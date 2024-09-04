@@ -1,5 +1,5 @@
 {
   "name": "task-concentrator",
-  "packageManager": "yarn@3.6.3",
+  "packageManager": "yarn@4.4.1",
   "private": true
 }
