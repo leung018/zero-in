@@ -4,7 +4,7 @@
   "description": "TODO: Write a description",
   "version": "1.0",
   "action": {
-    "default_popup": "index.html",
+    "default_popup": "popup.html",
     "default_icon": "favicon.ico"
   },
   "background": {

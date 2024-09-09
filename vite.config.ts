@@ -29,7 +29,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        index: 'index.html',
+        popup: 'popup.html',
         background: 'src/background.ts'
       },
       output: {
