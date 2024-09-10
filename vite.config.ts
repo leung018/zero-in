@@ -31,7 +31,7 @@ export default defineConfig({
       input: {
         popup: 'popup.html',
         options: 'options.html',
-        service_worker: 'src/service_worker.ts'
+        service_worker: 'src/service_workers/index.ts'
       },
       output: {
         entryFileNames: '[name].js'
