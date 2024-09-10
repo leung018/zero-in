@@ -30,6 +30,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         popup: 'popup.html',
+        options: 'options.html',
         service_worker: 'src/service_worker.ts'
       },
       output: {
