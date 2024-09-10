@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Task Concentrator",
+  "description": "TODO: Write a description",
+  "version": "1.0",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "favicon.ico"
+  },
+  "background": {
+    "service_worker": "service_worker.js",
+    "type": "module"
+  },
+  "options_page": "options.html"
+}
