@@ -1,1 +1,2 @@
-console.log('Hello from service worker')
+import './service_workers/a'
+import './service_workers/b'
