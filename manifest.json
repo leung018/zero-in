@@ -8,6 +8,6 @@
     "default_icon": "favicon.ico"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "service_worker.js"
   }
 }

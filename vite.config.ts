@@ -30,7 +30,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         popup: 'popup.html',
-        background: 'src/background.ts'
+        service_worker: 'src/service_worker.ts'
       },
       output: {
         entryFileNames: '[name].js'
