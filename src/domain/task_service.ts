@@ -1,0 +1,24 @@
+import { randomUUID } from 'crypto'
+import type { Task, TaskContent } from './task'
+
+export interface TaskService {
+  getTasks(): Promise<Task[]>
+  createTask(TaskContent: TaskContent): Promise<Task>
+}
+
+export class InMemoryTaskStorageService implements TaskService {
+  private tasks: Task[] = []
+
+  async getTasks(): Promise<Task[]> {
+    return this.tasks
+  }
+
+  async createTask(taskContent: TaskContent): Promise<Task> {
+    const task: Task = {
+      id: randomUUID(),
+      ...taskContent
+    }
+    this.tasks.push(task)
+    return task
+  }
+}
