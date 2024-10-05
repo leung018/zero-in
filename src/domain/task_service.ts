@@ -2,7 +2,11 @@ import { randomUUID } from 'crypto'
 import type { Task, TaskContent } from './task'
 
 export interface TaskService {
+  /**
+   * Gets tasks with the most recently created ones first.
+   */
   getTasks(): Promise<Task[]>
+
   createTask(TaskContent: TaskContent): Promise<Task>
 }
 
@@ -18,7 +22,7 @@ export class InMemoryTaskStorageService implements TaskService {
       id: randomUUID(),
       ...taskContent
     }
-    this.tasks.push(task)
+    this.tasks.unshift(task)
     return task
   }
 }
