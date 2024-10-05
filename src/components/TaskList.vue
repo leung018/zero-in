@@ -4,9 +4,8 @@ import type { Ref } from 'vue'
 import type { Task } from '../domain/task'
 
 const tasks: Ref<Task[]> = ref([
-  { id: '1', name: 'Task 1' },
-  { id: '2', name: 'Task 2' },
-  { id: '3', name: 'Task 3' }
+  { id: '1', name: 'Task 2' },
+  { id: '2', name: 'Task 1' }
 ])
 </script>
 
