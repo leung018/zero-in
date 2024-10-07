@@ -42,7 +42,7 @@ async function addTask() {
       </button>
     </form>
     <ul class="list-group">
-      <li v-for="task in tasks" :key="task.id" class="list-group-item" data-test="task">
+      <li v-for="task in tasks" :key="task.id" class="list-group-item" data-test="task-item">
         {{ task.name }}
       </li>
     </ul>

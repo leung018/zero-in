@@ -15,7 +15,7 @@ describe('TaskList', () => {
     })
     await flushPromises()
 
-    const taskItems = wrapper.findAll("[data-test='task']")
+    const taskItems = wrapper.findAll("[data-test='task-item']")
 
     const task1 = taskItems.find((item) => item.text().includes('Task 1'))
     const task2 = taskItems.find((item) => item.text().includes('Task 2'))
@@ -34,13 +34,13 @@ describe('TaskList', () => {
       props: { taskService }
     })
 
-    const taskInput = wrapper.find("[data-test='task-name-input']")
-    taskInput.setValue('New Task')
+    const taskNameInput = wrapper.find("[data-test='task-name-input']")
+    taskNameInput.setValue('New Task')
 
     const addButton = wrapper.find("[data-test='add-task-button']")
     await addButton.trigger('click')
 
-    const taskItems = wrapper.findAll("[data-test='task']")
+    const taskItems = wrapper.findAll("[data-test='task-item']")
     const newTask = taskItems.find((item) => item.text().includes('New Task'))
     expect(newTask).toBeTruthy()
 
