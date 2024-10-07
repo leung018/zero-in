@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { Ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import type { Task } from '../domain/task'
+import type { TaskService } from '@/domain/task_service'
 
-const tasks: Ref<Task[]> = ref([
-  { id: '1', name: 'Task 2' },
-  { id: '2', name: 'Task 1' }
-])
+const props = defineProps<{
+  taskService: TaskService
+}>()
+const tasks = ref<Task[]>([])
+
+onMounted(async () => {
+  tasks.value = await props.taskService.getTasks()
+})
 </script>
 
 <template>
