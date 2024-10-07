@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest'
 
-import { flushPromises, mount } from '@vue/test-utils'
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import TaskList from '../TaskList.vue'
 import { InMemoryTaskStorageService } from '../../domain/task_service'
+import type { TaskContent } from '../../domain/task'
 
 describe('TaskList', () => {
   it('should render tasks in the reverse order of creation', async () => {
@@ -34,11 +35,7 @@ describe('TaskList', () => {
       props: { taskService }
     })
 
-    const taskNameInput = wrapper.find("[data-test='task-name-input']")
-    taskNameInput.setValue('New Task')
-
-    const addButton = wrapper.find("[data-test='add-task-button']")
-    await addButton.trigger('click')
+    await addTask(wrapper, { name: 'New Task' })
 
     const taskItems = wrapper.findAll("[data-test='task-item']")
     const newTask = taskItems.find((item) => item.text().includes('New Task'))
@@ -55,13 +52,17 @@ describe('TaskList', () => {
       props: { taskService }
     })
 
+    await addTask(wrapper)
+
+    const inputElement = wrapper.find("[data-test='task-name-input']").element as HTMLInputElement
+    expect(inputElement.value).toBe('')
+  })
+
+  async function addTask(wrapper: VueWrapper, taskContent: TaskContent = { name: 'Dummy name' }) {
     const taskNameInput = wrapper.find("[data-test='task-name-input']")
-    taskNameInput.setValue('New Task')
+    taskNameInput.setValue(taskContent.name)
 
     const addButton = wrapper.find("[data-test='add-task-button']")
     await addButton.trigger('click')
-
-    const inputElement = taskNameInput.element as HTMLInputElement
-    expect(inputElement.value).toBe('')
-  })
+  }
 })
