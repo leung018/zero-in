@@ -15,7 +15,7 @@ describe('TaskList', () => {
     })
     await flushPromises()
 
-    const taskItems = wrapper.findAll('li')
+    const taskItems = wrapper.findAll("[data-test='task']")
 
     const task1 = taskItems.find((item) => item.text().includes('Task 1'))
     const task2 = taskItems.find((item) => item.text().includes('Task 2'))

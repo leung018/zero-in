@@ -19,7 +19,7 @@ const tasks: Ref<Task[]> = ref([
       <button type="submit" class="btn btn-primary">Add Task</button>
     </form>
     <ul class="list-group">
-      <li v-for="task in tasks" :key="task.id" class="list-group-item">
+      <li v-for="task in tasks" :key="task.id" class="list-group-item" data-test="task">
         {{ task.name }}
       </li>
     </ul>
