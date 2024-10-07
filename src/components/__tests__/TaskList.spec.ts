@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import TaskList from '../TaskList.vue'
-import { InMemoryTaskStorageService } from '../../domain/task_service'
+import { InMemoryTaskStorageService, type TaskService } from '../../domain/task_service'
 import type { TaskContent } from '../../domain/task'
 
 describe('TaskList', () => {
@@ -11,9 +11,7 @@ describe('TaskList', () => {
     await taskService.createTask({ name: 'Task 1' })
     await taskService.createTask({ name: 'Task 2' })
 
-    const wrapper = mount(TaskList, {
-      props: { taskService }
-    })
+    const { wrapper } = mountTaskList(taskService)
     await flushPromises()
 
     const taskItems = wrapper.findAll("[data-test='task-item']")
@@ -30,10 +28,7 @@ describe('TaskList', () => {
   })
 
   it('should able to add new task', async () => {
-    const taskService = new InMemoryTaskStorageService()
-    const wrapper = mount(TaskList, {
-      props: { taskService }
-    })
+    const { wrapper, taskService } = mountTaskList()
 
     await addTask(wrapper, { name: 'New Task' })
 
@@ -47,16 +42,22 @@ describe('TaskList', () => {
   })
 
   it('should clear task name input after adding new task', async () => {
-    const taskService = new InMemoryTaskStorageService()
-    const wrapper = mount(TaskList, {
-      props: { taskService }
-    })
-
+    const { wrapper } = mountTaskList()
     await addTask(wrapper)
 
     const inputElement = wrapper.find("[data-test='task-name-input']").element as HTMLInputElement
     expect(inputElement.value).toBe('')
   })
+
+  function mountTaskList(taskService: TaskService = new InMemoryTaskStorageService()) {
+    const wrapper = mount(TaskList, {
+      props: { taskService }
+    })
+    return {
+      taskService,
+      wrapper
+    }
+  }
 
   async function addTask(wrapper: VueWrapper, taskContent: TaskContent = { name: 'Dummy name' }) {
     const taskNameInput = wrapper.find("[data-test='task-name-input']")
