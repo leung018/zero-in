@@ -48,4 +48,20 @@ describe('TaskList', () => {
     expect(tasks.length).toBe(1)
     expect(tasks[0].name).toBe('New Task')
   })
+
+  it('should clear task name input after adding new task', async () => {
+    const taskService = new InMemoryTaskStorageService()
+    const wrapper = mount(TaskList, {
+      props: { taskService }
+    })
+
+    const taskNameInput = wrapper.find("[data-test='task-name-input']")
+    taskNameInput.setValue('New Task')
+
+    const addButton = wrapper.find("[data-test='add-task-button']")
+    await addButton.trigger('click')
+
+    const inputElement = taskNameInput.element as HTMLInputElement
+    expect(inputElement.value).toBe('')
+  })
 })

@@ -19,6 +19,7 @@ async function syncTasks() {
 
 async function addTask() {
   await props.taskService.createTask({ name: newTaskName.value })
+  newTaskName.value = ''
   await syncTasks()
 }
 </script>
