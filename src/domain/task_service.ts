@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto'
+import { v4 as uuidv4 } from 'uuid'
 import type { Task, TaskContent } from './task'
 
 export interface TaskService {
@@ -19,7 +19,7 @@ export class InMemoryTaskStorageService implements TaskService {
 
   async createTask(taskContent: TaskContent): Promise<Task> {
     const task: Task = {
-      id: randomUUID(),
+      id: uuidv4(),
       ...taskContent
     }
     this.tasks.unshift(task)
