@@ -18,6 +18,7 @@ async function syncTasks() {
 }
 
 async function addTask() {
+  if (!newTaskName.value) return
   await props.taskService.createTask({ name: newTaskName.value })
   newTaskName.value = ''
   await syncTasks()

@@ -49,6 +49,18 @@ describe('TaskList', () => {
     expect(inputElement.value).toBe('')
   })
 
+  it('should not add task with empty name', async () => {
+    const { wrapper, taskService } = mountTaskList()
+
+    await addTask(wrapper, { name: '' })
+
+    const taskItems = wrapper.findAll("[data-test='task-item']")
+    expect(taskItems.length).toBe(0)
+
+    const tasks = await taskService.getTasks()
+    expect(tasks.length).toBe(0)
+  })
+
   function mountTaskList(taskService: TaskService = new InMemoryTaskStorageService()) {
     const wrapper = mount(TaskList, {
       props: { taskService }
