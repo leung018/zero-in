@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
+import { DOMWrapper, flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import TaskList from '../TaskList.vue'
 import { InMemoryTaskStorageService, type TaskService } from '../../domain/task_service'
 import type { TaskContent } from '../../domain/task'
@@ -23,8 +23,7 @@ describe('TaskList', () => {
       throw new Error('Task items not found')
     }
 
-    const position = task1.element.compareDocumentPosition(task2.element)
-    expect(position).toBe(Node.DOCUMENT_POSITION_PRECEDING)
+    assertIsBefore(task2, task1)
   })
 
   it('should able to add new task', async () => {
@@ -78,5 +77,10 @@ describe('TaskList', () => {
 
     const addButton = wrapper.find("[data-test='add-task-button']")
     await addButton.trigger('click')
+  }
+
+  function assertIsBefore(a: DOMWrapper<Element>, b: DOMWrapper<Element>) {
+    const position = a.element.compareDocumentPosition(b.element)
+    expect(position).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
   }
 })
