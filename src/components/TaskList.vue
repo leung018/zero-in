@@ -28,7 +28,8 @@ async function addTask() {
 <template>
   <div class="container mt-4">
     <h1 class="mb-4">Task List</h1>
-    <form class="mb-4">
+    <!--If you trigger addTask in button @click, it will display the form validation message improperly after addTask-->
+    <form class="mb-4" @submit.prevent="addTask">
       <div class="mb-3">
         <input
           v-model="newTaskName"
@@ -39,9 +40,7 @@ async function addTask() {
           data-test="task-name-input"
         />
       </div>
-      <button type="submit" class="btn btn-primary" data-test="add-task-button" @click="addTask">
-        Add Task
-      </button>
+      <button class="btn btn-primary" data-test="add-task-button" type="submit">Add Task</button>
     </form>
     <ul class="list-group">
       <li v-for="task in tasks" :key="task.id" class="list-group-item" data-test="task-item">

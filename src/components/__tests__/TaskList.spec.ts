@@ -63,7 +63,8 @@ describe('TaskList', () => {
 
   function mountTaskList(taskService: TaskService = new InMemoryTaskStorageService()) {
     const wrapper = mount(TaskList, {
-      props: { taskService }
+      props: { taskService },
+      attachTo: document.body
     })
     return {
       taskService,
