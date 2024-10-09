@@ -11,5 +11,6 @@
     "service_worker": "service_worker.js",
     "type": "module"
   },
-  "options_page": "options.html"
+  "options_page": "options.html",
+  "permissions": ["storage", "unlimitedStorage"]
 }
