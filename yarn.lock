@@ -1275,13 +1275,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chrome-types@npm:^0.1.307":
-  version: 0.1.307
-  resolution: "chrome-types@npm:0.1.307"
-  checksum: 10c0/0d60f1cfc924881f1f088f9619460a499201651a364f69e79eaeb50ffb680b693eb1591002f964c6e20829e7de9a35c66f8ef13bed537bc3fcacbc22152788a6
-  languageName: node
-  linkType: hard
-
 "clean-stack@npm:^2.0.0":
   version: 2.2.0
   resolution: "clean-stack@npm:2.2.0"
@@ -3619,7 +3612,6 @@ __metadata:
     "@vue/tsconfig": "npm:^0.5.1"
     bootstrap: "npm:^5.3.3"
     bootstrap-vue-next: "npm:^0.24.23"
-    chrome-types: "npm:^0.1.307"
     eslint: "npm:^8.57.0"
     eslint-plugin-playwright: "npm:^1.6.2"
     eslint-plugin-vue: "npm:^9.23.0"
