@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import TaskList from './components/TaskList.vue'
-import { InMemoryTaskStorageService } from './domain/task_service'
-const taskService = new InMemoryTaskStorageService()
+import { ChromeLocalStorageTaskService } from './domain/task_service'
+const taskService = new ChromeLocalStorageTaskService()
 </script>
 
 <template>
