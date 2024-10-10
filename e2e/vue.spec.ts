@@ -1,7 +1,5 @@
 import { test, expect } from './fixtures.js'
 
-// See here how to get started:
-// https://playwright.dev/docs/intro
 test('should able to add tasks and display them', async ({ page, extensionId }) => {
   await page.goto(`chrome-extension://${extensionId}/popup.html`)
 
