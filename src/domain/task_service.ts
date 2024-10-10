@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import type { Task, TaskContent } from './task'
 
-declare const chrome: any // FIXME: Find a way to type this properly
+declare const chrome: any // FIXME: Find a way to type this properly and also fix the type hint related to it.
 
 export interface TaskService {
   /**
