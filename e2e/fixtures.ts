@@ -1,5 +1,7 @@
 import { test as base, chromium, type BrowserContext } from '@playwright/test'
 
+// Followed the guides from https://playwright.dev/docs/chrome-extensions
+
 export const test = base.extend<{
   context: BrowserContext
   extensionId: string
