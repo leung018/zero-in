@@ -14,7 +14,7 @@ describe('TaskList', () => {
     const { wrapper } = mountTaskList(taskService)
     await flushPromises()
 
-    const taskItems = wrapper.findAll("[data-test='task-item']")
+    const taskItems = wrapper.findAll("[data-test='task-items']")
 
     const task1 = taskItems.find((item) => item.text().includes('Task 1'))
     const task2 = taskItems.find((item) => item.text().includes('Task 2'))
@@ -31,7 +31,7 @@ describe('TaskList', () => {
 
     await addTask(wrapper, { name: 'New Task' })
 
-    const taskItems = wrapper.findAll("[data-test='task-item']")
+    const taskItems = wrapper.findAll("[data-test='task-items']")
     const newTask = taskItems.find((item) => item.text().includes('New Task'))
     expect(newTask).toBeTruthy()
 
@@ -53,7 +53,7 @@ describe('TaskList', () => {
 
     await addTask(wrapper, { name: '' })
 
-    const taskItems = wrapper.findAll("[data-test='task-item']")
+    const taskItems = wrapper.findAll("[data-test='task-items']")
     expect(taskItems.length).toBe(0)
 
     const tasks = await taskService.getTasks()
