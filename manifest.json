@@ -5,11 +5,12 @@
   "version": "1.0",
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "favicon.png"
+    "default_icon": {
+      "32": "favicon.png"
+    }
   },
   "background": {
-    "service_worker": "service_worker.js",
-    "type": "module"
+    "service_worker": "src/service_workers/index.ts"
   },
   "options_page": "options.html",
   "permissions": ["storage", "unlimitedStorage"]
