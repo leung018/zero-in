@@ -25,5 +25,7 @@ jobs:
         run: yarn test:unit
       - name: Build
         run: yarn build-only
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
       - name: End-to-End Testing
         run: yarn test:e2e
