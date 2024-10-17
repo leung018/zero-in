@@ -15,17 +15,17 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: ./yarn.lock
       - run: yarn install --immutable
-      - name: Linting
+      - name: Lint
         run: yarn lint
-      - name: Formatting
+      - name: Format Check
         run: yarn format-check
-      - name: Type Checking
+      - name: Type Check
         run: yarn type-check
-      - name: Unit Testing
+      - name: Unit Tests
         run: yarn test:unit
       - name: Build
         run: yarn build-only
-      - name: Install Playwright browsers
+      - name: Install Playwright Browser
         run: yarn playwright install --with-deps chromium
-      - name: End-to-End Testing
+      - name: End-to-End Tests
         run: xvfb-run yarn test:e2e
