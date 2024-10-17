@@ -4,7 +4,7 @@ on:
       - main # Because "Require branches to be up to date before merging" is enabled for main. The checking will be completed before pull request can be merged.
 name: Continuous Integration
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,3 +23,7 @@ jobs:
         run: yarn type-check
       - name: Unit Testing
         run: yarn test:unit
+      - name: Build
+        run: yarn build-only
+      - name: End-to-End Testing
+        run: yarn test:e2e
