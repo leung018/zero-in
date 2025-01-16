@@ -42,6 +42,16 @@ describe('BlockedDomains', () => {
       .element as HTMLInputElement
     expect(inputElement.value).toBe('')
   })
+
+  it('should not save blocked domain when input box is empty', async () => {
+    const { wrapper } = mountBlockedDomains()
+
+    await addBlockedDomain(wrapper, '')
+    assertDomainsDisplayed(wrapper, [])
+
+    await addBlockedDomain(wrapper, '  ')
+    assertDomainsDisplayed(wrapper, [])
+  })
 })
 
 function mountBlockedDomains(siteRulesService: SiteRulesService = new InMemorySiteRulesService()) {
