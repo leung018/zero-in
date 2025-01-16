@@ -45,13 +45,13 @@ describe('BlockedDomains', () => {
   })
 
   it('should not save blocked domain when input box is empty', async () => {
-    const { wrapper } = mountBlockedDomains()
+    const { wrapper, siteRulesService } = mountBlockedDomains()
 
     await addBlockedDomain(wrapper, '')
-    assertDomainsDisplayed(wrapper, [])
-
     await addBlockedDomain(wrapper, '  ')
+
     assertDomainsDisplayed(wrapper, [])
+    expect((await siteRulesService.getSiteRules()).blockedDomains).toEqual([])
   })
 
   it('should save domain in trimmed format', async () => {
