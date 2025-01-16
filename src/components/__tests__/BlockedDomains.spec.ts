@@ -34,8 +34,9 @@ describe('BlockedDomains', () => {
     ])
   })
 
-  it('should clear blockedDomain input after adding new domain', async () => {
+  it('should clear input box after adding new domain', async () => {
     const { wrapper } = mountBlockedDomains()
+
     await addBlockedDomain(wrapper, 'example.com')
 
     const inputElement = wrapper.find("[data-test='blocked-domain-input']")
