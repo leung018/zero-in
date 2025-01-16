@@ -33,6 +33,15 @@ describe('BlockedDomains', () => {
       'facebook.com'
     ])
   })
+
+  it('should clear blockedDomain input after adding new domain', async () => {
+    const { wrapper } = mountBlockedDomains()
+    await addBlockedDomain(wrapper, 'example.com')
+
+    const inputElement = wrapper.find("[data-test='blocked-domain-input']")
+      .element as HTMLInputElement
+    expect(inputElement.value).toBe('')
+  })
 })
 
 function mountBlockedDomains(siteRulesService: SiteRulesService = new InMemorySiteRulesService()) {

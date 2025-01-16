@@ -17,6 +17,7 @@ async function addDomain() {
     blockedDomains: [...blockedDomains.value, newDomainName.value]
   })
   blockedDomains.value = (await props.siteRulesService.getSiteRules()).blockedDomains
+  newDomainName.value = ''
 }
 </script>
 
