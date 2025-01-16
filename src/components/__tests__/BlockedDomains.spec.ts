@@ -53,6 +53,15 @@ describe('BlockedDomains', () => {
     await addBlockedDomain(wrapper, '  ')
     assertDomainsDisplayed(wrapper, [])
   })
+
+  it('should save domain in trimmed format', async () => {
+    const { wrapper, siteRulesService } = mountBlockedDomains()
+
+    await addBlockedDomain(wrapper, '  example.com  ')
+    assertDomainsDisplayed(wrapper, ['example.com'])
+
+    expect((await siteRulesService.getSiteRules()).blockedDomains).toEqual(['example.com'])
+  })
 })
 
 function mountBlockedDomains(siteRulesService: SiteRulesService = new InMemorySiteRulesService()) {

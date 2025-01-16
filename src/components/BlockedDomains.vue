@@ -15,7 +15,7 @@ onMounted(async () => {
 async function addDomain() {
   if (!newDomainName.value.trim()) return
   await props.siteRulesService.save({
-    blockedDomains: [...blockedDomains.value, newDomainName.value]
+    blockedDomains: [...blockedDomains.value, newDomainName.value.trim()]
   })
   blockedDomains.value = (await props.siteRulesService.getSiteRules()).blockedDomains
   newDomainName.value = ''
