@@ -1,6 +1,6 @@
+import { ChromeLocalStorageWrapper } from '../chrome/local_storage'
 import type { SiteRules } from './site_rules'
 
-declare const chrome: any // FIXME: Find a way to type this properly and also fix the type hint related to it.
 export interface SiteRulesService {
   save(siteRules: SiteRules): Promise<void>
   getSiteRules(): Promise<SiteRules>
@@ -18,14 +18,28 @@ export class InMemorySiteRulesService implements SiteRulesService {
   }
 }
 
-export class ChromeLocalStorageSiteRulesService implements SiteRulesService {
+export class SiteRulesServiceImpl implements SiteRulesService {
+  static createFake(): SiteRulesServiceImpl {
+    return new SiteRulesServiceImpl(ChromeLocalStorageWrapper.createFake())
+  }
+
+  static create(): SiteRulesServiceImpl {
+    return new SiteRulesServiceImpl(ChromeLocalStorageWrapper.create())
+  }
+
+  private storageWrapper: ChromeLocalStorageWrapper
+
+  private constructor(chromeLocalStorageWrapper: ChromeLocalStorageWrapper) {
+    this.storageWrapper = chromeLocalStorageWrapper
+  }
+
   async save(siteRules: SiteRules): Promise<void> {
-    await chrome.storage.local.set({ siteRules })
+    return this.storageWrapper.set({ siteRules })
   }
 
   async getSiteRules(): Promise<SiteRules> {
-    return chrome.storage.local.get('siteRules').then((result: any) => {
-      return result.siteRules
+    return this.storageWrapper.get('siteRules').then((result: any) => {
+      return result.siteRules || { blockedDomains: [] }
     })
   }
 }

@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
 import BlockedDomains from '../BlockedDomains.vue'
-import { InMemorySiteRulesService, type SiteRulesService } from '../../domain/site_rules_service'
+import { SiteRulesServiceImpl, type SiteRulesService } from '../../domain/site_rules_service'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 
 describe('BlockedDomains', () => {
   it('should render blocked domains', async () => {
-    const siteRulesService = new InMemorySiteRulesService()
+    const siteRulesService = SiteRulesServiceImpl.createFake()
     await siteRulesService.save({ blockedDomains: ['example.com', 'facebook.com'] })
 
     const { wrapper } = mountBlockedDomains(siteRulesService)
@@ -64,7 +64,9 @@ describe('BlockedDomains', () => {
   })
 })
 
-function mountBlockedDomains(siteRulesService: SiteRulesService = new InMemorySiteRulesService()) {
+function mountBlockedDomains(
+  siteRulesService: SiteRulesService = SiteRulesServiceImpl.createFake()
+) {
   const wrapper = mount(BlockedDomains, {
     props: { siteRulesService }
   })
@@ -77,7 +79,8 @@ async function addBlockedDomain(wrapper: VueWrapper, domain: string) {
   await inputElement.setValue(domain)
 
   const addButton = wrapper.find("[data-test='add-button']")
-  await addButton.trigger('click')
+  addButton.trigger('click')
+  await flushPromises()
 }
 
 function assertDomainsDisplayed(wrapper: VueWrapper, domains: string[]) {
