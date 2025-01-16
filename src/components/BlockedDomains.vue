@@ -6,19 +6,22 @@ const props = defineProps<{
   siteRulesService: SiteRulesService
 }>()
 const blockedDomains = ref<string[]>([])
-const newDomainName = ref<string>('')
+const newDomain = ref<string>('')
 
 onMounted(async () => {
   blockedDomains.value = (await props.siteRulesService.getSiteRules()).blockedDomains
 })
 
-async function addDomain() {
-  if (!newDomainName.value.trim()) return
+async function onClickAdd() {
+  const newDomainValue = newDomain.value.trim()
+  if (!newDomainValue) return
+
   await props.siteRulesService.save({
-    blockedDomains: [...blockedDomains.value, newDomainName.value.trim()]
+    blockedDomains: [...blockedDomains.value, newDomainValue]
   })
+
   blockedDomains.value = (await props.siteRulesService.getSiteRules()).blockedDomains
-  newDomainName.value = ''
+  newDomain.value = ''
 }
 </script>
 
@@ -28,7 +31,7 @@ async function addDomain() {
     <form class="mb-4">
       <div class="mb-3">
         <input
-          v-model="newDomainName"
+          v-model="newDomain"
           type="text"
           class="form-control"
           data-test="blocked-domain-input"
@@ -36,7 +39,7 @@ async function addDomain() {
           required
         />
       </div>
-      <button class="btn btn-primary" data-test="add-button" @click="addDomain">Add Domain</button>
+      <button class="btn btn-primary" data-test="add-button" @click="onClickAdd">Add Domain</button>
     </form>
     <ul class="list-group">
       <li
