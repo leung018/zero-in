@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import TaskList from './components/TaskList.vue'
-import { ChromeLocalStorageTaskService } from './domain/task_service'
-const taskService = new ChromeLocalStorageTaskService()
+import BlockedDomains from './components/BlockedDomains.vue'
+import { ChromeLocalStorageSiteRulesService } from './domain/site_rules_service'
+const siteRulesService = new ChromeLocalStorageSiteRulesService()
 </script>
 
 <template>
   <main>
-    <TaskList :task-service="taskService" />
+    <BlockedDomains :siteRulesService="siteRulesService" />
   </main>
 </template>
