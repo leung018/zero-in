@@ -12,11 +12,7 @@ describe('BlockedDomains', () => {
     const { wrapper } = mountBlockedDomains(siteRulesService)
     await flushPromises()
 
-    const blockedDomains = wrapper.findAll("[data-test='blocked-domains']")
-    expect(blockedDomains.length).toBe(2)
-
-    expect(blockedDomains[0].text()).toBe('example.com')
-    expect(blockedDomains[1].text()).toBe('facebook.com')
+    assertDomainsDisplayed(wrapper, ['example.com', 'facebook.com'])
   })
 
   it('should able to add new blocked domain', async () => {
@@ -24,19 +20,13 @@ describe('BlockedDomains', () => {
 
     await addBlockedDomain(wrapper, 'example.com')
 
-    let blockedDomains = wrapper.findAll("[data-test='blocked-domains']")
-    expect(blockedDomains.length).toBe(1)
-    expect(blockedDomains[0].text()).toBe('example.com')
+    assertDomainsDisplayed(wrapper, ['example.com'])
 
     expect((await siteRulesService.getSiteRules()).blockedDomains).toEqual(['example.com'])
 
     await addBlockedDomain(wrapper, 'facebook.com')
 
-    blockedDomains = wrapper.findAll("[data-test='blocked-domains']")
-    expect(blockedDomains.length).toBe(2)
-
-    expect(blockedDomains[0].text()).toBe('example.com')
-    expect(blockedDomains[1].text()).toBe('facebook.com')
+    assertDomainsDisplayed(wrapper, ['example.com', 'facebook.com'])
 
     expect((await siteRulesService.getSiteRules()).blockedDomains).toEqual([
       'example.com',
@@ -59,4 +49,13 @@ async function addBlockedDomain(wrapper: VueWrapper, domain: string) {
 
   const addButton = wrapper.find("[data-test='add-button']")
   await addButton.trigger('click')
+}
+
+function assertDomainsDisplayed(wrapper: VueWrapper, domains: string[]) {
+  const blockedDomains = wrapper.findAll("[data-test='blocked-domains']")
+  expect(blockedDomains.length).toBe(domains.length)
+
+  for (let i = 0; i < domains.length; i++) {
+    expect(blockedDomains[i].text()).toBe(domains[i])
+  }
 }
