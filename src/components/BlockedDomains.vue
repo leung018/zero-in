@@ -45,10 +45,11 @@ async function onClickAdd() {
       <li
         v-for="domain in blockedDomains"
         :key="domain"
-        class="list-group-item"
+        class="list-group-item d-flex justify-content-between align-items-center"
         data-test="blocked-domains"
       >
         {{ domain }}
+        <button class="btn text-danger bg-transparent border-0" data-test="">X</button>
       </li>
     </ul>
   </div>
