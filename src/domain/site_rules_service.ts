@@ -6,18 +6,6 @@ export interface SiteRulesService {
   get(): Promise<SiteRules>
 }
 
-export class InMemorySiteRulesService implements SiteRulesService {
-  private siteRules: SiteRules = { blockedDomains: [] }
-
-  async save(siteRules: SiteRules): Promise<void> {
-    this.siteRules = siteRules
-  }
-
-  async get(): Promise<SiteRules> {
-    return this.siteRules
-  }
-}
-
 export class SiteRulesServiceImpl implements SiteRulesService {
   static createFake(): SiteRulesServiceImpl {
     return new SiteRulesServiceImpl(ChromeLocalStorageWrapper.createFake())
