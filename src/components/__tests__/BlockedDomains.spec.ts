@@ -22,16 +22,13 @@ describe('BlockedDomains', () => {
 
     assertDomainsDisplayed(wrapper, ['example.com'])
 
-    expect((await siteRulesService.getSiteRules()).blockedDomains).toEqual(['example.com'])
+    expect((await siteRulesService.get()).blockedDomains).toEqual(['example.com'])
 
     await addBlockedDomain(wrapper, 'facebook.com')
 
     assertDomainsDisplayed(wrapper, ['example.com', 'facebook.com'])
 
-    expect((await siteRulesService.getSiteRules()).blockedDomains).toEqual([
-      'example.com',
-      'facebook.com'
-    ])
+    expect((await siteRulesService.get()).blockedDomains).toEqual(['example.com', 'facebook.com'])
   })
 
   it('should clear input box after adding new domain', async () => {
@@ -51,7 +48,7 @@ describe('BlockedDomains', () => {
     await addBlockedDomain(wrapper, '  ')
 
     assertDomainsDisplayed(wrapper, [])
-    expect((await siteRulesService.getSiteRules()).blockedDomains).toEqual([])
+    expect((await siteRulesService.get()).blockedDomains).toEqual([])
   })
 
   it('should save domain in trimmed format', async () => {
@@ -60,7 +57,7 @@ describe('BlockedDomains', () => {
     await addBlockedDomain(wrapper, '  example.com  ')
     assertDomainsDisplayed(wrapper, ['example.com'])
 
-    expect((await siteRulesService.getSiteRules()).blockedDomains).toEqual(['example.com'])
+    expect((await siteRulesService.get()).blockedDomains).toEqual(['example.com'])
   })
 })
 

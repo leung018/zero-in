@@ -3,7 +3,7 @@ import type { SiteRules } from './site_rules'
 
 export interface SiteRulesService {
   save(siteRules: SiteRules): Promise<void>
-  getSiteRules(): Promise<SiteRules>
+  get(): Promise<SiteRules>
 }
 
 export class InMemorySiteRulesService implements SiteRulesService {
@@ -13,7 +13,7 @@ export class InMemorySiteRulesService implements SiteRulesService {
     this.siteRules = siteRules
   }
 
-  async getSiteRules(): Promise<SiteRules> {
+  async get(): Promise<SiteRules> {
     return this.siteRules
   }
 }
@@ -37,7 +37,7 @@ export class SiteRulesServiceImpl implements SiteRulesService {
     return this.storageWrapper.set({ siteRules })
   }
 
-  async getSiteRules(): Promise<SiteRules> {
+  async get(): Promise<SiteRules> {
     return this.storageWrapper.get('siteRules').then((result: any) => {
       return result.siteRules || { blockedDomains: [] }
     })

@@ -9,7 +9,7 @@ const blockedDomains = ref<string[]>([])
 const newDomain = ref<string>('')
 
 onMounted(async () => {
-  blockedDomains.value = (await props.siteRulesService.getSiteRules()).blockedDomains
+  blockedDomains.value = (await props.siteRulesService.get()).blockedDomains
 })
 
 async function onClickAdd() {
@@ -20,7 +20,7 @@ async function onClickAdd() {
     blockedDomains: [...blockedDomains.value, newDomainValue]
   })
 
-  blockedDomains.value = (await props.siteRulesService.getSiteRules()).blockedDomains
+  blockedDomains.value = (await props.siteRulesService.get()).blockedDomains
   newDomain.value = ''
 }
 </script>
