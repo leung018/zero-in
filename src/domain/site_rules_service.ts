@@ -36,12 +36,16 @@ export class SiteRulesServiceImpl implements SiteRulesService {
   }
 }
 
-function serializeSiteRules(siteRules: SiteRules): any {
+type SerializedSiteRules = {
+  blockedDomains: ReadonlyArray<string>
+}
+
+function serializeSiteRules(siteRules: SiteRules): SerializedSiteRules {
   return {
     blockedDomains: siteRules.blockedDomains
   }
 }
 
-function deserializeSiteRules(input: { blockedDomains: string[] }): SiteRules {
-  return new SiteRules(input)
+function deserializeSiteRules(data: SerializedSiteRules): SiteRules {
+  return new SiteRules(data)
 }

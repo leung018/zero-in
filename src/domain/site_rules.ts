@@ -1,7 +1,7 @@
 export class SiteRules {
   private _blockedDomains: ReadonlyArray<string>
 
-  constructor({ blockedDomains = [] }: { blockedDomains?: string[] } = {}) {
+  constructor({ blockedDomains = [] }: { blockedDomains?: ReadonlyArray<string> } = {}) {
     this._blockedDomains = deduplicated(blockedDomains.map((domain) => domain.trim()))
   }
 
