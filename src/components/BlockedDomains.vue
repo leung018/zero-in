@@ -26,6 +26,16 @@ async function onClickAdd() {
   blockedDomains.value = (await props.siteRulesService.get()).blockedDomains
   newDomain.value = ''
 }
+
+async function onClickRemove(domain: string) {
+  await props.siteRulesService.save(
+    new SiteRules({
+      blockedDomains: blockedDomains.value.filter((d) => d !== domain)
+    })
+  )
+
+  blockedDomains.value = (await props.siteRulesService.get()).blockedDomains
+}
 </script>
 
 <template>
@@ -51,7 +61,13 @@ async function onClickAdd() {
         class="list-group-item d-flex justify-content-between align-items-center"
       >
         <span data-test="blocked-domains">{{ domain }}</span>
-        <button class="btn text-danger bg-transparent border-0" data-test="">X</button>
+        <button
+          class="btn text-danger bg-transparent border-0"
+          :data-test="`remove-${domain}`"
+          @click="onClickRemove(domain)"
+        >
+          X
+        </button>
       </li>
     </ul>
   </div>
