@@ -23,7 +23,7 @@ async function onClickAdd() {
     })
   )
 
-  blockedDomains.value = (await props.siteRulesService.get()).blockedDomains
+  await syncBlockedDomains()
   newDomain.value = ''
 }
 
@@ -34,6 +34,10 @@ async function onClickRemove(domain: string) {
     })
   )
 
+  await syncBlockedDomains()
+}
+
+async function syncBlockedDomains() {
   blockedDomains.value = (await props.siteRulesService.get()).blockedDomains
 }
 </script>
