@@ -3,11 +3,12 @@ import { describe, expect, it } from 'vitest'
 import BlockedDomains from '../BlockedDomains.vue'
 import { SiteRulesServiceImpl, type SiteRulesService } from '../../domain/site_rules_service'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
+import { SiteRules } from '../../domain/site_rules'
 
 describe('BlockedDomains', () => {
   it('should render blocked domains', async () => {
     const siteRulesService = SiteRulesServiceImpl.createFake()
-    await siteRulesService.save({ blockedDomains: ['example.com', 'facebook.com'] })
+    await siteRulesService.save(new SiteRules({ blockedDomains: ['example.com', 'facebook.com'] }))
 
     const { wrapper } = mountBlockedDomains(siteRulesService)
     await flushPromises()
@@ -59,6 +60,19 @@ describe('BlockedDomains', () => {
 
     expect((await siteRulesService.get()).blockedDomains).toEqual(['example.com'])
   })
+
+  it('should able to remove added domain', async () => {
+    const siteRulesService = SiteRulesServiceImpl.createFake()
+    await siteRulesService.save(new SiteRules({ blockedDomains: ['example.com', 'facebook.com'] }))
+
+    const { wrapper } = mountBlockedDomains(siteRulesService)
+    await flushPromises()
+
+    await removeBlockedDomain(wrapper, 'example.com')
+
+    assertDomainsDisplayed(wrapper, ['facebook.com'])
+    expect((await siteRulesService.get()).blockedDomains).toEqual(['facebook.com'])
+  })
 })
 
 function mountBlockedDomains(
@@ -77,6 +91,12 @@ async function addBlockedDomain(wrapper: VueWrapper, domain: string) {
 
   const addButton = wrapper.find("[data-test='add-button']")
   addButton.trigger('click')
+  await flushPromises()
+}
+
+async function removeBlockedDomain(wrapper: VueWrapper, domain: string) {
+  const removeButton = wrapper.find(`[data-test='remove-${domain}']`)
+  await removeButton.trigger('click')
   await flushPromises()
 }
 

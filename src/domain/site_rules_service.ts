@@ -1,21 +1,9 @@
 import { ChromeLocalStorageWrapper } from '../chrome/local_storage'
-import type { SiteRules } from './site_rules'
+import { SiteRules } from './site_rules'
 
 export interface SiteRulesService {
   save(siteRules: SiteRules): Promise<void>
   get(): Promise<SiteRules>
-}
-
-export class InMemorySiteRulesService implements SiteRulesService {
-  private siteRules: SiteRules = { blockedDomains: [] }
-
-  async save(siteRules: SiteRules): Promise<void> {
-    this.siteRules = siteRules
-  }
-
-  async get(): Promise<SiteRules> {
-    return this.siteRules
-  }
 }
 
 export class SiteRulesServiceImpl implements SiteRulesService {
@@ -34,12 +22,30 @@ export class SiteRulesServiceImpl implements SiteRulesService {
   }
 
   async save(siteRules: SiteRules): Promise<void> {
-    return this.storageWrapper.set({ siteRules })
+    return this.storageWrapper.set({ siteRules: serializeSiteRules(siteRules) })
   }
 
   async get(): Promise<SiteRules> {
     return this.storageWrapper.get('siteRules').then((result: any) => {
-      return result.siteRules || { blockedDomains: [] }
+      if (result.siteRules) {
+        return deserializeSiteRules(result.siteRules)
+      }
+
+      return new SiteRules()
     })
   }
+}
+
+type SerializedSiteRules = {
+  blockedDomains: ReadonlyArray<string>
+}
+
+function serializeSiteRules(siteRules: SiteRules): SerializedSiteRules {
+  return {
+    blockedDomains: siteRules.blockedDomains
+  }
+}
+
+function deserializeSiteRules(data: SerializedSiteRules): SiteRules {
+  return new SiteRules(data)
 }

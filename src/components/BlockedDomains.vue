@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import type { SiteRulesService } from '@/domain/site_rules_service'
+import { SiteRules } from '../domain/site_rules'
 
 const props = defineProps<{
   siteRulesService: SiteRulesService
 }>()
-const blockedDomains = ref<string[]>([])
+const blockedDomains = ref<ReadonlyArray<string>>([])
 const newDomain = ref<string>('')
 
 onMounted(async () => {
@@ -16,12 +17,28 @@ async function onClickAdd() {
   const newDomainValue = newDomain.value.trim()
   if (!newDomainValue) return
 
-  await props.siteRulesService.save({
-    blockedDomains: [...blockedDomains.value, newDomainValue]
-  })
+  await props.siteRulesService.save(
+    new SiteRules({
+      blockedDomains: [...blockedDomains.value, newDomainValue]
+    })
+  )
 
-  blockedDomains.value = (await props.siteRulesService.get()).blockedDomains
+  await syncBlockedDomains()
   newDomain.value = ''
+}
+
+async function onClickRemove(domain: string) {
+  await props.siteRulesService.save(
+    new SiteRules({
+      blockedDomains: blockedDomains.value.filter((d) => d !== domain)
+    })
+  )
+
+  await syncBlockedDomains()
+}
+
+async function syncBlockedDomains() {
+  blockedDomains.value = (await props.siteRulesService.get()).blockedDomains
 }
 </script>
 
@@ -45,10 +62,16 @@ async function onClickAdd() {
       <li
         v-for="domain in blockedDomains"
         :key="domain"
-        class="list-group-item"
-        data-test="blocked-domains"
+        class="list-group-item d-flex justify-content-between align-items-center"
       >
-        {{ domain }}
+        <span data-test="blocked-domains">{{ domain }}</span>
+        <button
+          class="btn text-danger bg-transparent border-0"
+          :data-test="`remove-${domain}`"
+          @click="onClickRemove(domain)"
+        >
+          X
+        </button>
       </li>
     </ul>
   </div>
