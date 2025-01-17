@@ -1,8 +1,4 @@
-export type SiteRules = {
-  blockedDomains: string[]
-}
-
-export class SiteRules2 {
+export class SiteRules {
   private _blockedDomains: ReadonlyArray<string>
 
   constructor({ blockedDomains = [] }: { blockedDomains?: string[] } = {}) {

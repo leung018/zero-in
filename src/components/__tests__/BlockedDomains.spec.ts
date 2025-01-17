@@ -3,11 +3,12 @@ import { describe, expect, it } from 'vitest'
 import BlockedDomains from '../BlockedDomains.vue'
 import { SiteRulesServiceImpl, type SiteRulesService } from '../../domain/site_rules_service'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
+import { SiteRules } from '../../domain/site_rules'
 
 describe('BlockedDomains', () => {
   it('should render blocked domains', async () => {
     const siteRulesService = SiteRulesServiceImpl.createFake()
-    await siteRulesService.save({ blockedDomains: ['example.com', 'facebook.com'] })
+    await siteRulesService.save(new SiteRules({ blockedDomains: ['example.com', 'facebook.com'] }))
 
     const { wrapper } = mountBlockedDomains(siteRulesService)
     await flushPromises()

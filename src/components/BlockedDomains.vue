@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import type { SiteRulesService } from '@/domain/site_rules_service'
+import { SiteRules } from '../domain/site_rules'
 
 const props = defineProps<{
   siteRulesService: SiteRulesService
 }>()
-const blockedDomains = ref<string[]>([])
+const blockedDomains = ref<ReadonlyArray<string>>([])
 const newDomain = ref<string>('')
 
 onMounted(async () => {
@@ -16,9 +17,11 @@ async function onClickAdd() {
   const newDomainValue = newDomain.value.trim()
   if (!newDomainValue) return
 
-  await props.siteRulesService.save({
-    blockedDomains: [...blockedDomains.value, newDomainValue]
-  })
+  await props.siteRulesService.save(
+    new SiteRules({
+      blockedDomains: [...blockedDomains.value, newDomainValue]
+    })
+  )
 
   blockedDomains.value = (await props.siteRulesService.get()).blockedDomains
   newDomain.value = ''
