@@ -2,9 +2,12 @@
 import { onMounted, ref } from 'vue'
 import type { SiteRulesStorageService } from '@/domain/site_rules_storage'
 import { SiteRules } from '../domain/site_rules'
+import type { WebsiteRedirectService } from '../chrome/redirect'
 
 const props = defineProps<{
   siteRulesStorageService: SiteRulesStorageService
+  websiteRedirectService: WebsiteRedirectService
+  targetRedirectUrl: string
 }>()
 const blockedDomains = ref<ReadonlyArray<string>>([])
 const newDomain = ref<string>('')
@@ -17,22 +20,22 @@ async function onClickAdd() {
   const newDomainValue = newDomain.value.trim()
   if (!newDomainValue) return
 
-  await props.siteRulesStorageService.save(
-    new SiteRules({
-      blockedDomains: [...blockedDomains.value, newDomainValue]
-    })
-  )
+  const siteRules = new SiteRules({
+    blockedDomains: [...blockedDomains.value, newDomainValue]
+  })
+  await props.siteRulesStorageService.save(siteRules)
+  await props.websiteRedirectService.activateRedirect(siteRules, props.targetRedirectUrl)
 
   await syncBlockedDomains()
   newDomain.value = ''
 }
 
 async function onClickRemove(domain: string) {
-  await props.siteRulesStorageService.save(
-    new SiteRules({
-      blockedDomains: blockedDomains.value.filter((d) => d !== domain)
-    })
-  )
+  const siteRules = new SiteRules({
+    blockedDomains: blockedDomains.value.filter((d) => d !== domain)
+  })
+  await props.siteRulesStorageService.save(siteRules)
+  await props.websiteRedirectService.activateRedirect(siteRules, props.targetRedirectUrl)
 
   await syncBlockedDomains()
 }

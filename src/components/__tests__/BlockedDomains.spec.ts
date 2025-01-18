@@ -7,6 +7,7 @@ import {
 } from '../../domain/site_rules_storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { SiteRules } from '../../domain/site_rules'
+import type { WebsiteRedirectService } from '../../chrome/redirect'
 
 describe('BlockedDomains', () => {
   it('should render blocked domains', async () => {
@@ -83,18 +84,75 @@ describe('BlockedDomains', () => {
     assertDomainsDisplayed(wrapper, ['facebook.com'])
     expect((await siteRulesStorageService.get()).blockedDomains).toEqual(['facebook.com'])
   })
+
+  it('should update activated redirect when domain is added', async () => {
+    const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
+    const { wrapper } = mountBlockedDomains({
+      websiteRedirectService: fakeWebsiteRedirectService,
+      targetRedirectUrl: 'https://target.com'
+    })
+
+    await addBlockedDomain(wrapper, 'example.com')
+    expect(fakeWebsiteRedirectService.getActivatedSiteRules()?.blockedDomains).toEqual([
+      'example.com'
+    ])
+    expect(fakeWebsiteRedirectService.getActivatedRedirectUrl()).toBe('https://target.com')
+  })
+
+  it('should update activated redirect when domain is removed', async () => {
+    const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
+    const siteRulesStorageService = SiteRulesStorageServiceImpl.createFake()
+    await siteRulesStorageService.save(
+      new SiteRules({ blockedDomains: ['example.com', 'facebook.com'] })
+    )
+
+    const { wrapper } = mountBlockedDomains({
+      siteRulesStorageService,
+      websiteRedirectService: fakeWebsiteRedirectService,
+      targetRedirectUrl: 'https://target.com'
+    })
+    await flushPromises()
+
+    await removeBlockedDomain(wrapper, 'example.com')
+    expect(fakeWebsiteRedirectService.getActivatedSiteRules()?.blockedDomains).toEqual([
+      'facebook.com'
+    ])
+    expect(fakeWebsiteRedirectService.getActivatedRedirectUrl()).toBe('https://target.com')
+  })
 })
 
 function mountBlockedDomains({
-  siteRulesStorageService = SiteRulesStorageServiceImpl.createFake()
+  siteRulesStorageService = SiteRulesStorageServiceImpl.createFake(),
+  websiteRedirectService = new FakeWebsiteRedirectService(),
+  targetRedirectUrl = 'https://example.com'
 }: {
   siteRulesStorageService?: SiteRulesStorageService
+  websiteRedirectService?: WebsiteRedirectService
+  targetRedirectUrl?: string
 } = {}) {
   const wrapper = mount(BlockedDomains, {
-    props: { siteRulesStorageService }
+    props: { siteRulesStorageService, websiteRedirectService, targetRedirectUrl }
   })
 
   return { wrapper, siteRulesStorageService }
+}
+
+class FakeWebsiteRedirectService implements WebsiteRedirectService {
+  private activatedSiteRules: SiteRules | null = null
+  private activatedRedirectUrl: string | null = null
+
+  async activateRedirect(siteRules: SiteRules, targetUrl: string): Promise<void> {
+    this.activatedSiteRules = siteRules
+    this.activatedRedirectUrl = targetUrl
+  }
+
+  getActivatedSiteRules(): SiteRules | null {
+    return this.activatedSiteRules
+  }
+
+  getActivatedRedirectUrl(): string | null {
+    return this.activatedRedirectUrl
+  }
 }
 
 async function addBlockedDomain(wrapper: VueWrapper, domain: string) {
