@@ -15,7 +15,7 @@ describe('BlockedDomains', () => {
       new SiteRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
 
-    const { wrapper } = mountBlockedDomains(siteRulesStorageService)
+    const { wrapper } = mountBlockedDomains({ siteRulesStorageService })
     await flushPromises()
 
     assertDomainsDisplayed(wrapper, ['example.com', 'facebook.com'])
@@ -75,7 +75,7 @@ describe('BlockedDomains', () => {
       new SiteRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
 
-    const { wrapper } = mountBlockedDomains(siteRulesStorageService)
+    const { wrapper } = mountBlockedDomains({ siteRulesStorageService })
     await flushPromises()
 
     await removeBlockedDomain(wrapper, 'example.com')
@@ -85,9 +85,11 @@ describe('BlockedDomains', () => {
   })
 })
 
-function mountBlockedDomains(
-  siteRulesStorageService: SiteRulesStorageService = SiteRulesStorageServiceImpl.createFake()
-) {
+function mountBlockedDomains({
+  siteRulesStorageService = SiteRulesStorageServiceImpl.createFake()
+}: {
+  siteRulesStorageService?: SiteRulesStorageService
+} = {}) {
   const wrapper = mount(BlockedDomains, {
     props: { siteRulesStorageService }
   })
