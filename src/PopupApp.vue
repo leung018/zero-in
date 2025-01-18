@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import BlockedDomains from './components/BlockedDomains.vue'
-import { SiteRulesServiceImpl } from './domain/site_rules_service'
-const siteRulesService = SiteRulesServiceImpl.create()
+import { SiteRulesStorageServiceImpl } from './domain/site_rules_storage'
+const siteRulesStorageService = SiteRulesStorageServiceImpl.create()
 </script>
 
 <template>
   <main>
-    <BlockedDomains :siteRulesService="siteRulesService" />
+    <BlockedDomains :siteRulesStorageService="siteRulesStorageService" />
   </main>
 </template>

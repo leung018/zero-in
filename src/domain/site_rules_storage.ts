@@ -1,18 +1,18 @@
 import { ChromeLocalStorageWrapper } from '../chrome/local_storage'
 import { SiteRules } from './site_rules'
 
-export interface SiteRulesService {
+export interface SiteRulesStorageService {
   save(siteRules: SiteRules): Promise<void>
   get(): Promise<SiteRules>
 }
 
-export class SiteRulesServiceImpl implements SiteRulesService {
-  static createFake(): SiteRulesServiceImpl {
-    return new SiteRulesServiceImpl(ChromeLocalStorageWrapper.createFake())
+export class SiteRulesStorageServiceImpl implements SiteRulesStorageService {
+  static createFake(): SiteRulesStorageServiceImpl {
+    return new SiteRulesStorageServiceImpl(ChromeLocalStorageWrapper.createFake())
   }
 
-  static create(): SiteRulesServiceImpl {
-    return new SiteRulesServiceImpl(ChromeLocalStorageWrapper.create())
+  static create(): SiteRulesStorageServiceImpl {
+    return new SiteRulesStorageServiceImpl(ChromeLocalStorageWrapper.create())
   }
 
   private storageWrapper: ChromeLocalStorageWrapper

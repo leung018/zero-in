@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import type { SiteRulesService } from '@/domain/site_rules_service'
+import type { SiteRulesStorageService } from '@/domain/site_rules_storage'
 import { SiteRules } from '../domain/site_rules'
 
 const props = defineProps<{
-  siteRulesService: SiteRulesService
+  siteRulesStorageService: SiteRulesStorageService
 }>()
 const blockedDomains = ref<ReadonlyArray<string>>([])
 const newDomain = ref<string>('')
 
 onMounted(async () => {
-  blockedDomains.value = (await props.siteRulesService.get()).blockedDomains
+  blockedDomains.value = (await props.siteRulesStorageService.get()).blockedDomains
 })
 
 async function onClickAdd() {
   const newDomainValue = newDomain.value.trim()
   if (!newDomainValue) return
 
-  await props.siteRulesService.save(
+  await props.siteRulesStorageService.save(
     new SiteRules({
       blockedDomains: [...blockedDomains.value, newDomainValue]
     })
@@ -28,7 +28,7 @@ async function onClickAdd() {
 }
 
 async function onClickRemove(domain: string) {
-  await props.siteRulesService.save(
+  await props.siteRulesStorageService.save(
     new SiteRules({
       blockedDomains: blockedDomains.value.filter((d) => d !== domain)
     })
@@ -38,7 +38,7 @@ async function onClickRemove(domain: string) {
 }
 
 async function syncBlockedDomains() {
-  blockedDomains.value = (await props.siteRulesService.get()).blockedDomains
+  blockedDomains.value = (await props.siteRulesStorageService.get()).blockedDomains
 }
 </script>
 
