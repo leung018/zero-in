@@ -23,10 +23,7 @@ async function onClickAdd() {
   const siteRules = new SiteRules({
     blockedDomains: [...blockedDomains.value, newDomainValue]
   })
-  await props.siteRulesStorageService.save(siteRules)
-  await props.websiteRedirectService.activateRedirect(siteRules, props.targetRedirectUrl)
-
-  await syncBlockedDomains()
+  await updateSiteRules(siteRules)
   newDomain.value = ''
 }
 
@@ -34,13 +31,12 @@ async function onClickRemove(domain: string) {
   const siteRules = new SiteRules({
     blockedDomains: blockedDomains.value.filter((d) => d !== domain)
   })
-  await props.siteRulesStorageService.save(siteRules)
-  await props.websiteRedirectService.activateRedirect(siteRules, props.targetRedirectUrl)
-
-  await syncBlockedDomains()
+  await updateSiteRules(siteRules)
 }
 
-async function syncBlockedDomains() {
+async function updateSiteRules(siteRules: SiteRules) {
+  await props.siteRulesStorageService.save(siteRules)
+  await props.websiteRedirectService.activateRedirect(siteRules, props.targetRedirectUrl)
   blockedDomains.value = (await props.siteRulesStorageService.get()).blockedDomains
 }
 </script>
