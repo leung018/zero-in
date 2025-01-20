@@ -25,4 +25,11 @@ describe('BrowsingRules', () => {
     })
     expect(browsingRules2.blockedDomains).toEqual(['example.com'])
   })
+
+  it('should ignore empty input', () => {
+    const browsingRules = new BrowsingRules({
+      blockedDomains: ['example.com', '', '   ', 'facebook.com']
+    })
+    expect(browsingRules.blockedDomains).toEqual(['example.com', 'facebook.com'])
+  })
 })
