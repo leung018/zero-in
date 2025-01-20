@@ -21,13 +21,23 @@ test('should able to add blocked domains and display them', async ({ page, exten
 })
 
 test('should able to add blocked domains and block them', async ({ page, extensionId }) => {
-  await page.goto(`chrome-extension://${extensionId}/popup.html`)
+  const extraPage = await page.context().newPage()
+  for (const p of [page, extraPage]) {
+    await p.route('https://google.com', async (route) => {
+      await route.fulfill({ body: 'This is fake google.com' })
+    })
+  }
+  await extraPage.goto('https://google.com')
+  await expect(extraPage.locator('body')).toContainText('This is fake google.com')
 
+  // Add blocked Domain
+  await page.goto(`chrome-extension://${extensionId}/popup.html`)
   await addBlockedDomain(page, 'google.com')
 
-  await page.route('https://google.com', async (route) => {
-    await route.fulfill({ body: 'This is fake google.com' })
-  })
+  // Previous page which is in google.com should be blocked
+  await assertInBlockedTemplate(extraPage)
+
+  // Future request to google.com should be blocked
   await page.goto('https://google.com')
   await assertInBlockedTemplate(page)
 })
