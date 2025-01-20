@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import type { SiteRulesStorageService } from '@/domain/site_rules_storage'
-import { SiteRules } from '../domain/site_rules'
+import type { BrowsingRulesStorageService } from '@/domain/browsing_rules_storage'
+import { BrowsingRules } from '../domain/browsing_rules'
 import type { WebsiteRedirectService } from '../chrome/redirect'
 
 const props = defineProps<{
-  siteRulesStorageService: SiteRulesStorageService
+  browsingRulesStorageService: BrowsingRulesStorageService
   websiteRedirectService: WebsiteRedirectService
   targetRedirectUrl: string
 }>()
@@ -13,31 +13,31 @@ const blockedDomains = ref<ReadonlyArray<string>>([])
 const newDomain = ref<string>('')
 
 onMounted(async () => {
-  blockedDomains.value = (await props.siteRulesStorageService.get()).blockedDomains
+  blockedDomains.value = (await props.browsingRulesStorageService.get()).blockedDomains
 })
 
 async function onClickAdd() {
   const newDomainValue = newDomain.value.trim()
   if (!newDomainValue) return
 
-  const siteRules = new SiteRules({
+  const browsingRules = new BrowsingRules({
     blockedDomains: [...blockedDomains.value, newDomainValue]
   })
-  await updateSiteRules(siteRules)
+  await updateBrowsingRules(browsingRules)
   newDomain.value = ''
 }
 
 async function onClickRemove(domain: string) {
-  const siteRules = new SiteRules({
+  const browsingRules = new BrowsingRules({
     blockedDomains: blockedDomains.value.filter((d) => d !== domain)
   })
-  await updateSiteRules(siteRules)
+  await updateBrowsingRules(browsingRules)
 }
 
-async function updateSiteRules(siteRules: SiteRules) {
-  await props.siteRulesStorageService.save(siteRules)
-  await props.websiteRedirectService.activateRedirect(siteRules, props.targetRedirectUrl)
-  blockedDomains.value = (await props.siteRulesStorageService.get()).blockedDomains
+async function updateBrowsingRules(browsingRules: BrowsingRules) {
+  await props.browsingRulesStorageService.save(browsingRules)
+  await props.websiteRedirectService.activateRedirect(browsingRules, props.targetRedirectUrl)
+  blockedDomains.value = (await props.browsingRulesStorageService.get()).blockedDomains
 }
 </script>
 

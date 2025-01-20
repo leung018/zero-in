@@ -2,40 +2,40 @@ import { describe, expect, it } from 'vitest'
 
 import BlockedDomains from '../BlockedDomains.vue'
 import {
-  SiteRulesStorageServiceImpl,
-  type SiteRulesStorageService
-} from '../../domain/site_rules_storage'
+  BrowsingRulesStorageServiceImpl,
+  type BrowsingRulesStorageService
+} from '../../domain/browsing_rules_storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
-import { SiteRules } from '../../domain/site_rules'
+import { BrowsingRules } from '../../domain/browsing_rules'
 import type { WebsiteRedirectService } from '../../chrome/redirect'
 
 describe('BlockedDomains', () => {
   it('should render blocked domains', async () => {
-    const siteRulesStorageService = SiteRulesStorageServiceImpl.createFake()
-    await siteRulesStorageService.save(
-      new SiteRules({ blockedDomains: ['example.com', 'facebook.com'] })
+    const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake()
+    await browsingRulesStorageService.save(
+      new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
 
-    const { wrapper } = mountBlockedDomains({ siteRulesStorageService })
+    const { wrapper } = mountBlockedDomains({ browsingRulesStorageService })
     await flushPromises()
 
     assertDomainsDisplayed(wrapper, ['example.com', 'facebook.com'])
   })
 
   it('should able to add new blocked domain', async () => {
-    const { wrapper, siteRulesStorageService } = mountBlockedDomains()
+    const { wrapper, browsingRulesStorageService } = mountBlockedDomains()
 
     await addBlockedDomain(wrapper, 'example.com')
 
     assertDomainsDisplayed(wrapper, ['example.com'])
 
-    expect((await siteRulesStorageService.get()).blockedDomains).toEqual(['example.com'])
+    expect((await browsingRulesStorageService.get()).blockedDomains).toEqual(['example.com'])
 
     await addBlockedDomain(wrapper, 'facebook.com')
 
     assertDomainsDisplayed(wrapper, ['example.com', 'facebook.com'])
 
-    expect((await siteRulesStorageService.get()).blockedDomains).toEqual([
+    expect((await browsingRulesStorageService.get()).blockedDomains).toEqual([
       'example.com',
       'facebook.com'
     ])
@@ -52,37 +52,37 @@ describe('BlockedDomains', () => {
   })
 
   it('should not save blocked domain when input box is empty', async () => {
-    const { wrapper, siteRulesStorageService } = mountBlockedDomains()
+    const { wrapper, browsingRulesStorageService } = mountBlockedDomains()
 
     await addBlockedDomain(wrapper, '')
     await addBlockedDomain(wrapper, '  ')
 
     assertDomainsDisplayed(wrapper, [])
-    expect((await siteRulesStorageService.get()).blockedDomains).toEqual([])
+    expect((await browsingRulesStorageService.get()).blockedDomains).toEqual([])
   })
 
   it('should save domain in trimmed format', async () => {
-    const { wrapper, siteRulesStorageService } = mountBlockedDomains()
+    const { wrapper, browsingRulesStorageService } = mountBlockedDomains()
 
     await addBlockedDomain(wrapper, '  example.com  ')
     assertDomainsDisplayed(wrapper, ['example.com'])
 
-    expect((await siteRulesStorageService.get()).blockedDomains).toEqual(['example.com'])
+    expect((await browsingRulesStorageService.get()).blockedDomains).toEqual(['example.com'])
   })
 
   it('should able to remove added domain', async () => {
-    const siteRulesStorageService = SiteRulesStorageServiceImpl.createFake()
-    await siteRulesStorageService.save(
-      new SiteRules({ blockedDomains: ['example.com', 'facebook.com'] })
+    const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake()
+    await browsingRulesStorageService.save(
+      new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
 
-    const { wrapper } = mountBlockedDomains({ siteRulesStorageService })
+    const { wrapper } = mountBlockedDomains({ browsingRulesStorageService })
     await flushPromises()
 
     await removeBlockedDomain(wrapper, 'example.com')
 
     assertDomainsDisplayed(wrapper, ['facebook.com'])
-    expect((await siteRulesStorageService.get()).blockedDomains).toEqual(['facebook.com'])
+    expect((await browsingRulesStorageService.get()).blockedDomains).toEqual(['facebook.com'])
   })
 
   it('should update activated redirect when domain is added', async () => {
@@ -93,7 +93,7 @@ describe('BlockedDomains', () => {
     })
 
     await addBlockedDomain(wrapper, 'example.com')
-    expect(fakeWebsiteRedirectService.getActivatedSiteRules()?.blockedDomains).toEqual([
+    expect(fakeWebsiteRedirectService.getActivatedBrowsingRules()?.blockedDomains).toEqual([
       'example.com'
     ])
     expect(fakeWebsiteRedirectService.getActivatedRedirectUrl()).toBe('https://target.com')
@@ -101,20 +101,20 @@ describe('BlockedDomains', () => {
 
   it('should update activated redirect when domain is removed', async () => {
     const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
-    const siteRulesStorageService = SiteRulesStorageServiceImpl.createFake()
-    await siteRulesStorageService.save(
-      new SiteRules({ blockedDomains: ['example.com', 'facebook.com'] })
+    const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake()
+    await browsingRulesStorageService.save(
+      new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
 
     const { wrapper } = mountBlockedDomains({
-      siteRulesStorageService,
+      browsingRulesStorageService,
       websiteRedirectService: fakeWebsiteRedirectService,
       targetRedirectUrl: 'https://target.com'
     })
     await flushPromises()
 
     await removeBlockedDomain(wrapper, 'example.com')
-    expect(fakeWebsiteRedirectService.getActivatedSiteRules()?.blockedDomains).toEqual([
+    expect(fakeWebsiteRedirectService.getActivatedBrowsingRules()?.blockedDomains).toEqual([
       'facebook.com'
     ])
     expect(fakeWebsiteRedirectService.getActivatedRedirectUrl()).toBe('https://target.com')
@@ -122,32 +122,32 @@ describe('BlockedDomains', () => {
 })
 
 function mountBlockedDomains({
-  siteRulesStorageService = SiteRulesStorageServiceImpl.createFake(),
+  browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake(),
   websiteRedirectService = new FakeWebsiteRedirectService(),
   targetRedirectUrl = 'https://example.com'
 }: {
-  siteRulesStorageService?: SiteRulesStorageService
+  browsingRulesStorageService?: BrowsingRulesStorageService
   websiteRedirectService?: WebsiteRedirectService
   targetRedirectUrl?: string
 } = {}) {
   const wrapper = mount(BlockedDomains, {
-    props: { siteRulesStorageService, websiteRedirectService, targetRedirectUrl }
+    props: { browsingRulesStorageService, websiteRedirectService, targetRedirectUrl }
   })
 
-  return { wrapper, siteRulesStorageService }
+  return { wrapper, browsingRulesStorageService }
 }
 
 class FakeWebsiteRedirectService implements WebsiteRedirectService {
-  private activatedSiteRules: SiteRules | null = null
+  private activatedBrowsingRules: BrowsingRules | null = null
   private activatedRedirectUrl: string | null = null
 
-  async activateRedirect(siteRules: SiteRules, targetUrl: string): Promise<void> {
-    this.activatedSiteRules = siteRules
+  async activateRedirect(browsingRules: BrowsingRules, targetUrl: string): Promise<void> {
+    this.activatedBrowsingRules = browsingRules
     this.activatedRedirectUrl = targetUrl
   }
 
-  getActivatedSiteRules(): SiteRules | null {
-    return this.activatedSiteRules
+  getActivatedBrowsingRules(): BrowsingRules | null {
+    return this.activatedBrowsingRules
   }
 
   getActivatedRedirectUrl(): string | null {

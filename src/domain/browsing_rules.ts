@@ -1,4 +1,4 @@
-export class SiteRules {
+export class BrowsingRules {
   private _blockedDomains: ReadonlyArray<string>
 
   constructor({ blockedDomains = [] }: { blockedDomains?: ReadonlyArray<string> } = {}) {
