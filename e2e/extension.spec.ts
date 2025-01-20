@@ -1,3 +1,5 @@
+/* eslint-disable playwright/expect-expect */
+import { Page } from '@playwright/test'
 import { test, expect } from './fixtures.js'
 
 test('should able to add blocked domains and display them', async ({ page, extensionId }) => {
@@ -24,16 +26,19 @@ test('should able to add blocked domains and display them', async ({ page, exten
   await expect(domainsAfterReload.nth(1)).toHaveText('xyz.com')
 })
 
-// test('should able to add blocked domains and block them', async ({ page, extensionId }) => {
-//   await page.goto(`chrome-extension://${extensionId}/popup.html`)
+test('should able to add blocked domains and block them', async ({ page, extensionId }) => {
+  await page.goto(`chrome-extension://${extensionId}/popup.html`)
 
-//   const input = page.getByTestId('blocked-domain-input')
-//   const addButton = page.getByTestId('add-button')
+  const input = page.getByTestId('blocked-domain-input')
+  const addButton = page.getByTestId('add-button')
 
-//   await input.fill('google.com')
-//   await addButton.click()
+  await input.fill('google.com')
+  await addButton.click()
 
-//   await page.goto('https://google.com')
-// })
+  await page.goto('https://google.com')
+  await assertInBlockedTemplate(page)
+})
 
-// function assertInBlockedTemplate(page: Page) {}
+async function assertInBlockedTemplate(page: Page) {
+  await expect(page.locator('body')).toContainText('This is options page') // TODO: Change the assertion if I have made the blocked template
+}
