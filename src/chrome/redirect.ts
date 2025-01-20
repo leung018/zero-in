@@ -48,6 +48,7 @@ export class WebsiteRedirectServiceImpl implements WebsiteRedirectService {
         const url = new URL(tab.url)
 
         for (const domain of siteRules.blockedDomains) {
+          // FIXME: This is not a good way to check the domain. It should be more strict.
           if (url.hostname.includes(domain)) {
             chrome.tabs.update(tab.id, {
               url: targetUrl
