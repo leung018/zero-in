@@ -30,7 +30,7 @@ export class WebsiteRedirectServiceImpl implements WebsiteRedirectService {
 
     return chrome.declarativeNetRequest.updateDynamicRules(
       {
-        addRules: [rule],
+        addRules: siteRules.blockedDomains.length > 0 ? [rule] : undefined,
         removeRuleIds: [1]
       },
       () => {
