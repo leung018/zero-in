@@ -6,7 +6,7 @@ export interface WebsiteRedirectService {
   activateRedirect(browsingRules: BrowsingRules, targetUrl: string): Promise<void>
 }
 
-export class WebsiteRedirectServiceImpl implements WebsiteRedirectService {
+export class ChromeRedirectService implements WebsiteRedirectService {
   async activateRedirect(browsingRules: BrowsingRules, targetUrl: string): Promise<void> {
     await this.redirectFutureRequests(browsingRules, targetUrl)
     await this.redirectAllActiveTabs(browsingRules, targetUrl)

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { WebsiteRedirectServiceImpl } from './chrome/redirect'
+import { ChromeRedirectService } from './chrome/redirect'
 import BlockedDomains from './components/BlockedDomains.vue'
 import { BrowsingRulesStorageServiceImpl } from './domain/browsing_rules/storage'
 const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.create()
-const websiteRedirectService = new WebsiteRedirectServiceImpl()
+const websiteRedirectService = new ChromeRedirectService()
 
 declare const chrome: any // FIXME: See other comments related to declare const chrome: any
 const targetRedirectUrl = chrome.runtime.getURL('options.html')
