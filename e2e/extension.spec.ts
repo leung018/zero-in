@@ -32,6 +32,22 @@ test('should able to add blocked domains and block them', async ({ page, extensi
   await assertInBlockedTemplate(page)
 })
 
+test('should able to remove all blocked domains and unblock them', async ({
+  page,
+  extensionId
+}) => {
+  await page.goto(`chrome-extension://${extensionId}/popup.html`)
+
+  await addBlockedDomain(page, 'google.com')
+  await removeBlockedDomain(page, 'google.com')
+
+  await page.route('https://google.com', async (route) => {
+    await route.fulfill({ body: 'This is fake google.com' })
+  })
+  await page.goto('https://google.com')
+  await assertNotInBlockedTemplate(page)
+})
+
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
   const addButton = page.getByTestId('add-button')
@@ -40,8 +56,17 @@ async function addBlockedDomain(page: Page, domain: string) {
   await addButton.click()
 }
 
+async function removeBlockedDomain(page: Page, domain: string) {
+  const removeButton = page.getByTestId(`remove-${domain}`)
+  await removeButton.click()
+}
+
 const TEXT_IN_BLOCKED_TEMPLATE = 'This is options page' // TODO: Change the text if I have made the blocked template
 
 async function assertInBlockedTemplate(page: Page) {
   await expect(page.locator('body')).toContainText(TEXT_IN_BLOCKED_TEMPLATE)
+}
+
+async function assertNotInBlockedTemplate(page: Page) {
+  await expect(page.locator('body')).not.toContainText(TEXT_IN_BLOCKED_TEMPLATE)
 }
