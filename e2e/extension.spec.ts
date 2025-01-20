@@ -25,6 +25,9 @@ test('should able to add blocked domains and block them', async ({ page, extensi
 
   await addBlockedDomain(page, 'google.com')
 
+  await page.route('https://google.com', async (route) => {
+    await route.fulfill({ body: 'This is fake google.com' })
+  })
   await page.goto('https://google.com')
   await assertInBlockedTemplate(page)
 })
