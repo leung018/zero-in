@@ -1,16 +1,12 @@
+/* eslint-disable playwright/expect-expect */
+import { Page } from '@playwright/test'
 import { test, expect } from './fixtures.js'
 
 test('should able to add blocked domains and display them', async ({ page, extensionId }) => {
   await page.goto(`chrome-extension://${extensionId}/popup.html`)
 
-  const input = page.getByTestId('blocked-domain-input')
-  const addButton = page.getByTestId('add-button')
-
-  await input.fill('abc.com')
-  await addButton.click()
-
-  await input.fill('xyz.com')
-  await addButton.click()
+  await addBlockedDomain(page, 'abc.com')
+  await addBlockedDomain(page, 'xyz.com')
 
   const domains = page.getByTestId('blocked-domains')
   await expect(domains).toHaveCount(2)
@@ -23,3 +19,64 @@ test('should able to add blocked domains and display them', async ({ page, exten
   await expect(domainsAfterReload.nth(0)).toHaveText('abc.com')
   await expect(domainsAfterReload.nth(1)).toHaveText('xyz.com')
 })
+
+test('should able to add blocked domains and block them', async ({ page, extensionId }) => {
+  const extraPage = await page.context().newPage()
+  for (const p of [page, extraPage]) {
+    await p.route('https://google.com', async (route) => {
+      await route.fulfill({ body: 'This is fake google.com' })
+    })
+  }
+  await extraPage.goto('https://google.com')
+  await expect(extraPage.locator('body')).toContainText('This is fake google.com')
+
+  // Add blocked Domain
+  await page.goto(`chrome-extension://${extensionId}/popup.html`)
+  await addBlockedDomain(page, 'google.com')
+
+  // Previous page which is in google.com should be blocked
+  await assertInBlockedTemplate(extraPage)
+
+  // Future request to google.com should be blocked
+  await page.goto('https://google.com')
+  await assertInBlockedTemplate(page)
+})
+
+test('should able to remove all blocked domains and unblock them', async ({
+  page,
+  extensionId
+}) => {
+  await page.goto(`chrome-extension://${extensionId}/popup.html`)
+
+  await addBlockedDomain(page, 'google.com')
+  await removeBlockedDomain(page, 'google.com')
+
+  await page.route('https://google.com', async (route) => {
+    await route.fulfill({ body: 'This is fake google.com' })
+  })
+  await page.goto('https://google.com')
+  await assertNotInBlockedTemplate(page)
+})
+
+async function addBlockedDomain(page: Page, domain: string) {
+  const input = page.getByTestId('blocked-domain-input')
+  const addButton = page.getByTestId('add-button')
+
+  await input.fill(domain)
+  await addButton.click()
+}
+
+async function removeBlockedDomain(page: Page, domain: string) {
+  const removeButton = page.getByTestId(`remove-${domain}`)
+  await removeButton.click()
+}
+
+const TEXT_IN_BLOCKED_TEMPLATE = 'This is options page' // TODO: Change the text if I have made the blocked template
+
+async function assertInBlockedTemplate(page: Page) {
+  await expect(page.locator('body')).toContainText(TEXT_IN_BLOCKED_TEMPLATE)
+}
+
+async function assertNotInBlockedTemplate(page: Page) {
+  await expect(page.locator('body')).not.toContainText(TEXT_IN_BLOCKED_TEMPLATE)
+}

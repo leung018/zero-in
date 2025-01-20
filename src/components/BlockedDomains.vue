@@ -1,44 +1,43 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import type { SiteRulesService } from '@/domain/site_rules_service'
+import type { SiteRulesStorageService } from '@/domain/site_rules_storage'
 import { SiteRules } from '../domain/site_rules'
+import type { WebsiteRedirectService } from '../chrome/redirect'
 
 const props = defineProps<{
-  siteRulesService: SiteRulesService
+  siteRulesStorageService: SiteRulesStorageService
+  websiteRedirectService: WebsiteRedirectService
+  targetRedirectUrl: string
 }>()
 const blockedDomains = ref<ReadonlyArray<string>>([])
 const newDomain = ref<string>('')
 
 onMounted(async () => {
-  blockedDomains.value = (await props.siteRulesService.get()).blockedDomains
+  blockedDomains.value = (await props.siteRulesStorageService.get()).blockedDomains
 })
 
 async function onClickAdd() {
   const newDomainValue = newDomain.value.trim()
   if (!newDomainValue) return
 
-  await props.siteRulesService.save(
-    new SiteRules({
-      blockedDomains: [...blockedDomains.value, newDomainValue]
-    })
-  )
-
-  await syncBlockedDomains()
+  const siteRules = new SiteRules({
+    blockedDomains: [...blockedDomains.value, newDomainValue]
+  })
+  await updateSiteRules(siteRules)
   newDomain.value = ''
 }
 
 async function onClickRemove(domain: string) {
-  await props.siteRulesService.save(
-    new SiteRules({
-      blockedDomains: blockedDomains.value.filter((d) => d !== domain)
-    })
-  )
-
-  await syncBlockedDomains()
+  const siteRules = new SiteRules({
+    blockedDomains: blockedDomains.value.filter((d) => d !== domain)
+  })
+  await updateSiteRules(siteRules)
 }
 
-async function syncBlockedDomains() {
-  blockedDomains.value = (await props.siteRulesService.get()).blockedDomains
+async function updateSiteRules(siteRules: SiteRules) {
+  await props.siteRulesStorageService.save(siteRules)
+  await props.websiteRedirectService.activateRedirect(siteRules, props.targetRedirectUrl)
+  blockedDomains.value = (await props.siteRulesStorageService.get()).blockedDomains
 }
 </script>
 
