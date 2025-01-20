@@ -1,18 +1,18 @@
-import type { SiteRules } from '../domain/site_rules'
+import type { BrowsingRules } from '../domain/browsing_rules'
+import type { WebsiteRedirectService } from '../domain/browsing_rules/redirect'
 
 declare const chrome: any // FIXME: Find a way to type this properly and also fix the type hint related to it.
 
-export interface WebsiteRedirectService {
-  activateRedirect(siteRules: SiteRules, targetUrl: string): Promise<void>
-}
-
-export class WebsiteRedirectServiceImpl implements WebsiteRedirectService {
-  async activateRedirect(siteRules: SiteRules, targetUrl: string): Promise<void> {
-    await this.redirectFutureRequests(siteRules, targetUrl)
-    await this.redirectAllActiveTabs(siteRules, targetUrl)
+export class ChromeRedirectService implements WebsiteRedirectService {
+  async activateRedirect(browsingRules: BrowsingRules, targetUrl: string): Promise<void> {
+    await this.redirectFutureRequests(browsingRules, targetUrl)
+    await this.redirectAllActiveTabs(browsingRules, targetUrl)
   }
 
-  private async redirectFutureRequests(siteRules: SiteRules, targetUrl: string): Promise<void> {
+  private async redirectFutureRequests(
+    browsingRules: BrowsingRules,
+    targetUrl: string
+  ): Promise<void> {
     const rule = {
       id: 1,
       priority: 1,
@@ -23,14 +23,14 @@ export class WebsiteRedirectServiceImpl implements WebsiteRedirectService {
         }
       },
       condition: {
-        requestDomains: siteRules.blockedDomains,
+        requestDomains: browsingRules.blockedDomains,
         resourceTypes: ['main_frame']
       }
     }
 
     return chrome.declarativeNetRequest.updateDynamicRules(
       {
-        addRules: siteRules.blockedDomains.length > 0 ? [rule] : undefined,
+        addRules: browsingRules.blockedDomains.length > 0 ? [rule] : undefined,
         removeRuleIds: [1]
       },
       () => {
@@ -41,13 +41,16 @@ export class WebsiteRedirectServiceImpl implements WebsiteRedirectService {
     )
   }
 
-  private async redirectAllActiveTabs(siteRules: SiteRules, targetUrl: string): Promise<void> {
+  private async redirectAllActiveTabs(
+    browsingRules: BrowsingRules,
+    targetUrl: string
+  ): Promise<void> {
     const tabs: any[] = await this.queryAllTabs()
     tabs.forEach((tab) => {
       if (tab && tab.url) {
         const url = new URL(tab.url)
 
-        for (const domain of siteRules.blockedDomains) {
+        for (const domain of browsingRules.blockedDomains) {
           // FIXME: This is not a good way to check the domain. It should be more strict.
           if (url.hostname.includes(domain)) {
             chrome.tabs.update(tab.id, {

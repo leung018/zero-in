@@ -1,8 +1,10 @@
-export class SiteRules {
+export class BrowsingRules {
   private _blockedDomains: ReadonlyArray<string>
 
   constructor({ blockedDomains = [] }: { blockedDomains?: ReadonlyArray<string> } = {}) {
-    this._blockedDomains = deduplicated(blockedDomains.map((domain) => domain.trim()))
+    this._blockedDomains = deduplicated(
+      blockedDomains.map((domain) => domain.trim()).filter((domain) => domain !== '')
+    )
   }
 
   public get blockedDomains(): ReadonlyArray<string> {
