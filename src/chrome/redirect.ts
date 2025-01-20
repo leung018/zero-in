@@ -1,10 +1,7 @@
 import type { BrowsingRules } from '../domain/browsing_rules'
+import type { WebsiteRedirectService } from '../domain/browsing_rules/redirect'
 
 declare const chrome: any // FIXME: Find a way to type this properly and also fix the type hint related to it.
-
-export interface WebsiteRedirectService {
-  activateRedirect(browsingRules: BrowsingRules, targetUrl: string): Promise<void>
-}
 
 export class ChromeRedirectService implements WebsiteRedirectService {
   async activateRedirect(browsingRules: BrowsingRules, targetUrl: string): Promise<void> {

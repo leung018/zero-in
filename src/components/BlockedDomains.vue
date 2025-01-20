@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import type { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { BrowsingRules } from '../domain/browsing_rules'
-import type { WebsiteRedirectService } from '../chrome/redirect'
+import type { WebsiteRedirectService } from '@/domain/browsing_rules/redirect'
 
 const props = defineProps<{
   browsingRulesStorageService: BrowsingRulesStorageService
