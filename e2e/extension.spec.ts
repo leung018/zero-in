@@ -23,3 +23,17 @@ test('should able to add blocked domains and display them', async ({ page, exten
   await expect(domainsAfterReload.nth(0)).toHaveText('abc.com')
   await expect(domainsAfterReload.nth(1)).toHaveText('xyz.com')
 })
+
+// test('should able to add blocked domains and block them', async ({ page, extensionId }) => {
+//   await page.goto(`chrome-extension://${extensionId}/popup.html`)
+
+//   const input = page.getByTestId('blocked-domain-input')
+//   const addButton = page.getByTestId('add-button')
+
+//   await input.fill('google.com')
+//   await addButton.click()
+
+//   await page.goto('https://google.com')
+// })
+
+// function assertInBlockedTemplate(page: Page) {}

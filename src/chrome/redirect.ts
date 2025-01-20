@@ -28,15 +28,22 @@ export class WebsiteRedirectServiceImpl implements WebsiteRedirectService {
       }
     }
 
-    return chrome.declarativeNetRequest.updateDynamicRules({
-      addRules: [rule],
-      removeRuleIds: [1]
-    })
+    return chrome.declarativeNetRequest.updateDynamicRules(
+      {
+        addRules: [rule],
+        removeRuleIds: [1]
+      },
+      () => {
+        if (chrome.runtime.lastError) {
+          console.error(chrome.runtime.lastError)
+        }
+      }
+    )
   }
 
   private async redirectAllActiveTabs(siteRules: SiteRules, targetUrl: string): Promise<void> {
     const tabs = await this.queryAllTabs()
-    return tabs.forEach((tab: any) => {
+    tabs.forEach((tab: any) => {
       if (tab && tab.url) {
         const url = new URL(tab.url)
 
@@ -49,6 +56,7 @@ export class WebsiteRedirectServiceImpl implements WebsiteRedirectService {
         }
       }
     })
+    console.log('All active tabs that match the site rules have been redirected')
   }
 
   private async queryAllTabs(): Promise<any> {
