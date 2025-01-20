@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import type { BrowsingRulesStorageService } from '@/domain/browsing_rules_storage'
+import type { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { BrowsingRules } from '../domain/browsing_rules'
 import type { WebsiteRedirectService } from '../chrome/redirect'
 

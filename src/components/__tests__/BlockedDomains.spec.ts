@@ -4,7 +4,7 @@ import BlockedDomains from '../BlockedDomains.vue'
 import {
   BrowsingRulesStorageServiceImpl,
   type BrowsingRulesStorageService
-} from '../../domain/browsing_rules_storage'
+} from '../../domain/browsing_rules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { BrowsingRules } from '../../domain/browsing_rules'
 import type { WebsiteRedirectService } from '../../chrome/redirect'

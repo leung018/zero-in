@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { BrowsingRules } from '../browsing_rules'
+import { BrowsingRules } from '..'
 
 describe('BrowsingRules', () => {
   it('should be able to import blocked domains', () => {

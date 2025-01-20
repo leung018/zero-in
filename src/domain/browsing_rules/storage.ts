@@ -1,5 +1,5 @@
-import { ChromeLocalStorageWrapper } from '../chrome/local_storage'
-import { BrowsingRules } from './browsing_rules'
+import { ChromeLocalStorageWrapper } from '../../chrome/local_storage'
+import { BrowsingRules } from '.'
 
 export interface BrowsingRulesStorageService {
   save(browsingRules: BrowsingRules): Promise<void>
