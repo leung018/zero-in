@@ -42,8 +42,8 @@ export class WebsiteRedirectServiceImpl implements WebsiteRedirectService {
   }
 
   private async redirectAllActiveTabs(siteRules: SiteRules, targetUrl: string): Promise<void> {
-    const tabs = await this.queryAllTabs()
-    tabs.forEach((tab: any) => {
+    const tabs: any[] = await this.queryAllTabs()
+    tabs.forEach((tab) => {
       if (tab && tab.url) {
         const url = new URL(tab.url)
 
@@ -56,10 +56,9 @@ export class WebsiteRedirectServiceImpl implements WebsiteRedirectService {
         }
       }
     })
-    console.log('All active tabs that match the site rules have been redirected')
   }
 
-  private async queryAllTabs(): Promise<any> {
+  private async queryAllTabs() {
     return chrome.tabs.query({})
   }
 }
