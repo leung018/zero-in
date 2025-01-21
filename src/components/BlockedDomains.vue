@@ -55,7 +55,7 @@ async function updateBrowsingRules(browsingRules: BrowsingRules) {
           required
         />
       </div>
-      <button class="btn btn-primary" data-test="add-button" @click="onClickAdd">Add Domain</button>
+      <button class="btn btn-primary" data-test="add-button" @click="onClickAdd">Add</button>
     </form>
     <ul class="list-group">
       <li
