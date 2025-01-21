@@ -16,3 +16,7 @@ export class Time {
 }
 
 export class TimeInvalidInputError extends Error {}
+
+export function formatTimeNumber(num: number): string {
+  return num.toLocaleString(undefined, { minimumIntegerDigits: 2 })
+}
