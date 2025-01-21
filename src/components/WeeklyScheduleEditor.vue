@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+
 enum Weekday {
   Sun = 0,
   Mon,
@@ -18,6 +20,23 @@ type WeeklySchedule = {
 }
 
 const weekdays = Object.values(Weekday).filter((value) => typeof value === 'string')
+
+const weeklySchedules = ref<WeeklySchedule[]>([
+  {
+    weekdaySet: new Set([Weekday.Mon, Weekday.Wed, Weekday.Fri]),
+    startHour: 10,
+    startMinute: 59,
+    endHour: 17,
+    endMinute: 59
+  },
+  {
+    weekdaySet: new Set([Weekday.Tue, Weekday.Thu]),
+    startHour: 10,
+    startMinute: 59,
+    endHour: 18,
+    endMinute: 59
+  }
+])
 </script>
 
 <template>
@@ -82,5 +101,28 @@ const weekdays = Object.values(Weekday).filter((value) => typeof value === 'stri
       </div>
       <button type="button" class="btn btn-primary">Add Schedule</button>
     </form>
+    <div class="mt-4">
+      <h3>Saved</h3>
+      <ul class="list-group">
+        <li
+          v-for="(schedule, index) in weeklySchedules"
+          :key="index"
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          <div>
+            {{
+              Array.from(schedule.weekdaySet)
+                .map((day) => Weekday[day])
+                .join(', ')
+            }}
+            <br />
+            {{ schedule.startHour }}:{{ schedule.startMinute }} - {{ schedule.endHour }}:{{
+              schedule.endMinute
+            }}
+          </div>
+          <button class="btn text-danger bg-transparent border-0">X</button>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
