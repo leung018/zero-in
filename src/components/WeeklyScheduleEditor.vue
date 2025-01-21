@@ -99,7 +99,7 @@ const weeklySchedules = ref<WeeklySchedule[]>([
           </div>
         </div>
       </div>
-      <button type="button" class="btn btn-primary">Add Schedule</button>
+      <button type="button" class="btn btn-primary">Add</button>
     </form>
     <div class="mt-4">
       <h3>Saved</h3>
