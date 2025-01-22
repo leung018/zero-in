@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import WeeklyScheduleEditor from './components/WeeklyScheduleEditor.vue'
+import WeeklySchedulesEditor from './components/WeeklySchedulesEditor.vue'
 </script>
 
 <template>
   <main>
-    <WeeklyScheduleEditor />
+    <WeeklySchedulesEditor />
   </main>
 </template>
