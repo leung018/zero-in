@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { Weekday, WeeklySchedule } from '../domain/schedules'
 import type { WeeklyScheduleStorageService } from '../domain/schedules/storage'
-import { formatTimeNumber } from '../domain/schedules/time'
+import { formatTimeNumber, Time } from '../domain/schedules/time'
 
 const props = defineProps<{
   weeklyScheduleStorageService: WeeklyScheduleStorageService
@@ -15,6 +15,10 @@ const weeklySchedules = ref<WeeklySchedule[]>([])
 onMounted(async () => {
   weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
 })
+
+const formatTime = (Time: Time) => {
+  return `${formatTimeNumber(Time.hour)}:${formatTimeNumber(Time.minute)}`
+}
 </script>
 
 <template>
@@ -95,12 +99,7 @@ onMounted(async () => {
                 .join(', ')
             }}
             <br />
-            {{ formatTimeNumber(schedule.startTime.hour) }}:{{
-              formatTimeNumber(schedule.startTime.minute)
-            }}
-            - {{ formatTimeNumber(schedule.endTime.hour) }}:{{
-              formatTimeNumber(schedule.endTime.minute)
-            }}
+            {{ formatTime(schedule.startTime) }} - {{ formatTime(schedule.endTime) }}
           </div>
           <button class="btn text-danger bg-transparent border-0">X</button>
         </li>
