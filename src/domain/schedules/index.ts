@@ -10,7 +10,7 @@ export enum Weekday {
   Sat
 }
 
-export class WeeklySchedules {
+export class WeeklySchedule {
   weekdaySet: ReadonlySet<Weekday>
   readonly startTime: Time
   readonly endTime: Time
@@ -20,7 +20,7 @@ export class WeeklySchedules {
     startTime,
     endTime
   }: {
-    weekdaySet: Set<Weekday>
+    weekdaySet: ReadonlySet<Weekday>
     startTime: Time
     endTime: Time
   }) {

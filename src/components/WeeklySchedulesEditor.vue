@@ -1,42 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { Weekday, WeeklySchedule } from '../domain/schedules'
+import type { WeeklyScheduleStorageService } from '../domain/schedules/storage'
+import { formatTimeNumber } from '../domain/schedules/time'
 
-enum Weekday {
-  Sun = 0,
-  Mon,
-  Tue,
-  Wed,
-  Thu,
-  Fri,
-  Sat
-}
-
-type WeeklySchedule = {
-  weekdaySet: Set<Weekday>
-  startHour: number
-  startMinute: number
-  endHour: number
-  endMinute: number
-}
+const props = defineProps<{
+  weeklyScheduleStorageService: WeeklyScheduleStorageService
+}>()
 
 const weekdays = Object.values(Weekday).filter((value) => typeof value === 'string')
 
-const weeklySchedules = ref<WeeklySchedule[]>([
-  {
-    weekdaySet: new Set([Weekday.Mon, Weekday.Wed, Weekday.Fri]),
-    startHour: 10,
-    startMinute: 59,
-    endHour: 17,
-    endMinute: 59
-  },
-  {
-    weekdaySet: new Set([Weekday.Tue, Weekday.Thu]),
-    startHour: 10,
-    startMinute: 59,
-    endHour: 18,
-    endMinute: 59
-  }
-])
+const weeklySchedules = ref<WeeklySchedule[]>([])
+
+onMounted(async () => {
+  weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
+})
 </script>
 
 <template>
@@ -108,6 +86,7 @@ const weeklySchedules = ref<WeeklySchedule[]>([
           v-for="(schedule, index) in weeklySchedules"
           :key="index"
           class="list-group-item d-flex justify-content-between align-items-center"
+          data-test="weekly-schedule"
         >
           <div>
             {{
@@ -116,8 +95,11 @@ const weeklySchedules = ref<WeeklySchedule[]>([
                 .join(', ')
             }}
             <br />
-            {{ schedule.startHour }}:{{ schedule.startMinute }} - {{ schedule.endHour }}:{{
-              schedule.endMinute
+            {{ formatTimeNumber(schedule.startTime.hour) }}:{{
+              formatTimeNumber(schedule.startTime.minute)
+            }}
+            - {{ formatTimeNumber(schedule.endTime.hour) }}:{{
+              formatTimeNumber(schedule.endTime.minute)
             }}
           </div>
           <button class="btn text-danger bg-transparent border-0">X</button>
