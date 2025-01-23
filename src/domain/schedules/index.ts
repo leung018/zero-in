@@ -24,8 +24,14 @@ export class WeeklySchedule {
     startTime: Time
     endTime: Time
   }) {
+    if (weekdaySet.size === 0) {
+      throw new WeeklyScheduleInvalidInputError('Empty weekday set')
+    }
+
     this.weekdaySet = weekdaySet
     this.startTime = startTime
     this.endTime = endTime
   }
 }
+
+export class WeeklyScheduleInvalidInputError extends Error {}
