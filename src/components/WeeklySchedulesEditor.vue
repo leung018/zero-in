@@ -8,13 +8,38 @@ const props = defineProps<{
   weeklyScheduleStorageService: WeeklyScheduleStorageService
 }>()
 
-const weekdays = Object.values(Weekday).filter((value) => typeof value === 'string')
+const startTimeHour = ref<number>(0)
+const startTimeMinute = ref<number>(0)
+const endTimeHour = ref<number>(0)
+const endTimeMinute = ref<number>(0)
+
+const weekdaySet = ref<Set<Weekday>>(new Set())
 
 const weeklySchedules = ref<WeeklySchedule[]>([])
 
 onMounted(async () => {
   weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
 })
+
+const onClickAdd = async () => {
+  const newWeeklySchedule = new WeeklySchedule({
+    weekdaySet: weekdaySet.value,
+    startTime: new Time(startTimeHour.value, startTimeMinute.value),
+    endTime: new Time(endTimeHour.value, endTimeMinute.value)
+  })
+  await props.weeklyScheduleStorageService.saveAll([newWeeklySchedule])
+  weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
+}
+
+const onChangeWeekday = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const weekday = Weekday[target.value as keyof typeof Weekday]
+  if (target.checked) {
+    weekdaySet.value.add(weekday)
+  } else {
+    // TODO
+  }
+}
 
 const formatTime = (Time: Time) => {
   return `${formatTimeNumber(Time.hour)}:${formatTimeNumber(Time.minute)}`
@@ -29,14 +54,15 @@ const formatTime = (Time: Time) => {
         <div class="form-group">
           <label>Select Weekdays:</label>
           <div class="d-flex flex-wrap">
-            <div v-for="(day, index) in weekdays" :key="index" class="form-check form-check-inline">
+            <div v-for="dayName in Weekday" :key="dayName" class="form-check form-check-inline">
               <input
                 class="form-check-input"
                 type="checkbox"
-                :id="'weekday-' + index"
-                :value="day"
+                :data-test="`check-weekday-${dayName}`"
+                :value="Weekday[dayName]"
+                @change="onChangeWeekday($event)"
               />
-              <label class="form-check-label" :for="'weekday-' + index">{{ day }}</label>
+              <label class="form-check-label">{{ dayName }}</label>
             </div>
           </div>
         </div>
@@ -50,6 +76,8 @@ const formatTime = (Time: Time) => {
               max="23"
               placeholder="Hour"
               class="form-control w-auto me-2"
+              data-test="start-time-hour-input"
+              v-model="startTimeHour"
             />
             <input
               type="number"
@@ -57,6 +85,8 @@ const formatTime = (Time: Time) => {
               max="59"
               placeholder="Minute"
               class="form-control w-auto"
+              data-test="start-time-minute-input"
+              v-model="startTimeMinute"
             />
           </div>
         </div>
@@ -70,6 +100,8 @@ const formatTime = (Time: Time) => {
               max="23"
               placeholder="Hour"
               class="form-control w-auto me-2"
+              data-test="end-time-hour-input"
+              v-model="endTimeHour"
             />
             <input
               type="number"
@@ -77,11 +109,15 @@ const formatTime = (Time: Time) => {
               max="59"
               placeholder="Minute"
               class="form-control w-auto"
+              data-test="end-time-minute-input"
+              v-model="endTimeMinute"
             />
           </div>
         </div>
       </div>
-      <button type="button" class="btn btn-primary">Add</button>
+      <button type="button" class="btn btn-primary" data-test="add-button" @click="onClickAdd">
+        Add
+      </button>
     </form>
     <div class="mt-4">
       <h3>Saved</h3>
