@@ -102,6 +102,28 @@ describe('WeeklySchedulesEditor', () => {
       'Start time must be before end time'
     )
   })
+
+  it('should error message display and hide properly', async () => {
+    const { wrapper } = mountWeeklySchedulesEditor()
+
+    expect(wrapper.find("[data-test='error-message']").exists()).toBe(false)
+
+    await addWeeklySchedule(wrapper, {
+      weekdaySet: new Set([Weekday.Mon]),
+      startTime: new Time(10, 0),
+      endTime: new Time(9, 0)
+    })
+
+    expect(wrapper.find("[data-test='error-message']").exists()).toBe(true)
+
+    await addWeeklySchedule(wrapper, {
+      weekdaySet: new Set([Weekday.Mon]),
+      startTime: new Time(9, 0),
+      endTime: new Time(10, 0)
+    })
+
+    expect(wrapper.find("[data-test='error-message']").exists()).toBe(false)
+  })
 })
 
 function mountWeeklySchedulesEditor({

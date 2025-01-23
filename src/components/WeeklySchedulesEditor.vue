@@ -42,6 +42,7 @@ const onClickAdd = async () => {
   })
   await props.weeklyScheduleStorageService.saveAll([newWeeklySchedule])
   weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
+  errorMessage.value = null
 }
 
 const onChangeWeekday = (event: Event) => {
