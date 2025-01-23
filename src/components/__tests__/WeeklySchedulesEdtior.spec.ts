@@ -68,8 +68,8 @@ describe('WeeklySchedulesEditor', () => {
       endTime: { hour: 12, minute: 0 }
     })
 
-    expect(wrapper.findAll("[data-test='weekly-schedule']")).toHaveLength(0)
     expect(await weeklyScheduleStorageService.getAll()).toEqual([])
+    expect(wrapper.find("[data-test='error-message']").text()).toContain('Please select weekdays')
   })
 
   it('should able to uncheck weekday', async () => {

@@ -25,6 +25,7 @@ onMounted(async () => {
 
 const onClickAdd = async () => {
   if (weekdaySet.value.size === 0) {
+    errorMessage.value = 'Please select weekdays'
     return
   }
   const startTime = new Time(startTimeHour.value, startTimeMinute.value)
