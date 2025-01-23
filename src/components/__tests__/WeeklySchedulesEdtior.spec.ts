@@ -35,12 +35,10 @@ describe('WeeklySchedulesEditor', () => {
 
     expect(weeklySchedules[0].text()).toContain('Mon')
     expect(weeklySchedules[0].text()).toContain('Tue')
-    expect(weeklySchedules[0].text()).toContain('07:00')
-    expect(weeklySchedules[0].text()).toContain('09:01')
+    expect(weeklySchedules[0].text()).toContain('07:00 - 09:01')
 
     expect(weeklySchedules[1].text()).toContain('Wed')
-    expect(weeklySchedules[1].text()).toContain('06:02')
-    expect(weeklySchedules[1].text()).toContain('08:04')
+    expect(weeklySchedules[1].text()).toContain('06:02 - 08:04')
   })
 
   it('should able to add new weekly schedule', async () => {
@@ -57,8 +55,7 @@ describe('WeeklySchedulesEditor', () => {
 
     expect(weeklySchedules[0].text()).toContain('Thu')
     expect(weeklySchedules[0].text()).toContain('Fri')
-    expect(weeklySchedules[0].text()).toContain('10:00')
-    expect(weeklySchedules[0].text()).toContain('12:00')
+    expect(weeklySchedules[0].text()).toContain('10:00 - 12:00')
 
     expect(await weeklyScheduleStorageService.getAll()).toEqual([weeklySchedule])
   })
