@@ -64,12 +64,11 @@ describe('WeeklySchedulesEditor', () => {
 
   it('should prevent add weekly schedule when weekdaySet is not selected', async () => {
     const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesEditor()
-    const weeklySchedule = new WeeklySchedule({
+    await addWeeklySchedule(wrapper, {
       weekdaySet: new Set(),
       startTime: { hour: 10, minute: 0 },
       endTime: { hour: 12, minute: 0 }
     })
-    await addWeeklySchedule(wrapper, weeklySchedule)
 
     expect(wrapper.findAll("[data-test='weekly-schedule']")).toHaveLength(0)
     expect(await weeklyScheduleStorageService.getAll()).toEqual([])
@@ -90,23 +89,30 @@ function mountWeeklySchedulesEditor({
   }
 }
 
-async function addWeeklySchedule(wrapper: VueWrapper, weeklySchedule: WeeklySchedule) {
-  for (const weekday of weeklySchedule.weekdaySet) {
+async function addWeeklySchedule(
+  wrapper: VueWrapper,
+  weeklyScheduleInput: {
+    weekdaySet: ReadonlySet<Weekday>
+    startTime: { hour: number; minute: number }
+    endTime: { hour: number; minute: number }
+  }
+) {
+  for (const weekday of weeklyScheduleInput.weekdaySet) {
     const weekdayCheckbox = wrapper.find(`[data-test='check-weekday-${weekday}']`)
     await weekdayCheckbox.setValue(true)
   }
 
   const startTimeHourInput = wrapper.find("[data-test='start-time-hour-input']")
-  await startTimeHourInput.setValue(weeklySchedule.startTime.hour)
+  await startTimeHourInput.setValue(weeklyScheduleInput.startTime.hour)
 
   const startTimeMinuteInput = wrapper.find("[data-test='start-time-minute-input']")
-  await startTimeMinuteInput.setValue(weeklySchedule.startTime.minute)
+  await startTimeMinuteInput.setValue(weeklyScheduleInput.startTime.minute)
 
   const endTimeHourInput = wrapper.find("[data-test='end-time-hour-input']")
-  await endTimeHourInput.setValue(weeklySchedule.endTime.hour)
+  await endTimeHourInput.setValue(weeklyScheduleInput.endTime.hour)
 
   const endTimeMinuteInput = wrapper.find("[data-test='end-time-minute-input']")
-  await endTimeMinuteInput.setValue(weeklySchedule.endTime.minute)
+  await endTimeMinuteInput.setValue(weeklyScheduleInput.endTime.minute)
 
   const addButton = wrapper.find("[data-test='add-button']")
   await addButton.trigger('click')

@@ -22,6 +22,8 @@ onMounted(async () => {
 })
 
 const onClickAdd = async () => {
+  if (weekdaySet.value.size === 0) return
+
   const newWeeklySchedule = new WeeklySchedule({
     weekdaySet: weekdaySet.value,
     startTime: new Time(startTimeHour.value, startTimeMinute.value),
