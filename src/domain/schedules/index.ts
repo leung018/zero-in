@@ -27,6 +27,9 @@ export class WeeklySchedule {
     if (weekdaySet.size === 0) {
       throw new WeeklyScheduleInvalidInputError('Empty weekday set')
     }
+    if (!startTime.isBefore(endTime)) {
+      throw new WeeklyScheduleInvalidInputError('startTime must be before endTime')
+    }
 
     this.weekdaySet = weekdaySet
     this.startTime = startTime

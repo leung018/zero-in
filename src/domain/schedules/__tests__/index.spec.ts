@@ -14,6 +14,26 @@ describe('WeeklySchedules', () => {
     ).toThrow('Empty weekday set')
   })
 
+  it('should reject if start time is not before end time', () => {
+    const errMsg = 'startTime must be before endTime'
+    expect(
+      () =>
+        new WeeklySchedule({
+          weekdaySet: new Set([Weekday.Mon]),
+          startTime: new Time(10, 0),
+          endTime: new Time(9, 0)
+        })
+    ).toThrow(errMsg)
+    expect(
+      () =>
+        new WeeklySchedule({
+          weekdaySet: new Set([Weekday.Mon]),
+          startTime: new Time(10, 0),
+          endTime: new Time(10, 0)
+        })
+    ).toThrow(errMsg)
+  })
+
   it('should accept valid input', () => {
     const weeklySchedule = new WeeklySchedule({
       weekdaySet: new Set([Weekday.Mon]),
