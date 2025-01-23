@@ -3,15 +3,14 @@ import { onMounted, ref } from 'vue'
 import { Weekday, WeeklySchedule } from '../domain/schedules'
 import type { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { formatTimeNumber, Time } from '../domain/schedules/time'
+import TimeInput from './TimeInput.vue'
 
 const props = defineProps<{
   weeklyScheduleStorageService: WeeklyScheduleStorageService
 }>()
 
-const startTimeHour = ref<number>(0)
-const startTimeMinute = ref<number>(0)
-const endTimeHour = ref<number>(0)
-const endTimeMinute = ref<number>(0)
+const startTime = ref<Time>(new Time(0, 0))
+const endTime = ref<Time>(new Time(0, 0))
 
 const weekdaySet = ref<Set<Weekday>>(new Set())
 
@@ -28,17 +27,15 @@ const onClickAdd = async () => {
     errorMessage.value = 'Please select weekdays'
     return
   }
-  const startTime = new Time(startTimeHour.value, startTimeMinute.value)
-  const endTime = new Time(endTimeHour.value, endTimeMinute.value)
-  if (!startTime.isBefore(endTime)) {
+  if (!startTime.value.isBefore(endTime.value)) {
     errorMessage.value = 'Start time must be before end time'
     return
   }
 
   const newWeeklySchedule = new WeeklySchedule({
     weekdaySet: weekdaySet.value,
-    startTime,
-    endTime
+    startTime: startTime.value,
+    endTime: endTime.value
   })
   await props.weeklyScheduleStorageService.saveAll([newWeeklySchedule])
   weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
@@ -83,50 +80,22 @@ const formatTime = (Time: Time) => {
 
         <div class="form-group">
           <label>Start Time:</label>
-          <div class="d-flex">
-            <input
-              type="number"
-              min="0"
-              max="23"
-              placeholder="Hour"
-              class="form-control w-auto me-2"
-              data-test="start-time-hour-input"
-              v-model="startTimeHour"
-            />
-            <input
-              type="number"
-              min="0"
-              max="59"
-              placeholder="Minute"
-              class="form-control w-auto"
-              data-test="start-time-minute-input"
-              v-model="startTimeMinute"
-            />
-          </div>
+          <TimeInput
+            class="d-flex"
+            v-model="startTime"
+            hour-input-data-test="start-time-hour-input"
+            minute-input-data-test="start-time-minute-input"
+          />
         </div>
 
         <div class="form-group">
           <label>End Time:</label>
-          <div class="d-flex">
-            <input
-              type="number"
-              min="0"
-              max="23"
-              placeholder="Hour"
-              class="form-control w-auto me-2"
-              data-test="end-time-hour-input"
-              v-model="endTimeHour"
-            />
-            <input
-              type="number"
-              min="0"
-              max="59"
-              placeholder="Minute"
-              class="form-control w-auto"
-              data-test="end-time-minute-input"
-              v-model="endTimeMinute"
-            />
-          </div>
+          <TimeInput
+            class="d-flex"
+            v-model="endTime"
+            hour-input-data-test="end-time-hour-input"
+            minute-input-data-test="end-time-minute-input"
+          />
         </div>
       </div>
       <button type="button" class="btn btn-primary" data-test="add-button" @click="onClickAdd">
