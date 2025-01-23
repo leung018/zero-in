@@ -61,6 +61,30 @@ test('should able to remove all blocked domains and unblock them', async ({
   await assertNotInBlockedTemplate(page)
 })
 
+test('should able to persist blocked schedules and fetching them', async ({
+  page,
+  extensionId
+}) => {
+  await page.goto(`chrome-extension://${extensionId}/options.html`)
+
+  await page.getByTestId('check-weekday-Sun').check()
+
+  await page.getByTestId('start-time-hour-input').fill('10')
+  await page.getByTestId('start-time-minute-input').fill('00')
+
+  await page.getByTestId('end-time-hour-input').fill('12')
+  await page.getByTestId('end-time-minute-input').fill('00')
+
+  await page.getByTestId('add-button').click()
+
+  await page.reload()
+
+  const schedules = page.getByTestId('weekly-schedule')
+  await expect(schedules).toHaveCount(1)
+  await expect(schedules.nth(0)).toContainText('Sun')
+  await expect(schedules.nth(0)).toContainText('10:00 - 12:00')
+})
+
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
   const addButton = page.getByTestId('add-button')
