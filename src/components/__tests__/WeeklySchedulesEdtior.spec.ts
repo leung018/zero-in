@@ -90,6 +90,21 @@ describe('WeeklySchedulesEditor', () => {
 
     expect(await weeklyScheduleStorageService.getAll()).toEqual([weeklySchedule])
   })
+
+  it('should display error message if start time is not before end time', async () => {
+    const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesEditor()
+
+    await addWeeklySchedule(wrapper, {
+      weekdaySet: new Set([Weekday.Mon]),
+      startTime: new Time(10, 0),
+      endTime: new Time(9, 0)
+    })
+
+    expect(await weeklyScheduleStorageService.getAll()).toEqual([])
+    expect(wrapper.find("[data-test='error-message']").text()).toContain(
+      'Start time must be before end time'
+    )
+  })
 })
 
 function mountWeeklySchedulesEditor({

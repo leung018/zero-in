@@ -17,17 +17,27 @@ const weekdaySet = ref<Set<Weekday>>(new Set())
 
 const weeklySchedules = ref<WeeklySchedule[]>([])
 
+const errorMessage = ref<string | null>(null)
+
 onMounted(async () => {
   weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
 })
 
 const onClickAdd = async () => {
-  if (weekdaySet.value.size === 0) return
+  if (weekdaySet.value.size === 0) {
+    return
+  }
+  const startTime = new Time(startTimeHour.value, startTimeMinute.value)
+  const endTime = new Time(endTimeHour.value, endTimeMinute.value)
+  if (!startTime.isBefore(endTime)) {
+    errorMessage.value = 'Start time must be before end time'
+    return
+  }
 
   const newWeeklySchedule = new WeeklySchedule({
     weekdaySet: weekdaySet.value,
-    startTime: new Time(startTimeHour.value, startTimeMinute.value),
-    endTime: new Time(endTimeHour.value, endTimeMinute.value)
+    startTime,
+    endTime
   })
   await props.weeklyScheduleStorageService.saveAll([newWeeklySchedule])
   weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
@@ -120,6 +130,9 @@ const formatTime = (Time: Time) => {
       <button type="button" class="btn btn-primary" data-test="add-button" @click="onClickAdd">
         Add
       </button>
+      <div v-if="errorMessage" class="text-danger mt-2" data-test="error-message">
+        {{ errorMessage }}
+      </div>
     </form>
     <div class="mt-4">
       <h3>Saved</h3>
