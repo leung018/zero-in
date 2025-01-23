@@ -61,6 +61,19 @@ describe('WeeklySchedulesEditor', () => {
 
     expect(await weeklyScheduleStorageService.getAll()).toEqual([weeklySchedule])
   })
+
+  it('should prevent add weekly schedule when weekdaySet is not selected', async () => {
+    const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesEditor()
+    const weeklySchedule = new WeeklySchedule({
+      weekdaySet: new Set(),
+      startTime: { hour: 10, minute: 0 },
+      endTime: { hour: 12, minute: 0 }
+    })
+    await addWeeklySchedule(wrapper, weeklySchedule)
+
+    expect(wrapper.findAll("[data-test='weekly-schedule']")).toHaveLength(0)
+    expect(await weeklyScheduleStorageService.getAll()).toEqual([])
+  })
 })
 
 function mountWeeklySchedulesEditor({
