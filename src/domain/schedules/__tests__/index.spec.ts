@@ -11,7 +11,7 @@ describe('WeeklySchedules', () => {
           startTime: new Time(0, 0),
           endTime: new Time(0, 0)
         })
-    ).toThrow('Empty weekday set')
+    ).toThrow('weekdaySet must not be empty')
   })
 
   it('should reject if start time is not before end time', () => {
