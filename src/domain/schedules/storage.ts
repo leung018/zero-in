@@ -45,7 +45,7 @@ type SerializedTime = {
 }
 
 type SerializedWeeklySchedule = {
-  weekdaySet: ReadonlySet<Weekday>
+  weekdays: Weekday[]
   startTime: SerializedTime
   endTime: SerializedTime
 }
@@ -63,7 +63,7 @@ function deserializeTime(data: SerializedTime): Time {
 
 function serializeWeeklySchedule(weeklySchedule: WeeklySchedule): SerializedWeeklySchedule {
   return {
-    weekdaySet: weeklySchedule.weekdaySet,
+    weekdays: Array.from(weeklySchedule.weekdaySet),
     startTime: serializeTime(weeklySchedule.startTime),
     endTime: serializeTime(weeklySchedule.endTime)
   }
@@ -71,7 +71,7 @@ function serializeWeeklySchedule(weeklySchedule: WeeklySchedule): SerializedWeek
 
 function deserializeWeeklySchedule(data: SerializedWeeklySchedule): WeeklySchedule {
   return new WeeklySchedule({
-    weekdaySet: data.weekdaySet,
+    weekdaySet: new Set(data.weekdays),
     startTime: deserializeTime(data.startTime),
     endTime: deserializeTime(data.endTime)
   })
