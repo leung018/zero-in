@@ -7,6 +7,7 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 
 import WeeklySchedulesEditor from '../WeeklySchedulesEditor.vue'
 import { Weekday, WeeklySchedule } from '../../domain/schedules'
+import { Time } from '../../domain/schedules/time'
 
 describe('WeeklySchedulesEditor', () => {
   it('should render weekly schedules', async () => {
@@ -14,13 +15,13 @@ describe('WeeklySchedulesEditor', () => {
     weeklyScheduleStorageService.saveAll([
       new WeeklySchedule({
         weekdaySet: new Set([Weekday.Mon, Weekday.Tue]),
-        startTime: { hour: 7, minute: 0 },
-        endTime: { hour: 9, minute: 1 }
+        startTime: new Time(7, 0),
+        endTime: new Time(9, 1)
       }),
       new WeeklySchedule({
         weekdaySet: new Set([Weekday.Wed]),
-        startTime: { hour: 6, minute: 2 },
-        endTime: { hour: 8, minute: 4 }
+        startTime: new Time(6, 2),
+        endTime: new Time(8, 4)
       })
     ])
 
@@ -46,8 +47,8 @@ describe('WeeklySchedulesEditor', () => {
     const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesEditor()
     const weeklySchedule = new WeeklySchedule({
       weekdaySet: new Set([Weekday.Thu, Weekday.Fri]),
-      startTime: { hour: 10, minute: 0 },
-      endTime: { hour: 12, minute: 0 }
+      startTime: new Time(10, 0),
+      endTime: new Time(12, 0)
     })
     await addWeeklySchedule(wrapper, weeklySchedule)
 
@@ -82,8 +83,8 @@ describe('WeeklySchedulesEditor', () => {
 
     const weeklySchedule = new WeeklySchedule({
       weekdaySet: new Set([Weekday.Mon]),
-      startTime: { hour: 10, minute: 0 },
-      endTime: { hour: 12, minute: 0 }
+      startTime: new Time(10, 0),
+      endTime: new Time(12, 0)
     })
     await addWeeklySchedule(wrapper, weeklySchedule)
 
