@@ -10,6 +10,12 @@ import { Weekday, WeeklySchedule } from '../../domain/schedules'
 import { Time } from '../../domain/schedules/time'
 
 describe('WeeklySchedulesEditor', () => {
+  it('should render weekday checkboxes properly', () => {
+    const { wrapper } = mountWeeklySchedulesEditor()
+    const weekdayCheckboxes = wrapper.findAll("[data-test^='check-weekday-']") // Add this test because it is easy to make mistake which render extra checkboxes when dealing with Weekday enum
+    expect(weekdayCheckboxes).toHaveLength(7)
+  })
+
   it('should render weekly schedules', async () => {
     const weeklyScheduleStorageService = WeeklyScheduleStorageServiceImpl.createFake()
     weeklyScheduleStorageService.saveAll([
@@ -74,7 +80,7 @@ describe('WeeklySchedulesEditor', () => {
 
   it('should able to uncheck weekday', async () => {
     const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesEditor()
-    const sundayCheckbox = wrapper.find(`[data-test='check-weekday-${Weekday.Sun}']`)
+    const sundayCheckbox = wrapper.find(`[data-test='check-weekday-${Weekday[Weekday.Sun]}']`)
     await sundayCheckbox.setValue(true)
     await sundayCheckbox.setValue(false)
 
@@ -149,7 +155,7 @@ async function addWeeklySchedule(
   }
 ) {
   for (const weekday of weeklyScheduleInput.weekdaySet) {
-    const weekdayCheckbox = wrapper.find(`[data-test='check-weekday-${weekday}']`)
+    const weekdayCheckbox = wrapper.find(`[data-test='check-weekday-${Weekday[weekday]}']`)
     await weekdayCheckbox.setValue(true)
   }
 

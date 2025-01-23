@@ -18,6 +18,8 @@ const weeklySchedules = ref<WeeklySchedule[]>([])
 
 const errorMessage = ref<string | null>(null)
 
+const weekdayNames = Object.values(Weekday).filter((v) => typeof v === 'string')
+
 onMounted(async () => {
   weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
 })
@@ -44,7 +46,7 @@ const onClickAdd = async () => {
 
 const onChangeWeekday = (event: Event) => {
   const target = event.target as HTMLInputElement
-  const weekday = Weekday[target.value as keyof typeof Weekday]
+  const weekday = Number(target.value) as Weekday
   if (target.checked) {
     weekdaySet.value.add(weekday)
   } else {
@@ -65,12 +67,16 @@ const formatTime = (Time: Time) => {
         <div class="form-group">
           <label>Select Weekdays:</label>
           <div class="d-flex flex-wrap">
-            <div v-for="dayName in Weekday" :key="dayName" class="form-check form-check-inline">
+            <div
+              v-for="dayName in weekdayNames"
+              :key="dayName"
+              class="form-check form-check-inline"
+            >
               <input
                 class="form-check-input"
                 type="checkbox"
                 :data-test="`check-weekday-${dayName}`"
-                :value="Weekday[dayName]"
+                :value="Weekday[dayName as keyof typeof Weekday]"
                 @change="onChangeWeekday($event)"
               />
               <label class="form-check-label">{{ dayName }}</label>
