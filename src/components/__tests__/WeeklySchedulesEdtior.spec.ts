@@ -73,6 +73,22 @@ describe('WeeklySchedulesEditor', () => {
     expect(wrapper.findAll("[data-test='weekly-schedule']")).toHaveLength(0)
     expect(await weeklyScheduleStorageService.getAll()).toEqual([])
   })
+
+  it('should able to uncheck weekday', async () => {
+    const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesEditor()
+    const sundayCheckbox = wrapper.find(`[data-test='check-weekday-${Weekday.Sun}']`)
+    await sundayCheckbox.setValue(true)
+    await sundayCheckbox.setValue(false)
+
+    const weeklySchedule = new WeeklySchedule({
+      weekdaySet: new Set([Weekday.Mon]),
+      startTime: { hour: 10, minute: 0 },
+      endTime: { hour: 12, minute: 0 }
+    })
+    await addWeeklySchedule(wrapper, weeklySchedule)
+
+    expect(await weeklyScheduleStorageService.getAll()).toEqual([weeklySchedule])
+  })
 })
 
 function mountWeeklySchedulesEditor({

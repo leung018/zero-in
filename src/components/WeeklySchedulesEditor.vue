@@ -39,7 +39,7 @@ const onChangeWeekday = (event: Event) => {
   if (target.checked) {
     weekdaySet.value.add(weekday)
   } else {
-    // TODO
+    weekdaySet.value.delete(weekday)
   }
 }
 
