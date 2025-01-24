@@ -10,10 +10,10 @@ const props = defineProps<{
   weeklyScheduleStorageService: WeeklyScheduleStorageService
 }>()
 
-const startTime = ref<Time>(new Time(0, 0))
-const endTime = ref<Time>(new Time(0, 0))
+const newStartTime = ref<Time>(new Time(0, 0))
+const newEndTime = ref<Time>(new Time(0, 0))
 
-const weekdaySet = ref<Set<Weekday>>(new Set())
+const newWeekdaySet = ref<Set<Weekday>>(new Set())
 
 const weeklySchedules = ref<WeeklySchedule[]>([])
 
@@ -24,27 +24,36 @@ onMounted(async () => {
 })
 
 const onClickAdd = async () => {
-  if (weekdaySet.value.size === 0) {
+  if (newWeekdaySet.value.size === 0) {
     errorMessage.value = 'Please select weekdays'
     return
   }
-  if (!startTime.value.isBefore(endTime.value)) {
+  if (!newStartTime.value.isBefore(newEndTime.value)) {
     errorMessage.value = 'Start time must be before end time'
     return
   }
 
   const newWeeklySchedule = new WeeklySchedule({
-    weekdaySet: weekdaySet.value,
-    startTime: startTime.value,
-    endTime: endTime.value
+    weekdaySet: newWeekdaySet.value,
+    startTime: newStartTime.value,
+    endTime: newEndTime.value
   })
-  await props.weeklyScheduleStorageService.saveAll([...weeklySchedules.value, newWeeklySchedule])
-  weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
+  await updateWeeklySchedules([...weeklySchedules.value, newWeeklySchedule])
 
   errorMessage.value = null
-  startTime.value = new Time(0, 0)
-  endTime.value = new Time(0, 0)
-  weekdaySet.value.clear()
+  newStartTime.value = new Time(0, 0)
+  newEndTime.value = new Time(0, 0)
+  newWeekdaySet.value.clear()
+}
+
+const onClickRemove = async (index: number) => {
+  const newWeeklySchedules = weeklySchedules.value.filter((_, i) => i !== index)
+  await updateWeeklySchedules(newWeeklySchedules)
+}
+
+const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
+  await props.weeklyScheduleStorageService.saveAll(newWeeklySchedules)
+  weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
 }
 
 const formatTime = (Time: Time) => {
@@ -59,14 +68,14 @@ const formatTime = (Time: Time) => {
       <div class="mb-4">
         <div class="form-group">
           <label>Select Weekdays:</label>
-          <WeekdaysSelector class="d-flex flex-wrap" v-model="weekdaySet" />
+          <WeekdaysSelector class="d-flex flex-wrap" v-model="newWeekdaySet" />
         </div>
 
         <div class="form-group">
           <label>Start Time:</label>
           <TimeInput
             class="d-flex"
-            v-model="startTime"
+            v-model="newStartTime"
             hour-input-data-test="start-time-hour-input"
             minute-input-data-test="start-time-minute-input"
           />
@@ -76,7 +85,7 @@ const formatTime = (Time: Time) => {
           <label>End Time:</label>
           <TimeInput
             class="d-flex"
-            v-model="endTime"
+            v-model="newEndTime"
             hour-input-data-test="end-time-hour-input"
             minute-input-data-test="end-time-minute-input"
           />
@@ -107,7 +116,13 @@ const formatTime = (Time: Time) => {
             <br />
             {{ formatTime(schedule.startTime) }} - {{ formatTime(schedule.endTime) }}
           </div>
-          <button class="btn text-danger bg-transparent border-0">X</button>
+          <button
+            class="btn text-danger bg-transparent border-0"
+            :data-test="`remove-schedule-with-index-${index}`"
+            @click="onClickRemove(index)"
+          >
+            X
+          </button>
         </li>
       </ul>
     </div>

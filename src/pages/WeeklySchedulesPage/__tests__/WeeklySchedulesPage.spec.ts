@@ -177,6 +177,37 @@ describe('WeeklySchedulesPage', () => {
 
     expect(wrapper.find("[data-test='error-message']").exists()).toBe(false)
   })
+
+  it('should able to remove added schedule', async () => {
+    const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesPage()
+    const originalSchedule = new WeeklySchedule({
+      weekdaySet: new Set([Weekday.Mon]),
+      startTime: new Time(10, 0),
+      endTime: new Time(12, 0)
+    })
+
+    await addWeeklySchedule(wrapper, originalSchedule)
+    await addWeeklySchedule(
+      wrapper,
+      new WeeklySchedule({
+        weekdaySet: new Set([Weekday.Tue]),
+        startTime: new Time(10, 0),
+        endTime: new Time(12, 0)
+      })
+    )
+
+    const removeButton = wrapper.find(`[data-test='remove-schedule-with-index-1']`)
+    await removeButton.trigger('click')
+    await flushPromises()
+
+    assertSchedulesDisplayed(wrapper, [
+      {
+        displayedWeekdays: 'Mon',
+        displayedTime: '10:00 - 12:00'
+      }
+    ])
+    expect(await weeklyScheduleStorageService.getAll()).toEqual([originalSchedule])
+  })
 })
 
 function mountWeeklySchedulesPage({
