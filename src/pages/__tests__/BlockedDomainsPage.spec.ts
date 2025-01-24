@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import BlockedDomains from '../BlockedDomains.vue'
+import BlockedDomainsPage from '../../pages/BlockedDomainsPage.vue'
 import {
   BrowsingRulesStorageServiceImpl,
   type BrowsingRulesStorageService
@@ -9,21 +9,21 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { BrowsingRules } from '../../domain/browsing_rules'
 import type { WebsiteRedirectService } from '../../domain/browsing_rules/redirect'
 
-describe('BlockedDomains', () => {
+describe('BlockedDomainsPage', () => {
   it('should render blocked domains', async () => {
     const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake()
     await browsingRulesStorageService.save(
       new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
 
-    const { wrapper } = mountBlockedDomains({ browsingRulesStorageService })
+    const { wrapper } = mountBlockedDomainsPage({ browsingRulesStorageService })
     await flushPromises()
 
     assertDomainsDisplayed(wrapper, ['example.com', 'facebook.com'])
   })
 
   it('should able to add new blocked domain', async () => {
-    const { wrapper, browsingRulesStorageService } = mountBlockedDomains()
+    const { wrapper, browsingRulesStorageService } = mountBlockedDomainsPage()
 
     await addBlockedDomain(wrapper, 'example.com')
 
@@ -42,7 +42,7 @@ describe('BlockedDomains', () => {
   })
 
   it('should clear input box after adding new domain', async () => {
-    const { wrapper } = mountBlockedDomains()
+    const { wrapper } = mountBlockedDomainsPage()
 
     await addBlockedDomain(wrapper, 'example.com')
 
@@ -52,7 +52,7 @@ describe('BlockedDomains', () => {
   })
 
   it('should not save blocked domain when input box is empty', async () => {
-    const { wrapper, browsingRulesStorageService } = mountBlockedDomains()
+    const { wrapper, browsingRulesStorageService } = mountBlockedDomainsPage()
 
     await addBlockedDomain(wrapper, '')
     await addBlockedDomain(wrapper, '  ')
@@ -62,7 +62,7 @@ describe('BlockedDomains', () => {
   })
 
   it('should save domain in trimmed format', async () => {
-    const { wrapper, browsingRulesStorageService } = mountBlockedDomains()
+    const { wrapper, browsingRulesStorageService } = mountBlockedDomainsPage()
 
     await addBlockedDomain(wrapper, '  example.com  ')
     assertDomainsDisplayed(wrapper, ['example.com'])
@@ -76,7 +76,7 @@ describe('BlockedDomains', () => {
       new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
 
-    const { wrapper } = mountBlockedDomains({ browsingRulesStorageService })
+    const { wrapper } = mountBlockedDomainsPage({ browsingRulesStorageService })
     await flushPromises()
 
     await removeBlockedDomain(wrapper, 'example.com')
@@ -87,7 +87,7 @@ describe('BlockedDomains', () => {
 
   it('should update activated redirect when domain is added', async () => {
     const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
-    const { wrapper } = mountBlockedDomains({
+    const { wrapper } = mountBlockedDomainsPage({
       websiteRedirectService: fakeWebsiteRedirectService,
       targetRedirectUrl: 'https://target.com'
     })
@@ -106,7 +106,7 @@ describe('BlockedDomains', () => {
       new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
 
-    const { wrapper } = mountBlockedDomains({
+    const { wrapper } = mountBlockedDomainsPage({
       browsingRulesStorageService,
       websiteRedirectService: fakeWebsiteRedirectService,
       targetRedirectUrl: 'https://target.com'
@@ -121,7 +121,7 @@ describe('BlockedDomains', () => {
   })
 })
 
-function mountBlockedDomains({
+function mountBlockedDomainsPage({
   browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake(),
   websiteRedirectService = new FakeWebsiteRedirectService(),
   targetRedirectUrl = 'https://example.com'
@@ -130,7 +130,7 @@ function mountBlockedDomains({
   websiteRedirectService?: WebsiteRedirectService
   targetRedirectUrl?: string
 } = {}) {
-  const wrapper = mount(BlockedDomains, {
+  const wrapper = mount(BlockedDomainsPage, {
     props: { browsingRulesStorageService, websiteRedirectService, targetRedirectUrl }
   })
 

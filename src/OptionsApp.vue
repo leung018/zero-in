@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import WeeklySchedulesEditor from './components/WeeklySchedulesEditor.vue'
+import WeeklySchedulesPage from './pages/WeeklySchedulesPage/index.vue'
 import { WeeklyScheduleStorageServiceImpl } from './domain/schedules/storage'
 
 const weeklyScheduleStorageService = WeeklyScheduleStorageServiceImpl.create()
@@ -7,6 +7,6 @@ const weeklyScheduleStorageService = WeeklyScheduleStorageServiceImpl.create()
 
 <template>
   <main>
-    <WeeklySchedulesEditor :weeklyScheduleStorageService="weeklyScheduleStorageService" />
+    <WeeklySchedulesPage :weeklyScheduleStorageService="weeklyScheduleStorageService" />
   </main>
 </template>

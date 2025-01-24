@@ -2,18 +2,18 @@ import { describe, expect, it } from 'vitest'
 import {
   WeeklyScheduleStorageServiceImpl,
   type WeeklyScheduleStorageService
-} from '../../domain/schedules/storage'
+} from '../../../domain/schedules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 
-import WeeklySchedulesEditor from '../WeeklySchedulesEditor.vue'
-import { Weekday, WeeklySchedule } from '../../domain/schedules'
-import { Time } from '../../domain/schedules/time'
+import WeeklySchedulesPage from '../index.vue'
+import { Weekday, WeeklySchedule } from '../../../domain/schedules'
+import { Time } from '../../../domain/schedules/time'
 
-describe('WeeklySchedulesEditor', () => {
+describe('WeeklySchedulesPage', () => {
   it('should render weekday checkboxes properly', () => {
     // Add this test because it is easy to make mistake when dealing with Weekday enum
 
-    const { wrapper } = mountWeeklySchedulesEditor()
+    const { wrapper } = mountWeeklySchedulesPage()
     const weekdayCheckboxes = wrapper.findAll("[data-test^='check-weekday-']")
     expect(weekdayCheckboxes).toHaveLength(7)
 
@@ -40,7 +40,7 @@ describe('WeeklySchedulesEditor', () => {
       })
     ])
 
-    const { wrapper } = mountWeeklySchedulesEditor({
+    const { wrapper } = mountWeeklySchedulesPage({
       weeklyScheduleStorageService
     })
     await flushPromises()
@@ -58,7 +58,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should able to add new weekly schedule', async () => {
-    const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesEditor()
+    const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesPage()
     const weeklySchedule = new WeeklySchedule({
       weekdaySet: new Set([Weekday.Thu, Weekday.Fri]),
       startTime: new Time(10, 0),
@@ -100,7 +100,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should reset input values after adding weekly schedule', async () => {
-    const { wrapper } = mountWeeklySchedulesEditor()
+    const { wrapper } = mountWeeklySchedulesPage()
 
     assertAllInputsAreNotSet(wrapper)
 
@@ -114,7 +114,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should prevent add weekly schedule when weekdaySet is not selected', async () => {
-    const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesEditor()
+    const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesPage()
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set(),
       startTime: { hour: 10, minute: 0 },
@@ -126,7 +126,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should able to uncheck weekday', async () => {
-    const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesEditor()
+    const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesPage()
     const sundayCheckbox = wrapper.find(`[data-test='check-weekday-${Weekday[Weekday.Sun]}']`)
     await sundayCheckbox.setValue(true)
     await sundayCheckbox.setValue(false)
@@ -142,7 +142,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should display error message if start time is not before end time', async () => {
-    const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesEditor()
+    const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesPage()
 
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set([Weekday.Mon]),
@@ -157,7 +157,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should error message display and hide properly', async () => {
-    const { wrapper } = mountWeeklySchedulesEditor()
+    const { wrapper } = mountWeeklySchedulesPage()
 
     expect(wrapper.find("[data-test='error-message']").exists()).toBe(false)
 
@@ -179,12 +179,12 @@ describe('WeeklySchedulesEditor', () => {
   })
 })
 
-function mountWeeklySchedulesEditor({
+function mountWeeklySchedulesPage({
   weeklyScheduleStorageService = WeeklyScheduleStorageServiceImpl.createFake()
 }: {
   weeklyScheduleStorageService?: WeeklyScheduleStorageService
 } = {}) {
-  const wrapper = mount(WeeklySchedulesEditor, {
+  const wrapper = mount(WeeklySchedulesPage, {
     props: { weeklyScheduleStorageService }
   })
   return {

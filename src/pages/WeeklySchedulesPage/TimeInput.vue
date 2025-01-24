@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Time } from '../domain/schedules/time'
+import { Time } from '../../domain/schedules/time'
 
 const props = defineProps<{
   hourInputDataTest: string
