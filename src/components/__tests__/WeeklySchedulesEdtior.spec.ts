@@ -11,9 +11,18 @@ import { Time } from '../../domain/schedules/time'
 
 describe('WeeklySchedulesEditor', () => {
   it('should render weekday checkboxes properly', () => {
+    // Add this test because it is easy to make mistake when dealing with Weekday enum
+
     const { wrapper } = mountWeeklySchedulesEditor()
-    const weekdayCheckboxes = wrapper.findAll("[data-test^='check-weekday-']") // Add this test because it is easy to make mistake which render extra checkboxes when dealing with Weekday enum
+    const weekdayCheckboxes = wrapper.findAll("[data-test^='check-weekday-']")
     expect(weekdayCheckboxes).toHaveLength(7)
+
+    const weekdayCheckboxLabels = wrapper.findAll("[data-test='weekday-label']")
+    expect(weekdayCheckboxLabels).toHaveLength(7)
+    for (let i = 0; i < 7; i++) {
+      const weekdayName: string = Weekday[i]
+      expect(weekdayCheckboxLabels[i].text()).toBe(weekdayName)
+    }
   })
 
   it('should render weekly schedules', async () => {

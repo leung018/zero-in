@@ -80,7 +80,9 @@ const formatTime = (Time: Time) => {
                 @change="onChangeWeekday(weekday)"
                 :checked="weekdaySet.has(weekday)"
               />
-              <label class="form-check-label">{{ Weekday[weekday] }}</label>
+              <label class="form-check-label" data-test="weekday-label">{{
+                Weekday[weekday]
+              }}</label>
             </div>
           </div>
         </div>
