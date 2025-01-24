@@ -68,7 +68,9 @@ const formatTime = (Time: Time) => {
           <label>Select Weekdays:</label>
           <div class="d-flex flex-wrap">
             <div
-              v-for="weekday in Object.values(Weekday).filter((v) => typeof v === 'number')"
+              v-for="weekday in Object.values(Weekday).filter(
+                (v) => typeof v === 'number'
+              ) as Weekday[]"
               :key="weekday"
               class="form-check form-check-inline"
             >
