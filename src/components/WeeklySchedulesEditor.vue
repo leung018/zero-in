@@ -18,8 +18,6 @@ const weeklySchedules = ref<WeeklySchedule[]>([])
 
 const errorMessage = ref<string | null>(null)
 
-const weekdayNames = Object.values(Weekday).filter((v) => typeof v === 'string')
-
 onMounted(async () => {
   weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
 })
@@ -48,13 +46,11 @@ const onClickAdd = async () => {
   weekdaySet.value.clear()
 }
 
-const onChangeWeekday = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const weekday = Number(target.value) as Weekday
-  if (target.checked) {
-    weekdaySet.value.add(weekday)
-  } else {
+const onChangeWeekday = (weekday: Weekday) => {
+  if (weekdaySet.value.has(weekday)) {
     weekdaySet.value.delete(weekday)
+  } else {
+    weekdaySet.value.add(weekday)
   }
 }
 
@@ -72,19 +68,19 @@ const formatTime = (Time: Time) => {
           <label>Select Weekdays:</label>
           <div class="d-flex flex-wrap">
             <div
-              v-for="dayName in weekdayNames"
-              :key="dayName"
+              v-for="weekday in Object.values(Weekday).filter((v) => typeof v === 'number')"
+              :key="weekday"
               class="form-check form-check-inline"
             >
               <input
                 class="form-check-input"
                 type="checkbox"
-                :data-test="`check-weekday-${dayName}`"
-                :value="Weekday[dayName as keyof typeof Weekday]"
-                @change="onChangeWeekday($event)"
-                :checked="weekdaySet.has(Weekday[dayName as keyof typeof Weekday])"
+                :data-test="`check-weekday-${Weekday[weekday]}`"
+                :value="weekday"
+                @change="onChangeWeekday(weekday)"
+                :checked="weekdaySet.has(weekday)"
               />
-              <label class="form-check-label">{{ dayName }}</label>
+              <label class="form-check-label">{{ Weekday[weekday] }}</label>
             </div>
           </div>
         </div>
