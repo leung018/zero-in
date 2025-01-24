@@ -4,6 +4,7 @@ import { Weekday, WeeklySchedule } from '../../domain/schedules'
 import type { WeeklyScheduleStorageService } from '../../domain/schedules/storage'
 import { formatTimeNumber, Time } from '../../domain/schedules/time'
 import TimeInput from './TimeInput.vue'
+import WeekdaysSelector from './WeekdaysSelector.vue'
 
 const props = defineProps<{
   weeklyScheduleStorageService: WeeklyScheduleStorageService
@@ -46,14 +47,6 @@ const onClickAdd = async () => {
   weekdaySet.value.clear()
 }
 
-const onChangeWeekday = (weekday: Weekday) => {
-  if (weekdaySet.value.has(weekday)) {
-    weekdaySet.value.delete(weekday)
-  } else {
-    weekdaySet.value.add(weekday)
-  }
-}
-
 const formatTime = (Time: Time) => {
   return `${formatTimeNumber(Time.hour)}:${formatTimeNumber(Time.minute)}`
 }
@@ -66,27 +59,7 @@ const formatTime = (Time: Time) => {
       <div class="mb-4">
         <div class="form-group">
           <label>Select Weekdays:</label>
-          <div class="d-flex flex-wrap">
-            <div
-              v-for="weekday in Object.values(Weekday).filter(
-                (v) => typeof v === 'number'
-              ) as Weekday[]"
-              :key="weekday"
-              class="form-check form-check-inline"
-            >
-              <input
-                class="form-check-input"
-                type="checkbox"
-                :data-test="`check-weekday-${Weekday[weekday]}`"
-                :value="weekday"
-                @change="onChangeWeekday(weekday)"
-                :checked="weekdaySet.has(weekday)"
-              />
-              <label class="form-check-label" data-test="weekday-label">{{
-                Weekday[weekday]
-              }}</label>
-            </div>
-          </div>
+          <WeekdaysSelector class="d-flex flex-wrap" v-model="weekdaySet" />
         </div>
 
         <div class="form-group">
