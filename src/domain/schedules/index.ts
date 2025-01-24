@@ -10,7 +10,7 @@ export enum Weekday {
   Sat
 }
 
-export class WeeklySchedules {
+export class WeeklySchedule {
   weekdaySet: ReadonlySet<Weekday>
   readonly startTime: Time
   readonly endTime: Time
@@ -20,12 +20,21 @@ export class WeeklySchedules {
     startTime,
     endTime
   }: {
-    weekdaySet: Set<Weekday>
+    weekdaySet: ReadonlySet<Weekday>
     startTime: Time
     endTime: Time
   }) {
+    if (weekdaySet.size === 0) {
+      throw new WeeklyScheduleInvalidInputError('weekdaySet must not be empty')
+    }
+    if (!startTime.isBefore(endTime)) {
+      throw new WeeklyScheduleInvalidInputError('startTime must be before endTime')
+    }
+
     this.weekdaySet = weekdaySet
     this.startTime = startTime
     this.endTime = endTime
   }
 }
+
+export class WeeklyScheduleInvalidInputError extends Error {}

@@ -13,6 +13,12 @@ export class Time {
     this.hour = hour
     this.minute = minute
   }
+
+  isBefore(otherTime: Time): boolean {
+    if (this.hour < otherTime.hour) return true
+    if (this.hour == otherTime.hour && this.minute < otherTime.minute) return true
+    return false
+  }
 }
 
 export class TimeInvalidInputError extends Error {}

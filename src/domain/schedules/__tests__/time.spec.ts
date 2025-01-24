@@ -19,6 +19,15 @@ describe('Time', () => {
     expect(time.hour).toBe(12)
     expect(time.minute).toBe(34)
   })
+
+  it('should isBefore check the time', () => {
+    expect(new Time(0, 55).isBefore(new Time(0, 55))).toBe(false)
+
+    expect(new Time(0, 55).isBefore(new Time(0, 56))).toBe(true)
+    expect(new Time(0, 55).isBefore(new Time(1, 55))).toBe(true)
+
+    expect(new Time(2, 55).isBefore(new Time(1, 56))).toBe(false)
+  })
 })
 
 describe('formatTimeNumber', () => {
