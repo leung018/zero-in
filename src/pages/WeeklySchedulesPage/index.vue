@@ -47,6 +47,12 @@ const onClickAdd = async () => {
   weekdaySet.value.clear()
 }
 
+const onClickRemove = async (index: number) => {
+  const newWeeklySchedules = weeklySchedules.value.filter((_, i) => i !== index)
+  await props.weeklyScheduleStorageService.saveAll(newWeeklySchedules)
+  weeklySchedules.value = newWeeklySchedules
+}
+
 const formatTime = (Time: Time) => {
   return `${formatTimeNumber(Time.hour)}:${formatTimeNumber(Time.minute)}`
 }
@@ -107,7 +113,13 @@ const formatTime = (Time: Time) => {
             <br />
             {{ formatTime(schedule.startTime) }} - {{ formatTime(schedule.endTime) }}
           </div>
-          <button class="btn text-danger bg-transparent border-0">X</button>
+          <button
+            class="btn text-danger bg-transparent border-0"
+            :data-test="`remove-schedule-with-index-${index}`"
+            @click="onClickRemove(index)"
+          >
+            X
+          </button>
         </li>
       </ul>
     </div>
