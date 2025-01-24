@@ -39,9 +39,13 @@ const onClickAdd = async () => {
     startTime: startTime.value,
     endTime: endTime.value
   })
-  await props.weeklyScheduleStorageService.saveAll([newWeeklySchedule])
+  await props.weeklyScheduleStorageService.saveAll([...weeklySchedules.value, newWeeklySchedule])
   weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
+
   errorMessage.value = null
+  startTime.value = new Time(0, 0)
+  endTime.value = new Time(0, 0)
+  weekdaySet.value.clear()
 }
 
 const onChangeWeekday = (event: Event) => {
@@ -78,6 +82,7 @@ const formatTime = (Time: Time) => {
                 :data-test="`check-weekday-${dayName}`"
                 :value="Weekday[dayName as keyof typeof Weekday]"
                 @change="onChangeWeekday($event)"
+                :checked="weekdaySet.has(Weekday[dayName as keyof typeof Weekday])"
               />
               <label class="form-check-label">{{ dayName }}</label>
             </div>

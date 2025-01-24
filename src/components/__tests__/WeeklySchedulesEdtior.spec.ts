@@ -56,7 +56,7 @@ describe('WeeklySchedulesEditor', () => {
     })
     await addWeeklySchedule(wrapper, weeklySchedule)
 
-    const weeklySchedules = wrapper.findAll("[data-test='weekly-schedule']")
+    let weeklySchedules = wrapper.findAll("[data-test='weekly-schedule']")
     expect(weeklySchedules).toHaveLength(1)
 
     expect(weeklySchedules[0].text()).toContain('Thu')
@@ -64,6 +64,42 @@ describe('WeeklySchedulesEditor', () => {
     expect(weeklySchedules[0].text()).toContain('10:00 - 12:00')
 
     expect(await weeklyScheduleStorageService.getAll()).toEqual([weeklySchedule])
+
+    const extraWeeklySchedule = new WeeklySchedule({
+      weekdaySet: new Set([Weekday.Sat]),
+      startTime: new Time(8, 0),
+      endTime: new Time(10, 0)
+    })
+    await addWeeklySchedule(wrapper, extraWeeklySchedule)
+
+    weeklySchedules = wrapper.findAll("[data-test='weekly-schedule']")
+    expect(weeklySchedules).toHaveLength(2)
+
+    expect(weeklySchedules[0].text()).toContain('Thu')
+    expect(weeklySchedules[0].text()).toContain('Fri')
+    expect(weeklySchedules[0].text()).toContain('10:00 - 12:00')
+
+    expect(weeklySchedules[1].text()).toContain('Sat')
+    expect(weeklySchedules[1].text()).toContain('08:00 - 10:00')
+
+    expect(await weeklyScheduleStorageService.getAll()).toEqual([
+      weeklySchedule,
+      extraWeeklySchedule
+    ])
+  })
+
+  it('should reset input values after adding weekly schedule', async () => {
+    const { wrapper } = mountWeeklySchedulesEditor()
+
+    assertAllInputsAreNotSet(wrapper)
+
+    await addWeeklySchedule(wrapper, {
+      weekdaySet: new Set([Weekday.Mon]),
+      startTime: { hour: 10, minute: 0 },
+      endTime: { hour: 12, minute: 0 }
+    })
+
+    assertAllInputsAreNotSet(wrapper)
   })
 
   it('should prevent add weekly schedule when weekdaySet is not selected', async () => {
@@ -174,4 +210,26 @@ async function addWeeklySchedule(
   const addButton = wrapper.find("[data-test='add-button']")
   await addButton.trigger('click')
   await flushPromises()
+}
+
+function assertAllInputsAreNotSet(wrapper: VueWrapper) {
+  const startTimeHourInputElement = wrapper.find("[data-test='start-time-hour-input']")
+    .element as HTMLInputElement
+  const startTimeMinuteInputElement = wrapper.find("[data-test='start-time-minute-input']")
+    .element as HTMLInputElement
+  const endTimeHourInputElement = wrapper.find("[data-test='end-time-hour-input']")
+    .element as HTMLInputElement
+  const endTimeMinuteInputElement = wrapper.find("[data-test='end-time-minute-input']")
+    .element as HTMLInputElement
+
+  expect(startTimeHourInputElement.value).toBe('0')
+  expect(startTimeMinuteInputElement.value).toBe('0')
+  expect(endTimeHourInputElement.value).toBe('0')
+  expect(endTimeMinuteInputElement.value).toBe('0')
+
+  const weekdayCheckboxes = wrapper.findAll("[data-test^='check-weekday-']")
+  for (const weekdayCheckbox of weekdayCheckboxes) {
+    const weekdayCheckboxElement = weekdayCheckbox.element as HTMLInputElement
+    expect(weekdayCheckboxElement.checked).toBe(false)
+  }
 }
