@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { Weekday, WeeklySchedule } from '../domain/schedules'
-import type { WeeklyScheduleStorageService } from '../domain/schedules/storage'
-import { formatTimeNumber, Time } from '../domain/schedules/time'
+import { Weekday, WeeklySchedule } from '../../domain/schedules'
+import type { WeeklyScheduleStorageService } from '../../domain/schedules/storage'
+import { formatTimeNumber, Time } from '../../domain/schedules/time'
 import TimeInput from './TimeInput.vue'
 
 const props = defineProps<{
