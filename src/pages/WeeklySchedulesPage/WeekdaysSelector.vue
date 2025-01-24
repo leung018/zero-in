@@ -13,7 +13,7 @@ const onChangeWeekday = (weekday: Weekday) => {
   }
 }
 
-const weekdays: Weekday[] = Object.values(Weekday).filter((v) => typeof v === 'number')
+const weekdays: Weekday[] = Object.values(Weekday).filter((v) => typeof v === 'number') as Weekday[]
 </script>
 
 <template>
