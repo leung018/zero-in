@@ -45,15 +45,16 @@ describe('WeeklySchedulesEditor', () => {
     })
     await flushPromises()
 
-    const weeklySchedules = wrapper.findAll("[data-test='weekly-schedule']")
-    expect(weeklySchedules).toHaveLength(2)
-
-    expect(weeklySchedules[0].text()).toContain('Mon')
-    expect(weeklySchedules[0].text()).toContain('Tue')
-    expect(weeklySchedules[0].text()).toContain('07:00 - 09:01')
-
-    expect(weeklySchedules[1].text()).toContain('Wed')
-    expect(weeklySchedules[1].text()).toContain('06:02 - 08:04')
+    assertSchedulesDisplayed(wrapper, [
+      {
+        displayedWeekdays: 'Mon, Tue',
+        displayedTime: '07:00 - 09:01'
+      },
+      {
+        displayedWeekdays: 'Wed',
+        displayedTime: '06:02 - 08:04'
+      }
+    ])
   })
 
   it('should able to add new weekly schedule', async () => {
@@ -65,12 +66,12 @@ describe('WeeklySchedulesEditor', () => {
     })
     await addWeeklySchedule(wrapper, weeklySchedule)
 
-    let weeklySchedules = wrapper.findAll("[data-test='weekly-schedule']")
-    expect(weeklySchedules).toHaveLength(1)
-
-    expect(weeklySchedules[0].text()).toContain('Thu')
-    expect(weeklySchedules[0].text()).toContain('Fri')
-    expect(weeklySchedules[0].text()).toContain('10:00 - 12:00')
+    assertSchedulesDisplayed(wrapper, [
+      {
+        displayedWeekdays: 'Thu, Fri',
+        displayedTime: '10:00 - 12:00'
+      }
+    ])
 
     expect(await weeklyScheduleStorageService.getAll()).toEqual([weeklySchedule])
 
@@ -81,15 +82,16 @@ describe('WeeklySchedulesEditor', () => {
     })
     await addWeeklySchedule(wrapper, extraWeeklySchedule)
 
-    weeklySchedules = wrapper.findAll("[data-test='weekly-schedule']")
-    expect(weeklySchedules).toHaveLength(2)
-
-    expect(weeklySchedules[0].text()).toContain('Thu')
-    expect(weeklySchedules[0].text()).toContain('Fri')
-    expect(weeklySchedules[0].text()).toContain('10:00 - 12:00')
-
-    expect(weeklySchedules[1].text()).toContain('Sat')
-    expect(weeklySchedules[1].text()).toContain('08:00 - 10:00')
+    assertSchedulesDisplayed(wrapper, [
+      {
+        displayedWeekdays: 'Thu, Fri',
+        displayedTime: '10:00 - 12:00'
+      },
+      {
+        displayedWeekdays: 'Sat',
+        displayedTime: '08:00 - 10:00'
+      }
+    ])
 
     expect(await weeklyScheduleStorageService.getAll()).toEqual([
       weeklySchedule,
@@ -240,5 +242,22 @@ function assertAllInputsAreNotSet(wrapper: VueWrapper) {
   for (const weekdayCheckbox of weekdayCheckboxes) {
     const weekdayCheckboxElement = weekdayCheckbox.element as HTMLInputElement
     expect(weekdayCheckboxElement.checked).toBe(false)
+  }
+}
+
+function assertSchedulesDisplayed(
+  wrapper: VueWrapper,
+  expected: {
+    displayedWeekdays: string
+    displayedTime: string
+  }[]
+) {
+  const weeklySchedules = wrapper.findAll("[data-test='weekly-schedule']")
+  expect(weeklySchedules).toHaveLength(expected.length)
+
+  for (let i = 0; i < expected.length; i++) {
+    const { displayedWeekdays, displayedTime } = expected[i]
+    expect(weeklySchedules[i].text()).toContain(displayedWeekdays)
+    expect(weeklySchedules[i].text()).toContain(displayedTime)
   }
 }
