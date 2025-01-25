@@ -63,7 +63,7 @@ async function updateBrowsingRules(browsingRules: BrowsingRules) {
         :key="domain"
         class="list-group-item d-flex justify-content-between align-items-center"
       >
-        <span data-test="blocked-domains">{{ domain }}</span>
+        <span data-test="blocked-domain">{{ domain }}</span>
         <button
           class="btn text-danger bg-transparent border-0"
           :data-test="`remove-${domain}`"

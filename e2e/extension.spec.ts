@@ -10,7 +10,7 @@ test('should able to persist blocked domains and fetching them', async ({ page, 
 
   await page.reload()
 
-  const domainsAfterReload = page.getByTestId('blocked-domains')
+  const domainsAfterReload = page.getByTestId('blocked-domain')
   await expect(domainsAfterReload).toHaveCount(2)
   await expect(domainsAfterReload.nth(0)).toHaveText('abc.com')
   await expect(domainsAfterReload.nth(1)).toHaveText('xyz.com')

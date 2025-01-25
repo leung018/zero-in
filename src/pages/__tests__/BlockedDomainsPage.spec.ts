@@ -171,7 +171,7 @@ async function removeBlockedDomain(wrapper: VueWrapper, domain: string) {
 }
 
 function assertDomainsDisplayed(wrapper: VueWrapper, domains: string[]) {
-  const blockedDomains = wrapper.findAll("[data-test='blocked-domains']")
+  const blockedDomains = wrapper.findAll("[data-test='blocked-domain']")
   expect(blockedDomains.length).toBe(domains.length)
 
   for (let i = 0; i < domains.length; i++) {
