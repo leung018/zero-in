@@ -2,10 +2,7 @@
 import { Page } from '@playwright/test'
 import { test, expect } from './fixtures.js'
 
-test('should able to persist blocked domains, fetching and displaying them', async ({
-  page,
-  extensionId
-}) => {
+test('should able to persist blocked domains and fetching them', async ({ page, extensionId }) => {
   await page.goto(`chrome-extension://${extensionId}/popup.html`)
 
   await addBlockedDomain(page, 'abc.com')
