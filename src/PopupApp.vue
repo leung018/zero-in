@@ -10,7 +10,7 @@ const targetRedirectUrl = chrome.runtime.getURL('options.html')
 </script>
 
 <template>
-  <main>
+  <main class="p-4">
     <BlockedDomainsPage
       :browsingRulesStorageService="browsingRulesStorageService"
       :websiteRedirectService="websiteRedirectService"

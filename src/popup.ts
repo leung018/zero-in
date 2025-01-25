@@ -1,4 +1,3 @@
-import './assets/main.css'
 import { createBootstrap } from 'bootstrap-vue-next'
 
 import 'bootstrap/dist/css/bootstrap.css'
