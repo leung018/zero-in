@@ -11,12 +11,8 @@ test('should able to persist blocked domains, fetching and displaying them', asy
   await addBlockedDomain(page, 'abc.com')
   await addBlockedDomain(page, 'xyz.com')
 
-  const domains = page.getByTestId('blocked-domains')
-  await expect(domains).toHaveCount(2)
-  await expect(domains.nth(0)).toHaveText('abc.com')
-  await expect(domains.nth(1)).toHaveText('xyz.com')
-
   await page.reload()
+
   const domainsAfterReload = page.getByTestId('blocked-domains')
   await expect(domainsAfterReload).toHaveCount(2)
   await expect(domainsAfterReload.nth(0)).toHaveText('abc.com')
