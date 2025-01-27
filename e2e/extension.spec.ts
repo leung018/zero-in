@@ -91,7 +91,7 @@ async function removeBlockedDomain(page: Page, domain: string) {
   await removeButton.click()
 }
 
-const TEXT_IN_BLOCKED_TEMPLATE = 'Schedules' // TODO: Change the text if I have made the blocked template
+const TEXT_IN_BLOCKED_TEMPLATE = 'Stay Focused'
 
 async function assertInBlockedTemplate(page: Page) {
   await expect(page.locator('body')).toContainText(TEXT_IN_BLOCKED_TEMPLATE)
