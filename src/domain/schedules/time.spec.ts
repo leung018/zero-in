@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatTimeNumber, Time } from '../time'
+import { formatTimeNumber, Time } from './time'
 
 describe('Time', () => {
   it('should reject invalid time', () => {
