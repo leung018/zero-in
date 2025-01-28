@@ -476,7 +476,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@popperjs/core@npm:^2.9.2":
+"@popperjs/core@npm:^2.11.8, @popperjs/core@npm:^2.9.2":
   version: 2.11.8
   resolution: "@popperjs/core@npm:2.11.8"
   checksum: 10c0/4681e682abc006d25eb380d0cf3efc7557043f53b6aea7a5057d0d1e7df849a00e281cd8ea79c902a35a414d7919621fc2ba293ecec05f413598e0b23d5a1e63
@@ -5123,6 +5123,7 @@ __metadata:
   resolution: "task-concentrator@workspace:."
   dependencies:
     "@playwright/test": "npm:^1.48.0"
+    "@popperjs/core": "npm:^2.11.8"
     "@rushstack/eslint-patch": "npm:^1.8.0"
     "@tsconfig/node20": "npm:^20.1.4"
     "@types/bootstrap": "npm:^5"
