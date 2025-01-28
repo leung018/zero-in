@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-import BlockedDomainsPage from '../../pages/BlockedDomainsPage.vue'
+import BlockedDomainsPage from './BlockedDomainsPage.vue'
 import {
   BrowsingRulesStorageServiceImpl,
   type BrowsingRulesStorageService
-} from '../../domain/browsing_rules/storage'
+} from '../domain/browsing_rules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
-import { BrowsingRules } from '../../domain/browsing_rules'
-import type { WebsiteRedirectService } from '../../domain/browsing_rules/redirect'
+import { BrowsingRules } from '../domain/browsing_rules'
+import type { WebsiteRedirectService } from '../domain/browsing_rules/redirect'
 
 describe('BlockedDomainsPage', () => {
   it('should render blocked domains', async () => {
