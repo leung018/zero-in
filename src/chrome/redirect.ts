@@ -1,19 +1,21 @@
 import type { BrowsingRules } from '../domain/browsing_rules'
 import type { WebsiteRedirectService } from '../domain/browsing_rules/redirect'
 
-declare const chrome: any // FIXME: Find a way to type this properly and also fix the type hint related to it.
-
 export class ChromeRedirectService implements WebsiteRedirectService {
   async activateRedirect(browsingRules: BrowsingRules, targetUrl: string): Promise<void> {
-    await this.redirectFutureRequests(browsingRules, targetUrl)
-    await this.redirectAllActiveTabs(browsingRules, targetUrl)
+    // May make more sense to chain the promise of redirectAllActiveTabs after redirectFutureRequests.
+    // However, it has bug when promise that involved chrome.updateDynamicRules is called first before another chained promise. The redirectAllActiveTabs cannot be triggered sometimes in that case.
+
+    return this.redirectAllActiveTabs(browsingRules, targetUrl).then(() => {
+      return this.redirectFutureRequests(browsingRules, targetUrl)
+    })
   }
 
   private async redirectFutureRequests(
     browsingRules: BrowsingRules,
     targetUrl: string
   ): Promise<void> {
-    const rule = {
+    const rule: chrome.declarativeNetRequest.Rule = {
       id: 1,
       priority: 1,
       action: {
@@ -23,31 +25,24 @@ export class ChromeRedirectService implements WebsiteRedirectService {
         }
       },
       condition: {
-        requestDomains: browsingRules.blockedDomains,
+        requestDomains: [...browsingRules.blockedDomains],
         resourceTypes: ['main_frame']
       }
     }
 
-    return chrome.declarativeNetRequest.updateDynamicRules(
-      {
-        addRules: browsingRules.blockedDomains.length > 0 ? [rule] : undefined,
-        removeRuleIds: [1]
-      },
-      () => {
-        if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError)
-        }
-      }
-    )
+    return chrome.declarativeNetRequest.updateDynamicRules({
+      addRules: browsingRules.blockedDomains.length > 0 ? [rule] : undefined,
+      removeRuleIds: [1]
+    })
   }
 
   private async redirectAllActiveTabs(
     browsingRules: BrowsingRules,
     targetUrl: string
   ): Promise<void> {
-    const tabs: any[] = await this.queryAllTabs()
+    const tabs = await this.queryAllTabs()
     tabs.forEach((tab) => {
-      if (tab && tab.url) {
+      if (tab && tab.url && tab.id) {
         const url = new URL(tab.url)
 
         for (const domain of browsingRules.blockedDomains) {
