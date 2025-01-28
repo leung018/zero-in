@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { formatTimeNumber, Time } from './time'
+import { formatTimeNumber, Time, TimeInvalidInputError } from './time'
+import { assertToThrowError } from '../../test_utils/check_error'
 
 describe('Time', () => {
   it('should reject invalid time', () => {
-    expect(() => new Time(-1, 0)).toThrow('Invalid hour')
-    expect(() => new Time(0, -1)).toThrow('Invalid minute')
-    expect(() => new Time(24, 0)).toThrow('Invalid hour')
-    expect(() => new Time(0, 60)).toThrow('Invalid minute')
+    assertToThrowError(() => new Time(-1, 0), new TimeInvalidInputError('Invalid hour'))
+    assertToThrowError(() => new Time(0, -1), new TimeInvalidInputError('Invalid minute'))
+    assertToThrowError(() => new Time(24, 0), new TimeInvalidInputError('Invalid hour'))
+    assertToThrowError(() => new Time(0, 60), new TimeInvalidInputError('Invalid minute'))
   })
 
   it('should accept valid time', () => {
