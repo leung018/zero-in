@@ -2,6 +2,8 @@
 import { Page } from '@playwright/test'
 import { test, expect } from './fixtures.js'
 
+test.describe.configure({ mode: 'parallel' })
+
 test('should able to persist blocked domains and fetching them', async ({ page, extensionId }) => {
   await page.goto(`chrome-extension://${extensionId}/popup.html`)
 
