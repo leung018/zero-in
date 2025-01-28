@@ -2,9 +2,10 @@
 import { onMounted, ref } from 'vue'
 import { Weekday, WeeklySchedule } from '../../domain/schedules'
 import type { WeeklyScheduleStorageService } from '../../domain/schedules/storage'
-import { formatTimeNumber, Time } from '../../domain/schedules/time'
+import { Time } from '../../domain/schedules/time'
 import TimeInput from './TimeInput.vue'
 import WeekdaysSelector from './WeekdaysSelector.vue'
+import SchedulesList from './SchedulesList.vue'
 
 const props = defineProps<{
   weeklyScheduleStorageService: WeeklyScheduleStorageService
@@ -46,18 +47,14 @@ const onClickAdd = async () => {
   newWeekdaySet.value.clear()
 }
 
-const onClickRemove = async (index: number) => {
-  const newWeeklySchedules = weeklySchedules.value.filter((_, i) => i !== index)
+const handleRemove = async (indexToRemove: number) => {
+  const newWeeklySchedules = weeklySchedules.value.filter((_, i) => i !== indexToRemove)
   await updateWeeklySchedules(newWeeklySchedules)
 }
 
 const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
   await props.weeklyScheduleStorageService.saveAll(newWeeklySchedules)
   weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
-}
-
-const formatTime = (Time: Time) => {
-  return `${formatTimeNumber(Time.hour)}:${formatTimeNumber(Time.minute)}`
 }
 </script>
 
@@ -100,31 +97,7 @@ const formatTime = (Time: Time) => {
     </form>
     <div class="mt-4">
       <h3>Saved</h3>
-      <ul class="list-group">
-        <li
-          v-for="(schedule, index) in weeklySchedules"
-          :key="index"
-          class="list-group-item d-flex justify-content-between align-items-center"
-          data-test="weekly-schedule"
-        >
-          <div>
-            {{
-              Array.from(schedule.weekdaySet)
-                .map((day) => Weekday[day])
-                .join(', ')
-            }}
-            <br />
-            {{ formatTime(schedule.startTime) }} - {{ formatTime(schedule.endTime) }}
-          </div>
-          <button
-            class="btn text-danger bg-transparent border-0"
-            :data-test="`remove-schedule-with-index-${index}`"
-            @click="onClickRemove(index)"
-          >
-            X
-          </button>
-        </li>
-      </ul>
+      <SchedulesList :weeklySchedules="weeklySchedules" @remove="handleRemove" />
     </div>
   </div>
 </template>
