@@ -37,7 +37,7 @@ async function onClickRemove(domain: string) {
 async function updateBrowsingRules(browsingRules: BrowsingRules) {
   await props.browsingRulesStorageService.save(browsingRules)
   await props.websiteRedirectService.activateRedirect(browsingRules, props.targetRedirectUrl)
-  blockedDomains.value = (await props.browsingRulesStorageService.get()).blockedDomains
+  blockedDomains.value = browsingRules.blockedDomains
 }
 </script>
 
