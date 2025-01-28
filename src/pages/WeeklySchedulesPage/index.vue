@@ -44,7 +44,7 @@ const onClickAdd = async () => {
   errorMessage.value = null
   newStartTime.value = new Time(0, 0)
   newEndTime.value = new Time(0, 0)
-  newWeekdaySet.value.clear()
+  newWeekdaySet.value = new Set()
 }
 
 const handleRemove = async (indexToRemove: number) => {
@@ -54,7 +54,7 @@ const handleRemove = async (indexToRemove: number) => {
 
 const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
   await props.weeklyScheduleStorageService.saveAll(newWeeklySchedules)
-  weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
+  weeklySchedules.value = newWeeklySchedules
 }
 </script>
 
