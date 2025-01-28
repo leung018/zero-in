@@ -1,5 +1,3 @@
-declare const chrome: any // FIXME: Find a way to type this properly and also fix the type hint related to it.
-
 interface ChromeStorage {
   set(obj: any): Promise<void>
   get(key: string): Promise<any>
