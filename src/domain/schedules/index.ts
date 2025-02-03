@@ -40,6 +40,11 @@ export class WeeklySchedule {
     this.endTime = endTime
   }
 
+  /**
+   * Checks if the time represented by the given date is within the schedule.
+   * Note: If the endTime is the same as the time of the date, it will return false.
+   * e.g. If the schedule ends at 5:00 PM and the date's time is exactly 5:00 PM, it will return false.
+   */
   isContain(date: Date): boolean {
     const weekday = getWeekdayFromDate(date)
     if (!this.weekdaySet.has(weekday)) {
