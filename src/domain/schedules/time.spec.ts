@@ -29,6 +29,13 @@ describe('Time', () => {
 
     expect(new Time(2, 55).isBefore(new Time(1, 56))).toBe(false)
   })
+
+  it('should create Time from Date', () => {
+    const date = new Date('2025-02-03T11:01:59')
+    const time = Time.fromDate(date)
+    expect(time.hour).toBe(11)
+    expect(time.minute).toBe(1)
+  })
 })
 
 describe('formatTimeNumber', () => {
