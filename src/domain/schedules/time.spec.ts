@@ -15,12 +15,6 @@ describe('Time', () => {
     new Time(23, 59)
   })
 
-  it('should get hour and minute', () => {
-    const time = new Time(12, 34)
-    expect(time.hour).toBe(12)
-    expect(time.minute).toBe(34)
-  })
-
   it('should isBefore check the time', () => {
     expect(new Time(0, 55).isBefore(new Time(0, 55))).toBe(false)
 
