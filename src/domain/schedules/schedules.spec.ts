@@ -49,4 +49,34 @@ describe('WeeklySchedules', () => {
     expect(weeklySchedule.startTime).toEqual(new Time(11, 0))
     expect(weeklySchedule.endTime).toEqual(new Time(18, 0))
   })
+
+  it('should isContain check the date within the schedule according to weekdays', () => {
+    const weeklySchedule = new WeeklySchedule({
+      weekdaySet: new Set([Weekday.Mon, Weekday.Tue]),
+      startTime: new Time(11, 0),
+      endTime: new Time(18, 0)
+    })
+    expect(weeklySchedule.isContain(new Date('2025-02-03T11:00:00'))).toBe(true) // Mon
+    expect(weeklySchedule.isContain(new Date('2025-02-04T11:00:00'))).toBe(true) // Tue
+    expect(weeklySchedule.isContain(new Date('2025-02-05T11:00:00'))).toBe(false) // Wed
+  })
+
+  it('should isContain check the date within the schedule according to start and end time', () => {
+    const weeklySchedule = new WeeklySchedule({
+      weekdaySet: new Set([Weekday.Mon]),
+      startTime: new Time(11, 0),
+      endTime: new Time(18, 0)
+    })
+
+    // 2025-02-03 is Monday
+
+    expect(weeklySchedule.isContain(new Date('2025-02-03T11:00:00'))).toBe(true)
+    expect(weeklySchedule.isContain(new Date('2025-02-03T11:00:01'))).toBe(true)
+    expect(weeklySchedule.isContain(new Date('2025-02-03T15:00:00'))).toBe(true)
+    expect(weeklySchedule.isContain(new Date('2025-02-03T17:59:59'))).toBe(true)
+
+    expect(weeklySchedule.isContain(new Date('2025-02-03T10:59:59'))).toBe(false)
+    expect(weeklySchedule.isContain(new Date('2025-02-03T18:00:00'))).toBe(false)
+    expect(weeklySchedule.isContain(new Date('2025-02-03T18:00:01'))).toBe(false)
+  })
 })
