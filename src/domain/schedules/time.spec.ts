@@ -15,12 +15,6 @@ describe('Time', () => {
     new Time(23, 59)
   })
 
-  it('should get hour and minute', () => {
-    const time = new Time(12, 34)
-    expect(time.hour).toBe(12)
-    expect(time.minute).toBe(34)
-  })
-
   it('should isBefore check the time', () => {
     expect(new Time(0, 55).isBefore(new Time(0, 55))).toBe(false)
 
@@ -28,6 +22,13 @@ describe('Time', () => {
     expect(new Time(0, 55).isBefore(new Time(1, 55))).toBe(true)
 
     expect(new Time(2, 55).isBefore(new Time(1, 56))).toBe(false)
+  })
+
+  it('should create Time from Date', () => {
+    const date = new Date('2025-02-03T11:01:59')
+    const time = Time.fromDate(date)
+    expect(time.hour).toBe(11)
+    expect(time.minute).toBe(1)
   })
 })
 

@@ -1,4 +1,4 @@
-import type { Time } from './time'
+import { Time } from './time'
 
 export enum Weekday {
   Sun = 0,
@@ -8,6 +8,10 @@ export enum Weekday {
   Thu,
   Fri,
   Sat
+}
+
+function getWeekdayFromDate(date: Date): Weekday {
+  return date.getDay() as Weekday
 }
 
 export class WeeklySchedule {
@@ -35,6 +39,27 @@ export class WeeklySchedule {
     this.startTime = startTime
     this.endTime = endTime
   }
+
+  /**
+   * Checks if the time represented by the given date is within the schedule.
+   * Note: If the endTime is the same as the time of the date, it will return false.
+   * e.g. If the schedule ends at 5:00 PM and the date's time is exactly 5:00 PM, it will return false.
+   */
+  isContain(date: Date): boolean {
+    const weekday = getWeekdayFromDate(date)
+    if (!this.weekdaySet.has(weekday)) {
+      return false
+    }
+    const currentTime = Time.fromDate(date)
+    if (timesAreEqual(currentTime, this.startTime)) {
+      return true
+    }
+    return this.startTime.isBefore(currentTime) && currentTime.isBefore(this.endTime)
+  }
+}
+
+function timesAreEqual(time1: Time, time2: Time): boolean {
+  return time1.hour === time2.hour && time1.minute === time2.minute
 }
 
 export class WeeklyScheduleInvalidInputError extends Error {}
