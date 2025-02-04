@@ -11,6 +11,12 @@ export class ChromeRedirectService implements WebsiteRedirectService {
     })
   }
 
+  async deactivateRedirect(): Promise<void> {
+    return chrome.declarativeNetRequest.updateDynamicRules({
+      removeRuleIds: [1]
+    })
+  }
+
   private async redirectFutureRequests(
     browsingRules: BrowsingRules,
     targetUrl: string

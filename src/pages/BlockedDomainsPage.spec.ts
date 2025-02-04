@@ -153,6 +153,11 @@ class FakeWebsiteRedirectService implements WebsiteRedirectService {
   getActivatedRedirectUrl(): string | null {
     return this.activatedRedirectUrl
   }
+
+  async deactivateRedirect(): Promise<void> {
+    this.activatedBrowsingRules = null
+    this.activatedRedirectUrl = null
+  }
 }
 
 async function addBlockedDomain(wrapper: VueWrapper, domain: string) {
