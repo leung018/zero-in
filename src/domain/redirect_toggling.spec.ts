@@ -42,4 +42,28 @@ describe('RedirectTogglingService', () => {
     await redirectTogglingService.run(new Date('2025-02-03T17:01:00'))
     expect(websiteRedirectService.getActivatedRedirectRules()).toBeNull()
   })
+
+  it('should always activate redirect when weekly schedules are empty', async () => {
+    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
+    const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake()
+    browsingRulesStorageService.save(browsingRules)
+
+    const weeklyScheduleStorageService = WeeklyScheduleStorageServiceImpl.createFake()
+
+    const websiteRedirectService = new FakeWebsiteRedirectService()
+
+    const redirectTogglingService = RedirectTogglingService.createFake({
+      browsingRulesStorageService,
+      websiteRedirectService,
+      weeklyScheduleStorageService,
+      targetRedirectUrl: 'target-url'
+    })
+
+    await redirectTogglingService.run()
+
+    expect(websiteRedirectService.getActivatedRedirectRules()).toEqual({
+      browsingRules,
+      targetUrl: 'target-url'
+    })
+  })
 })

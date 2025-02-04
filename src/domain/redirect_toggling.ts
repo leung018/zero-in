@@ -75,5 +75,8 @@ export class RedirectTogglingService {
 }
 
 function isDateWithinSchedules(date: Date, schedules: ReadonlyArray<WeeklySchedule>) {
+  if (schedules.length === 0) {
+    return true
+  }
   return schedules.some((schedule) => schedule.isContain(date))
 }
