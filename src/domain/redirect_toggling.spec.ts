@@ -25,7 +25,7 @@ describe('RedirectTogglingService', () => {
 
     const websiteRedirectService = new FakeWebsiteRedirectService()
 
-    const redirectTogglingService = new RedirectTogglingService({
+    const redirectTogglingService = RedirectTogglingService.createFake({
       browsingRulesStorageService,
       websiteRedirectService,
       weeklyScheduleStorageService,
