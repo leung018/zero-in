@@ -1,12 +1,11 @@
-import { ChromeRedirectService } from '../chrome/redirect'
-import { BLOCKED_TEMPLATE_URL } from '../config'
-import { BrowsingRulesStorageServiceImpl } from '../domain/browsing_rules/storage'
+import { RedirectTogglingService } from '../domain/redirect_toggling'
 
-const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.create()
-const websiteRedirectService = new ChromeRedirectService()
+const redirectTogglingService = RedirectTogglingService.create()
 
-// FIXME: Below is to handle the case when the extension is disabled and than enabled again. Without this, the rules for redirection are not activated.
-// However, I cannot find a way to test this in the e2e tests and I only use manual testing for this.
-browsingRulesStorageService.get().then((browsingRules) => {
-  websiteRedirectService.activateRedirect(browsingRules, BLOCKED_TEMPLATE_URL)
+chrome.alarms.create('redirectRules', { periodInMinutes: 0.01 }) // TODO: Set it to 0.5 in production
+chrome.alarms.onAlarm.addListener((alarm) => {
+  console.log('Alarm triggered', alarm)
+  if (alarm.name === 'redirectRules') {
+    redirectTogglingService.run()
+  }
 })

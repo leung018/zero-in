@@ -13,6 +13,6 @@
     "service_worker": "src/service_workers/index.ts"
   },
   "options_page": "options.html",
-  "permissions": ["storage", "unlimitedStorage", "declarativeNetRequest"],
+  "permissions": ["storage", "unlimitedStorage", "declarativeNetRequest", "alarms"],
   "host_permissions": ["<all_urls>"]
 }

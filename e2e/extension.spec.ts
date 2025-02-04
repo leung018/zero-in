@@ -80,6 +80,34 @@ test('should able to persist blocked schedules and fetching them', async ({
   await expect(schedules.nth(0)).toContainText('10:00 - 12:00')
 })
 
+test('should able to disable block according to schedule', async ({ page, extensionId }) => {
+  await page.goto(`chrome-extension://${extensionId}/popup.html`)
+
+  await addBlockedDomain(page, 'google.com')
+
+  await page.route('https://google.com', async (route) => {
+    await route.fulfill({ body: 'This is fake google.com' })
+  })
+
+  await page.clock.install({ time: new Date('2025-02-03T11:59:30') }) // 2025-02-03 is Mon
+
+  await page.goto(`chrome-extension://${extensionId}/options.html`)
+
+  await page.getByTestId('check-weekday-Mon').check()
+
+  await page.getByTestId('start-time-hour-input').fill('10')
+  await page.getByTestId('start-time-minute-input').fill('00')
+
+  await page.getByTestId('end-time-hour-input').fill('12')
+  await page.getByTestId('end-time-minute-input').fill('00')
+
+  await page.getByTestId('add-button').click()
+
+  await page.clock.runFor('01:00')
+  await page.goto('https://google.com')
+  await assertNotInBlockedTemplate(page)
+})
+
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
   const addButton = page.getByTestId('add-button')
