@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { BrowsingRules } from './browsing_rules'
 import { BrowsingRulesStorageServiceImpl } from './browsing_rules/storage'
-import type { WebsiteRedirectService } from './browsing_rules/redirect'
+import { FakeWebsiteRedirectService } from './redirect'
 import { Weekday, WeeklySchedule } from './schedules'
 import { Time } from './schedules/time'
 import { WeeklyScheduleStorageServiceImpl } from './schedules/storage'
@@ -34,34 +34,12 @@ describe('RedirectTogglingService', () => {
 
     await redirectTogglingService.run(new Date('2025-02-03T11:00:00')) // 2025-02-03 is Mon
 
-    expect(websiteRedirectService.getActivatedBrowsingRules()).toEqual(browsingRules)
-    expect(websiteRedirectService.getActivatedRedirectUrl()).toBe('target-url')
+    expect(websiteRedirectService.getActivatedRedirectRules()).toEqual({
+      browsingRules,
+      targetUrl: 'target-url'
+    })
 
     await redirectTogglingService.run(new Date('2025-02-03T17:01:00'))
-    expect(websiteRedirectService.getActivatedBrowsingRules()).toBeNull()
-    expect(websiteRedirectService.getActivatedRedirectUrl()).toBeNull()
+    expect(websiteRedirectService.getActivatedRedirectRules()).toBeNull()
   })
 })
-
-class FakeWebsiteRedirectService implements WebsiteRedirectService {
-  private activatedBrowsingRules: BrowsingRules | null = null
-  private activatedRedirectUrl: string | null = null
-
-  async activateRedirect(browsingRules: BrowsingRules, targetUrl: string): Promise<void> {
-    this.activatedBrowsingRules = browsingRules
-    this.activatedRedirectUrl = targetUrl
-  }
-
-  getActivatedBrowsingRules(): BrowsingRules | null {
-    return this.activatedBrowsingRules
-  }
-
-  getActivatedRedirectUrl(): string | null {
-    return this.activatedRedirectUrl
-  }
-
-  async deactivateRedirect(): Promise<void> {
-    this.activatedBrowsingRules = null
-    this.activatedRedirectUrl = null
-  }
-}

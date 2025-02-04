@@ -1,4 +1,4 @@
-import type { WebsiteRedirectService } from './browsing_rules/redirect'
+import type { WebsiteRedirectService } from './redirect'
 import type { BrowsingRulesStorageService } from './browsing_rules/storage'
 import type { WeeklySchedule } from './schedules'
 import type { WeeklyScheduleStorageService } from './schedules/storage'

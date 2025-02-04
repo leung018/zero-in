@@ -1,5 +1,5 @@
 import type { BrowsingRules } from '../domain/browsing_rules'
-import type { WebsiteRedirectService } from '../domain/browsing_rules/redirect'
+import type { WebsiteRedirectService } from '../domain/redirect'
 
 export class ChromeRedirectService implements WebsiteRedirectService {
   async activateRedirect(browsingRules: BrowsingRules, targetUrl: string): Promise<void> {

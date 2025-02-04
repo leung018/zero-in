@@ -7,7 +7,7 @@ import {
 } from '../domain/browsing_rules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { BrowsingRules } from '../domain/browsing_rules'
-import type { WebsiteRedirectService } from '../domain/browsing_rules/redirect'
+import { FakeWebsiteRedirectService, type WebsiteRedirectService } from '../domain/redirect'
 
 describe('BlockedDomainsPage', () => {
   it('should render blocked domains', async () => {
@@ -93,10 +93,10 @@ describe('BlockedDomainsPage', () => {
     })
 
     await addBlockedDomain(wrapper, 'example.com')
-    expect(fakeWebsiteRedirectService.getActivatedBrowsingRules()?.blockedDomains).toEqual([
-      'example.com'
-    ])
-    expect(fakeWebsiteRedirectService.getActivatedRedirectUrl()).toBe('https://target.com')
+    expect(fakeWebsiteRedirectService.getActivatedRedirectRules()).toEqual({
+      browsingRules: new BrowsingRules({ blockedDomains: ['example.com'] }),
+      targetUrl: 'https://target.com'
+    })
   })
 
   it('should update activated redirect when domain is removed', async () => {
@@ -114,10 +114,10 @@ describe('BlockedDomainsPage', () => {
     await flushPromises()
 
     await removeBlockedDomain(wrapper, 'example.com')
-    expect(fakeWebsiteRedirectService.getActivatedBrowsingRules()?.blockedDomains).toEqual([
-      'facebook.com'
-    ])
-    expect(fakeWebsiteRedirectService.getActivatedRedirectUrl()).toBe('https://target.com')
+    expect(fakeWebsiteRedirectService.getActivatedRedirectRules()).toEqual({
+      browsingRules: new BrowsingRules({ blockedDomains: ['facebook.com'] }),
+      targetUrl: 'https://target.com'
+    })
   })
 })
 
@@ -135,29 +135,6 @@ function mountBlockedDomainsPage({
   })
 
   return { wrapper, browsingRulesStorageService }
-}
-
-class FakeWebsiteRedirectService implements WebsiteRedirectService {
-  private activatedBrowsingRules: BrowsingRules | null = null
-  private activatedRedirectUrl: string | null = null
-
-  async activateRedirect(browsingRules: BrowsingRules, targetUrl: string): Promise<void> {
-    this.activatedBrowsingRules = browsingRules
-    this.activatedRedirectUrl = targetUrl
-  }
-
-  getActivatedBrowsingRules(): BrowsingRules | null {
-    return this.activatedBrowsingRules
-  }
-
-  getActivatedRedirectUrl(): string | null {
-    return this.activatedRedirectUrl
-  }
-
-  async deactivateRedirect(): Promise<void> {
-    this.activatedBrowsingRules = null
-    this.activatedRedirectUrl = null
-  }
 }
 
 async function addBlockedDomain(wrapper: VueWrapper, domain: string) {
