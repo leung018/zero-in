@@ -9,6 +9,7 @@ import {
   type WeeklyScheduleStorageService
 } from './schedules/storage'
 import { ChromeRedirectService } from '../chrome/redirect'
+import config from '../config'
 
 export class RedirectTogglingService {
   private websiteRedirectService: WebsiteRedirectService
@@ -21,7 +22,7 @@ export class RedirectTogglingService {
       websiteRedirectService: new ChromeRedirectService(),
       browsingRulesStorageService: BrowsingRulesStorageServiceImpl.create(),
       weeklyScheduleStorageService: WeeklyScheduleStorageServiceImpl.create(),
-      targetRedirectUrl: 'TODO' // TODO
+      targetRedirectUrl: config.getBlockedTemplateUrl()
     })
   }
 

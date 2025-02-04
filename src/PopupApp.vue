@@ -2,7 +2,7 @@
 import { ChromeRedirectService } from './chrome/redirect'
 import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
 import { BrowsingRulesStorageServiceImpl } from './domain/browsing_rules/storage'
-import { BLOCKED_TEMPLATE_URL } from './config'
+import config from './config'
 const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.create()
 const websiteRedirectService = new ChromeRedirectService()
 </script>
@@ -12,7 +12,7 @@ const websiteRedirectService = new ChromeRedirectService()
     <BlockedDomainsPage
       :browsingRulesStorageService="browsingRulesStorageService"
       :websiteRedirectService="websiteRedirectService"
-      :targetRedirectUrl="BLOCKED_TEMPLATE_URL"
+      :targetRedirectUrl="config.getBlockedTemplateUrl()"
     />
   </main>
 </template>
