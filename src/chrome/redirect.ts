@@ -1,6 +1,8 @@
 import type { BrowsingRules } from '../domain/browsing_rules'
 import type { WebsiteRedirectService } from '../domain/redirect'
 
+const REDIRECT_RULE_ID = 1
+
 export class ChromeRedirectService implements WebsiteRedirectService {
   async activateRedirect(browsingRules: BrowsingRules, targetUrl: string): Promise<void> {
     // May make more sense to chain the promise of redirectAllActiveTabs after redirectFutureRequests.
@@ -13,7 +15,7 @@ export class ChromeRedirectService implements WebsiteRedirectService {
 
   async deactivateRedirect(): Promise<void> {
     return chrome.declarativeNetRequest.updateDynamicRules({
-      removeRuleIds: [1]
+      removeRuleIds: [REDIRECT_RULE_ID]
     })
   }
 
@@ -22,7 +24,7 @@ export class ChromeRedirectService implements WebsiteRedirectService {
     targetUrl: string
   ): Promise<void> {
     const rule: chrome.declarativeNetRequest.Rule = {
-      id: 1,
+      id: REDIRECT_RULE_ID,
       priority: 1,
       action: {
         type: 'redirect',
