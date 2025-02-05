@@ -8,6 +8,7 @@ import {
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { BrowsingRules } from '../domain/browsing_rules'
 import { FakeWebsiteRedirectService, type WebsiteRedirectService } from '../domain/redirect'
+import { RedirectTogglingService } from '../domain/redirect_toggling'
 
 describe('BlockedDomainsPage', () => {
   it('should render blocked domains', async () => {
@@ -130,8 +131,13 @@ function mountBlockedDomainsPage({
   websiteRedirectService?: WebsiteRedirectService
   targetRedirectUrl?: string
 } = {}) {
+  const redirectTogglingService = RedirectTogglingService.createFake({
+    browsingRulesStorageService,
+    websiteRedirectService,
+    targetRedirectUrl
+  })
   const wrapper = mount(BlockedDomainsPage, {
-    props: { browsingRulesStorageService, websiteRedirectService, targetRedirectUrl }
+    props: { redirectTogglingService }
   })
 
   return { wrapper, browsingRulesStorageService }

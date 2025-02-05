@@ -2,18 +2,18 @@
 import { onMounted, ref } from 'vue'
 import type { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { BrowsingRules } from '../domain/browsing_rules'
-import type { WebsiteRedirectService } from '@/domain/redirect'
+import { RedirectTogglingService } from '../domain/redirect_toggling'
 
 const props = defineProps<{
-  browsingRulesStorageService: BrowsingRulesStorageService
-  websiteRedirectService: WebsiteRedirectService
-  targetRedirectUrl: string
+  redirectTogglingService: RedirectTogglingService
 }>()
+const browsingRulesStorageService: BrowsingRulesStorageService =
+  props.redirectTogglingService.browsingRulesStorageService
 const blockedDomains = ref<ReadonlyArray<string>>([])
 const newDomain = ref<string>('')
 
 onMounted(async () => {
-  blockedDomains.value = (await props.browsingRulesStorageService.get()).blockedDomains
+  blockedDomains.value = (await browsingRulesStorageService.get()).blockedDomains
 })
 
 async function onClickAdd() {
@@ -35,8 +35,8 @@ async function onClickRemove(domain: string) {
 }
 
 async function updateBrowsingRules(browsingRules: BrowsingRules) {
-  await props.browsingRulesStorageService.save(browsingRules)
-  await props.websiteRedirectService.activateRedirect(browsingRules, props.targetRedirectUrl)
+  await browsingRulesStorageService.save(browsingRules)
+  await props.redirectTogglingService.run()
   blockedDomains.value = browsingRules.blockedDomains
 }
 </script>

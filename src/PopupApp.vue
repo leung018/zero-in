@@ -1,18 +1,11 @@
 <script setup lang="ts">
-import { ChromeRedirectService } from './chrome/redirect'
+import { RedirectTogglingService } from './domain/redirect_toggling'
 import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
-import { BrowsingRulesStorageServiceImpl } from './domain/browsing_rules/storage'
-import config from './config'
-const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.create()
-const websiteRedirectService = new ChromeRedirectService()
+const redirectTogglingService = RedirectTogglingService.create()
 </script>
 
 <template>
   <main class="p-4">
-    <BlockedDomainsPage
-      :browsingRulesStorageService="browsingRulesStorageService"
-      :websiteRedirectService="websiteRedirectService"
-      :targetRedirectUrl="config.getBlockedTemplateUrl()"
-    />
+    <BlockedDomainsPage :redirectTogglingService="redirectTogglingService" />
   </main>
 </template>

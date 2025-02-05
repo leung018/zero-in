@@ -12,9 +12,9 @@ import { ChromeRedirectService } from '../chrome/redirect'
 import config from '../config'
 
 export class RedirectTogglingService {
-  private websiteRedirectService: WebsiteRedirectService
-  private browsingRulesStorageService: BrowsingRulesStorageService
-  private weeklyScheduleStorageService: WeeklyScheduleStorageService
+  readonly websiteRedirectService: WebsiteRedirectService
+  readonly browsingRulesStorageService: BrowsingRulesStorageService
+  readonly weeklyScheduleStorageService: WeeklyScheduleStorageService
   private readonly targetRedirectUrl: string
 
   static create() {
