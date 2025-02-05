@@ -89,21 +89,34 @@ test('should able to disable block according to schedule', async ({ page, extens
     await route.fulfill({ body: 'This is fake google.com' })
   })
 
-  await page.clock.install({ time: new Date('2025-02-03T11:59:30') }) // 2025-02-03 is Mon
+  let startHours: number
+  let endHours: number
+  // FIXME: I can't find a way to mock the time in the test. Clock in playwright doesn't modify the time in service worker.
+  // i.e. I choose to compute hours so that current time must not be in the schedule.
+  // eslint-disable-next-line playwright/no-conditional-in-test
+  if (new Date().getHours() >= 21) {
+    startHours = 1
+    endHours = 2
+  } else {
+    startHours = new Date().getHours() + 2
+    endHours = new Date().getHours() + 3
+  }
 
   await page.goto(`chrome-extension://${extensionId}/options.html`)
 
   await page.getByTestId('check-weekday-Mon').check()
 
-  await page.getByTestId('start-time-hour-input').fill('10')
+  await page.getByTestId('start-time-hour-input').fill(startHours.toString())
   await page.getByTestId('start-time-minute-input').fill('00')
 
-  await page.getByTestId('end-time-hour-input').fill('12')
+  await page.getByTestId('end-time-hour-input').fill(endHours.toString())
   await page.getByTestId('end-time-minute-input').fill('00')
 
   await page.getByTestId('add-button').click()
 
-  await page.clock.runFor('01:00')
+  await fireChromeAlarm(page, 'redirectRules')
+  await sleep(100) // FIXME: No explicit way to wait the alarm listener finish its job. So do this hack here.
+
   await page.goto('https://google.com')
   await assertNotInBlockedTemplate(page)
 })
@@ -129,4 +142,22 @@ async function assertInBlockedTemplate(page: Page) {
 
 async function assertNotInBlockedTemplate(page: Page) {
   await expect(page.locator('body')).not.toContainText(TEXT_IN_BLOCKED_TEMPLATE)
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
+}
+
+// Using clock api cannot control the chrome.alarms, so I use this function to fire the alarm.
+async function fireChromeAlarm(page: Page, alarmName: string) {
+  await page.evaluate(
+    async ([alarmName]) => {
+      await chrome.alarms.create(alarmName, {
+        when: Date.now()
+      })
+    },
+    [alarmName]
+  )
 }
