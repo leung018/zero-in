@@ -5,12 +5,11 @@ const REDIRECT_RULE_ID = 1
 
 export class ChromeRedirectService implements WebsiteRedirectService {
   async activateRedirect(browsingRules: BrowsingRules, targetUrl: string): Promise<void> {
-    // May make more sense to chain the promise of redirectAllActiveTabs after redirectFutureRequests.
-    // However, it has bug when promise that involved chrome.updateDynamicRules is called first before another chained promise. The redirectAllActiveTabs cannot be triggered sometimes in that case.
-
-    return this.redirectAllActiveTabs(browsingRules, targetUrl).then(() => {
-      return this.redirectFutureRequests(browsingRules, targetUrl)
-    })
+    const promises = [
+      this.redirectAllActiveTabs(browsingRules, targetUrl),
+      this.redirectFutureRequests(browsingRules, targetUrl)
+    ]
+    await Promise.all(promises)
   }
 
   async deactivateRedirect(): Promise<void> {
