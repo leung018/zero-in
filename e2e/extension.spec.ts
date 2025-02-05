@@ -114,7 +114,7 @@ test('should able to disable block according to schedule', async ({ page, extens
 
   await page.getByTestId('add-button').click()
 
-  await fireChromeAlarm(page, 'redirectRules')
+  await fireChromeAlarm(page, 'toggleRedirectRules')
   await sleep(100) // FIXME: No explicit way to wait the alarm listener finish its job. So do this hack here.
 
   await page.goto('https://google.com')
