@@ -80,7 +80,7 @@ test('should able to persist blocked schedules and fetching them', async ({
   await expect(schedules.nth(0)).toContainText('10:00 - 12:00')
 })
 
-test('should able to disable block according to schedule', async ({ page, extensionId }) => {
+test('should able to disable blocking according to schedule', async ({ page, extensionId }) => {
   await page.goto(`chrome-extension://${extensionId}/popup.html`)
 
   await addBlockedDomain(page, 'google.com')
@@ -93,13 +93,14 @@ test('should able to disable block according to schedule', async ({ page, extens
   let endHours: number
   // FIXME: I can't find a way to mock the time in the test. Clock in playwright doesn't modify the time in service worker.
   // i.e. I choose to compute hours so that current time must not be in the schedule.
+  const now = new Date()
   // eslint-disable-next-line playwright/no-conditional-in-test
-  if (new Date().getHours() >= 21) {
+  if (now.getHours() >= 21) {
     startHours = 1
     endHours = 2
   } else {
-    startHours = new Date().getHours() + 2
-    endHours = new Date().getHours() + 3
+    startHours = now.getHours() + 2
+    endHours = now.getHours() + 3
   }
 
   await page.goto(`chrome-extension://${extensionId}/options.html`)
