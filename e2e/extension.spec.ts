@@ -80,6 +80,48 @@ test('should able to persist blocked schedules and fetching them', async ({
   await expect(schedules.nth(0)).toContainText('10:00 - 12:00')
 })
 
+test('should able to disable blocking according to schedule', async ({ page, extensionId }) => {
+  await page.goto(`chrome-extension://${extensionId}/popup.html`)
+
+  await addBlockedDomain(page, 'google.com')
+
+  await page.route('https://google.com', async (route) => {
+    await route.fulfill({ body: 'This is fake google.com' })
+  })
+
+  let startHours: number
+  let endHours: number
+  // FIXME: I can't find a way to mock the time in the test. Clock in playwright doesn't modify the time in service worker.
+  // i.e. I choose to compute hours so that current time must not be in the schedule.
+  const now = new Date()
+  // eslint-disable-next-line playwright/no-conditional-in-test
+  if (now.getHours() >= 21) {
+    startHours = 1
+    endHours = 2
+  } else {
+    startHours = now.getHours() + 2
+    endHours = now.getHours() + 3
+  }
+
+  await page.goto(`chrome-extension://${extensionId}/options.html`)
+
+  await page.getByTestId('check-weekday-Mon').check()
+
+  await page.getByTestId('start-time-hour-input').fill(startHours.toString())
+  await page.getByTestId('start-time-minute-input').fill('00')
+
+  await page.getByTestId('end-time-hour-input').fill(endHours.toString())
+  await page.getByTestId('end-time-minute-input').fill('00')
+
+  await page.getByTestId('add-button').click()
+
+  await fireChromeAlarm(page, 'toggleRedirectRules')
+  await sleep(100) // FIXME: No explicit way to wait the alarm listener finish its job. So do this hack here.
+
+  await page.goto('https://google.com')
+  await assertNotInBlockedTemplate(page)
+})
+
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
   const addButton = page.getByTestId('add-button')
@@ -101,4 +143,22 @@ async function assertInBlockedTemplate(page: Page) {
 
 async function assertNotInBlockedTemplate(page: Page) {
   await expect(page.locator('body')).not.toContainText(TEXT_IN_BLOCKED_TEMPLATE)
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
+}
+
+// Using clock api cannot control the chrome.alarms, so I use this function to fire the alarm.
+async function fireChromeAlarm(page: Page, alarmName: string) {
+  await page.evaluate(
+    async ([alarmName]) => {
+      await chrome.alarms.create(alarmName, {
+        when: Date.now()
+      })
+    },
+    [alarmName]
+  )
 }

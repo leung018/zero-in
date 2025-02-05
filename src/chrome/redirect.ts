@@ -1,5 +1,7 @@
 import type { BrowsingRules } from '../domain/browsing_rules'
-import type { WebsiteRedirectService } from '../domain/browsing_rules/redirect'
+import type { WebsiteRedirectService } from '../domain/redirect'
+
+const REDIRECT_RULE_ID = 1
 
 export class ChromeRedirectService implements WebsiteRedirectService {
   async activateRedirect(browsingRules: BrowsingRules, targetUrl: string): Promise<void> {
@@ -11,12 +13,18 @@ export class ChromeRedirectService implements WebsiteRedirectService {
     })
   }
 
+  async deactivateRedirect(): Promise<void> {
+    return chrome.declarativeNetRequest.updateDynamicRules({
+      removeRuleIds: [REDIRECT_RULE_ID]
+    })
+  }
+
   private async redirectFutureRequests(
     browsingRules: BrowsingRules,
     targetUrl: string
   ): Promise<void> {
     const rule: chrome.declarativeNetRequest.Rule = {
-      id: 1,
+      id: REDIRECT_RULE_ID,
       priority: 1,
       action: {
         type: 'redirect',
@@ -41,6 +49,7 @@ export class ChromeRedirectService implements WebsiteRedirectService {
     targetUrl: string
   ): Promise<void> {
     const tabs = await this.queryAllTabs()
+    const promises: Promise<unknown>[] = []
     tabs.forEach((tab) => {
       if (tab && tab.url && tab.id) {
         const url = new URL(tab.url)
@@ -48,13 +57,17 @@ export class ChromeRedirectService implements WebsiteRedirectService {
         for (const domain of browsingRules.blockedDomains) {
           // FIXME: This is not a good way to check the domain. It should be more strict.
           if (url.hostname.includes(domain)) {
-            chrome.tabs.update(tab.id, {
-              url: targetUrl
-            })
+            promises.push(
+              chrome.tabs.update(tab.id, {
+                url: targetUrl
+              })
+            )
           }
         }
       }
     })
+
+    await Promise.all(promises)
   }
 
   private async queryAllTabs() {

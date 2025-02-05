@@ -1,1 +1,7 @@
-export const BLOCKED_TEMPLATE_URL = chrome.runtime.getURL('blocked.html')
+const getBlockedTemplateUrl = () => {
+  return chrome.runtime.getURL('blocked.html')
+}
+
+export default {
+  getBlockedTemplateUrl
+}
