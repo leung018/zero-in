@@ -49,6 +49,7 @@ export class ChromeRedirectService implements WebsiteRedirectService {
     targetUrl: string
   ): Promise<void> {
     const tabs = await this.queryAllTabs()
+    const promises: Promise<unknown>[] = []
     tabs.forEach((tab) => {
       if (tab && tab.url && tab.id) {
         const url = new URL(tab.url)
@@ -56,13 +57,17 @@ export class ChromeRedirectService implements WebsiteRedirectService {
         for (const domain of browsingRules.blockedDomains) {
           // FIXME: This is not a good way to check the domain. It should be more strict.
           if (url.hostname.includes(domain)) {
-            chrome.tabs.update(tab.id, {
-              url: targetUrl
-            })
+            promises.push(
+              chrome.tabs.update(tab.id, {
+                url: targetUrl
+              })
+            )
           }
         }
       }
     })
+
+    await Promise.all(promises)
   }
 
   private async queryAllTabs() {
