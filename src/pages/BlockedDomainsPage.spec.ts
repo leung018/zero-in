@@ -89,9 +89,7 @@ describe('BlockedDomainsPage', () => {
   })
 
   it('should update activated redirect when domain is added', async () => {
-    const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
-    const { wrapper } = mountBlockedDomainsPage({
-      websiteRedirectService: fakeWebsiteRedirectService,
+    const { fakeWebsiteRedirectService, wrapper } = mountBlockedDomainsPage({
       targetRedirectUrl: 'https://target.com'
     })
 
@@ -103,15 +101,13 @@ describe('BlockedDomainsPage', () => {
   })
 
   it('should update activated redirect when domain is removed', async () => {
-    const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
     const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake()
     await browsingRulesStorageService.save(
       new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
 
-    const { wrapper } = mountBlockedDomainsPage({
+    const { wrapper, fakeWebsiteRedirectService } = mountBlockedDomainsPage({
       browsingRulesStorageService,
-      websiteRedirectService: fakeWebsiteRedirectService,
       targetRedirectUrl: 'https://target.com'
     })
     await flushPromises()
@@ -126,16 +122,15 @@ describe('BlockedDomainsPage', () => {
 
 function mountBlockedDomainsPage({
   browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake(),
-  websiteRedirectService = new FakeWebsiteRedirectService(),
   targetRedirectUrl = 'https://example.com'
 }: {
   browsingRulesStorageService?: BrowsingRulesStorageService
-  websiteRedirectService?: WebsiteRedirectService
   targetRedirectUrl?: string
 } = {}) {
+  const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
   const redirectTogglingService = RedirectTogglingService.createFake({
     browsingRulesStorageService,
-    websiteRedirectService,
+    websiteRedirectService: fakeWebsiteRedirectService,
     targetRedirectUrl
   })
   const chromeMessenger = ChromeMessenger.createFake()
@@ -147,7 +142,7 @@ function mountBlockedDomainsPage({
     props: { browsingRulesStorageService, chromeMessenger }
   })
 
-  return { wrapper, browsingRulesStorageService }
+  return { wrapper, browsingRulesStorageService, fakeWebsiteRedirectService }
 }
 
 async function addBlockedDomain(wrapper: VueWrapper, domain: string) {
