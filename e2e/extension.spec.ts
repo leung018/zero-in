@@ -36,8 +36,7 @@ test('should able to add blocked domains and block them', async ({ page, extensi
   await assertInBlockedTemplate(extraPage)
 
   // Future request to google.com should be blocked
-  await page.goto('https://google.com')
-  await assertInBlockedTemplate(page)
+  await assertGoToBlockedTemplate(extraPage, 'https://google.com')
 })
 
 test('should able to remove all blocked domains and unblock them', async ({
@@ -52,8 +51,7 @@ test('should able to remove all blocked domains and unblock them', async ({
   await page.route('https://google.com', async (route) => {
     await route.fulfill({ body: 'This is fake google.com' })
   })
-  await page.goto('https://google.com')
-  await assertNotInBlockedTemplate(page)
+  await assertNotGoToBlockedTemplate(page, 'https://google.com')
 })
 
 test('should able to persist blocked schedules and fetching them', async ({
@@ -116,10 +114,8 @@ test('should able to disable blocking according to schedule', async ({ page, ext
   await page.getByTestId('add-button').click()
 
   await fireChromeAlarm(page, 'toggleRedirectRules')
-  await sleep(100) // FIXME: No explicit way to wait the alarm listener finish its job. So do this hack here.
 
-  await page.goto('https://google.com')
-  await assertNotInBlockedTemplate(page)
+  await assertNotGoToBlockedTemplate(page, 'https://google.com')
 })
 
 async function addBlockedDomain(page: Page, domain: string) {
@@ -141,8 +137,40 @@ async function assertInBlockedTemplate(page: Page) {
   await expect(page.locator('body')).toContainText(TEXT_IN_BLOCKED_TEMPLATE)
 }
 
-async function assertNotInBlockedTemplate(page: Page) {
-  await expect(page.locator('body')).not.toContainText(TEXT_IN_BLOCKED_TEMPLATE)
+async function assertGoToBlockedTemplate(
+  page: Page,
+  targetUrl: string,
+  retryCount = 3,
+  intervalMs = 100
+) {
+  await page.goto(targetUrl)
+  try {
+    expect(await page.locator('body').textContent()).toContain(TEXT_IN_BLOCKED_TEMPLATE)
+  } catch (Exception) {
+    if (retryCount <= 0) {
+      throw Exception
+    }
+    await sleep(intervalMs)
+    return assertGoToBlockedTemplate(page, targetUrl, retryCount - 1, intervalMs)
+  }
+}
+
+async function assertNotGoToBlockedTemplate(
+  page: Page,
+  targetUrl: string,
+  retryCount = 3,
+  intervalMs = 100
+) {
+  await page.goto(targetUrl)
+  try {
+    expect(await page.locator('body').textContent()).not.toContain(TEXT_IN_BLOCKED_TEMPLATE)
+  } catch (Exception) {
+    if (retryCount <= 0) {
+      throw Exception
+    }
+    await sleep(intervalMs)
+    return assertNotGoToBlockedTemplate(page, targetUrl, retryCount - 1, intervalMs)
+  }
 }
 
 function sleep(ms: number) {
