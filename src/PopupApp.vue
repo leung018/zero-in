@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { RedirectTogglingService } from './domain/redirect_toggling'
+import { ChromeMessenger } from './chrome/messenger'
+import { BrowsingRulesStorageServiceImpl } from './domain/browsing_rules/storage'
 import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
-const redirectTogglingService = RedirectTogglingService.create()
 </script>
 
 <template>
   <main class="p-4">
-    <BlockedDomainsPage :redirectTogglingService="redirectTogglingService" />
+    <BlockedDomainsPage
+      :browsingRulesStorageService="BrowsingRulesStorageServiceImpl.create()"
+      :chromeMessenger="ChromeMessenger.create()"
+    />
   </main>
 </template>

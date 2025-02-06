@@ -2,13 +2,14 @@
 import { onMounted, ref } from 'vue'
 import type { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { BrowsingRules } from '../domain/browsing_rules'
-import { RedirectTogglingService } from '../domain/redirect_toggling'
+import type { ChromeMessenger } from '../chrome/messenger'
+import { EventName } from '../event'
 
-const props = defineProps<{
-  redirectTogglingService: RedirectTogglingService
+const { browsingRulesStorageService, chromeMessenger } = defineProps<{
+  chromeMessenger: ChromeMessenger
+  browsingRulesStorageService: BrowsingRulesStorageService
 }>()
-const browsingRulesStorageService: BrowsingRulesStorageService =
-  props.redirectTogglingService.browsingRulesStorageService
+
 const blockedDomains = ref<ReadonlyArray<string>>([])
 const newDomain = ref<string>('')
 
@@ -36,7 +37,7 @@ async function onClickRemove(domain: string) {
 
 async function updateBrowsingRules(browsingRules: BrowsingRules) {
   await browsingRulesStorageService.save(browsingRules)
-  await props.redirectTogglingService.run()
+  await chromeMessenger.send({ name: EventName.TOGGLE_REDIRECT_RULES })
   blockedDomains.value = browsingRules.blockedDomains
 }
 </script>

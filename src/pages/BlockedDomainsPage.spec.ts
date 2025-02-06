@@ -9,6 +9,8 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { BrowsingRules } from '../domain/browsing_rules'
 import { FakeWebsiteRedirectService, type WebsiteRedirectService } from '../domain/redirect'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
+import { MessageListenersInitializer } from '../initializer'
+import { ChromeMessenger } from '../chrome/messenger'
 
 describe('BlockedDomainsPage', () => {
   it('should render blocked domains', async () => {
@@ -136,8 +138,13 @@ function mountBlockedDomainsPage({
     websiteRedirectService,
     targetRedirectUrl
   })
+  const chromeMessenger = ChromeMessenger.createFake()
+  MessageListenersInitializer.initFakeListeners({
+    redirectTogglingService,
+    chromeMessenger
+  })
   const wrapper = mount(BlockedDomainsPage, {
-    props: { redirectTogglingService }
+    props: { browsingRulesStorageService, chromeMessenger }
   })
 
   return { wrapper, browsingRulesStorageService }
