@@ -67,7 +67,7 @@ export class RedirectTogglingService {
 
     if (isDateWithinSchedules(currentTime, schedules)) {
       return this.browsingRulesStorageService.get().then((browsingRules) => {
-        this.websiteRedirectService.activateRedirect(browsingRules, this.targetRedirectUrl)
+        return this.websiteRedirectService.activateRedirect(browsingRules, this.targetRedirectUrl)
       })
     }
 
