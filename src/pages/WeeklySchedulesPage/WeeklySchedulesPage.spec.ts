@@ -1,15 +1,27 @@
-import { describe, expect, it } from 'vitest'
-import {
-  WeeklyScheduleStorageServiceImpl,
-  type WeeklyScheduleStorageService
-} from '../../domain/schedules/storage'
+import { describe, expect, it, vi } from 'vitest'
+import { WeeklyScheduleStorageServiceImpl } from '../../domain/schedules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 
 import WeeklySchedulesPage from './index.vue'
 import { Weekday, WeeklySchedule } from '../../domain/schedules'
 import { Time } from '../../domain/schedules/time'
+import { FakeWebsiteRedirectService } from '../../domain/redirect'
+import { BrowsingRulesStorageServiceImpl } from '../../domain/browsing_rules/storage'
+import { BrowsingRules } from '../../domain/browsing_rules'
+import { afterEach, beforeEach } from 'node:test'
+import { ChromeMessenger } from '../../chrome/messenger'
+import { MessageListenersInitializer } from '../../initializer'
+import { RedirectTogglingService } from '../../domain/redirect_toggling'
 
 describe('WeeklySchedulesPage', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should render weekday checkboxes properly', () => {
     // Add this test because it is easy to make mistake when dealing with Weekday enum
 
@@ -208,19 +220,67 @@ describe('WeeklySchedulesPage', () => {
     ])
     expect(await weeklyScheduleStorageService.getAll()).toEqual([originalSchedule])
   })
+
+  it('should add or remove schedule affect the activated redirect', async () => {
+    vi.setSystemTime(new Date('2025-02-03T11:00:00')) // 2025-02-03 is Monday
+
+    const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake()
+    await browsingRulesStorageService.save(new BrowsingRules({ blockedDomains: ['google.com'] }))
+    const { wrapper, fakeWebsiteRedirectService } = mountWeeklySchedulesPage({
+      browsingRulesStorageService,
+      targetRedirectUrl: 'https://google.com'
+    })
+
+    await addWeeklySchedule(wrapper, {
+      weekdaySet: new Set([Weekday.Mon]),
+      startTime: { hour: 10, minute: 30 },
+      endTime: { hour: 12, minute: 0 }
+    })
+    await addWeeklySchedule(wrapper, {
+      weekdaySet: new Set([Weekday.Tue]),
+      startTime: { hour: 10, minute: 30 },
+      endTime: { hour: 12, minute: 0 }
+    })
+
+    expect(fakeWebsiteRedirectService.getActivatedRedirectRules()).toEqual({
+      browsingRules: new BrowsingRules({ blockedDomains: ['google.com'] }),
+      targetUrl: 'https://google.com'
+    })
+
+    const removeButton = wrapper.find(`[data-test='remove-schedule-with-index-0']`) // Remove Monday
+    await removeButton.trigger('click')
+    await flushPromises()
+
+    await expect(fakeWebsiteRedirectService.getActivatedRedirectRules()).toBeNull()
+  })
 })
 
 function mountWeeklySchedulesPage({
-  weeklyScheduleStorageService = WeeklyScheduleStorageServiceImpl.createFake()
-}: {
-  weeklyScheduleStorageService?: WeeklyScheduleStorageService
+  weeklyScheduleStorageService = WeeklyScheduleStorageServiceImpl.createFake(),
+  browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake(),
+  targetRedirectUrl = 'https://example.com'
 } = {}) {
+  const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
+
+  const redirectTogglingService = RedirectTogglingService.createFake({
+    browsingRulesStorageService,
+    weeklyScheduleStorageService,
+    websiteRedirectService: fakeWebsiteRedirectService,
+    targetRedirectUrl
+  })
+
+  const chromeMessenger = ChromeMessenger.createFake()
+  MessageListenersInitializer.initFakeListeners({
+    redirectTogglingService,
+    chromeMessenger
+  })
   const wrapper = mount(WeeklySchedulesPage, {
-    props: { weeklyScheduleStorageService }
+    props: { weeklyScheduleStorageService, chromeMessenger }
   })
   return {
     wrapper,
-    weeklyScheduleStorageService
+    weeklyScheduleStorageService,
+    fakeWebsiteRedirectService
   }
 }
 

@@ -6,9 +6,12 @@ import { Time } from '../../domain/schedules/time'
 import TimeInput from './TimeInput.vue'
 import WeekdaysSelector from './WeekdaysSelector.vue'
 import SchedulesList from './SchedulesList.vue'
+import type { ChromeMessenger } from '../../chrome/messenger'
+import { EventName } from '../../event'
 
-const props = defineProps<{
+const { weeklyScheduleStorageService, chromeMessenger } = defineProps<{
   weeklyScheduleStorageService: WeeklyScheduleStorageService
+  chromeMessenger: ChromeMessenger
 }>()
 
 const newStartTime = ref<Time>(new Time(0, 0))
@@ -21,7 +24,7 @@ const weeklySchedules = ref<WeeklySchedule[]>([])
 const errorMessage = ref<string | null>(null)
 
 onMounted(async () => {
-  weeklySchedules.value = await props.weeklyScheduleStorageService.getAll()
+  weeklySchedules.value = await weeklyScheduleStorageService.getAll()
 })
 
 const onClickAdd = async () => {
@@ -53,7 +56,8 @@ const handleRemove = async (indexToRemove: number) => {
 }
 
 const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
-  await props.weeklyScheduleStorageService.saveAll(newWeeklySchedules)
+  await weeklyScheduleStorageService.saveAll(newWeeklySchedules)
+  await chromeMessenger.send({ name: EventName.TOGGLE_REDIRECT_RULES })
   weeklySchedules.value = newWeeklySchedules
 }
 </script>
