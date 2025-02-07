@@ -1,4 +1,4 @@
-import { ChromeLocalStorageWrapper } from '../../chrome/local_storage'
+import { ChromeLocalStorageFactory, type StorageHandler } from '../../chrome/local_storage'
 import { Weekday, WeeklySchedule } from '.'
 import { Time } from './time'
 
@@ -9,27 +9,29 @@ export interface WeeklyScheduleStorageService {
 
 export class WeeklyScheduleStorageServiceImpl implements WeeklyScheduleStorageService {
   static createFake(): WeeklyScheduleStorageServiceImpl {
-    return new WeeklyScheduleStorageServiceImpl(ChromeLocalStorageWrapper.createFake())
+    return new WeeklyScheduleStorageServiceImpl(
+      ChromeLocalStorageFactory.createFakeStorageHandler()
+    )
   }
 
   static create(): WeeklyScheduleStorageServiceImpl {
-    return new WeeklyScheduleStorageServiceImpl(ChromeLocalStorageWrapper.create())
+    return new WeeklyScheduleStorageServiceImpl(ChromeLocalStorageFactory.createStorageHandler())
   }
 
-  private storageWrapper: ChromeLocalStorageWrapper
+  private storageHandler: StorageHandler
 
-  private constructor(chromeLocalStorageWrapper: ChromeLocalStorageWrapper) {
-    this.storageWrapper = chromeLocalStorageWrapper
+  private constructor(storageHandler: StorageHandler) {
+    this.storageHandler = storageHandler
   }
 
   async saveAll(weeklySchedules: WeeklySchedule[]): Promise<void> {
-    return this.storageWrapper.set({
+    return this.storageHandler.set({
       weeklySchedules: weeklySchedules.map(serializeWeeklySchedule)
     })
   }
 
   async getAll(): Promise<WeeklySchedule[]> {
-    return this.storageWrapper.get('weeklySchedules').then((result: any) => {
+    return this.storageHandler.get('weeklySchedules').then((result: any) => {
       if (result.weeklySchedules) {
         return result.weeklySchedules.map(deserializeWeeklySchedule)
       }
