@@ -37,7 +37,7 @@ const formatTime = (Time: Time) => {
         :data-test="`remove-schedule-with-index-${index}`"
         @click="emit('remove', index)"
       >
-        <IMdiCrossCircleOutline />
+        X
       </button>
     </li>
   </ul>
