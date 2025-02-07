@@ -138,8 +138,6 @@ test('should able to disable blocking according to schedule', async ({ page, ext
 
   await page.getByTestId('add-button').click()
 
-  await fireChromeAlarm(page, 'toggleRedirectRules')
-
   await assertNotGoToBlockedTemplate(page, 'https://google.com')
 })
 
@@ -202,16 +200,4 @@ function sleep(ms: number) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms)
   })
-}
-
-// Using clock api cannot control the chrome.alarms, so I use this function to fire the alarm.
-async function fireChromeAlarm(page: Page, alarmName: string) {
-  await page.evaluate(
-    async ([alarmName]) => {
-      await chrome.alarms.create(alarmName, {
-        when: Date.now()
-      })
-    },
-    [alarmName]
-  )
 }
