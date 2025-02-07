@@ -1,10 +1,10 @@
-import { ChromeMessenger } from './chrome/messenger'
+import { type Messenger, MessengerFactory } from './chrome/messenger'
 import { RedirectTogglingService } from './domain/redirect_toggling'
 import { EventName } from './event'
 
 export class MessageListenersInitializer {
   redirectTogglingService: RedirectTogglingService
-  chromeMessenger: ChromeMessenger
+  messenger: Messenger
 
   static initListeners({
     redirectTogglingService
@@ -13,33 +13,33 @@ export class MessageListenersInitializer {
   }) {
     new MessageListenersInitializer({
       redirectTogglingService,
-      chromeMessenger: ChromeMessenger.create()
+      messenger: MessengerFactory.createMessenger()
     }).initListeners()
   }
 
   static initFakeListeners({
     redirectTogglingService = RedirectTogglingService.createFake(),
-    chromeMessenger = ChromeMessenger.createFake()
+    messenger = MessengerFactory.createFakeMessenger()
   } = {}) {
     new MessageListenersInitializer({
       redirectTogglingService,
-      chromeMessenger
+      messenger
     }).initListeners()
   }
 
   private constructor({
     redirectTogglingService,
-    chromeMessenger
+    messenger
   }: {
     redirectTogglingService: RedirectTogglingService
-    chromeMessenger: ChromeMessenger
+    messenger: Messenger
   }) {
     this.redirectTogglingService = redirectTogglingService
-    this.chromeMessenger = chromeMessenger
+    this.messenger = messenger
   }
 
   private initListeners() {
-    this.chromeMessenger.addListener((message, sendResponse) => {
+    this.messenger.addListener((message, sendResponse) => {
       if (message.name == EventName.TOGGLE_REDIRECT_RULES) {
         this.redirectTogglingService.run().then(() => {
           sendResponse()

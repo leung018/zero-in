@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChromeMessenger } from './chrome/messenger'
+import { MessengerFactory } from './chrome/messenger'
 import { BrowsingRulesStorageServiceImpl } from './domain/browsing_rules/storage'
 import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
 </script>
@@ -8,7 +8,7 @@ import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
   <main class="p-4">
     <BlockedDomainsPage
       :browsingRulesStorageService="BrowsingRulesStorageServiceImpl.create()"
-      :chromeMessenger="ChromeMessenger.create()"
+      :messenger="MessengerFactory.createMessenger()"
     />
   </main>
 </template>

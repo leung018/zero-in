@@ -1,15 +1,13 @@
 type Listener = (message: any, sendResponse: (response?: any) => void) => void
 
-interface Messenger {
+export interface Messenger {
   send(message: any): Promise<void>
   addListener(callback: Listener): void
 }
 
-export class ChromeMessenger {
-  private messenger: Messenger
-
-  static create(): ChromeMessenger {
-    return new ChromeMessenger({
+export class MessengerFactory {
+  static createMessenger(): Messenger {
+    return {
       send: (message: any) => {
         return chrome.runtime.sendMessage(message)
       },
@@ -19,23 +17,11 @@ export class ChromeMessenger {
           return true
         })
       }
-    })
+    }
   }
 
-  static createFake(): ChromeMessenger {
-    return new ChromeMessenger(new FakeMessenger())
-  }
-
-  private constructor(messenger: Messenger) {
-    this.messenger = messenger
-  }
-
-  async send(message: any): Promise<void> {
-    return this.messenger.send(message)
-  }
-
-  addListener(callback: Listener): void {
-    return this.messenger.addListener(callback)
+  static createFakeMessenger(): Messenger {
+    return new FakeMessenger()
   }
 }
 
