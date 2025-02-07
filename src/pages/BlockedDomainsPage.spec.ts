@@ -7,10 +7,10 @@ import {
 } from '../domain/browsing_rules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { BrowsingRules } from '../domain/browsing_rules'
-import { FakeWebsiteRedirectService, type WebsiteRedirectService } from '../domain/redirect'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
 import { MessageListenersInitializer } from '../initializer'
 import { ChromeMessenger } from '../chrome/messenger'
+import { FakeWebsiteRedirectService } from '../domain/redirect'
 
 describe('BlockedDomainsPage', () => {
   it('should render blocked domains', async () => {
