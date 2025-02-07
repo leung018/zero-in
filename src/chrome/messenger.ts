@@ -1,6 +1,4 @@
-import type { Messenger } from '../domain/messenger'
-
-export type Listener = (message: any, sendResponse: (response?: any) => void) => void
+import type { Listener, Messenger } from '../domain/messenger'
 
 export class MessengerFactory {
   static createMessenger(): Messenger {
