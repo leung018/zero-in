@@ -39,11 +39,12 @@ export class MessageListenersInitializer {
   }
 
   private initListeners() {
-    this.chromeMessenger.addListener((message) => {
+    this.chromeMessenger.addListener((message, sendResponse) => {
       if (message.name == EventName.TOGGLE_REDIRECT_RULES) {
-        this.redirectTogglingService.run()
+        this.redirectTogglingService.run().then(() => {
+          sendResponse()
+        })
       }
-      return true
     })
   }
 }

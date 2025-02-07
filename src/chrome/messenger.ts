@@ -1,6 +1,8 @@
+type Listener = (message: any, sendResponse: (response?: any) => void) => void
+
 interface Messenger {
   send(message: any): Promise<void>
-  addListener(callback: (message: any) => boolean | undefined): void
+  addListener(callback: Listener): void
 }
 
 export class ChromeMessenger {
@@ -11,8 +13,11 @@ export class ChromeMessenger {
       send: (message: any) => {
         return chrome.runtime.sendMessage(message)
       },
-      addListener: (callback: (message: any) => boolean | undefined) => {
-        return chrome.runtime.onMessage.addListener(callback)
+      addListener: (callback: Listener) => {
+        return chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
+          callback(message, sendResponse)
+          return true
+        })
       }
     })
   }
@@ -29,19 +34,19 @@ export class ChromeMessenger {
     return this.messenger.send(message)
   }
 
-  addListener(callback: (message: any) => boolean | undefined): void {
+  addListener(callback: Listener): void {
     return this.messenger.addListener(callback)
   }
 }
 
 class FakeMessenger implements Messenger {
-  private listeners: ((message: any) => boolean | undefined)[] = []
+  private listeners: Listener[] = []
 
   async send(message: any): Promise<void> {
-    this.listeners.forEach((listener) => listener(message))
+    this.listeners.forEach((listener) => listener(message, () => {}))
   }
 
-  addListener(callback: (message: any) => boolean | undefined): void {
+  addListener(callback: Listener): void {
     this.listeners.push(callback)
   }
 }
