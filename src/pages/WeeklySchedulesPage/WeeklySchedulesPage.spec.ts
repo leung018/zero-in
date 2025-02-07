@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from 'vitest'
-import { WeeklyScheduleStorageServiceImpl } from '../../domain/schedules/storage'
+import { WeeklyScheduleStorageService } from '../../domain/schedules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 
 import WeeklySchedulesPage from './index.vue'
 import { Weekday, WeeklySchedule } from '../../domain/schedules'
 import { Time } from '../../domain/schedules/time'
 import { FakeWebsiteRedirectService } from '../../domain/redirect'
-import { BrowsingRulesStorageServiceImpl } from '../../domain/browsing_rules/storage'
+import { BrowsingRulesStorageService } from '../../domain/browsing_rules/storage'
 import { BrowsingRules } from '../../domain/browsing_rules'
 import { afterEach, beforeEach } from 'node:test'
 import { MessengerFactory } from '../../chrome/messenger'
@@ -41,7 +41,7 @@ describe('WeeklySchedulesPage', () => {
   })
 
   it('should render weekly schedules', async () => {
-    const weeklyScheduleStorageService = WeeklyScheduleStorageServiceImpl.createFake()
+    const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
     weeklyScheduleStorageService.saveAll([
       new WeeklySchedule({
         weekdaySet: new Set([Weekday.MON, Weekday.TUE]),
@@ -227,7 +227,7 @@ describe('WeeklySchedulesPage', () => {
   it('should add or remove schedule affect the activated redirect', async () => {
     vi.setSystemTime(new Date('2025-02-03T11:00:00')) // 2025-02-03 is Monday
 
-    const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake()
+    const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
     await browsingRulesStorageService.save(new BrowsingRules({ blockedDomains: ['google.com'] }))
     const { wrapper, fakeWebsiteRedirectService } = mountWeeklySchedulesPage({
       browsingRulesStorageService,
@@ -259,8 +259,8 @@ describe('WeeklySchedulesPage', () => {
 })
 
 function mountWeeklySchedulesPage({
-  weeklyScheduleStorageService = WeeklyScheduleStorageServiceImpl.createFake(),
-  browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake(),
+  weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
+  browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
   targetRedirectUrl = 'https://example.com'
 } = {}) {
   const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()

@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'vitest'
 import { BrowsingRules } from './browsing_rules'
-import { BrowsingRulesStorageServiceImpl } from './browsing_rules/storage'
+import { BrowsingRulesStorageService } from './browsing_rules/storage'
 import { FakeWebsiteRedirectService } from './redirect'
 import { Weekday, WeeklySchedule } from './schedules'
 import { Time } from './schedules/time'
-import { WeeklyScheduleStorageServiceImpl } from './schedules/storage'
+import { WeeklyScheduleStorageService } from './schedules/storage'
 import { RedirectTogglingService } from './redirect_toggling'
 
 describe('RedirectTogglingService', () => {
   it('should toggle redirect according to browsing rules if current time is within schedule', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
-    const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake()
+    const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
     browsingRulesStorageService.save(browsingRules)
 
     const schedules = [
@@ -20,7 +20,7 @@ describe('RedirectTogglingService', () => {
         endTime: new Time(17, 0)
       })
     ]
-    const weeklyScheduleStorageService = WeeklyScheduleStorageServiceImpl.createFake()
+    const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
     weeklyScheduleStorageService.saveAll(schedules)
 
     const websiteRedirectService = new FakeWebsiteRedirectService()
@@ -45,10 +45,10 @@ describe('RedirectTogglingService', () => {
 
   it('should always activate redirect when weekly schedules are empty', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
-    const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake()
+    const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
     browsingRulesStorageService.save(browsingRules)
 
-    const weeklyScheduleStorageService = WeeklyScheduleStorageServiceImpl.createFake()
+    const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
 
     const websiteRedirectService = new FakeWebsiteRedirectService()
 

@@ -2,20 +2,13 @@ import { ChromeLocalStorageFactory, type StorageHandler } from '../../chrome/loc
 import { Weekday, WeeklySchedule } from '.'
 import { Time } from './time'
 
-export interface WeeklyScheduleStorageService {
-  saveAll(WeeklySchedulesList: WeeklySchedule[]): Promise<void>
-  getAll(): Promise<WeeklySchedule[]>
-}
-
-export class WeeklyScheduleStorageServiceImpl implements WeeklyScheduleStorageService {
-  static createFake(): WeeklyScheduleStorageServiceImpl {
-    return new WeeklyScheduleStorageServiceImpl(
-      ChromeLocalStorageFactory.createFakeStorageHandler()
-    )
+export class WeeklyScheduleStorageService {
+  static createFake(): WeeklyScheduleStorageService {
+    return new WeeklyScheduleStorageService(ChromeLocalStorageFactory.createFakeStorageHandler())
   }
 
-  static create(): WeeklyScheduleStorageServiceImpl {
-    return new WeeklyScheduleStorageServiceImpl(ChromeLocalStorageFactory.createStorageHandler())
+  static create(): WeeklyScheduleStorageService {
+    return new WeeklyScheduleStorageService(ChromeLocalStorageFactory.createStorageHandler())
   }
 
   private storageHandler: StorageHandler

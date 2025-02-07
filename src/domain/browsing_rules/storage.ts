@@ -1,18 +1,13 @@
 import { ChromeLocalStorageFactory, type StorageHandler } from '../../chrome/local_storage'
 import { BrowsingRules } from '.'
 
-export interface BrowsingRulesStorageService {
-  save(browsingRules: BrowsingRules): Promise<void>
-  get(): Promise<BrowsingRules>
-}
-
-export class BrowsingRulesStorageServiceImpl implements BrowsingRulesStorageService {
-  static createFake(): BrowsingRulesStorageServiceImpl {
-    return new BrowsingRulesStorageServiceImpl(ChromeLocalStorageFactory.createFakeStorageHandler())
+export class BrowsingRulesStorageService {
+  static createFake(): BrowsingRulesStorageService {
+    return new BrowsingRulesStorageService(ChromeLocalStorageFactory.createFakeStorageHandler())
   }
 
-  static create(): BrowsingRulesStorageServiceImpl {
-    return new BrowsingRulesStorageServiceImpl(ChromeLocalStorageFactory.createStorageHandler())
+  static create(): BrowsingRulesStorageService {
+    return new BrowsingRulesStorageService(ChromeLocalStorageFactory.createStorageHandler())
   }
 
   private storageHandler: StorageHandler
