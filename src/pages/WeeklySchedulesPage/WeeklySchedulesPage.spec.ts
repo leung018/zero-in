@@ -275,7 +275,7 @@ function mountWeeklySchedulesPage({
     messenger
   })
   const wrapper = mount(WeeklySchedulesPage, {
-    props: { weeklyScheduleStorageService, messenger }
+    props: { weeklyScheduleStorageService, sender: messenger }
   })
   return {
     wrapper,

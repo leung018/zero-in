@@ -1,4 +1,5 @@
-import { type Messenger, MessengerFactory } from './chrome/messenger'
+import { MessengerFactory } from './chrome/messenger'
+import { type Messenger } from './domain/messenger'
 import { RedirectTogglingService } from './domain/redirect_toggling'
 import { EventName } from './event'
 

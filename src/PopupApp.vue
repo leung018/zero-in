@@ -8,7 +8,7 @@ import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
   <main class="p-4">
     <BlockedDomainsPage
       :browsingRulesStorageService="BrowsingRulesStorageServiceImpl.create()"
-      :messenger="MessengerFactory.createMessenger()"
+      :sender="MessengerFactory.createMessenger()"
     />
   </main>
 </template>

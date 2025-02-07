@@ -8,7 +8,7 @@ import { MessengerFactory } from './chrome/messenger'
   <main>
     <WeeklySchedulesPage
       :weeklyScheduleStorageService="WeeklyScheduleStorageServiceImpl.create()"
-      :messenger="MessengerFactory.createMessenger()"
+      :sender="MessengerFactory.createMessenger()"
     />
   </main>
 </template>

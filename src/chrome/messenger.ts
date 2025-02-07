@@ -1,9 +1,6 @@
-type Listener = (message: any, sendResponse: (response?: any) => void) => void
+import type { Messenger } from '../domain/messenger'
 
-export interface Messenger {
-  send(message: any): Promise<void>
-  addListener(callback: Listener): void
-}
+export type Listener = (message: any, sendResponse: (response?: any) => void) => void
 
 export class MessengerFactory {
   static createMessenger(): Messenger {

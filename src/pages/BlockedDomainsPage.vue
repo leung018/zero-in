@@ -2,11 +2,11 @@
 import { onMounted, ref } from 'vue'
 import type { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { BrowsingRules } from '../domain/browsing_rules'
-import type { Messenger } from '../chrome/messenger'
+import type { Sender } from '@/domain/messenger'
 import { EventName } from '../event'
 
-const { browsingRulesStorageService, messenger } = defineProps<{
-  messenger: Messenger
+const { browsingRulesStorageService, sender } = defineProps<{
+  sender: Sender
   browsingRulesStorageService: BrowsingRulesStorageService
 }>()
 
@@ -37,7 +37,7 @@ async function onClickRemove(domain: string) {
 
 async function updateBrowsingRules(browsingRules: BrowsingRules) {
   await browsingRulesStorageService.save(browsingRules)
-  await messenger.send({ name: EventName.TOGGLE_REDIRECT_RULES })
+  await sender.send({ name: EventName.TOGGLE_REDIRECT_RULES })
   blockedDomains.value = browsingRules.blockedDomains
 }
 </script>

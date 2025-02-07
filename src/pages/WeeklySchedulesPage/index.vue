@@ -6,12 +6,12 @@ import { Time } from '../../domain/schedules/time'
 import TimeInput from './TimeInput.vue'
 import WeekdaysSelector from './WeekdaysSelector.vue'
 import SchedulesList from './SchedulesList.vue'
-import type { Messenger } from '../../chrome/messenger'
+import type { Sender } from '@/domain/messenger'
 import { EventName } from '../../event'
 
-const { weeklyScheduleStorageService, messenger } = defineProps<{
+const { weeklyScheduleStorageService, sender } = defineProps<{
   weeklyScheduleStorageService: WeeklyScheduleStorageService
-  messenger: Messenger
+  sender: Sender
 }>()
 
 const newStartTime = ref<Time>(new Time(0, 0))
@@ -57,7 +57,7 @@ const handleRemove = async (indexToRemove: number) => {
 
 const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
   await weeklyScheduleStorageService.saveAll(newWeeklySchedules)
-  await messenger.send({ name: EventName.TOGGLE_REDIRECT_RULES })
+  await sender.send({ name: EventName.TOGGLE_REDIRECT_RULES })
   weeklySchedules.value = newWeeklySchedules
 }
 </script>

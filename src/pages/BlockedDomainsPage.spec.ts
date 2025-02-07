@@ -139,7 +139,7 @@ function mountBlockedDomainsPage({
     messenger
   })
   const wrapper = mount(BlockedDomainsPage, {
-    props: { browsingRulesStorageService, messenger }
+    props: { browsingRulesStorageService, sender: messenger }
   })
 
   return { wrapper, browsingRulesStorageService, fakeWebsiteRedirectService }
