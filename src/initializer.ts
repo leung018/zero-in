@@ -4,8 +4,8 @@ import { RedirectTogglingService } from './domain/redirect_toggling'
 import { EventName } from './event'
 
 export class MessageListenersInitializer {
-  redirectTogglingService: RedirectTogglingService
-  messenger: Messenger
+  private redirectTogglingService: RedirectTogglingService
+  private messenger: Messenger
 
   static initListeners({
     redirectTogglingService
