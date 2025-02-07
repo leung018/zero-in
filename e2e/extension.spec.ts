@@ -10,12 +10,22 @@ test('should able to persist blocked domains and fetching them', async ({ page, 
   await addBlockedDomain(page, 'abc.com')
   await addBlockedDomain(page, 'xyz.com')
 
+  let domains = page.getByTestId('blocked-domain')
+  await expect(domains).toHaveCount(2)
+  await expect(domains.nth(0)).toHaveText('abc.com')
+  await expect(domains.nth(1)).toHaveText('xyz.com')
+
+  await removeBlockedDomain(page, 'abc.com')
+
+  domains = page.getByTestId('blocked-domain')
+  await expect(domains).toHaveCount(1)
+  await expect(domains.nth(0)).toHaveText('xyz.com')
+
   await page.reload()
 
-  const domainsAfterReload = page.getByTestId('blocked-domain')
-  await expect(domainsAfterReload).toHaveCount(2)
-  await expect(domainsAfterReload.nth(0)).toHaveText('abc.com')
-  await expect(domainsAfterReload.nth(1)).toHaveText('xyz.com')
+  domains = page.getByTestId('blocked-domain')
+  await expect(domains).toHaveCount(1)
+  await expect(domains.nth(0)).toHaveText('xyz.com')
 })
 
 test('should able to add blocked domains and block them', async ({ page, extensionId }) => {
@@ -70,12 +80,23 @@ test('should able to persist blocked schedules and fetching them', async ({
 
   await page.getByTestId('add-button').click()
 
-  await page.reload()
-
-  const schedules = page.getByTestId('weekly-schedule')
+  let schedules = page.getByTestId('weekly-schedule')
   await expect(schedules).toHaveCount(1)
   await expect(schedules.nth(0)).toContainText('Sun')
   await expect(schedules.nth(0)).toContainText('10:00 - 12:00')
+
+  await page.reload()
+
+  schedules = page.getByTestId('weekly-schedule')
+  await expect(schedules).toHaveCount(1)
+  await expect(schedules.nth(0)).toContainText('Sun')
+  await expect(schedules.nth(0)).toContainText('10:00 - 12:00')
+
+  await page.getByTestId('remove-schedule-with-index-0').click()
+  await expect(page.getByTestId('weekly-schedule')).toHaveCount(0)
+
+  await page.reload()
+  await expect(page.getByTestId('weekly-schedule')).toHaveCount(0)
 })
 
 test('should able to disable blocking according to schedule', async ({ page, extensionId }) => {
