@@ -4,18 +4,31 @@ import { test, expect } from './fixtures.js'
 
 test.describe.configure({ mode: 'parallel' })
 
-test('should able to persist blocked domains and fetching them', async ({ page, extensionId }) => {
+test('should able to persist blocked domains and update ui', async ({ page, extensionId }) => {
   await page.goto(`chrome-extension://${extensionId}/popup.html`)
 
+  // Add two domains
   await addBlockedDomain(page, 'abc.com')
   await addBlockedDomain(page, 'xyz.com')
 
+  let domains = page.getByTestId('blocked-domain')
+  await expect(domains).toHaveCount(2)
+  await expect(domains.nth(0)).toHaveText('abc.com')
+  await expect(domains.nth(1)).toHaveText('xyz.com')
+
+  // Remove one domain
+  await removeBlockedDomain(page, 'abc.com')
+
+  domains = page.getByTestId('blocked-domain')
+  await expect(domains).toHaveCount(1)
+  await expect(domains.nth(0)).toHaveText('xyz.com')
+
+  // Reload the page
   await page.reload()
 
-  const domainsAfterReload = page.getByTestId('blocked-domain')
-  await expect(domainsAfterReload).toHaveCount(2)
-  await expect(domainsAfterReload.nth(0)).toHaveText('abc.com')
-  await expect(domainsAfterReload.nth(1)).toHaveText('xyz.com')
+  domains = page.getByTestId('blocked-domain')
+  await expect(domains).toHaveCount(1)
+  await expect(domains.nth(0)).toHaveText('xyz.com')
 })
 
 test('should able to add blocked domains and block them', async ({ page, extensionId }) => {
@@ -36,8 +49,7 @@ test('should able to add blocked domains and block them', async ({ page, extensi
   await assertInBlockedTemplate(extraPage)
 
   // Future request to google.com should be blocked
-  await page.goto('https://google.com')
-  await assertInBlockedTemplate(page)
+  await assertGoToBlockedTemplate(extraPage, 'https://google.com')
 })
 
 test('should able to remove all blocked domains and unblock them', async ({
@@ -52,16 +64,13 @@ test('should able to remove all blocked domains and unblock them', async ({
   await page.route('https://google.com', async (route) => {
     await route.fulfill({ body: 'This is fake google.com' })
   })
-  await page.goto('https://google.com')
-  await assertNotInBlockedTemplate(page)
+  await assertNotGoToBlockedTemplate(page, 'https://google.com')
 })
 
-test('should able to persist blocked schedules and fetching them', async ({
-  page,
-  extensionId
-}) => {
+test('should able to persist blocked schedules and update ui', async ({ page, extensionId }) => {
   await page.goto(`chrome-extension://${extensionId}/options.html`)
 
+  // Add a schedule
   await page.getByTestId('check-weekday-Sun').check()
 
   await page.getByTestId('start-time-hour-input').fill('10')
@@ -72,12 +81,26 @@ test('should able to persist blocked schedules and fetching them', async ({
 
   await page.getByTestId('add-button').click()
 
-  await page.reload()
-
-  const schedules = page.getByTestId('weekly-schedule')
+  let schedules = page.getByTestId('weekly-schedule')
   await expect(schedules).toHaveCount(1)
   await expect(schedules.nth(0)).toContainText('Sun')
   await expect(schedules.nth(0)).toContainText('10:00 - 12:00')
+
+  // Reload to check if the schedule is persisted
+  await page.reload()
+
+  schedules = page.getByTestId('weekly-schedule')
+  await expect(schedules).toHaveCount(1)
+  await expect(schedules.nth(0)).toContainText('Sun')
+  await expect(schedules.nth(0)).toContainText('10:00 - 12:00')
+
+  // Remove the schedule
+  await page.getByTestId('remove-schedule-with-index-0').click()
+  await expect(page.getByTestId('weekly-schedule')).toHaveCount(0)
+
+  // Reload to check if the schedule is removed
+  await page.reload()
+  await expect(page.getByTestId('weekly-schedule')).toHaveCount(0)
 })
 
 test('should able to disable blocking according to schedule', async ({ page, extensionId }) => {
@@ -115,11 +138,7 @@ test('should able to disable blocking according to schedule', async ({ page, ext
 
   await page.getByTestId('add-button').click()
 
-  await fireChromeAlarm(page, 'toggleRedirectRules')
-  await sleep(100) // FIXME: No explicit way to wait the alarm listener finish its job. So do this hack here.
-
-  await page.goto('https://google.com')
-  await assertNotInBlockedTemplate(page)
+  await assertNotGoToBlockedTemplate(page, 'https://google.com')
 })
 
 async function addBlockedDomain(page: Page, domain: string) {
@@ -141,24 +160,44 @@ async function assertInBlockedTemplate(page: Page) {
   await expect(page.locator('body')).toContainText(TEXT_IN_BLOCKED_TEMPLATE)
 }
 
-async function assertNotInBlockedTemplate(page: Page) {
-  await expect(page.locator('body')).not.toContainText(TEXT_IN_BLOCKED_TEMPLATE)
+async function assertGoToBlockedTemplate(
+  page: Page,
+  targetUrl: string,
+  retryCount = 3,
+  intervalMs = 100
+) {
+  await page.goto(targetUrl)
+  try {
+    expect(await page.locator('body').textContent()).toContain(TEXT_IN_BLOCKED_TEMPLATE)
+  } catch (Exception) {
+    if (retryCount <= 0) {
+      throw Exception
+    }
+    await sleep(intervalMs)
+    return assertGoToBlockedTemplate(page, targetUrl, retryCount - 1, intervalMs)
+  }
+}
+
+async function assertNotGoToBlockedTemplate(
+  page: Page,
+  targetUrl: string,
+  retryCount = 3,
+  intervalMs = 100
+) {
+  await page.goto(targetUrl)
+  try {
+    expect(await page.locator('body').textContent()).not.toContain(TEXT_IN_BLOCKED_TEMPLATE)
+  } catch (Exception) {
+    if (retryCount <= 0) {
+      throw Exception
+    }
+    await sleep(intervalMs)
+    return assertNotGoToBlockedTemplate(page, targetUrl, retryCount - 1, intervalMs)
+  }
 }
 
 function sleep(ms: number) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms)
   })
-}
-
-// Using clock api cannot control the chrome.alarms, so I use this function to fire the alarm.
-async function fireChromeAlarm(page: Page, alarmName: string) {
-  await page.evaluate(
-    async ([alarmName]) => {
-      await chrome.alarms.create(alarmName, {
-        when: Date.now()
-      })
-    },
-    [alarmName]
-  )
 }

@@ -1,17 +1,18 @@
 import { RedirectTogglingService } from '../domain/redirect_toggling'
-
-enum AlarmName {
-  TOGGLE_REDIRECT_RULES = 'toggleRedirectRules'
-}
+import { EventName } from '../event'
+import { MessageListenersInitializer } from '../initializer'
 
 const redirectTogglingService = RedirectTogglingService.create()
 
-// Noted that e2e tests are hard to cover all of the below properly. Better use a bit manual testing if needed.
-
+// Noted that e2e tests are hard to cover below related to alarms properly. Better use a bit manual testing if needed.
+// Wrapper isn't used for alarms listener which is different from chrome.runtime.onMessage wrapped by MessageListenersInitializer.
+// Because unit tests are not needed for alarms.
 chrome.alarms.onAlarm.addListener((alarm) => {
   console.debug('Alarm fired:', alarm)
-  if (alarm.name === AlarmName.TOGGLE_REDIRECT_RULES) {
+  if (alarm.name === EventName.TOGGLE_REDIRECT_RULES) {
     return redirectTogglingService.run()
   }
 })
-chrome.alarms.create(AlarmName.TOGGLE_REDIRECT_RULES, { periodInMinutes: 0.5, when: Date.now() })
+chrome.alarms.create(EventName.TOGGLE_REDIRECT_RULES, { periodInMinutes: 0.5, when: Date.now() })
+
+MessageListenersInitializer.initListeners({ redirectTogglingService })

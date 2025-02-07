@@ -7,7 +7,10 @@ import {
 } from '../domain/browsing_rules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { BrowsingRules } from '../domain/browsing_rules'
-import { FakeWebsiteRedirectService, type WebsiteRedirectService } from '../domain/redirect'
+import { RedirectTogglingService } from '../domain/redirect_toggling'
+import { MessageListenersInitializer } from '../initializer'
+import { MessengerFactory } from '../chrome/messenger'
+import { FakeWebsiteRedirectService } from '../domain/redirect'
 
 describe('BlockedDomainsPage', () => {
   it('should render blocked domains', async () => {
@@ -86,9 +89,7 @@ describe('BlockedDomainsPage', () => {
   })
 
   it('should update activated redirect when domain is added', async () => {
-    const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
-    const { wrapper } = mountBlockedDomainsPage({
-      websiteRedirectService: fakeWebsiteRedirectService,
+    const { fakeWebsiteRedirectService, wrapper } = mountBlockedDomainsPage({
       targetRedirectUrl: 'https://target.com'
     })
 
@@ -100,15 +101,13 @@ describe('BlockedDomainsPage', () => {
   })
 
   it('should update activated redirect when domain is removed', async () => {
-    const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
     const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake()
     await browsingRulesStorageService.save(
       new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
 
-    const { wrapper } = mountBlockedDomainsPage({
+    const { wrapper, fakeWebsiteRedirectService } = mountBlockedDomainsPage({
       browsingRulesStorageService,
-      websiteRedirectService: fakeWebsiteRedirectService,
       targetRedirectUrl: 'https://target.com'
     })
     await flushPromises()
@@ -123,18 +122,27 @@ describe('BlockedDomainsPage', () => {
 
 function mountBlockedDomainsPage({
   browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake(),
-  websiteRedirectService = new FakeWebsiteRedirectService(),
   targetRedirectUrl = 'https://example.com'
 }: {
   browsingRulesStorageService?: BrowsingRulesStorageService
-  websiteRedirectService?: WebsiteRedirectService
   targetRedirectUrl?: string
 } = {}) {
+  const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
+  const redirectTogglingService = RedirectTogglingService.createFake({
+    browsingRulesStorageService,
+    websiteRedirectService: fakeWebsiteRedirectService,
+    targetRedirectUrl
+  })
+  const messenger = MessengerFactory.createFakeMessenger()
+  MessageListenersInitializer.initFakeListeners({
+    redirectTogglingService,
+    messenger
+  })
   const wrapper = mount(BlockedDomainsPage, {
-    props: { browsingRulesStorageService, websiteRedirectService, targetRedirectUrl }
+    props: { browsingRulesStorageService, sender: messenger }
   })
 
-  return { wrapper, browsingRulesStorageService }
+  return { wrapper, browsingRulesStorageService, fakeWebsiteRedirectService }
 }
 
 async function addBlockedDomain(wrapper: VueWrapper, domain: string) {
