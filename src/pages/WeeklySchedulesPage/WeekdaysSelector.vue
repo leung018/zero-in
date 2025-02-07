@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Weekday } from '../../domain/schedules'
+import { capitalized } from '../../util'
 
 const weekdaySet = defineModel<Set<Weekday>>({
   required: true
@@ -22,12 +23,14 @@ const weekdays: Weekday[] = Object.values(Weekday).filter((v) => typeof v === 'n
       <input
         class="form-check-input"
         type="checkbox"
-        :data-test="`check-weekday-${Weekday[weekday]}`"
+        :data-test="`check-weekday-${Weekday[weekday].toLowerCase()}`"
         :value="weekday"
         @change="onChangeWeekday(weekday)"
         :checked="weekdaySet.has(weekday)"
       />
-      <label class="form-check-label" data-test="weekday-label">{{ Weekday[weekday] }}</label>
+      <label class="form-check-label" data-test="weekday-label">{{
+        capitalized(Weekday[weekday])
+      }}</label>
     </div>
   </div>
 </template>

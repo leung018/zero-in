@@ -71,7 +71,7 @@ test('should able to persist blocked schedules and update ui', async ({ page, ex
   await page.goto(`chrome-extension://${extensionId}/options.html`)
 
   // Add a schedule
-  await page.getByTestId('check-weekday-Sun').check()
+  await page.getByTestId('check-weekday-sun').check()
 
   await page.getByTestId('start-time-hour-input').fill('10')
   await page.getByTestId('start-time-minute-input').fill('00')
@@ -128,7 +128,7 @@ test('should able to disable blocking according to schedule', async ({ page, ext
 
   await page.goto(`chrome-extension://${extensionId}/options.html`)
 
-  await page.getByTestId('check-weekday-Mon').check()
+  await page.getByTestId('check-weekday-mon').check()
 
   await page.getByTestId('start-time-hour-input').fill(startHours.toString())
   await page.getByTestId('start-time-minute-input').fill('00')

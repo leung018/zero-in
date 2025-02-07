@@ -15,7 +15,7 @@ describe('RedirectTogglingService', () => {
 
     const schedules = [
       new WeeklySchedule({
-        weekdaySet: new Set([Weekday.Mon, Weekday.Tue]),
+        weekdaySet: new Set([Weekday.MON, Weekday.TUE]),
         startTime: new Time(9, 0),
         endTime: new Time(17, 0)
       })

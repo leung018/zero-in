@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { formatTimeNumber, Time } from '../../domain/schedules/time'
 import { Weekday, WeeklySchedule } from '../../domain/schedules'
+import { capitalized } from '../../util'
 
 const props = defineProps<{
   weeklySchedules: WeeklySchedule[]
@@ -26,7 +27,7 @@ const formatTime = (Time: Time) => {
       <div>
         {{
           Array.from(schedule.weekdaySet)
-            .map((day) => Weekday[day])
+            .map((day) => capitalized(Weekday[day]))
             .join(', ')
         }}
         <br />
