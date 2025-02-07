@@ -22,7 +22,7 @@ describe('WeeklySchedules', () => {
     assertToThrowError(
       () =>
         new WeeklySchedule({
-          weekdaySet: new Set([Weekday.Mon]),
+          weekdaySet: new Set([Weekday.MON]),
           startTime: new Time(10, 0),
           endTime: new Time(9, 0)
         }),
@@ -31,7 +31,7 @@ describe('WeeklySchedules', () => {
     assertToThrowError(
       () =>
         new WeeklySchedule({
-          weekdaySet: new Set([Weekday.Mon]),
+          weekdaySet: new Set([Weekday.MON]),
           startTime: new Time(10, 0),
           endTime: new Time(10, 0)
         }),
@@ -41,18 +41,18 @@ describe('WeeklySchedules', () => {
 
   it('should accept valid input', () => {
     const weeklySchedule = new WeeklySchedule({
-      weekdaySet: new Set([Weekday.Mon]),
+      weekdaySet: new Set([Weekday.MON]),
       startTime: new Time(11, 0),
       endTime: new Time(18, 0)
     })
-    expect(weeklySchedule.weekdaySet).toEqual(new Set([Weekday.Mon]))
+    expect(weeklySchedule.weekdaySet).toEqual(new Set([Weekday.MON]))
     expect(weeklySchedule.startTime).toEqual(new Time(11, 0))
     expect(weeklySchedule.endTime).toEqual(new Time(18, 0))
   })
 
   it('should isContain check the date within the schedule according to weekdays', () => {
     const weeklySchedule = new WeeklySchedule({
-      weekdaySet: new Set([Weekday.Mon, Weekday.Tue]),
+      weekdaySet: new Set([Weekday.MON, Weekday.TUE]),
       startTime: new Time(11, 0),
       endTime: new Time(18, 0)
     })
@@ -63,7 +63,7 @@ describe('WeeklySchedules', () => {
 
   it('should isContain check the date within the schedule according to start and end time', () => {
     const weeklySchedule = new WeeklySchedule({
-      weekdaySet: new Set([Weekday.Mon]),
+      weekdaySet: new Set([Weekday.MON]),
       startTime: new Time(11, 0),
       endTime: new Time(18, 0)
     })

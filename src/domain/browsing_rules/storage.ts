@@ -1,32 +1,27 @@
-import { ChromeLocalStorageWrapper } from '../../chrome/local_storage'
+import { ChromeLocalStorageFactory, type StorageHandler } from '../../chrome/local_storage'
 import { BrowsingRules } from '.'
 
-export interface BrowsingRulesStorageService {
-  save(browsingRules: BrowsingRules): Promise<void>
-  get(): Promise<BrowsingRules>
-}
-
-export class BrowsingRulesStorageServiceImpl implements BrowsingRulesStorageService {
-  static createFake(): BrowsingRulesStorageServiceImpl {
-    return new BrowsingRulesStorageServiceImpl(ChromeLocalStorageWrapper.createFake())
+export class BrowsingRulesStorageService {
+  static createFake(): BrowsingRulesStorageService {
+    return new BrowsingRulesStorageService(ChromeLocalStorageFactory.createFakeStorageHandler())
   }
 
-  static create(): BrowsingRulesStorageServiceImpl {
-    return new BrowsingRulesStorageServiceImpl(ChromeLocalStorageWrapper.create())
+  static create(): BrowsingRulesStorageService {
+    return new BrowsingRulesStorageService(ChromeLocalStorageFactory.createStorageHandler())
   }
 
-  private storageWrapper: ChromeLocalStorageWrapper
+  private storageHandler: StorageHandler
 
-  private constructor(chromeLocalStorageWrapper: ChromeLocalStorageWrapper) {
-    this.storageWrapper = chromeLocalStorageWrapper
+  private constructor(storageHandler: StorageHandler) {
+    this.storageHandler = storageHandler
   }
 
   async save(browsingRules: BrowsingRules): Promise<void> {
-    return this.storageWrapper.set({ browsingRules: serializeBrowsingRules(browsingRules) })
+    return this.storageHandler.set({ browsingRules: serializeBrowsingRules(browsingRules) })
   }
 
   async get(): Promise<BrowsingRules> {
-    return this.storageWrapper.get('browsingRules').then((result: any) => {
+    return this.storageHandler.get('browsingRules').then((result: any) => {
       if (result.browsingRules) {
         return deserializeBrowsingRules(result.browsingRules)
       }

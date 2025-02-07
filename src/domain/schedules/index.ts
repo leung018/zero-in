@@ -1,13 +1,13 @@
 import { Time } from './time'
 
 export enum Weekday {
-  Sun = 0,
-  Mon,
-  Tue,
-  Wed,
-  Thu,
-  Fri,
-  Sat
+  SUN = 0,
+  MON,
+  TUE,
+  WED,
+  THU,
+  FRI,
+  SAT
 }
 
 function getWeekdayFromDate(date: Date): Weekday {

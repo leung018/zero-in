@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from 'vitest'
-import { WeeklyScheduleStorageServiceImpl } from '../../domain/schedules/storage'
+import { WeeklyScheduleStorageService } from '../../domain/schedules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 
 import WeeklySchedulesPage from './index.vue'
 import { Weekday, WeeklySchedule } from '../../domain/schedules'
 import { Time } from '../../domain/schedules/time'
 import { FakeWebsiteRedirectService } from '../../domain/redirect'
-import { BrowsingRulesStorageServiceImpl } from '../../domain/browsing_rules/storage'
+import { BrowsingRulesStorageService } from '../../domain/browsing_rules/storage'
 import { BrowsingRules } from '../../domain/browsing_rules'
 import { afterEach, beforeEach } from 'node:test'
 import { MessengerFactory } from '../../chrome/messenger'
@@ -31,22 +31,25 @@ describe('WeeklySchedulesPage', () => {
 
     const weekdayCheckboxLabels = wrapper.findAll("[data-test='weekday-label']")
     expect(weekdayCheckboxLabels).toHaveLength(7)
-    for (let i = 0; i < 7; i++) {
-      const weekdayName: string = Weekday[i]
-      expect(weekdayCheckboxLabels[i].text()).toBe(weekdayName)
-    }
+    expect(weekdayCheckboxLabels[0].text()).toBe('Sun')
+    expect(weekdayCheckboxLabels[1].text()).toBe('Mon')
+    expect(weekdayCheckboxLabels[2].text()).toBe('Tue')
+    expect(weekdayCheckboxLabels[3].text()).toBe('Wed')
+    expect(weekdayCheckboxLabels[4].text()).toBe('Thu')
+    expect(weekdayCheckboxLabels[5].text()).toBe('Fri')
+    expect(weekdayCheckboxLabels[6].text()).toBe('Sat')
   })
 
   it('should render weekly schedules', async () => {
-    const weeklyScheduleStorageService = WeeklyScheduleStorageServiceImpl.createFake()
+    const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
     weeklyScheduleStorageService.saveAll([
       new WeeklySchedule({
-        weekdaySet: new Set([Weekday.Mon, Weekday.Tue]),
+        weekdaySet: new Set([Weekday.MON, Weekday.TUE]),
         startTime: new Time(7, 0),
         endTime: new Time(9, 1)
       }),
       new WeeklySchedule({
-        weekdaySet: new Set([Weekday.Wed]),
+        weekdaySet: new Set([Weekday.WED]),
         startTime: new Time(6, 2),
         endTime: new Time(8, 4)
       })
@@ -72,7 +75,7 @@ describe('WeeklySchedulesPage', () => {
   it('should able to add new weekly schedule', async () => {
     const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesPage()
     const weeklySchedule = new WeeklySchedule({
-      weekdaySet: new Set([Weekday.Thu, Weekday.Fri]),
+      weekdaySet: new Set([Weekday.THU, Weekday.FRI]),
       startTime: new Time(10, 0),
       endTime: new Time(12, 0)
     })
@@ -88,7 +91,7 @@ describe('WeeklySchedulesPage', () => {
     expect(await weeklyScheduleStorageService.getAll()).toEqual([weeklySchedule])
 
     const extraWeeklySchedule = new WeeklySchedule({
-      weekdaySet: new Set([Weekday.Sat]),
+      weekdaySet: new Set([Weekday.SAT]),
       startTime: new Time(8, 0),
       endTime: new Time(10, 0)
     })
@@ -117,7 +120,7 @@ describe('WeeklySchedulesPage', () => {
     assertAllInputsAreNotSet(wrapper)
 
     await addWeeklySchedule(wrapper, {
-      weekdaySet: new Set([Weekday.Mon]),
+      weekdaySet: new Set([Weekday.MON]),
       startTime: { hour: 10, minute: 0 },
       endTime: { hour: 12, minute: 0 }
     })
@@ -139,12 +142,12 @@ describe('WeeklySchedulesPage', () => {
 
   it('should able to uncheck weekday', async () => {
     const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesPage()
-    const sundayCheckbox = wrapper.find(`[data-test='check-weekday-${Weekday[Weekday.Sun]}']`)
+    const sundayCheckbox = wrapper.find(`[data-test='check-weekday-sun']`)
     await sundayCheckbox.setValue(true)
     await sundayCheckbox.setValue(false)
 
     const weeklySchedule = new WeeklySchedule({
-      weekdaySet: new Set([Weekday.Mon]),
+      weekdaySet: new Set([Weekday.MON]),
       startTime: new Time(10, 0),
       endTime: new Time(12, 0)
     })
@@ -157,7 +160,7 @@ describe('WeeklySchedulesPage', () => {
     const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesPage()
 
     await addWeeklySchedule(wrapper, {
-      weekdaySet: new Set([Weekday.Mon]),
+      weekdaySet: new Set([Weekday.MON]),
       startTime: new Time(10, 0),
       endTime: new Time(9, 0)
     })
@@ -174,7 +177,7 @@ describe('WeeklySchedulesPage', () => {
     expect(wrapper.find("[data-test='error-message']").exists()).toBe(false)
 
     await addWeeklySchedule(wrapper, {
-      weekdaySet: new Set([Weekday.Mon]),
+      weekdaySet: new Set([Weekday.MON]),
       startTime: new Time(10, 0),
       endTime: new Time(9, 0)
     })
@@ -182,7 +185,7 @@ describe('WeeklySchedulesPage', () => {
     expect(wrapper.find("[data-test='error-message']").exists()).toBe(true)
 
     await addWeeklySchedule(wrapper, {
-      weekdaySet: new Set([Weekday.Mon]),
+      weekdaySet: new Set([Weekday.MON]),
       startTime: new Time(9, 0),
       endTime: new Time(10, 0)
     })
@@ -193,7 +196,7 @@ describe('WeeklySchedulesPage', () => {
   it('should able to remove added schedule', async () => {
     const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesPage()
     const originalSchedule = new WeeklySchedule({
-      weekdaySet: new Set([Weekday.Mon]),
+      weekdaySet: new Set([Weekday.MON]),
       startTime: new Time(10, 0),
       endTime: new Time(12, 0)
     })
@@ -202,7 +205,7 @@ describe('WeeklySchedulesPage', () => {
     await addWeeklySchedule(
       wrapper,
       new WeeklySchedule({
-        weekdaySet: new Set([Weekday.Tue]),
+        weekdaySet: new Set([Weekday.TUE]),
         startTime: new Time(10, 0),
         endTime: new Time(12, 0)
       })
@@ -224,7 +227,7 @@ describe('WeeklySchedulesPage', () => {
   it('should add or remove schedule affect the activated redirect', async () => {
     vi.setSystemTime(new Date('2025-02-03T11:00:00')) // 2025-02-03 is Monday
 
-    const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake()
+    const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
     await browsingRulesStorageService.save(new BrowsingRules({ blockedDomains: ['google.com'] }))
     const { wrapper, fakeWebsiteRedirectService } = mountWeeklySchedulesPage({
       browsingRulesStorageService,
@@ -232,12 +235,12 @@ describe('WeeklySchedulesPage', () => {
     })
 
     await addWeeklySchedule(wrapper, {
-      weekdaySet: new Set([Weekday.Mon]),
+      weekdaySet: new Set([Weekday.MON]),
       startTime: { hour: 10, minute: 30 },
       endTime: { hour: 12, minute: 0 }
     })
     await addWeeklySchedule(wrapper, {
-      weekdaySet: new Set([Weekday.Tue]),
+      weekdaySet: new Set([Weekday.TUE]),
       startTime: { hour: 10, minute: 30 },
       endTime: { hour: 12, minute: 0 }
     })
@@ -256,8 +259,8 @@ describe('WeeklySchedulesPage', () => {
 })
 
 function mountWeeklySchedulesPage({
-  weeklyScheduleStorageService = WeeklyScheduleStorageServiceImpl.createFake(),
-  browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake(),
+  weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
+  browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
   targetRedirectUrl = 'https://example.com'
 } = {}) {
   const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
@@ -293,7 +296,9 @@ async function addWeeklySchedule(
   }
 ) {
   for (const weekday of weeklyScheduleInput.weekdaySet) {
-    const weekdayCheckbox = wrapper.find(`[data-test='check-weekday-${Weekday[weekday]}']`)
+    const weekdayCheckbox = wrapper.find(
+      `[data-test='check-weekday-${Weekday[weekday].toLowerCase()}']`
+    )
     await weekdayCheckbox.setValue(true)
   }
 

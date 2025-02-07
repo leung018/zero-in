@@ -1,13 +1,7 @@
 import { FakeWebsiteRedirectService, type WebsiteRedirectService } from './redirect'
-import {
-  BrowsingRulesStorageServiceImpl,
-  type BrowsingRulesStorageService
-} from './browsing_rules/storage'
+import { BrowsingRulesStorageService } from './browsing_rules/storage'
 import type { WeeklySchedule } from './schedules'
-import {
-  WeeklyScheduleStorageServiceImpl,
-  type WeeklyScheduleStorageService
-} from './schedules/storage'
+import { WeeklyScheduleStorageService } from './schedules/storage'
 import { ChromeRedirectService } from '../chrome/redirect'
 import config from '../config'
 
@@ -20,22 +14,17 @@ export class RedirectTogglingService {
   static create() {
     return new RedirectTogglingService({
       websiteRedirectService: new ChromeRedirectService(),
-      browsingRulesStorageService: BrowsingRulesStorageServiceImpl.create(),
-      weeklyScheduleStorageService: WeeklyScheduleStorageServiceImpl.create(),
+      browsingRulesStorageService: BrowsingRulesStorageService.create(),
+      weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
       targetRedirectUrl: config.getBlockedTemplateUrl()
     })
   }
 
   static createFake({
     websiteRedirectService = new FakeWebsiteRedirectService(),
-    browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake(),
-    weeklyScheduleStorageService = WeeklyScheduleStorageServiceImpl.createFake(),
+    browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
+    weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
     targetRedirectUrl = 'https://example.com'
-  }: {
-    websiteRedirectService?: WebsiteRedirectService
-    browsingRulesStorageService?: BrowsingRulesStorageService
-    weeklyScheduleStorageService?: WeeklyScheduleStorageService
-    targetRedirectUrl?: string
   } = {}) {
     return new RedirectTogglingService({
       websiteRedirectService,

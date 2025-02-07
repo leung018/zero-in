@@ -7,7 +7,7 @@ export class BrowsingRules {
     )
   }
 
-  public get blockedDomains(): ReadonlyArray<string> {
+  get blockedDomains(): ReadonlyArray<string> {
     return this._blockedDomains
   }
 }

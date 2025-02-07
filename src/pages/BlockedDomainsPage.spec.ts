@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import BlockedDomainsPage from './BlockedDomainsPage.vue'
-import {
-  BrowsingRulesStorageServiceImpl,
-  type BrowsingRulesStorageService
-} from '../domain/browsing_rules/storage'
+import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { BrowsingRules } from '../domain/browsing_rules'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
@@ -14,7 +11,7 @@ import { FakeWebsiteRedirectService } from '../domain/redirect'
 
 describe('BlockedDomainsPage', () => {
   it('should render blocked domains', async () => {
-    const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake()
+    const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
     await browsingRulesStorageService.save(
       new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
@@ -74,7 +71,7 @@ describe('BlockedDomainsPage', () => {
   })
 
   it('should able to remove added domain', async () => {
-    const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake()
+    const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
     await browsingRulesStorageService.save(
       new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
@@ -101,7 +98,7 @@ describe('BlockedDomainsPage', () => {
   })
 
   it('should update activated redirect when domain is removed', async () => {
-    const browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake()
+    const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
     await browsingRulesStorageService.save(
       new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
@@ -121,11 +118,8 @@ describe('BlockedDomainsPage', () => {
 })
 
 function mountBlockedDomainsPage({
-  browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake(),
+  browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
   targetRedirectUrl = 'https://example.com'
-}: {
-  browsingRulesStorageService?: BrowsingRulesStorageService
-  targetRedirectUrl?: string
 } = {}) {
   const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
   const redirectTogglingService = RedirectTogglingService.createFake({

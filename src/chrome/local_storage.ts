@@ -1,33 +1,19 @@
-interface ChromeStorage {
+export interface StorageHandler {
   set(obj: any): Promise<void>
   get(key: string): Promise<any>
 }
 
-export class ChromeLocalStorageWrapper {
-  private storage: any
-
-  public static create(): ChromeLocalStorageWrapper {
-    return new ChromeLocalStorageWrapper(chrome.storage.local)
+export class ChromeLocalStorageFactory {
+  static createStorageHandler(): StorageHandler {
+    return chrome.storage.local
   }
 
-  public static createFake(): ChromeLocalStorageWrapper {
-    return new ChromeLocalStorageWrapper(new FakeChromeLocalStorage())
-  }
-
-  private constructor(storage: ChromeStorage) {
-    this.storage = storage
-  }
-
-  async set(update: any): Promise<void> {
-    return this.storage.set(update)
-  }
-
-  async get(key: string): Promise<any> {
-    return this.storage.get(key)
+  static createFakeStorageHandler(): StorageHandler {
+    return new FakeChromeLocalStorage()
   }
 }
 
-class FakeChromeLocalStorage implements ChromeStorage {
+class FakeChromeLocalStorage implements StorageHandler {
   private storage: any = {}
 
   async set(update: any): Promise<void> {
