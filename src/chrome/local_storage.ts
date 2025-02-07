@@ -4,11 +4,11 @@ export interface StorageHandler {
 }
 
 export class ChromeLocalStorageFactory {
-  public static createStorageHandler(): StorageHandler {
+  static createStorageHandler(): StorageHandler {
     return chrome.storage.local
   }
 
-  public static createFakeStorageHandler(): StorageHandler {
+  static createFakeStorageHandler(): StorageHandler {
     return new FakeChromeLocalStorage()
   }
 }
