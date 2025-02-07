@@ -4,7 +4,7 @@
   "exclude": ["**/*.spec.ts"],
   "compilerOptions": {
     "composite": true,
-    "types": ["chrome-types"],
+    "types": ["chrome-types", "unplugin-icons/types/vue"],
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
 
     "baseUrl": ".",
