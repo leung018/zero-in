@@ -70,7 +70,7 @@ async function updateBrowsingRules(browsingRules: BrowsingRules) {
           :data-test="`remove-${domain}`"
           @click="onClickRemove(domain)"
         >
-          <IMdiCrossCircleOutline />
+          X
         </button>
       </li>
     </ul>
