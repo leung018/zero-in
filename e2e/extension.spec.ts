@@ -4,9 +4,10 @@ import { test, expect } from './fixtures.js'
 
 test.describe.configure({ mode: 'parallel' })
 
-test('should able to persist blocked domains and fetching them', async ({ page, extensionId }) => {
+test('should able to persist blocked domains and update ui', async ({ page, extensionId }) => {
   await page.goto(`chrome-extension://${extensionId}/popup.html`)
 
+  // Add two domains
   await addBlockedDomain(page, 'abc.com')
   await addBlockedDomain(page, 'xyz.com')
 
@@ -15,12 +16,14 @@ test('should able to persist blocked domains and fetching them', async ({ page, 
   await expect(domains.nth(0)).toHaveText('abc.com')
   await expect(domains.nth(1)).toHaveText('xyz.com')
 
+  // Remove one domain
   await removeBlockedDomain(page, 'abc.com')
 
   domains = page.getByTestId('blocked-domain')
   await expect(domains).toHaveCount(1)
   await expect(domains.nth(0)).toHaveText('xyz.com')
 
+  // Reload the page
   await page.reload()
 
   domains = page.getByTestId('blocked-domain')
@@ -64,12 +67,10 @@ test('should able to remove all blocked domains and unblock them', async ({
   await assertNotGoToBlockedTemplate(page, 'https://google.com')
 })
 
-test('should able to persist blocked schedules and fetching them', async ({
-  page,
-  extensionId
-}) => {
+test('should able to persist blocked schedules and update ui', async ({ page, extensionId }) => {
   await page.goto(`chrome-extension://${extensionId}/options.html`)
 
+  // Add a schedule
   await page.getByTestId('check-weekday-Sun').check()
 
   await page.getByTestId('start-time-hour-input').fill('10')
@@ -85,6 +86,7 @@ test('should able to persist blocked schedules and fetching them', async ({
   await expect(schedules.nth(0)).toContainText('Sun')
   await expect(schedules.nth(0)).toContainText('10:00 - 12:00')
 
+  // Reload to check if the schedule is persisted
   await page.reload()
 
   schedules = page.getByTestId('weekly-schedule')
@@ -92,9 +94,11 @@ test('should able to persist blocked schedules and fetching them', async ({
   await expect(schedules.nth(0)).toContainText('Sun')
   await expect(schedules.nth(0)).toContainText('10:00 - 12:00')
 
+  // Remove the schedule
   await page.getByTestId('remove-schedule-with-index-0').click()
   await expect(page.getByTestId('weekly-schedule')).toHaveCount(0)
 
+  // Reload to check if the schedule is removed
   await page.reload()
   await expect(page.getByTestId('weekly-schedule')).toHaveCount(0)
 })
