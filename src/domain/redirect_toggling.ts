@@ -31,11 +31,6 @@ export class RedirectTogglingService {
     browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake(),
     weeklyScheduleStorageService = WeeklyScheduleStorageServiceImpl.createFake(),
     targetRedirectUrl = 'https://example.com'
-  }: {
-    websiteRedirectService?: WebsiteRedirectService
-    browsingRulesStorageService?: BrowsingRulesStorageService
-    weeklyScheduleStorageService?: WeeklyScheduleStorageService
-    targetRedirectUrl?: string
   } = {}) {
     return new RedirectTogglingService({
       websiteRedirectService,

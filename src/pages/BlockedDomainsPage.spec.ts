@@ -123,9 +123,6 @@ describe('BlockedDomainsPage', () => {
 function mountBlockedDomainsPage({
   browsingRulesStorageService = BrowsingRulesStorageServiceImpl.createFake(),
   targetRedirectUrl = 'https://example.com'
-}: {
-  browsingRulesStorageService?: BrowsingRulesStorageService
-  targetRedirectUrl?: string
 } = {}) {
   const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
   const redirectTogglingService = RedirectTogglingService.createFake({
