@@ -4,6 +4,8 @@ on:
 name: Development Release
 jobs:
   build:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,4 +24,3 @@ jobs:
           tag_name: latest
           files: dist
           prerelease: true
-          token: ${{ secrets.GITHUB_TOKEN }}
