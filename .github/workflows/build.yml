@@ -1,7 +1,7 @@
 on:
   push:
     # branches: main
-name: Build
+name: Development Release
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,8 +16,8 @@ jobs:
       - run: yarn install --immutable
       - name: Build
         run: yarn build
-      - name: Upload built artifacts
-        uses: actions/upload-artifact@v4
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: build-artifacts
-          path: dist/
+          files: dist
+          prerelease: true
