@@ -7,6 +7,8 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-latest
+    env:
+      TAG_NAME: dev-latest
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
@@ -19,10 +21,10 @@ jobs:
       - name: Build
         run: yarn build
       - name: Compress
-        run: zip -r task-concentrator-latest-dev.zip dist/
+        run: zip -r task-concentrator-${{ env.TAG_NAME }}.zip dist/
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: latest
-          files: task-concentrator-latest-dev.zip
+          tag_name: ${{ env.TAG_NAME }}
+          files: task-concentrator-${{ env.TAG_NAME }}.zip
           prerelease: true
