@@ -21,7 +21,9 @@ jobs:
       - name: Build
         run: yarn build
       - name: Compress
-        run: zip -r task-concentrator-${{ env.TAG_NAME }}.zip dist/
+        run: |
+          mv dist task-concentrator
+          zip -r task-concentrator-${{ env.TAG_NAME }}.zip task-concentrator
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
