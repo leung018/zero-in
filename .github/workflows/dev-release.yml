@@ -18,9 +18,11 @@ jobs:
       - run: yarn install --immutable
       - name: Build
         run: yarn build
+      - name: Compress
+        run: zip -r task-concentrator-latest-dev.zip dist/
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
-          files: dist/**
+          files: task-concentrator-latest-dev.zip
           prerelease: true
