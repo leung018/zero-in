@@ -22,3 +22,4 @@ jobs:
           tag_name: latest
           files: dist
           prerelease: true
+          token: ${{ secrets.GITHUB_TOKEN }}
