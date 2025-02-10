@@ -44,3 +44,6 @@ coverage
 
 test-results/
 playwright-report/
+
+# Dynamically create it and therefore ignore it
+manifest.json
