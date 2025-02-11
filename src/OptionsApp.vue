@@ -3,7 +3,7 @@ import WeeklySchedulesPage from './pages/WeeklySchedulesPage/index.vue'
 import { WeeklyScheduleStorageService } from './domain/schedules/storage'
 import { MessengerFactory } from './chrome/messenger'
 import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
-import { computed, ref, type Component } from 'vue'
+import { computed, onMounted, ref, type Component } from 'vue'
 import { BrowsingRulesStorageService } from './domain/browsing_rules/storage'
 
 const sender = MessengerFactory.createMessenger()
@@ -40,14 +40,18 @@ const routeMap: Record<PATH, Route> = {
 
 const currentPath = ref<PATH>(PATH.ROOT)
 
-window.addEventListener('hashchange', () => {
-  const newPath = window.location.hash.slice(1)
-  if (Object.values(PATH).includes(newPath as PATH)) {
-    currentPath.value = newPath as PATH
-  } else {
-    currentPath.value = PATH.ROOT
-  }
+onMounted(() => {
+  currentPath.value = getPathFromWindowLocation()
 })
+
+window.addEventListener('hashchange', () => {
+  currentPath.value = getPathFromWindowLocation()
+})
+
+function getPathFromWindowLocation(): PATH {
+  const path = window.location.hash.slice(1)
+  return Object.values(PATH).includes(path as PATH) ? (path as PATH) : PATH.ROOT
+}
 
 const currentView = computed(() => {
   return routeMap[currentPath.value]
