@@ -60,7 +60,7 @@ const currentView = computed(() => {
       <span class="navbar-brand ms-2">Options</span>
       <ul class="navbar-nav">
         <li v-for="path in Object.values(PATH)" :key="path" class="nav-item">
-          <a class="nav-link" :href="`#${path}`">
+          <a class="nav-link" :href="`#${path}`" :class="{ active: path === currentPath }">
             {{ routeMap[path].title }}
           </a>
         </li>
