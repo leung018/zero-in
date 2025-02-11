@@ -30,3 +30,4 @@ jobs:
           tag_name: ${{ env.TAG_NAME }}
           files: task-concentrator-${{ env.TAG_NAME }}.zip
           prerelease: true
+          fail_on_unmatched_files: true
