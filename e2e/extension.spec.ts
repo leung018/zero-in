@@ -5,7 +5,7 @@ import { test, expect } from './fixtures.js'
 test.describe.configure({ mode: 'parallel' })
 
 test('should able to persist blocked domains and update ui', async ({ page, extensionId }) => {
-  await page.goto(`chrome-extension://${extensionId}/popup.html`)
+  await goToBlockedDomainsPage(page, extensionId)
 
   // Add two domains
   await addBlockedDomain(page, 'abc.com')
@@ -42,7 +42,7 @@ test('should able to add blocked domains and block them', async ({ page, extensi
   await expect(extraPage.locator('body')).toContainText('This is fake google.com')
 
   // Add blocked Domain
-  await page.goto(`chrome-extension://${extensionId}/popup.html`)
+  await goToBlockedDomainsPage(page, extensionId)
   await addBlockedDomain(page, 'google.com')
 
   // Previous page which is in google.com should be blocked
@@ -56,7 +56,7 @@ test('should able to remove all blocked domains and unblock them', async ({
   page,
   extensionId
 }) => {
-  await page.goto(`chrome-extension://${extensionId}/popup.html`)
+  await goToBlockedDomainsPage(page, extensionId)
 
   await addBlockedDomain(page, 'google.com')
   await removeBlockedDomain(page, 'google.com')
@@ -68,7 +68,7 @@ test('should able to remove all blocked domains and unblock them', async ({
 })
 
 test('should able to persist blocked schedules and update ui', async ({ page, extensionId }) => {
-  await page.goto(`chrome-extension://${extensionId}/options.html`)
+  await goToSchedulesPage(page, extensionId)
 
   // Add a schedule
   await page.getByTestId('check-weekday-sun').check()
@@ -104,7 +104,7 @@ test('should able to persist blocked schedules and update ui', async ({ page, ex
 })
 
 test('should able to disable blocking according to schedule', async ({ page, extensionId }) => {
-  await page.goto(`chrome-extension://${extensionId}/popup.html`)
+  await goToBlockedDomainsPage(page, extensionId)
 
   await addBlockedDomain(page, 'google.com')
 
@@ -126,7 +126,7 @@ test('should able to disable blocking according to schedule', async ({ page, ext
     endHours = now.getHours() + 3
   }
 
-  await page.goto(`chrome-extension://${extensionId}/options.html`)
+  await goToSchedulesPage(page, extensionId)
 
   await page.getByTestId('check-weekday-mon').check()
 
@@ -140,6 +140,10 @@ test('should able to disable blocking according to schedule', async ({ page, ext
 
   await assertNotGoToBlockedTemplate(page, 'https://google.com')
 })
+
+async function goToBlockedDomainsPage(page: Page, extensionId: string) {
+  await page.goto(`chrome-extension://${extensionId}/options.html#/blocked-domains`)
+}
 
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
@@ -200,4 +204,8 @@ function sleep(ms: number) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms)
   })
+}
+
+async function goToSchedulesPage(page: Page, extensionId: string) {
+  await page.goto(`chrome-extension://${extensionId}/options.html`)
 }

@@ -43,7 +43,7 @@ async function updateBrowsingRules(browsingRules: BrowsingRules) {
 </script>
 
 <template>
-  <div class="container mt-4">
+  <div class="container mt-4" style="max-width: 400px">
     <h1 class="mb-4">Blocked Domains</h1>
     <form class="mb-4">
       <div class="mb-3">
