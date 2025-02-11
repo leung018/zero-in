@@ -8,15 +8,28 @@ import { BrowsingRulesStorageService } from './domain/browsing_rules/storage'
 
 const sender = MessengerFactory.createMessenger()
 
-const routes: { [key: string]: { component: Component; props: object } } = {
-  '/': {
+enum PATH {
+  ROOT = '/',
+  BLOCKED_DOMAINS = '/blocked-domains'
+}
+
+type Route = {
+  component: Component
+  props: object
+  title: string
+}
+
+const routeMap: Record<PATH, Route> = {
+  [PATH.ROOT]: {
+    title: 'Schedules',
     component: WeeklySchedulesPage,
     props: {
       weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
       sender
     }
   },
-  '/blocked-domains': {
+  [PATH.BLOCKED_DOMAINS]: {
+    title: 'Blocked Domains',
     component: BlockedDomainsPage,
     props: {
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
@@ -25,14 +38,19 @@ const routes: { [key: string]: { component: Component; props: object } } = {
   }
 }
 
-const currentPath = ref(window.location.hash)
+const currentPath = ref<PATH>(PATH.ROOT)
 
 window.addEventListener('hashchange', () => {
-  currentPath.value = window.location.hash
+  const newPath = window.location.hash.slice(1)
+  if (Object.values(PATH).includes(newPath as PATH)) {
+    currentPath.value = newPath as PATH
+  } else {
+    currentPath.value = PATH.ROOT
+  }
 })
 
 const currentView = computed(() => {
-  return routes[currentPath.value.slice(1) || '/'] || routes['/']
+  return routeMap[currentPath.value]
 })
 </script>
 
@@ -41,11 +59,10 @@ const currentView = computed(() => {
     <nav class="navbar navbar-expand navbar-light bg-light">
       <span class="navbar-brand ms-2">Options</span>
       <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="#/">Schedules</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#/blocked-domains">Blocked Domains</a>
+        <li v-for="path in Object.values(PATH)" :key="path" class="nav-item">
+          <a class="nav-link" :href="`#${path}`">
+            {{ routeMap[path].title }}
+          </a>
         </li>
       </ul>
     </nav>
