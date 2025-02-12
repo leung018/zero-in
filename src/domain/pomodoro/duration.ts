@@ -12,4 +12,8 @@ export class Duration {
   get seconds(): number {
     return this.totalSeconds % 60
   }
+
+  subtract(duration: Duration): Duration {
+    return new Duration({ seconds: this.totalSeconds - duration.totalSeconds })
+  }
 }

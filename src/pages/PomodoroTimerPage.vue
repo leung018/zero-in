@@ -2,8 +2,9 @@
 import type { Duration } from '@/domain/pomodoro/duration'
 import { formatNumber } from '../util'
 import { computed, ref } from 'vue'
+import type { Timer } from '@/domain/pomodoro/timer'
 
-const { focusDuration } = defineProps<{ focusDuration: Duration }>()
+const { focusDuration, timer } = defineProps<{ focusDuration: Duration; timer: Timer }>()
 
 const durationLeft = ref<Duration>(focusDuration)
 
@@ -12,11 +13,20 @@ const displayTime = computed(() => {
   const seconds = formatNumber(durationLeft.value.seconds)
   return `${minutes}:${seconds}`
 })
+
+const onClickStart = () => {
+  timer.setOnTick((timerRemainingDuration) => {
+    durationLeft.value = timerRemainingDuration
+  })
+  timer.start(focusDuration)
+}
 </script>
 
 <template>
   <div class="container text-center mt-3 mb-3">
     <div class="display-1" data-test="timer-display">{{ displayTime }}</div>
-    <button class="btn btn-success mt-3" data-test="start-button">Start</button>
+    <button class="btn btn-success mt-3" data-test="start-button" @click="onClickStart">
+      Start
+    </button>
   </div>
 </template>
