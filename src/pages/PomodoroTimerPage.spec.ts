@@ -2,7 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import PomodoroTimerPage from './PomodoroTimerPage.vue'
 import { expect, describe, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
-import { Timer } from '../domain/pomodoro/timer'
+import { FakePeriodicTaskScheduler, Timer } from '../domain/pomodoro/timer'
 
 describe('PomodoroTimerPage', () => {
   it('should display the time representing focus duration before timer is started', () => {
@@ -15,24 +15,32 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should reduce the time after timer is started', async () => {
-    const { wrapper, timer } = mountPomodoroTimerPage({
-      focusDuration: new Duration({ minutes: 9 })
+    const scheduler = new FakePeriodicTaskScheduler()
+    const { wrapper } = mountPomodoroTimerPage({
+      focusDuration: new Duration({ minutes: 9 }),
+      scheduler
     })
     const startButton = wrapper.find("[data-test='start-button']")
     await startButton.trigger('click')
     await flushPromises()
 
-    timer.advanceTime(new Duration({ minutes: 1, seconds: 59 }))
+    scheduler.triggerNext()
     await flushPromises()
 
-    expect(wrapper.find("[data-test='timer-display']").text()).toBe('07:01')
+    expect(wrapper.find("[data-test='timer-display']").text()).toBe('08:59')
+
+    scheduler.triggerNext()
+    await flushPromises()
+
+    expect(wrapper.find("[data-test='timer-display']").text()).toBe('08:58')
   })
 })
 
 function mountPomodoroTimerPage({
   focusDuration = new Duration({ minutes: 25 }),
-  timer = new Timer()
+  scheduler = new FakePeriodicTaskScheduler()
 } = {}) {
+  const timer = Timer.createFake(scheduler)
   const wrapper = mount(PomodoroTimerPage, {
     props: {
       focusDuration,
