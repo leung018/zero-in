@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Duration } from '@/domain/pomodoro/duration'
+import { formatNumber } from '../util'
 import { computed, ref } from 'vue'
 
 const { focusDuration } = defineProps<{ focusDuration: Duration }>()
@@ -7,8 +8,8 @@ const { focusDuration } = defineProps<{ focusDuration: Duration }>()
 const durationLeft = ref<Duration>(focusDuration)
 
 const displayTime = computed(() => {
-  const minutes = String(durationLeft.value.minutes).padStart(2, '0')
-  const seconds = String(durationLeft.value.seconds).padStart(2, '0')
+  const minutes = formatNumber(durationLeft.value.minutes)
+  const seconds = formatNumber(durationLeft.value.seconds)
   return `${minutes}:${seconds}`
 })
 </script>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatTimeNumber, Time, TimeInvalidInputError } from './time'
+import { Time, TimeInvalidInputError } from './time'
 import { assertToThrowError } from '../../test_utils/check_error'
 
 describe('Time', () => {
@@ -29,14 +29,5 @@ describe('Time', () => {
     const time = Time.fromDate(date)
     expect(time.hour).toBe(11)
     expect(time.minute).toBe(1)
-  })
-})
-
-describe('formatTimeNumber', () => {
-  it('should format number', () => {
-    expect(formatTimeNumber(0)).toBe('00')
-    expect(formatTimeNumber(9)).toBe('09')
-    expect(formatTimeNumber(10)).toBe('10')
-    expect(formatTimeNumber(59)).toBe('59')
   })
 })
