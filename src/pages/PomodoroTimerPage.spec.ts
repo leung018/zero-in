@@ -2,7 +2,8 @@ import { flushPromises, mount } from '@vue/test-utils'
 import PomodoroTimerPage from './PomodoroTimerPage.vue'
 import { expect, describe, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
-import { FakePeriodicTaskScheduler, Timer } from '../domain/pomodoro/timer'
+import { Timer } from '../domain/pomodoro/timer'
+import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 
 describe('PomodoroTimerPage', () => {
   it('should display the time representing focus duration before timer is started', () => {
