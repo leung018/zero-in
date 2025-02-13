@@ -6,12 +6,12 @@ export interface PeriodicTaskScheduler {
 export class PeriodicTaskSchedulerImpl implements PeriodicTaskScheduler {
   private intervalId: NodeJS.Timeout | null = null
 
-  scheduleTask(task: () => void, ms: number) {
+  scheduleTask(task: () => void, intervalMs: number) {
     if (this.intervalId) {
       throw TaskSchedulingError.taskAlreadyScheduledError()
     }
 
-    const intervalId = setInterval(task, ms)
+    const intervalId = setInterval(task, intervalMs)
     this.intervalId = intervalId
   }
 
@@ -37,13 +37,13 @@ export class FakePeriodicTaskScheduler implements PeriodicTaskScheduler {
   private intervalMs: number = 0
   private lastTaskTime: number = 0
 
-  scheduleTask(task: () => void, ms: number): void {
+  scheduleTask(task: () => void, intervalMs: number): void {
     if (this.task) {
       throw TaskSchedulingError.taskAlreadyScheduledError()
     }
 
     this.task = task
-    this.intervalMs = ms
+    this.intervalMs = intervalMs
   }
 
   stopTask(): void {
