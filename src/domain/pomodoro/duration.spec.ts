@@ -8,4 +8,13 @@ describe('Duration', () => {
     expect(duration.minutes).toBe(10)
     expect(duration.seconds).toBe(30)
   })
+
+  it('should subtract return new duration that is subtracted', () => {
+    const original = new Duration({ minutes: 10, seconds: 30 })
+
+    const subtracted = original.subtract(new Duration({ minutes: 1, seconds: 29 }))
+
+    expect(subtracted).toEqual(new Duration({ minutes: 9, seconds: 1 }))
+    expect(original).toEqual(new Duration({ minutes: 10, seconds: 30 }))
+  })
 })
