@@ -1,6 +1,10 @@
 import { afterEach } from 'node:test'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { PeriodicTaskSchedulerImpl, TaskSchedulingError } from './scheduler'
+import {
+  FakePeriodicTaskScheduler,
+  PeriodicTaskSchedulerImpl,
+  TaskSchedulingError
+} from './scheduler'
 import { assertToThrowError } from '../test_utils/check_error'
 
 describe('PeriodicTaskSchedulerImpl', () => {
@@ -44,7 +48,7 @@ describe('PeriodicTaskSchedulerImpl', () => {
 
     assertToThrowError(() => {
       scheduler.scheduleTask(mock, 1000)
-    }, new TaskSchedulingError('Task is already scheduled. Stop the task before scheduling a new one.'))
+    }, TaskSchedulingError.taskAlreadyScheduledError())
 
     vi.advanceTimersByTime(1500)
     expect(mock).not.toHaveBeenCalled()
@@ -53,6 +57,55 @@ describe('PeriodicTaskSchedulerImpl', () => {
     scheduler.scheduleTask(mock, 1000)
 
     vi.advanceTimersByTime(1500)
+    expect(mock).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('FakePeriodicTaskScheduler', () => {
+  it('should execute the callback according the schedules', () => {
+    const mock = vi.fn(() => {})
+
+    const scheduler = new FakePeriodicTaskScheduler()
+    scheduler.scheduleTask(mock, 1000)
+
+    expect(mock).not.toHaveBeenCalled()
+    scheduler.advanceTime(1500)
+    expect(mock).toHaveBeenCalledTimes(1)
+
+    scheduler.advanceTime(500)
+    expect(mock).toHaveBeenCalledTimes(2)
+  })
+
+  it('should able to stop scheduled task', () => {
+    const mock = vi.fn(() => {})
+
+    const scheduler = new FakePeriodicTaskScheduler()
+
+    scheduler.scheduleTask(mock, 1000)
+    scheduler.stopTask()
+
+    scheduler.advanceTime(10000)
+    expect(mock).not.toHaveBeenCalled()
+  })
+
+  it('should throw error when scheduleTask without previous scheduled task is stopped', () => {
+    const scheduler = new FakePeriodicTaskScheduler()
+
+    const mock = vi.fn(() => {})
+
+    scheduler.scheduleTask(() => {}, 1000)
+
+    assertToThrowError(() => {
+      scheduler.scheduleTask(mock, 1000)
+    }, TaskSchedulingError.taskAlreadyScheduledError())
+
+    scheduler.advanceTime(1500)
+    expect(mock).not.toHaveBeenCalled()
+
+    scheduler.stopTask()
+    scheduler.scheduleTask(mock, 1000)
+
+    scheduler.advanceTime(1500)
     expect(mock).toHaveBeenCalledTimes(1)
   })
 })
