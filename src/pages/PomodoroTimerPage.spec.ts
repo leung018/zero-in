@@ -25,15 +25,10 @@ describe('PomodoroTimerPage', () => {
     await startButton.trigger('click')
     await flushPromises()
 
-    scheduler.triggerNext()
+    scheduler.advanceTime(6001)
     await flushPromises()
 
-    expect(wrapper.find("[data-test='timer-display']").text()).toBe('08:59')
-
-    scheduler.triggerNext()
-    await flushPromises()
-
-    expect(wrapper.find("[data-test='timer-display']").text()).toBe('08:58')
+    expect(wrapper.find("[data-test='timer-display']").text()).toBe('08:54')
   })
 })
 
