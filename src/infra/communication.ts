@@ -4,6 +4,7 @@ export interface Port {
   send(message: any): void
   addListener(callback: (message: any) => void): void
 }
+
 export class FakePort implements Port {
   private emitter: EventEmitter
   private id: string
@@ -29,5 +30,33 @@ export class FakePort implements Port {
 
   addListener(callback: (message: any) => void): void {
     this.emitter.on(this.id, callback)
+  }
+}
+
+export interface CommunicationManager {
+  clientConnect(): Port
+  addClientConnectListener(callback: (backgroundPort: Port) => void): void
+}
+
+export class FakeCommunicationManager implements CommunicationManager {
+  private clientPort: Port
+
+  private backgroundPort: Port
+
+  private callback: (backgroundPort: Port) => void = () => {}
+
+  constructor() {
+    const [clientPort, backgroundPort] = FakePort.createPaired()
+    this.clientPort = clientPort
+    this.backgroundPort = backgroundPort
+  }
+
+  clientConnect() {
+    this.callback(this.backgroundPort)
+    return this.clientPort
+  }
+
+  addClientConnectListener(callback: (backgroundPort: Port) => void) {
+    this.callback = callback
   }
 }

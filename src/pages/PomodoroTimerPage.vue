@@ -2,7 +2,7 @@
 import { Duration } from '../domain/pomodoro/duration'
 import { formatNumber } from '../util'
 import { computed, onMounted, ref } from 'vue'
-import type { Port } from '@/infra/port'
+import type { Port } from '@/infra/communication'
 import { EventName } from '../event'
 
 const { focusDuration, port } = defineProps<{
