@@ -4,6 +4,7 @@ import { expect, describe, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
 import { Timer } from '../domain/pomodoro/timer'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
+import { BackgroundConnectionListener } from '../chrome/connector'
 
 describe('PomodoroTimerPage', () => {
   it('should display the time representing focus duration before timer is started', () => {
@@ -37,10 +38,12 @@ function mountPomodoroTimerPage({
   scheduler = new FakePeriodicTaskScheduler()
 } = {}) {
   const timer = Timer.createFake(scheduler)
+  const connector = BackgroundConnectionListener.initFakeListener(scheduler)
   const wrapper = mount(PomodoroTimerPage, {
     props: {
       focusDuration,
-      timer
+      timer,
+      connection: connector.newConnection()
     }
   })
   return { wrapper, timer }

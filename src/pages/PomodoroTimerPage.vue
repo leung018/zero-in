@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import type { Duration } from '@/domain/pomodoro/duration'
 import { formatNumber } from '../util'
-import { computed, ref } from 'vue'
-import type { Timer } from '@/domain/pomodoro/timer'
+import { computed, onMounted, ref } from 'vue'
+import type { Connection } from '../chrome/connector'
+import { EventName } from '../event'
 
-const { focusDuration, timer } = defineProps<{ focusDuration: Duration; timer: Timer }>()
+const { focusDuration, connection } = defineProps<{
+  focusDuration: Duration
+  connection: Connection
+}>()
 
 const durationLeft = ref<Duration>(focusDuration)
 
@@ -14,11 +18,14 @@ const displayTime = computed(() => {
   return `${minutes}:${seconds}`
 })
 
-const onClickStart = () => {
-  timer.setOnTick((timerRemainingDuration) => {
-    durationLeft.value = timerRemainingDuration
+onMounted(() => {
+  connection.addListener((message) => {
+    durationLeft.value = message
   })
-  timer.start(focusDuration)
+})
+
+const onClickStart = () => {
+  connection.send({ name: EventName.POMODORO_START, initial: focusDuration })
 }
 </script>
 
