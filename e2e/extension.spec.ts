@@ -141,6 +141,16 @@ test('should able to disable blocking according to schedule', async ({ page, ext
   await assertNotGoToBlockedTemplate(page, 'https://google.com')
 })
 
+test('should click start button to start the pomodoro timer', async ({ page, extensionId }) => {
+  await goToPomodoroTimer(page, extensionId)
+
+  await expect(page.getByTestId('timer-display')).toContainText('25:00')
+
+  await page.getByTestId('start-button').click()
+
+  await expect(page.getByTestId('timer-display')).toContainText('24:59')
+})
+
 async function goToBlockedDomainsPage(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/options.html#/blocked-domains`)
 }
@@ -208,4 +218,8 @@ function sleep(ms: number) {
 
 async function goToSchedulesPage(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/options.html`)
+}
+
+async function goToPomodoroTimer(page: Page, extensionId: string) {
+  await page.goto(`chrome-extension://${extensionId}/popup.html`)
 }

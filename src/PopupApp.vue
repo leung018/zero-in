@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import { MessengerFactory } from './chrome/messenger'
-import { BrowsingRulesStorageService } from './domain/browsing_rules/storage'
-import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
+import config from './config'
+import { Timer } from './domain/pomodoro/timer'
+import PomodoroTimerPage from './pages/PomodoroTimerPage.vue'
 </script>
 
 <template>
-  <main class="p-4">
-    <BlockedDomainsPage
-      :browsingRulesStorageService="BrowsingRulesStorageService.create()"
-      :sender="MessengerFactory.createMessenger()"
-    />
-  </main>
+  <PomodoroTimerPage :focus-duration="config.getFocusDuration()" :timer="Timer.create()" />
 </template>
