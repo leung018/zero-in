@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import config from './config'
-import { Timer } from './domain/pomodoro/timer'
+import { Connector } from './chrome/connector'
 import PomodoroTimerPage from './pages/PomodoroTimerPage.vue'
 </script>
 
 <template>
-  <PomodoroTimerPage :focus-duration="config.getFocusDuration()" :timer="Timer.create()" />
+  <PomodoroTimerPage
+    :focus-duration="config.getFocusDuration()"
+    :connection="Connector.create().newConnection()"
+  />
 </template>

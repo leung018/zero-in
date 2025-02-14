@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Duration } from '@/domain/pomodoro/duration'
+import { Duration } from '../domain/pomodoro/duration'
 import { formatNumber } from '../util'
 import { computed, onMounted, ref } from 'vue'
 import type { Connection } from '../chrome/connector'
@@ -20,12 +20,12 @@ const displayTime = computed(() => {
 
 onMounted(() => {
   connection.addListener((message) => {
-    durationLeft.value = message
+    durationLeft.value = new Duration({ seconds: message })
   })
 })
 
 const onClickStart = () => {
-  connection.send({ name: EventName.POMODORO_START, initial: focusDuration })
+  connection.send({ name: EventName.POMODORO_START, initial: focusDuration.totalSeconds })
 }
 </script>
 

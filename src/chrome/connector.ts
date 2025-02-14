@@ -2,6 +2,7 @@ import EventEmitter from 'events'
 import { Timer } from '../domain/pomodoro/timer'
 import { EventName } from '../event'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
+import { Duration } from '../domain/pomodoro/duration'
 
 export class Connector {
   static create() {
@@ -97,9 +98,9 @@ export class BackgroundConnectionListener {
       if (message.name == EventName.POMODORO_START) {
         const timer = this.timerFactory()
         timer.setOnTick((remaining) => {
-          connection.send(remaining)
+          connection.send(remaining.totalSeconds)
         })
-        timer.start(message.initial)
+        timer.start(new Duration({ seconds: message.initial }))
       }
     })
   }
