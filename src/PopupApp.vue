@@ -7,6 +7,6 @@ import PomodoroTimerPage from './pages/PomodoroTimerPage.vue'
 <template>
   <PomodoroTimerPage
     :focus-duration="config.getFocusDuration()"
-    :connection="Connector.create().newConnection()"
+    :port="Connector.create().connect()"
   />
 </template>

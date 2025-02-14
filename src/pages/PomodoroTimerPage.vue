@@ -2,12 +2,12 @@
 import { Duration } from '../domain/pomodoro/duration'
 import { formatNumber } from '../util'
 import { computed, onMounted, ref } from 'vue'
-import type { Connection } from '../chrome/connector'
+import type { Port } from '../chrome/connector'
 import { EventName } from '../event'
 
-const { focusDuration, connection } = defineProps<{
+const { focusDuration, port } = defineProps<{
   focusDuration: Duration
-  connection: Connection
+  port: Port
 }>()
 
 const durationLeft = ref<Duration>(focusDuration)
@@ -19,13 +19,13 @@ const displayTime = computed(() => {
 })
 
 onMounted(() => {
-  connection.addListener((message) => {
+  port.addListener((message) => {
     durationLeft.value = new Duration({ seconds: message })
   })
 })
 
 const onClickStart = () => {
-  connection.send({ name: EventName.POMODORO_START, initial: focusDuration.totalSeconds })
+  port.send({ name: EventName.POMODORO_START, initial: focusDuration.totalSeconds })
 }
 </script>
 

@@ -7,49 +7,49 @@ import { Duration } from '../domain/pomodoro/duration'
 export class Connector {
   static create() {
     return new Connector(() => {
-      const port = chrome.runtime.connect()
-      return newConnectionFormPort(port)
+      const chromePort = chrome.runtime.connect()
+      return newPort(chromePort)
     })
   }
 
-  static createFake(newConnection: () => Connection) {
-    return new Connector(newConnection)
+  static createFake(connect: () => Port) {
+    return new Connector(connect)
   }
 
-  readonly newConnection: () => Connection
+  readonly connect: () => Port
 
-  private constructor(newConnection: () => Connection) {
-    this.newConnection = newConnection
+  private constructor(connect: () => Port) {
+    this.connect = connect
   }
 }
 
-function newConnectionFormPort(port: chrome.runtime.Port) {
+function newPort(chromePort: chrome.runtime.Port) {
   return {
     send: (message: any) => {
-      return port.postMessage(message)
+      return chromePort.postMessage(message)
     },
     addListener: (callback: (message: any) => void) => {
-      return port.onMessage.addListener(callback)
+      return chromePort.onMessage.addListener(callback)
     }
   }
 }
 
-export interface Connection {
+export interface Port {
   send(message: any): void
   addListener(callback: (message: any) => void): void
 }
 
-class FakeConnection implements Connection {
+class FakePort implements Port {
   private emitter: EventEmitter
   private id: string
   private otherId: string
 
-  static createPaired(): [Connection, Connection] {
+  static createPaired(): [Port, Port] {
     const emitter = new EventEmitter()
-    const connection1 = new FakeConnection(emitter, 'connection1', 'connection2')
-    const connection2 = new FakeConnection(emitter, 'connection2', 'connection1')
+    const port1 = new FakePort(emitter, 'port1', 'port2')
+    const port2 = new FakePort(emitter, 'port2', 'port1')
 
-    return [connection1, connection2]
+    return [port1, port2]
   }
 
   private constructor(emitter: EventEmitter, id: string, otherId: string) {
@@ -67,11 +67,11 @@ class FakeConnection implements Connection {
   }
 }
 
-export class BackgroundConnectionListener {
+export class BackgroundPortListener {
   static initListener() {
-    chrome.runtime.onConnect.addListener((port) => {
-      const connection = newConnectionFormPort(port)
-      new BackgroundConnectionListener(Timer.create).onConnect(connection)
+    chrome.runtime.onConnect.addListener((chromePort) => {
+      const port = newPort(chromePort)
+      new BackgroundPortListener(Timer.create).onConnect(port)
     })
   }
 
@@ -79,11 +79,11 @@ export class BackgroundConnectionListener {
     scheduler: FakePeriodicTaskScheduler = new FakePeriodicTaskScheduler()
   ): Connector {
     return Connector.createFake(() => {
-      const [clientConn, serverConn] = FakeConnection.createPaired()
-      new BackgroundConnectionListener(() => {
+      const [clientPort, serverPort] = FakePort.createPaired()
+      new BackgroundPortListener(() => {
         return Timer.createFake(scheduler)
-      }).onConnect(serverConn)
-      return clientConn
+      }).onConnect(serverPort)
+      return clientPort
     })
   }
 
@@ -93,12 +93,12 @@ export class BackgroundConnectionListener {
     this.timerFactory = timerFactory
   }
 
-  private onConnect(connection: Connection) {
-    connection.addListener((message) => {
+  private onConnect(port: Port) {
+    port.addListener((message) => {
       if (message.name == EventName.POMODORO_START) {
         const timer = this.timerFactory()
         timer.setOnTick((remaining) => {
-          connection.send(remaining.totalSeconds)
+          port.send(remaining.totalSeconds)
         })
         timer.start(new Duration({ seconds: message.initial }))
       }
