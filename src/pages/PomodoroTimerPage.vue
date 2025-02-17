@@ -1,10 +1,18 @@
 <script setup lang="ts">
-import type { Duration } from '@/domain/pomodoro/duration'
+import { Duration } from '../domain/pomodoro/duration'
 import { formatNumber } from '../util'
-import { computed, ref } from 'vue'
-import type { Timer } from '@/domain/pomodoro/timer'
+import { computed, onMounted, ref } from 'vue'
+import type { Port } from '@/infra/communication'
+import { EventName, type MappedEvents } from '../service_workers/event'
+import type { MappedResponses, ResponseName } from '../service_workers/response'
 
-const { focusDuration, timer } = defineProps<{ focusDuration: Duration; timer: Timer }>()
+const { focusDuration, port } = defineProps<{
+  focusDuration: Duration
+  port: Port<
+    MappedEvents[EventName.POMODORO_START],
+    MappedResponses[ResponseName.POMODORO_TIMER_UPDATE]
+  >
+}>()
 
 const durationLeft = ref<Duration>(focusDuration)
 
@@ -14,11 +22,17 @@ const displayTime = computed(() => {
   return `${minutes}:${seconds}`
 })
 
-const onClickStart = () => {
-  timer.setOnTick((timerRemainingDuration) => {
-    durationLeft.value = timerRemainingDuration
+onMounted(() => {
+  port.addListener((message) => {
+    durationLeft.value = new Duration({ seconds: message.payload.remainingSeconds })
   })
-  timer.start(focusDuration)
+})
+
+const onClickStart = () => {
+  port.send({
+    name: EventName.POMODORO_START,
+    payload: { initialSeconds: focusDuration.totalSeconds }
+  })
 }
 </script>
 

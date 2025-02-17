@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import WeeklySchedulesPage from './pages/WeeklySchedulesPage/index.vue'
 import { WeeklyScheduleStorageService } from './domain/schedules/storage'
-import { MessengerFactory } from './chrome/messenger'
 import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
 import { computed, onMounted, ref, type Component } from 'vue'
 import { BrowsingRulesStorageService } from './domain/browsing_rules/storage'
+import { ChromeCommunicationManager } from './chrome/communication'
 
-const sender = MessengerFactory.createMessenger()
+const port = new ChromeCommunicationManager().clientConnect()
 
 enum PATH {
   ROOT = '/',
@@ -25,7 +25,7 @@ const routeMap: Record<PATH, Route> = {
     component: WeeklySchedulesPage,
     props: {
       weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
-      sender
+      port
     }
   },
   [PATH.BLOCKED_DOMAINS]: {
@@ -33,7 +33,7 @@ const routeMap: Record<PATH, Route> = {
     component: BlockedDomainsPage,
     props: {
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
-      sender
+      port
     }
   }
 }

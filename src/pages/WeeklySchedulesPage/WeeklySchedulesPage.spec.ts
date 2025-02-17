@@ -9,9 +9,9 @@ import { FakeWebsiteRedirectService } from '../../domain/redirect'
 import { BrowsingRulesStorageService } from '../../domain/browsing_rules/storage'
 import { BrowsingRules } from '../../domain/browsing_rules'
 import { afterEach, beforeEach } from 'node:test'
-import { MessengerFactory } from '../../chrome/messenger'
-import { MessageListenersInitializer } from '../../initializer'
 import { RedirectTogglingService } from '../../domain/redirect_toggling'
+import { FakeCommunicationManager } from '../../infra/communication'
+import { ConnectionListenerInitializer } from '../../service_workers/initializer'
 
 describe('WeeklySchedulesPage', () => {
   beforeEach(() => {
@@ -271,14 +271,13 @@ function mountWeeklySchedulesPage({
     websiteRedirectService: fakeWebsiteRedirectService,
     targetRedirectUrl
   })
-
-  const messenger = MessengerFactory.createFakeMessenger()
-  MessageListenersInitializer.initFakeListeners({
-    redirectTogglingService,
-    messenger
+  const communicationManager = new FakeCommunicationManager()
+  ConnectionListenerInitializer.fakeInit({
+    communicationManager,
+    redirectTogglingService
   })
   const wrapper = mount(WeeklySchedulesPage, {
-    props: { weeklyScheduleStorageService, sender: messenger }
+    props: { weeklyScheduleStorageService, port: communicationManager.clientConnect() }
   })
   return {
     wrapper,

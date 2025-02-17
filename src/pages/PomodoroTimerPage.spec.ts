@@ -2,8 +2,9 @@ import { flushPromises, mount } from '@vue/test-utils'
 import PomodoroTimerPage from './PomodoroTimerPage.vue'
 import { expect, describe, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
-import { Timer } from '../domain/pomodoro/timer'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
+import { ConnectionListenerInitializer } from '../service_workers/initializer'
+import { FakeCommunicationManager } from '../infra/communication'
 
 describe('PomodoroTimerPage', () => {
   it('should display the time representing focus duration before timer is started', () => {
@@ -16,10 +17,8 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should reduce the time after timer is started', async () => {
-    const scheduler = new FakePeriodicTaskScheduler()
-    const { wrapper } = mountPomodoroTimerPage({
-      focusDuration: new Duration({ minutes: 9 }),
-      scheduler
+    const { wrapper, scheduler } = mountPomodoroTimerPage({
+      focusDuration: new Duration({ minutes: 9 })
     })
     const startButton = wrapper.find("[data-test='start-button']")
     await startButton.trigger('click')
@@ -32,16 +31,18 @@ describe('PomodoroTimerPage', () => {
   })
 })
 
-function mountPomodoroTimerPage({
-  focusDuration = new Duration({ minutes: 25 }),
-  scheduler = new FakePeriodicTaskScheduler()
-} = {}) {
-  const timer = Timer.createFake(scheduler)
+function mountPomodoroTimerPage({ focusDuration = new Duration({ minutes: 25 }) } = {}) {
+  const scheduler = new FakePeriodicTaskScheduler()
+  const communicationManager = new FakeCommunicationManager()
+  ConnectionListenerInitializer.fakeInit({
+    scheduler,
+    communicationManager
+  })
   const wrapper = mount(PomodoroTimerPage, {
     props: {
       focusDuration,
-      timer
+      port: communicationManager.clientConnect()
     }
   })
-  return { wrapper, timer }
+  return { wrapper, scheduler }
 }

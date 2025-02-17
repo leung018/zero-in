@@ -6,12 +6,12 @@ import { Time } from '../../domain/schedules/time'
 import TimeInput from './TimeInput.vue'
 import WeekdaysSelector from './WeekdaysSelector.vue'
 import SchedulesList from './SchedulesList.vue'
-import type { Sender } from '@/domain/messenger'
-import { EventName } from '../../event'
+import { EventName } from '../../service_workers/event'
+import type { Port } from '../../infra/communication'
 
-const { weeklyScheduleStorageService, sender } = defineProps<{
+const { weeklyScheduleStorageService, port } = defineProps<{
   weeklyScheduleStorageService: WeeklyScheduleStorageService
-  sender: Sender
+  port: Port
 }>()
 
 const newStartTime = ref<Time>(new Time(0, 0))
@@ -57,7 +57,7 @@ const handleRemove = async (indexToRemove: number) => {
 
 const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
   await weeklyScheduleStorageService.saveAll(newWeeklySchedules)
-  await sender.send({ name: EventName.TOGGLE_REDIRECT_RULES })
+  await port.send({ name: EventName.TOGGLE_REDIRECT_RULES })
   weeklySchedules.value = newWeeklySchedules
 }
 </script>
