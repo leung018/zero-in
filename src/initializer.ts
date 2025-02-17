@@ -1,7 +1,7 @@
 import { MessengerFactory } from './chrome/messenger'
 import { type Messenger } from './domain/messenger'
 import { RedirectTogglingService } from './domain/redirect_toggling'
-import { EventName } from './event'
+import { EventName } from './service_workers/event'
 
 export class MessageListenersInitializer {
   private redirectTogglingService: RedirectTogglingService

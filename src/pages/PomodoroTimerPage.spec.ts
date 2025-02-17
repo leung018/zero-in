@@ -3,7 +3,7 @@ import PomodoroTimerPage from './PomodoroTimerPage.vue'
 import { expect, describe, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
-import { ConnectionListenerInitializer } from '../domain/initializer'
+import { ConnectionListenerInitializer } from '../service_workers/initializer'
 import { FakeCommunicationManager } from '../infra/communication'
 
 describe('PomodoroTimerPage', () => {

@@ -1,6 +1,6 @@
-import { ConnectionListenerInitializer } from '../domain/initializer'
+import { ConnectionListenerInitializer } from './initializer'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
-import { EventName } from '../event'
+import { EventName } from './event'
 import { MessageListenersInitializer } from '../initializer'
 
 const redirectTogglingService = RedirectTogglingService.create()

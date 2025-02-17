@@ -1,38 +1,44 @@
 import { ChromeCommunicationManager } from '../chrome/communication'
-import { EventName } from '../event'
+import { EventName } from './event'
 import {
   FakeCommunicationManager,
   type CommunicationManager,
   type Port
 } from '../infra/communication'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
-import { Duration } from './pomodoro/duration'
-import { Timer } from './pomodoro/timer'
+import { Duration } from '../domain/pomodoro/duration'
+import { Timer } from '../domain/pomodoro/timer'
+import { RedirectTogglingService } from '../domain/redirect_toggling'
 
 export class ConnectionListenerInitializer {
   static init() {
     return this.initListener({
       communicationManager: new ChromeCommunicationManager(),
-      timerFactory: () => Timer.create()
+      timerFactory: () => Timer.create(),
+      redirectTogglingService: RedirectTogglingService.create()
     })
   }
 
   static fakeInit({
     scheduler = new FakePeriodicTaskScheduler(),
-    communicationManager = new FakeCommunicationManager()
+    communicationManager = new FakeCommunicationManager(),
+    redirectTogglingService = RedirectTogglingService.createFake()
   } = {}) {
     return this.initListener({
       communicationManager,
-      timerFactory: () => Timer.createFake(scheduler)
+      timerFactory: () => Timer.createFake(scheduler),
+      redirectTogglingService
     })
   }
 
   private static initListener({
     communicationManager,
-    timerFactory
+    timerFactory,
+    redirectTogglingService
   }: {
     communicationManager: CommunicationManager
     timerFactory: () => Timer
+    redirectTogglingService: RedirectTogglingService
   }) {
     communicationManager.addClientConnectListener((backgroundPort: Port) => {
       backgroundPort.addListener((message) => {
@@ -42,6 +48,8 @@ export class ConnectionListenerInitializer {
             backgroundPort.send(remaining.totalSeconds)
           })
           timer.start(new Duration({ seconds: message.initial }))
+        } else if (message.name == EventName.TOGGLE_REDIRECT_RULES) {
+          redirectTogglingService.run()
         }
       })
     })
