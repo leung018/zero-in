@@ -1,8 +1,8 @@
 import EventEmitter from 'events'
 
-export interface Port {
-  send(message: any): void
-  addListener(callback: (message: any) => void): void
+export interface Port<OutgoingMessage = any, IncomingMessage = any> {
+  send(message: OutgoingMessage): void
+  addListener(callback: (message: IncomingMessage) => void): void
 }
 
 export class FakePort implements Port {
