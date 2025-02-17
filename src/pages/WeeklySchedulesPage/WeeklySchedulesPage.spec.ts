@@ -11,7 +11,7 @@ import { BrowsingRules } from '../../domain/browsing_rules'
 import { afterEach, beforeEach } from 'node:test'
 import { RedirectTogglingService } from '../../domain/redirect_toggling'
 import { FakeCommunicationManager } from '../../infra/communication'
-import { ConnectionListenerInitializer } from '../../service_workers/initializer'
+import { BackgroundListener } from '../../service_workers/listener'
 
 describe('WeeklySchedulesPage', () => {
   beforeEach(() => {
@@ -272,10 +272,10 @@ function mountWeeklySchedulesPage({
     targetRedirectUrl
   })
   const communicationManager = new FakeCommunicationManager()
-  ConnectionListenerInitializer.fakeInit({
+  BackgroundListener.createFake({
     communicationManager,
     redirectTogglingService
-  })
+  }).start()
   const wrapper = mount(WeeklySchedulesPage, {
     props: { weeklyScheduleStorageService, port: communicationManager.clientConnect() }
   })

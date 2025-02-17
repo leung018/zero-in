@@ -7,7 +7,7 @@ import { BrowsingRules } from '../domain/browsing_rules'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
 import { FakeWebsiteRedirectService } from '../domain/redirect'
 import { FakeCommunicationManager } from '../infra/communication'
-import { ConnectionListenerInitializer } from '../service_workers/initializer'
+import { BackgroundListener } from '../service_workers/listener'
 
 describe('BlockedDomainsPage', () => {
   it('should render blocked domains', async () => {
@@ -128,10 +128,10 @@ function mountBlockedDomainsPage({
     targetRedirectUrl
   })
   const communicationManager = new FakeCommunicationManager()
-  ConnectionListenerInitializer.fakeInit({
+  BackgroundListener.createFake({
     communicationManager,
     redirectTogglingService
-  })
+  }).start()
   const wrapper = mount(BlockedDomainsPage, {
     props: { browsingRulesStorageService, port: communicationManager.clientConnect() }
   })

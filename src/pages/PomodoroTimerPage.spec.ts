@@ -3,7 +3,7 @@ import PomodoroTimerPage from './PomodoroTimerPage.vue'
 import { expect, describe, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
-import { ConnectionListenerInitializer } from '../service_workers/initializer'
+import { BackgroundListener } from '../service_workers/listener'
 import { FakeCommunicationManager } from '../infra/communication'
 
 describe('PomodoroTimerPage', () => {
@@ -34,10 +34,10 @@ describe('PomodoroTimerPage', () => {
 function mountPomodoroTimerPage({ focusDuration = new Duration({ minutes: 25 }) } = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
   const communicationManager = new FakeCommunicationManager()
-  ConnectionListenerInitializer.fakeInit({
+  BackgroundListener.createFake({
     scheduler,
     communicationManager
-  })
+  }).start()
   const wrapper = mount(PomodoroTimerPage, {
     props: {
       focusDuration,

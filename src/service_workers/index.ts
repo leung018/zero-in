@@ -1,4 +1,4 @@
-import { ConnectionListenerInitializer } from './initializer'
+import { BackgroundListener } from './listener'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
 import { EventName } from './event'
 
@@ -15,4 +15,4 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 })
 chrome.alarms.create(EventName.TOGGLE_REDIRECT_RULES, { periodInMinutes: 0.5, when: Date.now() })
 
-ConnectionListenerInitializer.init()
+BackgroundListener.create().start()

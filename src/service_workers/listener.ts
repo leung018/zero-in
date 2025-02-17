@@ -11,29 +11,29 @@ import { Timer } from '../domain/pomodoro/timer'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
 import { ResponseName, type MappedResponses } from './response'
 
-export class ConnectionListenerInitializer {
+export class BackgroundListener {
   private redirectTogglingService: RedirectTogglingService
   private timerFactory: () => Timer
   private communicationManager: CommunicationManager
 
-  static init() {
-    new ConnectionListenerInitializer({
+  static create() {
+    return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
       timerFactory: () => Timer.create(),
       redirectTogglingService: RedirectTogglingService.create()
-    }).init()
+    })
   }
 
-  static fakeInit({
+  static createFake({
     scheduler = new FakePeriodicTaskScheduler(),
     communicationManager = new FakeCommunicationManager(),
     redirectTogglingService = RedirectTogglingService.createFake()
   } = {}) {
-    new ConnectionListenerInitializer({
+    return new BackgroundListener({
       communicationManager,
       timerFactory: () => Timer.createFake(scheduler),
       redirectTogglingService
-    }).init()
+    })
   }
 
   private constructor({
@@ -50,7 +50,7 @@ export class ConnectionListenerInitializer {
     this.redirectTogglingService = redirectTogglingService
   }
 
-  private init() {
+  start() {
     this.communicationManager.addClientConnectListener(
       (backgroundPort: Port<MappedResponses[ResponseName], MappedEvents[EventName]>) => {
         const listener = (message: MappedEvents[EventName]) => {
