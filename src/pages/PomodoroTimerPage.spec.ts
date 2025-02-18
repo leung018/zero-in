@@ -36,11 +36,11 @@ function mountPomodoroTimerPage({ focusDuration = new Duration({ minutes: 25 }) 
   const communicationManager = new FakeCommunicationManager()
   BackgroundListener.createFake({
     scheduler,
-    communicationManager
+    communicationManager,
+    focusDuration
   }).start()
   const wrapper = mount(PomodoroTimerPage, {
     props: {
-      focusDuration,
       port: communicationManager.clientConnect()
     }
   })

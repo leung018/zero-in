@@ -6,20 +6,38 @@ import {
 import { Duration } from './duration'
 export class Timer {
   static create() {
-    return new Timer(new PeriodicTaskSchedulerImpl())
+    return new Timer({
+      scheduler: new PeriodicTaskSchedulerImpl(),
+      focusDuration: new Duration({ minutes: 25 })
+    })
   }
 
-  static createFake(scheduler = new FakePeriodicTaskScheduler()) {
-    return new Timer(scheduler)
+  static createFake({
+    scheduler = new FakePeriodicTaskScheduler(),
+    focusDuration = new Duration({ minutes: 25 })
+  } = {}) {
+    return new Timer({
+      scheduler,
+      focusDuration
+    })
   }
 
-  private constructor(private scheduler: PeriodicTaskScheduler) {}
-
+  private readonly scheduler: PeriodicTaskScheduler
   private onTick: (remaining: Duration) => void = () => {}
   private remaining: Duration = new Duration({ seconds: 0 })
 
-  start(initial: Duration) {
-    this.remaining = initial
+  private constructor({
+    scheduler,
+    focusDuration
+  }: {
+    scheduler: PeriodicTaskScheduler
+    focusDuration: Duration
+  }) {
+    this.scheduler = scheduler
+    this.remaining = focusDuration
+  }
+
+  start() {
     const interval = new Duration({ seconds: 1 })
     this.scheduler.scheduleTask(() => this.advanceTime(interval), interval.totalSeconds * 1000)
   }
@@ -31,5 +49,9 @@ export class Timer {
 
   setOnTick(callback: (remaining: Duration) => void) {
     this.onTick = callback
+  }
+
+  getRemaining() {
+    return new Duration({ seconds: this.remaining.totalSeconds })
   }
 }

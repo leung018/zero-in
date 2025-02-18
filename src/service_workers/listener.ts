@@ -13,13 +13,13 @@ import { ResponseName, type MappedResponses } from './response'
 
 export class BackgroundListener {
   private redirectTogglingService: RedirectTogglingService
-  private timerFactory: () => Timer
   private communicationManager: CommunicationManager
+  private timer: Timer
 
   static create() {
     return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
-      timerFactory: () => Timer.create(),
+      timer: Timer.create(),
       redirectTogglingService: RedirectTogglingService.create()
     })
   }
@@ -27,27 +27,28 @@ export class BackgroundListener {
   static createFake({
     scheduler = new FakePeriodicTaskScheduler(),
     communicationManager = new FakeCommunicationManager(),
-    redirectTogglingService = RedirectTogglingService.createFake()
+    redirectTogglingService = RedirectTogglingService.createFake(),
+    focusDuration = new Duration({ minutes: 25 })
   } = {}) {
     return new BackgroundListener({
       communicationManager,
-      timerFactory: () => Timer.createFake(scheduler),
+      timer: Timer.createFake({ scheduler, focusDuration }),
       redirectTogglingService
     })
   }
 
   private constructor({
     communicationManager,
-    timerFactory,
+    timer,
     redirectTogglingService
   }: {
     communicationManager: CommunicationManager
-    timerFactory: () => Timer
+    timer: Timer
     redirectTogglingService: RedirectTogglingService
   }) {
     this.communicationManager = communicationManager
-    this.timerFactory = timerFactory
     this.redirectTogglingService = redirectTogglingService
+    this.timer = timer
   }
 
   start() {
@@ -56,8 +57,7 @@ export class BackgroundListener {
         const listener = (message: MappedEvents[EventName]) => {
           switch (message.name) {
             case EventName.POMODORO_START: {
-              const timer = this.timerFactory()
-              timer.setOnTick((remaining) => {
+              this.timer.setOnTick((remaining) => {
                 backgroundPort.send({
                   name: ResponseName.POMODORO_TIMER_UPDATE,
                   payload: {
@@ -65,11 +65,20 @@ export class BackgroundListener {
                   }
                 })
               })
-              timer.start(new Duration({ seconds: message.payload.initialSeconds }))
+              this.timer.start()
               break
             }
             case EventName.TOGGLE_REDIRECT_RULES: {
               this.redirectTogglingService.run()
+              break
+            }
+            case EventName.POMODORO_QUERY: {
+              backgroundPort.send({
+                name: ResponseName.POMODORO_TIMER_UPDATE,
+                payload: {
+                  remainingSeconds: this.timer.getRemaining().totalSeconds
+                }
+              })
               break
             }
           }
