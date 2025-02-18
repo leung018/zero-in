@@ -39,21 +39,12 @@ export interface CommunicationManager {
 }
 
 export class FakeCommunicationManager implements CommunicationManager {
-  private clientPort: Port
-
-  private backgroundPort: Port
-
   private callback: (backgroundPort: Port) => void = () => {}
 
-  constructor() {
-    const [clientPort, backgroundPort] = FakePort.createPaired()
-    this.clientPort = clientPort
-    this.backgroundPort = backgroundPort
-  }
-
   clientConnect() {
-    this.callback(this.backgroundPort)
-    return this.clientPort
+    const [clientPort, backgroundPort] = FakePort.createPaired()
+    this.callback(backgroundPort)
+    return clientPort
   }
 
   addClientConnectListener(callback: (backgroundPort: Port) => void) {

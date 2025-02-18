@@ -29,6 +29,35 @@ describe('PomodoroTimerPage', () => {
 
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('08:54')
   })
+
+  it('should reopened timer page can update the component if the timer is started already', async () => {
+    const scheduler = new FakePeriodicTaskScheduler()
+    const communicationManager = new FakeCommunicationManager()
+    BackgroundListener.createFake({
+      scheduler,
+      communicationManager,
+      focusDuration: new Duration({ minutes: 10 })
+    }).start()
+
+    let wrapper = mount(PomodoroTimerPage, {
+      props: {
+        port: communicationManager.clientConnect()
+      }
+    })
+    const startButton = wrapper.find("[data-test='start-button']")
+    await startButton.trigger('click')
+
+    wrapper = mount(PomodoroTimerPage, {
+      props: {
+        port: communicationManager.clientConnect()
+      }
+    })
+
+    scheduler.advanceTime(6001)
+    await flushPromises()
+
+    expect(wrapper.find("[data-test='timer-display']").text()).toBe('09:54')
+  })
 })
 
 function mountPomodoroTimerPage({ focusDuration = new Duration({ minutes: 25 }) } = {}) {
