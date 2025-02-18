@@ -79,6 +79,14 @@ export class BackgroundListener {
                   remainingSeconds: this.timer.getRemaining().totalSeconds
                 }
               })
+              this.timer.setOnTick((remaining) => {
+                backgroundPort.send({
+                  name: ResponseName.POMODORO_TIMER_UPDATE,
+                  payload: {
+                    remainingSeconds: remaining.totalSeconds
+                  }
+                })
+              })
               break
             }
           }
