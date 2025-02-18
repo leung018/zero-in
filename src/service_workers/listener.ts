@@ -57,14 +57,6 @@ export class BackgroundListener {
         const listener = (message: MappedEvents[EventName]) => {
           switch (message.name) {
             case EventName.POMODORO_START: {
-              this.timer.setOnTick((remaining) => {
-                backgroundPort.send({
-                  name: ResponseName.POMODORO_TIMER_UPDATE,
-                  payload: {
-                    remainingSeconds: remaining.totalSeconds
-                  }
-                })
-              })
               this.timer.start()
               break
             }
