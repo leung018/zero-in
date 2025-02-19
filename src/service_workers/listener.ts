@@ -7,9 +7,9 @@ import {
 } from '../infra/communication'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { Duration } from '../domain/pomodoro/duration'
-import { Timer } from '../domain/pomodoro/timer'
+import { Timer, type TimerState } from '../domain/pomodoro/timer'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
-import { ResponseName, type MappedResponses } from './response'
+import { ResponseName, type MappedResponses, type PomodoroTimerStatePayload } from './response'
 
 export class BackgroundListener {
   private redirectTogglingService: RedirectTogglingService
@@ -67,18 +67,12 @@ export class BackgroundListener {
             case EventName.POMODORO_QUERY: {
               backgroundPort.send({
                 name: ResponseName.POMODORO_TIMER_STATE,
-                payload: {
-                  remainingSeconds: this.timer.getRemaining().totalSeconds,
-                  isRunning: this.timer.getIsRunning()
-                }
+                payload: mapTimerStateToPomodoroTimerStatePayload(this.timer.getState())
               })
-              this.timer.setOnTick((remaining) => {
+              this.timer.subscribe((remaining) => {
                 backgroundPort.send({
                   name: ResponseName.POMODORO_TIMER_STATE,
-                  payload: {
-                    remainingSeconds: remaining.totalSeconds,
-                    isRunning: this.timer.getIsRunning()
-                  }
+                  payload: mapTimerStateToPomodoroTimerStatePayload(remaining)
                 })
               })
               break
@@ -92,5 +86,14 @@ export class BackgroundListener {
         backgroundPort.addListener(listener)
       }
     )
+  }
+}
+
+function mapTimerStateToPomodoroTimerStatePayload(
+  timerState: TimerState
+): PomodoroTimerStatePayload {
+  return {
+    remainingSeconds: timerState.remaining.totalSeconds,
+    isRunning: timerState.isRunning
   }
 }
