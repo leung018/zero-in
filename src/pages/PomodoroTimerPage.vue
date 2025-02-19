@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Duration } from '../domain/pomodoro/duration'
 import { formatNumber } from '../util'
-import { computed, ref } from 'vue'
+import { computed, onBeforeMount, ref } from 'vue'
 import type { Port } from '@/infra/communication'
 import { EventName, type Event } from '../service_workers/event'
 import type { PomodoroTimerResponse } from '@/service_workers/response'
@@ -19,12 +19,14 @@ const displayTime = computed(() => {
   return `${minutes}:${seconds}`
 })
 
-port.addListener((message) => {
-  durationLeft.value = new Duration({ seconds: message.remainingSeconds })
-  isRunning.value = message.isRunning
-})
-port.send({
-  name: EventName.POMODORO_QUERY
+onBeforeMount(() => {
+  port.addListener((message) => {
+    durationLeft.value = new Duration({ seconds: message.remainingSeconds })
+    isRunning.value = message.isRunning
+  })
+  port.send({
+    name: EventName.POMODORO_QUERY
+  })
 })
 
 const onClickStart = () => {
