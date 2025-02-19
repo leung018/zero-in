@@ -1,6 +1,5 @@
 import { BackgroundListener } from './listener'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
-import { EventName } from './event'
 
 const redirectTogglingService = RedirectTogglingService.create()
 
@@ -9,10 +8,8 @@ const redirectTogglingService = RedirectTogglingService.create()
 // Because unit tests are not needed for alarms.
 chrome.alarms.onAlarm.addListener((alarm) => {
   console.debug('Alarm fired:', alarm)
-  if (alarm.name === EventName.TOGGLE_REDIRECT_RULES) {
-    return redirectTogglingService.run()
-  }
+  redirectTogglingService.run()
 })
-chrome.alarms.create(EventName.TOGGLE_REDIRECT_RULES, { periodInMinutes: 0.5, when: Date.now() })
+chrome.alarms.create({ periodInMinutes: 0.5, when: Date.now() })
 
 BackgroundListener.create().start()
