@@ -80,13 +80,17 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should show the start button again after the timer is paused', async () => {
-    const { wrapper } = startListenerAndMountPage()
+    const { wrapper, communicationManager } = startListenerAndMountPage()
 
     await startTimer(wrapper)
     await pauseTimer(wrapper)
 
     expect(wrapper.find("[data-test='start-button']").exists()).toBe(true)
     expect(wrapper.find("[data-test='pause-button']").exists()).toBe(false)
+
+    const newWrapper = mountPage({ port: communicationManager.clientConnect() })
+    expect(newWrapper.find("[data-test='start-button']").exists()).toBe(true)
+    expect(newWrapper.find("[data-test='pause-button']").exists()).toBe(false)
   })
 })
 
