@@ -1,5 +1,5 @@
 import { ChromeCommunicationManager } from '../chrome/communication'
-import { EventName, type MappedEvents } from './event'
+import { type Event, EventName } from './event'
 import {
   FakeCommunicationManager,
   type CommunicationManager,
@@ -7,9 +7,9 @@ import {
 } from '../infra/communication'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { Duration } from '../domain/pomodoro/duration'
-import { Timer } from '../domain/pomodoro/timer'
+import { Timer, type TimerState } from '../domain/pomodoro/timer'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
-import { ResponseName, type MappedResponses } from './response'
+import { type PomodoroTimerResponse } from './response'
 
 export class BackgroundListener {
   private redirectTogglingService: RedirectTogglingService
@@ -53,8 +53,8 @@ export class BackgroundListener {
 
   start() {
     this.communicationManager.addClientConnectListener(
-      (backgroundPort: Port<MappedResponses[ResponseName], MappedEvents[EventName]>) => {
-        const listener = (message: MappedEvents[EventName]) => {
+      (backgroundPort: Port<PomodoroTimerResponse, Event>) => {
+        const listener = (message: Event) => {
           switch (message.name) {
             case EventName.POMODORO_START: {
               this.timer.start()
@@ -65,21 +65,9 @@ export class BackgroundListener {
               break
             }
             case EventName.POMODORO_QUERY: {
-              backgroundPort.send({
-                name: ResponseName.POMODORO_TIMER_STATE,
-                payload: {
-                  remainingSeconds: this.timer.getRemaining().totalSeconds,
-                  isRunning: this.timer.getIsRunning()
-                }
-              })
-              this.timer.setOnTick((remaining) => {
-                backgroundPort.send({
-                  name: ResponseName.POMODORO_TIMER_STATE,
-                  payload: {
-                    remainingSeconds: remaining.totalSeconds,
-                    isRunning: this.timer.getIsRunning()
-                  }
-                })
+              backgroundPort.send(mapTimerStateToPomodoroTimerResponse(this.timer.getState()))
+              this.timer.subscribe((remaining) => {
+                backgroundPort.send(mapTimerStateToPomodoroTimerResponse(remaining))
               })
               break
             }
@@ -92,5 +80,12 @@ export class BackgroundListener {
         backgroundPort.addListener(listener)
       }
     )
+  }
+}
+
+function mapTimerStateToPomodoroTimerResponse(timerState: TimerState): PomodoroTimerResponse {
+  return {
+    remainingSeconds: timerState.remaining.totalSeconds,
+    isRunning: timerState.isRunning
   }
 }

@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import { Duration } from '../domain/pomodoro/duration'
 import { formatNumber } from '../util'
-import { computed, ref } from 'vue'
+import { computed, onBeforeMount, ref } from 'vue'
 import type { Port } from '@/infra/communication'
-import { EventName, type MappedEvents } from '../service_workers/event'
-import type { MappedResponses, ResponseName } from '../service_workers/response'
+import { EventName, type Event } from '../service_workers/event'
+import type { PomodoroTimerResponse } from '@/service_workers/response'
 
 const { port } = defineProps<{
-  port: Port<
-    MappedEvents[EventName.POMODORO_QUERY | EventName.POMODORO_START | EventName.POMODORO_PAUSE],
-    MappedResponses[ResponseName.POMODORO_TIMER_STATE]
-  >
+  port: Port<Event, PomodoroTimerResponse>
 }>()
 
 const durationLeft = ref<Duration>(new Duration({ seconds: 0 }))
@@ -22,27 +19,26 @@ const displayTime = computed(() => {
   return `${minutes}:${seconds}`
 })
 
-port.addListener((message) => {
-  durationLeft.value = new Duration({ seconds: message.payload.remainingSeconds })
-  isRunning.value = message.payload.isRunning
-})
-port.send({
-  name: EventName.POMODORO_QUERY,
-  payload: undefined
+onBeforeMount(() => {
+  port.addListener((message) => {
+    durationLeft.value = new Duration({ seconds: message.remainingSeconds })
+    isRunning.value = message.isRunning
+  })
+  port.send({
+    name: EventName.POMODORO_QUERY
+  })
 })
 
 const onClickStart = () => {
   port.send({
-    name: EventName.POMODORO_START,
-    payload: undefined
+    name: EventName.POMODORO_START
   })
   isRunning.value = true
 }
 
 const onClickPause = () => {
   port.send({
-    name: EventName.POMODORO_PAUSE,
-    payload: undefined
+    name: EventName.POMODORO_PAUSE
   })
   isRunning.value = false
 }

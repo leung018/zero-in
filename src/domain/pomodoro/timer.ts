@@ -1,14 +1,16 @@
+import config from '../../config'
 import {
   FakePeriodicTaskScheduler,
   PeriodicTaskSchedulerImpl,
   type PeriodicTaskScheduler
 } from '../../infra/scheduler'
 import { Duration } from './duration'
+
 export class Timer {
   static create() {
     return new Timer({
       scheduler: new PeriodicTaskSchedulerImpl(),
-      focusDuration: new Duration({ minutes: 25 })
+      focusDuration: config.getFocusDuration()
     })
   }
 
@@ -23,8 +25,11 @@ export class Timer {
   }
 
   private readonly scheduler: PeriodicTaskScheduler
-  private onTick: (remaining: Duration) => void = () => {}
+
+  private onTick: (state: Readonly<TimerState>) => void = () => {}
+
   private remaining: Duration = new Duration({ seconds: 0 })
+
   private isRunning: boolean = false
 
   private constructor({
@@ -40,7 +45,10 @@ export class Timer {
 
   start() {
     const interval = new Duration({ seconds: 1 })
-    this.scheduler.scheduleTask(() => this.advanceTime(interval), interval.totalSeconds * 1000)
+    this.scheduler.scheduleTask(() => {
+      this.advanceTime(interval)
+      this.onTick(this.getState())
+    }, interval.totalSeconds * 1000)
     this.isRunning = true
   }
 
@@ -51,11 +59,17 @@ export class Timer {
 
   private advanceTime(duration: Duration) {
     this.remaining = this.remaining.subtract(duration)
-    this.onTick(this.remaining)
   }
 
-  setOnTick(callback: (remaining: Duration) => void) {
+  subscribe(callback: (state: Readonly<TimerState>) => void) {
     this.onTick = callback
+  }
+
+  getState(): Readonly<TimerState> {
+    return {
+      remaining: this.remaining,
+      isRunning: this.isRunning
+    }
   }
 
   getRemaining() {
@@ -65,4 +79,9 @@ export class Timer {
   getIsRunning() {
     return this.isRunning
   }
+}
+
+export type TimerState = {
+  remaining: Duration
+  isRunning: boolean
 }

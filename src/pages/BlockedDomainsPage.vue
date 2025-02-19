@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import type { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { BrowsingRules } from '../domain/browsing_rules'
 import { EventName } from '../service_workers/event'
@@ -13,7 +13,7 @@ const { browsingRulesStorageService, port } = defineProps<{
 const blockedDomains = ref<ReadonlyArray<string>>([])
 const newDomain = ref<string>('')
 
-onMounted(async () => {
+onBeforeMount(async () => {
   blockedDomains.value = (await browsingRulesStorageService.get()).blockedDomains
 })
 

@@ -63,10 +63,4 @@ export class FakePeriodicTaskScheduler implements PeriodicTaskScheduler {
       }
     }
   }
-
-  triggerNext() {
-    if (this.task) {
-      this.task()
-    }
-  }
 }
