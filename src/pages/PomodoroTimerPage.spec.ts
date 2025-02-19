@@ -64,6 +64,44 @@ describe('PomodoroTimerPage', () => {
     expect(newWrapper.find("[data-test='pause-button']").exists()).toBe(true)
     expect(newWrapper.find("[data-test='start-button']").exists()).toBe(false)
   })
+
+  it('should able to pause the timer', async () => {
+    const { wrapper, scheduler, communicationManager } = startListenerAndMountPage({
+      focusDuration: new Duration({ minutes: 10 })
+    })
+
+    const startButton = wrapper.find("[data-test='start-button']")
+    await startButton.trigger('click')
+    await flushPromises()
+
+    scheduler.advanceTime(30000)
+    const pauseButton = wrapper.find("[data-test='pause-button']")
+    await pauseButton.trigger('click')
+    await flushPromises()
+
+    scheduler.advanceTime(5000)
+    await flushPromises()
+
+    expect(wrapper.find("[data-test='timer-display']").text()).toBe('09:30')
+
+    const newWrapper = mountPage({ port: communicationManager.clientConnect() })
+    expect(newWrapper.find("[data-test='timer-display']").text()).toBe('09:30')
+  })
+
+  it('should show the start button again after the timer is paused', async () => {
+    const { wrapper } = startListenerAndMountPage()
+
+    const startButton = wrapper.find("[data-test='start-button']")
+    await startButton.trigger('click')
+    await flushPromises()
+
+    const pauseButton = wrapper.find("[data-test='pause-button']")
+    await pauseButton.trigger('click')
+    await flushPromises()
+
+    expect(wrapper.find("[data-test='start-button']").exists()).toBe(true)
+    expect(wrapper.find("[data-test='pause-button']").exists()).toBe(false)
+  })
 })
 
 function startListenerAndMountPage({ focusDuration = new Duration({ minutes: 25 }) } = {}) {

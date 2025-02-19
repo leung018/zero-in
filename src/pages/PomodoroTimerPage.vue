@@ -8,7 +8,7 @@ import type { MappedResponses, ResponseName } from '../service_workers/response'
 
 const { port } = defineProps<{
   port: Port<
-    MappedEvents[EventName.POMODORO_QUERY | EventName.POMODORO_START],
+    MappedEvents[EventName.POMODORO_QUERY | EventName.POMODORO_START | EventName.POMODORO_PAUSE],
     MappedResponses[ResponseName.POMODORO_TIMER_STATE]
   >
 }>()
@@ -38,12 +38,27 @@ const onClickStart = () => {
   })
   isRunning.value = true
 }
+
+const onClickPause = () => {
+  port.send({
+    name: EventName.POMODORO_PAUSE,
+    payload: undefined
+  })
+  isRunning.value = false
+}
 </script>
 
 <template>
   <div class="container text-center mt-3 mb-3">
     <div class="display-1" data-test="timer-display">{{ displayTime }}</div>
-    <button v-if="isRunning" class="btn btn-warning mt-3" data-test="pause-button">Pause</button>
+    <button
+      v-if="isRunning"
+      class="btn btn-warning mt-3"
+      data-test="pause-button"
+      @click="onClickPause"
+    >
+      Pause
+    </button>
     <button v-else class="btn btn-success mt-3" data-test="start-button" @click="onClickStart">
       Start
     </button>

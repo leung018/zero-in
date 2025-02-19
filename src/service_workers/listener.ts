@@ -83,6 +83,10 @@ export class BackgroundListener {
               })
               break
             }
+            case EventName.POMODORO_PAUSE: {
+              this.timer.pause()
+              break
+            }
           }
         }
         backgroundPort.addListener(listener)
