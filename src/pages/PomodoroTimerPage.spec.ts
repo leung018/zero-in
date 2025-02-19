@@ -1,4 +1,4 @@
-import { flushPromises, mount } from '@vue/test-utils'
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import PomodoroTimerPage from './PomodoroTimerPage.vue'
 import { expect, describe, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
@@ -20,9 +20,7 @@ describe('PomodoroTimerPage', () => {
     const { wrapper, scheduler } = startListenerAndMountPage({
       focusDuration: new Duration({ minutes: 9 })
     })
-    const startButton = wrapper.find("[data-test='start-button']")
-    await startButton.trigger('click')
-    await flushPromises()
+    await startTimer(wrapper)
 
     scheduler.advanceTime(6001)
     await flushPromises()
@@ -35,8 +33,7 @@ describe('PomodoroTimerPage', () => {
       focusDuration: new Duration({ minutes: 10 })
     })
 
-    const startButton = wrapper.find("[data-test='start-button']")
-    await startButton.trigger('click')
+    await startTimer(wrapper)
 
     const newWrapper = mountPage({ port: communicationManager.clientConnect() })
 
@@ -52,9 +49,7 @@ describe('PomodoroTimerPage', () => {
     expect(wrapper.find("[data-test='pause-button']").exists()).toBe(false)
     expect(wrapper.find("[data-test='start-button']").exists()).toBe(true)
 
-    const startButton = wrapper.find("[data-test='start-button']")
-    await startButton.trigger('click')
-    await flushPromises()
+    await startTimer(wrapper)
 
     expect(wrapper.find("[data-test='pause-button']").exists()).toBe(true)
     expect(wrapper.find("[data-test='start-button']").exists()).toBe(false)
@@ -70,14 +65,10 @@ describe('PomodoroTimerPage', () => {
       focusDuration: new Duration({ minutes: 10 })
     })
 
-    const startButton = wrapper.find("[data-test='start-button']")
-    await startButton.trigger('click')
-    await flushPromises()
+    await startTimer(wrapper)
 
     scheduler.advanceTime(30000)
-    const pauseButton = wrapper.find("[data-test='pause-button']")
-    await pauseButton.trigger('click')
-    await flushPromises()
+    await pauseTimer(wrapper)
 
     scheduler.advanceTime(5000)
     await flushPromises()
@@ -91,13 +82,8 @@ describe('PomodoroTimerPage', () => {
   it('should show the start button again after the timer is paused', async () => {
     const { wrapper } = startListenerAndMountPage()
 
-    const startButton = wrapper.find("[data-test='start-button']")
-    await startButton.trigger('click')
-    await flushPromises()
-
-    const pauseButton = wrapper.find("[data-test='pause-button']")
-    await pauseButton.trigger('click')
-    await flushPromises()
+    await startTimer(wrapper)
+    await pauseTimer(wrapper)
 
     expect(wrapper.find("[data-test='start-button']").exists()).toBe(true)
     expect(wrapper.find("[data-test='pause-button']").exists()).toBe(false)
@@ -122,4 +108,16 @@ function mountPage({ port = new FakeCommunicationManager().clientConnect() } = {
       port
     }
   })
+}
+
+async function startTimer(wrapper: VueWrapper) {
+  const startButton = wrapper.find("[data-test='start-button']")
+  startButton.trigger('click')
+  await flushPromises()
+}
+
+async function pauseTimer(wrapper: VueWrapper) {
+  const pauseButton = wrapper.find("[data-test='pause-button']")
+  pauseButton.trigger('click')
+  await flushPromises()
 }
