@@ -46,18 +46,24 @@ describe('PomodoroTimerPage', () => {
   it('should start button changed to a pause button after timer is started', async () => {
     const { wrapper, communicationManager } = startListenerAndMountPage()
 
-    expect(wrapper.find("[data-test='pause-button']").exists()).toBe(false)
-    expect(wrapper.find("[data-test='start-button']").exists()).toBe(true)
+    assertControlVisibility(wrapper, {
+      startButtonVisible: true,
+      pauseButtonVisible: false
+    })
 
     await startTimer(wrapper)
 
-    expect(wrapper.find("[data-test='pause-button']").exists()).toBe(true)
-    expect(wrapper.find("[data-test='start-button']").exists()).toBe(false)
+    assertControlVisibility(wrapper, {
+      startButtonVisible: false,
+      pauseButtonVisible: true
+    })
 
     const newWrapper = mountPage({ port: communicationManager.clientConnect() })
 
-    expect(newWrapper.find("[data-test='pause-button']").exists()).toBe(true)
-    expect(newWrapper.find("[data-test='start-button']").exists()).toBe(false)
+    assertControlVisibility(newWrapper, {
+      startButtonVisible: false,
+      pauseButtonVisible: true
+    })
   })
 
   it('should able to pause the timer', async () => {
@@ -85,12 +91,16 @@ describe('PomodoroTimerPage', () => {
     await startTimer(wrapper)
     await pauseTimer(wrapper)
 
-    expect(wrapper.find("[data-test='start-button']").exists()).toBe(true)
-    expect(wrapper.find("[data-test='pause-button']").exists()).toBe(false)
+    assertControlVisibility(wrapper, {
+      startButtonVisible: true,
+      pauseButtonVisible: false
+    })
 
     const newWrapper = mountPage({ port: communicationManager.clientConnect() })
-    expect(newWrapper.find("[data-test='start-button']").exists()).toBe(true)
-    expect(newWrapper.find("[data-test='pause-button']").exists()).toBe(false)
+    assertControlVisibility(newWrapper, {
+      startButtonVisible: true,
+      pauseButtonVisible: false
+    })
   })
 })
 
@@ -124,4 +134,15 @@ async function pauseTimer(wrapper: VueWrapper) {
   const pauseButton = wrapper.find("[data-test='pause-button']")
   pauseButton.trigger('click')
   await flushPromises()
+}
+
+function assertControlVisibility(
+  wrapper: VueWrapper,
+  {
+    startButtonVisible,
+    pauseButtonVisible
+  }: { startButtonVisible: boolean; pauseButtonVisible: boolean }
+) {
+  expect(wrapper.find("[data-test='start-button']").exists()).toBe(startButtonVisible)
+  expect(wrapper.find("[data-test='pause-button']").exists()).toBe(pauseButtonVisible)
 }
