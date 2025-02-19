@@ -3,12 +3,12 @@ import PomodoroTimerPage from './PomodoroTimerPage.vue'
 import { expect, describe, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
-import { ConnectionListenerInitializer } from '../service_workers/initializer'
+import { BackgroundListener } from '../service_workers/listener'
 import { FakeCommunicationManager } from '../infra/communication'
 
 describe('PomodoroTimerPage', () => {
   it('should display the time representing focus duration before timer is started', () => {
-    const { wrapper } = mountPomodoroTimerPage({
+    const { wrapper } = startListenerAndMountPage({
       focusDuration: new Duration({ minutes: 9 })
     })
 
@@ -17,7 +17,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should reduce the time after timer is started', async () => {
-    const { wrapper, scheduler } = mountPomodoroTimerPage({
+    const { wrapper, scheduler } = startListenerAndMountPage({
       focusDuration: new Duration({ minutes: 9 })
     })
     const startButton = wrapper.find("[data-test='start-button']")
@@ -29,20 +29,40 @@ describe('PomodoroTimerPage', () => {
 
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('08:54')
   })
+
+  it('should reopened timer page can update the component if the timer is started already', async () => {
+    const { wrapper, scheduler, communicationManager } = startListenerAndMountPage({
+      focusDuration: new Duration({ minutes: 10 })
+    })
+
+    const startButton = wrapper.find("[data-test='start-button']")
+    await startButton.trigger('click')
+
+    const newWrapper = mountPage({ port: communicationManager.clientConnect() })
+
+    scheduler.advanceTime(6001)
+    await flushPromises()
+
+    expect(newWrapper.find("[data-test='timer-display']").text()).toBe('09:54')
+  })
 })
 
-function mountPomodoroTimerPage({ focusDuration = new Duration({ minutes: 25 }) } = {}) {
+function startListenerAndMountPage({ focusDuration = new Duration({ minutes: 25 }) } = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
   const communicationManager = new FakeCommunicationManager()
-  ConnectionListenerInitializer.fakeInit({
+  BackgroundListener.createFake({
     scheduler,
-    communicationManager
-  })
-  const wrapper = mount(PomodoroTimerPage, {
+    communicationManager,
+    focusDuration
+  }).start()
+  const wrapper = mountPage({ port: communicationManager.clientConnect() })
+  return { wrapper, scheduler, communicationManager }
+}
+
+function mountPage({ port = new FakeCommunicationManager().clientConnect() } = {}) {
+  return mount(PomodoroTimerPage, {
     props: {
-      focusDuration,
-      port: communicationManager.clientConnect()
+      port
     }
   })
-  return { wrapper, scheduler }
 }
