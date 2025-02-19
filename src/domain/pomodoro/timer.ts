@@ -1,3 +1,4 @@
+import config from '../../config'
 import {
   FakePeriodicTaskScheduler,
   PeriodicTaskSchedulerImpl,
@@ -8,7 +9,7 @@ export class Timer {
   static create() {
     return new Timer({
       scheduler: new PeriodicTaskSchedulerImpl(),
-      focusDuration: new Duration({ minutes: 25 })
+      focusDuration: config.getFocusDuration()
     })
   }
 
