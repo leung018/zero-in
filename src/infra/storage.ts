@@ -3,17 +3,7 @@ export interface StorageHandler {
   get(key: string): Promise<any>
 }
 
-export class ChromeLocalStorageFactory {
-  static createStorageHandler(): StorageHandler {
-    return chrome.storage.local
-  }
-
-  static createFakeStorageHandler(): StorageHandler {
-    return new FakeChromeLocalStorage()
-  }
-}
-
-class FakeChromeLocalStorage implements StorageHandler {
+export class FakeChromeLocalStorage implements StorageHandler {
   private storage: any = {}
 
   async set(update: any): Promise<void> {

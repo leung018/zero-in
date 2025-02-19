@@ -1,9 +1,10 @@
-import { ChromeLocalStorageFactory, type StorageHandler } from '../../chrome/local_storage'
+import { ChromeLocalStorageFactory } from '../../chrome/storage'
+import { FakeChromeLocalStorage, type StorageHandler } from '../../infra/storage'
 import { BrowsingRules } from '.'
 
 export class BrowsingRulesStorageService {
   static createFake(): BrowsingRulesStorageService {
-    return new BrowsingRulesStorageService(ChromeLocalStorageFactory.createFakeStorageHandler())
+    return new BrowsingRulesStorageService(new FakeChromeLocalStorage())
   }
 
   static create(): BrowsingRulesStorageService {
