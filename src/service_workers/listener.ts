@@ -66,19 +66,25 @@ export class BackgroundListener {
             }
             case EventName.POMODORO_QUERY: {
               backgroundPort.send({
-                name: ResponseName.POMODORO_TIMER_UPDATE,
+                name: ResponseName.POMODORO_TIMER_STATE,
                 payload: {
-                  remainingSeconds: this.timer.getRemaining().totalSeconds
+                  remainingSeconds: this.timer.getRemaining().totalSeconds,
+                  isRunning: this.timer.getIsRunning()
                 }
               })
               this.timer.setOnTick((remaining) => {
                 backgroundPort.send({
-                  name: ResponseName.POMODORO_TIMER_UPDATE,
+                  name: ResponseName.POMODORO_TIMER_STATE,
                   payload: {
-                    remainingSeconds: remaining.totalSeconds
+                    remainingSeconds: remaining.totalSeconds,
+                    isRunning: this.timer.getIsRunning()
                   }
                 })
               })
+              break
+            }
+            case EventName.POMODORO_PAUSE: {
+              this.timer.pause()
               break
             }
           }
