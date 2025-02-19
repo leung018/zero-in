@@ -5,7 +5,7 @@ export interface Port<OutgoingMessage = any, IncomingMessage = any> {
   addListener(callback: (message: IncomingMessage) => void): void
 }
 
-export class FakePort implements Port {
+class FakePort implements Port {
   private emitter: EventEmitter
   private id: string
   private otherId: string
