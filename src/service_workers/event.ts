@@ -1,7 +1,7 @@
 export enum EventName {
-  TOGGLE_REDIRECT_RULES = 'toggleRedirectRules',
-  POMODORO_START = 'pomodoroStart',
-  POMODORO_QUERY = 'pomodoroQuery'
+  TOGGLE_REDIRECT_RULES,
+  POMODORO_START,
+  POMODORO_QUERY
 }
 
 export type EventMap = {
