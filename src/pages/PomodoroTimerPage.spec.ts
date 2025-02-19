@@ -102,6 +102,23 @@ describe('PomodoroTimerPage', () => {
       pauseButtonVisible: false
     })
   })
+
+  it('should able to restart timer', async () => {
+    const { wrapper, scheduler } = startListenerAndMountPage({
+      focusDuration: new Duration({ minutes: 10 })
+    })
+
+    await startTimer(wrapper)
+
+    scheduler.advanceTime(30000)
+    await pauseTimer(wrapper)
+
+    await startTimer(wrapper)
+    scheduler.advanceTime(30000)
+    await flushPromises()
+
+    expect(wrapper.find("[data-test='timer-display']").text()).toBe('09:00')
+  })
 })
 
 function startListenerAndMountPage({ focusDuration = new Duration({ minutes: 25 }) } = {}) {
