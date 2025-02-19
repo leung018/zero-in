@@ -1,13 +1,14 @@
 export enum ResponseName {
-  POMODORO_TIMER_UPDATE = 'pomodoroTimerUpdate'
+  POMODORO_TIMER_STATE
 }
 
-export type PomodoroTimerUpdatePayload = {
+export type PomodoroTimerStatePayload = {
   remainingSeconds: number
+  isRunning: boolean
 }
 
 export type ResponseMap = {
-  [ResponseName.POMODORO_TIMER_UPDATE]: PomodoroTimerUpdatePayload
+  [ResponseName.POMODORO_TIMER_STATE]: PomodoroTimerStatePayload
 }
 
 export type MappedResponses = {

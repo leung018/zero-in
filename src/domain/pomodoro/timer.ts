@@ -25,6 +25,7 @@ export class Timer {
   private readonly scheduler: PeriodicTaskScheduler
   private onTick: (remaining: Duration) => void = () => {}
   private remaining: Duration = new Duration({ seconds: 0 })
+  private isRunning: boolean = false
 
   private constructor({
     scheduler,
@@ -40,6 +41,7 @@ export class Timer {
   start() {
     const interval = new Duration({ seconds: 1 })
     this.scheduler.scheduleTask(() => this.advanceTime(interval), interval.totalSeconds * 1000)
+    this.isRunning = true
   }
 
   private advanceTime(duration: Duration) {
@@ -53,5 +55,9 @@ export class Timer {
 
   getRemaining() {
     return new Duration({ seconds: this.remaining.totalSeconds })
+  }
+
+  getIsRunning() {
+    return this.isRunning
   }
 }

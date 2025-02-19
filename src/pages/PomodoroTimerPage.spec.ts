@@ -45,6 +45,25 @@ describe('PomodoroTimerPage', () => {
 
     expect(newWrapper.find("[data-test='timer-display']").text()).toBe('09:54')
   })
+
+  it('should start button changed to a pause button after timer is started', async () => {
+    const { wrapper, communicationManager } = startListenerAndMountPage()
+
+    expect(wrapper.find("[data-test='pause-button']").exists()).toBe(false)
+    expect(wrapper.find("[data-test='start-button']").exists()).toBe(true)
+
+    const startButton = wrapper.find("[data-test='start-button']")
+    await startButton.trigger('click')
+    await flushPromises()
+
+    expect(wrapper.find("[data-test='pause-button']").exists()).toBe(true)
+    expect(wrapper.find("[data-test='start-button']").exists()).toBe(false)
+
+    const newWrapper = mountPage({ port: communicationManager.clientConnect() })
+
+    expect(newWrapper.find("[data-test='pause-button']").exists()).toBe(true)
+    expect(newWrapper.find("[data-test='start-button']").exists()).toBe(false)
+  })
 })
 
 function startListenerAndMountPage({ focusDuration = new Duration({ minutes: 25 }) } = {}) {
