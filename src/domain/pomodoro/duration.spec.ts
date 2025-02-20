@@ -39,4 +39,10 @@ describe('Duration', () => {
 
     expect(subtracted).toEqual(new Duration({ minutes: 0, seconds: 0 }))
   })
+
+  it('should isZero check for zero duration', () => {
+    expect(new Duration({ minutes: 0, seconds: 0 }).isZero()).toBe(true)
+    expect(new Duration({ minutes: 0, seconds: 1 }).isZero()).toBe(false)
+    expect(new Duration({ minutes: 1, seconds: 0 }).isZero()).toBe(false)
+  })
 })

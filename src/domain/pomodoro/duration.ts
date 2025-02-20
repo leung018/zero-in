@@ -23,6 +23,10 @@ export class Duration {
     }
     return new Duration({ seconds: newTotalSeconds })
   }
+
+  isZero(): boolean {
+    return this.totalSeconds === 0
+  }
 }
 
 export class DurationInvalidInputError extends Error {}
