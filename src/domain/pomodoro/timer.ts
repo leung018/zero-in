@@ -1,4 +1,3 @@
-import config from '../../config'
 import {
   FakePeriodicTaskScheduler,
   PeriodicTaskSchedulerImpl,
@@ -7,20 +6,20 @@ import {
 import { Duration } from './duration'
 
 export class Timer {
-  static create() {
+  static create(initialDuration: Duration) {
     return new Timer({
       scheduler: new PeriodicTaskSchedulerImpl(),
-      focusDuration: config.getFocusDuration()
+      initialDuration
     })
   }
 
   static createFake({
     scheduler = new FakePeriodicTaskScheduler(),
-    focusDuration = new Duration({ minutes: 25 })
+    initialDuration = new Duration({ minutes: 25 })
   } = {}) {
     return new Timer({
       scheduler,
-      focusDuration
+      initialDuration
     })
   }
 
@@ -34,13 +33,13 @@ export class Timer {
 
   private constructor({
     scheduler,
-    focusDuration
+    initialDuration
   }: {
     scheduler: PeriodicTaskScheduler
-    focusDuration: Duration
+    initialDuration: Duration
   }) {
     this.scheduler = scheduler
-    this.remaining = focusDuration
+    this.remaining = initialDuration
   }
 
   reset(duration: Duration) {

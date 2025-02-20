@@ -10,6 +10,7 @@ import { Duration } from '../domain/pomodoro/duration'
 import { Timer, type TimerState } from '../domain/pomodoro/timer'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
 import { PomodoroState, type PomodoroTimerResponse } from './response'
+import config from '../config'
 
 export class BackgroundListener {
   private redirectTogglingService: RedirectTogglingService
@@ -21,7 +22,7 @@ export class BackgroundListener {
   static create() {
     return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
-      timer: Timer.create(),
+      timer: Timer.create(config.getFocusDuration()),
       redirectTogglingService: RedirectTogglingService.create(),
       restDuration: new Duration({ minutes: 5 })
     })
@@ -36,7 +37,7 @@ export class BackgroundListener {
   } = {}) {
     return new BackgroundListener({
       communicationManager,
-      timer: Timer.createFake({ scheduler, focusDuration }),
+      timer: Timer.createFake({ scheduler, initialDuration: focusDuration }),
       redirectTogglingService,
       restDuration
     })
