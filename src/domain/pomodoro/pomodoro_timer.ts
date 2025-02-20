@@ -21,6 +21,8 @@ export class PomodoroTimer {
 
   private scheduler: PeriodicTaskScheduler
 
+  private callbacks: ((state: PomodoroTimerState) => void)[] = []
+
   private constructor({
     focusDuration,
     scheduler
@@ -44,8 +46,10 @@ export class PomodoroTimer {
     const interval = new Duration({ seconds: 1 })
     this.scheduler.scheduleTask(() => {
       this.advanceTime(interval)
+      this.publish()
     }, interval.totalSeconds * 1000)
     this.isRunning = true
+    this.publish()
   }
 
   pause() {
@@ -55,6 +59,16 @@ export class PomodoroTimer {
 
   private advanceTime(duration: Duration) {
     this.remaining = this.remaining.subtract(duration)
+  }
+
+  subscribe(callback: (state: PomodoroTimerState) => void) {
+    this.callbacks.push(callback)
+  }
+
+  private publish() {
+    this.callbacks.forEach((callback) => {
+      callback(this.getState())
+    })
   }
 }
 
