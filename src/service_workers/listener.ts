@@ -9,7 +9,8 @@ import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { Duration } from '../domain/pomodoro/duration'
 import { Timer, type TimerState } from '../domain/pomodoro/timer'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
-import { PomodoroState, type PomodoroTimerResponse } from './response'
+import { type PomodoroTimerResponse } from './response'
+import { PomodoroState } from '../domain/pomodoro/state'
 import config from '../config'
 
 export class BackgroundListener {

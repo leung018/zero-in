@@ -1,7 +1,4 @@
-export enum PomodoroState {
-  FOCUS,
-  REST
-}
+import type { PomodoroState } from '../domain/pomodoro/state'
 
 export type PomodoroTimerResponse = {
   pomodoroState: PomodoroState

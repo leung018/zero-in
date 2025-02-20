@@ -4,7 +4,8 @@ import { formatNumber } from '../util'
 import { computed, onBeforeMount, ref } from 'vue'
 import type { Port } from '@/infra/communication'
 import { EventName, type Event } from '../service_workers/event'
-import { PomodoroState, type PomodoroTimerResponse } from '../service_workers/response'
+import { type PomodoroTimerResponse } from '../service_workers/response'
+import { PomodoroState } from '../domain/pomodoro/state'
 
 const { port } = defineProps<{
   port: Port<Event, PomodoroTimerResponse>
