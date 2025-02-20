@@ -31,4 +31,12 @@ describe('Duration', () => {
     expect(subtracted).toEqual(new Duration({ minutes: 9, seconds: 1 }))
     expect(original).toEqual(new Duration({ minutes: 10, seconds: 30 }))
   })
+
+  it('should become 0 if the subtracted duration is greater than the original', () => {
+    const original = new Duration({ minutes: 10, seconds: 30 })
+
+    const subtracted = original.subtract(new Duration({ minutes: 10, seconds: 31 }))
+
+    expect(subtracted).toEqual(new Duration({ minutes: 0, seconds: 0 }))
+  })
 })

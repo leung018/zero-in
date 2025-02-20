@@ -17,7 +17,11 @@ export class Duration {
   }
 
   subtract(duration: Duration): Duration {
-    return new Duration({ seconds: this.totalSeconds - duration.totalSeconds })
+    let newTotalSeconds = this.totalSeconds - duration.totalSeconds
+    if (newTotalSeconds < 0) {
+      newTotalSeconds = 0
+    }
+    return new Duration({ seconds: newTotalSeconds })
   }
 }
 
