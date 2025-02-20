@@ -59,6 +59,20 @@ describe('PeriodicTaskSchedulerImpl', () => {
     vi.advanceTimersByTime(1500)
     expect(mock).toHaveBeenCalledTimes(1)
   })
+
+  it('should able to stop task in the scheduled task', () => {
+    const mock = vi.fn(() => {})
+
+    const scheduler = new PeriodicTaskSchedulerImpl()
+    scheduler.scheduleTask(() => {
+      mock()
+      scheduler.stopTask()
+    }, 1000)
+
+    vi.advanceTimersByTime(3000)
+
+    expect(mock).toHaveBeenCalledTimes(1)
+  })
 })
 
 describe('FakePeriodicTaskScheduler', () => {
@@ -106,6 +120,20 @@ describe('FakePeriodicTaskScheduler', () => {
     scheduler.scheduleTask(mock, 1000)
 
     scheduler.advanceTime(1500)
+    expect(mock).toHaveBeenCalledTimes(1)
+  })
+
+  it('should able to stop task in the scheduled task', () => {
+    const mock = vi.fn(() => {})
+
+    const scheduler = new FakePeriodicTaskScheduler()
+    scheduler.scheduleTask(() => {
+      mock()
+      scheduler.stopTask()
+    }, 1000)
+
+    scheduler.advanceTime(3000)
+
     expect(mock).toHaveBeenCalledTimes(1)
   })
 })
