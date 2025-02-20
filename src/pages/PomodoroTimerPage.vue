@@ -4,7 +4,7 @@ import { formatNumber } from '../util'
 import { computed, onBeforeMount, ref } from 'vue'
 import type { Port } from '@/infra/communication'
 import { EventName, type Event } from '../service_workers/event'
-import type { PomodoroTimerResponse } from '@/service_workers/response'
+import { PomodoroState, type PomodoroTimerResponse } from '../service_workers/response'
 
 const { port } = defineProps<{
   port: Port<Event, PomodoroTimerResponse>
@@ -12,6 +12,7 @@ const { port } = defineProps<{
 
 const durationLeft = ref<Duration>(new Duration({ seconds: 0 }))
 const isRunning = ref(false)
+const pomodoroState = ref<PomodoroState>(PomodoroState.FOCUS)
 
 const displayTime = computed(() => {
   const minutes = formatNumber(durationLeft.value.minutes)
@@ -19,8 +20,13 @@ const displayTime = computed(() => {
   return `${minutes}:${seconds}`
 })
 
+const pomodoroStateMsg = computed(() =>
+  pomodoroState.value === PomodoroState.FOCUS ? 'Focus' : 'Take a Break'
+)
+
 onBeforeMount(() => {
   port.addListener((message) => {
+    pomodoroState.value = message.pomodoroState
     durationLeft.value = new Duration({ seconds: message.remainingSeconds })
     isRunning.value = message.isRunning
   })
@@ -46,6 +52,7 @@ const onClickPause = () => {
 
 <template>
   <div class="container text-center mt-3 mb-3">
+    <h1 class="mb-4" data-test="pomodoro-state">{{ pomodoroStateMsg }}</h1>
     <div class="display-1" data-test="timer-display">{{ displayTime }}</div>
     <button
       v-if="isRunning"

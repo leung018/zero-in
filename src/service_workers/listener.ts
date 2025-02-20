@@ -9,18 +9,21 @@ import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { Duration } from '../domain/pomodoro/duration'
 import { Timer, type TimerState } from '../domain/pomodoro/timer'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
-import { type PomodoroTimerResponse } from './response'
+import { PomodoroState, type PomodoroTimerResponse } from './response'
 
 export class BackgroundListener {
   private redirectTogglingService: RedirectTogglingService
   private communicationManager: CommunicationManager
   private timer: Timer
+  private pomodoroState: PomodoroState = PomodoroState.FOCUS
+  private restDuration: Duration
 
   static create() {
     return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
       timer: Timer.create(),
-      redirectTogglingService: RedirectTogglingService.create()
+      redirectTogglingService: RedirectTogglingService.create(),
+      restDuration: new Duration({ minutes: 5 })
     })
   }
 
@@ -28,27 +31,32 @@ export class BackgroundListener {
     scheduler = new FakePeriodicTaskScheduler(),
     communicationManager = new FakeCommunicationManager(),
     redirectTogglingService = RedirectTogglingService.createFake(),
-    focusDuration = new Duration({ minutes: 25 })
+    focusDuration = new Duration({ minutes: 25 }),
+    restDuration = new Duration({ minutes: 5 })
   } = {}) {
     return new BackgroundListener({
       communicationManager,
       timer: Timer.createFake({ scheduler, focusDuration }),
-      redirectTogglingService
+      redirectTogglingService,
+      restDuration
     })
   }
 
   private constructor({
     communicationManager,
     timer,
-    redirectTogglingService
+    redirectTogglingService,
+    restDuration
   }: {
     communicationManager: CommunicationManager
     timer: Timer
     redirectTogglingService: RedirectTogglingService
+    restDuration: Duration
   }) {
     this.communicationManager = communicationManager
     this.redirectTogglingService = redirectTogglingService
     this.timer = timer
+    this.restDuration = restDuration
   }
 
   start() {
@@ -65,9 +73,19 @@ export class BackgroundListener {
               break
             }
             case EventName.POMODORO_QUERY: {
-              backgroundPort.send(mapTimerStateToPomodoroTimerResponse(this.timer.getState()))
-              this.timer.subscribe((remaining) => {
-                backgroundPort.send(mapTimerStateToPomodoroTimerResponse(remaining))
+              backgroundPort.send(
+                newPomodoroTimerResponse(this.timer.getState(), this.pomodoroState)
+              )
+              this.timer.subscribe((timerState) => {
+                if (timerState.remaining.isZero()) {
+                  this.pomodoroState = PomodoroState.REST
+                  this.timer.reset(this.restDuration)
+                  backgroundPort.send(
+                    newPomodoroTimerResponse(this.timer.getState(), this.pomodoroState)
+                  )
+                  return
+                }
+                backgroundPort.send(newPomodoroTimerResponse(timerState, this.pomodoroState))
               })
               break
             }
@@ -83,8 +101,12 @@ export class BackgroundListener {
   }
 }
 
-function mapTimerStateToPomodoroTimerResponse(timerState: TimerState): PomodoroTimerResponse {
+function newPomodoroTimerResponse(
+  timerState: TimerState,
+  pomodoroState: PomodoroState
+): PomodoroTimerResponse {
   return {
+    pomodoroState,
     remainingSeconds: timerState.remaining.totalSeconds,
     isRunning: timerState.isRunning
   }

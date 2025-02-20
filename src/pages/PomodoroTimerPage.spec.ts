@@ -7,13 +7,16 @@ import { BackgroundListener } from '../service_workers/listener'
 import { FakeCommunicationManager } from '../infra/communication'
 
 describe('PomodoroTimerPage', () => {
-  it('should display the time representing focus duration before timer is started', () => {
+  it('should display initial state and timer properly', () => {
     const { wrapper } = startListenerAndMountPage({
       focusDuration: new Duration({ minutes: 9 })
     })
 
     const timerDisplay = wrapper.find("[data-test='timer-display']")
     expect(timerDisplay.text()).toBe('09:00')
+
+    const pomodoroState = wrapper.find("[data-test='pomodoro-state']")
+    expect(pomodoroState.text()).toBe('Focus')
   })
 
   it('should reduce the time after timer is started', async () => {
@@ -119,15 +122,40 @@ describe('PomodoroTimerPage', () => {
 
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('09:00')
   })
+
+  it('should display hint of rest if focus duration has passed', async () => {
+    const { wrapper, scheduler } = startListenerAndMountPage({
+      focusDuration: new Duration({ minutes: 1 }),
+      restDuration: new Duration({ seconds: 30 })
+    })
+
+    await startTimer(wrapper)
+
+    scheduler.advanceTime(61000)
+    await flushPromises()
+
+    const pomodoroState = wrapper.find("[data-test='pomodoro-state']")
+    expect(pomodoroState.text()).toBe('Take a Break')
+    expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
+
+    assertControlVisibility(wrapper, {
+      startButtonVisible: true,
+      pauseButtonVisible: false
+    })
+  })
 })
 
-function startListenerAndMountPage({ focusDuration = new Duration({ minutes: 25 }) } = {}) {
+function startListenerAndMountPage({
+  focusDuration = new Duration({ minutes: 25 }),
+  restDuration = new Duration({ minutes: 5 })
+} = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
   const communicationManager = new FakeCommunicationManager()
   BackgroundListener.createFake({
     scheduler,
     communicationManager,
-    focusDuration
+    focusDuration,
+    restDuration
   }).start()
   const wrapper = mountPage({ port: communicationManager.clientConnect() })
   return { wrapper, scheduler, communicationManager }

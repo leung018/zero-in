@@ -43,6 +43,11 @@ export class Timer {
     this.remaining = focusDuration
   }
 
+  reset(duration: Duration) {
+    this.pause()
+    this.remaining = duration
+  }
+
   start() {
     const interval = new Duration({ seconds: 1 })
     this.scheduler.scheduleTask(() => {
