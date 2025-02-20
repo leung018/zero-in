@@ -76,14 +76,6 @@ export class Timer {
       isRunning: this.isRunning
     }
   }
-
-  getRemaining() {
-    return new Duration({ seconds: this.remaining.totalSeconds })
-  }
-
-  getIsRunning() {
-    return this.isRunning
-  }
 }
 
 export type TimerState = {
