@@ -48,6 +48,11 @@ export class PomodoroTimer {
     this.isRunning = true
   }
 
+  pause() {
+    this.isRunning = false
+    this.scheduler.stopTask()
+  }
+
   private advanceTime(duration: Duration) {
     this.remaining = this.remaining.subtract(duration)
   }

@@ -31,6 +31,22 @@ describe('PomodoroTimer', () => {
       pomodoroState: PomodoroState.FOCUS
     })
   })
+
+  it('should able to pause', () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ minutes: 10 })
+    })
+    timer.start()
+    scheduler.advanceTime(5000)
+    timer.pause()
+    scheduler.advanceTime(5000)
+
+    expect(timer.getState()).toEqual({
+      remaining: new Duration({ minutes: 9, seconds: 55 }),
+      isRunning: false,
+      pomodoroState: PomodoroState.FOCUS
+    })
+  })
 })
 
 function createTimer({ focusDuration = new Duration({ minutes: 25 }) } = {}) {
