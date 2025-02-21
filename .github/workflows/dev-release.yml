@@ -24,6 +24,10 @@ jobs:
         run: |
           mv dist task-concentrator
           zip -r task-concentrator-${{ env.TAG_NAME }}.zip task-concentrator
+      - name: Delete previous tag # This step is to remove the source code asset of the previous release. Otherwise, they will be included in the new release.
+        run: gh release delete ${{env.TAG_NAME}} --cleanup-tag
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
