@@ -4,52 +4,70 @@ import {
   PeriodicTaskSchedulerImpl,
   type PeriodicTaskScheduler
 } from '../../infra/scheduler'
+import type { PomodoroTimerConfig } from './config'
 import { Duration } from './duration'
+import { PomodoroStage } from './stage'
 
-export class Timer {
+export class PomodoroTimer {
   static create() {
-    return new Timer({
+    return new PomodoroTimer({
       scheduler: new PeriodicTaskSchedulerImpl(),
-      focusDuration: config.getFocusDuration()
+      config: config.getPomodoroTimerConfig()
     })
   }
 
   static createFake({
     scheduler = new FakePeriodicTaskScheduler(),
-    focusDuration = new Duration({ minutes: 25 })
+    focusDuration = new Duration({ minutes: 25 }),
+    restDuration = new Duration({ minutes: 5 })
   } = {}) {
-    return new Timer({
-      scheduler,
-      focusDuration
+    const config: PomodoroTimerConfig = { focusDuration, restDuration }
+    return new PomodoroTimer({
+      config,
+      scheduler
     })
   }
 
-  private readonly scheduler: PeriodicTaskScheduler
+  private stage: PomodoroStage = PomodoroStage.FOCUS
 
-  private onTick: (state: Readonly<TimerState>) => void = () => {}
-
-  private remaining: Duration = new Duration({ seconds: 0 })
+  private restDuration: Duration
 
   private isRunning: boolean = false
 
+  private remaining: Duration = new Duration({ seconds: 0 })
+
+  private scheduler: PeriodicTaskScheduler
+
+  private callbacks: ((state: PomodoroTimerState) => void)[] = []
+
   private constructor({
-    scheduler,
-    focusDuration
+    config,
+    scheduler
   }: {
+    config: PomodoroTimerConfig
     scheduler: PeriodicTaskScheduler
-    focusDuration: Duration
   }) {
+    this.remaining = config.focusDuration
+    this.restDuration = config.restDuration
     this.scheduler = scheduler
-    this.remaining = focusDuration
+  }
+
+  getState(): Readonly<PomodoroTimerState> {
+    return {
+      remaining: this.remaining,
+      isRunning: this.isRunning,
+      stage: this.stage
+    }
   }
 
   start() {
     const interval = new Duration({ seconds: 1 })
     this.scheduler.scheduleTask(() => {
       this.advanceTime(interval)
-      this.onTick(this.getState())
+      this.publish()
     }, interval.totalSeconds * 1000)
     this.isRunning = true
+    this.publish()
   }
 
   pause() {
@@ -59,29 +77,26 @@ export class Timer {
 
   private advanceTime(duration: Duration) {
     this.remaining = this.remaining.subtract(duration)
-  }
-
-  subscribe(callback: (state: Readonly<TimerState>) => void) {
-    this.onTick = callback
-  }
-
-  getState(): Readonly<TimerState> {
-    return {
-      remaining: this.remaining,
-      isRunning: this.isRunning
+    if (this.remaining.isZero()) {
+      this.stage = PomodoroStage.REST
+      this.remaining = this.restDuration
+      this.pause()
     }
   }
 
-  getRemaining() {
-    return new Duration({ seconds: this.remaining.totalSeconds })
+  subscribe(callback: (state: PomodoroTimerState) => void) {
+    this.callbacks.push(callback)
   }
 
-  getIsRunning() {
-    return this.isRunning
+  private publish() {
+    this.callbacks.forEach((callback) => {
+      callback(this.getState())
+    })
   }
 }
 
-export type TimerState = {
+export type PomodoroTimerState = {
   remaining: Duration
   isRunning: boolean
+  stage: PomodoroStage
 }

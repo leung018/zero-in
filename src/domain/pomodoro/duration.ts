@@ -3,6 +3,9 @@ export class Duration {
 
   constructor({ minutes = 0, seconds = 0 }: { minutes?: number; seconds?: number }) {
     this.totalSeconds = minutes * 60 + seconds
+    if (this.totalSeconds < 0) {
+      throw new DurationInvalidInputError('Duration cannot be negative')
+    }
   }
 
   get minutes(): number {
@@ -14,6 +17,16 @@ export class Duration {
   }
 
   subtract(duration: Duration): Duration {
-    return new Duration({ seconds: this.totalSeconds - duration.totalSeconds })
+    let newTotalSeconds = this.totalSeconds - duration.totalSeconds
+    if (newTotalSeconds < 0) {
+      newTotalSeconds = 0
+    }
+    return new Duration({ seconds: newTotalSeconds })
+  }
+
+  isZero(): boolean {
+    return this.totalSeconds === 0
   }
 }
+
+export class DurationInvalidInputError extends Error {}

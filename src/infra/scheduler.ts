@@ -58,7 +58,7 @@ export class FakePeriodicTaskScheduler implements PeriodicTaskScheduler {
       this.elapsedMs += ms
       const intervals = Math.floor((this.elapsedMs - this.lastTaskTime) / this.intervalMs)
       for (let i = 0; i < intervals; i++) {
-        this.task()
+        if (this.task !== null) this.task()
         this.lastTaskTime += this.intervalMs
       }
     }
