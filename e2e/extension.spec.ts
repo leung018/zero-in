@@ -141,7 +141,7 @@ test('should able to disable blocking according to schedule', async ({ page, ext
   await assertNotGoToBlockedTemplate(page, 'https://google.com')
 })
 
-test('should click start button to start the pomodoro timer', async ({ page, extensionId }) => {
+test('should pomodoro timer count successfully', async ({ page, extensionId }) => {
   await goToPomodoroTimer(page, extensionId)
 
   await expect(page.getByTestId('timer-display')).toContainText('25:00')
@@ -149,6 +149,13 @@ test('should click start button to start the pomodoro timer', async ({ page, ext
   await page.getByTestId('start-button').click()
 
   await expect(page.getByTestId('timer-display')).toContainText('24:59')
+
+  // FIXME: Below test catch the bug related to subscription of timer state from service worker. Better catch the bug in unit test instead.
+  await page.getByTestId('pause-button').click()
+  await page.reload()
+  await page.getByTestId('start-button').click()
+
+  await expect(page.getByTestId('timer-display')).toContainText('24:57')
 })
 
 async function goToBlockedDomainsPage(page: Page, extensionId: string) {
