@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { PomodoroTimer, type PomodoroTimerState } from './timer'
 import { Duration } from './duration'
-import { PomodoroState } from './state'
+import { PomodoroStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
 
 describe('PomodoroTimer', () => {
@@ -14,7 +14,7 @@ describe('PomodoroTimer', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ minutes: 10 }),
       isRunning: false,
-      pomodoroState: PomodoroState.FOCUS
+      stage: PomodoroStage.FOCUS
     })
   })
 
@@ -28,7 +28,7 @@ describe('PomodoroTimer', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ minutes: 9, seconds: 55 }),
       isRunning: true,
-      pomodoroState: PomodoroState.FOCUS
+      stage: PomodoroStage.FOCUS
     })
   })
 
@@ -44,7 +44,7 @@ describe('PomodoroTimer', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ minutes: 9, seconds: 55 }),
       isRunning: false,
-      pomodoroState: PomodoroState.FOCUS
+      stage: PomodoroStage.FOCUS
     })
   })
 
@@ -64,17 +64,17 @@ describe('PomodoroTimer', () => {
       {
         remaining: new Duration({ minutes: 10, seconds: 0 }),
         isRunning: true,
-        pomodoroState: PomodoroState.FOCUS
+        stage: PomodoroStage.FOCUS
       },
       {
         remaining: new Duration({ minutes: 9, seconds: 59 }),
         isRunning: true,
-        pomodoroState: PomodoroState.FOCUS
+        stage: PomodoroStage.FOCUS
       },
       {
         remaining: new Duration({ minutes: 9, seconds: 58 }),
         isRunning: true,
-        pomodoroState: PomodoroState.FOCUS
+        stage: PomodoroStage.FOCUS
       }
     ])
   })
@@ -90,7 +90,7 @@ describe('PomodoroTimer', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ seconds: 30 }),
       isRunning: false,
-      pomodoroState: PomodoroState.REST
+      stage: PomodoroStage.REST
     })
   })
 })

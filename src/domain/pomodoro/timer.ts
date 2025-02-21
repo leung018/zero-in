@@ -5,7 +5,7 @@ import {
   type PeriodicTaskScheduler
 } from '../../infra/scheduler'
 import { Duration } from './duration'
-import { PomodoroState } from './state'
+import { PomodoroStage } from './stage'
 
 export class PomodoroTimer {
   static create() {
@@ -28,7 +28,7 @@ export class PomodoroTimer {
     })
   }
 
-  private pomodoroState: PomodoroState = PomodoroState.FOCUS
+  private stage: PomodoroStage = PomodoroStage.FOCUS
 
   private restDuration: Duration
 
@@ -58,7 +58,7 @@ export class PomodoroTimer {
     return {
       remaining: this.remaining,
       isRunning: this.isRunning,
-      pomodoroState: this.pomodoroState
+      stage: this.stage
     }
   }
 
@@ -80,7 +80,7 @@ export class PomodoroTimer {
   private advanceTime(duration: Duration) {
     this.remaining = this.remaining.subtract(duration)
     if (this.remaining.isZero()) {
-      this.pomodoroState = PomodoroState.REST
+      this.stage = PomodoroStage.REST
       this.remaining = this.restDuration
       this.pause()
     }
@@ -100,5 +100,5 @@ export class PomodoroTimer {
 export type PomodoroTimerState = {
   remaining: Duration
   isRunning: boolean
-  pomodoroState: PomodoroState
+  stage: PomodoroStage
 }
