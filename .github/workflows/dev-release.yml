@@ -24,6 +24,9 @@ jobs:
         run: |
           mv dist task-concentrator
           zip -r task-concentrator-${{ env.TAG_NAME }}.zip task-concentrator
+      - name: Delete tag
+        run: |
+          run: gh release delete ${{env.TAG_NAME}} --cleanup-tag
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
