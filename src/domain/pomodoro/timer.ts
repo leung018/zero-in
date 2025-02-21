@@ -64,11 +64,17 @@ export class PomodoroTimer {
   }
 
   start() {
-    const interval = new Duration({ seconds: 1 })
+    const timerUnit = new Duration({ milliseconds: 100 })
+    const numOfIntervalsPerSecond = 1000 / timerUnit.totalMilliseconds
+
+    let advanceTimeCount = 0
     this.scheduler.scheduleTask(() => {
-      this.advanceTime(interval)
-      this.publish()
-    }, interval.totalSeconds * 1000)
+      this.advanceTime(timerUnit)
+      advanceTimeCount++
+      if (advanceTimeCount % numOfIntervalsPerSecond === 0) {
+        this.publish()
+      }
+    }, timerUnit.totalMilliseconds)
     this.isRunning = true
     this.publish()
   }

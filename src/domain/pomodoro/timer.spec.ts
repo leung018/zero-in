@@ -48,6 +48,19 @@ describe('PomodoroTimer', () => {
     })
   })
 
+  it('should pause and start remain accuracy to 100ms', () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ minutes: 10 })
+    })
+    timer.start()
+    scheduler.advanceTime(5200)
+    timer.pause()
+    timer.start()
+    scheduler.advanceTime(5800)
+
+    expect(timer.getState().remaining).toEqual(new Duration({ minutes: 9, seconds: 49 }))
+  })
+
   it('should able to subscribe change of states', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 10 })

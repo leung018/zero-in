@@ -1,7 +1,7 @@
 import type { PomodoroStage } from '../domain/pomodoro/stage'
 
 export type PomodoroTimerResponse = {
-  pomodoroState: PomodoroStage
+  stage: PomodoroStage
   remainingSeconds: number
   isRunning: boolean
 }
