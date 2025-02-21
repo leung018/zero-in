@@ -53,7 +53,7 @@ describe('PomodoroTimer', () => {
       focusDuration: new Duration({ minutes: 10 })
     })
     const changes: PomodoroTimerState[] = []
-    timer.subscribe((state) => {
+    timer.setCallback((state) => {
       changes.push(state)
     })
 

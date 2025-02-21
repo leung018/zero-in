@@ -40,7 +40,7 @@ export class PomodoroTimer {
 
   private scheduler: PeriodicTaskScheduler
 
-  private callbacks: ((state: PomodoroTimerState) => void)[] = []
+  private callback: (state: PomodoroTimerState) => void = () => {}
 
   private constructor({
     config,
@@ -86,14 +86,12 @@ export class PomodoroTimer {
     }
   }
 
-  subscribe(callback: (state: PomodoroTimerState) => void) {
-    this.callbacks.push(callback)
+  setCallback(callback: (state: PomodoroTimerState) => void) {
+    this.callback = callback
   }
 
   private publish() {
-    this.callbacks.forEach((callback) => {
-      callback(this.getState())
-    })
+    this.callback(this.getState())
   }
 
   private transit() {
