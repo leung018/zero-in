@@ -30,11 +30,13 @@ export class PomodoroTimer {
 
   private stage: PomodoroStage = PomodoroStage.FOCUS
 
+  private focusDuration: Duration
+
   private restDuration: Duration
 
   private isRunning: boolean = false
 
-  private remaining: Duration = new Duration({ seconds: 0 })
+  private remaining: Duration
 
   private scheduler: PeriodicTaskScheduler
 
@@ -47,8 +49,9 @@ export class PomodoroTimer {
     config: PomodoroTimerConfig
     scheduler: PeriodicTaskScheduler
   }) {
-    this.remaining = config.focusDuration
+    this.focusDuration = config.focusDuration
     this.restDuration = config.restDuration
+    this.remaining = config.focusDuration
     this.scheduler = scheduler
   }
 
@@ -78,9 +81,8 @@ export class PomodoroTimer {
   private advanceTime(duration: Duration) {
     this.remaining = this.remaining.subtract(duration)
     if (this.remaining.isZero()) {
-      this.stage = PomodoroStage.REST
-      this.remaining = this.restDuration
       this.pause()
+      this.transit()
     }
   }
 
@@ -92,6 +94,16 @@ export class PomodoroTimer {
     this.callbacks.forEach((callback) => {
       callback(this.getState())
     })
+  }
+
+  private transit() {
+    if (this.stage === PomodoroStage.FOCUS) {
+      this.stage = PomodoroStage.REST
+      this.remaining = this.restDuration
+    } else {
+      this.stage = PomodoroStage.FOCUS
+      this.remaining = this.focusDuration
+    }
   }
 }
 

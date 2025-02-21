@@ -93,6 +93,23 @@ describe('PomodoroTimer', () => {
       stage: PomodoroStage.REST
     })
   })
+
+  it('should switch back to focus after rest duration is passed', () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ minutes: 1 }),
+      restDuration: new Duration({ seconds: 30 })
+    })
+    timer.start()
+    scheduler.advanceTime(61000)
+    timer.start()
+    scheduler.advanceTime(31000)
+
+    expect(timer.getState()).toEqual({
+      remaining: new Duration({ minutes: 1 }),
+      isRunning: false,
+      stage: PomodoroStage.FOCUS
+    })
+  })
 })
 
 function createTimer({
