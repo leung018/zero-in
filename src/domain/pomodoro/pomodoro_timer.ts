@@ -5,15 +5,19 @@ import { PomodoroState } from './state'
 export class PomodoroTimer {
   static createFake({
     scheduler = new FakePeriodicTaskScheduler(),
-    focusDuration = new Duration({ minutes: 25 })
+    focusDuration = new Duration({ minutes: 25 }),
+    restDuration = new Duration({ minutes: 5 })
   } = {}) {
     return new PomodoroTimer({
       focusDuration,
+      restDuration,
       scheduler
     })
   }
 
   private pomodoroState: PomodoroState = PomodoroState.FOCUS
+
+  private restDuration: Duration
 
   private isRunning: boolean = false
 
@@ -25,12 +29,15 @@ export class PomodoroTimer {
 
   private constructor({
     focusDuration,
+    restDuration,
     scheduler
   }: {
     focusDuration: Duration
+    restDuration: Duration
     scheduler: PeriodicTaskScheduler
   }) {
     this.remaining = focusDuration
+    this.restDuration = restDuration
     this.scheduler = scheduler
   }
 
@@ -59,6 +66,11 @@ export class PomodoroTimer {
 
   private advanceTime(duration: Duration) {
     this.remaining = this.remaining.subtract(duration)
+    if (this.remaining.isZero()) {
+      this.pomodoroState = PomodoroState.REST
+      this.remaining = this.restDuration
+      this.pause()
+    }
   }
 
   subscribe(callback: (state: PomodoroTimerState) => void) {

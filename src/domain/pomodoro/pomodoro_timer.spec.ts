@@ -78,11 +78,29 @@ describe('PomodoroTimer', () => {
       }
     ])
   })
+
+  it('should switch to break after focus duration is passed', () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ minutes: 1 }),
+      restDuration: new Duration({ seconds: 30 })
+    })
+    timer.start()
+    scheduler.advanceTime(61000)
+
+    expect(timer.getState()).toEqual({
+      remaining: new Duration({ seconds: 30 }),
+      isRunning: false,
+      pomodoroState: PomodoroState.REST
+    })
+  })
 })
 
-function createTimer({ focusDuration = new Duration({ minutes: 25 }) } = {}) {
+function createTimer({
+  focusDuration = new Duration({ minutes: 25 }),
+  restDuration = new Duration({ minutes: 5 })
+} = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
-  const timer = PomodoroTimer.createFake({ focusDuration, scheduler })
+  const timer = PomodoroTimer.createFake({ focusDuration, restDuration, scheduler })
   return {
     scheduler,
     timer
