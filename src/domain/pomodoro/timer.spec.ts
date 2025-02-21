@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PomodoroTimer, type PomodoroTimerState } from './pomodoro_timer'
+import { PomodoroTimer, type PomodoroTimerState } from './timer'
 import { Duration } from './duration'
 import { PomodoroState } from './state'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
