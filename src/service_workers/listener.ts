@@ -91,7 +91,7 @@ export class BackgroundListener {
 function mapPomodoroTimerStateToResponse(state: PomodoroTimerState): PomodoroTimerResponse {
   return {
     stage: state.stage,
-    remainingSeconds: state.remaining.totalSeconds,
+    remainingSeconds: state.remaining.totalMilliseconds / 1000,
     isRunning: state.isRunning
   }
 }

@@ -3,11 +3,11 @@ import { Duration, DurationInvalidInputError } from './duration'
 import { assertToThrowError } from '../../test_utils/check_error'
 
 describe('Duration', () => {
-  it('should build duration from minutes and seconds', () => {
-    const duration = new Duration({ minutes: 10, seconds: 30 })
-    expect(duration.totalSeconds).toBe(630)
+  it('should build duration from minutes, seconds or milliseconds', () => {
+    const duration = new Duration({ minutes: 10, seconds: 30, milliseconds: 500 })
     expect(duration.minutes).toBe(10)
     expect(duration.seconds).toBe(30)
+    expect(duration.totalMilliseconds).toBe(630500)
   })
 
   it('should prevent negative duration to created', () => {
@@ -20,15 +20,21 @@ describe('Duration', () => {
       () => new Duration({ minutes: -1, seconds: 0 }),
       new DurationInvalidInputError(errMsg)
     )
-    new Duration({ seconds: 0 }) // should not throw error
+    assertToThrowError(
+      () => new Duration({ minutes: 0, seconds: 0, milliseconds: -1 }),
+      new DurationInvalidInputError(errMsg)
+    )
+    new Duration({ milliseconds: 0 }) // should not throw error
   })
 
   it('should subtract return new duration that is subtracted', () => {
     const original = new Duration({ minutes: 10, seconds: 30 })
 
-    const subtracted = original.subtract(new Duration({ minutes: 1, seconds: 29 }))
+    const subtracted = original.subtract(
+      new Duration({ minutes: 1, seconds: 29, milliseconds: 500 })
+    )
 
-    expect(subtracted).toEqual(new Duration({ minutes: 9, seconds: 1 }))
+    expect(subtracted).toEqual(new Duration({ minutes: 9, seconds: 0, milliseconds: 500 }))
     expect(original).toEqual(new Duration({ minutes: 10, seconds: 30 }))
   })
 
@@ -41,8 +47,9 @@ describe('Duration', () => {
   })
 
   it('should isZero check for zero duration', () => {
-    expect(new Duration({ minutes: 0, seconds: 0 }).isZero()).toBe(true)
-    expect(new Duration({ minutes: 0, seconds: 1 }).isZero()).toBe(false)
-    expect(new Duration({ minutes: 1, seconds: 0 }).isZero()).toBe(false)
+    expect(new Duration({ minutes: 0, seconds: 0, milliseconds: 0 }).isZero()).toBe(true)
+    expect(new Duration({ minutes: 0, seconds: 0, milliseconds: 1 }).isZero()).toBe(false)
+    expect(new Duration({ minutes: 0, seconds: 1, milliseconds: 0 }).isZero()).toBe(false)
+    expect(new Duration({ minutes: 1 }).isZero()).toBe(false)
   })
 })

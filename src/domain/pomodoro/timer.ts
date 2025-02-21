@@ -68,7 +68,7 @@ export class PomodoroTimer {
     this.scheduler.scheduleTask(() => {
       this.advanceTime(interval)
       this.publish()
-    }, interval.totalSeconds * 1000)
+    }, interval.totalMilliseconds)
     this.isRunning = true
     this.publish()
   }
