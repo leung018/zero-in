@@ -90,7 +90,7 @@ export class BackgroundListener {
 
 function mapPomodoroTimerStateToResponse(state: PomodoroTimerState): PomodoroTimerResponse {
   return {
-    pomodoroState: state.stage,
+    stage: state.stage,
     remainingSeconds: state.remaining.totalSeconds,
     isRunning: state.isRunning
   }
