@@ -1,6 +1,6 @@
 on:
   push:
-    branches: fix-release-source-asset # TODO: Change to main after the fix is verified.
+    branches: main
 name: Development Release
 jobs:
   release:
