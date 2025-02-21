@@ -4,6 +4,7 @@ import {
   PeriodicTaskSchedulerImpl,
   type PeriodicTaskScheduler
 } from '../../infra/scheduler'
+import type { PomodoroTimerConfig } from './config'
 import { Duration } from './duration'
 import { PomodoroStage } from './stage'
 
@@ -11,8 +12,7 @@ export class PomodoroTimer {
   static create() {
     return new PomodoroTimer({
       scheduler: new PeriodicTaskSchedulerImpl(),
-      focusDuration: config.getFocusDuration(),
-      restDuration: config.getRestDuration()
+      config: config.getPomodoroTimerConfig()
     })
   }
 
@@ -21,9 +21,9 @@ export class PomodoroTimer {
     focusDuration = new Duration({ minutes: 25 }),
     restDuration = new Duration({ minutes: 5 })
   } = {}) {
+    const config: PomodoroTimerConfig = { focusDuration, restDuration }
     return new PomodoroTimer({
-      focusDuration,
-      restDuration,
+      config,
       scheduler
     })
   }
@@ -41,16 +41,14 @@ export class PomodoroTimer {
   private callbacks: ((state: PomodoroTimerState) => void)[] = []
 
   private constructor({
-    focusDuration,
-    restDuration,
+    config,
     scheduler
   }: {
-    focusDuration: Duration
-    restDuration: Duration
+    config: PomodoroTimerConfig
     scheduler: PeriodicTaskScheduler
   }) {
-    this.remaining = focusDuration
-    this.restDuration = restDuration
+    this.remaining = config.focusDuration
+    this.restDuration = config.restDuration
     this.scheduler = scheduler
   }
 
