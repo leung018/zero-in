@@ -17,18 +17,11 @@ export class Duration {
     }
   }
 
-  get minutes(): number {
-    return Math.floor(this.totalMilliseconds / 1000 / 60)
-  }
-
-  get seconds(): number {
-    return Math.floor((this.totalMilliseconds / 1000) % 60)
-  }
-
   remaining(): { minutes: number; seconds: number } {
+    const totalRemainingSeconds = Math.ceil(this.totalMilliseconds / 1000)
     return {
-      minutes: Math.floor(this.totalMilliseconds / 1000 / 60),
-      seconds: Math.ceil((this.totalMilliseconds / 1000) % 60)
+      minutes: Math.floor(totalRemainingSeconds / 60),
+      seconds: totalRemainingSeconds % 60
     }
   }
 
