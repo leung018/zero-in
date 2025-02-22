@@ -4,10 +4,24 @@ import { assertToThrowError } from '../../test_utils/check_error'
 
 describe('Duration', () => {
   it('should build duration from minutes, seconds or milliseconds', () => {
-    const duration = new Duration({ minutes: 10, seconds: 30, milliseconds: 500 })
-    expect(duration.minutes).toBe(10)
-    expect(duration.seconds).toBe(30)
-    expect(duration.totalMilliseconds).toBe(630500)
+    const duration = new Duration({ minutes: 10, seconds: 30, milliseconds: 1000 })
+    expect(duration.timeLeft()).toEqual({ minutes: 10, seconds: 31 })
+    expect(duration.totalMilliseconds).toBe(631000)
+  })
+
+  it('should timeLeft round up properly', () => {
+    expect(new Duration({ minutes: 0, seconds: 59, milliseconds: 999 }).timeLeft()).toEqual({
+      minutes: 1,
+      seconds: 0
+    })
+    expect(new Duration({ minutes: 10, seconds: 30, milliseconds: 200 }).timeLeft()).toEqual({
+      minutes: 10,
+      seconds: 31
+    })
+    expect(new Duration({ minutes: 10, seconds: 30, milliseconds: 0 }).timeLeft()).toEqual({
+      minutes: 10,
+      seconds: 30
+    })
   })
 
   it('should prevent negative duration to created', () => {

@@ -76,7 +76,7 @@ describe('PomodoroTimerPage', () => {
 
     await startTimer(wrapper)
 
-    scheduler.advanceTime(30000)
+    scheduler.advanceTime(30500)
     await pauseTimer(wrapper)
 
     scheduler.advanceTime(5000)
