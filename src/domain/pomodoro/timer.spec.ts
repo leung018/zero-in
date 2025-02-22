@@ -71,21 +71,21 @@ describe('PomodoroTimer', () => {
     })
 
     timer.start()
-    scheduler.advanceTime(2000)
+    scheduler.advanceTime(250)
 
     expect(changes).toEqual([
       {
-        remaining: new Duration({ minutes: 10, seconds: 0 }),
+        remaining: new Duration({ minutes: 10, seconds: 0, milliseconds: 0 }),
         isRunning: true,
         stage: PomodoroStage.FOCUS
       },
       {
-        remaining: new Duration({ minutes: 9, seconds: 59 }),
+        remaining: new Duration({ minutes: 9, seconds: 59, milliseconds: 900 }),
         isRunning: true,
         stage: PomodoroStage.FOCUS
       },
       {
-        remaining: new Duration({ minutes: 9, seconds: 58 }),
+        remaining: new Duration({ minutes: 9, seconds: 59, milliseconds: 800 }),
         isRunning: true,
         stage: PomodoroStage.FOCUS
       }
