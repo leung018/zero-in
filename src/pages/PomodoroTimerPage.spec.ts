@@ -143,6 +143,28 @@ describe('PomodoroTimerPage', () => {
       pauseButtonVisible: false
     })
   })
+
+  it('should prevent bug of last second pause and restart may freezing the component', async () => {
+    const { wrapper, scheduler } = startListenerAndMountPage({
+      focusDuration: new Duration({ minutes: 1 }),
+      restDuration: new Duration({ seconds: 30 })
+    })
+
+    await startTimer(wrapper)
+
+    scheduler.advanceTime(59500)
+    await pauseTimer(wrapper)
+
+    expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:01')
+
+    await startTimer(wrapper)
+    scheduler.advanceTime(600)
+    await flushPromises()
+
+    const pomodoroState = wrapper.find("[data-test='pomodoro-state']")
+    expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
+    expect(pomodoroState.text()).toBe('Take a Break')
+  })
 })
 
 function startListenerAndMountPage({
