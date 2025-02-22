@@ -28,25 +28,4 @@ describe('FakeCommunicationManager', () => {
     expect(message1).toBe('Hello World')
     expect(message2).toBe('Hi World')
   })
-
-  it('should able to disconnect the port', () => {
-    const fakeCommunicationManager = new FakeCommunicationManager()
-
-    let message: any
-    fakeCommunicationManager.addClientConnectListener((backgroundPort) => {
-      backgroundPort.addListener((incomingMessage) => {
-        backgroundPort.send(incomingMessage + ' World')
-      })
-    })
-
-    const clientPort = fakeCommunicationManager.clientConnect()
-    clientPort.addListener((incomingMessage) => {
-      message = incomingMessage
-    })
-    clientPort.send('Hello')
-    clientPort.disconnect()
-    expect(() => clientPort.send('Disconnected')).toThrow()
-
-    expect(message).toBe('Hello World')
-  })
 })

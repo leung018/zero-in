@@ -3,7 +3,6 @@ import EventEmitter from 'events'
 export interface Port<OutgoingMessage = any, IncomingMessage = any> {
   send(message: OutgoingMessage): void
   addListener(callback: (message: IncomingMessage) => void): void
-  disconnect(): void
 }
 
 class FakePort implements Port {
@@ -26,18 +25,11 @@ class FakePort implements Port {
   }
 
   send(message: any): void {
-    if (!this.emitter.listenerCount(this.otherId)) {
-      throw new Error('No listener on the other port')
-    }
     this.emitter.emit(this.otherId, message)
   }
 
   addListener(callback: (message: any) => void): void {
     this.emitter.on(this.id, callback)
-  }
-
-  disconnect(): void {
-    this.emitter.removeAllListeners()
   }
 }
 
