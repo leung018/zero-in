@@ -25,6 +25,13 @@ export class Duration {
     return Math.floor((this.totalMilliseconds / 1000) % 60)
   }
 
+  remaining(): { minutes: number; seconds: number } {
+    return {
+      minutes: Math.floor(this.totalMilliseconds / 1000 / 60),
+      seconds: Math.ceil((this.totalMilliseconds / 1000) % 60)
+    }
+  }
+
   subtract(duration: Duration): Duration {
     let newTotalMilliseconds = this.totalMilliseconds - duration.totalMilliseconds
     if (newTotalMilliseconds < 0) {
