@@ -21,6 +21,12 @@ function mapChromePortToPort(chromePort: chrome.runtime.Port) {
     },
     addListener: (callback: (message: any) => void) => {
       return chromePort.onMessage.addListener(callback)
+    },
+    onDisconnect: (callback: () => void) => {
+      return chromePort.onDisconnect.addListener(callback)
+    },
+    disconnect: () => {
+      throw new Error('Not implemented') // I don't need it in real implementation yet but I need this method in the test implementation
     }
   }
 }
