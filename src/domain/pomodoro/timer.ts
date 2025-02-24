@@ -40,7 +40,9 @@ export class PomodoroTimer {
 
   private scheduler: PeriodicTaskScheduler
 
-  private callback: (state: PomodoroTimerState) => void = () => {}
+  private onTimerUpdate: (state: PomodoroTimerState) => void = () => {}
+
+  private onStageTransit: () => void = () => {}
 
   private constructor({
     config,
@@ -68,10 +70,10 @@ export class PomodoroTimer {
 
     this.scheduler.scheduleTask(() => {
       this.advanceTime(timerUnit)
-      this.publish()
+      this.publishTimerUpdate()
     }, timerUnit.totalMilliseconds)
     this.isRunning = true
-    this.publish()
+    this.publishTimerUpdate()
   }
 
   pause() {
@@ -87,12 +89,16 @@ export class PomodoroTimer {
     }
   }
 
-  setCallback(callback: (state: PomodoroTimerState) => void) {
-    this.callback = callback
+  setOnTimerUpdate(callback: (state: PomodoroTimerState) => void) {
+    this.onTimerUpdate = callback
   }
 
-  private publish() {
-    this.callback(this.getState())
+  setOnStageTransit(callback: () => void) {
+    this.onStageTransit = callback
+  }
+
+  private publishTimerUpdate() {
+    this.onTimerUpdate(this.getState())
   }
 
   private transit() {
@@ -103,6 +109,7 @@ export class PomodoroTimer {
       this.stage = PomodoroStage.FOCUS
       this.remaining = this.focusDuration
     }
+    this.onStageTransit()
   }
 }
 

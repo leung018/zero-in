@@ -5,6 +5,8 @@ import { Duration } from '../domain/pomodoro/duration'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { BackgroundListener } from '../service_workers/listener'
 import { FakeCommunicationManager } from '../infra/communication'
+import { FakeReminderService } from '../infra/reminder'
+import { PomodoroTimer } from '../domain/pomodoro/timer'
 
 describe('PomodoroTimerPage', () => {
   it('should display initial state and timer properly', () => {
@@ -124,7 +126,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should display hint of rest if focus duration has passed', async () => {
-    const { wrapper, scheduler } = startListenerAndMountPage({
+    const { wrapper, scheduler, reminderService } = startListenerAndMountPage({
       focusDuration: new Duration({ minutes: 1 }),
       restDuration: new Duration({ seconds: 30 })
     })
@@ -142,6 +144,8 @@ describe('PomodoroTimerPage', () => {
       startButtonVisible: true,
       pauseButtonVisible: false
     })
+
+    expect(reminderService.getTriggerCount()).toBe(1)
   })
 
   it('should prevent bug of last second pause and restart may freezing the component', async () => {
@@ -173,14 +177,19 @@ function startListenerAndMountPage({
 } = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
   const communicationManager = new FakeCommunicationManager()
-  BackgroundListener.createFake({
+  const reminderService = new FakeReminderService()
+  const timer = PomodoroTimer.createFake({
     scheduler,
-    communicationManager,
     focusDuration,
     restDuration
+  })
+  BackgroundListener.createFake({
+    timer,
+    communicationManager,
+    reminderService
   }).start()
   const wrapper = mountPage({ port: communicationManager.clientConnect() })
-  return { wrapper, scheduler, communicationManager }
+  return { wrapper, scheduler, communicationManager, reminderService }
 }
 
 function mountPage({ port = new FakeCommunicationManager().clientConnect() } = {}) {
