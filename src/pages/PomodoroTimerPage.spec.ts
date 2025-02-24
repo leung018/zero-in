@@ -6,6 +6,7 @@ import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { BackgroundListener } from '../service_workers/listener'
 import { FakeCommunicationManager } from '../infra/communication'
 import { FakeReminderService } from '../infra/reminder'
+import { PomodoroTimer } from '../domain/pomodoro/timer'
 
 describe('PomodoroTimerPage', () => {
   it('should display initial state and timer properly', () => {
@@ -177,12 +178,15 @@ function startListenerAndMountPage({
   const scheduler = new FakePeriodicTaskScheduler()
   const communicationManager = new FakeCommunicationManager()
   const reminderService = new FakeReminderService()
-  BackgroundListener.createFake({
+  const timer = PomodoroTimer.createFake({
     scheduler,
-    communicationManager,
-    reminderService,
     focusDuration,
     restDuration
+  })
+  BackgroundListener.createFake({
+    timer,
+    communicationManager,
+    reminderService
   }).start()
   const wrapper = mountPage({ port: communicationManager.clientConnect() })
   return { wrapper, scheduler, communicationManager, reminderService }

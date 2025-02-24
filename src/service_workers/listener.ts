@@ -5,8 +5,6 @@ import {
   type CommunicationManager,
   type Port
 } from '../infra/communication'
-import { FakePeriodicTaskScheduler } from '../infra/scheduler'
-import { Duration } from '../domain/pomodoro/duration'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
 import { type PomodoroTimerResponse } from './response'
 import { PomodoroTimer, type PomodoroTimerState } from '../domain/pomodoro/timer'
@@ -29,20 +27,14 @@ export class BackgroundListener {
   }
 
   static createFake({
-    scheduler = new FakePeriodicTaskScheduler(),
+    timer = PomodoroTimer.createFake(),
     communicationManager = new FakeCommunicationManager(),
     redirectTogglingService = RedirectTogglingService.createFake(),
-    reminderService = new FakeReminderService(),
-    focusDuration = new Duration({ minutes: 25 }),
-    restDuration = new Duration({ minutes: 5 })
+    reminderService = new FakeReminderService()
   } = {}) {
     return new BackgroundListener({
       communicationManager,
-      timer: PomodoroTimer.createFake({
-        scheduler,
-        focusDuration,
-        restDuration
-      }),
+      timer: timer,
       redirectTogglingService,
       reminderService
     })
