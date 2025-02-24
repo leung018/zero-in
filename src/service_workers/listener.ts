@@ -24,7 +24,7 @@ export class BackgroundListener {
       communicationManager: new ChromeCommunicationManager(),
       timer: PomodoroTimer.create(),
       redirectTogglingService: RedirectTogglingService.create(),
-      reminderService: new ChromeNewTabReminderService()
+      reminderService: new ChromeNewTabReminderService() // TODO: Currently just test this ReminderService integration manually. Find way to automate this in future.
     })
   }
 
