@@ -33,6 +33,19 @@ describe('PomodoroTimer', () => {
     })
   })
 
+  it("should extra call of start won't affect the timer", () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ minutes: 10 })
+    })
+
+    timer.start()
+    scheduler.advanceTime(5950)
+    timer.start()
+    scheduler.advanceTime(5050)
+
+    expect(timer.getState().remaining).toEqual(new Duration({ minutes: 9, seconds: 49 }))
+  })
+
   it('should able to pause', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 10 })
