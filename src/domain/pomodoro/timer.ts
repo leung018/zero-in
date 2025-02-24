@@ -66,6 +66,10 @@ export class PomodoroTimer {
   }
 
   start() {
+    if (this.isRunning) {
+      return
+    }
+
     const timerUnit = new Duration({ milliseconds: 100 })
 
     this.scheduler.scheduleTask(() => {
