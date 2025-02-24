@@ -10,6 +10,7 @@ import { Duration } from '../domain/pomodoro/duration'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
 import { type PomodoroTimerResponse } from './response'
 import { PomodoroTimer, type PomodoroTimerState } from '../domain/pomodoro/timer'
+import { FakeReminderService } from '../infra/reminder'
 
 export class BackgroundListener {
   private redirectTogglingService: RedirectTogglingService
@@ -28,6 +29,7 @@ export class BackgroundListener {
     scheduler = new FakePeriodicTaskScheduler(),
     communicationManager = new FakeCommunicationManager(),
     redirectTogglingService = RedirectTogglingService.createFake(),
+    reminderService = new FakeReminderService(),
     focusDuration = new Duration({ minutes: 25 }),
     restDuration = new Duration({ minutes: 5 })
   } = {}) {
