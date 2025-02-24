@@ -3,6 +3,7 @@ import { PomodoroTimer, type PomodoroTimerState } from './timer'
 import { Duration } from './duration'
 import { PomodoroStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
+import { flushPromises } from '@vue/test-utils'
 
 describe('PomodoroTimer', () => {
   it('should initial state is set correctly', () => {
@@ -66,7 +67,7 @@ describe('PomodoroTimer', () => {
       focusDuration: new Duration({ minutes: 10 })
     })
     const changes: PomodoroTimerState[] = []
-    timer.setCallback((state) => {
+    timer.setOnTimerUpdate((state) => {
       changes.push(state)
     })
 
@@ -90,6 +91,29 @@ describe('PomodoroTimer', () => {
         stage: PomodoroStage.FOCUS
       }
     ])
+  })
+
+  it('should able to trigger callback when stage transit', async () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ minutes: 1 }),
+      restDuration: new Duration({ seconds: 30 })
+    })
+    let triggeredCount = 0
+    timer.setOnStageTransit(() => {
+      triggeredCount++
+    })
+
+    timer.start()
+    scheduler.advanceTime(60000)
+    await flushPromises()
+
+    expect(triggeredCount).toBe(1)
+
+    timer.start()
+    scheduler.advanceTime(30000)
+    await flushPromises()
+
+    expect(triggeredCount).toBe(2)
   })
 
   it('should switch to break after focus duration is passed', () => {

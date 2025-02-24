@@ -73,7 +73,7 @@ export class BackgroundListener {
             }
             case EventName.POMODORO_QUERY: {
               backgroundPort.send(mapPomodoroTimerStateToResponse(this.timer.getState()))
-              this.timer.setCallback((state) => {
+              this.timer.setOnTimerUpdate((state) => {
                 backgroundPort.send(mapPomodoroTimerStateToResponse(state))
               })
               break
