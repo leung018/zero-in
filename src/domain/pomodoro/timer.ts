@@ -102,7 +102,6 @@ export class PomodoroTimer {
   }
 
   private transit() {
-    this.onStageTransit()
     if (this.stage === PomodoroStage.FOCUS) {
       this.stage = PomodoroStage.REST
       this.remaining = this.restDuration
@@ -110,6 +109,7 @@ export class PomodoroTimer {
       this.stage = PomodoroStage.FOCUS
       this.remaining = this.focusDuration
     }
+    this.onStageTransit()
   }
 }
 

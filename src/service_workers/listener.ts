@@ -10,18 +10,21 @@ import { Duration } from '../domain/pomodoro/duration'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
 import { type PomodoroTimerResponse } from './response'
 import { PomodoroTimer, type PomodoroTimerState } from '../domain/pomodoro/timer'
-import { FakeReminderService } from '../infra/reminder'
+import { FakeReminderService, type ReminderService } from '../infra/reminder'
+import { ChromeNewTabReminderService } from '../chrome/new_tab'
 
 export class BackgroundListener {
   private redirectTogglingService: RedirectTogglingService
   private communicationManager: CommunicationManager
   private timer: PomodoroTimer
+  private reminderService: ReminderService
 
   static create() {
     return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
       timer: PomodoroTimer.create(),
-      redirectTogglingService: RedirectTogglingService.create()
+      redirectTogglingService: RedirectTogglingService.create(),
+      reminderService: new ChromeNewTabReminderService()
     })
   }
 
@@ -40,22 +43,29 @@ export class BackgroundListener {
         focusDuration,
         restDuration
       }),
-      redirectTogglingService
+      redirectTogglingService,
+      reminderService
     })
   }
 
   private constructor({
     communicationManager,
     timer,
-    redirectTogglingService
+    redirectTogglingService,
+    reminderService
   }: {
     communicationManager: CommunicationManager
     timer: PomodoroTimer
     redirectTogglingService: RedirectTogglingService
+    reminderService: ReminderService
   }) {
     this.communicationManager = communicationManager
     this.redirectTogglingService = redirectTogglingService
+    this.reminderService = reminderService
     this.timer = timer
+    this.timer.setOnStageTransit(() => {
+      this.reminderService.trigger()
+    })
   }
 
   start() {
