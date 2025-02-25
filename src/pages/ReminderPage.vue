@@ -2,7 +2,7 @@
 import { computed, onBeforeMount, ref } from 'vue'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import type { Port } from '../infra/communication'
-import type { ActionService } from '../infra/service'
+import type { ActionService } from '../infra/action'
 import type { PomodoroTimerResponse } from '../service_workers/response'
 import { EventName, type Event } from '../service_workers/event'
 
