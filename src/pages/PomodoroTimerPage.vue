@@ -52,7 +52,7 @@ const onClickPause = () => {
 
 <template>
   <div class="container text-center mt-3 mb-3">
-    <h1 class="mb-4" data-test="pomodoro-state">{{ pomodoroStageMsg }}</h1>
+    <h1 class="mb-4" data-test="pomodoro-stage">{{ pomodoroStageMsg }}</h1>
     <div class="display-1" data-test="timer-display">{{ displayTime }}</div>
     <button
       v-if="isRunning"

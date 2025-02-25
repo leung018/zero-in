@@ -17,8 +17,8 @@ describe('PomodoroTimerPage', () => {
     const timerDisplay = wrapper.find("[data-test='timer-display']")
     expect(timerDisplay.text()).toBe('09:00')
 
-    const pomodoroState = wrapper.find("[data-test='pomodoro-state']")
-    expect(pomodoroState.text()).toBe('Focus')
+    const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
+    expect(pomodoroStage.text()).toBe('Focus')
   })
 
   it('should reduce the time after timer is started', async () => {
@@ -136,8 +136,8 @@ describe('PomodoroTimerPage', () => {
     scheduler.advanceTime(61000)
     await flushPromises()
 
-    const pomodoroState = wrapper.find("[data-test='pomodoro-state']")
-    expect(pomodoroState.text()).toBe('Take a Break')
+    const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
+    expect(pomodoroStage.text()).toBe('Take a Break')
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
 
     assertControlVisibility(wrapper, {
@@ -165,9 +165,9 @@ describe('PomodoroTimerPage', () => {
     scheduler.advanceTime(600)
     await flushPromises()
 
-    const pomodoroState = wrapper.find("[data-test='pomodoro-state']")
+    const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
-    expect(pomodoroState.text()).toBe('Take a Break')
+    expect(pomodoroStage.text()).toBe('Take a Break')
   })
 })
 
