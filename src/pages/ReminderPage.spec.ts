@@ -40,7 +40,8 @@ describe('ReminderPage', () => {
   it('should click start button to start timer again', async () => {
     const { scheduler, timer, wrapper } = mountPage({
       focusDuration: new Duration({ minutes: 1 }),
-      shortBreakDuration: new Duration({ seconds: 30 })
+      shortBreakDuration: new Duration({ seconds: 30 }),
+      numOfFocusPerCycle: 4
     })
 
     timer.start()
