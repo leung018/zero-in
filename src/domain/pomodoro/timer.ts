@@ -123,21 +123,41 @@ export class PomodoroTimer {
 
   private transit() {
     if (this.stage === PomodoroStage.FOCUS) {
-      this.numOfFocusCompleted++
-
-      if (this.numOfFocusCompleted === this.numOfFocusPerCycle) {
-        this.stage = PomodoroStage.LONG_BREAK
-        this.remaining = this.longBreakDuration
-        this.numOfFocusCompleted = 0
-      } else {
-        this.stage = PomodoroStage.SHORT_BREAK
-        this.remaining = this.shortBreakDuration
-      }
+      this.handleFocusComplete()
     } else {
-      this.stage = PomodoroStage.FOCUS
-      this.remaining = this.focusDuration
+      this.handleBreakComplete()
     }
     this.onStageTransit()
+  }
+
+  private handleFocusComplete() {
+    this.numOfFocusCompleted++
+
+    if (this.numOfFocusCompleted === this.numOfFocusPerCycle) {
+      this.numOfFocusCompleted = 0
+      this.transitToLongBreak()
+    } else {
+      this.transitToShortBreak()
+    }
+  }
+
+  private handleBreakComplete() {
+    this.transitToFocus()
+  }
+
+  private transitToLongBreak() {
+    this.stage = PomodoroStage.LONG_BREAK
+    this.remaining = this.longBreakDuration
+  }
+
+  private transitToShortBreak() {
+    this.stage = PomodoroStage.SHORT_BREAK
+    this.remaining = this.shortBreakDuration
+  }
+
+  private transitToFocus() {
+    this.stage = PomodoroStage.FOCUS
+    this.remaining = this.focusDuration
   }
 }
 
