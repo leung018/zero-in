@@ -109,7 +109,7 @@ describe('PomodoroTimer', () => {
   it('should able to trigger callback when stage transit', async () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 1 }),
-      breakDuration: new Duration({ seconds: 30 })
+      shortBreakDuration: new Duration({ seconds: 30 })
     })
     let triggeredCount = 0
     timer.setOnStageTransit(() => {
@@ -132,7 +132,7 @@ describe('PomodoroTimer', () => {
   it('should switch to break after focus duration is passed', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 1 }),
-      breakDuration: new Duration({ seconds: 30 })
+      shortBreakDuration: new Duration({ seconds: 30 })
     })
     timer.start()
     scheduler.advanceTime(61000)
@@ -147,7 +147,7 @@ describe('PomodoroTimer', () => {
   it('should switch back to focus after break duration is passed', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 1 }),
-      breakDuration: new Duration({ seconds: 30 })
+      shortBreakDuration: new Duration({ seconds: 30 })
     })
     timer.start()
     scheduler.advanceTime(61000)
@@ -164,10 +164,10 @@ describe('PomodoroTimer', () => {
 
 function createTimer({
   focusDuration = new Duration({ minutes: 25 }),
-  breakDuration = new Duration({ minutes: 5 })
+  shortBreakDuration = new Duration({ minutes: 5 })
 } = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
-  const timer = PomodoroTimer.createFake({ focusDuration, breakDuration, scheduler })
+  const timer = PomodoroTimer.createFake({ focusDuration, shortBreakDuration, scheduler })
   return {
     scheduler,
     timer
