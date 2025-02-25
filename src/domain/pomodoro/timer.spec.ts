@@ -109,7 +109,7 @@ describe('PomodoroTimer', () => {
   it('should able to trigger callback when stage transit', async () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 1 }),
-      breakDuration: new Duration({ seconds: 30 })
+      shortBreakDuration: new Duration({ seconds: 30 })
     })
     let triggeredCount = 0
     timer.setOnStageTransit(() => {
@@ -132,7 +132,7 @@ describe('PomodoroTimer', () => {
   it('should switch to break after focus duration is passed', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 1 }),
-      breakDuration: new Duration({ seconds: 30 })
+      shortBreakDuration: new Duration({ seconds: 30 })
     })
     timer.start()
     scheduler.advanceTime(61000)
@@ -140,14 +140,14 @@ describe('PomodoroTimer', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ seconds: 30 }),
       isRunning: false,
-      stage: PomodoroStage.BREAK
+      stage: PomodoroStage.SHORT_BREAK
     })
   })
 
   it('should switch back to focus after break duration is passed', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 1 }),
-      breakDuration: new Duration({ seconds: 30 })
+      shortBreakDuration: new Duration({ seconds: 30 })
     })
     timer.start()
     scheduler.advanceTime(61000)
@@ -160,14 +160,102 @@ describe('PomodoroTimer', () => {
       stage: PomodoroStage.FOCUS
     })
   })
+
+  it('should start long break after number of focus per cycle is passed', () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ minutes: 1 }),
+      shortBreakDuration: new Duration({ seconds: 15 }),
+      longBreakDuration: new Duration({ seconds: 30 }),
+      numOfFocusPerCycle: 2
+    })
+
+    // 1st Focus
+    timer.start()
+    scheduler.advanceTime(60000)
+
+    // Short Break
+    timer.start()
+    scheduler.advanceTime(15000)
+
+    // 2nd Focus
+    timer.start()
+    scheduler.advanceTime(60000)
+
+    // Long Break
+    expect(timer.getState()).toEqual({
+      remaining: new Duration({ seconds: 30 }),
+      isRunning: false,
+      stage: PomodoroStage.LONG_BREAK
+    })
+    timer.start()
+    scheduler.advanceTime(30000)
+  })
+
+  it('should reset the cycle after long break', () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ minutes: 1 }),
+      shortBreakDuration: new Duration({ seconds: 15 }),
+      longBreakDuration: new Duration({ seconds: 30 }),
+      numOfFocusPerCycle: 2
+    })
+
+    // 1st Focus
+    timer.start()
+    scheduler.advanceTime(60000)
+
+    // Short Break
+    timer.start()
+    scheduler.advanceTime(15000)
+
+    // 2nd Focus
+    timer.start()
+    scheduler.advanceTime(60000)
+
+    // Long Break
+    timer.start()
+    scheduler.advanceTime(30000)
+
+    // After Long Break, it should reset to Focus
+    expect(timer.getState()).toEqual({
+      remaining: new Duration({ minutes: 1 }),
+      isRunning: false,
+      stage: PomodoroStage.FOCUS
+    })
+
+    timer.start()
+    scheduler.advanceTime(60000)
+
+    // Short Break
+    timer.start()
+    scheduler.advanceTime(15000)
+
+    // 3rd Focus
+    timer.start()
+    scheduler.advanceTime(60000)
+
+    // Long Break again
+    expect(timer.getState()).toEqual({
+      remaining: new Duration({ seconds: 30 }),
+      isRunning: false,
+      stage: PomodoroStage.LONG_BREAK
+    })
+  })
 })
 
 function createTimer({
   focusDuration = new Duration({ minutes: 25 }),
-  breakDuration = new Duration({ minutes: 5 })
+  shortBreakDuration = new Duration({ minutes: 5 }),
+  longBreakDuration = new Duration({ minutes: 15 }),
+  numOfFocusPerCycle = 4
 } = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
-  const timer = PomodoroTimer.createFake({ focusDuration, breakDuration, scheduler })
+  const timer = PomodoroTimer.createFake({
+    focusDuration,
+    shortBreakDuration,
+    longBreakDuration,
+    numOfFocusPerCycle,
+    scheduler
+  })
   return {
     scheduler,
     timer

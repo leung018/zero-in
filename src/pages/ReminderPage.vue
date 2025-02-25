@@ -14,7 +14,14 @@ const { port, closeCurrentTabService } = defineProps<{
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
 
 const hintMsg = computed(() => {
-  return pomodoroStage.value === PomodoroStage.BREAK ? 'Start your break.' : 'Start focusing.'
+  switch (pomodoroStage.value) {
+    case PomodoroStage.SHORT_BREAK:
+      return 'Take a break'
+    case PomodoroStage.LONG_BREAK:
+      return 'Take a longer break'
+    default:
+      return 'Start focusing'
+  }
 })
 
 onBeforeMount(() => {
@@ -37,7 +44,7 @@ const onClickStart = () => {
 <template>
   <div class="container text-center mt-5">
     <div class="alert alert-info">
-      Time's up! <br /><span class="hint-message" data-test="hint-message">{{ hintMsg }}</span>
+      Time's up! <br /><span class="hint-message" data-test="hint-message">{{ hintMsg }}.</span>
     </div>
     <button class="btn btn-success" data-test="start-button" @click="onClickStart">Start</button>
   </div>

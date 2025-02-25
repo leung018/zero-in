@@ -13,26 +13,34 @@ describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
     const { scheduler, timer, wrapper } = mountPage({
       focusDuration: new Duration({ minutes: 1 }),
-      breakDuration: new Duration({ seconds: 30 })
+      shortBreakDuration: new Duration({ seconds: 15 }),
+      longBreakDuration: new Duration({ seconds: 30 }),
+      numOfFocusPerCycle: 2
     })
 
     timer.start()
     scheduler.advanceTime(60001)
     await flushPromises()
 
-    expect(wrapper.find("[data-test='hint-message']").text()).toContain('break')
+    expect(wrapper.find("[data-test='hint-message']").text()).toContain('Take a break')
 
     timer.start()
-    scheduler.advanceTime(30001)
+    scheduler.advanceTime(15001)
     await flushPromises()
 
-    expect(wrapper.find("[data-test='hint-message']").text()).toContain('focus')
+    expect(wrapper.find("[data-test='hint-message']").text()).toContain('Start focusing')
+
+    timer.start()
+    scheduler.advanceTime(60001)
+    await flushPromises()
+
+    expect(wrapper.find("[data-test='hint-message']").text()).toContain('Take a longer break')
   })
 
   it('should click start button to start timer again', async () => {
     const { scheduler, timer, wrapper } = mountPage({
       focusDuration: new Duration({ minutes: 1 }),
-      breakDuration: new Duration({ seconds: 30 })
+      shortBreakDuration: new Duration({ seconds: 30 })
     })
 
     timer.start()
@@ -48,7 +56,7 @@ describe('ReminderPage', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ seconds: 29 }),
       isRunning: true,
-      stage: PomodoroStage.BREAK
+      stage: PomodoroStage.SHORT_BREAK
     })
   })
 
@@ -63,14 +71,18 @@ describe('ReminderPage', () => {
 
 function mountPage({
   focusDuration = new Duration({ minutes: 25 }),
-  breakDuration = new Duration({ minutes: 5 })
+  shortBreakDuration = new Duration({ minutes: 5 }),
+  longBreakDuration = new Duration({ minutes: 15 }),
+  numOfFocusPerCycle = 4
 } = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
   const communicationManager = new FakeCommunicationManager()
   const timer = PomodoroTimer.createFake({
     scheduler,
     focusDuration,
-    breakDuration
+    shortBreakDuration,
+    longBreakDuration,
+    numOfFocusPerCycle
   })
 
   BackgroundListener.createFake({

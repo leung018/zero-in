@@ -8,7 +8,9 @@ const getBlockedTemplateUrl = () => {
 const getPomodoroTimerConfig = (): PomodoroTimerConfig => {
   return {
     focusDuration: new Duration({ minutes: 25 }),
-    breakDuration: new Duration({ minutes: 5 })
+    shortBreakDuration: new Duration({ minutes: 5 }),
+    longBreakDuration: new Duration({ minutes: 15 }),
+    numOfFocusPerCycle: 4
   }
 }
 

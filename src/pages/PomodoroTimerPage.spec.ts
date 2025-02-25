@@ -128,7 +128,8 @@ describe('PomodoroTimerPage', () => {
   it('should display hint of break if focus duration has passed', async () => {
     const { wrapper, scheduler, reminderService } = startListenerAndMountPage({
       focusDuration: new Duration({ minutes: 1 }),
-      breakDuration: new Duration({ seconds: 30 })
+      shortBreakDuration: new Duration({ seconds: 30 }),
+      numOfFocusPerCycle: 4
     })
 
     await startTimer(wrapper)
@@ -137,7 +138,7 @@ describe('PomodoroTimerPage', () => {
     await flushPromises()
 
     const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
-    expect(pomodoroStage.text()).toBe('Take a Break')
+    expect(pomodoroStage.text()).toBe('Short Break')
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
 
     assertControlVisibility(wrapper, {
@@ -151,7 +152,7 @@ describe('PomodoroTimerPage', () => {
   it('should prevent bug of last second pause and restart may freezing the component', async () => {
     const { wrapper, scheduler } = startListenerAndMountPage({
       focusDuration: new Duration({ minutes: 1 }),
-      breakDuration: new Duration({ seconds: 30 })
+      shortBreakDuration: new Duration({ seconds: 30 })
     })
 
     await startTimer(wrapper)
@@ -167,13 +168,43 @@ describe('PomodoroTimerPage', () => {
 
     const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
-    expect(pomodoroStage.text()).toBe('Take a Break')
+    expect(pomodoroStage.text()).toBe('Short Break')
+  })
+
+  it('should display hint of long break', async () => {
+    const { wrapper, scheduler } = startListenerAndMountPage({
+      focusDuration: new Duration({ minutes: 1 }),
+      shortBreakDuration: new Duration({ seconds: 15 }),
+      longBreakDuration: new Duration({ seconds: 30 }),
+      numOfFocusPerCycle: 2
+    })
+
+    // 1st Focus
+    await startTimer(wrapper)
+    scheduler.advanceTime(60000)
+    await flushPromises()
+
+    // Short Break
+    await startTimer(wrapper)
+    scheduler.advanceTime(15000)
+    await flushPromises()
+
+    // 2nd Focus
+    await startTimer(wrapper)
+    scheduler.advanceTime(60000)
+    await flushPromises()
+
+    const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
+    expect(pomodoroStage.text()).toBe('Long Break')
+    expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
   })
 })
 
 function startListenerAndMountPage({
   focusDuration = new Duration({ minutes: 25 }),
-  breakDuration = new Duration({ minutes: 5 })
+  shortBreakDuration = new Duration({ minutes: 5 }),
+  longBreakDuration = new Duration({ minutes: 15 }),
+  numOfFocusPerCycle = 4
 } = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
   const communicationManager = new FakeCommunicationManager()
@@ -181,7 +212,9 @@ function startListenerAndMountPage({
   const timer = PomodoroTimer.createFake({
     scheduler,
     focusDuration,
-    breakDuration
+    shortBreakDuration,
+    longBreakDuration,
+    numOfFocusPerCycle
   })
   BackgroundListener.createFake({
     timer,

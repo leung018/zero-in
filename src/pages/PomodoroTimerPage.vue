@@ -20,9 +20,16 @@ const displayTime = computed(() => {
   return `${formatNumber(minutes)}:${formatNumber(seconds)}`
 })
 
-const pomodoroStageMsg = computed(() =>
-  pomodoroStage.value === PomodoroStage.FOCUS ? 'Focus' : 'Take a Break'
-)
+const pomodoroStageMsg = computed(() => {
+  switch (pomodoroStage.value) {
+    case PomodoroStage.SHORT_BREAK:
+      return 'Short Break'
+    case PomodoroStage.LONG_BREAK:
+      return 'Long Break'
+    default:
+      return 'Focus'
+  }
+})
 
 onBeforeMount(() => {
   port.addListener((message) => {
