@@ -23,6 +23,12 @@ onBeforeMount(() => {
     name: EventName.POMODORO_QUERY
   })
 })
+
+const onClickStart = () => {
+  port.send({
+    name: EventName.POMODORO_START
+  })
+}
 </script>
 
 <template>
@@ -30,7 +36,7 @@ onBeforeMount(() => {
     <div class="alert alert-info">
       Time's up! <br /><span class="hint-message" data-test="hint-message">{{ hintMsg }}</span>
     </div>
-    <button class="btn btn-success">Start</button>
+    <button class="btn btn-success" data-test="start-button" @click="onClickStart">Start</button>
   </div>
 </template>
 
