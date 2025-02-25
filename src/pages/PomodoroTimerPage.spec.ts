@@ -5,7 +5,7 @@ import { Duration } from '../domain/pomodoro/duration'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { BackgroundListener } from '../service_workers/listener'
 import { FakeCommunicationManager } from '../infra/communication'
-import { FakeReminderService } from '../infra/reminder'
+import { FakeActionService } from '../infra/action'
 import { PomodoroTimer } from '../domain/pomodoro/timer'
 
 describe('PomodoroTimerPage', () => {
@@ -177,7 +177,7 @@ function startListenerAndMountPage({
 } = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
   const communicationManager = new FakeCommunicationManager()
-  const reminderService = new FakeReminderService()
+  const reminderService = new FakeActionService()
   const timer = PomodoroTimer.createFake({
     scheduler,
     focusDuration,

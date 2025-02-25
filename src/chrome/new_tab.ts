@@ -1,6 +1,6 @@
-import type { ReminderService } from '../infra/reminder'
+import type { ActionService } from '../infra/action'
 
-export class ChromeNewTabReminderService implements ReminderService {
+export class ChromeNewTabReminderService implements ActionService {
   private targetUrl: string = chrome.runtime.getURL('reminder.html')
 
   trigger() {
