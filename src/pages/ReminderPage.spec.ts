@@ -13,7 +13,7 @@ describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
     const { scheduler, timer, wrapper } = mountPage({
       focusDuration: new Duration({ minutes: 1 }),
-      restDuration: new Duration({ seconds: 30 })
+      breakDuration: new Duration({ seconds: 30 })
     })
 
     timer.start()
@@ -32,7 +32,7 @@ describe('ReminderPage', () => {
   it('should click start button to start timer again', async () => {
     const { scheduler, timer, wrapper } = mountPage({
       focusDuration: new Duration({ minutes: 1 }),
-      restDuration: new Duration({ seconds: 30 })
+      breakDuration: new Duration({ seconds: 30 })
     })
 
     timer.start()
@@ -48,7 +48,7 @@ describe('ReminderPage', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ seconds: 29 }),
       isRunning: true,
-      stage: PomodoroStage.REST
+      stage: PomodoroStage.BREAK
     })
   })
 
@@ -63,14 +63,14 @@ describe('ReminderPage', () => {
 
 function mountPage({
   focusDuration = new Duration({ minutes: 25 }),
-  restDuration = new Duration({ minutes: 5 })
+  breakDuration = new Duration({ minutes: 5 })
 } = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
   const communicationManager = new FakeCommunicationManager()
   const timer = PomodoroTimer.createFake({
     scheduler,
     focusDuration,
-    restDuration
+    breakDuration
   })
 
   BackgroundListener.createFake({

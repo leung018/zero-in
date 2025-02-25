@@ -19,9 +19,9 @@ export class PomodoroTimer {
   static createFake({
     scheduler = new FakePeriodicTaskScheduler(),
     focusDuration = new Duration({ minutes: 25 }),
-    restDuration = new Duration({ minutes: 5 })
+    breakDuration = new Duration({ minutes: 5 })
   } = {}) {
-    const config: PomodoroTimerConfig = { focusDuration, restDuration }
+    const config: PomodoroTimerConfig = { focusDuration, breakDuration }
     return new PomodoroTimer({
       config,
       scheduler
@@ -32,7 +32,7 @@ export class PomodoroTimer {
 
   private focusDuration: Duration
 
-  private restDuration: Duration
+  private breakDuration: Duration
 
   private isRunning: boolean = false
 
@@ -52,7 +52,7 @@ export class PomodoroTimer {
     scheduler: PeriodicTaskScheduler
   }) {
     this.focusDuration = config.focusDuration
-    this.restDuration = config.restDuration
+    this.breakDuration = config.breakDuration
     this.remaining = config.focusDuration
     this.scheduler = scheduler
   }
@@ -107,8 +107,8 @@ export class PomodoroTimer {
 
   private transit() {
     if (this.stage === PomodoroStage.FOCUS) {
-      this.stage = PomodoroStage.REST
-      this.remaining = this.restDuration
+      this.stage = PomodoroStage.BREAK
+      this.remaining = this.breakDuration
     } else {
       this.stage = PomodoroStage.FOCUS
       this.remaining = this.focusDuration
