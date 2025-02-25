@@ -6,7 +6,7 @@ import { Time } from '../../domain/schedules/time'
 import TimeInput from './TimeInput.vue'
 import WeekdaysSelector from './WeekdaysSelector.vue'
 import SchedulesList from './SchedulesList.vue'
-import { EventName } from '../../service_workers/event'
+import { WorkRequestName } from '../../service_workers/request'
 import type { Port } from '../../infra/communication'
 
 const { weeklyScheduleStorageService, port } = defineProps<{
@@ -57,7 +57,7 @@ const handleRemove = async (indexToRemove: number) => {
 
 const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
   await weeklyScheduleStorageService.saveAll(newWeeklySchedules)
-  await port.send({ name: EventName.TOGGLE_REDIRECT_RULES })
+  await port.send({ name: WorkRequestName.TOGGLE_REDIRECT_RULES })
   weeklySchedules.value = newWeeklySchedules
 }
 </script>

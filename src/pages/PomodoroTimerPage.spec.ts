@@ -17,8 +17,8 @@ describe('PomodoroTimerPage', () => {
     const timerDisplay = wrapper.find("[data-test='timer-display']")
     expect(timerDisplay.text()).toBe('09:00')
 
-    const pomodoroState = wrapper.find("[data-test='pomodoro-state']")
-    expect(pomodoroState.text()).toBe('Focus')
+    const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
+    expect(pomodoroStage.text()).toBe('Focus')
   })
 
   it('should reduce the time after timer is started', async () => {
@@ -125,10 +125,10 @@ describe('PomodoroTimerPage', () => {
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('09:00')
   })
 
-  it('should display hint of rest if focus duration has passed', async () => {
+  it('should display hint of break if focus duration has passed', async () => {
     const { wrapper, scheduler, reminderService } = startListenerAndMountPage({
       focusDuration: new Duration({ minutes: 1 }),
-      restDuration: new Duration({ seconds: 30 })
+      breakDuration: new Duration({ seconds: 30 })
     })
 
     await startTimer(wrapper)
@@ -136,8 +136,8 @@ describe('PomodoroTimerPage', () => {
     scheduler.advanceTime(61000)
     await flushPromises()
 
-    const pomodoroState = wrapper.find("[data-test='pomodoro-state']")
-    expect(pomodoroState.text()).toBe('Take a Break')
+    const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
+    expect(pomodoroStage.text()).toBe('Take a Break')
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
 
     assertControlVisibility(wrapper, {
@@ -151,7 +151,7 @@ describe('PomodoroTimerPage', () => {
   it('should prevent bug of last second pause and restart may freezing the component', async () => {
     const { wrapper, scheduler } = startListenerAndMountPage({
       focusDuration: new Duration({ minutes: 1 }),
-      restDuration: new Duration({ seconds: 30 })
+      breakDuration: new Duration({ seconds: 30 })
     })
 
     await startTimer(wrapper)
@@ -165,15 +165,15 @@ describe('PomodoroTimerPage', () => {
     scheduler.advanceTime(600)
     await flushPromises()
 
-    const pomodoroState = wrapper.find("[data-test='pomodoro-state']")
+    const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
-    expect(pomodoroState.text()).toBe('Take a Break')
+    expect(pomodoroStage.text()).toBe('Take a Break')
   })
 })
 
 function startListenerAndMountPage({
   focusDuration = new Duration({ minutes: 25 }),
-  restDuration = new Duration({ minutes: 5 })
+  breakDuration = new Duration({ minutes: 5 })
 } = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
   const communicationManager = new FakeCommunicationManager()
@@ -181,7 +181,7 @@ function startListenerAndMountPage({
   const timer = PomodoroTimer.createFake({
     scheduler,
     focusDuration,
-    restDuration
+    breakDuration
   })
   BackgroundListener.createFake({
     timer,

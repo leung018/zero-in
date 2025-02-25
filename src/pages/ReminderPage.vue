@@ -4,17 +4,17 @@ import { PomodoroStage } from '../domain/pomodoro/stage'
 import type { Port } from '../infra/communication'
 import type { ActionService } from '../infra/action'
 import type { PomodoroTimerResponse } from '../service_workers/response'
-import { EventName, type Event } from '../service_workers/event'
+import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 
 const { port, closeCurrentTabService } = defineProps<{
-  port: Port<Event, PomodoroTimerResponse>
+  port: Port<WorkRequest, PomodoroTimerResponse>
   closeCurrentTabService: ActionService
 }>()
 
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
 
 const hintMsg = computed(() => {
-  return pomodoroStage.value === PomodoroStage.REST ? 'Start your break.' : 'Start focusing.'
+  return pomodoroStage.value === PomodoroStage.BREAK ? 'Start your break.' : 'Start focusing.'
 })
 
 onBeforeMount(() => {
@@ -22,13 +22,13 @@ onBeforeMount(() => {
     pomodoroStage.value = message.stage
   })
   port.send({
-    name: EventName.POMODORO_QUERY
+    name: WorkRequestName.POMODORO_QUERY
   })
 })
 
 const onClickStart = () => {
   port.send({
-    name: EventName.POMODORO_START
+    name: WorkRequestName.POMODORO_START
   })
   closeCurrentTabService.trigger()
 }
