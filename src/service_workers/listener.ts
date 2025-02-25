@@ -1,5 +1,5 @@
 import { ChromeCommunicationManager } from '../chrome/communication'
-import { type Event, EventName } from './event'
+import { type WorkRequest, WorkRequestName } from './request'
 import {
   FakeCommunicationManager,
   type CommunicationManager,
@@ -62,25 +62,25 @@ export class BackgroundListener {
 
   start() {
     this.communicationManager.addClientConnectListener(
-      (backgroundPort: Port<PomodoroTimerResponse, Event>) => {
-        const listener = (message: Event) => {
+      (backgroundPort: Port<PomodoroTimerResponse, WorkRequest>) => {
+        const listener = (message: WorkRequest) => {
           switch (message.name) {
-            case EventName.POMODORO_START: {
+            case WorkRequestName.POMODORO_START: {
               this.timer.start()
               break
             }
-            case EventName.TOGGLE_REDIRECT_RULES: {
+            case WorkRequestName.TOGGLE_REDIRECT_RULES: {
               this.redirectTogglingService.run()
               break
             }
-            case EventName.POMODORO_QUERY: {
+            case WorkRequestName.POMODORO_QUERY: {
               backgroundPort.send(mapPomodoroTimerStateToResponse(this.timer.getState()))
               this.timer.setOnTimerUpdate((state) => {
                 backgroundPort.send(mapPomodoroTimerStateToResponse(state))
               })
               break
             }
-            case EventName.POMODORO_PAUSE: {
+            case WorkRequestName.POMODORO_PAUSE: {
               this.timer.pause()
               break
             }

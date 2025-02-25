@@ -3,12 +3,12 @@ import { Duration } from '../domain/pomodoro/duration'
 import { formatNumber } from '../util'
 import { computed, onBeforeMount, ref } from 'vue'
 import type { Port } from '@/infra/communication'
-import { EventName, type Event } from '../service_workers/event'
+import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 import { type PomodoroTimerResponse } from '../service_workers/response'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 
 const { port } = defineProps<{
-  port: Port<Event, PomodoroTimerResponse>
+  port: Port<WorkRequest, PomodoroTimerResponse>
 }>()
 
 const durationLeft = ref<Duration>(new Duration({ seconds: 0 }))
@@ -31,20 +31,20 @@ onBeforeMount(() => {
     isRunning.value = message.isRunning
   })
   port.send({
-    name: EventName.POMODORO_QUERY
+    name: WorkRequestName.POMODORO_QUERY
   })
 })
 
 const onClickStart = () => {
   port.send({
-    name: EventName.POMODORO_START
+    name: WorkRequestName.POMODORO_START
   })
   isRunning.value = true
 }
 
 const onClickPause = () => {
   port.send({
-    name: EventName.POMODORO_PAUSE
+    name: WorkRequestName.POMODORO_PAUSE
   })
   isRunning.value = false
 }
