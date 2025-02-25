@@ -2,11 +2,13 @@
 import { computed, onBeforeMount, ref } from 'vue'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import type { Port } from '../infra/communication'
+import type { ActionService } from '../infra/action'
 import type { PomodoroTimerResponse } from '../service_workers/response'
 import { EventName, type Event } from '../service_workers/event'
 
-const { port } = defineProps<{
+const { port, closeCurrentTabService } = defineProps<{
   port: Port<Event, PomodoroTimerResponse>
+  closeCurrentTabService: ActionService
 }>()
 
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
@@ -23,6 +25,13 @@ onBeforeMount(() => {
     name: EventName.POMODORO_QUERY
   })
 })
+
+const onClickStart = () => {
+  port.send({
+    name: EventName.POMODORO_START
+  })
+  closeCurrentTabService.trigger()
+}
 </script>
 
 <template>
@@ -30,7 +39,7 @@ onBeforeMount(() => {
     <div class="alert alert-info">
       Time's up! <br /><span class="hint-message" data-test="hint-message">{{ hintMsg }}</span>
     </div>
-    <button class="btn btn-success">Start</button>
+    <button class="btn btn-success" data-test="start-button" @click="onClickStart">Start</button>
   </div>
 </template>
 

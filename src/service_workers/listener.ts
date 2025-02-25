@@ -8,14 +8,14 @@ import {
 import { RedirectTogglingService } from '../domain/redirect_toggling'
 import { type PomodoroTimerResponse } from './response'
 import { PomodoroTimer, type PomodoroTimerState } from '../domain/pomodoro/timer'
-import { FakeReminderService, type ReminderService } from '../infra/reminder'
+import { FakeActionService, type ActionService } from '../infra/action'
 import { ChromeNewTabReminderService } from '../chrome/new_tab'
 
 export class BackgroundListener {
   private redirectTogglingService: RedirectTogglingService
   private communicationManager: CommunicationManager
   private timer: PomodoroTimer
-  private reminderService: ReminderService
+  private reminderService: ActionService
 
   static create() {
     return new BackgroundListener({
@@ -30,7 +30,7 @@ export class BackgroundListener {
     timer = PomodoroTimer.createFake(),
     communicationManager = new FakeCommunicationManager(),
     redirectTogglingService = RedirectTogglingService.createFake(),
-    reminderService = new FakeReminderService()
+    reminderService = new FakeActionService()
   } = {}) {
     return new BackgroundListener({
       communicationManager,
@@ -49,7 +49,7 @@ export class BackgroundListener {
     communicationManager: CommunicationManager
     timer: PomodoroTimer
     redirectTogglingService: RedirectTogglingService
-    reminderService: ReminderService
+    reminderService: ActionService
   }) {
     this.communicationManager = communicationManager
     this.redirectTogglingService = redirectTogglingService

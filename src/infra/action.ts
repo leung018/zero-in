@@ -1,8 +1,8 @@
-export interface ReminderService {
+export interface ActionService {
   trigger(): void
 }
 
-export class FakeReminderService implements ReminderService {
+export class FakeActionService implements ActionService {
   private triggerCount: number = 0
 
   trigger() {
