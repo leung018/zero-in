@@ -16,11 +16,11 @@ const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
 const hintMsg = computed(() => {
   switch (pomodoroStage.value) {
     case PomodoroStage.SHORT_BREAK:
-      return 'Start your break.'
+      return 'Start your break'
     case PomodoroStage.LONG_BREAK:
-      return 'Start your longer break.'
+      return 'Start your longer break'
     default:
-      return 'Start focusing.'
+      return 'Start focusing'
   }
 })
 
@@ -44,7 +44,7 @@ const onClickStart = () => {
 <template>
   <div class="container text-center mt-5">
     <div class="alert alert-info">
-      Time's up! <br /><span class="hint-message" data-test="hint-message">{{ hintMsg }}</span>
+      Time's up! <br /><span class="hint-message" data-test="hint-message">{{ hintMsg }}.</span>
     </div>
     <button class="btn btn-success" data-test="start-button" @click="onClickStart">Start</button>
   </div>
