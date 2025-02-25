@@ -14,7 +14,14 @@ const { port, closeCurrentTabService } = defineProps<{
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
 
 const hintMsg = computed(() => {
-  return pomodoroStage.value === PomodoroStage.SHORT_BREAK ? 'Start your break.' : 'Start focusing.'
+  switch (pomodoroStage.value) {
+    case PomodoroStage.SHORT_BREAK:
+      return 'Start your break.'
+    case PomodoroStage.LONG_BREAK:
+      return 'Start your longer break.'
+    default:
+      return 'Start focusing.'
+  }
 })
 
 onBeforeMount(() => {
