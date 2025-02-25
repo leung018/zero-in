@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
 import { PomodoroTimer } from '../domain/pomodoro/timer'
 import { PomodoroStage } from '../domain/pomodoro/stage'
+import { FakeActionService } from '../infra/action'
 
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
@@ -50,6 +51,14 @@ describe('ReminderPage', () => {
       stage: PomodoroStage.REST
     })
   })
+
+  it('should click start button trigger the closeCurrentTabService', async () => {
+    const { wrapper, closeCurrentTabService } = mountPage()
+
+    wrapper.find("[data-test='start-button']").trigger('click')
+
+    expect(closeCurrentTabService.getTriggerCount()).toBe(1)
+  })
 })
 
 function mountPage({
@@ -69,10 +78,12 @@ function mountPage({
     communicationManager
   }).start()
 
+  const closeCurrentTabService = new FakeActionService()
   const wrapper = mount(ReminderPage, {
     props: {
-      port: communicationManager.clientConnect()
+      port: communicationManager.clientConnect(),
+      closeCurrentTabService
     }
   })
-  return { wrapper, scheduler, timer }
+  return { wrapper, scheduler, timer, closeCurrentTabService }
 }

@@ -2,11 +2,13 @@
 import { computed, onBeforeMount, ref } from 'vue'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import type { Port } from '../infra/communication'
+import type { ActionService } from '../infra/service'
 import type { PomodoroTimerResponse } from '../service_workers/response'
 import { EventName, type Event } from '../service_workers/event'
 
-const { port } = defineProps<{
+const { port, closeCurrentTabService } = defineProps<{
   port: Port<Event, PomodoroTimerResponse>
+  closeCurrentTabService: ActionService
 }>()
 
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
@@ -28,6 +30,7 @@ const onClickStart = () => {
   port.send({
     name: EventName.POMODORO_START
   })
+  closeCurrentTabService.trigger()
 }
 </script>
 
