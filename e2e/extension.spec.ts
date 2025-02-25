@@ -158,6 +158,14 @@ test('should pomodoro timer count successfully', async ({ page, extensionId }) =
   await expect(page.getByTestId('timer-display')).toContainText('24:57')
 })
 
+test('should close reminder page after clicking start button', async ({ page, extensionId }) => {
+  await goToReminderPage(page, extensionId)
+
+  await page.getByTestId('start-button').click()
+
+  expect(page.context().pages()).not.toContain(page)
+})
+
 async function goToBlockedDomainsPage(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/options.html#/blocked-domains`)
 }
@@ -229,4 +237,12 @@ async function goToSchedulesPage(page: Page, extensionId: string) {
 
 async function goToPomodoroTimer(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/popup.html`)
+}
+
+async function goToReminderPage(page: Page, extensionId: string) {
+  await page.goto(`chrome-extension://${extensionId}/reminder.html`)
+}
+
+async function assertNotInReminderPage(page: Page) {
+  expect(await page.locator('title').textContent()).not.toContain('Reminder')
 }
