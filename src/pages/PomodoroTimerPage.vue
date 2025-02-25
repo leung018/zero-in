@@ -23,9 +23,9 @@ const displayTime = computed(() => {
 const pomodoroStageMsg = computed(() => {
   switch (pomodoroStage.value) {
     case PomodoroStage.SHORT_BREAK:
-      return 'Take a Break'
+      return 'Short Break'
     case PomodoroStage.LONG_BREAK:
-      return 'Take a Longer Break'
+      return 'Long Break'
     default:
       return 'Focus'
   }

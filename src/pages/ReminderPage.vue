@@ -16,9 +16,9 @@ const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
 const hintMsg = computed(() => {
   switch (pomodoroStage.value) {
     case PomodoroStage.SHORT_BREAK:
-      return 'Start your break'
+      return 'Take a break'
     case PomodoroStage.LONG_BREAK:
-      return 'Start your longer break'
+      return 'Take a longer break'
     default:
       return 'Start focusing'
   }

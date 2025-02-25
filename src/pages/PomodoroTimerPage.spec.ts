@@ -138,7 +138,7 @@ describe('PomodoroTimerPage', () => {
     await flushPromises()
 
     const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
-    expect(pomodoroStage.text()).toBe('Take a Break')
+    expect(pomodoroStage.text()).toBe('Short Break')
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
 
     assertControlVisibility(wrapper, {
@@ -168,7 +168,7 @@ describe('PomodoroTimerPage', () => {
 
     const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
-    expect(pomodoroStage.text()).toBe('Take a Break')
+    expect(pomodoroStage.text()).toBe('Short Break')
   })
 
   it('should display hint of long break', async () => {
@@ -195,7 +195,7 @@ describe('PomodoroTimerPage', () => {
     await flushPromises()
 
     const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
-    expect(pomodoroStage.text()).toBe('Take a Longer Break')
+    expect(pomodoroStage.text()).toBe('Long Break')
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
   })
 })
