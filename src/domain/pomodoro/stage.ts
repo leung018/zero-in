@@ -1,4 +1,5 @@
 export enum PomodoroStage {
   FOCUS,
-  BREAK
+  SHORT_BREAK,
+  LONG_BREAK
 }

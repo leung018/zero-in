@@ -48,7 +48,7 @@ describe('ReminderPage', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ seconds: 29 }),
       isRunning: true,
-      stage: PomodoroStage.BREAK
+      stage: PomodoroStage.SHORT_BREAK
     })
   })
 
