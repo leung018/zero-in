@@ -128,6 +128,20 @@ describe('PomodoroTimer', () => {
     expect(changes2.length).toBe(0)
   })
 
+  it('should getSubscriptionCount is reflecting number of subscription', () => {
+    const { timer } = createTimer({})
+    expect(timer.getSubscriptionCount()).toBe(0)
+
+    const subscriptionId = timer.subscribeTimerUpdate(() => {})
+    timer.subscribeTimerUpdate(() => {})
+
+    expect(timer.getSubscriptionCount()).toBe(2)
+
+    timer.unsubscribeTimerUpdate(subscriptionId)
+
+    expect(timer.getSubscriptionCount()).toBe(1)
+  })
+
   it('should able to trigger callback when stage transit', async () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 1 }),

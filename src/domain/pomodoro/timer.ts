@@ -118,7 +118,7 @@ export class PomodoroTimer {
   }
 
   getSubscriptionCount() {
-    return 0
+    return this.timerUpdateSubscriptionManager.getSubscriptionCount()
   }
 
   setOnStageTransit(callback: () => void) {
@@ -173,7 +173,7 @@ class SubscriptionManager<Arguments> {
   private callbackMap = new Map<number, (args: Arguments) => void>()
 
   subscribe(callback: (args: Arguments) => void) {
-    const subscriptionId = this.callbackMap.size + 1
+    const subscriptionId = this.getSubscriptionCount() + 1
     this.callbackMap.set(subscriptionId, callback)
     return subscriptionId
   }
@@ -186,6 +186,10 @@ class SubscriptionManager<Arguments> {
     this.callbackMap.forEach((callback) => {
       callback(args)
     })
+  }
+
+  getSubscriptionCount() {
+    return this.callbackMap.size
   }
 }
 
