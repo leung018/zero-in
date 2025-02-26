@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { BackgroundListener } from './listener'
 import { WorkRequestName } from './request'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
@@ -10,20 +10,11 @@ import { flushPromises } from '@vue/test-utils'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
-  let scheduler: FakePeriodicTaskScheduler
-
-  beforeEach(() => {
-    scheduler = new FakePeriodicTaskScheduler()
-  })
-
   it('should remove subscription when disconnect fired', () => {
-    const timer = PomodoroTimer.createFake({ scheduler })
-    const communicationManager = new FakeCommunicationManager()
-    BackgroundListener.createFake({ timer, communicationManager }).start()
+    const { timer, clientPort } = startBackgroundListener()
 
     const initialSubscriptionCount = timer.getSubscriptionCount()
 
-    const clientPort = communicationManager.clientConnect()
     clientPort.send({ name: WorkRequestName.POMODORO_QUERY })
 
     expect(timer.getSubscriptionCount()).toBe(initialSubscriptionCount + 1)
@@ -34,17 +25,11 @@ describe('BackgroundListener', () => {
   })
 
   it('should display badge when the timer is started', async () => {
-    const timer = PomodoroTimer.createFake({
-      scheduler,
-      focusDuration: new Duration({ minutes: 25 })
-    })
-    const badgeDisplayService = new FakeBadgeDisplayService()
-    const communicationManager = new FakeCommunicationManager()
-    BackgroundListener.createFake({ timer, badgeDisplayService, communicationManager }).start()
+    const { badgeDisplayService, scheduler, clientPort } = startBackgroundListener()
 
     expect(badgeDisplayService.getDisplayedBadge()).toBe(null)
 
-    communicationManager.clientConnect().send({ name: WorkRequestName.POMODORO_START })
+    clientPort.send({ name: WorkRequestName.POMODORO_START })
     scheduler.advanceTime(1000)
     await flushPromises()
 
@@ -55,3 +40,13 @@ describe('BackgroundListener', () => {
     })
   })
 })
+
+function startBackgroundListener({ focusDuration = new Duration({ minutes: 25 }) } = {}) {
+  const scheduler = new FakePeriodicTaskScheduler()
+  const timer = PomodoroTimer.createFake({ scheduler, focusDuration })
+  const badgeDisplayService = new FakeBadgeDisplayService()
+  const communicationManager = new FakeCommunicationManager()
+  BackgroundListener.createFake({ timer, badgeDisplayService, communicationManager }).start()
+  const clientPort = communicationManager.clientConnect()
+  return { timer, badgeDisplayService, clientPort, scheduler }
+}
