@@ -21,12 +21,16 @@ describe('BackgroundListener', () => {
     const communicationManager = new FakeCommunicationManager()
     BackgroundListener.createFake({ timer, communicationManager }).start()
 
+    const initialSubscriptionCount = timer.getSubscriptionCount()
+
     const clientPort = communicationManager.clientConnect()
     clientPort.send({ name: WorkRequestName.POMODORO_QUERY })
 
+    expect(timer.getSubscriptionCount()).toBe(initialSubscriptionCount + 1)
+
     clientPort.disconnect()
 
-    expect(timer.getSubscriptionCount()).toBe(0)
+    expect(timer.getSubscriptionCount()).toBe(initialSubscriptionCount)
   })
 
   it('should display badge when the timer is started', async () => {

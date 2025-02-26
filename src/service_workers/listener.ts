@@ -68,6 +68,13 @@ export class BackgroundListener {
     this.timer.setOnStageTransit(() => {
       this.reminderService.trigger()
     })
+    this.timer.subscribeTimerUpdate((state) => {
+      this.badgeDisplayService.displayBadge({
+        text: (state.remaining.timeLeft().minutes + 1).toString(), // TODO: Improve this rounding
+        backgroundColor: '#ff0000',
+        textColor: '#ffffff'
+      })
+    })
   }
 
   start() {
@@ -77,13 +84,6 @@ export class BackgroundListener {
           switch (message.name) {
             case WorkRequestName.POMODORO_START: {
               this.timer.start()
-              this.timer.subscribeTimerUpdate((state) => {
-                this.badgeDisplayService.displayBadge({
-                  text: (state.remaining.timeLeft().minutes + 1).toString(), // TODO: Improve this rounding
-                  backgroundColor: '#ff0000',
-                  textColor: '#ffffff'
-                })
-              })
               break
             }
             case WorkRequestName.TOGGLE_REDIRECT_RULES: {
