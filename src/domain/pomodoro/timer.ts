@@ -53,7 +53,7 @@ export class PomodoroTimer {
 
   private scheduler: PeriodicTaskScheduler
 
-  private onTimerUpdate: (state: PomodoroTimerState) => void = () => {}
+  private timerUpdateSubscriptionManager = new SubscriptionManager<PomodoroTimerState>()
 
   private onStageTransit: () => void = () => {}
 
@@ -109,8 +109,12 @@ export class PomodoroTimer {
     }
   }
 
-  setOnTimerUpdate(callback: (state: PomodoroTimerState) => void) {
-    this.onTimerUpdate = callback
+  subscribeTimerUpdate(callback: (state: PomodoroTimerState) => void) {
+    return this.timerUpdateSubscriptionManager.subscribe(callback)
+  }
+
+  unsubscribeTimerUpdate(subscriptionId: number) {
+    this.timerUpdateSubscriptionManager.unsubscribe(subscriptionId)
   }
 
   setOnStageTransit(callback: () => void) {
@@ -118,7 +122,7 @@ export class PomodoroTimer {
   }
 
   private publishTimerUpdate() {
-    this.onTimerUpdate(this.getState())
+    this.timerUpdateSubscriptionManager.publish(this.getState())
   }
 
   private transit() {
@@ -158,6 +162,26 @@ export class PomodoroTimer {
   private transitToFocus() {
     this.stage = PomodoroStage.FOCUS
     this.remaining = this.focusDuration
+  }
+}
+
+class SubscriptionManager<Arguments> {
+  private callbackMap = new Map<number, (args: Arguments) => void>()
+
+  subscribe(callback: (args: Arguments) => void) {
+    const subscriptionId = this.callbackMap.size + 1
+    this.callbackMap.set(subscriptionId, callback)
+    return subscriptionId
+  }
+
+  unsubscribe(subscriptionId: number) {
+    this.callbackMap.delete(subscriptionId)
+  }
+
+  publish(args: Arguments) {
+    this.callbackMap.forEach((callback) => {
+      callback(args)
+    })
   }
 }
 

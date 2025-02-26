@@ -80,7 +80,7 @@ describe('PomodoroTimer', () => {
       focusDuration: new Duration({ minutes: 10 })
     })
     const changes: PomodoroTimerState[] = []
-    timer.setOnTimerUpdate((state) => {
+    timer.subscribeTimerUpdate((state) => {
       changes.push(state)
     })
 
@@ -104,6 +104,28 @@ describe('PomodoroTimer', () => {
         stage: PomodoroStage.FOCUS
       }
     ])
+  })
+
+  it('should able to unsubscribe change of states', () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ minutes: 10 })
+    })
+    const changes1: PomodoroTimerState[] = []
+    const changes2: PomodoroTimerState[] = []
+    timer.subscribeTimerUpdate((state) => {
+      changes1.push(state)
+    })
+    const subscriptionId2 = timer.subscribeTimerUpdate((state) => {
+      changes2.push(state)
+    })
+
+    timer.unsubscribeTimerUpdate(subscriptionId2)
+
+    timer.start()
+    scheduler.advanceTime(250)
+
+    expect(changes1.length).toBeGreaterThan(0)
+    expect(changes2.length).toBe(0)
   })
 
   it('should able to trigger callback when stage transit', async () => {
