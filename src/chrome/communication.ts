@@ -30,8 +30,11 @@ function mapChromePortToPort(chromePort: chrome.runtime.Port) {
         throw error
       }
     },
-    addListener: (callback: (message: any) => void) => {
+    onMessage: (callback: (message: any) => void) => {
       return chromePort.onMessage.addListener(callback)
+    },
+    onDisconnect: (callback: () => void) => {
+      return chromePort.onDisconnect.addListener(callback)
     }
   }
 }

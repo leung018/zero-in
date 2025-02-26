@@ -102,7 +102,7 @@ export class BackgroundListener {
             }
           }
         }
-        backgroundPort.addListener(listener)
+        backgroundPort.onMessage(listener)
       }
     )
   }

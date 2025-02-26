@@ -7,19 +7,19 @@ describe('FakeCommunicationManager', () => {
 
     let message1: any, message2: any
     fakeCommunicationManager.addClientConnectListener((backgroundPort) => {
-      backgroundPort.addListener((incomingMessage) => {
+      backgroundPort.onMessage((incomingMessage) => {
         backgroundPort.send(incomingMessage + ' World')
       })
     })
 
     const clientPort1 = fakeCommunicationManager.clientConnect()
-    clientPort1.addListener((incomingMessage) => {
+    clientPort1.onMessage((incomingMessage) => {
       message1 = incomingMessage
     })
     clientPort1.send('Hello')
 
     const clientPort2 = fakeCommunicationManager.clientConnect()
-    clientPort2.addListener((incomingMessage) => {
+    clientPort2.onMessage((incomingMessage) => {
       message2 = incomingMessage
     })
     clientPort2.send('Hi')

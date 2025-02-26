@@ -25,7 +25,7 @@ const hintMsg = computed(() => {
 })
 
 onBeforeMount(() => {
-  port.addListener((message) => {
+  port.onMessage((message) => {
     pomodoroStage.value = message.stage
   })
   port.send({

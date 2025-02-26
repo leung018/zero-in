@@ -32,7 +32,7 @@ const pomodoroStageMsg = computed(() => {
 })
 
 onBeforeMount(() => {
-  port.addListener((message) => {
+  port.onMessage((message) => {
     pomodoroStage.value = message.stage
     durationLeft.value = new Duration({ seconds: message.remainingSeconds })
     isRunning.value = message.isRunning
