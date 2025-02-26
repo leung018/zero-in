@@ -6,7 +6,7 @@ describe('FakeCommunicationManager', () => {
     const fakeCommunicationManager = new FakeCommunicationManager()
 
     let message1: any, message2: any
-    fakeCommunicationManager.addClientConnectListener((backgroundPort) => {
+    fakeCommunicationManager.onNewClientConnect((backgroundPort) => {
       backgroundPort.onMessage((incomingMessage) => {
         backgroundPort.send(incomingMessage + ' World')
       })
@@ -40,7 +40,7 @@ describe('FakeCommunicationManager', () => {
       onDisconnect: () => {}
     }
 
-    fakeCommunicationManager.addClientConnectListener((port) => {
+    fakeCommunicationManager.onNewClientConnect((port) => {
       port.onMessage((incomingMessage) => {
         lastBackgroundReceivedMsg = incomingMessage
       })
@@ -65,7 +65,7 @@ describe('FakeCommunicationManager', () => {
 
     let isOnDisconnectCalled = false
 
-    fakeCommunicationManager.addClientConnectListener((port) => {
+    fakeCommunicationManager.onNewClientConnect((port) => {
       port.onDisconnect(() => {
         isOnDisconnectCalled = true
       })

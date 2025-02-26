@@ -6,7 +6,7 @@ export class ChromeCommunicationManager implements CommunicationManager {
     return mapChromePortToPort(chromePort)
   }
 
-  addClientConnectListener(callback: (backgroundPort: Port) => void) {
+  onNewClientConnect(callback: (backgroundPort: Port) => void) {
     chrome.runtime.onConnect.addListener((chromePort) => {
       const port = mapChromePortToPort(chromePort)
       return callback(port)

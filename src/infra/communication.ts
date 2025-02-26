@@ -46,7 +46,7 @@ class FakePort implements Port {
 
 export interface CommunicationManager {
   clientConnect(): Port
-  addClientConnectListener(callback: (backgroundPort: Port) => void): void
+  onNewClientConnect(callback: (backgroundPort: Port) => void): void
 }
 
 export class FakeCommunicationManager implements CommunicationManager {
@@ -58,7 +58,7 @@ export class FakeCommunicationManager implements CommunicationManager {
     return clientPort
   }
 
-  addClientConnectListener(callback: (backgroundPort: Port) => void) {
+  onNewClientConnect(callback: (backgroundPort: Port) => void) {
     this.callback = callback
   }
 }

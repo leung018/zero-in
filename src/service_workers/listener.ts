@@ -71,7 +71,7 @@ export class BackgroundListener {
   }
 
   start() {
-    this.communicationManager.addClientConnectListener(
+    this.communicationManager.onNewClientConnect(
       (backgroundPort: Port<PomodoroTimerResponse, WorkRequest>) => {
         const listener = (message: WorkRequest) => {
           switch (message.name) {
