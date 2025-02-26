@@ -34,6 +34,11 @@ class FakePort implements Port {
   }
 
   onDisconnect(callback: () => void): void {}
+
+  disconnect() {
+    this.emitter.removeAllListeners(this.id)
+    this.emitter.removeAllListeners(this.otherId)
+  }
 }
 
 export interface CommunicationManager {
