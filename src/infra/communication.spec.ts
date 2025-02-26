@@ -59,4 +59,21 @@ describe('FakeCommunicationManager', () => {
     expect(lastClientReceivedMsg).toBeNull()
     expect(lastBackgroundReceivedMsg).toBeNull()
   })
+
+  it('should disconnect trigger onDisconnect callback of connected port', () => {
+    const fakeCommunicationManager = new FakeCommunicationManager()
+
+    let isOnDisconnectCalled = false
+
+    fakeCommunicationManager.addClientConnectListener((port) => {
+      port.onDisconnect(() => {
+        isOnDisconnectCalled = true
+      })
+    })
+
+    const clientPort = fakeCommunicationManager.clientConnect()
+    clientPort.disconnect()
+
+    expect(isOnDisconnectCalled).toBe(true)
+  })
 })
