@@ -10,19 +10,23 @@ import { type PomodoroTimerResponse } from './response'
 import { PomodoroTimer, type PomodoroTimerState } from '../domain/pomodoro/timer'
 import { FakeActionService, type ActionService } from '../infra/action'
 import { ChromeNewTabReminderService } from '../chrome/new_tab'
+import { FakeBadgeDisplayService, type BadgeDisplayService } from '../infra/badge'
+import { ChromeBadgeDisplayService } from '../chrome/badge'
 
 export class BackgroundListener {
   private redirectTogglingService: RedirectTogglingService
   private communicationManager: CommunicationManager
   private timer: PomodoroTimer
   private reminderService: ActionService
+  private badgeDisplayService: BadgeDisplayService
 
   static create() {
     return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
       timer: PomodoroTimer.create(),
       redirectTogglingService: RedirectTogglingService.create(),
-      reminderService: new ChromeNewTabReminderService()
+      reminderService: new ChromeNewTabReminderService(),
+      badgeDisplayService: new ChromeBadgeDisplayService()
     })
   }
 
@@ -30,13 +34,15 @@ export class BackgroundListener {
     timer = PomodoroTimer.createFake(),
     communicationManager = new FakeCommunicationManager(),
     redirectTogglingService = RedirectTogglingService.createFake(),
-    reminderService = new FakeActionService()
+    reminderService = new FakeActionService(),
+    badgeDisplayService = new FakeBadgeDisplayService()
   } = {}) {
     return new BackgroundListener({
       communicationManager,
       timer: timer,
       redirectTogglingService,
-      reminderService
+      reminderService,
+      badgeDisplayService
     })
   }
 
@@ -44,16 +50,20 @@ export class BackgroundListener {
     communicationManager,
     timer,
     redirectTogglingService,
-    reminderService
+    reminderService,
+    badgeDisplayService
   }: {
     communicationManager: CommunicationManager
     timer: PomodoroTimer
     redirectTogglingService: RedirectTogglingService
     reminderService: ActionService
+    badgeDisplayService: BadgeDisplayService
   }) {
     this.communicationManager = communicationManager
     this.redirectTogglingService = redirectTogglingService
     this.reminderService = reminderService
+    this.badgeDisplayService = badgeDisplayService
+
     this.timer = timer
     this.timer.setOnStageTransit(() => {
       this.reminderService.trigger()
@@ -67,6 +77,12 @@ export class BackgroundListener {
           switch (message.name) {
             case WorkRequestName.POMODORO_START: {
               this.timer.start()
+              // TODO: Not hardcode this one
+              this.badgeDisplayService.displayBadge({
+                text: this.timer.getState().remaining.timeLeft().minutes.toString(),
+                backgroundColor: '#ff0000',
+                textColor: '#ffffff'
+              })
               break
             }
             case WorkRequestName.TOGGLE_REDIRECT_RULES: {
