@@ -15,6 +15,19 @@ describe('BackgroundListener', () => {
     scheduler = new FakePeriodicTaskScheduler()
   })
 
+  it('should remove subscription when disconnect fired', () => {
+    const timer = PomodoroTimer.createFake({ scheduler })
+    const communicationManager = new FakeCommunicationManager()
+    BackgroundListener.createFake({ timer, communicationManager }).start()
+
+    const clientPort = communicationManager.clientConnect()
+    clientPort.send({ name: WorkRequestName.POMODORO_QUERY })
+
+    clientPort.disconnect()
+
+    expect(timer.getSubscriptionCount()).toBe(0)
+  })
+
   it('should display badge when the timer is started', () => {
     const timer = PomodoroTimer.createFake({
       scheduler,

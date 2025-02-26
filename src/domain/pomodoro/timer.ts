@@ -117,6 +117,10 @@ export class PomodoroTimer {
     this.timerUpdateSubscriptionManager.unsubscribe(subscriptionId)
   }
 
+  getSubscriptionCount() {
+    return 0
+  }
+
   setOnStageTransit(callback: () => void) {
     this.onStageTransit = callback
   }
