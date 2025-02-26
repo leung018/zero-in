@@ -29,13 +29,13 @@ onBeforeMount(() => {
     pomodoroStage.value = message.stage
   })
   port.send({
-    name: WorkRequestName.POMODORO_QUERY
+    name: WorkRequestName.LISTEN_TO_TIMER
   })
 })
 
 const onClickStart = () => {
   port.send({
-    name: WorkRequestName.POMODORO_START
+    name: WorkRequestName.START_TIMER
   })
   closeCurrentTabService.trigger()
 }

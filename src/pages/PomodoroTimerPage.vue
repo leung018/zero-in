@@ -38,20 +38,20 @@ onBeforeMount(() => {
     isRunning.value = message.isRunning
   })
   port.send({
-    name: WorkRequestName.POMODORO_QUERY
+    name: WorkRequestName.LISTEN_TO_TIMER
   })
 })
 
 const onClickStart = () => {
   port.send({
-    name: WorkRequestName.POMODORO_START
+    name: WorkRequestName.START_TIMER
   })
   isRunning.value = true
 }
 
 const onClickPause = () => {
   port.send({
-    name: WorkRequestName.POMODORO_PAUSE
+    name: WorkRequestName.TIMER_PAUSE
   })
   isRunning.value = false
 }

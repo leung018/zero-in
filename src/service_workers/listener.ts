@@ -82,7 +82,7 @@ export class BackgroundListener {
       (backgroundPort: Port<PomodoroTimerResponse, WorkRequest>) => {
         const listener = (message: WorkRequest) => {
           switch (message.name) {
-            case WorkRequestName.POMODORO_START: {
+            case WorkRequestName.START_TIMER: {
               this.timer.start()
               break
             }
@@ -90,7 +90,7 @@ export class BackgroundListener {
               this.redirectTogglingService.run()
               break
             }
-            case WorkRequestName.POMODORO_QUERY: {
+            case WorkRequestName.LISTEN_TO_TIMER: {
               backgroundPort.send(mapPomodoroTimerStateToResponse(this.timer.getState()))
               const subscriptionId = this.timer.subscribeTimerUpdate((state) => {
                 backgroundPort.send(mapPomodoroTimerStateToResponse(state))
@@ -100,7 +100,7 @@ export class BackgroundListener {
               })
               break
             }
-            case WorkRequestName.POMODORO_PAUSE: {
+            case WorkRequestName.TIMER_PAUSE: {
               this.timer.pause()
               break
             }

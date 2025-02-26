@@ -1,8 +1,8 @@
 export enum WorkRequestName {
   TOGGLE_REDIRECT_RULES,
-  POMODORO_START,
-  POMODORO_QUERY,
-  POMODORO_PAUSE
+  START_TIMER,
+  LISTEN_TO_TIMER,
+  TIMER_PAUSE
 }
 
 export type WorkRequest = {

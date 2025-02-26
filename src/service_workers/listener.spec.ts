@@ -15,7 +15,7 @@ describe('BackgroundListener', () => {
 
     const initialSubscriptionCount = timer.getSubscriptionCount()
 
-    clientPort.send({ name: WorkRequestName.POMODORO_QUERY })
+    clientPort.send({ name: WorkRequestName.LISTEN_TO_TIMER })
 
     expect(timer.getSubscriptionCount()).toBe(initialSubscriptionCount + 1)
 
@@ -29,7 +29,7 @@ describe('BackgroundListener', () => {
 
     expect(badgeDisplayService.getDisplayedBadge()).toBe(null)
 
-    clientPort.send({ name: WorkRequestName.POMODORO_START })
+    clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
     await flushPromises()
 
