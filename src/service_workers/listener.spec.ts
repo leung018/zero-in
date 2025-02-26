@@ -6,6 +6,7 @@ import { PomodoroTimer } from '../domain/pomodoro/timer'
 import { FakeBadgeDisplayService } from '../infra/badge'
 import { Duration } from '../domain/pomodoro/duration'
 import { FakeCommunicationManager } from '../infra/communication'
+import { flushPromises } from '@vue/test-utils'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -28,7 +29,7 @@ describe('BackgroundListener', () => {
     expect(timer.getSubscriptionCount()).toBe(0)
   })
 
-  it('should display badge when the timer is started', () => {
+  it('should display badge when the timer is started', async () => {
     const timer = PomodoroTimer.createFake({
       scheduler,
       focusDuration: new Duration({ minutes: 25 })
@@ -40,6 +41,8 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toBe(null)
 
     communicationManager.clientConnect().send({ name: WorkRequestName.POMODORO_START })
+    scheduler.advanceTime(1000)
+    await flushPromises()
 
     expect(badgeDisplayService.getDisplayedBadge()).toEqual({
       text: '25',

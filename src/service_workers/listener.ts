@@ -77,11 +77,12 @@ export class BackgroundListener {
           switch (message.name) {
             case WorkRequestName.POMODORO_START: {
               this.timer.start()
-              // TODO: Not hardcode this one
-              this.badgeDisplayService.displayBadge({
-                text: this.timer.getState().remaining.timeLeft().minutes.toString(),
-                backgroundColor: '#ff0000',
-                textColor: '#ffffff'
+              this.timer.subscribeTimerUpdate((state) => {
+                this.badgeDisplayService.displayBadge({
+                  text: (state.remaining.timeLeft().minutes + 1).toString(), // TODO: Improve this rounding
+                  backgroundColor: '#ff0000',
+                  textColor: '#ffffff'
+                })
               })
               break
             }
