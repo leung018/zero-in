@@ -25,16 +25,36 @@ describe('BackgroundListener', () => {
   })
 
   it('should display badge when the timer is started', async () => {
-    const { badgeDisplayService, scheduler, clientPort } = startBackgroundListener()
+    const { badgeDisplayService, scheduler, clientPort } = startBackgroundListener({
+      focusDuration: new Duration({ minutes: 25 })
+    })
 
     expect(badgeDisplayService.getDisplayedBadge()).toBe(null)
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
-    scheduler.advanceTime(1000)
-    await flushPromises()
 
     expect(badgeDisplayService.getDisplayedBadge()).toEqual({
       text: '25',
+      textColor: '#ffffff',
+      backgroundColor: '#ff0000'
+    })
+
+    scheduler.advanceTime(1000)
+    await flushPromises()
+
+    // timeLeft 24:59 still display 25
+    expect(badgeDisplayService.getDisplayedBadge()).toEqual({
+      text: '25',
+      textColor: '#ffffff',
+      backgroundColor: '#ff0000'
+    })
+
+    scheduler.advanceTime(59000)
+    await flushPromises()
+
+    // change to 24 only when timeLeft is 24:00
+    expect(badgeDisplayService.getDisplayedBadge()).toEqual({
+      text: '24',
       textColor: '#ffffff',
       backgroundColor: '#ff0000'
     })
