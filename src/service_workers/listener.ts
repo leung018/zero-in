@@ -71,8 +71,10 @@ export class BackgroundListener {
     this.timer.subscribeTimerUpdate((state) => {
       this.badgeDisplayService.displayBadge({
         text: roundUpTimeLeftInMinutes(state.remaining.timeLeft()).toString(),
-        backgroundColor: '#ff0000',
-        textColor: '#ffffff'
+        color: {
+          textColor: '#ffffff',
+          backgroundColor: '#ff0000'
+        }
       })
     })
   }

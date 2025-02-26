@@ -3,7 +3,7 @@ import { BackgroundListener } from './listener'
 import { WorkRequestName } from './request'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { PomodoroTimer } from '../domain/pomodoro/timer'
-import { FakeBadgeDisplayService } from '../infra/badge'
+import { FakeBadgeDisplayService, type BadgeColor } from '../infra/badge'
 import { Duration } from '../domain/pomodoro/duration'
 import { FakeCommunicationManager } from '../infra/communication'
 import { flushPromises } from '@vue/test-utils'
@@ -33,10 +33,14 @@ describe('BackgroundListener', () => {
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
 
-    expect(badgeDisplayService.getDisplayedBadge()).toEqual({
-      text: '25',
+    const focusBadgeColor: BadgeColor = {
       textColor: '#ffffff',
       backgroundColor: '#ff0000'
+    }
+
+    expect(badgeDisplayService.getDisplayedBadge()).toEqual({
+      text: '25',
+      color: focusBadgeColor
     })
 
     scheduler.advanceTime(1000)
@@ -45,8 +49,7 @@ describe('BackgroundListener', () => {
     // timeLeft 24:59 still display 25
     expect(badgeDisplayService.getDisplayedBadge()).toEqual({
       text: '25',
-      textColor: '#ffffff',
-      backgroundColor: '#ff0000'
+      color: focusBadgeColor
     })
 
     scheduler.advanceTime(59000)
@@ -55,8 +58,7 @@ describe('BackgroundListener', () => {
     // change to 24 only when timeLeft is 24:00
     expect(badgeDisplayService.getDisplayedBadge()).toEqual({
       text: '24',
-      textColor: '#ffffff',
-      backgroundColor: '#ff0000'
+      color: focusBadgeColor
     })
   })
 })

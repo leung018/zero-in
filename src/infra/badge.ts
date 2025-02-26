@@ -1,9 +1,12 @@
 export type Badge = {
   text: string
+  color: BadgeColor
+}
+
+export type BadgeColor = {
   textColor: string
   backgroundColor: string
 }
-
 export interface BadgeDisplayService {
   displayBadge(badge: Badge): void
   clearBadge(): void
