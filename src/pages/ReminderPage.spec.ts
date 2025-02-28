@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import { startBackgroundListener } from '../test_utils/listener'
+import { FakeActionService } from '../infra/action'
 
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
@@ -72,7 +73,7 @@ function mountPage({
   longBreakDuration = new Duration({ minutes: 15 }),
   numOfFocusPerCycle = 4
 } = {}) {
-  const { scheduler, timer, reminderService, communicationManager } = startBackgroundListener({
+  const { scheduler, timer, communicationManager } = startBackgroundListener({
     timerConfig: {
       focusDuration,
       shortBreakDuration,
@@ -80,11 +81,12 @@ function mountPage({
       numOfFocusPerCycle
     }
   })
+  const closeCurrentTabService = new FakeActionService()
   const wrapper = mount(ReminderPage, {
     props: {
       port: communicationManager.clientConnect(),
-      closeCurrentTabService: reminderService
+      closeCurrentTabService
     }
   })
-  return { wrapper, scheduler, timer, closeCurrentTabService: reminderService }
+  return { wrapper, scheduler, timer, closeCurrentTabService }
 }
