@@ -84,11 +84,47 @@ describe('BackgroundListener', () => {
 
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
+
+  it('should display short break badge properly', async () => {
+    const { badgeDisplayService, scheduler, clientPort } = startBackgroundListener({
+      focusDuration: new Duration({ seconds: 5 }),
+      shortBreakDuration: new Duration({ minutes: 2 }),
+      longBreakDuration: new Duration({ minutes: 1 }),
+      numOfFocusPerCycle: 2
+    })
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(5000)
+
+    const breakBadgeColor: BadgeColor = {
+      textColor: '#ffffff',
+      backgroundColor: '#add8e6'
+    }
+
+    // start short break
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+
+    expect(badgeDisplayService.getDisplayedBadge()).toEqual({
+      text: '2',
+      color: breakBadgeColor
+    })
+  })
 })
 
-function startBackgroundListener({ focusDuration = new Duration({ minutes: 25 }) } = {}) {
+function startBackgroundListener({
+  focusDuration = new Duration({ minutes: 25 }),
+  shortBreakDuration = new Duration({ minutes: 5 }),
+  longBreakDuration = new Duration({ minutes: 15 }),
+  numOfFocusPerCycle = 4
+} = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
-  const timer = PomodoroTimer.createFake({ scheduler, focusDuration })
+  const timer = PomodoroTimer.createFake({
+    scheduler,
+    focusDuration,
+    shortBreakDuration,
+    longBreakDuration,
+    numOfFocusPerCycle
+  })
   const badgeDisplayService = new FakeBadgeDisplayService()
   const communicationManager = new FakeCommunicationManager()
   BackgroundListener.createFake({ timer, badgeDisplayService, communicationManager }).start()

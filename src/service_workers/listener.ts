@@ -10,8 +10,9 @@ import { type PomodoroTimerResponse } from './response'
 import { PomodoroTimer, type PomodoroTimerState } from '../domain/pomodoro/timer'
 import { FakeActionService, type ActionService } from '../infra/action'
 import { ChromeNewTabReminderService } from '../chrome/new_tab'
-import { FakeBadgeDisplayService, type BadgeDisplayService } from '../infra/badge'
+import { FakeBadgeDisplayService, type BadgeColor, type BadgeDisplayService } from '../infra/badge'
 import { ChromeBadgeDisplayService } from '../chrome/badge'
+import { PomodoroStage } from '../domain/pomodoro/stage'
 
 export class BackgroundListener {
   private redirectTogglingService: RedirectTogglingService
@@ -71,12 +72,15 @@ export class BackgroundListener {
     })
     this.timer.subscribeTimerUpdate((state) => {
       if (state.isRunning) {
+        let color: BadgeColor
+        if (state.stage === PomodoroStage.FOCUS) {
+          color = { textColor: '#ffffff', backgroundColor: '#ff0000' }
+        } else {
+          color = { textColor: '#ffffff', backgroundColor: '#add8e6' }
+        }
         this.badgeDisplayService.displayBadge({
           text: roundUpTimeLeftInMinutes(state.remaining.timeLeft()).toString(),
-          color: {
-            textColor: '#ffffff',
-            backgroundColor: '#ff0000'
-          }
+          color
         })
       }
     })
