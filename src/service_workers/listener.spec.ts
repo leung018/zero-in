@@ -1,18 +1,16 @@
 import { describe, expect, it } from 'vitest'
-import { BackgroundListener } from './listener'
 import { WorkRequestName } from './request'
-import { FakePeriodicTaskScheduler } from '../infra/scheduler'
-import { PomodoroTimer } from '../domain/pomodoro/timer'
-import { FakeBadgeDisplayService, type BadgeColor } from '../infra/badge'
+import { type BadgeColor } from '../infra/badge'
 import { Duration } from '../domain/pomodoro/duration'
-import { FakeCommunicationManager } from '../infra/communication'
 import { flushPromises } from '@vue/test-utils'
 import config from '../config'
+import { startBackgroundListener } from '../test_utils/listener'
+import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
   it('should remove subscription when disconnect fired', () => {
-    const { timer, clientPort } = startBackgroundListener()
+    const { timer, clientPort } = startListener()
 
     const initialSubscriptionCount = timer.getSubscriptionCount()
 
@@ -26,9 +24,11 @@ describe('BackgroundListener', () => {
   })
 
   it('should display badge when the timer is started', async () => {
-    const { badgeDisplayService, scheduler, clientPort } = startBackgroundListener({
-      focusDuration: new Duration({ minutes: 25 })
-    })
+    const { badgeDisplayService, scheduler, clientPort } = startListener(
+      newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ minutes: 25 })
+      })
+    )
 
     expect(badgeDisplayService.getDisplayedBadge()).toBe(null)
 
@@ -61,7 +61,7 @@ describe('BackgroundListener', () => {
   })
 
   it('should remove badge when the timer is paused', () => {
-    const { badgeDisplayService, clientPort } = startBackgroundListener()
+    const { badgeDisplayService, clientPort } = startListener()
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
 
@@ -73,9 +73,11 @@ describe('BackgroundListener', () => {
   })
 
   it('should remove badge when the timer is finished', () => {
-    const { badgeDisplayService, scheduler, clientPort } = startBackgroundListener({
-      focusDuration: new Duration({ seconds: 5 })
-    })
+    const { badgeDisplayService, scheduler, clientPort } = startListener(
+      newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ seconds: 5 })
+      })
+    )
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(5000)
@@ -84,12 +86,14 @@ describe('BackgroundListener', () => {
   })
 
   it('should display short break badge properly', async () => {
-    const { badgeDisplayService, scheduler, clientPort } = startBackgroundListener({
-      focusDuration: new Duration({ seconds: 5 }),
-      shortBreakDuration: new Duration({ minutes: 2 }),
-      longBreakDuration: new Duration({ minutes: 4 }),
-      numOfFocusPerCycle: 2
-    })
+    const { badgeDisplayService, scheduler, clientPort } = startListener(
+      newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ seconds: 5 }),
+        shortBreakDuration: new Duration({ minutes: 2 }),
+        longBreakDuration: new Duration({ minutes: 4 }),
+        numOfFocusPerCycle: 2
+      })
+    )
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(5000)
@@ -104,12 +108,14 @@ describe('BackgroundListener', () => {
   })
 
   it('should display long break badge properly', async () => {
-    const { badgeDisplayService, scheduler, clientPort } = startBackgroundListener({
-      focusDuration: new Duration({ seconds: 5 }),
-      shortBreakDuration: new Duration({ minutes: 2 }),
-      longBreakDuration: new Duration({ minutes: 4 }),
-      numOfFocusPerCycle: 1
-    })
+    const { badgeDisplayService, scheduler, clientPort } = startListener(
+      newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ seconds: 5 }),
+        shortBreakDuration: new Duration({ minutes: 2 }),
+        longBreakDuration: new Duration({ minutes: 4 }),
+        numOfFocusPerCycle: 1
+      })
+    )
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(5000)
@@ -122,25 +128,32 @@ describe('BackgroundListener', () => {
       color: config.getBadgeColorConfig().breakBadgeColor
     })
   })
+
+  it('should trigger reminderService when time is up', () => {
+    const { reminderService, scheduler, clientPort } = startListener(
+      newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ seconds: 5 })
+      })
+    )
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(5000)
+
+    expect(reminderService.getTriggerCount()).toBe(1)
+  })
 })
 
-function startBackgroundListener({
-  focusDuration = new Duration({ minutes: 25 }),
-  shortBreakDuration = new Duration({ minutes: 5 }),
-  longBreakDuration = new Duration({ minutes: 15 }),
-  numOfFocusPerCycle = 4
-} = {}) {
-  const scheduler = new FakePeriodicTaskScheduler()
-  const timer = PomodoroTimer.createFake({
+function startListener(timerConfig = newTestPomodoroTimerConfig()) {
+  const { timer, badgeDisplayService, communicationManager, scheduler, reminderService } =
+    startBackgroundListener({
+      timerConfig
+    })
+
+  return {
+    timer,
+    badgeDisplayService,
+    clientPort: communicationManager.clientConnect(),
     scheduler,
-    focusDuration,
-    shortBreakDuration,
-    longBreakDuration,
-    numOfFocusPerCycle
-  })
-  const badgeDisplayService = new FakeBadgeDisplayService()
-  const communicationManager = new FakeCommunicationManager()
-  BackgroundListener.createFake({ timer, badgeDisplayService, communicationManager }).start()
-  const clientPort = communicationManager.clientConnect()
-  return { timer, badgeDisplayService, clientPort, scheduler }
+    reminderService
+  }
 }

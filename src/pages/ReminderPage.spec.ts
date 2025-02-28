@@ -1,13 +1,11 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { FakePeriodicTaskScheduler } from '../infra/scheduler'
-import { BackgroundListener } from '../service_workers/listener'
-import { FakeCommunicationManager } from '../infra/communication'
 import ReminderPage from './ReminderPage.vue'
 import { describe, expect, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
-import { PomodoroTimer } from '../domain/pomodoro/timer'
 import { PomodoroStage } from '../domain/pomodoro/stage'
+import { startBackgroundListener } from '../test_utils/listener'
 import { FakeActionService } from '../infra/action'
+import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
 
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
@@ -38,11 +36,13 @@ describe('ReminderPage', () => {
   })
 
   it('should click start button to start timer again', async () => {
-    const { scheduler, timer, wrapper } = mountPage({
-      focusDuration: new Duration({ minutes: 1 }),
-      shortBreakDuration: new Duration({ seconds: 30 }),
-      numOfFocusPerCycle: 4
-    })
+    const { scheduler, timer, wrapper } = mountPage(
+      newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ minutes: 1 }),
+        shortBreakDuration: new Duration({ seconds: 30 }),
+        numOfFocusPerCycle: 4
+      })
+    )
 
     timer.start()
     scheduler.advanceTime(60001)
@@ -70,27 +70,10 @@ describe('ReminderPage', () => {
   })
 })
 
-function mountPage({
-  focusDuration = new Duration({ minutes: 25 }),
-  shortBreakDuration = new Duration({ minutes: 5 }),
-  longBreakDuration = new Duration({ minutes: 15 }),
-  numOfFocusPerCycle = 4
-} = {}) {
-  const scheduler = new FakePeriodicTaskScheduler()
-  const communicationManager = new FakeCommunicationManager()
-  const timer = PomodoroTimer.createFake({
-    scheduler,
-    focusDuration,
-    shortBreakDuration,
-    longBreakDuration,
-    numOfFocusPerCycle
+function mountPage(timerConfig = newTestPomodoroTimerConfig()) {
+  const { scheduler, timer, communicationManager } = startBackgroundListener({
+    timerConfig
   })
-
-  BackgroundListener.createFake({
-    timer,
-    communicationManager
-  }).start()
-
   const closeCurrentTabService = new FakeActionService()
   const wrapper = mount(ReminderPage, {
     props: {

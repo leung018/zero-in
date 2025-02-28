@@ -6,8 +6,7 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { BrowsingRules } from '../domain/browsing_rules'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
 import { FakeWebsiteRedirectService } from '../domain/redirect'
-import { FakeCommunicationManager } from '../infra/communication'
-import { BackgroundListener } from '../service_workers/listener'
+import { startBackgroundListener } from '../test_utils/listener'
 
 describe('BlockedDomainsPage', () => {
   it('should render blocked domains', async () => {
@@ -127,11 +126,9 @@ function mountBlockedDomainsPage({
     websiteRedirectService: fakeWebsiteRedirectService,
     targetRedirectUrl
   })
-  const communicationManager = new FakeCommunicationManager()
-  BackgroundListener.createFake({
-    communicationManager,
-    redirectTogglingService
-  }).start()
+  const { communicationManager } = startBackgroundListener({
+    redirectTogglingService: redirectTogglingService
+  })
   const wrapper = mount(BlockedDomainsPage, {
     props: { browsingRulesStorageService, port: communicationManager.clientConnect() }
   })
