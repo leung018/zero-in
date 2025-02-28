@@ -119,6 +119,17 @@ describe('BackgroundListener', () => {
       color: config.getBadgeColorConfig().breakBadgeColor
     })
   })
+
+  it('should trigger reminderService when time is up', () => {
+    const { reminderService, scheduler, clientPort } = startListener({
+      focusDuration: new Duration({ seconds: 5 })
+    })
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(5000)
+
+    expect(reminderService.getTriggerCount()).toBe(1)
+  })
 })
 
 function startListener({
@@ -127,14 +138,21 @@ function startListener({
   longBreakDuration = new Duration({ minutes: 15 }),
   numOfFocusPerCycle = 4
 } = {}) {
-  const { timer, badgeDisplayService, communicationManager, scheduler } = startBackgroundListener({
-    timerConfig: {
-      focusDuration,
-      shortBreakDuration,
-      longBreakDuration,
-      numOfFocusPerCycle
-    }
-  })
+  const { timer, badgeDisplayService, communicationManager, scheduler, reminderService } =
+    startBackgroundListener({
+      timerConfig: {
+        focusDuration,
+        shortBreakDuration,
+        longBreakDuration,
+        numOfFocusPerCycle
+      }
+    })
 
-  return { timer, badgeDisplayService, clientPort: communicationManager.clientConnect(), scheduler }
+  return {
+    timer,
+    badgeDisplayService,
+    clientPort: communicationManager.clientConnect(),
+    scheduler,
+    reminderService
+  }
 }

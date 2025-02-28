@@ -123,7 +123,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should display hint of break if focus duration has passed', async () => {
-    const { wrapper, scheduler, reminderService } = startListenerAndMountPage({
+    const { wrapper, scheduler } = startListenerAndMountPage({
       focusDuration: new Duration({ minutes: 1 }),
       shortBreakDuration: new Duration({ seconds: 30 }),
       numOfFocusPerCycle: 4
@@ -142,8 +142,6 @@ describe('PomodoroTimerPage', () => {
       startButtonVisible: true,
       pauseButtonVisible: false
     })
-
-    expect(reminderService.getTriggerCount()).toBe(1)
   })
 
   it('should prevent bug of last second pause and restart may freezing the component', async () => {
@@ -203,7 +201,7 @@ function startListenerAndMountPage({
   longBreakDuration = new Duration({ minutes: 15 }),
   numOfFocusPerCycle = 4
 } = {}) {
-  const { scheduler, communicationManager, reminderService } = startBackgroundListener({
+  const { scheduler, communicationManager } = startBackgroundListener({
     timerConfig: {
       focusDuration,
       shortBreakDuration,
@@ -212,7 +210,7 @@ function startListenerAndMountPage({
     }
   })
   const wrapper = mountPage({ port: communicationManager.clientConnect() })
-  return { wrapper, scheduler, communicationManager, reminderService }
+  return { wrapper, scheduler, communicationManager }
 }
 
 function mountPage({ port = new FakeCommunicationManager().clientConnect() } = {}) {
