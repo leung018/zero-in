@@ -102,7 +102,7 @@ export class BackgroundListener {
               })
               break
             }
-            case WorkRequestName.TIMER_PAUSE: {
+            case WorkRequestName.PAUSE_TIMER: {
               this.timer.pause()
               this.badgeDisplayService.clearBadge()
               break

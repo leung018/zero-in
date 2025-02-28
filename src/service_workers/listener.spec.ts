@@ -69,7 +69,7 @@ describe('BackgroundListener', () => {
 
     expect(badgeDisplayService.getDisplayedBadge()).not.toBeNull()
 
-    clientPort.send({ name: WorkRequestName.TIMER_PAUSE })
+    clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
 
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })

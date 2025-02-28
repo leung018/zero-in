@@ -51,7 +51,7 @@ const onClickStart = () => {
 
 const onClickPause = () => {
   port.send({
-    name: WorkRequestName.TIMER_PAUSE
+    name: WorkRequestName.PAUSE_TIMER
   })
   isRunning.value = false
 }
