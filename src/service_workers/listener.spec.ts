@@ -7,6 +7,7 @@ import { FakeBadgeDisplayService, type BadgeColor } from '../infra/badge'
 import { Duration } from '../domain/pomodoro/duration'
 import { FakeCommunicationManager } from '../infra/communication'
 import { flushPromises } from '@vue/test-utils'
+import config from '../config'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -33,10 +34,7 @@ describe('BackgroundListener', () => {
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
 
-    const focusBadgeColor: BadgeColor = {
-      textColor: '#ffffff',
-      backgroundColor: '#ff0000'
-    }
+    const focusBadgeColor: BadgeColor = config.getBadgeColorConfig().focusBadgeColor
 
     expect(badgeDisplayService.getDisplayedBadge()).toEqual({
       text: '25',
@@ -96,17 +94,12 @@ describe('BackgroundListener', () => {
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(5000)
 
-    const breakBadgeColor: BadgeColor = {
-      textColor: '#ffffff',
-      backgroundColor: '#add8e6'
-    }
-
     // start short break
     clientPort.send({ name: WorkRequestName.START_TIMER })
 
     expect(badgeDisplayService.getDisplayedBadge()).toEqual({
       text: '2',
-      color: breakBadgeColor
+      color: config.getBadgeColorConfig().breakBadgeColor
     })
   })
 })
