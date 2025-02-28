@@ -61,6 +61,18 @@ describe('BackgroundListener', () => {
       color: focusBadgeColor
     })
   })
+
+  it('should remove badge when the timer is paused', () => {
+    const { badgeDisplayService, clientPort } = startBackgroundListener()
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+
+    expect(badgeDisplayService.getDisplayedBadge()).not.toBeNull()
+
+    clientPort.send({ name: WorkRequestName.TIMER_PAUSE })
+
+    expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
+  })
 })
 
 function startBackgroundListener({ focusDuration = new Duration({ minutes: 25 }) } = {}) {

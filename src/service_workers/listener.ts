@@ -104,6 +104,7 @@ export class BackgroundListener {
             }
             case WorkRequestName.TIMER_PAUSE: {
               this.timer.pause()
+              this.badgeDisplayService.clearBadge()
               break
             }
           }
