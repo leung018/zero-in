@@ -26,7 +26,7 @@ const getBadgeColorConfig = (): {
     },
     breakBadgeColor: {
       textColor: '#ffffff',
-      backgroundColor: '#add8e6'
+      backgroundColor: '#6495ed'
     }
   }
 }
