@@ -1,5 +1,6 @@
 import type { PomodoroTimerConfig } from './domain/pomodoro/config'
 import { Duration } from './domain/pomodoro/duration'
+import type { BadgeColor } from './infra/badge'
 
 const getBlockedTemplateUrl = () => {
   return chrome.runtime.getURL('blocked.html')
@@ -14,7 +15,24 @@ const getPomodoroTimerConfig = (): PomodoroTimerConfig => {
   }
 }
 
+const getBadgeColorConfig = (): {
+  focusBadgeColor: BadgeColor
+  breakBadgeColor: BadgeColor
+} => {
+  return {
+    focusBadgeColor: {
+      textColor: '#ffffff',
+      backgroundColor: '#ff0000'
+    },
+    breakBadgeColor: {
+      textColor: '#ffffff',
+      backgroundColor: '#add8e6'
+    }
+  }
+}
+
 export default {
   getPomodoroTimerConfig,
-  getBlockedTemplateUrl
+  getBlockedTemplateUrl,
+  getBadgeColorConfig
 }

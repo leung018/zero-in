@@ -2,7 +2,8 @@ import EventEmitter from 'events'
 
 export interface Port<OutgoingMessage = any, IncomingMessage = any> {
   send(message: OutgoingMessage): void
-  addListener(callback: (message: IncomingMessage) => void): void
+  onMessage(callback: (message: IncomingMessage) => void): void
+  onDisconnect(callback: () => void): void
 }
 
 class FakePort implements Port {
@@ -10,7 +11,7 @@ class FakePort implements Port {
   private id: string
   private otherId: string
 
-  static createPaired(): [Port, Port] {
+  static createPaired(): [FakePort, FakePort] {
     const emitter = new EventEmitter()
     const port1 = new FakePort(emitter, 'port1', 'port2')
     const port2 = new FakePort(emitter, 'port2', 'port1')
@@ -28,14 +29,24 @@ class FakePort implements Port {
     this.emitter.emit(this.otherId, message)
   }
 
-  addListener(callback: (message: any) => void): void {
+  onMessage(callback: (message: any) => void): void {
     this.emitter.on(this.id, callback)
+  }
+
+  onDisconnect(callback: () => void): void {
+    this.emitter.on(this.id + '-disconnected', callback)
+  }
+
+  disconnect() {
+    this.emitter.emit(this.otherId + '-disconnected')
+    this.emitter.removeAllListeners(this.id)
+    this.emitter.removeAllListeners(this.otherId)
   }
 }
 
 export interface CommunicationManager {
   clientConnect(): Port
-  addClientConnectListener(callback: (backgroundPort: Port) => void): void
+  onNewClientConnect(callback: (backgroundPort: Port) => void): void
 }
 
 export class FakeCommunicationManager implements CommunicationManager {
@@ -47,7 +58,7 @@ export class FakeCommunicationManager implements CommunicationManager {
     return clientPort
   }
 
-  addClientConnectListener(callback: (backgroundPort: Port) => void) {
+  onNewClientConnect(callback: (backgroundPort: Port) => void) {
     this.callback = callback
   }
 }

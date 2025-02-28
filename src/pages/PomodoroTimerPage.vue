@@ -32,26 +32,26 @@ const pomodoroStageMsg = computed(() => {
 })
 
 onBeforeMount(() => {
-  port.addListener((message) => {
+  port.onMessage((message) => {
     pomodoroStage.value = message.stage
     durationLeft.value = new Duration({ seconds: message.remainingSeconds })
     isRunning.value = message.isRunning
   })
   port.send({
-    name: WorkRequestName.POMODORO_QUERY
+    name: WorkRequestName.LISTEN_TO_TIMER
   })
 })
 
 const onClickStart = () => {
   port.send({
-    name: WorkRequestName.POMODORO_START
+    name: WorkRequestName.START_TIMER
   })
   isRunning.value = true
 }
 
 const onClickPause = () => {
   port.send({
-    name: WorkRequestName.POMODORO_PAUSE
+    name: WorkRequestName.PAUSE_TIMER
   })
   isRunning.value = false
 }
