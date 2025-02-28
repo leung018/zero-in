@@ -100,6 +100,7 @@ export class BackgroundListener {
                 backgroundPort.send(mapPomodoroTimerStateToResponse(state))
               })
               backgroundPort.onDisconnect(() => {
+                console.debug('Connection closed, unsubscribing timer update.')
                 this.timer.unsubscribeTimerUpdate(subscriptionId)
               })
               break
