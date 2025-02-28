@@ -2,11 +2,8 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import PomodoroTimerPage from './PomodoroTimerPage.vue'
 import { expect, describe, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
-import { FakePeriodicTaskScheduler } from '../infra/scheduler'
-import { BackgroundListener } from '../service_workers/listener'
 import { FakeCommunicationManager } from '../infra/communication'
-import { FakeActionService } from '../infra/action'
-import { PomodoroTimer } from '../domain/pomodoro/timer'
+import { startBackgroundListener } from '../test_utils/listener'
 
 describe('PomodoroTimerPage', () => {
   it('should display initial state and timer properly', () => {
@@ -206,21 +203,14 @@ function startListenerAndMountPage({
   longBreakDuration = new Duration({ minutes: 15 }),
   numOfFocusPerCycle = 4
 } = {}) {
-  const scheduler = new FakePeriodicTaskScheduler()
-  const communicationManager = new FakeCommunicationManager()
-  const reminderService = new FakeActionService()
-  const timer = PomodoroTimer.createFake({
-    scheduler,
-    focusDuration,
-    shortBreakDuration,
-    longBreakDuration,
-    numOfFocusPerCycle
+  const { scheduler, communicationManager, reminderService } = startBackgroundListener({
+    timerConfig: {
+      focusDuration,
+      shortBreakDuration,
+      longBreakDuration,
+      numOfFocusPerCycle
+    }
   })
-  BackgroundListener.createFake({
-    timer,
-    communicationManager,
-    reminderService
-  }).start()
   const wrapper = mountPage({ port: communicationManager.clientConnect() })
   return { wrapper, scheduler, communicationManager, reminderService }
 }

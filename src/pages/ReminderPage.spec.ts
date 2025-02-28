@@ -1,13 +1,9 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { FakePeriodicTaskScheduler } from '../infra/scheduler'
-import { BackgroundListener } from '../service_workers/listener'
-import { FakeCommunicationManager } from '../infra/communication'
 import ReminderPage from './ReminderPage.vue'
 import { describe, expect, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
-import { PomodoroTimer } from '../domain/pomodoro/timer'
 import { PomodoroStage } from '../domain/pomodoro/stage'
-import { FakeActionService } from '../infra/action'
+import { startBackgroundListener } from '../test_utils/listener'
 
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
@@ -76,27 +72,19 @@ function mountPage({
   longBreakDuration = new Duration({ minutes: 15 }),
   numOfFocusPerCycle = 4
 } = {}) {
-  const scheduler = new FakePeriodicTaskScheduler()
-  const communicationManager = new FakeCommunicationManager()
-  const timer = PomodoroTimer.createFake({
-    scheduler,
-    focusDuration,
-    shortBreakDuration,
-    longBreakDuration,
-    numOfFocusPerCycle
+  const { scheduler, timer, reminderService, communicationManager } = startBackgroundListener({
+    timerConfig: {
+      focusDuration,
+      shortBreakDuration,
+      longBreakDuration,
+      numOfFocusPerCycle
+    }
   })
-
-  BackgroundListener.createFake({
-    timer,
-    communicationManager
-  }).start()
-
-  const closeCurrentTabService = new FakeActionService()
   const wrapper = mount(ReminderPage, {
     props: {
       port: communicationManager.clientConnect(),
-      closeCurrentTabService
+      closeCurrentTabService: reminderService
     }
   })
-  return { wrapper, scheduler, timer, closeCurrentTabService }
+  return { wrapper, scheduler, timer, closeCurrentTabService: reminderService }
 }
