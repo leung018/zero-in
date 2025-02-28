@@ -87,7 +87,7 @@ describe('BackgroundListener', () => {
     const { badgeDisplayService, scheduler, clientPort } = startBackgroundListener({
       focusDuration: new Duration({ seconds: 5 }),
       shortBreakDuration: new Duration({ minutes: 2 }),
-      longBreakDuration: new Duration({ minutes: 1 }),
+      longBreakDuration: new Duration({ minutes: 4 }),
       numOfFocusPerCycle: 2
     })
 
@@ -99,6 +99,26 @@ describe('BackgroundListener', () => {
 
     expect(badgeDisplayService.getDisplayedBadge()).toEqual({
       text: '2',
+      color: config.getBadgeColorConfig().breakBadgeColor
+    })
+  })
+
+  it('should display long break badge properly', async () => {
+    const { badgeDisplayService, scheduler, clientPort } = startBackgroundListener({
+      focusDuration: new Duration({ seconds: 5 }),
+      shortBreakDuration: new Duration({ minutes: 2 }),
+      longBreakDuration: new Duration({ minutes: 4 }),
+      numOfFocusPerCycle: 1
+    })
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(5000)
+
+    // start long break
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+
+    expect(badgeDisplayService.getDisplayedBadge()).toEqual({
+      text: '4',
       color: config.getBadgeColorConfig().breakBadgeColor
     })
   })
