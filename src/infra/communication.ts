@@ -1,5 +1,3 @@
-import EventEmitter from 'events'
-
 export interface Port<OutgoingMessage = any, IncomingMessage = any> {
   send(message: OutgoingMessage): void
   onMessage(callback: (message: IncomingMessage) => void): void
@@ -7,19 +5,19 @@ export interface Port<OutgoingMessage = any, IncomingMessage = any> {
 }
 
 class FakePort implements Port {
-  private emitter: EventEmitter
+  private emitter: MyEventEmitter
   private id: string
   private otherId: string
 
   static createPaired(): [FakePort, FakePort] {
-    const emitter = new EventEmitter()
+    const emitter = new MyEventEmitter()
     const port1 = new FakePort(emitter, 'port1', 'port2')
     const port2 = new FakePort(emitter, 'port2', 'port1')
 
     return [port1, port2]
   }
 
-  private constructor(emitter: EventEmitter, id: string, otherId: string) {
+  private constructor(emitter: MyEventEmitter, id: string, otherId: string) {
     this.emitter = emitter
     this.id = id
     this.otherId = otherId
@@ -41,6 +39,28 @@ class FakePort implements Port {
     this.emitter.emit(this.otherId + '-disconnected')
     this.emitter.removeAllListeners(this.id)
     this.emitter.removeAllListeners(this.otherId)
+  }
+}
+
+class MyEventEmitter {
+  // Use it instead of Node.js EventEmitter so that have no dependency on Node.js modules in application codes
+  private listeners: Record<string, Function[]> = {}
+
+  emit(event: string, ...args: any[]) {
+    if (this.listeners[event]) {
+      this.listeners[event].forEach((listener) => listener(...args))
+    }
+  }
+
+  on(event: string, listener: Function) {
+    if (!this.listeners[event]) {
+      this.listeners[event] = []
+    }
+    this.listeners[event].push(listener)
+  }
+
+  removeAllListeners(event: string) {
+    this.listeners[event] = []
   }
 }
 
