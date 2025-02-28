@@ -73,6 +73,17 @@ describe('BackgroundListener', () => {
 
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
+
+  it('should remove badge when the timer is finished', () => {
+    const { badgeDisplayService, scheduler, clientPort } = startBackgroundListener({
+      focusDuration: new Duration({ seconds: 5 })
+    })
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(5000)
+
+    expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
+  })
 })
 
 function startBackgroundListener({ focusDuration = new Duration({ minutes: 25 }) } = {}) {

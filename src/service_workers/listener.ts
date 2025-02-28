@@ -67,15 +67,18 @@ export class BackgroundListener {
     this.timer = timer
     this.timer.setOnStageTransit(() => {
       this.reminderService.trigger()
+      this.badgeDisplayService.clearBadge()
     })
     this.timer.subscribeTimerUpdate((state) => {
-      this.badgeDisplayService.displayBadge({
-        text: roundUpTimeLeftInMinutes(state.remaining.timeLeft()).toString(),
-        color: {
-          textColor: '#ffffff',
-          backgroundColor: '#ff0000'
-        }
-      })
+      if (state.isRunning) {
+        this.badgeDisplayService.displayBadge({
+          text: roundUpTimeLeftInMinutes(state.remaining.timeLeft()).toString(),
+          color: {
+            textColor: '#ffffff',
+            backgroundColor: '#ff0000'
+          }
+        })
+      }
     })
   }
 
