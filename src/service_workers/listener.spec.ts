@@ -5,6 +5,7 @@ import { Duration } from '../domain/pomodoro/duration'
 import { flushPromises } from '@vue/test-utils'
 import config from '../config'
 import { startBackgroundListener } from '../test_utils/listener'
+import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -23,9 +24,11 @@ describe('BackgroundListener', () => {
   })
 
   it('should display badge when the timer is started', async () => {
-    const { badgeDisplayService, scheduler, clientPort } = startListener({
-      focusDuration: new Duration({ minutes: 25 })
-    })
+    const { badgeDisplayService, scheduler, clientPort } = startListener(
+      newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ minutes: 25 })
+      })
+    )
 
     expect(badgeDisplayService.getDisplayedBadge()).toBe(null)
 
@@ -70,9 +73,11 @@ describe('BackgroundListener', () => {
   })
 
   it('should remove badge when the timer is finished', () => {
-    const { badgeDisplayService, scheduler, clientPort } = startListener({
-      focusDuration: new Duration({ seconds: 5 })
-    })
+    const { badgeDisplayService, scheduler, clientPort } = startListener(
+      newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ seconds: 5 })
+      })
+    )
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(5000)
@@ -81,12 +86,14 @@ describe('BackgroundListener', () => {
   })
 
   it('should display short break badge properly', async () => {
-    const { badgeDisplayService, scheduler, clientPort } = startListener({
-      focusDuration: new Duration({ seconds: 5 }),
-      shortBreakDuration: new Duration({ minutes: 2 }),
-      longBreakDuration: new Duration({ minutes: 4 }),
-      numOfFocusPerCycle: 2
-    })
+    const { badgeDisplayService, scheduler, clientPort } = startListener(
+      newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ seconds: 5 }),
+        shortBreakDuration: new Duration({ minutes: 2 }),
+        longBreakDuration: new Duration({ minutes: 4 }),
+        numOfFocusPerCycle: 2
+      })
+    )
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(5000)
@@ -101,12 +108,14 @@ describe('BackgroundListener', () => {
   })
 
   it('should display long break badge properly', async () => {
-    const { badgeDisplayService, scheduler, clientPort } = startListener({
-      focusDuration: new Duration({ seconds: 5 }),
-      shortBreakDuration: new Duration({ minutes: 2 }),
-      longBreakDuration: new Duration({ minutes: 4 }),
-      numOfFocusPerCycle: 1
-    })
+    const { badgeDisplayService, scheduler, clientPort } = startListener(
+      newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ seconds: 5 }),
+        shortBreakDuration: new Duration({ minutes: 2 }),
+        longBreakDuration: new Duration({ minutes: 4 }),
+        numOfFocusPerCycle: 1
+      })
+    )
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(5000)
@@ -121,9 +130,11 @@ describe('BackgroundListener', () => {
   })
 
   it('should trigger reminderService when time is up', () => {
-    const { reminderService, scheduler, clientPort } = startListener({
-      focusDuration: new Duration({ seconds: 5 })
-    })
+    const { reminderService, scheduler, clientPort } = startListener(
+      newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ seconds: 5 })
+      })
+    )
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(5000)
@@ -132,20 +143,10 @@ describe('BackgroundListener', () => {
   })
 })
 
-function startListener({
-  focusDuration = new Duration({ minutes: 25 }),
-  shortBreakDuration = new Duration({ minutes: 5 }),
-  longBreakDuration = new Duration({ minutes: 15 }),
-  numOfFocusPerCycle = 4
-} = {}) {
+function startListener(timerConfig = newTestPomodoroTimerConfig()) {
   const { timer, badgeDisplayService, communicationManager, scheduler, reminderService } =
     startBackgroundListener({
-      timerConfig: {
-        focusDuration,
-        shortBreakDuration,
-        longBreakDuration,
-        numOfFocusPerCycle
-      }
+      timerConfig
     })
 
   return {

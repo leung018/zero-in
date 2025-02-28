@@ -5,6 +5,7 @@ import { Duration } from '../domain/pomodoro/duration'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import { startBackgroundListener } from '../test_utils/listener'
 import { FakeActionService } from '../infra/action'
+import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
 
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
@@ -35,11 +36,13 @@ describe('ReminderPage', () => {
   })
 
   it('should click start button to start timer again', async () => {
-    const { scheduler, timer, wrapper } = mountPage({
-      focusDuration: new Duration({ minutes: 1 }),
-      shortBreakDuration: new Duration({ seconds: 30 }),
-      numOfFocusPerCycle: 4
-    })
+    const { scheduler, timer, wrapper } = mountPage(
+      newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ minutes: 1 }),
+        shortBreakDuration: new Duration({ seconds: 30 }),
+        numOfFocusPerCycle: 4
+      })
+    )
 
     timer.start()
     scheduler.advanceTime(60001)
@@ -67,19 +70,9 @@ describe('ReminderPage', () => {
   })
 })
 
-function mountPage({
-  focusDuration = new Duration({ minutes: 25 }),
-  shortBreakDuration = new Duration({ minutes: 5 }),
-  longBreakDuration = new Duration({ minutes: 15 }),
-  numOfFocusPerCycle = 4
-} = {}) {
+function mountPage(timerConfig = newTestPomodoroTimerConfig()) {
   const { scheduler, timer, communicationManager } = startBackgroundListener({
-    timerConfig: {
-      focusDuration,
-      shortBreakDuration,
-      longBreakDuration,
-      numOfFocusPerCycle
-    }
+    timerConfig
   })
   const closeCurrentTabService = new FakeActionService()
   const wrapper = mount(ReminderPage, {
