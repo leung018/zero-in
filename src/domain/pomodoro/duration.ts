@@ -17,12 +17,8 @@ export class Duration {
     }
   }
 
-  timeLeft(): { minutes: number; seconds: number } {
-    const totalRemainingSeconds = Math.ceil(this.totalMilliseconds / 1000)
-    return {
-      minutes: Math.floor(totalRemainingSeconds / 60),
-      seconds: totalRemainingSeconds % 60
-    }
+  remainingSeconds(): number {
+    return Math.ceil(this.totalMilliseconds / 1000)
   }
 
   subtract(duration: Duration): Duration {

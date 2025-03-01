@@ -44,7 +44,7 @@ describe('BackgroundListener', () => {
     scheduler.advanceTime(1000)
     await flushPromises()
 
-    // timeLeft 24:59 still display 25
+    // remaining 24:59 still display 25
     expect(badgeDisplayService.getDisplayedBadge()).toEqual({
       text: '25',
       color: focusBadgeColor
@@ -53,7 +53,7 @@ describe('BackgroundListener', () => {
     scheduler.advanceTime(59000)
     await flushPromises()
 
-    // change to 24 only when timeLeft is 24:00
+    // change to 24 only when remaining 24:00
     expect(badgeDisplayService.getDisplayedBadge()).toEqual({
       text: '24',
       color: focusBadgeColor

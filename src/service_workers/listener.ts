@@ -74,7 +74,7 @@ export class BackgroundListener {
     this.timer.subscribeTimerUpdate((state) => {
       if (state.isRunning) {
         this.badgeDisplayService.displayBadge({
-          text: roundUpTimeLeftInMinutes(state.remaining.timeLeft()).toString(),
+          text: roundUpToRemainingMinutes(state.remaining.remainingSeconds()).toString(),
           color: getBadgeColor(state.stage)
         })
       }
@@ -126,11 +126,8 @@ function mapPomodoroTimerStateToResponse(state: PomodoroTimerState): PomodoroTim
   }
 }
 
-function roundUpTimeLeftInMinutes(timeLeft: { minutes: number; seconds: number }): number {
-  if (timeLeft.seconds > 0) {
-    return timeLeft.minutes + 1
-  }
-  return timeLeft.minutes
+function roundUpToRemainingMinutes(remainingSeconds: number): number {
+  return Math.ceil(remainingSeconds / 60)
 }
 
 function getBadgeColor(stage: PomodoroStage): BadgeColor {
