@@ -7,7 +7,7 @@ import { startBackgroundListener } from '../test_utils/listener'
 import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
 
 describe('PomodoroTimerPage', () => {
-  it('should display initial state and timer properly', () => {
+  it('should display initial stage and remaining time properly', () => {
     const { wrapper } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ minutes: 9 })
