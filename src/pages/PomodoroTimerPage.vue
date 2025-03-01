@@ -16,7 +16,9 @@ const isRunning = ref(false)
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
 
 const displayTime = computed(() => {
-  const { minutes, seconds } = durationLeft.value.timeLeft()
+  const totalSeconds = durationLeft.value.remainingSeconds()
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
   return `${formatNumber(minutes)}:${formatNumber(seconds)}`
 })
 

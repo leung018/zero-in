@@ -71,11 +71,11 @@ export class BackgroundListener {
       this.reminderService.trigger()
       this.badgeDisplayService.clearBadge()
     })
-    this.timer.subscribeTimerUpdate((state) => {
-      if (state.isRunning) {
+    this.timer.subscribeTimerUpdate((newStatus) => {
+      if (newStatus.isRunning) {
         this.badgeDisplayService.displayBadge({
-          text: roundUpTimeLeftInMinutes(state.remaining.timeLeft()).toString(),
-          color: getBadgeColor(state.stage)
+          text: roundUpToRemainingMinutes(newStatus.remainingSeconds).toString(),
+          color: getBadgeColor(newStatus.stage)
         })
       }
     })
@@ -96,8 +96,8 @@ export class BackgroundListener {
             }
             case WorkRequestName.LISTEN_TO_TIMER: {
               backgroundPort.send(mapPomodoroTimerStateToResponse(this.timer.getState()))
-              const subscriptionId = this.timer.subscribeTimerUpdate((state) => {
-                backgroundPort.send(mapPomodoroTimerStateToResponse(state))
+              const subscriptionId = this.timer.subscribeTimerUpdate((update) => {
+                backgroundPort.send(update)
               })
               backgroundPort.onDisconnect(() => {
                 console.debug('Connection closed, unsubscribing timer update.')
@@ -126,11 +126,8 @@ function mapPomodoroTimerStateToResponse(state: PomodoroTimerState): PomodoroTim
   }
 }
 
-function roundUpTimeLeftInMinutes(timeLeft: { minutes: number; seconds: number }): number {
-  if (timeLeft.seconds > 0) {
-    return timeLeft.minutes + 1
-  }
-  return timeLeft.minutes
+function roundUpToRemainingMinutes(remainingSeconds: number): number {
+  return Math.ceil(remainingSeconds / 60)
 }
 
 function getBadgeColor(stage: PomodoroStage): BadgeColor {

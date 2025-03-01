@@ -37,13 +37,7 @@ export class PomodoroTimer {
 
   private stage: PomodoroStage = PomodoroStage.FOCUS
 
-  private focusDuration: Duration
-
-  private shortBreakDuration: Duration
-
-  private longBreakDuration: Duration
-
-  private numOfFocusPerCycle: number
+  private config: PomodoroTimerConfig
 
   private isRunning: boolean = false
 
@@ -53,7 +47,7 @@ export class PomodoroTimer {
 
   private scheduler: PeriodicTaskScheduler
 
-  private timerUpdateSubscriptionManager = new SubscriptionManager<PomodoroTimerState>()
+  private timerUpdateSubscriptionManager = new SubscriptionManager<PomodoroTimerUpdate>()
 
   private onStageTransit: () => void = () => {}
 
@@ -64,13 +58,20 @@ export class PomodoroTimer {
     config: PomodoroTimerConfig
     scheduler: PeriodicTaskScheduler
   }) {
-    this.focusDuration = config.focusDuration
-    this.shortBreakDuration = config.shortBreakDuration
-    this.longBreakDuration = config.longBreakDuration
-    this.numOfFocusPerCycle = config.numOfFocusPerCycle
-
+    this.config = {
+      ...config,
+      focusDuration: this.roundUpToSeconds(config.focusDuration),
+      shortBreakDuration: this.roundUpToSeconds(config.shortBreakDuration),
+      longBreakDuration: this.roundUpToSeconds(config.longBreakDuration)
+    }
     this.remaining = config.focusDuration
     this.scheduler = scheduler
+  }
+
+  private roundUpToSeconds(duration: Duration): Duration {
+    return new Duration({
+      seconds: duration.remainingSeconds()
+    })
   }
 
   getState(): Readonly<PomodoroTimerState> {
@@ -79,6 +80,10 @@ export class PomodoroTimer {
       isRunning: this.isRunning,
       stage: this.stage
     }
+  }
+
+  getConfig(): Readonly<PomodoroTimerConfig> {
+    return this.config
   }
 
   start() {
@@ -90,7 +95,9 @@ export class PomodoroTimer {
 
     this.scheduler.scheduleTask(() => {
       this.advanceTime(timerUnit)
-      this.publishTimerUpdate()
+      if (this.remaining.totalMilliseconds % 1000 === 0) {
+        this.publishTimerUpdate()
+      }
     }, timerUnit.totalMilliseconds)
     this.isRunning = true
     this.publishTimerUpdate()
@@ -109,7 +116,7 @@ export class PomodoroTimer {
     }
   }
 
-  subscribeTimerUpdate(callback: (state: PomodoroTimerState) => void) {
+  subscribeTimerUpdate(callback: (update: PomodoroTimerUpdate) => void) {
     return this.timerUpdateSubscriptionManager.subscribe(callback)
   }
 
@@ -126,7 +133,11 @@ export class PomodoroTimer {
   }
 
   private publishTimerUpdate() {
-    this.timerUpdateSubscriptionManager.publish(this.getState())
+    this.timerUpdateSubscriptionManager.publish({
+      remainingSeconds: this.remaining.remainingSeconds(),
+      isRunning: this.isRunning,
+      stage: this.stage
+    })
   }
 
   private transit() {
@@ -141,7 +152,7 @@ export class PomodoroTimer {
   private handleFocusComplete() {
     this.numOfFocusCompleted++
 
-    if (this.numOfFocusCompleted === this.numOfFocusPerCycle) {
+    if (this.numOfFocusCompleted === this.config.numOfFocusPerCycle) {
       this.numOfFocusCompleted = 0
       this.transitToLongBreak()
     } else {
@@ -155,17 +166,17 @@ export class PomodoroTimer {
 
   private transitToLongBreak() {
     this.stage = PomodoroStage.LONG_BREAK
-    this.remaining = this.longBreakDuration
+    this.remaining = this.config.longBreakDuration
   }
 
   private transitToShortBreak() {
     this.stage = PomodoroStage.SHORT_BREAK
-    this.remaining = this.shortBreakDuration
+    this.remaining = this.config.shortBreakDuration
   }
 
   private transitToFocus() {
     this.stage = PomodoroStage.FOCUS
-    this.remaining = this.focusDuration
+    this.remaining = this.config.focusDuration
   }
 }
 
@@ -195,6 +206,12 @@ class SubscriptionManager<Arguments> {
 
 export type PomodoroTimerState = {
   remaining: Duration
+  isRunning: boolean
+  stage: PomodoroStage
+}
+
+export type PomodoroTimerUpdate = {
+  remainingSeconds: number
   isRunning: boolean
   stage: PomodoroStage
 }
