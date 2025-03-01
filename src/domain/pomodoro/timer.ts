@@ -58,9 +58,20 @@ export class PomodoroTimer {
     config: PomodoroTimerConfig
     scheduler: PeriodicTaskScheduler
   }) {
-    this.config = config
+    this.config = {
+      ...config,
+      focusDuration: this.roundUpToSeconds(config.focusDuration),
+      shortBreakDuration: this.roundUpToSeconds(config.shortBreakDuration),
+      longBreakDuration: this.roundUpToSeconds(config.longBreakDuration)
+    }
     this.remaining = config.focusDuration
     this.scheduler = scheduler
+  }
+
+  private roundUpToSeconds(duration: Duration): Duration {
+    return new Duration({
+      seconds: duration.remainingSeconds()
+    })
   }
 
   getState(): Readonly<PomodoroTimerState> {
@@ -69,6 +80,10 @@ export class PomodoroTimer {
       isRunning: this.isRunning,
       stage: this.stage
     }
+  }
+
+  getConfig(): Readonly<PomodoroTimerConfig> {
+    return this.config
   }
 
   start() {

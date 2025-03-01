@@ -19,6 +19,24 @@ describe('PomodoroTimer', () => {
     })
   })
 
+  it('should round up to seconds of duration in the config', () => {
+    // Since some timer publishing logic is assume that the smallest unit is second, duration in config is enforced in second precision to keep that correct
+
+    const { timer } = createTimer({
+      focusDuration: new Duration({ seconds: 10, milliseconds: 1 }),
+      shortBreakDuration: new Duration({ seconds: 3, milliseconds: 1 }),
+      longBreakDuration: new Duration({ seconds: 2, milliseconds: 1 }),
+      numOfFocusPerCycle: 5
+    })
+
+    expect(timer.getConfig()).toEqual({
+      focusDuration: new Duration({ seconds: 11 }),
+      shortBreakDuration: new Duration({ seconds: 4 }),
+      longBreakDuration: new Duration({ seconds: 3 }),
+      numOfFocusPerCycle: 5
+    })
+  })
+
   it('should able to start focus', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 10 })
