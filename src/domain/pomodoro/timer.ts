@@ -90,7 +90,9 @@ export class PomodoroTimer {
 
     this.scheduler.scheduleTask(() => {
       this.advanceTime(timerUnit)
-      this.publishTimerUpdate()
+      if (this.remaining.totalMilliseconds % 1000 === 0) {
+        this.publishTimerUpdate()
+      }
     }, timerUnit.totalMilliseconds)
     this.isRunning = true
     this.publishTimerUpdate()
