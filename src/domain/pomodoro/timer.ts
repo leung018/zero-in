@@ -37,13 +37,7 @@ export class PomodoroTimer {
 
   private stage: PomodoroStage = PomodoroStage.FOCUS
 
-  private focusDuration: Duration
-
-  private shortBreakDuration: Duration
-
-  private longBreakDuration: Duration
-
-  private numOfFocusPerCycle: number
+  private config: PomodoroTimerConfig
 
   private isRunning: boolean = false
 
@@ -64,11 +58,7 @@ export class PomodoroTimer {
     config: PomodoroTimerConfig
     scheduler: PeriodicTaskScheduler
   }) {
-    this.focusDuration = config.focusDuration
-    this.shortBreakDuration = config.shortBreakDuration
-    this.longBreakDuration = config.longBreakDuration
-    this.numOfFocusPerCycle = config.numOfFocusPerCycle
-
+    this.config = config
     this.remaining = config.focusDuration
     this.scheduler = scheduler
   }
@@ -147,7 +137,7 @@ export class PomodoroTimer {
   private handleFocusComplete() {
     this.numOfFocusCompleted++
 
-    if (this.numOfFocusCompleted === this.numOfFocusPerCycle) {
+    if (this.numOfFocusCompleted === this.config.numOfFocusPerCycle) {
       this.numOfFocusCompleted = 0
       this.transitToLongBreak()
     } else {
@@ -161,17 +151,17 @@ export class PomodoroTimer {
 
   private transitToLongBreak() {
     this.stage = PomodoroStage.LONG_BREAK
-    this.remaining = this.longBreakDuration
+    this.remaining = this.config.longBreakDuration
   }
 
   private transitToShortBreak() {
     this.stage = PomodoroStage.SHORT_BREAK
-    this.remaining = this.shortBreakDuration
+    this.remaining = this.config.shortBreakDuration
   }
 
   private transitToFocus() {
     this.stage = PomodoroStage.FOCUS
-    this.remaining = this.focusDuration
+    this.remaining = this.config.focusDuration
   }
 }
 
