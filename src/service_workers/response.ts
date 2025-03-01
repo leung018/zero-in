@@ -1,7 +1,3 @@
-import type { PomodoroStage } from '../domain/pomodoro/stage'
+import type { PomodoroTimerUpdate } from '../domain/pomodoro/timer'
 
-export type PomodoroTimerResponse = {
-  stage: PomodoroStage
-  remainingSeconds: number
-  isRunning: boolean
-}
+export type PomodoroTimerResponse = PomodoroTimerUpdate
