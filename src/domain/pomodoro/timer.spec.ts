@@ -106,6 +106,38 @@ describe('PomodoroTimer', () => {
     ])
   })
 
+  it('should start, pause and restart again wont reduce the subscription received', () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ minutes: 10 })
+    })
+    const updates: PomodoroTimerUpdate[] = []
+    timer.subscribeTimerUpdate((update) => {
+      updates.push(update)
+    })
+
+    timer.start()
+    scheduler.advanceTime(1400)
+
+    timer.pause()
+
+    expect(updates.length).toBe(2)
+    expect(updates[0].remainingSeconds).toBe(new Duration({ minutes: 10 }).remainingSeconds())
+    expect(updates[1].remainingSeconds).toBe(
+      new Duration({ minutes: 9, seconds: 59 }).remainingSeconds()
+    )
+
+    timer.start()
+    scheduler.advanceTime(600)
+
+    expect(updates.length).toBe(4)
+    expect(updates[2].remainingSeconds).toBe(
+      new Duration({ minutes: 9, seconds: 59 }).remainingSeconds() // Whenever timer is started, it will publish the current state
+    )
+    expect(updates[3].remainingSeconds).toBe(
+      new Duration({ minutes: 9, seconds: 58 }).remainingSeconds() // After 600ms since restart, the remaining time should be 9:58 and it should be published
+    )
+  })
+
   it('should able to unsubscribe updates', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 10 })
