@@ -71,11 +71,11 @@ export class BackgroundListener {
       this.reminderService.trigger()
       this.badgeDisplayService.clearBadge()
     })
-    this.timer.subscribeTimerUpdate((state) => {
-      if (state.isRunning) {
+    this.timer.subscribeTimerUpdate((newStatus) => {
+      if (newStatus.isRunning) {
         this.badgeDisplayService.displayBadge({
-          text: roundUpToRemainingMinutes(state.remaining.remainingSeconds()).toString(),
-          color: getBadgeColor(state.stage)
+          text: roundUpToRemainingMinutes(newStatus.remainingSeconds).toString(),
+          color: getBadgeColor(newStatus.stage)
         })
       }
     })
@@ -96,8 +96,8 @@ export class BackgroundListener {
             }
             case WorkRequestName.LISTEN_TO_TIMER: {
               backgroundPort.send(mapPomodoroTimerStateToResponse(this.timer.getState()))
-              const subscriptionId = this.timer.subscribeTimerUpdate((state) => {
-                backgroundPort.send(mapPomodoroTimerStateToResponse(state))
+              const subscriptionId = this.timer.subscribeTimerUpdate((update) => {
+                backgroundPort.send(update)
               })
               backgroundPort.onDisconnect(() => {
                 console.debug('Connection closed, unsubscribing timer update.')

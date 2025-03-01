@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PomodoroTimer, type PomodoroTimerState } from './timer'
+import { PomodoroTimer, type PomodoroTimerState, type PomodoroTimerUpdate } from './timer'
 import { Duration } from './duration'
 import { PomodoroStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
@@ -75,48 +75,48 @@ describe('PomodoroTimer', () => {
     expect(timer.getState().remaining).toEqual(new Duration({ minutes: 9, seconds: 49 }))
   })
 
-  it('should able to subscribe change of states', () => {
+  it('should able to subscribe updates', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 10 })
     })
-    const changes: PomodoroTimerState[] = []
-    timer.subscribeTimerUpdate((state) => {
-      changes.push(state)
+    const updates: PomodoroTimerUpdate[] = []
+    timer.subscribeTimerUpdate((update) => {
+      updates.push(update)
     })
 
     timer.start()
     scheduler.advanceTime(250)
 
-    expect(changes).toEqual([
+    expect(updates).toEqual([
       {
-        remaining: new Duration({ minutes: 10, seconds: 0, milliseconds: 0 }),
+        remaining: new Duration({ minutes: 10, seconds: 0, milliseconds: 0 }).remainingSeconds(),
         isRunning: true,
         stage: PomodoroStage.FOCUS
       },
       {
-        remaining: new Duration({ minutes: 9, seconds: 59, milliseconds: 900 }),
+        remaining: new Duration({ minutes: 9, seconds: 59, milliseconds: 900 }).remainingSeconds(),
         isRunning: true,
         stage: PomodoroStage.FOCUS
       },
       {
-        remaining: new Duration({ minutes: 9, seconds: 59, milliseconds: 800 }),
+        remaining: new Duration({ minutes: 9, seconds: 59, milliseconds: 800 }).remainingSeconds(),
         isRunning: true,
         stage: PomodoroStage.FOCUS
       }
     ])
   })
 
-  it('should able to unsubscribe change of states', () => {
+  it('should able to unsubscribe updates', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 10 })
     })
-    const changes1: PomodoroTimerState[] = []
-    const changes2: PomodoroTimerState[] = []
-    timer.subscribeTimerUpdate((state) => {
-      changes1.push(state)
+    const updates1: PomodoroTimerUpdate[] = []
+    const updates2: PomodoroTimerUpdate[] = []
+    timer.subscribeTimerUpdate((update) => {
+      updates1.push(update)
     })
-    const subscriptionId2 = timer.subscribeTimerUpdate((state) => {
-      changes2.push(state)
+    const subscriptionId2 = timer.subscribeTimerUpdate((update) => {
+      updates2.push(update)
     })
 
     timer.unsubscribeTimerUpdate(subscriptionId2)
@@ -124,8 +124,8 @@ describe('PomodoroTimer', () => {
     timer.start()
     scheduler.advanceTime(250)
 
-    expect(changes1.length).toBeGreaterThan(0)
-    expect(changes2.length).toBe(0)
+    expect(updates1.length).toBeGreaterThan(0)
+    expect(updates2.length).toBe(0)
   })
 
   it('should getSubscriptionCount is reflecting number of subscription', () => {

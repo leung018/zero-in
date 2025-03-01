@@ -53,7 +53,7 @@ export class PomodoroTimer {
 
   private scheduler: PeriodicTaskScheduler
 
-  private timerUpdateSubscriptionManager = new SubscriptionManager<PomodoroTimerState>()
+  private timerUpdateSubscriptionManager = new SubscriptionManager<PomodoroTimerUpdate>()
 
   private onStageTransit: () => void = () => {}
 
@@ -109,7 +109,7 @@ export class PomodoroTimer {
     }
   }
 
-  subscribeTimerUpdate(callback: (state: PomodoroTimerState) => void) {
+  subscribeTimerUpdate(callback: (update: PomodoroTimerUpdate) => void) {
     return this.timerUpdateSubscriptionManager.subscribe(callback)
   }
 
@@ -126,7 +126,11 @@ export class PomodoroTimer {
   }
 
   private publishTimerUpdate() {
-    this.timerUpdateSubscriptionManager.publish(this.getState())
+    this.timerUpdateSubscriptionManager.publish({
+      remainingSeconds: this.remaining.remainingSeconds(),
+      isRunning: this.isRunning,
+      stage: this.stage
+    })
   }
 
   private transit() {
@@ -195,6 +199,12 @@ class SubscriptionManager<Arguments> {
 
 export type PomodoroTimerState = {
   remaining: Duration
+  isRunning: boolean
+  stage: PomodoroStage
+}
+
+export type PomodoroTimerUpdate = {
+  remainingSeconds: number
   isRunning: boolean
   stage: PomodoroStage
 }
