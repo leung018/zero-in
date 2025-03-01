@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PomodoroTimer, type PomodoroTimerState, type PomodoroTimerUpdate } from './timer'
+import { PomodoroTimer, type PomodoroTimerUpdate } from './timer'
 import { Duration } from './duration'
 import { PomodoroStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
@@ -77,7 +77,9 @@ describe('PomodoroTimer', () => {
 
   it('should able to subscribe updates', () => {
     const { timer, scheduler } = createTimer({
-      focusDuration: new Duration({ minutes: 10 })
+      focusDuration: new Duration({ seconds: 3 }),
+      shortBreakDuration: new Duration({ seconds: 5 }),
+      numOfFocusPerCycle: 4
     })
     const updates: PomodoroTimerUpdate[] = []
     timer.subscribeTimerUpdate((update) => {
@@ -89,21 +91,30 @@ describe('PomodoroTimer', () => {
 
     expect(updates).toEqual([
       {
-        remainingSeconds: new Duration({ minutes: 10, seconds: 0 }).remainingSeconds(),
+        remainingSeconds: new Duration({ seconds: 3 }).remainingSeconds(),
         isRunning: true,
         stage: PomodoroStage.FOCUS
       },
       {
-        remainingSeconds: new Duration({ minutes: 9, seconds: 59 }).remainingSeconds(),
+        remainingSeconds: new Duration({ seconds: 2 }).remainingSeconds(),
         isRunning: true,
         stage: PomodoroStage.FOCUS
       },
       {
-        remainingSeconds: new Duration({ minutes: 9, seconds: 58 }).remainingSeconds(),
+        remainingSeconds: new Duration({ seconds: 1 }).remainingSeconds(),
         isRunning: true,
         stage: PomodoroStage.FOCUS
       }
     ])
+
+    scheduler.advanceTime(2000)
+
+    expect(updates.length).toBe(4)
+    expect(updates[3]).toEqual({
+      remainingSeconds: new Duration({ seconds: 5 }).remainingSeconds(),
+      isRunning: false,
+      stage: PomodoroStage.SHORT_BREAK
+    })
   })
 
   it('should start, pause and restart again wont reduce the subscription received', () => {
