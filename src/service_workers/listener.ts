@@ -5,7 +5,7 @@ import {
   type CommunicationManager,
   type Port
 } from '../infra/communication'
-import { RedirectTogglingService } from '../domain/redirect_toggling'
+import { RedirectTogglingService } from '../domain/browsing_control_toggling'
 import { type PomodoroTimerResponse } from './response'
 import { PomodoroTimer } from '../domain/pomodoro/timer'
 import { FakeActionService, type ActionService } from '../infra/action'

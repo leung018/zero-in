@@ -1,8 +1,8 @@
-import { FakeBrowsingControlService, type BrowsingControlService } from './redirect'
+import { FakeBrowsingControlService, type BrowsingControlService } from './browsing_control'
 import { BrowsingRulesStorageService } from './browsing_rules/storage'
 import type { WeeklySchedule } from './schedules'
 import { WeeklyScheduleStorageService } from './schedules/storage'
-import { ChromeBrowsingControlService } from '../chrome/redirect'
+import { ChromeBrowsingControlService } from '../chrome/browsing_control'
 
 export class RedirectTogglingService {
   readonly browsingControlService: BrowsingControlService

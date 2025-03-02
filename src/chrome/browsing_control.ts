@@ -1,6 +1,6 @@
 import config from '../config'
 import type { BrowsingRules } from '../domain/browsing_rules'
-import type { BrowsingControlService } from '../domain/redirect'
+import type { BrowsingControlService } from '../domain/browsing_control'
 
 const REDIRECT_RULE_ID = 1
 

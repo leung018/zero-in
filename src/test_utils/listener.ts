@@ -1,6 +1,6 @@
 import config from '../config'
 import { PomodoroTimer } from '../domain/pomodoro/timer'
-import { RedirectTogglingService } from '../domain/redirect_toggling'
+import { RedirectTogglingService } from '../domain/browsing_control_toggling'
 import { FakeActionService } from '../infra/action'
 import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeCommunicationManager } from '../infra/communication'

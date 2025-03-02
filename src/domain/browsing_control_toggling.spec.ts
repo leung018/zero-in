@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { BrowsingRules } from './browsing_rules'
 import { BrowsingRulesStorageService } from './browsing_rules/storage'
-import { FakeBrowsingControlService } from './redirect'
+import { FakeBrowsingControlService } from './browsing_control'
 import { Weekday, WeeklySchedule } from './schedules'
 import { Time } from './schedules/time'
 import { WeeklyScheduleStorageService } from './schedules/storage'
-import { RedirectTogglingService } from './redirect_toggling'
+import { RedirectTogglingService } from './browsing_control_toggling'
 
 describe('RedirectTogglingService', () => {
   it('should toggle redirect according to browsing rules if current time is within schedule', async () => {

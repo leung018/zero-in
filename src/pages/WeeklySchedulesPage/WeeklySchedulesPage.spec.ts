@@ -5,11 +5,11 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import WeeklySchedulesPage from './index.vue'
 import { Weekday, WeeklySchedule } from '../../domain/schedules'
 import { Time } from '../../domain/schedules/time'
-import { FakeBrowsingControlService } from '../../domain/redirect'
+import { FakeBrowsingControlService } from '../../domain/browsing_control'
 import { BrowsingRulesStorageService } from '../../domain/browsing_rules/storage'
 import { BrowsingRules } from '../../domain/browsing_rules'
 import { afterEach, beforeEach } from 'node:test'
-import { RedirectTogglingService } from '../../domain/redirect_toggling'
+import { RedirectTogglingService } from '../../domain/browsing_control_toggling'
 import { startBackgroundListener } from '../../test_utils/listener'
 
 describe('WeeklySchedulesPage', () => {

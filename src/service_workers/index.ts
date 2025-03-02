@@ -1,5 +1,5 @@
 import { BackgroundListener } from './listener'
-import { RedirectTogglingService } from '../domain/redirect_toggling'
+import { RedirectTogglingService } from '../domain/browsing_control_toggling'
 
 const redirectTogglingService = RedirectTogglingService.create()
 
