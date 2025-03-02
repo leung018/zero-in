@@ -7,7 +7,7 @@ import {
 } from '../infra/communication'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
 import { type PomodoroTimerResponse } from './response'
-import { PomodoroTimer, type PomodoroTimerState } from '../domain/pomodoro/timer'
+import { PomodoroTimer } from '../domain/pomodoro/timer'
 import { FakeActionService, type ActionService } from '../infra/action'
 import { ChromeNewTabReminderService } from '../chrome/new_tab'
 import { FakeBadgeDisplayService, type BadgeColor, type BadgeDisplayService } from '../infra/badge'
