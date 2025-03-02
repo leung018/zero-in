@@ -17,7 +17,7 @@ export function startBackgroundListener({
   const scheduler = new FakePeriodicTaskScheduler()
   const timer = PomodoroTimer.createFake({
     scheduler,
-    ...timerConfig
+    timerConfig
   })
 
   const listener = BackgroundListener.createFake({

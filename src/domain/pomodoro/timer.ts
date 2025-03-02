@@ -12,25 +12,16 @@ export class PomodoroTimer {
   static create() {
     return new PomodoroTimer({
       scheduler: new PeriodicTaskSchedulerImpl(),
-      config: config.getPomodoroTimerConfig()
+      timerConfig: config.getPomodoroTimerConfig()
     })
   }
 
   static createFake({
     scheduler = new FakePeriodicTaskScheduler(),
-    focusDuration = new Duration({ minutes: 25 }),
-    shortBreakDuration = new Duration({ minutes: 5 }),
-    longBreakDuration = new Duration({ minutes: 15 }),
-    numOfFocusPerCycle = 4
+    timerConfig = config.getPomodoroTimerConfig()
   } = {}) {
-    const config: PomodoroTimerConfig = {
-      focusDuration,
-      shortBreakDuration,
-      longBreakDuration,
-      numOfFocusPerCycle
-    }
     return new PomodoroTimer({
-      config,
+      timerConfig,
       scheduler
     })
   }
@@ -52,19 +43,19 @@ export class PomodoroTimer {
   private onStageComplete: () => void = () => {}
 
   private constructor({
-    config,
+    timerConfig,
     scheduler
   }: {
-    config: PomodoroTimerConfig
+    timerConfig: PomodoroTimerConfig
     scheduler: PeriodicTaskScheduler
   }) {
     this.config = {
-      ...config,
-      focusDuration: this.roundUpToSeconds(config.focusDuration),
-      shortBreakDuration: this.roundUpToSeconds(config.shortBreakDuration),
-      longBreakDuration: this.roundUpToSeconds(config.longBreakDuration)
+      ...timerConfig,
+      focusDuration: this.roundUpToSeconds(timerConfig.focusDuration),
+      shortBreakDuration: this.roundUpToSeconds(timerConfig.shortBreakDuration),
+      longBreakDuration: this.roundUpToSeconds(timerConfig.longBreakDuration)
     }
-    this.remaining = config.focusDuration
+    this.remaining = timerConfig.focusDuration
     this.scheduler = scheduler
   }
 

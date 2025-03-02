@@ -390,11 +390,13 @@ function createTimer({
 } = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
   const timer = PomodoroTimer.createFake({
-    focusDuration,
-    shortBreakDuration,
-    longBreakDuration,
-    numOfFocusPerCycle,
-    scheduler
+    scheduler,
+    timerConfig: {
+      focusDuration,
+      shortBreakDuration,
+      longBreakDuration,
+      numOfFocusPerCycle
+    }
   })
   return {
     scheduler,
