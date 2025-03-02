@@ -85,15 +85,12 @@ describe('BlockedDomainsPage', () => {
   })
 
   it('should update activated redirect when domain is added', async () => {
-    const { fakeWebsiteRedirectService, wrapper } = mountBlockedDomainsPage({
-      targetRedirectUrl: 'https://target.com'
-    })
+    const { fakeWebsiteRedirectService, wrapper } = mountBlockedDomainsPage()
 
     await addBlockedDomain(wrapper, 'example.com')
-    expect(fakeWebsiteRedirectService.getActivatedRedirectRules()).toEqual({
-      browsingRules: new BrowsingRules({ blockedDomains: ['example.com'] }),
-      targetUrl: 'https://target.com'
-    })
+    expect(fakeWebsiteRedirectService.getActivatedBrowsingRules()).toEqual(
+      new BrowsingRules({ blockedDomains: ['example.com'] })
+    )
   })
 
   it('should update activated redirect when domain is removed', async () => {
@@ -103,28 +100,24 @@ describe('BlockedDomainsPage', () => {
     )
 
     const { wrapper, fakeWebsiteRedirectService } = mountBlockedDomainsPage({
-      browsingRulesStorageService,
-      targetRedirectUrl: 'https://target.com'
+      browsingRulesStorageService
     })
     await flushPromises()
 
     await removeBlockedDomain(wrapper, 'example.com')
-    expect(fakeWebsiteRedirectService.getActivatedRedirectRules()).toEqual({
-      browsingRules: new BrowsingRules({ blockedDomains: ['facebook.com'] }),
-      targetUrl: 'https://target.com'
-    })
+    expect(fakeWebsiteRedirectService.getActivatedBrowsingRules()).toEqual(
+      new BrowsingRules({ blockedDomains: ['facebook.com'] })
+    )
   })
 })
 
 function mountBlockedDomainsPage({
-  browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
-  targetRedirectUrl = 'https://example.com'
+  browsingRulesStorageService = BrowsingRulesStorageService.createFake()
 } = {}) {
   const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
   const redirectTogglingService = RedirectTogglingService.createFake({
     browsingRulesStorageService,
-    websiteRedirectService: fakeWebsiteRedirectService,
-    targetRedirectUrl
+    websiteRedirectService: fakeWebsiteRedirectService
   })
   const { communicationManager } = startBackgroundListener({
     redirectTogglingService: redirectTogglingService

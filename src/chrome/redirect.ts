@@ -1,10 +1,12 @@
+import config from '../config'
 import type { BrowsingRules } from '../domain/browsing_rules'
 import type { WebsiteRedirectService } from '../domain/redirect'
 
 const REDIRECT_RULE_ID = 1
 
 export class ChromeRedirectService implements WebsiteRedirectService {
-  async activateRedirect(browsingRules: BrowsingRules, targetUrl: string): Promise<void> {
+  async activateRedirect(browsingRules: BrowsingRules): Promise<void> {
+    const targetUrl = config.getBlockedTemplateUrl()
     const promises = [
       this.redirectAllActiveTabs(browsingRules, targetUrl),
       this.redirectFutureRequests(browsingRules, targetUrl)

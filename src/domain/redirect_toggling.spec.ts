@@ -28,19 +28,15 @@ describe('RedirectTogglingService', () => {
     const redirectTogglingService = RedirectTogglingService.createFake({
       browsingRulesStorageService,
       websiteRedirectService,
-      weeklyScheduleStorageService,
-      targetRedirectUrl: 'target-url'
+      weeklyScheduleStorageService
     })
 
     await redirectTogglingService.run(new Date('2025-02-03T11:00:00')) // 2025-02-03 is Mon
 
-    expect(websiteRedirectService.getActivatedRedirectRules()).toEqual({
-      browsingRules,
-      targetUrl: 'target-url'
-    })
+    expect(websiteRedirectService.getActivatedBrowsingRules()).toEqual(browsingRules)
 
     await redirectTogglingService.run(new Date('2025-02-03T17:01:00'))
-    expect(websiteRedirectService.getActivatedRedirectRules()).toBeNull()
+    expect(websiteRedirectService.getActivatedBrowsingRules()).toBeNull()
   })
 
   it('should always activate redirect when weekly schedules are empty', async () => {
@@ -55,15 +51,11 @@ describe('RedirectTogglingService', () => {
     const redirectTogglingService = RedirectTogglingService.createFake({
       browsingRulesStorageService,
       websiteRedirectService,
-      weeklyScheduleStorageService,
-      targetRedirectUrl: 'target-url'
+      weeklyScheduleStorageService
     })
 
     await redirectTogglingService.run()
 
-    expect(websiteRedirectService.getActivatedRedirectRules()).toEqual({
-      browsingRules,
-      targetUrl: 'target-url'
-    })
+    expect(websiteRedirectService.getActivatedBrowsingRules()).toEqual(browsingRules)
   })
 })

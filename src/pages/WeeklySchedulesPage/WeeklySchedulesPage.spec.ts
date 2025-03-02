@@ -229,8 +229,7 @@ describe('WeeklySchedulesPage', () => {
     const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
     await browsingRulesStorageService.save(new BrowsingRules({ blockedDomains: ['google.com'] }))
     const { wrapper, fakeWebsiteRedirectService } = mountWeeklySchedulesPage({
-      browsingRulesStorageService,
-      targetRedirectUrl: 'https://google.com'
+      browsingRulesStorageService
     })
 
     await addWeeklySchedule(wrapper, {
@@ -244,31 +243,28 @@ describe('WeeklySchedulesPage', () => {
       endTime: { hour: 12, minute: 0 }
     })
 
-    expect(fakeWebsiteRedirectService.getActivatedRedirectRules()).toEqual({
-      browsingRules: new BrowsingRules({ blockedDomains: ['google.com'] }),
-      targetUrl: 'https://google.com'
-    })
+    expect(fakeWebsiteRedirectService.getActivatedBrowsingRules()).toEqual(
+      new BrowsingRules({ blockedDomains: ['google.com'] })
+    )
 
     const removeButton = wrapper.find(`[data-test='remove-schedule-with-index-0']`) // Remove Monday
     await removeButton.trigger('click')
     await flushPromises()
 
-    await expect(fakeWebsiteRedirectService.getActivatedRedirectRules()).toBeNull()
+    await expect(fakeWebsiteRedirectService.getActivatedBrowsingRules()).toBeNull()
   })
 })
 
 function mountWeeklySchedulesPage({
   weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
-  browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
-  targetRedirectUrl = 'https://example.com'
+  browsingRulesStorageService = BrowsingRulesStorageService.createFake()
 } = {}) {
   const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
 
   const redirectTogglingService = RedirectTogglingService.createFake({
     browsingRulesStorageService,
     weeklyScheduleStorageService,
-    websiteRedirectService: fakeWebsiteRedirectService,
-    targetRedirectUrl
+    websiteRedirectService: fakeWebsiteRedirectService
   })
   const { communicationManager } = startBackgroundListener({
     redirectTogglingService
