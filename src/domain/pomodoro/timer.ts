@@ -96,11 +96,11 @@ export class PomodoroTimer {
     this.scheduler.scheduleTask(() => {
       this.advanceTime(timerUnit)
       if (this.remaining.totalMilliseconds % 1000 === 0) {
-        this.publishTimerUpdate()
+        this.broadcastTimerUpdate()
       }
     }, timerUnit.totalMilliseconds)
     this.isRunning = true
-    this.publishTimerUpdate()
+    this.broadcastTimerUpdate()
   }
 
   pause() {
@@ -141,8 +141,8 @@ export class PomodoroTimer {
     this.onStageComplete = callback
   }
 
-  private publishTimerUpdate() {
-    this.timerUpdateSubscriptionManager.publishToAll({
+  private broadcastTimerUpdate() {
+    this.timerUpdateSubscriptionManager.broadcast({
       remainingSeconds: this.remaining.remainingSeconds(),
       isRunning: this.isRunning,
       stage: this.stage
@@ -202,7 +202,7 @@ class SubscriptionManager<Arguments> {
     this.callbackMap.delete(subscriptionId)
   }
 
-  publishToAll(args: Arguments) {
+  broadcast(args: Arguments) {
     this.callbackMap.forEach((callback) => {
       callback(args)
     })
