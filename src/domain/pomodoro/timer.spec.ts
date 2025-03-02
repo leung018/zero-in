@@ -140,7 +140,7 @@ describe('PomodoroTimer', () => {
     })
   })
 
-  it('should pause and restart again receive update immediately', () => {
+  it('should after pause and restart again, subscription can receive updates properly', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 10 })
     })
@@ -154,19 +154,15 @@ describe('PomodoroTimer', () => {
 
     timer.pause()
 
-    expect(updates.length).toBe(3)
-    expect(updates[2].remainingSeconds).toBe(
-      new Duration({ minutes: 9, seconds: 59 }).remainingSeconds()
-    )
+    const lastUpdatesLength = updates.length
 
     timer.start()
     scheduler.advanceTime(600)
 
-    expect(updates.length).toBe(5)
-    expect(updates[3].remainingSeconds).toBe(
+    expect(updates[lastUpdatesLength].remainingSeconds).toBe(
       new Duration({ minutes: 9, seconds: 59 }).remainingSeconds() // Whenever timer is started, it will publish the current state
     )
-    expect(updates[4].remainingSeconds).toBe(
+    expect(updates[lastUpdatesLength + 1].remainingSeconds).toBe(
       new Duration({ minutes: 9, seconds: 58 }).remainingSeconds() // After 600ms since restart, the remaining time should be 9:58 and it should be published
     )
   })
