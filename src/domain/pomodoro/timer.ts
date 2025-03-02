@@ -82,6 +82,14 @@ export class PomodoroTimer {
     }
   }
 
+  getUpdate(): PomodoroTimerUpdate {
+    return {
+      remainingSeconds: this.remaining.remainingSeconds(),
+      isRunning: this.isRunning,
+      stage: this.stage
+    }
+  }
+
   getConfig(): Readonly<PomodoroTimerConfig> {
     return this.config
   }
@@ -118,14 +126,7 @@ export class PomodoroTimer {
 
   subscribeTimerUpdate(callback: (update: PomodoroTimerUpdate) => void) {
     const subscriptionId = this.timerUpdateSubscriptionManager.subscribe(callback)
-    this.timerUpdateSubscriptionManager.publish(
-      {
-        remainingSeconds: this.remaining.remainingSeconds(),
-        isRunning: this.isRunning,
-        stage: this.stage
-      },
-      subscriptionId
-    )
+    this.timerUpdateSubscriptionManager.publish(this.getUpdate(), subscriptionId)
     return subscriptionId
   }
 
@@ -142,11 +143,7 @@ export class PomodoroTimer {
   }
 
   private broadcastTimerUpdate() {
-    this.timerUpdateSubscriptionManager.broadcast({
-      remainingSeconds: this.remaining.remainingSeconds(),
-      isRunning: this.isRunning,
-      stage: this.stage
-    })
+    this.timerUpdateSubscriptionManager.broadcast(this.getUpdate())
   }
 
   private transit() {
