@@ -49,7 +49,7 @@ export class PomodoroTimer {
 
   private timerUpdateSubscriptionManager = new SubscriptionManager<PomodoroTimerUpdate>()
 
-  private onStageTransit: () => void = () => {}
+  private onStageComplete: () => void = () => {}
 
   private constructor({
     config,
@@ -128,8 +128,8 @@ export class PomodoroTimer {
     return this.timerUpdateSubscriptionManager.getSubscriptionCount()
   }
 
-  setOnStageTransit(callback: () => void) {
-    this.onStageTransit = callback
+  setOnStageComplete(callback: () => void) {
+    this.onStageComplete = callback
   }
 
   private publishTimerUpdate() {
@@ -146,7 +146,7 @@ export class PomodoroTimer {
     } else {
       this.handleBreakComplete()
     }
-    this.onStageTransit()
+    this.onStageComplete()
   }
 
   private handleFocusComplete() {

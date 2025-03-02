@@ -209,7 +209,7 @@ describe('PomodoroTimer', () => {
       shortBreakDuration: new Duration({ seconds: 30 })
     })
     let triggeredCount = 0
-    timer.setOnStageTransit(() => {
+    timer.setOnStageComplete(() => {
       triggeredCount++
     })
 

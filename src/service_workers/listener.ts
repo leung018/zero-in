@@ -67,7 +67,7 @@ export class BackgroundListener {
     this.badgeDisplayService = badgeDisplayService
 
     this.timer = timer
-    this.timer.setOnStageTransit(() => {
+    this.timer.setOnStageComplete(() => {
       this.reminderService.trigger()
       this.badgeDisplayService.clearBadge()
     })
