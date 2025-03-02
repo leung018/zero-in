@@ -95,7 +95,6 @@ export class BackgroundListener {
               break
             }
             case WorkRequestName.LISTEN_TO_TIMER: {
-              backgroundPort.send(mapPomodoroTimerStateToResponse(this.timer.getState()))
               const subscriptionId = this.timer.subscribeTimerUpdate((update) => {
                 backgroundPort.send(update)
               })
@@ -115,14 +114,6 @@ export class BackgroundListener {
         backgroundPort.onMessage(listener)
       }
     )
-  }
-}
-
-function mapPomodoroTimerStateToResponse(state: PomodoroTimerState): PomodoroTimerResponse {
-  return {
-    stage: state.stage,
-    remainingSeconds: state.remaining.totalMilliseconds / 1000,
-    isRunning: state.isRunning
   }
 }
 
