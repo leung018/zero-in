@@ -7,7 +7,7 @@ import {
 } from '../infra/communication'
 import { RedirectTogglingService } from '../domain/redirect_toggling'
 import { type PomodoroTimerResponse } from './response'
-import { PomodoroTimer, type PomodoroTimerState } from '../domain/pomodoro/timer'
+import { PomodoroTimer } from '../domain/pomodoro/timer'
 import { FakeActionService, type ActionService } from '../infra/action'
 import { ChromeNewTabReminderService } from '../chrome/new_tab'
 import { FakeBadgeDisplayService, type BadgeColor, type BadgeDisplayService } from '../infra/badge'
@@ -67,7 +67,7 @@ export class BackgroundListener {
     this.badgeDisplayService = badgeDisplayService
 
     this.timer = timer
-    this.timer.setOnStageTransit(() => {
+    this.timer.setOnStageComplete(() => {
       this.reminderService.trigger()
       this.badgeDisplayService.clearBadge()
     })
@@ -95,7 +95,6 @@ export class BackgroundListener {
               break
             }
             case WorkRequestName.LISTEN_TO_TIMER: {
-              backgroundPort.send(mapPomodoroTimerStateToResponse(this.timer.getState()))
               const subscriptionId = this.timer.subscribeTimerUpdate((update) => {
                 backgroundPort.send(update)
               })
@@ -115,14 +114,6 @@ export class BackgroundListener {
         backgroundPort.onMessage(listener)
       }
     )
-  }
-}
-
-function mapPomodoroTimerStateToResponse(state: PomodoroTimerState): PomodoroTimerResponse {
-  return {
-    stage: state.stage,
-    remainingSeconds: state.remaining.totalMilliseconds / 1000,
-    isRunning: state.isRunning
   }
 }
 

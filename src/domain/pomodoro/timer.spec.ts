@@ -110,6 +110,11 @@ describe('PomodoroTimer', () => {
     expect(updates).toEqual([
       {
         remainingSeconds: new Duration({ seconds: 3 }).remainingSeconds(),
+        isRunning: false,
+        stage: PomodoroStage.FOCUS
+      },
+      {
+        remainingSeconds: new Duration({ seconds: 3 }).remainingSeconds(),
         isRunning: true,
         stage: PomodoroStage.FOCUS
       },
@@ -127,15 +132,38 @@ describe('PomodoroTimer', () => {
 
     scheduler.advanceTime(2000)
 
-    expect(updates.length).toBe(4)
-    expect(updates[3]).toEqual({
+    expect(updates.length).toBe(5)
+    expect(updates[4]).toEqual({
       remainingSeconds: new Duration({ seconds: 5 }).remainingSeconds(),
       isRunning: false,
       stage: PomodoroStage.SHORT_BREAK
     })
   })
 
-  it('should start, pause and restart again wont reduce the subscription received', () => {
+  it('should receive update whenever timer pause', () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ minutes: 10 })
+    })
+    const updates: PomodoroTimerUpdate[] = []
+    timer.subscribeTimerUpdate((update) => {
+      updates.push(update)
+    })
+
+    timer.start()
+    scheduler.advanceTime(5000)
+
+    const lastUpdatesLength = updates.length
+
+    timer.pause()
+
+    expect(updates[lastUpdatesLength]).toEqual({
+      remainingSeconds: new Duration({ minutes: 9, seconds: 55 }).remainingSeconds(),
+      isRunning: false,
+      stage: PomodoroStage.FOCUS
+    })
+  })
+
+  it('should after pause and restart again, subscription can receive updates properly', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 10 })
     })
@@ -149,22 +177,38 @@ describe('PomodoroTimer', () => {
 
     timer.pause()
 
-    expect(updates.length).toBe(2)
-    expect(updates[0].remainingSeconds).toBe(new Duration({ minutes: 10 }).remainingSeconds())
-    expect(updates[1].remainingSeconds).toBe(
-      new Duration({ minutes: 9, seconds: 59 }).remainingSeconds()
-    )
+    const lastUpdatesLength = updates.length
 
     timer.start()
     scheduler.advanceTime(600)
 
-    expect(updates.length).toBe(4)
-    expect(updates[2].remainingSeconds).toBe(
+    expect(updates[lastUpdatesLength].remainingSeconds).toBe(
       new Duration({ minutes: 9, seconds: 59 }).remainingSeconds() // Whenever timer is started, it will publish the current state
     )
-    expect(updates[3].remainingSeconds).toBe(
+    expect(updates[lastUpdatesLength + 1].remainingSeconds).toBe(
       new Duration({ minutes: 9, seconds: 58 }).remainingSeconds() // After 600ms since restart, the remaining time should be 9:58 and it should be published
     )
+  })
+
+  it('should receive immediate update whenever subscribe', () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ minutes: 10 })
+    })
+    const updates: PomodoroTimerUpdate[] = []
+    timer.start()
+    scheduler.advanceTime(1005)
+
+    timer.subscribeTimerUpdate((update) => {
+      updates.push(update)
+    })
+
+    // although the update will be published every 1000ms, should receive immediate response when subscribe
+    expect(updates.length).toBe(1)
+    expect(updates[0]).toEqual({
+      remainingSeconds: new Duration({ minutes: 9, seconds: 59 }).remainingSeconds(),
+      isRunning: true,
+      stage: PomodoroStage.FOCUS
+    })
   })
 
   it('should able to unsubscribe updates', () => {
@@ -185,8 +229,7 @@ describe('PomodoroTimer', () => {
     timer.start()
     scheduler.advanceTime(250)
 
-    expect(updates1.length).toBeGreaterThan(0)
-    expect(updates2.length).toBe(0)
+    expect(updates2.length).toBeLessThan(updates1.length)
   })
 
   it('should getSubscriptionCount is reflecting number of subscription', () => {
@@ -209,7 +252,7 @@ describe('PomodoroTimer', () => {
       shortBreakDuration: new Duration({ seconds: 30 })
     })
     let triggeredCount = 0
-    timer.setOnStageTransit(() => {
+    timer.setOnStageComplete(() => {
       triggeredCount++
     })
 
@@ -347,11 +390,13 @@ function createTimer({
 } = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
   const timer = PomodoroTimer.createFake({
-    focusDuration,
-    shortBreakDuration,
-    longBreakDuration,
-    numOfFocusPerCycle,
-    scheduler
+    scheduler,
+    timerConfig: {
+      focusDuration,
+      shortBreakDuration,
+      longBreakDuration,
+      numOfFocusPerCycle
+    }
   })
   return {
     scheduler,
