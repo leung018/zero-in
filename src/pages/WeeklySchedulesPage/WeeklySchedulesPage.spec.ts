@@ -5,11 +5,11 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import WeeklySchedulesPage from './index.vue'
 import { Weekday, WeeklySchedule } from '../../domain/schedules'
 import { Time } from '../../domain/schedules/time'
-import { FakeWebsiteRedirectService } from '../../domain/redirect'
+import { FakeBrowsingControlService } from '../../domain/browsing_control'
 import { BrowsingRulesStorageService } from '../../domain/browsing_rules/storage'
 import { BrowsingRules } from '../../domain/browsing_rules'
 import { afterEach, beforeEach } from 'node:test'
-import { RedirectTogglingService } from '../../domain/redirect_toggling'
+import { BrowsingControlTogglingService } from '../../domain/browsing_control_toggling'
 import { startBackgroundListener } from '../../test_utils/listener'
 
 describe('WeeklySchedulesPage', () => {
@@ -228,9 +228,8 @@ describe('WeeklySchedulesPage', () => {
 
     const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
     await browsingRulesStorageService.save(new BrowsingRules({ blockedDomains: ['google.com'] }))
-    const { wrapper, fakeWebsiteRedirectService } = mountWeeklySchedulesPage({
-      browsingRulesStorageService,
-      targetRedirectUrl: 'https://google.com'
+    const { wrapper, fakeBrowsingControlService } = mountWeeklySchedulesPage({
+      browsingRulesStorageService
     })
 
     await addWeeklySchedule(wrapper, {
@@ -244,31 +243,28 @@ describe('WeeklySchedulesPage', () => {
       endTime: { hour: 12, minute: 0 }
     })
 
-    expect(fakeWebsiteRedirectService.getActivatedRedirectRules()).toEqual({
-      browsingRules: new BrowsingRules({ blockedDomains: ['google.com'] }),
-      targetUrl: 'https://google.com'
-    })
+    expect(fakeBrowsingControlService.getActivatedBrowsingRules()).toEqual(
+      new BrowsingRules({ blockedDomains: ['google.com'] })
+    )
 
     const removeButton = wrapper.find(`[data-test='remove-schedule-with-index-0']`) // Remove Monday
     await removeButton.trigger('click')
     await flushPromises()
 
-    await expect(fakeWebsiteRedirectService.getActivatedRedirectRules()).toBeNull()
+    await expect(fakeBrowsingControlService.getActivatedBrowsingRules()).toBeNull()
   })
 })
 
 function mountWeeklySchedulesPage({
   weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
-  browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
-  targetRedirectUrl = 'https://example.com'
+  browsingRulesStorageService = BrowsingRulesStorageService.createFake()
 } = {}) {
-  const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
+  const fakeBrowsingControlService = new FakeBrowsingControlService()
 
-  const redirectTogglingService = RedirectTogglingService.createFake({
+  const redirectTogglingService = BrowsingControlTogglingService.createFake({
     browsingRulesStorageService,
     weeklyScheduleStorageService,
-    websiteRedirectService: fakeWebsiteRedirectService,
-    targetRedirectUrl
+    browsingControlService: fakeBrowsingControlService
   })
   const { communicationManager } = startBackgroundListener({
     redirectTogglingService
@@ -279,7 +275,7 @@ function mountWeeklySchedulesPage({
   return {
     wrapper,
     weeklyScheduleStorageService,
-    fakeWebsiteRedirectService
+    fakeBrowsingControlService
   }
 }
 
