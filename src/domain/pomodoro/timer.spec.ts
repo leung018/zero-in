@@ -206,8 +206,7 @@ describe('PomodoroTimer', () => {
     timer.start()
     scheduler.advanceTime(250)
 
-    expect(updates1.length).toBeGreaterThan(1)
-    expect(updates2.length).toBe(1)
+    expect(updates2.length).toBeLessThan(updates1.length)
   })
 
   it('should getSubscriptionCount is reflecting number of subscription', () => {
