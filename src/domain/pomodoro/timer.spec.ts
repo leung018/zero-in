@@ -140,6 +140,29 @@ describe('PomodoroTimer', () => {
     })
   })
 
+  it('should receive update whenever timer pause', () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ minutes: 10 })
+    })
+    const updates: PomodoroTimerUpdate[] = []
+    timer.subscribeTimerUpdate((update) => {
+      updates.push(update)
+    })
+
+    timer.start()
+    scheduler.advanceTime(5000)
+
+    const lastUpdatesLength = updates.length
+
+    timer.pause()
+
+    expect(updates[lastUpdatesLength]).toEqual({
+      remainingSeconds: new Duration({ minutes: 9, seconds: 55 }).remainingSeconds(),
+      isRunning: false,
+      stage: PomodoroStage.FOCUS
+    })
+  })
+
   it('should after pause and restart again, subscription can receive updates properly', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 10 })

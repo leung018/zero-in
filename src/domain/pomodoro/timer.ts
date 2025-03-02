@@ -112,16 +112,21 @@ export class PomodoroTimer {
   }
 
   pause() {
-    this.isRunning = false
-    this.scheduler.stopTask()
+    this.stopRunning()
+    this.broadcastTimerUpdate()
   }
 
   private advanceTime(duration: Duration) {
     this.remaining = this.remaining.subtract(duration)
     if (this.remaining.isZero()) {
-      this.pause()
+      this.stopRunning()
       this.transit()
     }
+  }
+
+  private stopRunning() {
+    this.isRunning = false
+    this.scheduler.stopTask()
   }
 
   subscribeTimerUpdate(callback: (update: PomodoroTimerUpdate) => void) {
