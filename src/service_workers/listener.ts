@@ -5,7 +5,7 @@ import {
   type CommunicationManager,
   type Port
 } from '../infra/communication'
-import { RedirectTogglingService } from '../domain/browsing_control_toggling'
+import { BrowsingControlTogglingService } from '../domain/browsing_control_toggling'
 import { type PomodoroTimerResponse } from './response'
 import { PomodoroTimer } from '../domain/pomodoro/timer'
 import { FakeActionService, type ActionService } from '../infra/action'
@@ -16,7 +16,7 @@ import { PomodoroStage } from '../domain/pomodoro/stage'
 import config from '../config'
 
 export class BackgroundListener {
-  private redirectTogglingService: RedirectTogglingService
+  private redirectTogglingService: BrowsingControlTogglingService
   private communicationManager: CommunicationManager
   private timer: PomodoroTimer
   private reminderService: ActionService
@@ -26,7 +26,7 @@ export class BackgroundListener {
     return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
       timer: PomodoroTimer.create(),
-      redirectTogglingService: RedirectTogglingService.create(),
+      redirectTogglingService: BrowsingControlTogglingService.create(),
       reminderService: new ChromeNewTabReminderService(),
       badgeDisplayService: new ChromeBadgeDisplayService()
     })
@@ -35,7 +35,7 @@ export class BackgroundListener {
   static createFake({
     timer = PomodoroTimer.createFake(),
     communicationManager = new FakeCommunicationManager(),
-    redirectTogglingService = RedirectTogglingService.createFake(),
+    redirectTogglingService = BrowsingControlTogglingService.createFake(),
     reminderService = new FakeActionService(),
     badgeDisplayService = new FakeBadgeDisplayService()
   } = {}) {
@@ -57,7 +57,7 @@ export class BackgroundListener {
   }: {
     communicationManager: CommunicationManager
     timer: PomodoroTimer
-    redirectTogglingService: RedirectTogglingService
+    redirectTogglingService: BrowsingControlTogglingService
     reminderService: ActionService
     badgeDisplayService: BadgeDisplayService
   }) {

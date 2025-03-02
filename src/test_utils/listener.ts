@@ -1,6 +1,6 @@
 import config from '../config'
 import { PomodoroTimer } from '../domain/pomodoro/timer'
-import { RedirectTogglingService } from '../domain/browsing_control_toggling'
+import { BrowsingControlTogglingService } from '../domain/browsing_control_toggling'
 import { FakeActionService } from '../infra/action'
 import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeCommunicationManager } from '../infra/communication'
@@ -9,7 +9,7 @@ import { BackgroundListener } from '../service_workers/listener'
 
 export function startBackgroundListener({
   timerConfig = config.getPomodoroTimerConfig(),
-  redirectTogglingService = RedirectTogglingService.createFake(),
+  redirectTogglingService = BrowsingControlTogglingService.createFake(),
   reminderService = new FakeActionService(),
   badgeDisplayService = new FakeBadgeDisplayService(),
   communicationManager = new FakeCommunicationManager()

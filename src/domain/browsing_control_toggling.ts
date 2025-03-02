@@ -4,13 +4,13 @@ import type { WeeklySchedule } from './schedules'
 import { WeeklyScheduleStorageService } from './schedules/storage'
 import { ChromeBrowsingControlService } from '../chrome/browsing_control'
 
-export class RedirectTogglingService {
+export class BrowsingControlTogglingService {
   readonly browsingControlService: BrowsingControlService
   readonly browsingRulesStorageService: BrowsingRulesStorageService
   readonly weeklyScheduleStorageService: WeeklyScheduleStorageService
 
   static create() {
-    return new RedirectTogglingService({
+    return new BrowsingControlTogglingService({
       browsingControlService: new ChromeBrowsingControlService(),
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
       weeklyScheduleStorageService: WeeklyScheduleStorageService.create()
@@ -22,7 +22,7 @@ export class RedirectTogglingService {
     browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
     weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
   } = {}) {
-    return new RedirectTogglingService({
+    return new BrowsingControlTogglingService({
       browsingControlService,
       browsingRulesStorageService,
       weeklyScheduleStorageService

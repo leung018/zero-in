@@ -5,10 +5,10 @@ import { FakeBrowsingControlService } from './browsing_control'
 import { Weekday, WeeklySchedule } from './schedules'
 import { Time } from './schedules/time'
 import { WeeklyScheduleStorageService } from './schedules/storage'
-import { RedirectTogglingService } from './browsing_control_toggling'
+import { BrowsingControlTogglingService } from './browsing_control_toggling'
 
-describe('RedirectTogglingService', () => {
-  it('should toggle redirect according to browsing rules if current time is within schedule', async () => {
+describe('BrowsingControlTogglingService', () => {
+  it('should toggle according to browsing rules if current time is within schedule', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
     browsingRulesStorageService.save(browsingRules)
@@ -25,7 +25,7 @@ describe('RedirectTogglingService', () => {
 
     const browsingControlService = new FakeBrowsingControlService()
 
-    const redirectTogglingService = RedirectTogglingService.createFake({
+    const redirectTogglingService = BrowsingControlTogglingService.createFake({
       browsingRulesStorageService,
       browsingControlService,
       weeklyScheduleStorageService
@@ -39,7 +39,7 @@ describe('RedirectTogglingService', () => {
     expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
   })
 
-  it('should always activate redirect when weekly schedules are empty', async () => {
+  it('should always activate when weekly schedules are empty', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
     browsingRulesStorageService.save(browsingRules)
@@ -48,7 +48,7 @@ describe('RedirectTogglingService', () => {
 
     const browsingControlService = new FakeBrowsingControlService()
 
-    const redirectTogglingService = RedirectTogglingService.createFake({
+    const redirectTogglingService = BrowsingControlTogglingService.createFake({
       browsingRulesStorageService,
       browsingControlService,
       weeklyScheduleStorageService

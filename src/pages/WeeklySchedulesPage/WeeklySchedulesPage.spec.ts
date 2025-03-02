@@ -9,7 +9,7 @@ import { FakeBrowsingControlService } from '../../domain/browsing_control'
 import { BrowsingRulesStorageService } from '../../domain/browsing_rules/storage'
 import { BrowsingRules } from '../../domain/browsing_rules'
 import { afterEach, beforeEach } from 'node:test'
-import { RedirectTogglingService } from '../../domain/browsing_control_toggling'
+import { BrowsingControlTogglingService } from '../../domain/browsing_control_toggling'
 import { startBackgroundListener } from '../../test_utils/listener'
 
 describe('WeeklySchedulesPage', () => {
@@ -261,7 +261,7 @@ function mountWeeklySchedulesPage({
 } = {}) {
   const fakeBrowsingControlService = new FakeBrowsingControlService()
 
-  const redirectTogglingService = RedirectTogglingService.createFake({
+  const redirectTogglingService = BrowsingControlTogglingService.createFake({
     browsingRulesStorageService,
     weeklyScheduleStorageService,
     browsingControlService: fakeBrowsingControlService
