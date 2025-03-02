@@ -117,7 +117,16 @@ export class PomodoroTimer {
   }
 
   subscribeTimerUpdate(callback: (update: PomodoroTimerUpdate) => void) {
-    return this.timerUpdateSubscriptionManager.subscribe(callback)
+    const subscriptionId = this.timerUpdateSubscriptionManager.subscribe(callback)
+    this.timerUpdateSubscriptionManager.publish(
+      {
+        remainingSeconds: this.remaining.remainingSeconds(),
+        isRunning: this.isRunning,
+        stage: this.stage
+      },
+      subscriptionId
+    )
+    return subscriptionId
   }
 
   unsubscribeTimerUpdate(subscriptionId: number) {
@@ -133,7 +142,7 @@ export class PomodoroTimer {
   }
 
   private publishTimerUpdate() {
-    this.timerUpdateSubscriptionManager.publish({
+    this.timerUpdateSubscriptionManager.publishToAll({
       remainingSeconds: this.remaining.remainingSeconds(),
       isRunning: this.isRunning,
       stage: this.stage
@@ -193,10 +202,17 @@ class SubscriptionManager<Arguments> {
     this.callbackMap.delete(subscriptionId)
   }
 
-  publish(args: Arguments) {
+  publishToAll(args: Arguments) {
     this.callbackMap.forEach((callback) => {
       callback(args)
     })
+  }
+
+  publish(args: Arguments, subscriptionId: number) {
+    const callback = this.callbackMap.get(subscriptionId)
+    if (callback) {
+      callback(args)
+    }
   }
 
   getSubscriptionCount() {

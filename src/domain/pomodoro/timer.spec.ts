@@ -110,6 +110,11 @@ describe('PomodoroTimer', () => {
     expect(updates).toEqual([
       {
         remainingSeconds: new Duration({ seconds: 3 }).remainingSeconds(),
+        isRunning: false,
+        stage: PomodoroStage.FOCUS
+      },
+      {
+        remainingSeconds: new Duration({ seconds: 3 }).remainingSeconds(),
         isRunning: true,
         stage: PomodoroStage.FOCUS
       },
@@ -127,15 +132,15 @@ describe('PomodoroTimer', () => {
 
     scheduler.advanceTime(2000)
 
-    expect(updates.length).toBe(4)
-    expect(updates[3]).toEqual({
+    expect(updates.length).toBe(5)
+    expect(updates[4]).toEqual({
       remainingSeconds: new Duration({ seconds: 5 }).remainingSeconds(),
       isRunning: false,
       stage: PomodoroStage.SHORT_BREAK
     })
   })
 
-  it('should start, pause and restart again wont reduce the subscription received', () => {
+  it('should pause and restart again receive update immediately', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 10 })
     })
@@ -149,22 +154,42 @@ describe('PomodoroTimer', () => {
 
     timer.pause()
 
-    expect(updates.length).toBe(2)
-    expect(updates[0].remainingSeconds).toBe(new Duration({ minutes: 10 }).remainingSeconds())
-    expect(updates[1].remainingSeconds).toBe(
+    expect(updates.length).toBe(3)
+    expect(updates[2].remainingSeconds).toBe(
       new Duration({ minutes: 9, seconds: 59 }).remainingSeconds()
     )
 
     timer.start()
     scheduler.advanceTime(600)
 
-    expect(updates.length).toBe(4)
-    expect(updates[2].remainingSeconds).toBe(
+    expect(updates.length).toBe(5)
+    expect(updates[3].remainingSeconds).toBe(
       new Duration({ minutes: 9, seconds: 59 }).remainingSeconds() // Whenever timer is started, it will publish the current state
     )
-    expect(updates[3].remainingSeconds).toBe(
+    expect(updates[4].remainingSeconds).toBe(
       new Duration({ minutes: 9, seconds: 58 }).remainingSeconds() // After 600ms since restart, the remaining time should be 9:58 and it should be published
     )
+  })
+
+  it('should receive immediate update whenever subscribe', () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ minutes: 10 })
+    })
+    const updates: PomodoroTimerUpdate[] = []
+    timer.start()
+    scheduler.advanceTime(1005)
+
+    timer.subscribeTimerUpdate((update) => {
+      updates.push(update)
+    })
+
+    // although the update will be published every 1000ms, should receive immediate response when subscribe
+    expect(updates.length).toBe(1)
+    expect(updates[0]).toEqual({
+      remainingSeconds: new Duration({ minutes: 9, seconds: 59 }).remainingSeconds(),
+      isRunning: true,
+      stage: PomodoroStage.FOCUS
+    })
   })
 
   it('should able to unsubscribe updates', () => {
@@ -185,8 +210,8 @@ describe('PomodoroTimer', () => {
     timer.start()
     scheduler.advanceTime(250)
 
-    expect(updates1.length).toBeGreaterThan(0)
-    expect(updates2.length).toBe(0)
+    expect(updates1.length).toBeGreaterThan(1)
+    expect(updates2.length).toBe(1)
   })
 
   it('should getSubscriptionCount is reflecting number of subscription', () => {
