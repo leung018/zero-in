@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { BrowsingRules } from './browsing_rules'
 import { BrowsingRulesStorageService } from './browsing_rules/storage'
-import { FakeWebsiteRedirectService } from './redirect'
+import { FakeBrowsingControlService } from './redirect'
 import { Weekday, WeeklySchedule } from './schedules'
 import { Time } from './schedules/time'
 import { WeeklyScheduleStorageService } from './schedules/storage'
@@ -23,20 +23,20 @@ describe('RedirectTogglingService', () => {
     const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
     weeklyScheduleStorageService.saveAll(schedules)
 
-    const websiteRedirectService = new FakeWebsiteRedirectService()
+    const browsingControlService = new FakeBrowsingControlService()
 
     const redirectTogglingService = RedirectTogglingService.createFake({
       browsingRulesStorageService,
-      websiteRedirectService,
+      browsingControlService,
       weeklyScheduleStorageService
     })
 
     await redirectTogglingService.run(new Date('2025-02-03T11:00:00')) // 2025-02-03 is Mon
 
-    expect(websiteRedirectService.getActivatedBrowsingRules()).toEqual(browsingRules)
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
 
     await redirectTogglingService.run(new Date('2025-02-03T17:01:00'))
-    expect(websiteRedirectService.getActivatedBrowsingRules()).toBeNull()
+    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
   })
 
   it('should always activate redirect when weekly schedules are empty', async () => {
@@ -46,16 +46,16 @@ describe('RedirectTogglingService', () => {
 
     const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
 
-    const websiteRedirectService = new FakeWebsiteRedirectService()
+    const browsingControlService = new FakeBrowsingControlService()
 
     const redirectTogglingService = RedirectTogglingService.createFake({
       browsingRulesStorageService,
-      websiteRedirectService,
+      browsingControlService,
       weeklyScheduleStorageService
     })
 
     await redirectTogglingService.run()
 
-    expect(websiteRedirectService.getActivatedBrowsingRules()).toEqual(browsingRules)
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
   })
 })

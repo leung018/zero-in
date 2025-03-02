@@ -1,44 +1,44 @@
-import { FakeWebsiteRedirectService, type WebsiteRedirectService } from './redirect'
+import { FakeBrowsingControlService, type BrowsingControlService } from './redirect'
 import { BrowsingRulesStorageService } from './browsing_rules/storage'
 import type { WeeklySchedule } from './schedules'
 import { WeeklyScheduleStorageService } from './schedules/storage'
-import { ChromeRedirectService } from '../chrome/redirect'
+import { ChromeBrowsingControlService } from '../chrome/redirect'
 
 export class RedirectTogglingService {
-  readonly websiteRedirectService: WebsiteRedirectService
+  readonly browsingControlService: BrowsingControlService
   readonly browsingRulesStorageService: BrowsingRulesStorageService
   readonly weeklyScheduleStorageService: WeeklyScheduleStorageService
 
   static create() {
     return new RedirectTogglingService({
-      websiteRedirectService: new ChromeRedirectService(),
+      browsingControlService: new ChromeBrowsingControlService(),
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
       weeklyScheduleStorageService: WeeklyScheduleStorageService.create()
     })
   }
 
   static createFake({
-    websiteRedirectService = new FakeWebsiteRedirectService(),
+    browsingControlService = new FakeBrowsingControlService(),
     browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
     weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
   } = {}) {
     return new RedirectTogglingService({
-      websiteRedirectService,
+      browsingControlService,
       browsingRulesStorageService,
       weeklyScheduleStorageService
     })
   }
 
   private constructor({
-    websiteRedirectService,
+    browsingControlService,
     browsingRulesStorageService,
     weeklyScheduleStorageService
   }: {
-    websiteRedirectService: WebsiteRedirectService
+    browsingControlService: BrowsingControlService
     browsingRulesStorageService: BrowsingRulesStorageService
     weeklyScheduleStorageService: WeeklyScheduleStorageService
   }) {
-    this.websiteRedirectService = websiteRedirectService
+    this.browsingControlService = browsingControlService
     this.browsingRulesStorageService = browsingRulesStorageService
     this.weeklyScheduleStorageService = weeklyScheduleStorageService
   }
@@ -48,11 +48,11 @@ export class RedirectTogglingService {
 
     if (isDateWithinSchedules(currentTime, schedules)) {
       return this.browsingRulesStorageService.get().then((browsingRules) => {
-        return this.websiteRedirectService.activateRedirect(browsingRules)
+        return this.browsingControlService.setAndActivateNewRules(browsingRules)
       })
     }
 
-    return this.websiteRedirectService.deactivateRedirect()
+    return this.browsingControlService.deactivateExistingRules()
   }
 }
 

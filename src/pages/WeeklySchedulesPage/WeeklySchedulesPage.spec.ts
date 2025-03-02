@@ -5,7 +5,7 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import WeeklySchedulesPage from './index.vue'
 import { Weekday, WeeklySchedule } from '../../domain/schedules'
 import { Time } from '../../domain/schedules/time'
-import { FakeWebsiteRedirectService } from '../../domain/redirect'
+import { FakeBrowsingControlService } from '../../domain/redirect'
 import { BrowsingRulesStorageService } from '../../domain/browsing_rules/storage'
 import { BrowsingRules } from '../../domain/browsing_rules'
 import { afterEach, beforeEach } from 'node:test'
@@ -228,7 +228,7 @@ describe('WeeklySchedulesPage', () => {
 
     const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
     await browsingRulesStorageService.save(new BrowsingRules({ blockedDomains: ['google.com'] }))
-    const { wrapper, fakeWebsiteRedirectService } = mountWeeklySchedulesPage({
+    const { wrapper, fakeBrowsingControlService } = mountWeeklySchedulesPage({
       browsingRulesStorageService
     })
 
@@ -243,7 +243,7 @@ describe('WeeklySchedulesPage', () => {
       endTime: { hour: 12, minute: 0 }
     })
 
-    expect(fakeWebsiteRedirectService.getActivatedBrowsingRules()).toEqual(
+    expect(fakeBrowsingControlService.getActivatedBrowsingRules()).toEqual(
       new BrowsingRules({ blockedDomains: ['google.com'] })
     )
 
@@ -251,7 +251,7 @@ describe('WeeklySchedulesPage', () => {
     await removeButton.trigger('click')
     await flushPromises()
 
-    await expect(fakeWebsiteRedirectService.getActivatedBrowsingRules()).toBeNull()
+    await expect(fakeBrowsingControlService.getActivatedBrowsingRules()).toBeNull()
   })
 })
 
@@ -259,12 +259,12 @@ function mountWeeklySchedulesPage({
   weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
   browsingRulesStorageService = BrowsingRulesStorageService.createFake()
 } = {}) {
-  const fakeWebsiteRedirectService = new FakeWebsiteRedirectService()
+  const fakeBrowsingControlService = new FakeBrowsingControlService()
 
   const redirectTogglingService = RedirectTogglingService.createFake({
     browsingRulesStorageService,
     weeklyScheduleStorageService,
-    websiteRedirectService: fakeWebsiteRedirectService
+    browsingControlService: fakeBrowsingControlService
   })
   const { communicationManager } = startBackgroundListener({
     redirectTogglingService
@@ -275,7 +275,7 @@ function mountWeeklySchedulesPage({
   return {
     wrapper,
     weeklyScheduleStorageService,
-    fakeWebsiteRedirectService
+    fakeBrowsingControlService
   }
 }
 

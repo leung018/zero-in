@@ -1,11 +1,11 @@
 import config from '../config'
 import type { BrowsingRules } from '../domain/browsing_rules'
-import type { WebsiteRedirectService } from '../domain/redirect'
+import type { BrowsingControlService } from '../domain/redirect'
 
 const REDIRECT_RULE_ID = 1
 
-export class ChromeRedirectService implements WebsiteRedirectService {
-  async activateRedirect(browsingRules: BrowsingRules): Promise<void> {
+export class ChromeBrowsingControlService implements BrowsingControlService {
+  async setAndActivateNewRules(browsingRules: BrowsingRules): Promise<void> {
     const targetUrl = config.getBlockedTemplateUrl()
     const promises = [
       this.redirectAllActiveTabs(browsingRules, targetUrl),
@@ -14,7 +14,7 @@ export class ChromeRedirectService implements WebsiteRedirectService {
     await Promise.all(promises)
   }
 
-  async deactivateRedirect(): Promise<void> {
+  async deactivateExistingRules(): Promise<void> {
     return chrome.declarativeNetRequest.updateDynamicRules({
       removeRuleIds: [REDIRECT_RULE_ID]
     })
