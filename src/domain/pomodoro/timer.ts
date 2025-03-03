@@ -157,17 +157,11 @@ export class PomodoroTimer {
     this.restart({ stage: PomodoroStage.FOCUS })
   }
 
-  private resetNumOfFocusCompleted(numOfFocusCompleted: number) {
+  private resetNumOfFocusCompleted(n: number) {
     const upperLimit = this.config.numOfFocusPerCycle - 1
-    if (numOfFocusCompleted > upperLimit) {
-      this.numOfFocusCompleted = upperLimit
-      return
-    }
-    if (numOfFocusCompleted < 0) {
-      this.numOfFocusCompleted = 0
-      return
-    }
-    this.numOfFocusCompleted = numOfFocusCompleted
+    n = Math.min(upperLimit, n)
+    n = Math.max(0, n)
+    this.numOfFocusCompleted = n
   }
 
   private restart({ stage }: { stage: PomodoroStage }) {
