@@ -461,6 +461,36 @@ describe('PomodoroTimer', () => {
       numOfFocusCompleted: 0
     })
   })
+
+  it('should able to specify numOfFocusCompleted when jump to focus', () => {
+    const { timer } = createTimer({
+      numOfFocusPerCycle: 4
+    })
+
+    timer.restartFocus(2)
+    expect(timer.getState().numOfFocusCompleted).toBe(2)
+
+    timer.restartFocus(4)
+    expect(timer.getState().numOfFocusCompleted).toBe(3)
+
+    timer.restartFocus(-1)
+    expect(timer.getState().numOfFocusCompleted).toBe(0)
+  })
+
+  it('should able to specify numOfFocusCompleted when jump to short break', () => {
+    const { timer } = createTimer({
+      numOfFocusPerCycle: 4
+    })
+
+    timer.restartShortBreak(2)
+    expect(timer.getState().numOfFocusCompleted).toBe(2)
+
+    timer.restartShortBreak(4)
+    expect(timer.getState().numOfFocusCompleted).toBe(3)
+
+    timer.restartShortBreak(-1)
+    expect(timer.getState().numOfFocusCompleted).toBe(0)
+  })
 })
 
 function createTimer({
