@@ -69,7 +69,8 @@ export class PomodoroTimer {
     return {
       remaining: this.remaining,
       isRunning: this.isRunning,
-      stage: this.stage
+      stage: this.stage,
+      numOfFocusCompleted: this.numOfFocusCompleted
     }
   }
 
@@ -154,8 +155,7 @@ export class PomodoroTimer {
   private handleFocusComplete() {
     this.numOfFocusCompleted++
 
-    if (this.numOfFocusCompleted === this.config.numOfFocusPerCycle) {
-      this.numOfFocusCompleted = 0
+    if (this.numOfFocusCompleted >= this.config.numOfFocusPerCycle) {
       this.transitToLongBreak()
     } else {
       this.transitToShortBreak()
@@ -163,6 +163,9 @@ export class PomodoroTimer {
   }
 
   private handleBreakComplete() {
+    if (this.stage === PomodoroStage.LONG_BREAK) {
+      this.numOfFocusCompleted = 0
+    }
     this.transitToFocus()
   }
 
@@ -217,6 +220,7 @@ export type PomodoroTimerState = {
   remaining: Duration
   isRunning: boolean
   stage: PomodoroStage
+  numOfFocusCompleted: number
 }
 
 export type PomodoroTimerUpdate = {

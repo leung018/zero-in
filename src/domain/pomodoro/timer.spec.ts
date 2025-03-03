@@ -15,7 +15,8 @@ describe('PomodoroTimer', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ minutes: 10 }),
       isRunning: false,
-      stage: PomodoroStage.FOCUS
+      stage: PomodoroStage.FOCUS,
+      numOfFocusCompleted: 0
     })
   })
 
@@ -47,7 +48,8 @@ describe('PomodoroTimer', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ minutes: 9, seconds: 55 }),
       isRunning: true,
-      stage: PomodoroStage.FOCUS
+      stage: PomodoroStage.FOCUS,
+      numOfFocusCompleted: 0
     })
   })
 
@@ -76,7 +78,8 @@ describe('PomodoroTimer', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ minutes: 9, seconds: 55 }),
       isRunning: false,
-      stage: PomodoroStage.FOCUS
+      stage: PomodoroStage.FOCUS,
+      numOfFocusCompleted: 0
     })
   })
 
@@ -280,7 +283,8 @@ describe('PomodoroTimer', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ seconds: 30 }),
       isRunning: false,
-      stage: PomodoroStage.SHORT_BREAK
+      stage: PomodoroStage.SHORT_BREAK,
+      numOfFocusCompleted: 1
     })
   })
 
@@ -297,7 +301,8 @@ describe('PomodoroTimer', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ minutes: 1 }),
       isRunning: false,
-      stage: PomodoroStage.FOCUS
+      stage: PomodoroStage.FOCUS,
+      numOfFocusCompleted: 1
     })
   })
 
@@ -325,7 +330,8 @@ describe('PomodoroTimer', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ seconds: 30 }),
       isRunning: false,
-      stage: PomodoroStage.LONG_BREAK
+      stage: PomodoroStage.LONG_BREAK,
+      numOfFocusCompleted: 2
     })
     timer.start()
     scheduler.advanceTime(30000)
@@ -359,7 +365,8 @@ describe('PomodoroTimer', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ minutes: 1 }),
       isRunning: false,
-      stage: PomodoroStage.FOCUS
+      stage: PomodoroStage.FOCUS,
+      numOfFocusCompleted: 0
     })
 
     timer.start()
@@ -377,7 +384,8 @@ describe('PomodoroTimer', () => {
     expect(timer.getState()).toEqual({
       remaining: new Duration({ seconds: 30 }),
       isRunning: false,
-      stage: PomodoroStage.LONG_BREAK
+      stage: PomodoroStage.LONG_BREAK,
+      numOfFocusCompleted: 2
     })
   })
 })
