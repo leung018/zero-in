@@ -388,6 +388,79 @@ describe('PomodoroTimer', () => {
       numOfFocusCompleted: 2
     })
   })
+
+  it('should able to jump to short break', () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ seconds: 10 }),
+      shortBreakDuration: new Duration({ seconds: 2 }),
+      numOfFocusPerCycle: 4
+    })
+
+    timer.start()
+    scheduler.advanceTime(1000)
+    timer.pause()
+
+    timer.restartShortBreak()
+    scheduler.advanceTime(1000)
+
+    expect(timer.getState()).toEqual({
+      remaining: new Duration({ seconds: 1 }),
+      isRunning: true,
+      stage: PomodoroStage.SHORT_BREAK,
+      numOfFocusCompleted: 0
+    })
+  })
+
+  it('should able to jump to long break', () => {
+    const { timer, scheduler } = createTimer({
+      focusDuration: new Duration({ seconds: 10 }),
+      shortBreakDuration: new Duration({ seconds: 2 }),
+      longBreakDuration: new Duration({ seconds: 3 }),
+      numOfFocusPerCycle: 4
+    })
+
+    timer.start()
+    scheduler.advanceTime(10000)
+
+    // 1st Short Break
+    timer.start()
+    scheduler.advanceTime(1000)
+    timer.pause()
+
+    timer.restartLongBreak()
+    scheduler.advanceTime(500)
+
+    expect(timer.getState()).toEqual({
+      remaining: new Duration({ seconds: 2, milliseconds: 500 }),
+      isRunning: true,
+      stage: PomodoroStage.LONG_BREAK,
+      numOfFocusCompleted: 1
+    })
+
+    scheduler.advanceTime(2500)
+
+    // Should reset numOfFocusCompleted after long break even number of focus completed in previous cycle is less than 4
+    expect(timer.getState().stage).toBe(PomodoroStage.FOCUS)
+    expect(timer.getState().numOfFocusCompleted).toBe(0)
+  })
+
+  it('should able to jump to focus', () => {
+    const { timer } = createTimer({
+      focusDuration: new Duration({ seconds: 10 }),
+      longBreakDuration: new Duration({ seconds: 3 }),
+      numOfFocusPerCycle: 4
+    })
+
+    timer.restartLongBreak()
+    timer.restartFocus()
+
+    expect(timer.getState()).toEqual({
+      remaining: new Duration({ seconds: 10 }),
+      isRunning: true,
+      stage: PomodoroStage.FOCUS,
+      numOfFocusCompleted: 0
+    })
+  })
 })
 
 function createTimer({

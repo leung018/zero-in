@@ -139,6 +139,34 @@ export class PomodoroTimer {
     this.onStageComplete = callback
   }
 
+  restartShortBreak() {
+    this.restart({ stage: PomodoroStage.SHORT_BREAK })
+  }
+
+  restartLongBreak() {
+    this.restart({ stage: PomodoroStage.LONG_BREAK })
+  }
+
+  restartFocus() {
+    this.restart({ stage: PomodoroStage.FOCUS })
+  }
+
+  private restart({ stage }: { stage: PomodoroStage }) {
+    this.stopRunning()
+    switch (stage) {
+      case PomodoroStage.FOCUS:
+        this.transitToFocus()
+        break
+      case PomodoroStage.SHORT_BREAK:
+        this.transitToShortBreak()
+        break
+      case PomodoroStage.LONG_BREAK:
+        this.transitToLongBreak()
+        break
+    }
+    this.start()
+  }
+
   private broadcastTimerUpdate() {
     this.timerUpdateSubscriptionManager.broadcast(this.getUpdate())
   }
