@@ -54,11 +54,10 @@ describe('ReminderPage', () => {
     scheduler.advanceTime(1000)
     await flushPromises()
 
-    expect(timer.getState()).toEqual({
-      remaining: new Duration({ seconds: 29 }),
-      isRunning: true,
-      stage: PomodoroStage.SHORT_BREAK
-    })
+    const state = timer.getState()
+    expect(state.remaining).toEqual(new Duration({ seconds: 29 }))
+    expect(state.isRunning).toBe(true)
+    expect(state.stage).toBe(PomodoroStage.SHORT_BREAK)
   })
 
   it('should click start button trigger the closeCurrentTabService', async () => {

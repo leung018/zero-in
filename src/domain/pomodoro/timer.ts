@@ -69,7 +69,8 @@ export class PomodoroTimer {
     return {
       remaining: this.remaining,
       isRunning: this.isRunning,
-      stage: this.stage
+      stage: this.stage,
+      numOfFocusCompleted: this.numOfFocusCompleted
     }
   }
 
@@ -111,7 +112,7 @@ export class PomodoroTimer {
     this.remaining = this.remaining.subtract(duration)
     if (this.remaining.isZero()) {
       this.stopRunning()
-      this.transit()
+      this.completeCurrentStage()
     }
   }
 
@@ -138,11 +139,52 @@ export class PomodoroTimer {
     this.onStageComplete = callback
   }
 
+  restartShortBreak(numOfFocusCompleted?: number) {
+    if (numOfFocusCompleted) {
+      this.resetNumOfFocusCompleted(numOfFocusCompleted)
+    }
+    this.restart({ stage: PomodoroStage.SHORT_BREAK })
+  }
+
+  restartLongBreak() {
+    this.restart({ stage: PomodoroStage.LONG_BREAK })
+  }
+
+  restartFocus(numOfFocusCompleted?: number) {
+    if (numOfFocusCompleted) {
+      this.resetNumOfFocusCompleted(numOfFocusCompleted)
+    }
+    this.restart({ stage: PomodoroStage.FOCUS })
+  }
+
+  private resetNumOfFocusCompleted(n: number) {
+    const upperLimit = this.config.numOfFocusPerCycle - 1
+    n = Math.min(upperLimit, n)
+    n = Math.max(0, n)
+    this.numOfFocusCompleted = n
+  }
+
+  private restart({ stage }: { stage: PomodoroStage }) {
+    this.stopRunning()
+    switch (stage) {
+      case PomodoroStage.FOCUS:
+        this.setToBeginOfFocus()
+        break
+      case PomodoroStage.SHORT_BREAK:
+        this.setToBeginOfShortBreak()
+        break
+      case PomodoroStage.LONG_BREAK:
+        this.setToBeginOfLongBreak()
+        break
+    }
+    this.start()
+  }
+
   private broadcastTimerUpdate() {
     this.timerUpdateSubscriptionManager.broadcast(this.getUpdate())
   }
 
-  private transit() {
+  private completeCurrentStage() {
     if (this.stage === PomodoroStage.FOCUS) {
       this.handleFocusComplete()
     } else {
@@ -154,29 +196,31 @@ export class PomodoroTimer {
   private handleFocusComplete() {
     this.numOfFocusCompleted++
 
-    if (this.numOfFocusCompleted === this.config.numOfFocusPerCycle) {
-      this.numOfFocusCompleted = 0
-      this.transitToLongBreak()
+    if (this.numOfFocusCompleted >= this.config.numOfFocusPerCycle) {
+      this.setToBeginOfLongBreak()
     } else {
-      this.transitToShortBreak()
+      this.setToBeginOfShortBreak()
     }
   }
 
   private handleBreakComplete() {
-    this.transitToFocus()
+    if (this.stage === PomodoroStage.LONG_BREAK) {
+      this.numOfFocusCompleted = 0
+    }
+    this.setToBeginOfFocus()
   }
 
-  private transitToLongBreak() {
+  private setToBeginOfLongBreak() {
     this.stage = PomodoroStage.LONG_BREAK
     this.remaining = this.config.longBreakDuration
   }
 
-  private transitToShortBreak() {
+  private setToBeginOfShortBreak() {
     this.stage = PomodoroStage.SHORT_BREAK
     this.remaining = this.config.shortBreakDuration
   }
 
-  private transitToFocus() {
+  private setToBeginOfFocus() {
     this.stage = PomodoroStage.FOCUS
     this.remaining = this.config.focusDuration
   }
@@ -217,6 +261,7 @@ export type PomodoroTimerState = {
   remaining: Duration
   isRunning: boolean
   stage: PomodoroStage
+  numOfFocusCompleted: number
 }
 
 export type PomodoroTimerUpdate = {
