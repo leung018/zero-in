@@ -72,5 +72,49 @@ const onClickPause = () => {
     <button v-else class="btn btn-success mt-3" data-test="start-button" @click="onClickStart">
       Start
     </button>
+    <div class="mt-4">
+      <button
+        class="btn btn-dark"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#restart-menu"
+      >
+        Restart
+      </button>
+      <div class="collapse mt-2" id="restart-menu">
+        <div class="row">
+          <div class="col-6">
+            <button class="btn btn-primary m-1 w-100">1st Focus</button>
+          </div>
+          <div class="col-6">
+            <button class="btn btn-secondary m-1 w-100">1st Break</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <button class="btn btn-primary m-1 w-100">2nd Focus</button>
+          </div>
+          <div class="col-6">
+            <button class="btn btn-secondary m-1 w-100">2nd Break</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <button class="btn btn-primary m-1 w-100">3rd Focus</button>
+          </div>
+          <div class="col-6">
+            <button class="btn btn-secondary m-1 w-100">3rd Break</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <button class="btn btn-primary m-1 w-100">4th Focus</button>
+          </div>
+          <div class="col-6">
+            <button class="btn btn-secondary m-1 w-100">Long Break</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
