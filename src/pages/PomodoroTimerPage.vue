@@ -6,6 +6,7 @@ import type { Port } from '@/infra/communication'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 import { type PomodoroTimerResponse } from '../service_workers/response'
 import { PomodoroStage } from '../domain/pomodoro/stage'
+import { BButton, BCol, BCollapse, BRow } from 'bootstrap-vue-next'
 
 const { port } = defineProps<{
   port: Port<WorkRequest, PomodoroTimerResponse>
@@ -73,48 +74,25 @@ const onClickPause = () => {
       Start
     </button>
     <div class="mt-4">
-      <button
-        class="btn btn-dark"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#restart-menu"
-      >
-        Restart
-      </button>
-      <div class="collapse mt-2" id="restart-menu">
-        <div class="row">
-          <div class="col-6">
-            <button class="btn btn-primary m-1 w-100">1st Focus</button>
-          </div>
-          <div class="col-6">
-            <button class="btn btn-secondary m-1 w-100">1st Break</button>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-6">
-            <button class="btn btn-primary m-1 w-100">2nd Focus</button>
-          </div>
-          <div class="col-6">
-            <button class="btn btn-secondary m-1 w-100">2nd Break</button>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-6">
-            <button class="btn btn-primary m-1 w-100">3rd Focus</button>
-          </div>
-          <div class="col-6">
-            <button class="btn btn-secondary m-1 w-100">3rd Break</button>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-6">
-            <button class="btn btn-primary m-1 w-100">4th Focus</button>
-          </div>
-          <div class="col-6">
-            <button class="btn btn-secondary m-1 w-100">Long Break</button>
-          </div>
-        </div>
-      </div>
+      <BButton variant="dark" v-b-toggle.restart-menu>Restart</BButton>
+      <BCollapse class="mt-2" id="restart-menu">
+        <BRow>
+          <BCol>
+            <BButton class="mt-2 w-100" variant="primary">1st Focus</BButton>
+          </BCol>
+          <BCol>
+            <BButton class="mt-2 w-100" variant="secondary">1st Break</BButton>
+          </BCol>
+        </BRow>
+        <BRow>
+          <BCol>
+            <BButton class="mt-2 w-100" variant="primary">4th Focus</BButton>
+          </BCol>
+          <BCol>
+            <BButton class="mt-2 w-100" variant="secondary">Long Break</BButton>
+          </BCol>
+        </BRow>
+      </BCollapse>
     </div>
   </div>
 </template>
