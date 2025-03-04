@@ -485,9 +485,12 @@ describe('PomodoroTimer', () => {
     })
 
     timer.restartShortBreak(3)
-    expect(timer.getState().numOfFocusCompleted).toBe(2)
+    expect(timer.getState().numOfFocusCompleted).toBe(3)
 
-    timer.restartShortBreak(5)
+    timer.restartShortBreak(1)
+    expect(timer.getState().numOfFocusCompleted).toBe(1)
+
+    timer.restartShortBreak(4) // 4th break is Long Break. So last shortBreak is 3rd which means 3 focus completed
     expect(timer.getState().numOfFocusCompleted).toBe(3)
 
     timer.restartShortBreak(0)
