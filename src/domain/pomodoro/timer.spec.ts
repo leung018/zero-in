@@ -467,8 +467,11 @@ describe('PomodoroTimer', () => {
       numOfFocusPerCycle: 4
     })
 
-    timer.restartFocus(3) // 3rd focus
-    expect(timer.getState().numOfFocusCompleted).toBe(2)
+    timer.restartFocus(4) // 4th Focus
+    expect(timer.getState().numOfFocusCompleted).toBe(3)
+
+    timer.restartFocus(1)
+    expect(timer.getState().numOfFocusCompleted).toBe(0)
 
     // Larger than 4 or Less than 0 will treat as the closest valid number
 
@@ -484,7 +487,7 @@ describe('PomodoroTimer', () => {
       numOfFocusPerCycle: 4
     })
 
-    timer.restartShortBreak(3)
+    timer.restartShortBreak(3) // 3th Short Break
     expect(timer.getState().numOfFocusCompleted).toBe(3)
 
     timer.restartShortBreak(1)
