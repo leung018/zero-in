@@ -139,9 +139,9 @@ export class PomodoroTimer {
     this.onStageComplete = callback
   }
 
-  restartShortBreak(numOfFocusCompleted?: number) {
-    if (numOfFocusCompleted) {
-      this.resetNumOfFocusCompleted(numOfFocusCompleted)
+  restartShortBreak(nth?: number) {
+    if (nth != null) {
+      this.resetNumOfFocusCompleted(nth - 1)
     }
     this.restart({ stage: PomodoroStage.SHORT_BREAK })
   }

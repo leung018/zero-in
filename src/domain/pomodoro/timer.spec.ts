@@ -484,13 +484,13 @@ describe('PomodoroTimer', () => {
       numOfFocusPerCycle: 4
     })
 
-    timer.restartShortBreak(2)
+    timer.restartShortBreak(3)
     expect(timer.getState().numOfFocusCompleted).toBe(2)
 
-    timer.restartShortBreak(4)
+    timer.restartShortBreak(5)
     expect(timer.getState().numOfFocusCompleted).toBe(3)
 
-    timer.restartShortBreak(-1)
+    timer.restartShortBreak(0)
     expect(timer.getState().numOfFocusCompleted).toBe(0)
   })
 })
