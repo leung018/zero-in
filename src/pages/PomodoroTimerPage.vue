@@ -62,7 +62,7 @@ const onClickRestartFocus = (nth: number) => {
   port.send({
     name: WorkRequestName.RESTART_FOCUS,
     payload: {
-      numOfFocusCompleted: nth - 1
+      nth
     }
   })
 }

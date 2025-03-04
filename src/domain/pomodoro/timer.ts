@@ -150,9 +150,9 @@ export class PomodoroTimer {
     this.restart({ stage: PomodoroStage.LONG_BREAK })
   }
 
-  restartFocus(numOfFocusCompleted?: number) {
-    if (numOfFocusCompleted) {
-      this.resetNumOfFocusCompleted(numOfFocusCompleted)
+  restartFocus(nth?: number) {
+    if (nth != null) {
+      this.resetNumOfFocusCompleted(nth - 1)
     }
     this.restart({ stage: PomodoroStage.FOCUS })
   }

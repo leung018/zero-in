@@ -110,7 +110,7 @@ export class BackgroundListener {
               break
             }
             case WorkRequestName.RESTART_FOCUS: {
-              this.timer.restartFocus(message.payload?.numOfFocusCompleted)
+              this.timer.restartFocus(message.payload?.nth)
               break
             }
           }

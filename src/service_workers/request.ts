@@ -7,7 +7,7 @@ export enum WorkRequestName {
 }
 
 export type RestartFocusPayload = {
-  numOfFocusCompleted: number
+  nth: number
 }
 
 export type WorkRequestPayloadMap = {
