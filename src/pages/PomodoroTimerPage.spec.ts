@@ -210,20 +210,49 @@ describe('PomodoroTimerPage', () => {
     expect(pomodoroStage.text()).toBe('Long Break')
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
   })
+
+  it('should render restart control buttons properly', async () => {
+    const { wrapper } = startListenerAndMountPage(
+      newTestPomodoroTimerConfig({
+        numOfFocusPerCycle: 3
+      })
+    )
+
+    const focusButtons = wrapper.findAll("[data-test='restart-focus']")
+    const breakButtons = wrapper.findAll("[data-test='restart-break']")
+
+    expect(focusButtons).toHaveLength(3)
+    expect(breakButtons).toHaveLength(3)
+
+    expect(focusButtons[0].text()).toBe('1st Focus')
+    expect(focusButtons[1].text()).toBe('2nd Focus')
+    expect(focusButtons[2].text()).toBe('3rd Focus')
+
+    expect(breakButtons[0].text()).toBe('1st Break')
+    expect(breakButtons[1].text()).toBe('2nd Break')
+    expect(breakButtons[2].text()).toBe('Long Break')
+  })
 })
 
 function startListenerAndMountPage(timerConfig = newTestPomodoroTimerConfig()) {
   const { scheduler, communicationManager } = startBackgroundListener({
     timerConfig
   })
-  const wrapper = mountPage({ port: communicationManager.clientConnect() })
+  const wrapper = mountPage({
+    port: communicationManager.clientConnect(),
+    numOfFocusPerCycle: timerConfig.numOfFocusPerCycle
+  })
   return { wrapper, scheduler, communicationManager }
 }
 
-function mountPage({ port = new FakeCommunicationManager().clientConnect() } = {}) {
+function mountPage({
+  port = new FakeCommunicationManager().clientConnect(),
+  numOfFocusPerCycle = 4
+} = {}) {
   return mount(PomodoroTimerPage, {
     props: {
-      port
+      port,
+      numOfFocusPerCycle
     }
   })
 }
