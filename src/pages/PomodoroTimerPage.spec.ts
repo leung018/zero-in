@@ -5,6 +5,7 @@ import { Duration } from '../domain/pomodoro/duration'
 import { FakeCommunicationManager } from '../infra/communication'
 import { startBackgroundListener } from '../test_utils/listener'
 import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
+import { PomodoroStage } from '../domain/pomodoro/stage'
 
 describe('PomodoroTimerPage', () => {
   it('should display initial stage and remaining time properly', () => {
@@ -232,17 +233,41 @@ describe('PomodoroTimerPage', () => {
     expect(breakButtons[1].text()).toBe('2nd Break')
     expect(breakButtons[2].text()).toBe('Long Break')
   })
+
+  it('should able to restart the focus', async () => {
+    const { wrapper, timer } = startListenerAndMountPage(
+      newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ seconds: 10 }),
+        numOfFocusPerCycle: 3
+      })
+    )
+
+    await restartFocus(wrapper, 2)
+
+    expect(timer.getState().numOfFocusCompleted).toBe(1)
+    expect(timer.getState().stage).toBe(PomodoroStage.FOCUS)
+
+    await restartFocus(wrapper, 3)
+
+    expect(timer.getState().numOfFocusCompleted).toBe(2)
+    expect(timer.getState().stage).toBe(PomodoroStage.FOCUS)
+
+    await restartFocus(wrapper, 1)
+
+    expect(timer.getState().numOfFocusCompleted).toBe(0)
+    expect(timer.getState().stage).toBe(PomodoroStage.FOCUS)
+  })
 })
 
 function startListenerAndMountPage(timerConfig = newTestPomodoroTimerConfig()) {
-  const { scheduler, communicationManager } = startBackgroundListener({
+  const { scheduler, communicationManager, timer } = startBackgroundListener({
     timerConfig
   })
   const wrapper = mountPage({
     port: communicationManager.clientConnect(),
     numOfFocusPerCycle: timerConfig.numOfFocusPerCycle
   })
-  return { wrapper, scheduler, communicationManager }
+  return { wrapper, scheduler, communicationManager, timer }
 }
 
 function mountPage({
@@ -266,6 +291,12 @@ async function startTimer(wrapper: VueWrapper) {
 async function pauseTimer(wrapper: VueWrapper) {
   const pauseButton = wrapper.find("[data-test='pause-button']")
   pauseButton.trigger('click')
+  await flushPromises()
+}
+
+async function restartFocus(wrapper: VueWrapper, nth: number) {
+  const restartButtons = wrapper.findAll("[data-test='restart-focus']")
+  restartButtons[nth - 1].trigger('click')
   await flushPromises()
 }
 
