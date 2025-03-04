@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { Duration } from '../domain/pomodoro/duration'
-import { formatNumber } from '../util'
+import { formatNumber, getNumberWithOrdinal } from '../util'
 import { computed, onBeforeMount, ref } from 'vue'
 import type { Port } from '@/infra/communication'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 import { type PomodoroTimerResponse } from '../service_workers/response'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import { BButton, BCol, BCollapse, BRow } from 'bootstrap-vue-next'
+import config from '../config'
+
+const numOfFocusPerCycle = config.getPomodoroTimerConfig().numOfFocusPerCycle
 
 const { port } = defineProps<{
   port: Port<WorkRequest, PomodoroTimerResponse>
@@ -76,17 +79,23 @@ const onClickPause = () => {
     <div class="mt-4">
       <BButton variant="dark" v-b-toggle.restart-menu>Restart</BButton>
       <BCollapse class="mt-2" id="restart-menu">
-        <BRow>
+        <BRow v-for="index in numOfFocusPerCycle - 1" :key="index">
           <BCol>
-            <BButton class="mt-2 w-100" variant="primary">1st Focus</BButton>
+            <BButton class="mt-2 w-100" variant="primary"
+              >{{ getNumberWithOrdinal(index) }} Focus</BButton
+            >
           </BCol>
           <BCol>
-            <BButton class="mt-2 w-100" variant="secondary">1st Break</BButton>
+            <BButton class="mt-2 w-100" variant="secondary"
+              >{{ getNumberWithOrdinal(index) }} Break</BButton
+            >
           </BCol>
         </BRow>
         <BRow>
           <BCol>
-            <BButton class="mt-2 w-100" variant="primary">4th Focus</BButton>
+            <BButton class="mt-2 w-100" variant="primary"
+              >{{ getNumberWithOrdinal(numOfFocusPerCycle) }} Focus</BButton
+            >
           </BCol>
           <BCol>
             <BButton class="mt-2 w-100" variant="secondary">Long Break</BButton>
