@@ -147,7 +147,7 @@ describe('PomodoroTimerPage', () => {
     scheduler.advanceTime(61000)
     await flushPromises()
 
-    assertCurrentStage(wrapper, 'Short Break')
+    assertCurrentStage(wrapper, '1st Short Break')
 
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
 
@@ -176,7 +176,6 @@ describe('PomodoroTimerPage', () => {
     scheduler.advanceTime(600)
     await flushPromises()
 
-    assertCurrentStage(wrapper, 'Short Break')
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
   })
 

@@ -28,7 +28,7 @@ const displayTime = computed(() => {
 const currentStage = computed(() => {
   switch (pomodoroStage.value) {
     case PomodoroStage.SHORT_BREAK:
-      return 'Short Break'
+      return `${getNumberWithOrdinal(numOfFocusCompleted.value)} Short Break`
     case PomodoroStage.LONG_BREAK:
       return 'Long Break'
     default:
