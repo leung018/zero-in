@@ -7,8 +7,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    BButton: typeof import('bootstrap-vue-next/components/BButton')['BButton']
     BCard: typeof import('bootstrap-vue-next/components/BCard')['BCard']
     BCollapse: typeof import('bootstrap-vue-next/components/BCollapse')['BCollapse']
+    BFormInput: typeof import('bootstrap-vue-next/components/BFormInput')['BFormInput']
   }
   export interface ComponentCustomProperties {
     vBToggle: typeof import('bootstrap-vue-next/directives/BToggle')['vBToggle']
