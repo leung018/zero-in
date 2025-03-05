@@ -462,33 +462,41 @@ describe('PomodoroTimer', () => {
     })
   })
 
-  it('should able to specify numOfFocusCompleted when jump to focus', () => {
+  it('should able to jump to specific focus', () => {
     const { timer } = createTimer({
       numOfFocusPerCycle: 4
     })
 
-    timer.restartFocus(2)
-    expect(timer.getState().numOfFocusCompleted).toBe(2)
-
-    timer.restartFocus(4)
+    timer.restartFocus(4) // 4th Focus
     expect(timer.getState().numOfFocusCompleted).toBe(3)
 
-    timer.restartFocus(-1)
+    timer.restartFocus(1)
+    expect(timer.getState().numOfFocusCompleted).toBe(0)
+
+    // Larger than 4 or Less than 0 will treat as the closest valid number
+
+    timer.restartFocus(5)
+    expect(timer.getState().numOfFocusCompleted).toBe(3)
+
+    timer.restartFocus(0)
     expect(timer.getState().numOfFocusCompleted).toBe(0)
   })
 
-  it('should able to specify numOfFocusCompleted when jump to short break', () => {
+  it('should able to jump to specific short break', () => {
     const { timer } = createTimer({
       numOfFocusPerCycle: 4
     })
 
-    timer.restartShortBreak(2)
-    expect(timer.getState().numOfFocusCompleted).toBe(2)
-
-    timer.restartShortBreak(4)
+    timer.restartShortBreak(3) // 3th Short Break
     expect(timer.getState().numOfFocusCompleted).toBe(3)
 
-    timer.restartShortBreak(-1)
+    timer.restartShortBreak(1)
+    expect(timer.getState().numOfFocusCompleted).toBe(1)
+
+    timer.restartShortBreak(4) // 4th break is Long Break. So last shortBreak is 3rd which means 3 focus completed
+    expect(timer.getState().numOfFocusCompleted).toBe(3)
+
+    timer.restartShortBreak(0)
     expect(timer.getState().numOfFocusCompleted).toBe(0)
   })
 })

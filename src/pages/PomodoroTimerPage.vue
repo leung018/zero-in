@@ -57,6 +57,30 @@ const onClickPause = () => {
     name: WorkRequestName.PAUSE_TIMER
   })
 }
+
+const onClickRestartFocus = (nth: number) => {
+  port.send({
+    name: WorkRequestName.RESTART_FOCUS,
+    payload: {
+      nth
+    }
+  })
+}
+
+const onClickRestartShortBreak = (nth: number) => {
+  port.send({
+    name: WorkRequestName.RESTART_SHORT_BREAK,
+    payload: {
+      nth
+    }
+  })
+}
+
+const onClickRestartLongBreak = () => {
+  port.send({
+    name: WorkRequestName.RESTART_LONG_BREAK
+  })
+}
 </script>
 
 <template>
@@ -77,26 +101,42 @@ const onClickPause = () => {
     <div class="mt-4">
       <BButton variant="dark" v-b-toggle.restart-menu>Restart</BButton>
       <BCollapse class="mt-2" id="restart-menu">
-        <BRow v-for="index in numOfFocusPerCycle - 1" :key="index">
+        <BRow v-for="nth in numOfFocusPerCycle - 1" :key="nth">
           <BCol>
-            <BButton class="mt-2 w-100" variant="primary" data-test="restart-focus"
-              >{{ getNumberWithOrdinal(index) }} Focus</BButton
+            <BButton
+              class="mt-2 w-100"
+              variant="primary"
+              data-test="restart-focus"
+              @click="onClickRestartFocus(nth)"
+              >{{ getNumberWithOrdinal(nth) }} Focus</BButton
             >
           </BCol>
           <BCol>
-            <BButton class="mt-2 w-100" variant="secondary" data-test="restart-break"
-              >{{ getNumberWithOrdinal(index) }} Break</BButton
+            <BButton
+              class="mt-2 w-100"
+              variant="secondary"
+              data-test="restart-short-break"
+              @click="onClickRestartShortBreak(nth)"
+              >{{ getNumberWithOrdinal(nth) }} Break</BButton
             >
           </BCol>
         </BRow>
         <BRow>
           <BCol>
-            <BButton class="mt-2 w-100" variant="primary" data-test="restart-focus"
+            <BButton
+              class="mt-2 w-100"
+              variant="primary"
+              data-test="restart-focus"
+              @click="onClickRestartFocus(numOfFocusPerCycle)"
               >{{ getNumberWithOrdinal(numOfFocusPerCycle) }} Focus</BButton
             >
           </BCol>
           <BCol>
-            <BButton class="mt-2 w-100" variant="secondary" data-test="restart-break"
+            <BButton
+              class="mt-2 w-100"
+              variant="secondary"
+              data-test="restart-long-break"
+              @click="onClickRestartLongBreak"
               >Long Break</BButton
             >
           </BCol>

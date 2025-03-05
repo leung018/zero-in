@@ -109,6 +109,18 @@ export class BackgroundListener {
               this.badgeDisplayService.clearBadge()
               break
             }
+            case WorkRequestName.RESTART_FOCUS: {
+              this.timer.restartFocus(message.payload?.nth)
+              break
+            }
+            case WorkRequestName.RESTART_SHORT_BREAK: {
+              this.timer.restartShortBreak(message.payload?.nth)
+              break
+            }
+            case WorkRequestName.RESTART_LONG_BREAK: {
+              this.timer.restartLongBreak()
+              break
+            }
           }
         }
         backgroundPort.onMessage(listener)
