@@ -18,7 +18,7 @@ describe('PomodoroTimerPage', () => {
     const timerDisplay = wrapper.find("[data-test='timer-display']")
     expect(timerDisplay.text()).toBe('09:00')
 
-    assertCurrentStage(wrapper, 'Focus')
+    assertCurrentStage(wrapper, '1st Focus')
   })
 
   it('should reduce the time after timer is started', async () => {

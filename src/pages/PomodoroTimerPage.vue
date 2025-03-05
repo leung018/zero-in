@@ -16,6 +16,7 @@ const { port } = defineProps<{
 const durationLeft = ref<Duration>(new Duration({ seconds: 0 }))
 const isRunning = ref(false)
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
+const numOfFocusCompleted = ref(0)
 
 const displayTime = computed(() => {
   const totalSeconds = durationLeft.value.remainingSeconds()
@@ -31,7 +32,7 @@ const currentStage = computed(() => {
     case PomodoroStage.LONG_BREAK:
       return 'Long Break'
     default:
-      return 'Focus'
+      return `${getNumberWithOrdinal(numOfFocusCompleted.value + 1)} Focus`
   }
 })
 
@@ -40,6 +41,7 @@ onBeforeMount(() => {
     pomodoroStage.value = message.stage
     durationLeft.value = new Duration({ seconds: message.remainingSeconds })
     isRunning.value = message.isRunning
+    numOfFocusCompleted.value = message.numOfFocusCompleted
   })
   port.send({
     name: WorkRequestName.LISTEN_TO_TIMER
