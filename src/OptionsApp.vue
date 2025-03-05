@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import WeeklySchedulesPage from './pages/WeeklySchedulesPage/index.vue'
+import WeeklyTargetSchedulesPage from './pages/WeeklyTargetSchedules/index.vue'
 import { WeeklyScheduleStorageService } from './domain/schedules/storage'
 import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
 import { computed, onMounted, ref, type Component } from 'vue'
@@ -10,7 +11,8 @@ const port = new ChromeCommunicationManager().clientConnect()
 
 enum PATH {
   ROOT = '/',
-  BLOCKED_DOMAINS = '/blocked-domains'
+  BLOCKED_DOMAINS = '/blocked-domains',
+  TARGET_SCHEDULES = '/target-schedules'
 }
 
 type Route = {
@@ -35,6 +37,11 @@ const routeMap: Record<PATH, Route> = {
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
       port
     }
+  },
+  [PATH.TARGET_SCHEDULES]: {
+    title: 'Target Schedules',
+    component: WeeklyTargetSchedulesPage,
+    props: {}
   }
 }
 
