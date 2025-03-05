@@ -237,7 +237,6 @@ describe('PomodoroTimerPage', () => {
   it('should able to restart the focus', async () => {
     const { wrapper, timer } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
-        focusDuration: new Duration({ seconds: 10 }),
         numOfFocusPerCycle: 3
       })
     )
