@@ -18,8 +18,7 @@ describe('PomodoroTimerPage', () => {
     const timerDisplay = wrapper.find("[data-test='timer-display']")
     expect(timerDisplay.text()).toBe('09:00')
 
-    const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
-    expect(pomodoroStage.text()).toBe('Focus')
+    assertCurrentStage(wrapper, 'Focus')
   })
 
   it('should reduce the time after timer is started', async () => {
@@ -148,8 +147,8 @@ describe('PomodoroTimerPage', () => {
     scheduler.advanceTime(61000)
     await flushPromises()
 
-    const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
-    expect(pomodoroStage.text()).toBe('Short Break')
+    assertCurrentStage(wrapper, 'Short Break')
+
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
 
     assertControlVisibility(wrapper, {
@@ -177,9 +176,8 @@ describe('PomodoroTimerPage', () => {
     scheduler.advanceTime(600)
     await flushPromises()
 
-    const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
+    assertCurrentStage(wrapper, 'Short Break')
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
-    expect(pomodoroStage.text()).toBe('Short Break')
   })
 
   it('should display hint of long break', async () => {
@@ -207,8 +205,7 @@ describe('PomodoroTimerPage', () => {
     scheduler.advanceTime(60000)
     await flushPromises()
 
-    const pomodoroStage = wrapper.find("[data-test='pomodoro-stage']")
-    expect(pomodoroStage.text()).toBe('Long Break')
+    assertCurrentStage(wrapper, 'Long Break')
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
   })
 
@@ -345,6 +342,11 @@ async function restartLongBreak(wrapper: VueWrapper) {
   const restartButton = wrapper.find("[data-test='restart-long-break']")
   restartButton.trigger('click')
   await flushPromises()
+}
+
+async function assertCurrentStage(wrapper: VueWrapper, stage: string) {
+  const pomodoroStage = wrapper.find("[data-test='current-stage']")
+  expect(pomodoroStage.text()).toBe(stage)
 }
 
 function assertControlVisibility(
