@@ -117,6 +117,10 @@ export class BackgroundListener {
               this.timer.restartShortBreak(message.payload?.nth)
               break
             }
+            case WorkRequestName.RESTART_LONG_BREAK: {
+              this.timer.restartLongBreak()
+              break
+            }
           }
         }
         backgroundPort.onMessage(listener)

@@ -75,6 +75,12 @@ const onClickRestartShortBreak = (nth: number) => {
     }
   })
 }
+
+const onClickRestartLongBreak = () => {
+  port.send({
+    name: WorkRequestName.RESTART_LONG_BREAK
+  })
+}
 </script>
 
 <template>
@@ -109,7 +115,7 @@ const onClickRestartShortBreak = (nth: number) => {
             <BButton
               class="mt-2 w-100"
               variant="secondary"
-              data-test="restart-break"
+              data-test="restart-short-break"
               @click="onClickRestartShortBreak(nth)"
               >{{ getNumberWithOrdinal(nth) }} Break</BButton
             >
@@ -126,7 +132,11 @@ const onClickRestartShortBreak = (nth: number) => {
             >
           </BCol>
           <BCol>
-            <BButton class="mt-2 w-100" variant="secondary" data-test="restart-break"
+            <BButton
+              class="mt-2 w-100"
+              variant="secondary"
+              data-test="restart-long-break"
+              @click="onClickRestartLongBreak"
               >Long Break</BButton
             >
           </BCol>

@@ -212,7 +212,7 @@ describe('PomodoroTimerPage', () => {
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
   })
 
-  it('should render restart control buttons properly', async () => {
+  it('should render restart focus and short break buttons properly', async () => {
     const { wrapper } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         numOfFocusPerCycle: 3
@@ -220,18 +220,19 @@ describe('PomodoroTimerPage', () => {
     )
 
     const focusButtons = wrapper.findAll("[data-test='restart-focus']")
-    const breakButtons = wrapper.findAll("[data-test='restart-break']")
 
     expect(focusButtons).toHaveLength(3)
-    expect(breakButtons).toHaveLength(3)
 
     expect(focusButtons[0].text()).toBe('1st Focus')
     expect(focusButtons[1].text()).toBe('2nd Focus')
     expect(focusButtons[2].text()).toBe('3rd Focus')
 
-    expect(breakButtons[0].text()).toBe('1st Break')
-    expect(breakButtons[1].text()).toBe('2nd Break')
-    expect(breakButtons[2].text()).toBe('Long Break')
+    const shortBreakButtons = wrapper.findAll("[data-test='restart-short-break']")
+
+    expect(shortBreakButtons).toHaveLength(2)
+
+    expect(shortBreakButtons[0].text()).toBe('1st Break')
+    expect(shortBreakButtons[1].text()).toBe('2nd Break')
   })
 
   it('should able to restart the focus', async () => {
@@ -279,6 +280,18 @@ describe('PomodoroTimerPage', () => {
     expect(timer.getState().numOfFocusCompleted).toBe(3)
     expect(timer.getState().stage).toBe(PomodoroStage.SHORT_BREAK)
   })
+
+  it('should able to restart long break', async () => {
+    const { wrapper, timer } = startListenerAndMountPage(
+      newTestPomodoroTimerConfig({
+        numOfFocusPerCycle: 4
+      })
+    )
+
+    await restartLongBreak(wrapper)
+
+    expect(timer.getState().stage).toBe(PomodoroStage.LONG_BREAK)
+  })
 })
 
 function startListenerAndMountPage(timerConfig = newTestPomodoroTimerConfig()) {
@@ -323,8 +336,14 @@ async function restartFocus(wrapper: VueWrapper, nth: number) {
 }
 
 async function restartShortBreak(wrapper: VueWrapper, nth: number) {
-  const restartButtons = wrapper.findAll("[data-test='restart-break']")
+  const restartButtons = wrapper.findAll("[data-test='restart-short-break']")
   restartButtons[nth - 1].trigger('click')
+  await flushPromises()
+}
+
+async function restartLongBreak(wrapper: VueWrapper) {
+  const restartButton = wrapper.find("[data-test='restart-long-break']")
+  restartButton.trigger('click')
   await flushPromises()
 }
 
