@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import WeeklySchedulesPage from './pages/WeeklySchedulesPage/index.vue'
-import WeeklyTargetSchedulesPage from './pages/WeeklyTargetSchedules/index.vue'
+import WeeklyTargetSchedulesPage from './pages/WeeklyTargetSchedulesPage/index.vue'
 import { WeeklyScheduleStorageService } from './domain/schedules/storage'
 import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
 import { computed, onMounted, ref, type Component } from 'vue'
