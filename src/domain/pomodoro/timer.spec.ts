@@ -462,7 +462,7 @@ describe('PomodoroTimer', () => {
     })
   })
 
-  it('should able to specify numOfFocusCompleted when jump to focus', () => {
+  it('should able to jump to specific focus', () => {
     const { timer } = createTimer({
       numOfFocusPerCycle: 4
     })
@@ -482,7 +482,7 @@ describe('PomodoroTimer', () => {
     expect(timer.getState().numOfFocusCompleted).toBe(0)
   })
 
-  it('should able to specify numOfFocusCompleted when jump to short break', () => {
+  it('should able to jump to specific short break', () => {
     const { timer } = createTimer({
       numOfFocusPerCycle: 4
     })
