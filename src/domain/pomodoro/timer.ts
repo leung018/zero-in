@@ -78,7 +78,8 @@ export class PomodoroTimer {
     return {
       remainingSeconds: this.remaining.remainingSeconds(),
       isRunning: this.isRunning,
-      stage: this.stage
+      stage: this.stage,
+      numOfFocusCompleted: this.numOfFocusCompleted
     }
   }
 
@@ -268,4 +269,5 @@ export type PomodoroTimerUpdate = {
   remainingSeconds: number
   isRunning: boolean
   stage: PomodoroStage
+  numOfFocusCompleted: number
 }

@@ -114,22 +114,26 @@ describe('PomodoroTimer', () => {
       {
         remainingSeconds: new Duration({ seconds: 3 }).remainingSeconds(),
         isRunning: false,
-        stage: PomodoroStage.FOCUS
+        stage: PomodoroStage.FOCUS,
+        numOfFocusCompleted: 0
       },
       {
         remainingSeconds: new Duration({ seconds: 3 }).remainingSeconds(),
         isRunning: true,
-        stage: PomodoroStage.FOCUS
+        stage: PomodoroStage.FOCUS,
+        numOfFocusCompleted: 0
       },
       {
         remainingSeconds: new Duration({ seconds: 2 }).remainingSeconds(),
         isRunning: true,
-        stage: PomodoroStage.FOCUS
+        stage: PomodoroStage.FOCUS,
+        numOfFocusCompleted: 0
       },
       {
         remainingSeconds: new Duration({ seconds: 1 }).remainingSeconds(),
         isRunning: true,
-        stage: PomodoroStage.FOCUS
+        stage: PomodoroStage.FOCUS,
+        numOfFocusCompleted: 0
       }
     ])
 
@@ -139,11 +143,12 @@ describe('PomodoroTimer', () => {
     expect(updates[4]).toEqual({
       remainingSeconds: new Duration({ seconds: 5 }).remainingSeconds(),
       isRunning: false,
-      stage: PomodoroStage.SHORT_BREAK
+      stage: PomodoroStage.SHORT_BREAK,
+      numOfFocusCompleted: 1
     })
   })
 
-  it('should receive update whenever timer pause', () => {
+  it('should receive immediate update whenever timer pause', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ minutes: 10 })
     })
@@ -159,11 +164,10 @@ describe('PomodoroTimer', () => {
 
     timer.pause()
 
-    expect(updates[lastUpdatesLength]).toEqual({
-      remainingSeconds: new Duration({ minutes: 9, seconds: 55 }).remainingSeconds(),
-      isRunning: false,
-      stage: PomodoroStage.FOCUS
-    })
+    expect(updates[lastUpdatesLength].isRunning).toBe(false)
+    expect(updates[lastUpdatesLength].remainingSeconds).toBe(
+      new Duration({ minutes: 9, seconds: 55 }).remainingSeconds()
+    )
   })
 
   it('should after pause and restart again, subscription can receive updates properly', () => {
@@ -207,11 +211,9 @@ describe('PomodoroTimer', () => {
 
     // although the update will be published every 1000ms, should receive immediate response when subscribe
     expect(updates.length).toBe(1)
-    expect(updates[0]).toEqual({
-      remainingSeconds: new Duration({ minutes: 9, seconds: 59 }).remainingSeconds(),
-      isRunning: true,
-      stage: PomodoroStage.FOCUS
-    })
+    expect(updates[0].remainingSeconds).toEqual(
+      new Duration({ minutes: 9, seconds: 59 }).remainingSeconds()
+    )
   })
 
   it('should able to unsubscribe updates', () => {

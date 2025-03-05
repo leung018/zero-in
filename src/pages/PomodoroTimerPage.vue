@@ -16,6 +16,7 @@ const { port } = defineProps<{
 const durationLeft = ref<Duration>(new Duration({ seconds: 0 }))
 const isRunning = ref(false)
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
+const numOfFocusCompleted = ref(0)
 
 const displayTime = computed(() => {
   const totalSeconds = durationLeft.value.remainingSeconds()
@@ -24,14 +25,14 @@ const displayTime = computed(() => {
   return `${formatNumber(minutes)}:${formatNumber(seconds)}`
 })
 
-const pomodoroStageMsg = computed(() => {
+const currentStage = computed(() => {
   switch (pomodoroStage.value) {
     case PomodoroStage.SHORT_BREAK:
-      return 'Short Break'
+      return `${getNumberWithOrdinal(numOfFocusCompleted.value)} Short Break`
     case PomodoroStage.LONG_BREAK:
       return 'Long Break'
     default:
-      return 'Focus'
+      return `${getNumberWithOrdinal(numOfFocusCompleted.value + 1)} Focus`
   }
 })
 
@@ -40,6 +41,7 @@ onBeforeMount(() => {
     pomodoroStage.value = message.stage
     durationLeft.value = new Duration({ seconds: message.remainingSeconds })
     isRunning.value = message.isRunning
+    numOfFocusCompleted.value = message.numOfFocusCompleted
   })
   port.send({
     name: WorkRequestName.LISTEN_TO_TIMER
@@ -85,7 +87,7 @@ const onClickRestartLongBreak = () => {
 
 <template>
   <div class="container text-center mt-3 mb-3">
-    <h1 class="mb-4" data-test="pomodoro-stage">{{ pomodoroStageMsg }}</h1>
+    <h1 class="mb-4" data-test="current-stage">{{ currentStage }}</h1>
     <div class="display-1" data-test="timer-display">{{ displayTime }}</div>
     <button
       v-if="isRunning"
