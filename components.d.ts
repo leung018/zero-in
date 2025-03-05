@@ -10,6 +10,8 @@ declare module 'vue' {
     BButton: typeof import('bootstrap-vue-next/components/BButton')['BButton']
     BCard: typeof import('bootstrap-vue-next/components/BCard')['BCard']
     BCollapse: typeof import('bootstrap-vue-next/components/BCollapse')['BCollapse']
+    BFormGroup: typeof import('bootstrap-vue-next/components/BFormGroup')['BFormGroup']
+    BFormInput: typeof import('bootstrap-vue-next/components/BFormInput')['BFormInput']
   }
   export interface ComponentCustomProperties {
     vBToggle: typeof import('bootstrap-vue-next/directives/BToggle')['vBToggle']
