@@ -63,32 +63,3 @@ function timesAreEqual(time1: Time, time2: Time): boolean {
 }
 
 export class WeeklyScheduleInvalidInputError extends Error {}
-
-export class WeeklyTargetSchedule {
-  weekdaySet: ReadonlySet<Weekday>
-  readonly startTime: Time
-  readonly targetPomodori: number
-
-  constructor({
-    weekdaySet,
-    startTime,
-    targetPomodori
-  }: {
-    weekdaySet: ReadonlySet<Weekday>
-    startTime: Time
-    targetPomodori: number
-  }) {
-    if (weekdaySet.size === 0) {
-      throw new WeeklyTargetScheduleInvalidInputError('weekdaySet must not be empty')
-    }
-    if (targetPomodori <= 0) {
-      throw new WeeklyTargetScheduleInvalidInputError('targetPomodori must be positive')
-    }
-
-    this.weekdaySet = weekdaySet
-    this.startTime = startTime
-    this.targetPomodori = targetPomodori
-  }
-}
-
-export class WeeklyTargetScheduleInvalidInputError extends Error {}

@@ -1,11 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  Weekday,
-  WeeklySchedule,
-  WeeklyScheduleInvalidInputError,
-  WeeklyTargetSchedule,
-  WeeklyTargetScheduleInvalidInputError
-} from '.'
+import { Weekday, WeeklySchedule, WeeklyScheduleInvalidInputError } from '.'
 import { Time } from './time'
 import { assertToThrowError } from '../../test_utils/check_error'
 
@@ -84,31 +78,5 @@ describe('WeeklySchedules', () => {
     expect(weeklySchedule.isContain(new Date('2025-02-03T10:59:59'))).toBe(false)
     expect(weeklySchedule.isContain(new Date('2025-02-03T18:00:00'))).toBe(false)
     expect(weeklySchedule.isContain(new Date('2025-02-03T18:00:01'))).toBe(false)
-  })
-})
-
-describe('WeeklyTargetSchedule', () => {
-  it('should reject empty weekday set', () => {
-    assertToThrowError(
-      () =>
-        new WeeklyTargetSchedule({
-          weekdaySet: new Set(),
-          startTime: new Time(0, 0),
-          targetPomodori: 1
-        }),
-      new WeeklyTargetScheduleInvalidInputError('weekdaySet must not be empty')
-    )
-  })
-
-  it('should targetPomodori must be positive', () => {
-    assertToThrowError(
-      () =>
-        new WeeklyTargetSchedule({
-          weekdaySet: new Set([Weekday.MON]),
-          startTime: new Time(0, 0),
-          targetPomodori: 0
-        }),
-      new WeeklyTargetScheduleInvalidInputError('targetPomodori must be positive')
-    )
   })
 })
