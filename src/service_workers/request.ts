@@ -3,10 +3,11 @@ export enum WorkRequestName {
   START_TIMER,
   LISTEN_TO_TIMER,
   PAUSE_TIMER,
-  RESTART_FOCUS
+  RESTART_FOCUS,
+  RESTART_SHORT_BREAK
 }
 
-export type RestartFocusPayload = {
+export type RestartNthPayload = {
   nth: number
 }
 
@@ -15,7 +16,8 @@ export type WorkRequestPayloadMap = {
   [WorkRequestName.START_TIMER]: undefined
   [WorkRequestName.LISTEN_TO_TIMER]: undefined
   [WorkRequestName.PAUSE_TIMER]: undefined
-  [WorkRequestName.RESTART_FOCUS]: RestartFocusPayload
+  [WorkRequestName.RESTART_FOCUS]: RestartNthPayload
+  [WorkRequestName.RESTART_SHORT_BREAK]: RestartNthPayload
 }
 
 export type WorkRequest = {

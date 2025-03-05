@@ -257,6 +257,29 @@ describe('PomodoroTimerPage', () => {
     expect(timer.getState().numOfFocusCompleted).toBe(0)
     expect(timer.getState().stage).toBe(PomodoroStage.FOCUS)
   })
+
+  it('should able to restart the short break', async () => {
+    const { wrapper, timer } = startListenerAndMountPage(
+      newTestPomodoroTimerConfig({
+        numOfFocusPerCycle: 4
+      })
+    )
+
+    await restartShortBreak(wrapper, 1)
+
+    expect(timer.getState().numOfFocusCompleted).toBe(1)
+    expect(timer.getState().stage).toBe(PomodoroStage.SHORT_BREAK)
+
+    await restartShortBreak(wrapper, 2)
+
+    expect(timer.getState().numOfFocusCompleted).toBe(2)
+    expect(timer.getState().stage).toBe(PomodoroStage.SHORT_BREAK)
+
+    await restartShortBreak(wrapper, 3)
+
+    expect(timer.getState().numOfFocusCompleted).toBe(3)
+    expect(timer.getState().stage).toBe(PomodoroStage.SHORT_BREAK)
+  })
 })
 
 function startListenerAndMountPage(timerConfig = newTestPomodoroTimerConfig()) {
@@ -296,6 +319,12 @@ async function pauseTimer(wrapper: VueWrapper) {
 
 async function restartFocus(wrapper: VueWrapper, nth: number) {
   const restartButtons = wrapper.findAll("[data-test='restart-focus']")
+  restartButtons[nth - 1].trigger('click')
+  await flushPromises()
+}
+
+async function restartShortBreak(wrapper: VueWrapper, nth: number) {
+  const restartButtons = wrapper.findAll("[data-test='restart-break']")
   restartButtons[nth - 1].trigger('click')
   await flushPromises()
 }

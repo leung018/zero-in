@@ -113,6 +113,10 @@ export class BackgroundListener {
               this.timer.restartFocus(message.payload?.nth)
               break
             }
+            case WorkRequestName.RESTART_SHORT_BREAK: {
+              this.timer.restartShortBreak(message.payload?.nth)
+              break
+            }
           }
         }
         backgroundPort.onMessage(listener)

@@ -66,6 +66,15 @@ const onClickRestartFocus = (nth: number) => {
     }
   })
 }
+
+const onClickRestartShortBreak = (nth: number) => {
+  port.send({
+    name: WorkRequestName.RESTART_SHORT_BREAK,
+    payload: {
+      nth
+    }
+  })
+}
 </script>
 
 <template>
@@ -97,7 +106,11 @@ const onClickRestartFocus = (nth: number) => {
             >
           </BCol>
           <BCol>
-            <BButton class="mt-2 w-100" variant="secondary" data-test="restart-break"
+            <BButton
+              class="mt-2 w-100"
+              variant="secondary"
+              data-test="restart-break"
+              @click="onClickRestartShortBreak(nth)"
               >{{ getNumberWithOrdinal(nth) }} Break</BButton
             >
           </BCol>
