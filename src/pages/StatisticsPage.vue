@@ -2,6 +2,7 @@
 import { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/storage'
 import { ref, onBeforeMount } from 'vue'
 import { formatNumber } from '../util'
+import { Time } from '../domain/time'
 
 const { dailyCutoffTimeStorageService } = defineProps<{
   dailyCutoffTimeStorageService: DailyCutoffTimeStorageService
@@ -14,6 +15,12 @@ onBeforeMount(() => {
       formatNumber(dailyCutoffTime.hour) + ':' + formatNumber(dailyCutoffTime.minute)
   })
 })
+
+const onClickSave = async () => {
+  const [hour, minute] = dailyCutoffTimeStr.value.split(':').map(Number)
+  const newTime = new Time(hour, minute)
+  return dailyCutoffTimeStorageService.save(newTime)
+}
 </script>
 
 <template>
@@ -27,5 +34,6 @@ onBeforeMount(() => {
         data-test="timer-input"
       />
     </BFormGroup>
+    <BButton data-test="save-button" @click="onClickSave">Save</BButton>
   </div>
 </template>
