@@ -1,6 +1,7 @@
 import { ChromeLocalStorageFactory } from '../../chrome/storage'
 import { FakeChromeLocalStorage, type StorageHandler } from '../../infra/storage'
 import { Time } from '../time'
+import { deserializeTime, serializeTime } from '../time/serialize'
 
 export class DailyCutoffTimeStorageService {
   static create() {
@@ -32,20 +33,4 @@ export class DailyCutoffTimeStorageService {
       return new Time(0, 0)
     })
   }
-}
-
-type SerializedTime = {
-  hour: number
-  minute: number
-}
-
-function serializeTime(time: Time): SerializedTime {
-  return {
-    hour: time.hour,
-    minute: time.minute
-  }
-}
-
-function deserializeTime(data: SerializedTime): Time {
-  return new Time(data.hour, data.minute)
 }

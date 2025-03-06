@@ -1,7 +1,7 @@
 import { ChromeLocalStorageFactory } from '../../chrome/storage'
 import { FakeChromeLocalStorage, type StorageHandler } from '../../infra/storage'
 import { Weekday, WeeklySchedule } from '.'
-import { Time } from '../time'
+import { deserializeTime, serializeTime, type SerializedTime } from '../time/serialize'
 
 export class WeeklyScheduleStorageService {
   static createFake(): WeeklyScheduleStorageService {
@@ -35,26 +35,10 @@ export class WeeklyScheduleStorageService {
   }
 }
 
-type SerializedTime = {
-  hour: number
-  minute: number
-}
-
 type SerializedWeeklySchedule = {
   weekdays: Weekday[]
   startTime: SerializedTime
   endTime: SerializedTime
-}
-
-function serializeTime(time: Time): SerializedTime {
-  return {
-    hour: time.hour,
-    minute: time.minute
-  }
-}
-
-function deserializeTime(data: SerializedTime): Time {
-  return new Time(data.hour, data.minute)
 }
 
 function serializeWeeklySchedule(weeklySchedule: WeeklySchedule): SerializedWeeklySchedule {
