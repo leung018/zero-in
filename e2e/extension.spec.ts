@@ -242,7 +242,3 @@ async function goToPomodoroTimer(page: Page, extensionId: string) {
 async function goToReminderPage(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/reminder.html`)
 }
-
-async function assertNotInReminderPage(page: Page) {
-  expect(await page.locator('title').textContent()).not.toContain('Reminder')
-}
