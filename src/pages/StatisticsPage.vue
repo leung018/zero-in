@@ -3,7 +3,7 @@ import { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/stora
 import { ref, onBeforeMount } from 'vue'
 import { Time } from '../domain/time'
 import type { ReloadService } from '@/chrome/reload'
-import TimeInput from './WeeklySchedulesPage/TimeInput.vue'
+import TimeInput from './components/TimeInput.vue'
 
 const { dailyCutoffTimeStorageService, reloadService } = defineProps<{
   dailyCutoffTimeStorageService: DailyCutoffTimeStorageService
