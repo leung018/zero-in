@@ -232,7 +232,7 @@ function sleep(ms: number) {
 }
 
 async function goToSchedulesPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/options.html`)
+  await page.goto(`chrome-extension://${extensionId}/options.html#/schedules`)
 }
 
 async function goToPomodoroTimer(page: Page, extensionId: string) {
