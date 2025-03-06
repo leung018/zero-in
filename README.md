@@ -1,20 +1,19 @@
 # task-concentrator
 
-This template should help get you started developing with Vue 3 in Vite.
+## Introduction
 
-## Recommended IDE Setup
+A Chrome extension that helps users stay focused by implementing website restriction features and a timer supporting the Pomodoro Technique.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+I am planning to release this extension on the Chrome Web Store later. If you have interest in the current development version, you can download the extension from the [Releases](https://github.com/leung018/task-concentrator/releases). Download the `task-concentrator-dev-latest.zip` file, unzip it, and load the extension in Chrome by enabling the Developer mode in the Extensions page.
 
-## Type Support for `.vue` Imports in TS
+## Development
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+### Prerequisites
 
-## Customize configuration
+- Node.js: I use v20 and if you use nvm, you can run `nvm use` to switch to that version.
+- Yarn: Follow the instructions [here](https://yarnpkg.com/getting-started/install) for how to enabling Yarn if you haven't.
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
+### Install the Dependencies
 
 ```sh
 yarn
@@ -49,12 +48,6 @@ yarn build
 
 # Runs the end-to-end tests
 yarn test:e2e
-# Runs the tests only on Chromium
-yarn test:e2e --project=chromium
-# Runs the tests of a specific file
-yarn test:e2e tests/example.spec.ts
-# Runs the tests in debug mode
-yarn test:e2e --debug
 ```
 
 ### Lint with [ESLint](https://eslint.org/)
