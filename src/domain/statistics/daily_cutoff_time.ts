@@ -1,11 +1,11 @@
 import { Time } from '../schedules/time'
 
-export class DailyRefreshTimeStorageService {
+export class DailyCutoffTimeStorageService {
   static createFake() {
-    return new DailyRefreshTimeStorageService()
+    return new DailyCutoffTimeStorageService()
   }
 
-  async save(dailyRefreshTime: Time) {}
+  async save(dailyCutoffTime: Time) {}
 
   async get(): Promise<Time> {
     return new Time(10, 30)

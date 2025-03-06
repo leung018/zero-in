@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { DailyRefreshTimeStorageService } from '../domain/statistics/daily_refresh_time'
+import { DailyCutoffTimeStorageService } from '../domain/statistics/daily_cutoff_time'
 import { ref, onBeforeMount } from 'vue'
 
-const { dailyRefreshTimeStorageService } = defineProps<{
-  dailyRefreshTimeStorageService: DailyRefreshTimeStorageService
+const { dailyCutoffTimeStorageService } = defineProps<{
+  dailyCutoffTimeStorageService: DailyCutoffTimeStorageService
 }>()
-const dailyRefreshTimeStr = ref<String>('')
+const dailyCutoffTimeStr = ref<String>('')
 
 onBeforeMount(() => {
-  dailyRefreshTimeStorageService.get().then((dailyRefreshTime) => {
-    dailyRefreshTimeStr.value = dailyRefreshTime.hour + ':' + dailyRefreshTime.minute
+  dailyCutoffTimeStorageService.get().then((dailyCutoffTime) => {
+    dailyCutoffTimeStr.value = dailyCutoffTime.hour + ':' + dailyCutoffTime.minute
   })
 })
 </script>
@@ -17,11 +17,11 @@ onBeforeMount(() => {
 <template>
   <div class="container">
     <h1 class="mb-4 mt-4">Statistics</h1>
-    <BFormGroup label="Set daily refresh time:">
+    <BFormGroup label="Set daily cutoff time:">
       <BFormInput
         type="time"
         style="width: 8rem"
-        v-model="dailyRefreshTimeStr"
+        v-model="dailyCutoffTimeStr"
         data-test="timer-input"
       />
     </BFormGroup>
