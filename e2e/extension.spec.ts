@@ -167,15 +167,15 @@ test('should close reminder page after clicking start button', async ({ page, ex
 test('should able to save daily cutoff time', async ({ page, extensionId }) => {
   await goToStatisticsPage(page, extensionId)
 
-  await page.getByTestId('timer-input').fill('10:30')
+  await page.getByTestId('time-input').fill('10:30')
 
   await page.getByTestId('save-button').click()
 
-  await expect(page.getByTestId('timer-input')).toHaveValue('10:30')
+  await expect(page.getByTestId('time-input')).toHaveValue('10:30')
 
   await page.reload()
 
-  await expect(page.getByTestId('timer-input')).toHaveValue('10:30')
+  await expect(page.getByTestId('time-input')).toHaveValue('10:30')
 })
 
 async function goToBlockedDomainsPage(page: Page, extensionId: string) {

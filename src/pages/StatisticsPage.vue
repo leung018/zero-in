@@ -30,7 +30,7 @@ const onClickSave = async () => {
   <div class="container">
     <h1 class="mb-4 mt-4">Statistics</h1>
     <BFormGroup label="Set daily cutoff time:">
-      <TimeInput v-model="dailyCutoffTime" data-test="timer-input" />
+      <TimeInput v-model="dailyCutoffTime" data-test="time-input" />
     </BFormGroup>
     <BButton variant="primary" class="mt-4" data-test="save-button" @click="onClickSave"
       >Save</BButton
