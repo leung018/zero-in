@@ -9,7 +9,7 @@ describe('StatisticsPage', () => {
     const dailyCutoffTimeStorageService = DailyCutoffTimeStorageService.createFake()
     dailyCutoffTimeStorageService.save(new Time(10, 30))
 
-    const { wrapper } = mountDailyCutoffTimePage({
+    const { wrapper } = mountStatisticsPage({
       dailyCutoffTimeStorageService
     })
     await flushPromises()
@@ -19,7 +19,7 @@ describe('StatisticsPage', () => {
   })
 
   it('should render 00:00 if it has not been saved before', async () => {
-    const { wrapper } = mountDailyCutoffTimePage({
+    const { wrapper } = mountStatisticsPage({
       dailyCutoffTimeStorageService: DailyCutoffTimeStorageService.createFake() // No saved time before
     })
     await flushPromises()
@@ -29,7 +29,7 @@ describe('StatisticsPage', () => {
   })
 })
 
-function mountDailyCutoffTimePage({
+function mountStatisticsPage({
   dailyCutoffTimeStorageService = DailyCutoffTimeStorageService.createFake()
 } = {}) {
   const wrapper = mount(StatisticsPage, {
