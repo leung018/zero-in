@@ -5,7 +5,7 @@ import StatisticsPage from './StatisticsPage.vue'
 import { Time } from '../domain/time'
 
 describe('StatisticsPage', () => {
-  it('should render saved daily refresh time', async () => {
+  it('should render saved daily cutoff time', async () => {
     const dailyCutoffTimeStorageService = DailyCutoffTimeStorageService.createFake()
     dailyCutoffTimeStorageService.save(new Time(10, 30))
 
