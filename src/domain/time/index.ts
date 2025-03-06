@@ -1,3 +1,5 @@
+import { formatNumber } from '../../util'
+
 export class Time {
   readonly hour: number
   readonly minute: number
@@ -22,6 +24,10 @@ export class Time {
     if (this.hour < otherTime.hour) return true
     if (this.hour == otherTime.hour && this.minute < otherTime.minute) return true
     return false
+  }
+
+  toHhMmString(): string {
+    return formatNumber(this.hour) + ':' + formatNumber(this.minute)
   }
 }
 

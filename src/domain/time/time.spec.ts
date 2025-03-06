@@ -30,4 +30,10 @@ describe('Time', () => {
     expect(time.hour).toBe(11)
     expect(time.minute).toBe(1)
   })
+
+  it('should print hh:mm string', () => {
+    expect(new Time(0, 0).toHhMmString()).toBe('00:00')
+    expect(new Time(1, 1).toHhMmString()).toBe('01:01')
+    expect(new Time(12, 59).toHhMmString()).toBe('12:59')
+  })
 })
