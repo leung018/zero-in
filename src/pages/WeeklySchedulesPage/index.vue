@@ -2,7 +2,7 @@
 import { onBeforeMount, ref } from 'vue'
 import { Weekday, WeeklySchedule } from '../../domain/schedules'
 import type { WeeklyScheduleStorageService } from '../../domain/schedules/storage'
-import { Time } from '../../domain/schedules/time'
+import { Time } from '../../domain/time'
 import TimeInput from './TimeInput.vue'
 import WeekdaysSelector from './WeekdaysSelector.vue'
 import SchedulesList from './SchedulesList.vue'

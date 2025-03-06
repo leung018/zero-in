@@ -1,6 +1,7 @@
 import { ChromeLocalStorageFactory } from '../../chrome/storage'
 import { FakeChromeLocalStorage, type StorageHandler } from '../../infra/storage'
 import { BrowsingRules } from '.'
+import { deserializeBrowsingRules, serializeBrowsingRules } from './serialize'
 
 export class BrowsingRulesStorageService {
   static createFake(): BrowsingRulesStorageService {
@@ -30,18 +31,4 @@ export class BrowsingRulesStorageService {
       return new BrowsingRules()
     })
   }
-}
-
-type SerializedBrowsingRules = {
-  blockedDomains: ReadonlyArray<string>
-}
-
-function serializeBrowsingRules(browsingRules: BrowsingRules): SerializedBrowsingRules {
-  return {
-    blockedDomains: browsingRules.blockedDomains
-  }
-}
-
-function deserializeBrowsingRules(data: SerializedBrowsingRules): BrowsingRules {
-  return new BrowsingRules(data)
 }

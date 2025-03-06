@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Time, TimeInvalidInputError } from './time'
+import { Time, TimeInvalidInputError } from '.'
 import { assertToThrowError } from '../../test_utils/check_error'
 
 describe('Time', () => {
