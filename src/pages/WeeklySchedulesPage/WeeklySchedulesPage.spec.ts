@@ -11,7 +11,6 @@ import { BrowsingRules } from '../../domain/browsing_rules'
 import { afterEach, beforeEach } from 'node:test'
 import { BrowsingControlTogglingService } from '../../domain/browsing_control_toggling'
 import { startBackgroundListener } from '../../test_utils/listener'
-import { formatNumber } from '../../util'
 
 describe('WeeklySchedulesPage', () => {
   beforeEach(() => {
@@ -295,13 +294,17 @@ async function addWeeklySchedule(
     await weekdayCheckbox.setValue(true)
   }
 
-  const { startTime, endTime } = weeklyScheduleInput
+  const startTime = new Time(
+    weeklyScheduleInput.startTime.hour,
+    weeklyScheduleInput.startTime.minute
+  )
+  const endTime = new Time(weeklyScheduleInput.endTime.hour, weeklyScheduleInput.endTime.minute)
 
   const startTimeInput = wrapper.find("[data-test='start-time-input']")
-  startTimeInput.setValue(`${formatNumber(startTime.hour)}:${formatNumber(startTime.minute)}`)
+  startTimeInput.setValue(startTime.toHhMmString())
 
   const endTimeInput = wrapper.find("[data-test='end-time-input']")
-  endTimeInput.setValue(`${formatNumber(endTime.hour)}:${formatNumber(endTime.minute)}`)
+  endTimeInput.setValue(endTime.toHhMmString())
 
   const addButton = wrapper.find("[data-test='add-button']")
   await addButton.trigger('click')

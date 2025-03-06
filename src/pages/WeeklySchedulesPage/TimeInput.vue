@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Time } from '../../domain/time'
-import { formatNumber } from '../../util'
 
 const { dataTest } = defineProps<{
   dataTest: string
@@ -13,7 +12,7 @@ const time = defineModel<Time>({
 
 const timeStr = computed({
   get: () => {
-    return formatNumber(time.value.hour) + ':' + formatNumber(time.value.minute)
+    return time.value.toHhMmString()
   },
   set: (value: string) => {
     const [hour, minute] = value.split(':').map(Number)

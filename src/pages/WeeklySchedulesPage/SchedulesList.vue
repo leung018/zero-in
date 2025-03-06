@@ -12,8 +12,8 @@ const emit = defineEmits<{
   remove: [indexToRemove: number]
 }>()
 
-const formatTime = (Time: Time) => {
-  return `${formatNumber(Time.hour)}:${formatNumber(Time.minute)}`
+const formatTime = (time: Time) => {
+  return time.toHhMmString()
 }
 </script>
 
