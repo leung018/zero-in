@@ -73,11 +73,9 @@ test('should able to persist blocked schedules and update ui', async ({ page, ex
   // Add a schedule
   await page.getByTestId('check-weekday-sun').check()
 
-  await page.getByTestId('start-time-hour-input').fill('10')
-  await page.getByTestId('start-time-minute-input').fill('00')
+  await page.getByTestId('start-time-input').fill('10:00')
 
-  await page.getByTestId('end-time-hour-input').fill('12')
-  await page.getByTestId('end-time-minute-input').fill('00')
+  await page.getByTestId('end-time-input').fill('12:00')
 
   await page.getByTestId('add-button').click()
 
