@@ -3,9 +3,11 @@ import { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/stora
 import { ref, onBeforeMount } from 'vue'
 import { formatNumber } from '../util'
 import { Time } from '../domain/time'
+import type { ReloadService } from '@/chrome/reload'
 
-const { dailyCutoffTimeStorageService } = defineProps<{
+const { dailyCutoffTimeStorageService, reloadService } = defineProps<{
   dailyCutoffTimeStorageService: DailyCutoffTimeStorageService
+  reloadService: ReloadService
 }>()
 const dailyCutoffTimeStr = ref<String>('')
 
@@ -19,7 +21,9 @@ onBeforeMount(() => {
 const onClickSave = async () => {
   const [hour, minute] = dailyCutoffTimeStr.value.split(':').map(Number)
   const newTime = new Time(hour, minute)
-  return dailyCutoffTimeStorageService.save(newTime)
+  return dailyCutoffTimeStorageService.save(newTime).then(() => {
+    reloadService.trigger()
+  })
 }
 </script>
 

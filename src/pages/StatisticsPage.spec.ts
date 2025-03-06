@@ -3,6 +3,7 @@ import { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/stora
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import StatisticsPage from './StatisticsPage.vue'
 import { Time } from '../domain/time'
+import { FakeActionService } from '../infra/action'
 
 describe('StatisticsPage', () => {
   it('should render saved daily cutoff time', async () => {
@@ -35,17 +36,29 @@ describe('StatisticsPage', () => {
 
     expect(await dailyCutoffTimeStorageService.get()).toEqual(new Time(9, 5))
   })
+
+  it('should reload page after clicked save', async () => {
+    const { wrapper, reloadService } = mountStatisticsPage()
+
+    expect(reloadService.getTriggerCount()).toBe(0)
+
+    await saveTime(wrapper, '15:05')
+
+    expect(reloadService.getTriggerCount()).toBe(1)
+  })
 })
 
 function mountStatisticsPage({
   dailyCutoffTimeStorageService = DailyCutoffTimeStorageService.createFake()
 } = {}) {
+  const reloadService = new FakeActionService()
   const wrapper = mount(StatisticsPage, {
     props: {
-      dailyCutoffTimeStorageService
+      dailyCutoffTimeStorageService,
+      reloadService
     }
   })
-  return { wrapper, dailyCutoffTimeStorageService }
+  return { wrapper, dailyCutoffTimeStorageService, reloadService }
 }
 
 async function saveTime(wrapper: VueWrapper, newTime: string) {
