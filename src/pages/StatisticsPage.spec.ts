@@ -17,6 +17,16 @@ describe('StatisticsPage', () => {
     const timerInput = wrapper.find("[data-test='timer-input']").element as HTMLInputElement
     expect(timerInput.value).toBe('10:30')
   })
+
+  it('should render 00:00 if it has not been saved before', async () => {
+    const { wrapper } = mountDailyCutoffTimePage({
+      dailyCutoffTimeStorageService: DailyCutoffTimeStorageService.createFake() // No saved time before
+    })
+    await flushPromises()
+
+    const timerInput = wrapper.find("[data-test='timer-input']").element as HTMLInputElement
+    expect(timerInput.value).toBe('00:00')
+  })
 })
 
 function mountDailyCutoffTimePage({

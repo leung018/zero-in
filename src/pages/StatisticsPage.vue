@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/storage'
 import { ref, onBeforeMount } from 'vue'
+import { formatNumber } from '../util'
 
 const { dailyCutoffTimeStorageService } = defineProps<{
   dailyCutoffTimeStorageService: DailyCutoffTimeStorageService
@@ -9,7 +10,8 @@ const dailyCutoffTimeStr = ref<String>('')
 
 onBeforeMount(() => {
   dailyCutoffTimeStorageService.get().then((dailyCutoffTime) => {
-    dailyCutoffTimeStr.value = dailyCutoffTime.hour + ':' + dailyCutoffTime.minute
+    dailyCutoffTimeStr.value =
+      formatNumber(dailyCutoffTime.hour) + ':' + formatNumber(dailyCutoffTime.minute)
   })
 })
 </script>
