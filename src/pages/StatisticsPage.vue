@@ -34,6 +34,8 @@ const onClickSave = async () => {
         data-test="timer-input"
       />
     </BFormGroup>
-    <BButton data-test="save-button" @click="onClickSave">Save</BButton>
+    <BButton variant="primary" class="mt-4" data-test="save-button" @click="onClickSave"
+      >Save</BButton
+    >
   </div>
 </template>
