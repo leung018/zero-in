@@ -1,7 +1,7 @@
 import { ChromeLocalStorageFactory } from '../../chrome/storage'
 import { FakeChromeLocalStorage, type StorageHandler } from '../../infra/storage'
 import { Weekday, WeeklySchedule } from '.'
-import { Time } from './time'
+import { Time } from '../time'
 
 export class WeeklyScheduleStorageService {
   static createFake(): WeeklyScheduleStorageService {

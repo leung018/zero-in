@@ -1,6 +1,6 @@
 import { ChromeLocalStorageFactory } from '../../chrome/storage'
 import { FakeChromeLocalStorage, type StorageHandler } from '../../infra/storage'
-import { Time } from '../schedules/time'
+import { Time } from '../time'
 
 export class DailyCutoffTimeStorageService {
   static create() {

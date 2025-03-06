@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Time, TimeInvalidInputError } from './time'
-import { assertToThrowError } from '../../test_utils/check_error'
+import { assertToThrowError } from '../test_utils/check_error'
 
 describe('Time', () => {
   it('should reject invalid time', () => {

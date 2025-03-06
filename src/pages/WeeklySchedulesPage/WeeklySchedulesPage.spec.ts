@@ -4,7 +4,7 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 
 import WeeklySchedulesPage from './index.vue'
 import { Weekday, WeeklySchedule } from '../../domain/schedules'
-import { Time } from '../../domain/schedules/time'
+import { Time } from '../../domain/time'
 import { FakeBrowsingControlService } from '../../domain/browsing_control'
 import { BrowsingRulesStorageService } from '../../domain/browsing_rules/storage'
 import { BrowsingRules } from '../../domain/browsing_rules'

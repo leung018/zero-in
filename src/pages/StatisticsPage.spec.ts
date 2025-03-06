@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/storage'
 import { flushPromises, mount } from '@vue/test-utils'
 import StatisticsPage from './StatisticsPage.vue'
-import { Time } from '../domain/schedules/time'
+import { Time } from '../domain/time'
 
 describe('StatisticsPage', () => {
   it('should render saved daily refresh time', async () => {
