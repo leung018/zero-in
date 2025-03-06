@@ -1,13 +1,46 @@
+import { FakeChromeLocalStorage, type StorageHandler } from '../../infra/storage'
 import { Time } from '../schedules/time'
 
 export class DailyCutoffTimeStorageService {
   static createFake() {
-    return new DailyCutoffTimeStorageService()
+    return new DailyCutoffTimeStorageService(new FakeChromeLocalStorage())
   }
 
-  async save(dailyCutoffTime: Time) {}
+  private storageHandler: StorageHandler
+
+  private constructor(storageHandler: StorageHandler) {
+    this.storageHandler = storageHandler
+  }
+
+  async save(dailyCutoffTime: Time) {
+    return this.storageHandler.set({
+      dailyCutoffTime: serializeTime(dailyCutoffTime)
+    })
+  }
 
   async get(): Promise<Time> {
-    return new Time(10, 30)
+    return this.storageHandler.get('dailyCutoffTime').then((result) => {
+      if (result.dailyCutoffTime) {
+        return deserializeTime(result.dailyCutoffTime)
+      }
+
+      return new Time(0, 0)
+    })
   }
+}
+
+type SerializedTime = {
+  hour: number
+  minute: number
+}
+
+function serializeTime(time: Time): SerializedTime {
+  return {
+    hour: time.hour,
+    minute: time.minute
+  }
+}
+
+function deserializeTime(data: SerializedTime): Time {
+  return new Time(data.hour, data.minute)
 }
