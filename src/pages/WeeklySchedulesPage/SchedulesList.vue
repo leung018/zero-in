@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Time } from '../../domain/time'
-import { formatNumber } from '../../util'
 import { Weekday, WeeklySchedule } from '../../domain/schedules'
 import { capitalized } from '../../util'
 
