@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { DailyCutoffTimeStorageService } from '../domain/statistics/daily_cutoff_time'
+import { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/storage'
 import { flushPromises, mount } from '@vue/test-utils'
 import StatisticsPage from './StatisticsPage.vue'
 import { Time } from '../domain/schedules/time'

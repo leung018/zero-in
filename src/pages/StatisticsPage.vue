@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DailyCutoffTimeStorageService } from '../domain/statistics/daily_cutoff_time'
+import { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/storage'
 import { ref, onBeforeMount } from 'vue'
 
 const { dailyCutoffTimeStorageService } = defineProps<{
