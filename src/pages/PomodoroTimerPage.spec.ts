@@ -23,7 +23,7 @@ describe('PomodoroTimerPage', () => {
   it('should reduce the time after timer is started', async () => {
     const { wrapper, scheduler } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
-        focusDuration: new Duration({ minutes: 9 })
+        focusDuration: new Duration({ minutes: 25 })
       })
     )
     await startTimer(wrapper)
@@ -31,7 +31,7 @@ describe('PomodoroTimerPage', () => {
     scheduler.advanceTime(2001)
     await flushPromises()
 
-    expect(wrapper.find("[data-test='timer-display']").text()).toBe('08:58')
+    expect(wrapper.find("[data-test='timer-display']").text()).toBe('24:58')
   })
 
   it('should reopened timer page can update the component if the timer is started already', async () => {
