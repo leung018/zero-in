@@ -329,7 +329,7 @@ async function restartLongBreak(wrapper: VueWrapper) {
   await flushPromises()
 }
 
-async function assertCurrentStage(wrapper: VueWrapper, stage: string) {
+function assertCurrentStage(wrapper: VueWrapper, stage: string) {
   const pomodoroStage = wrapper.find("[data-test='current-stage']")
   expect(pomodoroStage.text()).toBe(stage)
 }
