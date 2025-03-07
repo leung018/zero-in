@@ -10,6 +10,8 @@ declare module 'vue' {
     BButton: typeof import('bootstrap-vue-next/components/BButton')['BButton']
     BCol: typeof import('bootstrap-vue-next/components/BContainer')['BCol']
     BCollapse: typeof import('bootstrap-vue-next/components/BCollapse')['BCollapse']
+    BFormCheckbox: typeof import('bootstrap-vue-next/components/BFormCheckbox')['BFormCheckbox']
+    BFormCheckboxGroup: typeof import('bootstrap-vue-next/components/BFormCheckbox')['BFormCheckboxGroup']
     BFormGroup: typeof import('bootstrap-vue-next/components/BFormGroup')['BFormGroup']
     BFormInput: typeof import('bootstrap-vue-next/components/BFormInput')['BFormInput']
     BRow: typeof import('bootstrap-vue-next/components/BContainer')['BRow']
