@@ -294,17 +294,17 @@ async function addWeeklySchedule(
     await weekdayCheckbox.setValue(true)
   }
 
-  const startTimeHourInput = wrapper.find("[data-test='start-time-hour-input']")
-  await startTimeHourInput.setValue(weeklyScheduleInput.startTime.hour)
+  const startTime = new Time(
+    weeklyScheduleInput.startTime.hour,
+    weeklyScheduleInput.startTime.minute
+  )
+  const endTime = new Time(weeklyScheduleInput.endTime.hour, weeklyScheduleInput.endTime.minute)
 
-  const startTimeMinuteInput = wrapper.find("[data-test='start-time-minute-input']")
-  await startTimeMinuteInput.setValue(weeklyScheduleInput.startTime.minute)
+  const startTimeInput = wrapper.find("[data-test='start-time-input']")
+  startTimeInput.setValue(startTime.toHhMmString())
 
-  const endTimeHourInput = wrapper.find("[data-test='end-time-hour-input']")
-  await endTimeHourInput.setValue(weeklyScheduleInput.endTime.hour)
-
-  const endTimeMinuteInput = wrapper.find("[data-test='end-time-minute-input']")
-  await endTimeMinuteInput.setValue(weeklyScheduleInput.endTime.minute)
+  const endTimeInput = wrapper.find("[data-test='end-time-input']")
+  endTimeInput.setValue(endTime.toHhMmString())
 
   const addButton = wrapper.find("[data-test='add-button']")
   await addButton.trigger('click')
@@ -312,19 +312,13 @@ async function addWeeklySchedule(
 }
 
 function assertAllInputsAreNotSet(wrapper: VueWrapper) {
-  const startTimeHourInputElement = wrapper.find("[data-test='start-time-hour-input']")
+  const startTimeInputElement = wrapper.find("[data-test='start-time-input']")
     .element as HTMLInputElement
-  const startTimeMinuteInputElement = wrapper.find("[data-test='start-time-minute-input']")
-    .element as HTMLInputElement
-  const endTimeHourInputElement = wrapper.find("[data-test='end-time-hour-input']")
-    .element as HTMLInputElement
-  const endTimeMinuteInputElement = wrapper.find("[data-test='end-time-minute-input']")
+  const endTimeInputElement = wrapper.find("[data-test='end-time-input']")
     .element as HTMLInputElement
 
-  expect(startTimeHourInputElement.value).toBe('0')
-  expect(startTimeMinuteInputElement.value).toBe('0')
-  expect(endTimeHourInputElement.value).toBe('0')
-  expect(endTimeMinuteInputElement.value).toBe('0')
+  expect(startTimeInputElement.value).toBe('00:00')
+  expect(endTimeInputElement.value).toBe('00:00')
 
   const weekdayCheckboxes = wrapper.findAll("[data-test^='check-weekday-']")
   for (const weekdayCheckbox of weekdayCheckboxes) {

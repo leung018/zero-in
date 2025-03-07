@@ -73,11 +73,9 @@ test('should able to persist blocked schedules and update ui', async ({ page, ex
   // Add a schedule
   await page.getByTestId('check-weekday-sun').check()
 
-  await page.getByTestId('start-time-hour-input').fill('10')
-  await page.getByTestId('start-time-minute-input').fill('00')
+  await page.getByTestId('start-time-input').fill('10:00')
 
-  await page.getByTestId('end-time-hour-input').fill('12')
-  await page.getByTestId('end-time-minute-input').fill('00')
+  await page.getByTestId('end-time-input').fill('12:00')
 
   await page.getByTestId('add-button').click()
 
@@ -130,11 +128,9 @@ test('should able to disable blocking according to schedule', async ({ page, ext
 
   await page.getByTestId('check-weekday-mon').check()
 
-  await page.getByTestId('start-time-hour-input').fill(startHours.toString())
-  await page.getByTestId('start-time-minute-input').fill('00')
+  await page.getByTestId('start-time-input').fill(`${formatNumber(startHours)}:00`)
 
-  await page.getByTestId('end-time-hour-input').fill(endHours.toString())
-  await page.getByTestId('end-time-minute-input').fill('00')
+  await page.getByTestId('end-time-input').fill(`${formatNumber(endHours)}:00`)
 
   await page.getByTestId('add-button').click()
 
@@ -169,15 +165,15 @@ test('should close reminder page after clicking start button', async ({ page, ex
 test('should able to save daily cutoff time', async ({ page, extensionId }) => {
   await goToStatisticsPage(page, extensionId)
 
-  await page.getByTestId('timer-input').fill('10:30')
+  await page.getByTestId('time-input').fill('10:30')
 
   await page.getByTestId('save-button').click()
 
-  await expect(page.getByTestId('timer-input')).toHaveValue('10:30')
+  await expect(page.getByTestId('time-input')).toHaveValue('10:30')
 
   await page.reload()
 
-  await expect(page.getByTestId('timer-input')).toHaveValue('10:30')
+  await expect(page.getByTestId('time-input')).toHaveValue('10:30')
 })
 
 async function goToBlockedDomainsPage(page: Page, extensionId: string) {
@@ -259,4 +255,9 @@ async function goToReminderPage(page: Page, extensionId: string) {
 
 async function goToStatisticsPage(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/options.html`)
+}
+
+// TODO: copy from src/util.ts and find way to share the code between e2e and src, so that we can avoid duplication
+function formatNumber(num: number, minDigits: number = 2): string {
+  return num.toLocaleString(undefined, { minimumIntegerDigits: minDigits })
 }

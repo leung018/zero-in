@@ -3,7 +3,7 @@ import { onBeforeMount, ref } from 'vue'
 import { Weekday, WeeklySchedule } from '../../domain/schedules'
 import type { WeeklyScheduleStorageService } from '../../domain/schedules/storage'
 import { Time } from '../../domain/time'
-import TimeInput from './TimeInput.vue'
+import TimeInput from '../components/TimeInput.vue'
 import WeekdaysSelector from './WeekdaysSelector.vue'
 import SchedulesList from './SchedulesList.vue'
 import { WorkRequestName } from '../../service_workers/request'
@@ -74,22 +74,12 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
 
         <div class="form-group">
           <label>Start Time:</label>
-          <TimeInput
-            class="d-flex"
-            v-model="newStartTime"
-            hour-input-data-test="start-time-hour-input"
-            minute-input-data-test="start-time-minute-input"
-          />
+          <TimeInput class="d-flex" v-model="newStartTime" data-test="start-time-input" />
         </div>
 
         <div class="form-group">
           <label>End Time:</label>
-          <TimeInput
-            class="d-flex"
-            v-model="newEndTime"
-            hour-input-data-test="end-time-hour-input"
-            minute-input-data-test="end-time-minute-input"
-          />
+          <TimeInput class="d-flex" v-model="newEndTime" data-test="end-time-input" />
         </div>
       </div>
       <button type="button" class="btn btn-primary" data-test="add-button" @click="onClickAdd">

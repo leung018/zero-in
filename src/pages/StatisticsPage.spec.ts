@@ -15,7 +15,7 @@ describe('StatisticsPage', () => {
     })
     await flushPromises()
 
-    const timerInput = wrapper.find("[data-test='timer-input']").element as HTMLInputElement
+    const timerInput = wrapper.find("[data-test='time-input']").element as HTMLInputElement
     expect(timerInput.value).toBe('10:30')
   })
 
@@ -25,7 +25,7 @@ describe('StatisticsPage', () => {
     })
     await flushPromises()
 
-    const timerInput = wrapper.find("[data-test='timer-input']").element as HTMLInputElement
+    const timerInput = wrapper.find("[data-test='time-input']").element as HTMLInputElement
     expect(timerInput.value).toBe('00:00')
   })
 
@@ -62,7 +62,7 @@ function mountStatisticsPage({
 }
 
 async function saveTime(wrapper: VueWrapper, newTime: string) {
-  const timerInput = wrapper.find("[data-test='timer-input']")
+  const timerInput = wrapper.find("[data-test='time-input']")
   timerInput.setValue(newTime)
 
   const saveButton = wrapper.find("[data-test='save-button']")

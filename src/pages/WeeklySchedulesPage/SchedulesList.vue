@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Time } from '../../domain/time'
-import { formatNumber } from '../../util'
 import { Weekday, WeeklySchedule } from '../../domain/schedules'
 import { capitalized } from '../../util'
 
@@ -12,8 +11,8 @@ const emit = defineEmits<{
   remove: [indexToRemove: number]
 }>()
 
-const formatTime = (Time: Time) => {
-  return `${formatNumber(Time.hour)}:${formatNumber(Time.minute)}`
+const formatTime = (time: Time) => {
+  return time.toHhMmString()
 }
 </script>
 
