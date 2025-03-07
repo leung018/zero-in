@@ -5,7 +5,6 @@ import { Duration } from '../domain/pomodoro/duration'
 import { FakeCommunicationManager } from '../infra/communication'
 import { startBackgroundListener } from '../test_utils/listener'
 import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
-import { PomodoroStage } from '../domain/pomodoro/stage'
 
 describe('PomodoroTimerPage', () => {
   it('should display initial stage and remaining time properly', () => {
@@ -15,8 +14,7 @@ describe('PomodoroTimerPage', () => {
       })
     )
 
-    const timerDisplay = wrapper.find("[data-test='timer-display']")
-    expect(timerDisplay.text()).toBe('09:00')
+    assertTimerDisplay(wrapper, '09:00')
 
     assertCurrentStage(wrapper, '1st Focus')
   })
@@ -24,15 +22,15 @@ describe('PomodoroTimerPage', () => {
   it('should reduce the time after timer is started', async () => {
     const { wrapper, scheduler } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
-        focusDuration: new Duration({ minutes: 9 })
+        focusDuration: new Duration({ minutes: 25 })
       })
     )
     await startTimer(wrapper)
 
-    scheduler.advanceTime(6001)
+    scheduler.advanceTime(2001)
     await flushPromises()
 
-    expect(wrapper.find("[data-test='timer-display']").text()).toBe('08:54')
+    assertTimerDisplay(wrapper, '24:58')
   })
 
   it('should reopened timer page can update the component if the timer is started already', async () => {
@@ -46,10 +44,10 @@ describe('PomodoroTimerPage', () => {
 
     const newWrapper = mountPage({ port: communicationManager.clientConnect() })
 
-    scheduler.advanceTime(6001)
+    scheduler.advanceTime(1001)
     await flushPromises()
 
-    expect(newWrapper.find("[data-test='timer-display']").text()).toBe('09:54')
+    assertTimerDisplay(newWrapper, '09:59')
   })
 
   it('should start button changed to a pause button after timer is started', async () => {
@@ -84,16 +82,16 @@ describe('PomodoroTimerPage', () => {
 
     await startTimer(wrapper)
 
-    scheduler.advanceTime(30500)
+    scheduler.advanceTime(1000)
     await pauseTimer(wrapper)
 
-    scheduler.advanceTime(5000)
+    scheduler.advanceTime(2000)
     await flushPromises()
 
-    expect(wrapper.find("[data-test='timer-display']").text()).toBe('09:30')
+    assertTimerDisplay(wrapper, '09:59')
 
     const newWrapper = mountPage({ port: communicationManager.clientConnect() })
-    expect(newWrapper.find("[data-test='timer-display']").text()).toBe('09:30')
+    assertTimerDisplay(newWrapper, '09:59')
   })
 
   it('should show the start button again after the timer is paused', async () => {
@@ -123,33 +121,33 @@ describe('PomodoroTimerPage', () => {
 
     await startTimer(wrapper)
 
-    scheduler.advanceTime(30000)
+    scheduler.advanceTime(500)
     await pauseTimer(wrapper)
 
     await startTimer(wrapper)
-    scheduler.advanceTime(30000)
+    scheduler.advanceTime(500)
     await flushPromises()
 
-    expect(wrapper.find("[data-test='timer-display']").text()).toBe('09:00')
+    assertTimerDisplay(wrapper, '09:59')
   })
 
   it('should display hint of break if focus duration has passed', async () => {
     const { wrapper, scheduler } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
-        focusDuration: new Duration({ minutes: 1 }),
-        shortBreakDuration: new Duration({ seconds: 30 }),
+        focusDuration: new Duration({ seconds: 2 }),
+        shortBreakDuration: new Duration({ seconds: 1 }),
         numOfFocusPerCycle: 4
       })
     )
 
     await startTimer(wrapper)
 
-    scheduler.advanceTime(61000)
+    scheduler.advanceTime(2000)
     await flushPromises()
 
     assertCurrentStage(wrapper, '1st Short Break')
 
-    expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
+    expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:01')
 
     assertControlVisibility(wrapper, {
       startButtonVisible: true,
@@ -160,52 +158,52 @@ describe('PomodoroTimerPage', () => {
   it('should prevent bug of last second pause and restart may freezing the component', async () => {
     const { wrapper, scheduler } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
-        focusDuration: new Duration({ minutes: 1 }),
-        shortBreakDuration: new Duration({ seconds: 30 })
+        focusDuration: new Duration({ seconds: 3 }),
+        shortBreakDuration: new Duration({ seconds: 2 })
       })
     )
 
     await startTimer(wrapper)
 
-    scheduler.advanceTime(59500)
+    scheduler.advanceTime(2500)
     await pauseTimer(wrapper)
 
-    expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:01')
+    assertTimerDisplay(wrapper, '00:01')
 
     await startTimer(wrapper)
     scheduler.advanceTime(600)
     await flushPromises()
 
-    expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
+    assertTimerDisplay(wrapper, '00:02')
   })
 
   it('should display hint of long break', async () => {
     const { wrapper, scheduler } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
-        focusDuration: new Duration({ minutes: 1 }),
-        shortBreakDuration: new Duration({ seconds: 15 }),
-        longBreakDuration: new Duration({ seconds: 30 }),
+        focusDuration: new Duration({ seconds: 3 }),
+        shortBreakDuration: new Duration({ seconds: 1 }),
+        longBreakDuration: new Duration({ seconds: 2 }),
         numOfFocusPerCycle: 2
       })
     )
 
     // 1st Focus
     await startTimer(wrapper)
-    scheduler.advanceTime(60000)
+    scheduler.advanceTime(3000)
     await flushPromises()
 
     // Short Break
     await startTimer(wrapper)
-    scheduler.advanceTime(15000)
+    scheduler.advanceTime(1000)
     await flushPromises()
 
     // 2nd Focus
     await startTimer(wrapper)
-    scheduler.advanceTime(60000)
+    scheduler.advanceTime(3000)
     await flushPromises()
 
     assertCurrentStage(wrapper, 'Long Break')
-    expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:30')
+    assertTimerDisplay(wrapper, '00:02')
   })
 
   it('should render restart focus and short break buttons properly', async () => {
@@ -232,73 +230,60 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should able to restart the focus', async () => {
-    const { wrapper, timer } = startListenerAndMountPage(
+    const { wrapper } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         numOfFocusPerCycle: 3
       })
     )
 
     await restartFocus(wrapper, 2)
-
-    expect(timer.getState().numOfFocusCompleted).toBe(1)
-    expect(timer.getState().stage).toBe(PomodoroStage.FOCUS)
+    assertCurrentStage(wrapper, '2nd Focus')
 
     await restartFocus(wrapper, 3)
-
-    expect(timer.getState().numOfFocusCompleted).toBe(2)
-    expect(timer.getState().stage).toBe(PomodoroStage.FOCUS)
+    assertCurrentStage(wrapper, '3rd Focus')
 
     await restartFocus(wrapper, 1)
-
-    expect(timer.getState().numOfFocusCompleted).toBe(0)
-    expect(timer.getState().stage).toBe(PomodoroStage.FOCUS)
+    assertCurrentStage(wrapper, '1st Focus')
   })
 
   it('should able to restart the short break', async () => {
-    const { wrapper, timer } = startListenerAndMountPage(
+    const { wrapper } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         numOfFocusPerCycle: 4
       })
     )
 
     await restartShortBreak(wrapper, 1)
-
-    expect(timer.getState().numOfFocusCompleted).toBe(1)
-    expect(timer.getState().stage).toBe(PomodoroStage.SHORT_BREAK)
+    assertCurrentStage(wrapper, '1st Short Break')
 
     await restartShortBreak(wrapper, 2)
-
-    expect(timer.getState().numOfFocusCompleted).toBe(2)
-    expect(timer.getState().stage).toBe(PomodoroStage.SHORT_BREAK)
+    assertCurrentStage(wrapper, '2nd Short Break')
 
     await restartShortBreak(wrapper, 3)
-
-    expect(timer.getState().numOfFocusCompleted).toBe(3)
-    expect(timer.getState().stage).toBe(PomodoroStage.SHORT_BREAK)
+    assertCurrentStage(wrapper, '3rd Short Break')
   })
 
   it('should able to restart long break', async () => {
-    const { wrapper, timer } = startListenerAndMountPage(
+    const { wrapper } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         numOfFocusPerCycle: 4
       })
     )
 
     await restartLongBreak(wrapper)
-
-    expect(timer.getState().stage).toBe(PomodoroStage.LONG_BREAK)
+    assertCurrentStage(wrapper, 'Long Break')
   })
 })
 
 function startListenerAndMountPage(timerConfig = newTestPomodoroTimerConfig()) {
-  const { scheduler, communicationManager, timer } = startBackgroundListener({
+  const { scheduler, communicationManager } = startBackgroundListener({
     timerConfig
   })
   const wrapper = mountPage({
     port: communicationManager.clientConnect(),
     numOfFocusPerCycle: timerConfig.numOfFocusPerCycle
   })
-  return { wrapper, scheduler, communicationManager, timer }
+  return { wrapper, scheduler, communicationManager }
 }
 
 function mountPage({
@@ -343,7 +328,12 @@ async function restartLongBreak(wrapper: VueWrapper) {
   await flushPromises()
 }
 
-async function assertCurrentStage(wrapper: VueWrapper, stage: string) {
+function assertTimerDisplay(wrapper: VueWrapper, time: string) {
+  const timerDisplay = wrapper.find("[data-test='timer-display']")
+  expect(timerDisplay.text()).toBe(time)
+}
+
+function assertCurrentStage(wrapper: VueWrapper, stage: string) {
   const pomodoroStage = wrapper.find("[data-test='current-stage']")
   expect(pomodoroStage.text()).toBe(stage)
 }
