@@ -232,73 +232,60 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should able to restart the focus', async () => {
-    const { wrapper, timer } = startListenerAndMountPage(
+    const { wrapper } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         numOfFocusPerCycle: 3
       })
     )
 
     await restartFocus(wrapper, 2)
-
-    expect(timer.getState().numOfFocusCompleted).toBe(1)
-    expect(timer.getState().stage).toBe(PomodoroStage.FOCUS)
+    assertCurrentStage(wrapper, '2nd Focus')
 
     await restartFocus(wrapper, 3)
-
-    expect(timer.getState().numOfFocusCompleted).toBe(2)
-    expect(timer.getState().stage).toBe(PomodoroStage.FOCUS)
+    assertCurrentStage(wrapper, '3rd Focus')
 
     await restartFocus(wrapper, 1)
-
-    expect(timer.getState().numOfFocusCompleted).toBe(0)
-    expect(timer.getState().stage).toBe(PomodoroStage.FOCUS)
+    assertCurrentStage(wrapper, '1st Focus')
   })
 
   it('should able to restart the short break', async () => {
-    const { wrapper, timer } = startListenerAndMountPage(
+    const { wrapper } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         numOfFocusPerCycle: 4
       })
     )
 
     await restartShortBreak(wrapper, 1)
-
-    expect(timer.getState().numOfFocusCompleted).toBe(1)
-    expect(timer.getState().stage).toBe(PomodoroStage.SHORT_BREAK)
+    assertCurrentStage(wrapper, '1st Short Break')
 
     await restartShortBreak(wrapper, 2)
-
-    expect(timer.getState().numOfFocusCompleted).toBe(2)
-    expect(timer.getState().stage).toBe(PomodoroStage.SHORT_BREAK)
+    assertCurrentStage(wrapper, '2nd Short Break')
 
     await restartShortBreak(wrapper, 3)
-
-    expect(timer.getState().numOfFocusCompleted).toBe(3)
-    expect(timer.getState().stage).toBe(PomodoroStage.SHORT_BREAK)
+    assertCurrentStage(wrapper, '3rd Short Break')
   })
 
   it('should able to restart long break', async () => {
-    const { wrapper, timer } = startListenerAndMountPage(
+    const { wrapper } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         numOfFocusPerCycle: 4
       })
     )
 
     await restartLongBreak(wrapper)
-
-    expect(timer.getState().stage).toBe(PomodoroStage.LONG_BREAK)
+    assertCurrentStage(wrapper, 'Long Break')
   })
 })
 
 function startListenerAndMountPage(timerConfig = newTestPomodoroTimerConfig()) {
-  const { scheduler, communicationManager, timer } = startBackgroundListener({
+  const { scheduler, communicationManager } = startBackgroundListener({
     timerConfig
   })
   const wrapper = mountPage({
     port: communicationManager.clientConnect(),
     numOfFocusPerCycle: timerConfig.numOfFocusPerCycle
   })
-  return { wrapper, scheduler, communicationManager, timer }
+  return { wrapper, scheduler, communicationManager }
 }
 
 function mountPage({
