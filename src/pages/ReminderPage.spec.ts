@@ -10,26 +10,26 @@ import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
     const { scheduler, timer, wrapper } = mountPage({
-      focusDuration: new Duration({ minutes: 1 }),
-      shortBreakDuration: new Duration({ seconds: 15 }),
-      longBreakDuration: new Duration({ seconds: 30 }),
+      focusDuration: new Duration({ seconds: 3 }),
+      shortBreakDuration: new Duration({ seconds: 1 }),
+      longBreakDuration: new Duration({ seconds: 2 }),
       numOfFocusPerCycle: 2
     })
 
     timer.start()
-    scheduler.advanceTime(60001)
+    scheduler.advanceTime(3001)
     await flushPromises()
 
     expect(wrapper.find("[data-test='hint-message']").text()).toContain('Take a break')
 
     timer.start()
-    scheduler.advanceTime(15001)
+    scheduler.advanceTime(1001)
     await flushPromises()
 
     expect(wrapper.find("[data-test='hint-message']").text()).toContain('Start focusing')
 
     timer.start()
-    scheduler.advanceTime(60001)
+    scheduler.advanceTime(3001)
     await flushPromises()
 
     expect(wrapper.find("[data-test='hint-message']").text()).toContain('Take a longer break')
@@ -38,14 +38,14 @@ describe('ReminderPage', () => {
   it('should click start button to start timer again', async () => {
     const { scheduler, timer, wrapper } = mountPage(
       newTestPomodoroTimerConfig({
-        focusDuration: new Duration({ minutes: 1 }),
-        shortBreakDuration: new Duration({ seconds: 30 }),
+        focusDuration: new Duration({ seconds: 3 }),
+        shortBreakDuration: new Duration({ seconds: 2 }),
         numOfFocusPerCycle: 4
       })
     )
 
     timer.start()
-    scheduler.advanceTime(60001)
+    scheduler.advanceTime(3001)
     await flushPromises()
 
     expect(timer.getState().isRunning).toBe(false)
@@ -55,7 +55,7 @@ describe('ReminderPage', () => {
     await flushPromises()
 
     const state = timer.getState()
-    expect(state.remaining).toEqual(new Duration({ seconds: 29 }))
+    expect(state.remaining).toEqual(new Duration({ seconds: 1 }))
     expect(state.isRunning).toBe(true)
     expect(state.stage).toBe(PomodoroStage.SHORT_BREAK)
   })

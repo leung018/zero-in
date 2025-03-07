@@ -75,12 +75,12 @@ describe('BackgroundListener', () => {
   it('should remove badge when the timer is finished', () => {
     const { badgeDisplayService, scheduler, clientPort } = startListener(
       newTestPomodoroTimerConfig({
-        focusDuration: new Duration({ seconds: 5 })
+        focusDuration: new Duration({ seconds: 1 })
       })
     )
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
-    scheduler.advanceTime(5000)
+    scheduler.advanceTime(1000)
 
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
@@ -88,7 +88,7 @@ describe('BackgroundListener', () => {
   it('should display short break badge properly', async () => {
     const { badgeDisplayService, scheduler, clientPort } = startListener(
       newTestPomodoroTimerConfig({
-        focusDuration: new Duration({ seconds: 5 }),
+        focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ minutes: 2 }),
         longBreakDuration: new Duration({ minutes: 4 }),
         numOfFocusPerCycle: 2
@@ -96,7 +96,7 @@ describe('BackgroundListener', () => {
     )
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
-    scheduler.advanceTime(5000)
+    scheduler.advanceTime(3000)
 
     // start short break
     clientPort.send({ name: WorkRequestName.START_TIMER })
@@ -110,7 +110,7 @@ describe('BackgroundListener', () => {
   it('should display long break badge properly', async () => {
     const { badgeDisplayService, scheduler, clientPort } = startListener(
       newTestPomodoroTimerConfig({
-        focusDuration: new Duration({ seconds: 5 }),
+        focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ minutes: 2 }),
         longBreakDuration: new Duration({ minutes: 4 }),
         numOfFocusPerCycle: 1
@@ -118,7 +118,7 @@ describe('BackgroundListener', () => {
     )
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
-    scheduler.advanceTime(5000)
+    scheduler.advanceTime(3000)
 
     // start long break
     clientPort.send({ name: WorkRequestName.START_TIMER })
@@ -132,12 +132,12 @@ describe('BackgroundListener', () => {
   it('should trigger reminderService when time is up', () => {
     const { reminderService, scheduler, clientPort } = startListener(
       newTestPomodoroTimerConfig({
-        focusDuration: new Duration({ seconds: 5 })
+        focusDuration: new Duration({ seconds: 3 })
       })
     )
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
-    scheduler.advanceTime(5000)
+    scheduler.advanceTime(3000)
 
     expect(reminderService.getTriggerCount()).toBe(1)
   })
