@@ -21,5 +21,25 @@ export default defineConfig({
       compiler: 'vue3',
       autoInstall: true
     })
-  ]
+  ],
+  build: {
+    rollupOptions: {
+      output: {
+        sanitizeFileName(name) {
+          // Below is copied from https://github.com/rollup/rollup/blob/master/src/utils/sanitizeFileName.ts
+          // with the only modification changing the replacement character from '_' to '-'.
+          // Because Chrome doesn't allow '_' in the file name
+
+          // eslint-disable-next-line no-control-regex
+          const INVALID_CHAR_REGEX = /[\u0000-\u001F"#$%&*+,:;<=>?[\]^`{|}\u007F]/g
+          const DRIVE_LETTER_REGEX = /^[a-z]:/i
+
+          const match = DRIVE_LETTER_REGEX.exec(name)
+          const driveLetter = match ? match[0] : ''
+
+          return driveLetter + name.slice(driveLetter.length).replace(INVALID_CHAR_REGEX, '-')
+        }
+      }
+    }
+  }
 })

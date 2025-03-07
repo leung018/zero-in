@@ -6,10 +6,10 @@
   "scripts": {
     "dev": "yarn build-manifest && vite",
     "build-manifest": "node manifest.js",
-    "build": "yarn build-manifest && run-p type-check \"build-only {@}\" --",
+    "build": "run-p type-check \"build-only {@}\" --",
     "test:unit": "vitest",
     "test:e2e": "playwright test",
-    "build-only": "yarn build-manifest && vite build",
+    "build-only": "rm -rf dist && yarn build-manifest && vite build",
     "build-and-e2e": "yarn build-only && yarn test:e2e",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
