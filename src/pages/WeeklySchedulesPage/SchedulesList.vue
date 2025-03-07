@@ -33,13 +33,13 @@ const formatTime = (time: Time) => {
         <br />
         {{ formatTime(schedule.startTime) }} - {{ formatTime(schedule.endTime) }}
       </div>
-      <button
-        class="btn text-danger bg-transparent border-0"
+      <BButton
+        class="bg-transparent text-danger border-0"
         :data-test="`remove-schedule-with-index-${index}`"
         @click="emit('remove', index)"
       >
         X
-      </button>
+      </BButton>
     </li>
   </ul>
 </template>

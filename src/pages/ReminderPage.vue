@@ -46,7 +46,7 @@ const onClickStart = () => {
     <div class="alert alert-info">
       Time's up! <br /><span class="hint-message" data-test="hint-message">{{ hintMsg }}.</span>
     </div>
-    <button class="btn btn-success" data-test="start-button" @click="onClickStart">Start</button>
+    <BButton variant="success" data-test="start-button" @click="onClickStart">Start</BButton>
   </div>
 </template>
 
