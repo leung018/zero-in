@@ -6,7 +6,6 @@ import type { Port } from '@/infra/communication'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 import { type PomodoroTimerResponse } from '../service_workers/response'
 import { PomodoroStage } from '../domain/pomodoro/stage'
-import { BButton, BCol, BCollapse, BRow } from 'bootstrap-vue-next'
 
 const { port } = defineProps<{
   port: Port<WorkRequest, PomodoroTimerResponse>
