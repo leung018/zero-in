@@ -14,6 +14,8 @@ declare module 'vue' {
     BFormCheckboxGroup: typeof import('bootstrap-vue-next/components/BFormCheckbox')['BFormCheckboxGroup']
     BFormGroup: typeof import('bootstrap-vue-next/components/BFormGroup')['BFormGroup']
     BFormInput: typeof import('bootstrap-vue-next/components/BFormInput')['BFormInput']
+    BNav: typeof import('bootstrap-vue-next/components/BNav')['BNav']
+    BNavItem: typeof import('bootstrap-vue-next/components/BNav')['BNavItem']
     BRow: typeof import('bootstrap-vue-next/components/BContainer')['BRow']
   }
   export interface ComponentCustomProperties {

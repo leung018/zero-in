@@ -4,6 +4,7 @@ import type { BrowsingRulesStorageService } from '@/domain/browsing_rules/storag
 import { BrowsingRules } from '../domain/browsing_rules'
 import { WorkRequestName } from '../service_workers/request'
 import type { Port } from '../infra/communication'
+import ContentTemplate from './components/ContentTemplate.vue'
 
 const { browsingRulesStorageService, port } = defineProps<{
   port: Port
@@ -43,8 +44,7 @@ async function updateBrowsingRules(browsingRules: BrowsingRules) {
 </script>
 
 <template>
-  <div class="container mt-4" style="max-width: 400px">
-    <h1 class="mb-4">Blocked Domains</h1>
+  <ContentTemplate title="Blocked Domains">
     <form class="mb-4">
       <div class="mb-3">
         <input
@@ -76,5 +76,5 @@ async function updateBrowsingRules(browsingRules: BrowsingRules) {
         </BButton>
       </li>
     </ul>
-  </div>
+  </ContentTemplate>
 </template>

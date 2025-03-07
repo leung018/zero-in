@@ -8,6 +8,7 @@ import WeekdaysSelector from './WeekdaysSelector.vue'
 import SchedulesList from './SchedulesList.vue'
 import { WorkRequestName } from '../../service_workers/request'
 import type { Port } from '../../infra/communication'
+import ContentTemplate from '../components/ContentTemplate.vue'
 
 const { weeklyScheduleStorageService, port } = defineProps<{
   weeklyScheduleStorageService: WeeklyScheduleStorageService
@@ -63,8 +64,7 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
 </script>
 
 <template>
-  <div class="container">
-    <h1 class="mb-4 mt-4">Schedules</h1>
+  <ContentTemplate title="Schedules">
     <form>
       <div class="mb-4">
         <div class="form-group">
@@ -91,5 +91,5 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
       <h3>Saved</h3>
       <SchedulesList :weeklySchedules="weeklySchedules" @remove="handleRemove" />
     </div>
-  </div>
+  </ContentTemplate>
 </template>
