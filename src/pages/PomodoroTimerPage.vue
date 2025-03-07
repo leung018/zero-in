@@ -6,7 +6,6 @@ import type { Port } from '@/infra/communication'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 import { type PomodoroTimerResponse } from '../service_workers/response'
 import { PomodoroStage } from '../domain/pomodoro/stage'
-import { BButton, BCol, BCollapse, BRow } from 'bootstrap-vue-next'
 
 const { port } = defineProps<{
   port: Port<WorkRequest, PomodoroTimerResponse>
@@ -89,17 +88,18 @@ const onClickRestartLongBreak = () => {
   <div class="container text-center mt-3 mb-3">
     <h1 class="mb-4" data-test="current-stage">{{ currentStage }}</h1>
     <div class="display-1" data-test="timer-display">{{ displayTime }}</div>
-    <button
+    <BButton
       v-if="isRunning"
-      class="btn btn-warning mt-3"
+      class="mt-3"
+      variant="warning"
       data-test="pause-button"
       @click="onClickPause"
     >
       Pause
-    </button>
-    <button v-else class="btn btn-success mt-3" data-test="start-button" @click="onClickStart">
+    </BButton>
+    <BButton v-else variant="success" class="mt-3" data-test="start-button" @click="onClickStart">
       Start
-    </button>
+    </BButton>
     <div class="mt-4">
       <BButton variant="dark" v-b-toggle.restart-menu>Restart</BButton>
       <BCollapse class="mt-2" id="restart-menu">

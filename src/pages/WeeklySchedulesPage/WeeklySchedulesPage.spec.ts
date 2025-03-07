@@ -120,8 +120,8 @@ describe('WeeklySchedulesPage', () => {
 
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set([Weekday.MON]),
-      startTime: { hour: 10, minute: 0 },
-      endTime: { hour: 12, minute: 0 }
+      startTime: new Time(10, 0),
+      endTime: new Time(12, 0)
     })
 
     assertAllInputsAreNotSet(wrapper)
@@ -131,8 +131,8 @@ describe('WeeklySchedulesPage', () => {
     const { wrapper, weeklyScheduleStorageService } = mountWeeklySchedulesPage()
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set(),
-      startTime: { hour: 10, minute: 0 },
-      endTime: { hour: 12, minute: 0 }
+      startTime: new Time(10, 0),
+      endTime: new Time(12, 0)
     })
 
     expect(await weeklyScheduleStorageService.getAll()).toEqual([])
@@ -234,13 +234,13 @@ describe('WeeklySchedulesPage', () => {
 
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set([Weekday.MON]),
-      startTime: { hour: 10, minute: 30 },
-      endTime: { hour: 12, minute: 0 }
+      startTime: new Time(10, 30),
+      endTime: new Time(12, 0)
     })
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set([Weekday.TUE]),
-      startTime: { hour: 10, minute: 30 },
-      endTime: { hour: 12, minute: 0 }
+      startTime: new Time(10, 30),
+      endTime: new Time(12, 0)
     })
 
     expect(fakeBrowsingControlService.getActivatedBrowsingRules()).toEqual(
@@ -283,8 +283,8 @@ async function addWeeklySchedule(
   wrapper: VueWrapper,
   weeklyScheduleInput: {
     weekdaySet: ReadonlySet<Weekday>
-    startTime: { hour: number; minute: number }
-    endTime: { hour: number; minute: number }
+    startTime: Time
+    endTime: Time
   }
 ) {
   for (const weekday of weeklyScheduleInput.weekdaySet) {
@@ -294,11 +294,7 @@ async function addWeeklySchedule(
     await weekdayCheckbox.setValue(true)
   }
 
-  const startTime = new Time(
-    weeklyScheduleInput.startTime.hour,
-    weeklyScheduleInput.startTime.minute
-  )
-  const endTime = new Time(weeklyScheduleInput.endTime.hour, weeklyScheduleInput.endTime.minute)
+  const { startTime, endTime } = weeklyScheduleInput
 
   const startTimeInput = wrapper.find("[data-test='start-time-input']")
   startTimeInput.setValue(startTime.toHhMmString())

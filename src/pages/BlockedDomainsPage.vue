@@ -56,7 +56,7 @@ async function updateBrowsingRules(browsingRules: BrowsingRules) {
           required
         />
       </div>
-      <button class="btn btn-primary" data-test="add-button" @click="onClickAdd">Add</button>
+      <BButton variant="primary" data-test="add-button" @click="onClickAdd">Add</BButton>
     </form>
     <ul class="list-group">
       <li
@@ -65,13 +65,13 @@ async function updateBrowsingRules(browsingRules: BrowsingRules) {
         class="list-group-item d-flex justify-content-between align-items-center"
       >
         <span data-test="blocked-domain">{{ domain }}</span>
-        <button
-          class="btn text-danger bg-transparent border-0"
+        <BButton
+          class="bg-transparent text-danger border-0"
           :data-test="`remove-${domain}`"
           @click="onClickRemove(domain)"
         >
           X
-        </button>
+        </BButton>
       </li>
     </ul>
   </div>

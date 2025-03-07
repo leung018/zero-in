@@ -82,9 +82,7 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
           <TimeInput class="d-flex" v-model="newEndTime" data-test="end-time-input" />
         </div>
       </div>
-      <button type="button" class="btn btn-primary" data-test="add-button" @click="onClickAdd">
-        Add
-      </button>
+      <BButton variant="primary" data-test="add-button" @click="onClickAdd">Add</BButton>
       <div v-if="errorMessage" class="text-danger mt-2" data-test="error-message">
         {{ errorMessage }}
       </div>
