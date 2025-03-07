@@ -4,6 +4,7 @@ import { ref, onBeforeMount } from 'vue'
 import { Time } from '../domain/time'
 import type { ReloadService } from '@/chrome/reload'
 import TimeInput from './components/TimeInput.vue'
+import ContentTemplate from './components/ContentTemplate.vue'
 
 const { dailyCutoffTimeStorageService, reloadService } = defineProps<{
   dailyCutoffTimeStorageService: DailyCutoffTimeStorageService
@@ -27,13 +28,12 @@ const onClickSave = async () => {
 </script>
 
 <template>
-  <div class="container">
-    <h1 class="mb-4 mt-4">Statistics</h1>
+  <ContentTemplate title="Statistics">
     <BFormGroup label="Set daily cutoff time:">
       <TimeInput v-model="dailyCutoffTime" data-test="time-input" />
     </BFormGroup>
     <BButton variant="primary" class="mt-4" data-test="save-button" @click="onClickSave"
       >Save</BButton
     >
-  </div>
+  </ContentTemplate>
 </template>
