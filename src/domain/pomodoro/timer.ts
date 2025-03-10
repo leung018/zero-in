@@ -15,7 +15,7 @@ export class PomodoroTimer {
     return new PomodoroTimer({
       scheduler: new PeriodicTaskSchedulerImpl(),
       timerConfig: config.getPomodoroTimerConfig(),
-      pomodoroRecordStorageService: PomodoroRecordStorageService.createFake() // TODO: replace with real implementation
+      pomodoroRecordStorageService: PomodoroRecordStorageService.create()
     })
   }
 

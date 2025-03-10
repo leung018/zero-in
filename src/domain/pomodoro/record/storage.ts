@@ -1,7 +1,13 @@
 import { FakeChromeLocalStorage, type StorageHandler } from '../../../infra/storage'
 import type { PomodoroRecord } from '.'
+import { ChromeLocalStorageFactory } from '../../../chrome/storage'
+import { deserializePomodoroRecord, serializePomodoroRecord } from './serialize'
 
 export class PomodoroRecordStorageService {
+  static create() {
+    return new PomodoroRecordStorageService(ChromeLocalStorageFactory.createStorageHandler())
+  }
+
   static createFake() {
     return new PomodoroRecordStorageService(new FakeChromeLocalStorage())
   }
@@ -16,14 +22,14 @@ export class PomodoroRecordStorageService {
     const pomodoroRecords = await this.getAll()
     pomodoroRecords.push(record)
     return this.storageHandler.set({
-      pomodoroRecords
+      pomodoroRecords: pomodoroRecords.map(serializePomodoroRecord)
     })
   }
 
   async getAll(): Promise<PomodoroRecord[]> {
     return this.storageHandler.get('pomodoroRecords').then((result: any) => {
       if (result.pomodoroRecords) {
-        return result.pomodoroRecords
+        return result.pomodoroRecords.map(deserializePomodoroRecord)
       } else {
         return []
       }
