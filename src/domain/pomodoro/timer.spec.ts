@@ -4,6 +4,7 @@ import { Duration } from './duration'
 import { PomodoroStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
 import { flushPromises } from '@vue/test-utils'
+import { PomodoroRecordStorageService } from './record/storage'
 
 describe('PomodoroTimer', () => {
   it('should initial state is set correctly', () => {
@@ -16,7 +17,7 @@ describe('PomodoroTimer', () => {
       remaining: new Duration({ minutes: 10 }),
       isRunning: false,
       stage: PomodoroStage.FOCUS,
-      numOfFocusCompleted: 0
+      numOfPomodoriCompleted: 0
     })
   })
 
@@ -27,14 +28,14 @@ describe('PomodoroTimer', () => {
       focusDuration: new Duration({ seconds: 10, milliseconds: 1 }),
       shortBreakDuration: new Duration({ seconds: 3, milliseconds: 1 }),
       longBreakDuration: new Duration({ seconds: 2, milliseconds: 1 }),
-      numOfFocusPerCycle: 5
+      numOfPomodoriPerCycle: 5
     })
 
     expect(timer.getConfig()).toEqual({
       focusDuration: new Duration({ seconds: 11 }),
       shortBreakDuration: new Duration({ seconds: 4 }),
       longBreakDuration: new Duration({ seconds: 3 }),
-      numOfFocusPerCycle: 5
+      numOfPomodoriPerCycle: 5
     })
   })
 
@@ -49,7 +50,7 @@ describe('PomodoroTimer', () => {
       remaining: new Duration({ minutes: 9, seconds: 59 }),
       isRunning: true,
       stage: PomodoroStage.FOCUS,
-      numOfFocusCompleted: 0
+      numOfPomodoriCompleted: 0
     })
   })
 
@@ -79,7 +80,7 @@ describe('PomodoroTimer', () => {
       remaining: new Duration({ minutes: 9, seconds: 59 }),
       isRunning: false,
       stage: PomodoroStage.FOCUS,
-      numOfFocusCompleted: 0
+      numOfPomodoriCompleted: 0
     })
   })
 
@@ -100,7 +101,7 @@ describe('PomodoroTimer', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ seconds: 3 }),
       shortBreakDuration: new Duration({ seconds: 5 }),
-      numOfFocusPerCycle: 4
+      numOfPomodoriPerCycle: 4
     })
     const updates: PomodoroTimerUpdate[] = []
     timer.subscribeTimerUpdate((update) => {
@@ -115,25 +116,25 @@ describe('PomodoroTimer', () => {
         remainingSeconds: new Duration({ seconds: 3 }).remainingSeconds(),
         isRunning: false,
         stage: PomodoroStage.FOCUS,
-        numOfFocusCompleted: 0
+        numOfPomodoriCompleted: 0
       },
       {
         remainingSeconds: new Duration({ seconds: 3 }).remainingSeconds(),
         isRunning: true,
         stage: PomodoroStage.FOCUS,
-        numOfFocusCompleted: 0
+        numOfPomodoriCompleted: 0
       },
       {
         remainingSeconds: new Duration({ seconds: 2 }).remainingSeconds(),
         isRunning: true,
         stage: PomodoroStage.FOCUS,
-        numOfFocusCompleted: 0
+        numOfPomodoriCompleted: 0
       },
       {
         remainingSeconds: new Duration({ seconds: 1 }).remainingSeconds(),
         isRunning: true,
         stage: PomodoroStage.FOCUS,
-        numOfFocusCompleted: 0
+        numOfPomodoriCompleted: 0
       }
     ])
 
@@ -144,7 +145,7 @@ describe('PomodoroTimer', () => {
       remainingSeconds: new Duration({ seconds: 5 }).remainingSeconds(),
       isRunning: false,
       stage: PomodoroStage.SHORT_BREAK,
-      numOfFocusCompleted: 1
+      numOfPomodoriCompleted: 1
     })
   })
 
@@ -286,7 +287,7 @@ describe('PomodoroTimer', () => {
       remaining: new Duration({ seconds: 1 }),
       isRunning: false,
       stage: PomodoroStage.SHORT_BREAK,
-      numOfFocusCompleted: 1
+      numOfPomodoriCompleted: 1
     })
   })
 
@@ -304,16 +305,16 @@ describe('PomodoroTimer', () => {
       remaining: new Duration({ seconds: 3 }),
       isRunning: false,
       stage: PomodoroStage.FOCUS,
-      numOfFocusCompleted: 1
+      numOfPomodoriCompleted: 1
     })
   })
 
-  it('should start long break after number of focus per cycle is passed', () => {
+  it('should start long break after number of pomodori per cycle is passed', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ seconds: 3 }),
       shortBreakDuration: new Duration({ seconds: 1 }),
       longBreakDuration: new Duration({ seconds: 2 }),
-      numOfFocusPerCycle: 2
+      numOfPomodoriPerCycle: 2
     })
 
     // 1st Focus
@@ -333,7 +334,7 @@ describe('PomodoroTimer', () => {
       remaining: new Duration({ seconds: 2 }),
       isRunning: false,
       stage: PomodoroStage.LONG_BREAK,
-      numOfFocusCompleted: 2
+      numOfPomodoriCompleted: 2
     })
   })
 
@@ -342,7 +343,7 @@ describe('PomodoroTimer', () => {
       focusDuration: new Duration({ seconds: 3 }),
       shortBreakDuration: new Duration({ seconds: 1 }),
       longBreakDuration: new Duration({ seconds: 2 }),
-      numOfFocusPerCycle: 2
+      numOfPomodoriPerCycle: 2
     })
 
     // 1st Focus
@@ -366,7 +367,7 @@ describe('PomodoroTimer', () => {
       remaining: new Duration({ seconds: 3 }),
       isRunning: false,
       stage: PomodoroStage.FOCUS,
-      numOfFocusCompleted: 0
+      numOfPomodoriCompleted: 0
     })
 
     // 1st Focus
@@ -386,7 +387,7 @@ describe('PomodoroTimer', () => {
       remaining: new Duration({ seconds: 2 }),
       isRunning: false,
       stage: PomodoroStage.LONG_BREAK,
-      numOfFocusCompleted: 2
+      numOfPomodoriCompleted: 2
     })
   })
 
@@ -394,7 +395,7 @@ describe('PomodoroTimer', () => {
     const { timer, scheduler } = createTimer({
       focusDuration: new Duration({ seconds: 10 }),
       shortBreakDuration: new Duration({ seconds: 2 }),
-      numOfFocusPerCycle: 4
+      numOfPomodoriPerCycle: 4
     })
 
     timer.start()
@@ -408,7 +409,7 @@ describe('PomodoroTimer', () => {
       remaining: new Duration({ seconds: 1 }),
       isRunning: true,
       stage: PomodoroStage.SHORT_BREAK,
-      numOfFocusCompleted: 0
+      numOfPomodoriCompleted: 0
     })
   })
 
@@ -417,7 +418,7 @@ describe('PomodoroTimer', () => {
       focusDuration: new Duration({ seconds: 3 }),
       shortBreakDuration: new Duration({ seconds: 1 }),
       longBreakDuration: new Duration({ seconds: 2 }),
-      numOfFocusPerCycle: 4
+      numOfPomodoriPerCycle: 4
     })
 
     timer.start()
@@ -435,21 +436,21 @@ describe('PomodoroTimer', () => {
       remaining: new Duration({ seconds: 1, milliseconds: 500 }),
       isRunning: true,
       stage: PomodoroStage.LONG_BREAK,
-      numOfFocusCompleted: 1
+      numOfPomodoriCompleted: 1
     })
 
     scheduler.advanceTime(1500)
 
-    // Should reset numOfFocusCompleted after long break even number of focus completed in previous cycle is less than 4
+    // Should reset numOfPomodoriCompleted after long break even number of focus completed in previous cycle is less than 4
     expect(timer.getState().stage).toBe(PomodoroStage.FOCUS)
-    expect(timer.getState().numOfFocusCompleted).toBe(0)
+    expect(timer.getState().numOfPomodoriCompleted).toBe(0)
   })
 
   it('should able to jump to focus', () => {
     const { timer } = createTimer({
       focusDuration: new Duration({ seconds: 10 }),
       longBreakDuration: new Duration({ seconds: 3 }),
-      numOfFocusPerCycle: 4
+      numOfPomodoriPerCycle: 4
     })
 
     timer.restartLongBreak()
@@ -459,46 +460,70 @@ describe('PomodoroTimer', () => {
       remaining: new Duration({ seconds: 10 }),
       isRunning: true,
       stage: PomodoroStage.FOCUS,
-      numOfFocusCompleted: 0
+      numOfPomodoriCompleted: 0
     })
   })
 
   it('should able to jump to specific focus', () => {
     const { timer } = createTimer({
-      numOfFocusPerCycle: 4
+      numOfPomodoriPerCycle: 4
     })
 
     timer.restartFocus(4) // 4th Focus
-    expect(timer.getState().numOfFocusCompleted).toBe(3)
+    expect(timer.getState().numOfPomodoriCompleted).toBe(3)
 
     timer.restartFocus(1)
-    expect(timer.getState().numOfFocusCompleted).toBe(0)
+    expect(timer.getState().numOfPomodoriCompleted).toBe(0)
 
     // Larger than 4 or Less than 0 will treat as the closest valid number
 
     timer.restartFocus(5)
-    expect(timer.getState().numOfFocusCompleted).toBe(3)
+    expect(timer.getState().numOfPomodoriCompleted).toBe(3)
 
     timer.restartFocus(0)
-    expect(timer.getState().numOfFocusCompleted).toBe(0)
+    expect(timer.getState().numOfPomodoriCompleted).toBe(0)
   })
 
   it('should able to jump to specific short break', () => {
     const { timer } = createTimer({
-      numOfFocusPerCycle: 4
+      numOfPomodoriPerCycle: 4
     })
 
     timer.restartShortBreak(3) // 3th Short Break
-    expect(timer.getState().numOfFocusCompleted).toBe(3)
+    expect(timer.getState().numOfPomodoriCompleted).toBe(3)
 
     timer.restartShortBreak(1)
-    expect(timer.getState().numOfFocusCompleted).toBe(1)
+    expect(timer.getState().numOfPomodoriCompleted).toBe(1)
 
     timer.restartShortBreak(4) // 4th break is Long Break. So last shortBreak is 3rd which means 3 focus completed
-    expect(timer.getState().numOfFocusCompleted).toBe(3)
+    expect(timer.getState().numOfPomodoriCompleted).toBe(3)
 
     timer.restartShortBreak(0)
-    expect(timer.getState().numOfFocusCompleted).toBe(0)
+    expect(timer.getState().numOfPomodoriCompleted).toBe(0)
+  })
+
+  it('should save the pomodoro record after focus is completed', async () => {
+    const { timer, scheduler, pomodoroRecordStorageService } = createTimer({
+      focusDuration: new Duration({ seconds: 3 }),
+      shortBreakDuration: new Duration({ seconds: 1 }),
+      numOfPomodoriPerCycle: 3
+    })
+
+    // Focus
+    timer.start()
+    scheduler.advanceTime(3000)
+    await flushPromises()
+
+    const pomodoroRecords = await pomodoroRecordStorageService.getAll()
+    expect(pomodoroRecords.length).toBe(1)
+    expect(pomodoroRecords[0].completedAt).toBeInstanceOf(Date)
+
+    // Break
+    timer.start()
+    scheduler.advanceTime(1000)
+    await flushPromises()
+
+    expect((await pomodoroRecordStorageService.getAll()).length).toBe(1)
   })
 })
 
@@ -506,19 +531,22 @@ function createTimer({
   focusDuration = new Duration({ minutes: 25 }),
   shortBreakDuration = new Duration({ minutes: 5 }),
   longBreakDuration = new Duration({ minutes: 15 }),
-  numOfFocusPerCycle = 4
+  numOfPomodoriPerCycle = 4
 } = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
+  const pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
   const timer = PomodoroTimer.createFake({
     scheduler,
+    pomodoroRecordStorageService,
     timerConfig: {
       focusDuration,
       shortBreakDuration,
       longBreakDuration,
-      numOfFocusPerCycle
+      numOfPomodoriPerCycle
     }
   })
   return {
+    pomodoroRecordStorageService,
     scheduler,
     timer
   }

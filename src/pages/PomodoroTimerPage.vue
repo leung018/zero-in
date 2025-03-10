@@ -9,13 +9,13 @@ import { PomodoroStage } from '../domain/pomodoro/stage'
 
 const { port } = defineProps<{
   port: Port<WorkRequest, PomodoroTimerResponse>
-  numOfFocusPerCycle: number
+  numOfPomodoriPerCycle: number
 }>()
 
 const durationLeft = ref<Duration>(new Duration({ seconds: 0 }))
 const isRunning = ref(false)
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
-const numOfFocusCompleted = ref(0)
+const numOfPomodoriCompleted = ref(0)
 
 const displayTime = computed(() => {
   const totalSeconds = durationLeft.value.remainingSeconds()
@@ -27,11 +27,11 @@ const displayTime = computed(() => {
 const currentStage = computed(() => {
   switch (pomodoroStage.value) {
     case PomodoroStage.SHORT_BREAK:
-      return `${getNumberWithOrdinal(numOfFocusCompleted.value)} Short Break`
+      return `${getNumberWithOrdinal(numOfPomodoriCompleted.value)} Short Break`
     case PomodoroStage.LONG_BREAK:
       return 'Long Break'
     default:
-      return `${getNumberWithOrdinal(numOfFocusCompleted.value + 1)} Focus`
+      return `${getNumberWithOrdinal(numOfPomodoriCompleted.value + 1)} Focus`
   }
 })
 
@@ -40,7 +40,7 @@ onBeforeMount(() => {
     pomodoroStage.value = message.stage
     durationLeft.value = new Duration({ seconds: message.remainingSeconds })
     isRunning.value = message.isRunning
-    numOfFocusCompleted.value = message.numOfFocusCompleted
+    numOfPomodoriCompleted.value = message.numOfPomodoriCompleted
   })
   port.send({
     name: WorkRequestName.LISTEN_TO_TIMER
@@ -103,7 +103,7 @@ const onClickRestartLongBreak = () => {
     <div class="mt-4">
       <BButton variant="dark" v-b-toggle.restart-menu>Restart</BButton>
       <BCollapse class="mt-2" id="restart-menu">
-        <BRow v-for="nth in numOfFocusPerCycle - 1" :key="nth">
+        <BRow v-for="nth in numOfPomodoriPerCycle - 1" :key="nth">
           <BCol>
             <BButton
               class="mt-2 w-100"
@@ -129,8 +129,8 @@ const onClickRestartLongBreak = () => {
               class="mt-2 w-100"
               variant="primary"
               data-test="restart-focus"
-              @click="onClickRestartFocus(numOfFocusPerCycle)"
-              >{{ getNumberWithOrdinal(numOfFocusPerCycle) }} Focus</BButton
+              @click="onClickRestartFocus(numOfPomodoriPerCycle)"
+              >{{ getNumberWithOrdinal(numOfPomodoriPerCycle) }} Focus</BButton
             >
           </BCol>
           <BCol>

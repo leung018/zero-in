@@ -91,7 +91,7 @@ describe('BackgroundListener', () => {
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ minutes: 2 }),
         longBreakDuration: new Duration({ minutes: 4 }),
-        numOfFocusPerCycle: 2
+        numOfPomodoriPerCycle: 2
       })
     )
 
@@ -113,7 +113,7 @@ describe('BackgroundListener', () => {
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ minutes: 2 }),
         longBreakDuration: new Duration({ minutes: 4 }),
-        numOfFocusPerCycle: 1
+        numOfPomodoriPerCycle: 1
       })
     )
 
