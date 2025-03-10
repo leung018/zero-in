@@ -4,6 +4,7 @@ import { Duration } from './duration'
 import { PomodoroStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
 import { flushPromises } from '@vue/test-utils'
+import { PomodoroRecordStorageService } from './record/storage'
 
 describe('PomodoroTimer', () => {
   it('should initial state is set correctly', () => {
@@ -500,6 +501,30 @@ describe('PomodoroTimer', () => {
     timer.restartShortBreak(0)
     expect(timer.getState().numOfFocusCompleted).toBe(0)
   })
+
+  it('should save the pomodoro record after focus is completed', async () => {
+    const { timer, scheduler, pomodoroRecordStorageService } = createTimer({
+      focusDuration: new Duration({ seconds: 3 }),
+      shortBreakDuration: new Duration({ seconds: 1 }),
+      numOfFocusPerCycle: 3
+    })
+
+    // Focus
+    timer.start()
+    scheduler.advanceTime(3000)
+    await flushPromises()
+
+    const pomodoroRecords = await pomodoroRecordStorageService.getAll()
+    expect(pomodoroRecords.length).toBe(1)
+    expect(pomodoroRecords[0].completedAt).toBeInstanceOf(Date)
+
+    // Break
+    timer.start()
+    scheduler.advanceTime(1000)
+    await flushPromises()
+
+    expect((await pomodoroRecordStorageService.getAll()).length).toBe(1)
+  })
 })
 
 function createTimer({
@@ -509,8 +534,10 @@ function createTimer({
   numOfFocusPerCycle = 4
 } = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
+  const pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
   const timer = PomodoroTimer.createFake({
     scheduler,
+    pomodoroRecordStorageService,
     timerConfig: {
       focusDuration,
       shortBreakDuration,
@@ -519,6 +546,7 @@ function createTimer({
     }
   })
   return {
+    pomodoroRecordStorageService,
     scheduler,
     timer
   }

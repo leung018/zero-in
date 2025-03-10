@@ -6,22 +6,27 @@ import {
 } from '../../infra/scheduler'
 import type { PomodoroTimerConfig } from './config'
 import { Duration } from './duration'
+import { newPomodoroRecord } from './record'
+import { PomodoroRecordStorageService } from './record/storage'
 import { PomodoroStage } from './stage'
 
 export class PomodoroTimer {
   static create() {
     return new PomodoroTimer({
       scheduler: new PeriodicTaskSchedulerImpl(),
-      timerConfig: config.getPomodoroTimerConfig()
+      timerConfig: config.getPomodoroTimerConfig(),
+      pomodoroRecordStorageService: PomodoroRecordStorageService.createFake() // TODO: replace with real implementation
     })
   }
 
   static createFake({
     scheduler = new FakePeriodicTaskScheduler(),
+    pomodoroRecordStorageService = PomodoroRecordStorageService.createFake(),
     timerConfig = config.getPomodoroTimerConfig()
   } = {}) {
     return new PomodoroTimer({
       timerConfig,
+      pomodoroRecordStorageService,
       scheduler
     })
   }
@@ -38,16 +43,20 @@ export class PomodoroTimer {
 
   private scheduler: PeriodicTaskScheduler
 
+  private pomodoroRecordStorageService: PomodoroRecordStorageService
+
   private timerUpdateSubscriptionManager = new SubscriptionManager<PomodoroTimerUpdate>()
 
   private onStageComplete: () => void = () => {}
 
   private constructor({
     timerConfig,
-    scheduler
+    scheduler,
+    pomodoroRecordStorageService
   }: {
     timerConfig: PomodoroTimerConfig
     scheduler: PeriodicTaskScheduler
+    pomodoroRecordStorageService: PomodoroRecordStorageService
   }) {
     this.config = {
       ...timerConfig,
@@ -57,6 +66,7 @@ export class PomodoroTimer {
     }
     this.remaining = timerConfig.focusDuration
     this.scheduler = scheduler
+    this.pomodoroRecordStorageService = pomodoroRecordStorageService
   }
 
   private roundUpToSeconds(duration: Duration): Duration {
@@ -196,6 +206,7 @@ export class PomodoroTimer {
 
   private handleFocusComplete() {
     this.numOfFocusCompleted++
+    this.pomodoroRecordStorageService.add(newPomodoroRecord())
 
     if (this.numOfFocusCompleted >= this.config.numOfFocusPerCycle) {
       this.setToBeginOfLongBreak()
