@@ -8,6 +8,7 @@ import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 import type { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
 import type { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/storage'
 import { Time } from '../domain/time'
+import { getLastDateWithTime } from '../util'
 
 const {
   port,
@@ -48,12 +49,10 @@ onBeforeMount(async () => {
 })
 
 async function getTotalNumOfPomodoriAfter(dailyCutoffTime: Time): Promise<number> {
-  const date = new Date()
+  const startDate = getLastDateWithTime(dailyCutoffTime)
 
-  date.setHours(dailyCutoffTime.hour)
-  date.setMinutes(dailyCutoffTime.minute)
-
-  const totalNumOfPomodori = (await pomodoroRecordStorageService.getRecordsOnOrAfter(date)).length
+  const totalNumOfPomodori = (await pomodoroRecordStorageService.getRecordsOnOrAfter(startDate))
+    .length
   return totalNumOfPomodori
 }
 
