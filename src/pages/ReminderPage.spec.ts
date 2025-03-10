@@ -88,7 +88,7 @@ describe('ReminderPage', () => {
     await pomodoroRecordStorageService.add(newPomodoroRecord(new Date(2025, 2, 1, 15, 3)))
     await pomodoroRecordStorageService.add(newPomodoroRecord(new Date(2025, 2, 1, 15, 5)))
 
-    vi.setSystemTime(new Date(2025, 2, 1, 20, 0))
+    vi.setSystemTime(new Date(2025, 2, 2, 14, 0))
 
     const { wrapper } = mountPage({
       pomodoroRecordStorageService,
