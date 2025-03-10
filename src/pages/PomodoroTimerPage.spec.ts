@@ -136,7 +136,7 @@ describe('PomodoroTimerPage', () => {
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 2 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
-        numOfFocusPerCycle: 4
+        numOfPomodoriPerCycle: 4
       })
     )
 
@@ -183,7 +183,7 @@ describe('PomodoroTimerPage', () => {
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
         longBreakDuration: new Duration({ seconds: 2 }),
-        numOfFocusPerCycle: 2
+        numOfPomodoriPerCycle: 2
       })
     )
 
@@ -209,7 +209,7 @@ describe('PomodoroTimerPage', () => {
   it('should render restart focus and short break buttons properly', async () => {
     const { wrapper } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
-        numOfFocusPerCycle: 3
+        numOfPomodoriPerCycle: 3
       })
     )
 
@@ -232,7 +232,7 @@ describe('PomodoroTimerPage', () => {
   it('should able to restart the focus', async () => {
     const { wrapper } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
-        numOfFocusPerCycle: 3
+        numOfPomodoriPerCycle: 3
       })
     )
 
@@ -249,7 +249,7 @@ describe('PomodoroTimerPage', () => {
   it('should able to restart the short break', async () => {
     const { wrapper } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
-        numOfFocusPerCycle: 4
+        numOfPomodoriPerCycle: 4
       })
     )
 
@@ -266,7 +266,7 @@ describe('PomodoroTimerPage', () => {
   it('should able to restart long break', async () => {
     const { wrapper } = startListenerAndMountPage(
       newTestPomodoroTimerConfig({
-        numOfFocusPerCycle: 4
+        numOfPomodoriPerCycle: 4
       })
     )
 
@@ -281,19 +281,19 @@ function startListenerAndMountPage(timerConfig = newTestPomodoroTimerConfig()) {
   })
   const wrapper = mountPage({
     port: communicationManager.clientConnect(),
-    numOfFocusPerCycle: timerConfig.numOfFocusPerCycle
+    numOfPomodoriPerCycle: timerConfig.numOfPomodoriPerCycle
   })
   return { wrapper, scheduler, communicationManager }
 }
 
 function mountPage({
   port = new FakeCommunicationManager().clientConnect(),
-  numOfFocusPerCycle = 4
+  numOfPomodoriPerCycle = 4
 } = {}) {
   return mount(PomodoroTimerPage, {
     props: {
       port,
-      numOfFocusPerCycle
+      numOfPomodoriPerCycle
     }
   })
 }

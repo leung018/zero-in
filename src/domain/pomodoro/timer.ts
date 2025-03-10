@@ -39,7 +39,7 @@ export class PomodoroTimer {
 
   private remaining: Duration
 
-  private numOfFocusCompleted: number = 0
+  private numOfPomodoriCompleted: number = 0
 
   private scheduler: PeriodicTaskScheduler
 
@@ -80,7 +80,7 @@ export class PomodoroTimer {
       remaining: this.remaining,
       isRunning: this.isRunning,
       stage: this.stage,
-      numOfFocusCompleted: this.numOfFocusCompleted
+      numOfPomodoriCompleted: this.numOfPomodoriCompleted
     }
   }
 
@@ -89,7 +89,7 @@ export class PomodoroTimer {
       remainingSeconds: this.remaining.remainingSeconds(),
       isRunning: this.isRunning,
       stage: this.stage,
-      numOfFocusCompleted: this.numOfFocusCompleted
+      numOfPomodoriCompleted: this.numOfPomodoriCompleted
     }
   }
 
@@ -152,7 +152,7 @@ export class PomodoroTimer {
 
   restartShortBreak(nth?: number) {
     if (nth != null) {
-      this.resetNumOfFocusCompleted(nth)
+      this.resetnumOfPomodoriCompleted(nth)
     }
     this.restart({ stage: PomodoroStage.SHORT_BREAK })
   }
@@ -163,16 +163,16 @@ export class PomodoroTimer {
 
   restartFocus(nth?: number) {
     if (nth != null) {
-      this.resetNumOfFocusCompleted(nth - 1)
+      this.resetnumOfPomodoriCompleted(nth - 1)
     }
     this.restart({ stage: PomodoroStage.FOCUS })
   }
 
-  private resetNumOfFocusCompleted(n: number) {
-    const upperLimit = this.config.numOfFocusPerCycle - 1
+  private resetnumOfPomodoriCompleted(n: number) {
+    const upperLimit = this.config.numOfPomodoriPerCycle - 1
     n = Math.min(upperLimit, n)
     n = Math.max(0, n)
-    this.numOfFocusCompleted = n
+    this.numOfPomodoriCompleted = n
   }
 
   private restart({ stage }: { stage: PomodoroStage }) {
@@ -205,10 +205,10 @@ export class PomodoroTimer {
   }
 
   private handleFocusComplete() {
-    this.numOfFocusCompleted++
+    this.numOfPomodoriCompleted++
     this.pomodoroRecordStorageService.add(newPomodoroRecord())
 
-    if (this.numOfFocusCompleted >= this.config.numOfFocusPerCycle) {
+    if (this.numOfPomodoriCompleted >= this.config.numOfPomodoriPerCycle) {
       this.setToBeginOfLongBreak()
     } else {
       this.setToBeginOfShortBreak()
@@ -217,7 +217,7 @@ export class PomodoroTimer {
 
   private handleBreakComplete() {
     if (this.stage === PomodoroStage.LONG_BREAK) {
-      this.numOfFocusCompleted = 0
+      this.numOfPomodoriCompleted = 0
     }
     this.setToBeginOfFocus()
   }
@@ -273,12 +273,12 @@ export type PomodoroTimerState = {
   remaining: Duration
   isRunning: boolean
   stage: PomodoroStage
-  numOfFocusCompleted: number
+  numOfPomodoriCompleted: number
 }
 
 export type PomodoroTimerUpdate = {
   remainingSeconds: number
   isRunning: boolean
   stage: PomodoroStage
-  numOfFocusCompleted: number
+  numOfPomodoriCompleted: number
 }
