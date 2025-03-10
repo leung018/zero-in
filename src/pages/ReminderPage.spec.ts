@@ -10,10 +10,12 @@ import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
     const { scheduler, timer, wrapper } = mountPage({
-      focusDuration: new Duration({ seconds: 3 }),
-      shortBreakDuration: new Duration({ seconds: 1 }),
-      longBreakDuration: new Duration({ seconds: 2 }),
-      numOfPomodoriPerCycle: 2
+      timerConfig: {
+        focusDuration: new Duration({ seconds: 3 }),
+        shortBreakDuration: new Duration({ seconds: 1 }),
+        longBreakDuration: new Duration({ seconds: 2 }),
+        numOfPomodoriPerCycle: 2
+      }
     })
 
     timer.start()
@@ -36,13 +38,13 @@ describe('ReminderPage', () => {
   })
 
   it('should click start button to start timer again', async () => {
-    const { scheduler, timer, wrapper } = mountPage(
-      newTestPomodoroTimerConfig({
+    const { scheduler, timer, wrapper } = mountPage({
+      timerConfig: newTestPomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 2 }),
         numOfPomodoriPerCycle: 4
       })
-    )
+    })
 
     timer.start()
     scheduler.advanceTime(3001)
@@ -69,7 +71,7 @@ describe('ReminderPage', () => {
   })
 })
 
-function mountPage(timerConfig = newTestPomodoroTimerConfig()) {
+function mountPage({ timerConfig = newTestPomodoroTimerConfig() } = {}) {
   const { scheduler, timer, communicationManager } = startBackgroundListener({
     timerConfig
   })
