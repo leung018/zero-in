@@ -96,9 +96,8 @@ describe('ReminderPage', () => {
     })
     await flushPromises()
 
-    expect(wrapper.find("[data-test='daily-completed-pomodori-msg']").text()).toBe(
-      'Number of pomodori completed since 15:03: 2'
-    )
+    expect(wrapper.find("[data-test='cutoff-time']").text()).toBe('15:03')
+    expect(wrapper.find("[data-test='daily-completed-pomodori']").text()).toBe('2')
   })
 })
 

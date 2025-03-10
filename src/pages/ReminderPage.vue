@@ -70,9 +70,14 @@ const onClickStart = () => {
       Time's up! <br /><span class="hint-message" data-test="hint-message">{{ hintMsg }}.</span>
     </div>
     <BButton variant="success" data-test="start-button" @click="onClickStart">Start</BButton>
-    <p data-test="daily-completed-pomodori-msg">
-      Number of pomodori completed since {{ dailyCutoffTime.toHhMmString() }}:
-      {{ dailyCompletedPomodori }}
+    <p class="mt-3">
+      <span
+        >Number of pomodori completed since last
+        <span data-test="cutoff-time">{{ dailyCutoffTime.toHhMmString() }}</span></span
+      >
+      <span class="daily-completed-pomodori ms-2" data-test="daily-completed-pomodori">{{
+        dailyCompletedPomodori
+      }}</span>
     </p>
   </div>
 </template>
@@ -88,5 +93,10 @@ const onClickStart = () => {
 
 .hint-message {
   font-size: 2rem;
+}
+
+.daily-completed-pomodori {
+  font-weight: bold;
+  color: #28a745;
 }
 </style>
