@@ -46,6 +46,21 @@ describe('StatisticsPage', () => {
 
     expect(reloadService.getTriggerCount()).toBe(1)
   })
+
+  it('should render stats table with 7 column representing each weekday', async () => {
+    const { wrapper } = mountStatisticsPage()
+
+    const statsTable = wrapper.find("[data-test='stats-table']")
+    const headers = statsTable.findAll('th')
+    expect(headers.length).toBe(7)
+    expect(headers[0].text()).toBe('Sun')
+    expect(headers[1].text()).toBe('Mon')
+    expect(headers[2].text()).toBe('Tue')
+    expect(headers[3].text()).toBe('Wed')
+    expect(headers[4].text()).toBe('Thu')
+    expect(headers[5].text()).toBe('Fri')
+    expect(headers[6].text()).toBe('Sat')
+  })
 })
 
 function mountStatisticsPage({
