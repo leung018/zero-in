@@ -51,8 +51,11 @@ onBeforeMount(async () => {
 async function getTotalNumOfPomodoriAfter(dailyCutoffTime: Time): Promise<number> {
   const startDate = getLastDateWithTime(dailyCutoffTime)
 
-  const totalNumOfPomodori = (await pomodoroRecordStorageService.getRecordsOnOrAfter(startDate))
-    .length
+  const totalNumOfPomodori = (
+    await pomodoroRecordStorageService
+      .getAll()
+      .then((records) => records.filter((record) => record.completedAt >= startDate))
+  ).length
   return totalNumOfPomodori
 }
 

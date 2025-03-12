@@ -37,10 +37,4 @@ export class PomodoroRecordStorageService {
       }
     })
   }
-
-  async getRecordsOnOrAfter(date: Date): Promise<PomodoroRecord[]> {
-    return this.getAll().then((records) => {
-      return records.filter((record) => record.completedAt >= date)
-    })
-  }
 }
