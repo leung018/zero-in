@@ -26,7 +26,7 @@ export function getNumberWithOrdinal(n: number): string {
   }
 }
 
-export function getLastDateWithTime(time: Time, currentDate = new Date()): Date {
+export function getMostRecentDate(time: Time, currentDate = new Date()): Date {
   const newDate = new Date(currentDate)
   newDate.setHours(time.hour, time.minute, 0, 0)
 

@@ -6,7 +6,7 @@ import type { ReloadService } from '@/chrome/reload'
 import TimeInput from './components/TimeInput.vue'
 import ContentTemplate from './components/ContentTemplate.vue'
 import type { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
-import { getLastDateWithTime } from '../util'
+import { getMostRecentDate } from '../util'
 
 type PomodoroStat = { day: string; completedPomodori: number }
 
@@ -39,7 +39,7 @@ onBeforeMount(async () => {
 async function setPomodoroStats(dailyCutoffTime: Time) {
   const records = await pomodoroRecordStorageService.getAll()
   let exclusiveEndDate = currentDate
-  const inclusiveStartDate = getLastDateWithTime(dailyCutoffTime, exclusiveEndDate)
+  const inclusiveStartDate = getMostRecentDate(dailyCutoffTime, exclusiveEndDate)
   for (let i = 0; i < pomodoroStats.value.length; i++) {
     pomodoroStats.value[i].completedPomodori = records.filter(
       (record) => record.completedAt >= inclusiveStartDate && record.completedAt < exclusiveEndDate
