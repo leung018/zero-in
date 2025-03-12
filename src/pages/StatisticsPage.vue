@@ -33,10 +33,13 @@ function initialPomodoroStats(): PomodoroStat[] {
 
 onBeforeMount(async () => {
   dailyCutoffTime.value = await dailyCutoffTimeStorageService.get()
+  await setPomodoroStats(dailyCutoffTime.value)
+})
 
+async function setPomodoroStats(dailyCutoffTime: Time) {
   const records = await pomodoroRecordStorageService.getAll()
   let exclusiveEndDate = currentDate
-  const inclusiveStartDate = getLastDateWithTime(dailyCutoffTime.value, exclusiveEndDate)
+  const inclusiveStartDate = getLastDateWithTime(dailyCutoffTime, exclusiveEndDate)
   for (let i = 0; i < pomodoroStats.value.length; i++) {
     pomodoroStats.value[i].completedPomodori = records.filter(
       (record) => record.completedAt >= inclusiveStartDate && record.completedAt < exclusiveEndDate
@@ -45,7 +48,7 @@ onBeforeMount(async () => {
     exclusiveEndDate = new Date(inclusiveStartDate)
     inclusiveStartDate.setDate(inclusiveStartDate.getDate() - 1)
   }
-})
+}
 
 const onClickSave = async () => {
   const newTime = dailyCutoffTime.value
