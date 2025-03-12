@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import ReminderPage from './ReminderPage.vue'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import { startBackgroundListener } from '../test_utils/listener'
@@ -12,14 +12,6 @@ import { Time } from '../domain/time'
 import { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/storage'
 
 describe('ReminderPage', () => {
-  beforeEach(() => {
-    vi.useFakeTimers()
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
-  })
-
   it('should display proper reminder', async () => {
     const { scheduler, timer, wrapper } = mountPage({
       timerConfig: {
@@ -88,11 +80,10 @@ describe('ReminderPage', () => {
     await pomodoroRecordStorageService.add(newPomodoroRecord(new Date(2025, 2, 1, 15, 3)))
     await pomodoroRecordStorageService.add(newPomodoroRecord(new Date(2025, 2, 1, 15, 5)))
 
-    vi.setSystemTime(new Date(2025, 2, 2, 14, 0))
-
     const { wrapper } = mountPage({
       pomodoroRecordStorageService,
-      dailyCutOffTime: new Time(15, 3)
+      dailyCutOffTime: new Time(15, 3),
+      currentDate: new Date(2025, 2, 2, 14, 0)
     })
     await flushPromises()
 
@@ -104,7 +95,8 @@ describe('ReminderPage', () => {
 function mountPage({
   timerConfig = newTestPomodoroTimerConfig(),
   pomodoroRecordStorageService = PomodoroRecordStorageService.createFake(),
-  dailyCutOffTime = new Time(0, 0)
+  dailyCutOffTime = new Time(0, 0),
+  currentDate = new Date()
 } = {}) {
   const { scheduler, timer, communicationManager } = startBackgroundListener({
     timerConfig
@@ -118,7 +110,8 @@ function mountPage({
       port: communicationManager.clientConnect(),
       closeCurrentTabService,
       pomodoroRecordStorageService,
-      dailyCutoffTimeStorageService
+      dailyCutoffTimeStorageService,
+      currentDate
     }
   })
   return { wrapper, scheduler, timer, closeCurrentTabService }

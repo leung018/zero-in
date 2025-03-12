@@ -14,12 +14,14 @@ const {
   port,
   closeCurrentTabService,
   pomodoroRecordStorageService,
-  dailyCutoffTimeStorageService
+  dailyCutoffTimeStorageService,
+  currentDate
 } = defineProps<{
   port: Port<WorkRequest, PomodoroTimerResponse>
   closeCurrentTabService: ActionService
   pomodoroRecordStorageService: PomodoroRecordStorageService
   dailyCutoffTimeStorageService: DailyCutoffTimeStorageService
+  currentDate: Date
 }>()
 
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
@@ -49,7 +51,7 @@ onBeforeMount(async () => {
 })
 
 async function getTotalNumOfPomodoriAfter(dailyCutoffTime: Time): Promise<number> {
-  const startDate = getLastDateWithTime(dailyCutoffTime)
+  const startDate = getLastDateWithTime(dailyCutoffTime, currentDate)
 
   const totalNumOfPomodori = (
     await pomodoroRecordStorageService

@@ -12,5 +12,6 @@ import { PomodoroRecordStorageService } from './domain/pomodoro/record/storage'
     :dailyCutoffTimeStorageService="DailyCutoffTimeStorageService.create()"
     :port="new ChromeCommunicationManager().clientConnect()"
     :closeCurrentTabService="new CloseCurrentTabService()"
+    :currentDate="new Date()"
   />
 </template>
