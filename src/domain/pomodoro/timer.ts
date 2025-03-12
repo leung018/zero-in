@@ -152,7 +152,7 @@ export class PomodoroTimer {
 
   restartShortBreak(nth?: number) {
     if (nth != null) {
-      this.resetnumOfPomodoriCompleted(nth)
+      this.resetNumOfPomodoriCompleted(nth)
     }
     this.restart({ stage: PomodoroStage.SHORT_BREAK })
   }
@@ -163,12 +163,12 @@ export class PomodoroTimer {
 
   restartFocus(nth?: number) {
     if (nth != null) {
-      this.resetnumOfPomodoriCompleted(nth - 1)
+      this.resetNumOfPomodoriCompleted(nth - 1)
     }
     this.restart({ stage: PomodoroStage.FOCUS })
   }
 
-  private resetnumOfPomodoriCompleted(n: number) {
+  private resetNumOfPomodoriCompleted(n: number) {
     const upperLimit = this.config.numOfPomodoriPerCycle - 1
     n = Math.min(upperLimit, n)
     n = Math.max(0, n)
