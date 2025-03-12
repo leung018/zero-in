@@ -16,6 +16,7 @@ import { PomodoroStage } from '../domain/pomodoro/stage'
 import config from '../config'
 import { MultipleActionService } from '../infra/multiple_actions'
 import { ChromeNotificationService } from '../chrome/notification'
+import { TimerUpdateStorageService } from '../domain/pomodoro/storage'
 
 export class BackgroundListener {
   private redirectTogglingService: BrowsingControlTogglingService
@@ -23,6 +24,7 @@ export class BackgroundListener {
   private timer: PomodoroTimer
   private reminderService: ActionService
   private badgeDisplayService: BadgeDisplayService
+  private timerUpdateStorageService: TimerUpdateStorageService
 
   static create() {
     const reminderService = new MultipleActionService([
@@ -35,7 +37,8 @@ export class BackgroundListener {
       timer: PomodoroTimer.create(),
       redirectTogglingService: BrowsingControlTogglingService.create(),
       reminderService,
-      badgeDisplayService: new ChromeBadgeDisplayService()
+      badgeDisplayService: new ChromeBadgeDisplayService(),
+      timerUpdateStorageService: TimerUpdateStorageService.create()
     })
   }
 
@@ -44,14 +47,16 @@ export class BackgroundListener {
     communicationManager = new FakeCommunicationManager(),
     redirectTogglingService = BrowsingControlTogglingService.createFake(),
     reminderService = new FakeActionService(),
-    badgeDisplayService = new FakeBadgeDisplayService()
+    badgeDisplayService = new FakeBadgeDisplayService(),
+    timerUpdateStorageService = TimerUpdateStorageService.createFake()
   } = {}) {
     return new BackgroundListener({
       communicationManager,
       timer: timer,
       redirectTogglingService,
       reminderService,
-      badgeDisplayService
+      badgeDisplayService,
+      timerUpdateStorageService
     })
   }
 
@@ -60,25 +65,31 @@ export class BackgroundListener {
     timer,
     redirectTogglingService,
     reminderService,
-    badgeDisplayService
+    badgeDisplayService,
+    timerUpdateStorageService
   }: {
     communicationManager: CommunicationManager
     timer: PomodoroTimer
     redirectTogglingService: BrowsingControlTogglingService
     reminderService: ActionService
     badgeDisplayService: BadgeDisplayService
+    timerUpdateStorageService: TimerUpdateStorageService
   }) {
     this.communicationManager = communicationManager
     this.redirectTogglingService = redirectTogglingService
     this.reminderService = reminderService
     this.badgeDisplayService = badgeDisplayService
+    this.timerUpdateStorageService = timerUpdateStorageService
 
     this.timer = timer
+
     this.timer.setOnStageComplete(() => {
       this.reminderService.trigger()
       this.badgeDisplayService.clearBadge()
     })
     this.timer.subscribeTimerUpdate((newStatus) => {
+      this.timerUpdateStorageService.save(newStatus)
+
       if (newStatus.isRunning) {
         this.badgeDisplayService.displayBadge({
           text: roundUpToRemainingMinutes(newStatus.remainingSeconds).toString(),

@@ -6,6 +6,7 @@ import { flushPromises } from '@vue/test-utils'
 import config from '../config'
 import { startBackgroundListener } from '../test_utils/listener'
 import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
+import { TimerUpdateStorageService } from '../domain/pomodoro/storage'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -141,17 +142,39 @@ describe('BackgroundListener', () => {
 
     expect(reminderService.getTriggerCount()).toBe(1)
   })
+
+  it('should back up update to storage', async () => {
+    const { timerUpdateStorageService, scheduler, clientPort, timer } = startListener(
+      newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ seconds: 3 })
+      })
+    )
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(1000)
+
+    expect(await timerUpdateStorageService.get()).toEqual(timer.getUpdate())
+
+    clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
+
+    expect(await timerUpdateStorageService.get()).toEqual(timer.getUpdate())
+  })
 })
 
-function startListener(timerConfig = newTestPomodoroTimerConfig()) {
+function startListener(
+  timerConfig = newTestPomodoroTimerConfig(),
+  timerUpdateStorageService = TimerUpdateStorageService.createFake()
+) {
   const { timer, badgeDisplayService, communicationManager, scheduler, reminderService } =
     startBackgroundListener({
-      timerConfig
+      timerConfig,
+      timerUpdateStorageService
     })
 
   return {
     timer,
     badgeDisplayService,
+    timerUpdateStorageService,
     clientPort: communicationManager.clientConnect(),
     scheduler,
     reminderService
