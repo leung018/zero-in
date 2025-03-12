@@ -236,6 +236,15 @@ export class PomodoroTimer {
     this.stage = PomodoroStage.FOCUS
     this.remaining = this.config.focusDuration
   }
+
+  setState(state: PomodoroTimerState) {
+    if (!this.isRunning) {
+      this.remaining = state.remaining
+      this.isRunning = state.isRunning
+      this.stage = state.stage
+      this.numOfPomodoriCompleted = state.numOfPomodoriCompleted
+    }
+  }
 }
 
 class SubscriptionManager<Arguments> {

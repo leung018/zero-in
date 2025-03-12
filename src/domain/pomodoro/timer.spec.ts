@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PomodoroTimer, type PomodoroTimerUpdate } from './timer'
+import { PomodoroTimer, type PomodoroTimerState, type PomodoroTimerUpdate } from './timer'
 import { Duration } from './duration'
 import { PomodoroStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
@@ -524,6 +524,46 @@ describe('PomodoroTimer', () => {
     await flushPromises()
 
     expect((await pomodoroRecordStorageService.getAll()).length).toBe(1)
+  })
+
+  it('should able to set state', async () => {
+    const { timer } = createTimer({
+      focusDuration: new Duration({ seconds: 3 }),
+      shortBreakDuration: new Duration({ seconds: 1 }),
+      numOfPomodoriPerCycle: 3
+    })
+
+    const targetState: PomodoroTimerState = {
+      remaining: new Duration({ seconds: 2 }),
+      isRunning: true,
+      stage: PomodoroStage.FOCUS,
+      numOfPomodoriCompleted: 1
+    }
+
+    timer.setState(targetState)
+
+    expect(timer.getState()).toEqual(targetState)
+  })
+
+  it('should not able to set state when timer is running', async () => {
+    const { timer } = createTimer({
+      focusDuration: new Duration({ seconds: 3 }),
+      shortBreakDuration: new Duration({ seconds: 1 }),
+      numOfPomodoriPerCycle: 3
+    })
+
+    timer.start()
+
+    const targetState: PomodoroTimerState = {
+      remaining: new Duration({ seconds: 2 }),
+      isRunning: true,
+      stage: PomodoroStage.FOCUS,
+      numOfPomodoriCompleted: 1
+    }
+
+    timer.setState(targetState)
+
+    expect(timer.getState()).not.toEqual(targetState)
   })
 })
 
