@@ -14,6 +14,8 @@ import { FakeBadgeDisplayService, type BadgeColor, type BadgeDisplayService } fr
 import { ChromeBadgeDisplayService } from '../chrome/badge'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import config from '../config'
+import { MultipleActionService } from '../infra/multiple_actions'
+import { ChromeNotificationService } from '../chrome/notification'
 
 export class BackgroundListener {
   private redirectTogglingService: BrowsingControlTogglingService
@@ -23,11 +25,16 @@ export class BackgroundListener {
   private badgeDisplayService: BadgeDisplayService
 
   static create() {
+    const reminderService = new MultipleActionService([
+      new ChromeNewTabReminderService(),
+      new ChromeNotificationService()
+    ])
+
     return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
       timer: PomodoroTimer.create(),
       redirectTogglingService: BrowsingControlTogglingService.create(),
-      reminderService: new ChromeNewTabReminderService(),
+      reminderService,
       badgeDisplayService: new ChromeBadgeDisplayService()
     })
   }
