@@ -5,20 +5,46 @@ import { Time } from '../domain/time'
 import type { ReloadService } from '@/chrome/reload'
 import TimeInput from './components/TimeInput.vue'
 import ContentTemplate from './components/ContentTemplate.vue'
-import { Weekday } from '../domain/schedules'
-import { capitalized } from '../util'
+import type { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
+import { getLastDateWithTime } from '../util'
 
-const { dailyCutoffTimeStorageService, reloadService } = defineProps<{
-  dailyCutoffTimeStorageService: DailyCutoffTimeStorageService
-  reloadService: ReloadService
-}>()
+type PomodoroStat = { day: string; completedPomodori: number }
+
+const { dailyCutoffTimeStorageService, reloadService, currentDate, pomodoroRecordStorageService } =
+  defineProps<{
+    dailyCutoffTimeStorageService: DailyCutoffTimeStorageService
+    reloadService: ReloadService
+    currentDate: Date
+    pomodoroRecordStorageService: PomodoroRecordStorageService
+  }>()
 
 const dailyCutoffTime = ref<Time>(new Time(0, 0))
+const pomodoroStats = ref<PomodoroStat[]>(initialPomodoroStats())
 
-onBeforeMount(() => {
-  dailyCutoffTimeStorageService.get().then((time) => {
-    dailyCutoffTime.value = time
-  })
+function initialPomodoroStats(): PomodoroStat[] {
+  const stats = []
+  stats.push({ day: 'Today', completedPomodori: 0 })
+  stats.push({ day: 'Yesterday', completedPomodori: 0 })
+  for (let i = 2; i < 7; i++) {
+    stats.push({ day: `${i} days ago`, completedPomodori: 0 })
+  }
+  return stats
+}
+
+onBeforeMount(async () => {
+  dailyCutoffTime.value = await dailyCutoffTimeStorageService.get()
+
+  const records = await pomodoroRecordStorageService.getAll()
+  let exclusiveEndDate = currentDate
+  const inclusiveStartDate = getLastDateWithTime(dailyCutoffTime.value, exclusiveEndDate)
+  for (let i = 0; i < pomodoroStats.value.length; i++) {
+    pomodoroStats.value[i].completedPomodori = records.filter(
+      (record) => record.completedAt >= inclusiveStartDate && record.completedAt < exclusiveEndDate
+    ).length
+
+    exclusiveEndDate = new Date(inclusiveStartDate)
+    inclusiveStartDate.setDate(inclusiveStartDate.getDate() - 1)
+  }
 })
 
 const onClickSave = async () => {
@@ -27,8 +53,6 @@ const onClickSave = async () => {
     reloadService.trigger()
   })
 }
-
-const WEEKDAYS: Weekday[] = Object.values(Weekday).filter((v) => typeof v === 'number') as Weekday[]
 </script>
 
 <template>
@@ -44,11 +68,16 @@ const WEEKDAYS: Weekday[] = Object.values(Weekday).filter((v) => typeof v === 'n
       <table class="table" data-test="stats-table">
         <thead>
           <tr>
-            <th v-for="weekday in WEEKDAYS" :key="weekday">
-              {{ capitalized(Weekday[weekday]) }}
-            </th>
+            <th>Day</th>
+            <th>Completed Pomodori</th>
           </tr>
         </thead>
+        <tbody>
+          <tr v-for="stat in pomodoroStats" :key="stat.day">
+            <td data-test="day-field">{{ stat.day }}</td>
+            <td data-test="completed-pomodori-field">{{ stat.completedPomodori }}</td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </ContentTemplate>
