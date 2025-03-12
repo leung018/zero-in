@@ -8,18 +8,20 @@ import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 import type { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
 import type { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/storage'
 import { Time } from '../domain/time'
-import { getLastDateWithTime } from '../util'
+import { getMostRecentDate } from '../util'
 
 const {
   port,
   closeCurrentTabService,
   pomodoroRecordStorageService,
-  dailyCutoffTimeStorageService
+  dailyCutoffTimeStorageService,
+  currentDate
 } = defineProps<{
   port: Port<WorkRequest, PomodoroTimerResponse>
   closeCurrentTabService: ActionService
   pomodoroRecordStorageService: PomodoroRecordStorageService
   dailyCutoffTimeStorageService: DailyCutoffTimeStorageService
+  currentDate: Date
 }>()
 
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
@@ -49,10 +51,13 @@ onBeforeMount(async () => {
 })
 
 async function getTotalNumOfPomodoriAfter(dailyCutoffTime: Time): Promise<number> {
-  const startDate = getLastDateWithTime(dailyCutoffTime)
+  const startDate = getMostRecentDate(dailyCutoffTime, currentDate)
 
-  const totalNumOfPomodori = (await pomodoroRecordStorageService.getRecordsOnOrAfter(startDate))
-    .length
+  const totalNumOfPomodori = (
+    await pomodoroRecordStorageService
+      .getAll()
+      .then((records) => records.filter((record) => record.completedAt >= startDate))
+  ).length
   return totalNumOfPomodori
 }
 

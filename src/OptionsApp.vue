@@ -8,6 +8,7 @@ import { BrowsingRulesStorageService } from './domain/browsing_rules/storage'
 import { ChromeCommunicationManager } from './chrome/communication'
 import { DailyCutoffTimeStorageService } from './domain/daily_cutoff_time/storage'
 import { ReloadService } from './chrome/reload'
+import { PomodoroRecordStorageService } from './domain/pomodoro/record/storage'
 
 const port = new ChromeCommunicationManager().clientConnect()
 
@@ -29,7 +30,9 @@ const routeMap: Record<PATH, Route> = {
     component: StatisticsPage,
     props: {
       dailyCutoffTimeStorageService: DailyCutoffTimeStorageService.create(),
-      reloadService: new ReloadService()
+      reloadService: new ReloadService(),
+      currentDate: new Date(),
+      pomodoroRecordStorageService: PomodoroRecordStorageService.create()
     }
   },
   [PATH.SCHEDULES]: {
