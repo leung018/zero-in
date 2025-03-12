@@ -78,6 +78,7 @@ describe('StatisticsPage', () => {
 
     await pomodoroRecordStorageService.add({ completedAt: new Date(2025, 3, 11, 8, 24) })
 
+    // When current time hasn't reached the daily cutoff time that day.
     const { wrapper } = mountStatisticsPage({
       dailyCutoffTimeStorageService,
       currentDate: new Date(2025, 3, 11, 9, 0),
@@ -86,13 +87,30 @@ describe('StatisticsPage', () => {
     await flushPromises()
 
     const rows = wrapper.find('tbody').findAll('tr')
-    expect(rows[0].find('[data-test="completed-pomodori-field"]').text()).toBe('1') // 2025-04-10 10:30 - 2025-04-11 10:29
+    expect(rows[0].find('[data-test="completed-pomodori-field"]').text()).toBe('1') // 2025-04-10 10:30 - now
     expect(rows[1].find('[data-test="completed-pomodori-field"]').text()).toBe('0') // 2025-04-09 10:30 - 2025-04-10 10:29
     expect(rows[2].find('[data-test="completed-pomodori-field"]').text()).toBe('0') // 2025-04-08 10:30 - 2025-04-09 10:29
     expect(rows[3].find('[data-test="completed-pomodori-field"]').text()).toBe('0') // 2025-04-07 10:30 - 2025-04-08 10:29
     expect(rows[4].find('[data-test="completed-pomodori-field"]').text()).toBe('2') // 2025-04-06 10:30 - 2025-04-07 10:29
     expect(rows[5].find('[data-test="completed-pomodori-field"]').text()).toBe('0') // 2025-04-05 10:30 - 2025-04-06 10:29
     expect(rows[6].find('[data-test="completed-pomodori-field"]').text()).toBe('2') // 2025-04-04 10:30 - 2025-04-05 10:29
+
+    // When current time has reached the daily cutoff time that day.
+    const { wrapper: newWrapper } = mountStatisticsPage({
+      dailyCutoffTimeStorageService,
+      currentDate: new Date(2025, 3, 11, 10, 30),
+      pomodoroRecordStorageService
+    })
+    await flushPromises()
+
+    const newRows = newWrapper.find('tbody').findAll('tr')
+    expect(newRows[0].find('[data-test="completed-pomodori-field"]').text()).toBe('0') // 2025-04-11 10:30 - now
+    expect(newRows[1].find('[data-test="completed-pomodori-field"]').text()).toBe('1') // 2025-04-10 10:30 - 2025-04-11 10:29
+    expect(newRows[2].find('[data-test="completed-pomodori-field"]').text()).toBe('0') // 2025-04-09 10:30 - 2025-04-10 10:29
+    expect(newRows[3].find('[data-test="completed-pomodori-field"]').text()).toBe('0') // 2025-04-08 10:30 - 2025-04-09 10:29
+    expect(newRows[4].find('[data-test="completed-pomodori-field"]').text()).toBe('0') // 2025-04-07 10:30 - 2025-04-08 10:29
+    expect(newRows[5].find('[data-test="completed-pomodori-field"]').text()).toBe('2') // 2025-04-06 10:30 - 2025-04-07 10:29
+    expect(newRows[6].find('[data-test="completed-pomodori-field"]').text()).toBe('0') // 2025-04-05 10:30 - 2025-04-06 10:29
   })
 })
 
