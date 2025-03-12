@@ -90,6 +90,12 @@ describe('ReminderPage', () => {
     expect(wrapper.find("[data-test='cutoff-time']").text()).toBe('15:03')
     expect(wrapper.find("[data-test='daily-completed-pomodori']").text()).toBe('2')
   })
+
+  it('should trigger soundService when mount', async () => {
+    const { soundService } = mountPage()
+
+    expect(soundService.getTriggerCount()).toBe(1)
+  })
 })
 
 function mountPage({
@@ -102,6 +108,7 @@ function mountPage({
     timerConfig
   })
   const closeCurrentTabService = new FakeActionService()
+  const soundService = new FakeActionService()
   const dailyCutoffTimeStorageService = DailyCutoffTimeStorageService.createFake()
   dailyCutoffTimeStorageService.save(dailyCutOffTime)
 
@@ -109,10 +116,11 @@ function mountPage({
     props: {
       port: communicationManager.clientConnect(),
       closeCurrentTabService,
+      soundService,
       pomodoroRecordStorageService,
       dailyCutoffTimeStorageService,
       currentDate
     }
   })
-  return { wrapper, scheduler, timer, closeCurrentTabService }
+  return { wrapper, scheduler, timer, closeCurrentTabService, soundService }
 }

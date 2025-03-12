@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, ref } from 'vue'
+import { computed, onBeforeMount, onMounted, ref } from 'vue'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import type { Port } from '../infra/communication'
 import type { ActionService } from '../infra/action'
@@ -13,12 +13,14 @@ import { getMostRecentDate } from '../util'
 const {
   port,
   closeCurrentTabService,
+  soundService,
   pomodoroRecordStorageService,
   dailyCutoffTimeStorageService,
   currentDate
 } = defineProps<{
   port: Port<WorkRequest, PomodoroTimerResponse>
   closeCurrentTabService: ActionService
+  soundService: ActionService
   pomodoroRecordStorageService: PomodoroRecordStorageService
   dailyCutoffTimeStorageService: DailyCutoffTimeStorageService
   currentDate: Date
@@ -48,6 +50,10 @@ onBeforeMount(async () => {
   })
   dailyCutoffTime.value = await dailyCutoffTimeStorageService.get()
   dailyCompletedPomodori.value = await getTotalNumOfPomodoriAfter(dailyCutoffTime.value)
+})
+
+onMounted(() => {
+  soundService.trigger()
 })
 
 async function getTotalNumOfPomodoriAfter(dailyCutoffTime: Time): Promise<number> {
