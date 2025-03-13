@@ -548,6 +548,27 @@ describe('PomodoroTimer', () => {
 
     expect(timer.getState()).toEqual(targetState)
   })
+
+  it('should able to publishing the new state if newState is running', async () => {
+    const { timer, scheduler } = createTimer()
+
+    const targetState: PomodoroTimerState = {
+      remainingSeconds: 3,
+      isRunning: true,
+      stage: PomodoroStage.FOCUS,
+      numOfPomodoriCompleted: 0
+    }
+
+    const updates: PomodoroTimerState[] = []
+    timer.subscribeTimerState((newState) => {
+      updates.push(newState)
+    })
+
+    timer.setState(targetState)
+    scheduler.advanceTime(1000)
+
+    expect(updates[updates.length - 1].remainingSeconds).toBe(2)
+  })
 })
 
 function createTimer({

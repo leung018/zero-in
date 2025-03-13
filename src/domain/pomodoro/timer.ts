@@ -230,9 +230,12 @@ export class PomodoroTimer {
 
   setState(state: PomodoroTimerState) {
     this.remaining = new Duration({ seconds: state.remainingSeconds })
-    this.isRunning = state.isRunning
     this.stage = state.stage
     this.numOfPomodoriCompleted = state.numOfPomodoriCompleted
+
+    if (state.isRunning) {
+      this.start()
+    }
   }
 }
 
