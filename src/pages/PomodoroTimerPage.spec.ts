@@ -7,8 +7,8 @@ import { startBackgroundListener } from '../test_utils/listener'
 import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
 
 describe('PomodoroTimerPage', () => {
-  it('should display initial stage and remaining time properly', () => {
-    const { wrapper } = startListenerAndMountPage(
+  it('should display initial stage and remaining time properly', async () => {
+    const { wrapper } = await startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ minutes: 9 })
       })
@@ -20,7 +20,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should reduce the time after timer is started', async () => {
-    const { wrapper, scheduler } = startListenerAndMountPage(
+    const { wrapper, scheduler } = await startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ minutes: 25 })
       })
@@ -34,7 +34,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should reopened timer page can update the component if the timer is started already', async () => {
-    const { wrapper, scheduler, communicationManager } = startListenerAndMountPage(
+    const { wrapper, scheduler, communicationManager } = await startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ minutes: 10 })
       })
@@ -51,7 +51,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should start button changed to a pause button after timer is started', async () => {
-    const { wrapper, communicationManager } = startListenerAndMountPage()
+    const { wrapper, communicationManager } = await startListenerAndMountPage()
 
     assertControlVisibility(wrapper, {
       startButtonVisible: true,
@@ -74,7 +74,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should able to pause the timer', async () => {
-    const { wrapper, scheduler, communicationManager } = startListenerAndMountPage(
+    const { wrapper, scheduler, communicationManager } = await startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ minutes: 10 })
       })
@@ -95,7 +95,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should show the start button again after the timer is paused', async () => {
-    const { wrapper, communicationManager } = startListenerAndMountPage()
+    const { wrapper, communicationManager } = await startListenerAndMountPage()
 
     await startTimer(wrapper)
     await pauseTimer(wrapper)
@@ -113,7 +113,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should able to restart timer', async () => {
-    const { wrapper, scheduler } = startListenerAndMountPage(
+    const { wrapper, scheduler } = await startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ minutes: 10 })
       })
@@ -132,7 +132,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should display hint of break if focus duration has passed', async () => {
-    const { wrapper, scheduler } = startListenerAndMountPage(
+    const { wrapper, scheduler } = await startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 2 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
@@ -156,7 +156,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should prevent bug of last second pause and restart may freezing the component', async () => {
-    const { wrapper, scheduler } = startListenerAndMountPage(
+    const { wrapper, scheduler } = await startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 2 })
@@ -178,7 +178,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should display hint of long break', async () => {
-    const { wrapper, scheduler } = startListenerAndMountPage(
+    const { wrapper, scheduler } = await startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
@@ -207,7 +207,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should render restart focus and short break buttons properly', async () => {
-    const { wrapper } = startListenerAndMountPage(
+    const { wrapper } = await startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         numOfPomodoriPerCycle: 3
       })
@@ -230,7 +230,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should able to restart the focus', async () => {
-    const { wrapper } = startListenerAndMountPage(
+    const { wrapper } = await startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         numOfPomodoriPerCycle: 3
       })
@@ -247,7 +247,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should able to restart the short break', async () => {
-    const { wrapper } = startListenerAndMountPage(
+    const { wrapper } = await startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         numOfPomodoriPerCycle: 4
       })
@@ -264,7 +264,7 @@ describe('PomodoroTimerPage', () => {
   })
 
   it('should able to restart long break', async () => {
-    const { wrapper } = startListenerAndMountPage(
+    const { wrapper } = await startListenerAndMountPage(
       newTestPomodoroTimerConfig({
         numOfPomodoriPerCycle: 4
       })
@@ -275,8 +275,8 @@ describe('PomodoroTimerPage', () => {
   })
 })
 
-function startListenerAndMountPage(timerConfig = newTestPomodoroTimerConfig()) {
-  const { scheduler, communicationManager } = startBackgroundListener({
+async function startListenerAndMountPage(timerConfig = newTestPomodoroTimerConfig()) {
+  const { scheduler, communicationManager } = await startBackgroundListener({
     timerConfig
   })
   const wrapper = mountPage({

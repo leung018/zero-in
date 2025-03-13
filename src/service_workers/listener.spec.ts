@@ -7,11 +7,13 @@ import config from '../config'
 import { startBackgroundListener } from '../test_utils/listener'
 import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
 import { TimerUpdateStorageService } from '../domain/pomodoro/storage'
+import type { PomodoroTimerUpdate } from '../domain/pomodoro/timer'
+import { PomodoroStage } from '../domain/pomodoro/stage'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
-  it('should remove subscription when disconnect fired', () => {
-    const { timer, clientPort } = startListener()
+  it('should remove subscription when disconnect fired', async () => {
+    const { timer, clientPort } = await startListener()
 
     const initialSubscriptionCount = timer.getSubscriptionCount()
 
@@ -25,7 +27,7 @@ describe('BackgroundListener', () => {
   })
 
   it('should display badge when the timer is started', async () => {
-    const { badgeDisplayService, scheduler, clientPort } = startListener(
+    const { badgeDisplayService, scheduler, clientPort } = await startListener(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ minutes: 25 })
       })
@@ -61,8 +63,8 @@ describe('BackgroundListener', () => {
     })
   })
 
-  it('should remove badge when the timer is paused', () => {
-    const { badgeDisplayService, clientPort } = startListener()
+  it('should remove badge when the timer is paused', async () => {
+    const { badgeDisplayService, clientPort } = await startListener()
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
 
@@ -73,8 +75,8 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
 
-  it('should remove badge when the timer is finished', () => {
-    const { badgeDisplayService, scheduler, clientPort } = startListener(
+  it('should remove badge when the timer is finished', async () => {
+    const { badgeDisplayService, scheduler, clientPort } = await startListener(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 1 })
       })
@@ -87,7 +89,7 @@ describe('BackgroundListener', () => {
   })
 
   it('should display short break badge properly', async () => {
-    const { badgeDisplayService, scheduler, clientPort } = startListener(
+    const { badgeDisplayService, scheduler, clientPort } = await startListener(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ minutes: 2 }),
@@ -109,7 +111,7 @@ describe('BackgroundListener', () => {
   })
 
   it('should display long break badge properly', async () => {
-    const { badgeDisplayService, scheduler, clientPort } = startListener(
+    const { badgeDisplayService, scheduler, clientPort } = await startListener(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ minutes: 2 }),
@@ -130,8 +132,8 @@ describe('BackgroundListener', () => {
     })
   })
 
-  it('should trigger reminderService when time is up', () => {
-    const { reminderService, scheduler, clientPort } = startListener(
+  it('should trigger reminderService when time is up', async () => {
+    const { reminderService, scheduler, clientPort } = await startListener(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 3 })
       })
@@ -144,7 +146,7 @@ describe('BackgroundListener', () => {
   })
 
   it('should back up update to storage', async () => {
-    const { timerUpdateStorageService, scheduler, clientPort, timer } = startListener(
+    const { timerUpdateStorageService, scheduler, clientPort, timer } = await startListener(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 3 })
       })
@@ -159,14 +161,36 @@ describe('BackgroundListener', () => {
 
     expect(await timerUpdateStorageService.get()).toEqual(timer.getUpdate())
   })
+
+  it('should restore timer state from storage', async () => {
+    const timerUpdateStorageService = TimerUpdateStorageService.createFake()
+    const targetUpdate: PomodoroTimerUpdate = {
+      remainingSeconds: 1000,
+      isRunning: true,
+      stage: PomodoroStage.FOCUS,
+      numOfPomodoriCompleted: 1
+    }
+    await timerUpdateStorageService.save(targetUpdate)
+
+    const { timer } = await startListener(
+      newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ seconds: 3 }),
+        numOfPomodoriPerCycle: 2
+      }),
+      timerUpdateStorageService
+    )
+    await flushPromises()
+
+    expect(timer.getUpdate()).toEqual(targetUpdate)
+  })
 })
 
-function startListener(
+async function startListener(
   timerConfig = newTestPomodoroTimerConfig(),
   timerUpdateStorageService = TimerUpdateStorageService.createFake()
 ) {
   const { timer, badgeDisplayService, communicationManager, scheduler, reminderService } =
-    startBackgroundListener({
+    await startBackgroundListener({
       timerConfig,
       timerUpdateStorageService
     })

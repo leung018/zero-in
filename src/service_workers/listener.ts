@@ -17,6 +17,7 @@ import config from '../config'
 import { MultipleActionService } from '../infra/multiple_actions'
 import { ChromeNotificationService } from '../chrome/notification'
 import { TimerUpdateStorageService } from '../domain/pomodoro/storage'
+import { Duration } from '../domain/pomodoro/duration'
 
 export class BackgroundListener {
   private redirectTogglingService: BrowsingControlTogglingService
@@ -82,68 +83,81 @@ export class BackgroundListener {
     this.timerUpdateStorageService = timerUpdateStorageService
 
     this.timer = timer
-
-    this.timer.setOnStageComplete(() => {
-      this.reminderService.trigger()
-      this.badgeDisplayService.clearBadge()
-    })
-    this.timer.subscribeTimerUpdate((newStatus) => {
-      this.timerUpdateStorageService.save(newStatus)
-
-      if (newStatus.isRunning) {
-        this.badgeDisplayService.displayBadge({
-          text: roundUpToRemainingMinutes(newStatus.remainingSeconds).toString(),
-          color: getBadgeColor(newStatus.stage)
-        })
-      }
-    })
   }
 
-  start() {
-    this.communicationManager.onNewClientConnect(
-      (backgroundPort: Port<PomodoroTimerResponse, WorkRequest>) => {
-        const listener = (message: WorkRequest) => {
-          switch (message.name) {
-            case WorkRequestName.START_TIMER: {
-              this.timer.start()
-              break
-            }
-            case WorkRequestName.TOGGLE_REDIRECT_RULES: {
-              this.redirectTogglingService.run()
-              break
-            }
-            case WorkRequestName.LISTEN_TO_TIMER: {
-              const subscriptionId = this.timer.subscribeTimerUpdate((update) => {
-                backgroundPort.send(update)
-              })
-              backgroundPort.onDisconnect(() => {
-                console.debug('Connection closed, unsubscribing timer update.')
-                this.timer.unsubscribeTimerUpdate(subscriptionId)
-              })
-              break
-            }
-            case WorkRequestName.PAUSE_TIMER: {
-              this.timer.pause()
-              this.badgeDisplayService.clearBadge()
-              break
-            }
-            case WorkRequestName.RESTART_FOCUS: {
-              this.timer.restartFocus(message.payload?.nth)
-              break
-            }
-            case WorkRequestName.RESTART_SHORT_BREAK: {
-              this.timer.restartShortBreak(message.payload?.nth)
-              break
-            }
-            case WorkRequestName.RESTART_LONG_BREAK: {
-              this.timer.restartLongBreak()
-              break
-            }
-          }
+  async start() {
+    return this.timerUpdateStorageService
+      .get()
+      .then((update) => {
+        if (update) {
+          this.timer.setState({
+            remaining: new Duration({ seconds: update.remainingSeconds }),
+            isRunning: update.isRunning,
+            stage: update.stage,
+            numOfPomodoriCompleted: update.numOfPomodoriCompleted
+          })
         }
-        backgroundPort.onMessage(listener)
-      }
-    )
+        this.timer.setOnStageComplete(() => {
+          this.reminderService.trigger()
+          this.badgeDisplayService.clearBadge()
+        })
+        this.timer.subscribeTimerUpdate((newStatus) => {
+          this.timerUpdateStorageService.save(newStatus)
+
+          if (newStatus.isRunning) {
+            this.badgeDisplayService.displayBadge({
+              text: roundUpToRemainingMinutes(newStatus.remainingSeconds).toString(),
+              color: getBadgeColor(newStatus.stage)
+            })
+          }
+        })
+      })
+      .then(() => {
+        this.communicationManager.onNewClientConnect(
+          (backgroundPort: Port<PomodoroTimerResponse, WorkRequest>) => {
+            const listener = (message: WorkRequest) => {
+              switch (message.name) {
+                case WorkRequestName.START_TIMER: {
+                  this.timer.start()
+                  break
+                }
+                case WorkRequestName.TOGGLE_REDIRECT_RULES: {
+                  this.redirectTogglingService.run()
+                  break
+                }
+                case WorkRequestName.LISTEN_TO_TIMER: {
+                  const subscriptionId = this.timer.subscribeTimerUpdate((update) => {
+                    backgroundPort.send(update)
+                  })
+                  backgroundPort.onDisconnect(() => {
+                    console.debug('Connection closed, unsubscribing timer update.')
+                    this.timer.unsubscribeTimerUpdate(subscriptionId)
+                  })
+                  break
+                }
+                case WorkRequestName.PAUSE_TIMER: {
+                  this.timer.pause()
+                  this.badgeDisplayService.clearBadge()
+                  break
+                }
+                case WorkRequestName.RESTART_FOCUS: {
+                  this.timer.restartFocus(message.payload?.nth)
+                  break
+                }
+                case WorkRequestName.RESTART_SHORT_BREAK: {
+                  this.timer.restartShortBreak(message.payload?.nth)
+                  break
+                }
+                case WorkRequestName.RESTART_LONG_BREAK: {
+                  this.timer.restartLongBreak()
+                  break
+                }
+              }
+            }
+            backgroundPort.onMessage(listener)
+          }
+        )
+      })
   }
 }
 

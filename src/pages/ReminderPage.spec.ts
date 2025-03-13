@@ -13,7 +13,7 @@ import { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/stora
 
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
-    const { scheduler, timer, wrapper } = mountPage({
+    const { scheduler, timer, wrapper } = await mountPage({
       timerConfig: {
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
@@ -42,7 +42,7 @@ describe('ReminderPage', () => {
   })
 
   it('should click start button to start timer again', async () => {
-    const { scheduler, timer, wrapper } = mountPage({
+    const { scheduler, timer, wrapper } = await mountPage({
       timerConfig: newTestPomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 2 }),
@@ -67,7 +67,7 @@ describe('ReminderPage', () => {
   })
 
   it('should click start button trigger the closeCurrentTabService', async () => {
-    const { wrapper, closeCurrentTabService } = mountPage()
+    const { wrapper, closeCurrentTabService } = await mountPage()
 
     wrapper.find("[data-test='start-button']").trigger('click')
 
@@ -80,7 +80,7 @@ describe('ReminderPage', () => {
     await pomodoroRecordStorageService.add(newPomodoroRecord(new Date(2025, 2, 1, 15, 3)))
     await pomodoroRecordStorageService.add(newPomodoroRecord(new Date(2025, 2, 1, 15, 5)))
 
-    const { wrapper } = mountPage({
+    const { wrapper } = await mountPage({
       pomodoroRecordStorageService,
       dailyCutOffTime: new Time(15, 3),
       currentDate: new Date(2025, 2, 2, 14, 0)
@@ -92,19 +92,19 @@ describe('ReminderPage', () => {
   })
 
   it('should trigger soundService when mount', async () => {
-    const { soundService } = mountPage()
+    const { soundService } = await mountPage()
 
     expect(soundService.getTriggerCount()).toBe(1)
   })
 })
 
-function mountPage({
+async function mountPage({
   timerConfig = newTestPomodoroTimerConfig(),
   pomodoroRecordStorageService = PomodoroRecordStorageService.createFake(),
   dailyCutOffTime = new Time(0, 0),
   currentDate = new Date()
 } = {}) {
-  const { scheduler, timer, communicationManager } = startBackgroundListener({
+  const { scheduler, timer, communicationManager } = await startBackgroundListener({
     timerConfig
   })
   const closeCurrentTabService = new FakeActionService()
