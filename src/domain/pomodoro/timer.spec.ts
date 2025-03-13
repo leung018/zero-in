@@ -64,7 +64,7 @@ describe('PomodoroTimer', () => {
     timer.start()
     scheduler.advanceTime(1050)
 
-    expect(timer.getState().remainingSeconds).toEqual(
+    expect(timer.getState().remainingSeconds).toBe(
       new Duration({ minutes: 9, seconds: 58 }).remainingSeconds()
     )
   })
@@ -96,7 +96,7 @@ describe('PomodoroTimer', () => {
     timer.start()
     scheduler.advanceTime(1800)
 
-    expect(timer.getState().remainingSeconds).toEqual(
+    expect(timer.getState().remainingSeconds).toBe(
       new Duration({ minutes: 9, seconds: 57 }).remainingSeconds()
     )
   })
@@ -216,7 +216,7 @@ describe('PomodoroTimer', () => {
 
     // although the update will be published every 1000ms, should receive immediate response when subscribe
     expect(updates.length).toBe(1)
-    expect(updates[0].remainingSeconds).toEqual(
+    expect(updates[0].remainingSeconds).toBe(
       new Duration({ minutes: 9, seconds: 59 }).remainingSeconds()
     )
   })
