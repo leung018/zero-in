@@ -10,13 +10,11 @@ describe('Duration', () => {
   })
 
   it('should remainingSeconds round up properly', () => {
-    expect(new Duration({ minutes: 0, seconds: 59, milliseconds: 999 }).remainingSeconds()).toEqual(
-      60
+    expect(new Duration({ minutes: 0, seconds: 59, milliseconds: 999 }).remainingSeconds()).toBe(60)
+    expect(new Duration({ minutes: 10, seconds: 30, milliseconds: 200 }).remainingSeconds()).toBe(
+      10 * 60 + 31
     )
-    expect(
-      new Duration({ minutes: 10, seconds: 30, milliseconds: 200 }).remainingSeconds()
-    ).toEqual(10 * 60 + 31)
-    expect(new Duration({ minutes: 10, seconds: 30, milliseconds: 0 }).remainingSeconds()).toEqual(
+    expect(new Duration({ minutes: 10, seconds: 30, milliseconds: 0 }).remainingSeconds()).toBe(
       10 * 60 + 30
     )
   })
