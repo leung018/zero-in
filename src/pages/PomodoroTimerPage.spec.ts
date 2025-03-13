@@ -190,10 +190,12 @@ describe('PomodoroTimerPage', () => {
     // 1st Focus
     await startTimer(wrapper)
     scheduler.advanceTime(3000)
+    await flushPromises()
 
     // Short Break
     await startTimer(wrapper)
     scheduler.advanceTime(1000)
+    await flushPromises()
 
     // 2nd Focus
     await startTimer(wrapper)
