@@ -6,8 +6,8 @@ import { flushPromises } from '@vue/test-utils'
 import config from '../config'
 import { startBackgroundListener } from '../test_utils/listener'
 import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
-import { TimerUpdateStorageService } from '../domain/pomodoro/storage'
-import type { PomodoroTimerUpdate } from '../domain/pomodoro/timer'
+import { TimerStateStorageService } from '../domain/pomodoro/storage'
+import type { PomodoroTimerState } from '../domain/pomodoro/timer'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
@@ -146,7 +146,7 @@ describe('BackgroundListener', () => {
   })
 
   it('should back up update to storage', async () => {
-    const { timerUpdateStorageService, scheduler, clientPort, timer } = await startListener(
+    const { timerStateStorageService, scheduler, clientPort, timer } = await startListener(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 3 })
       })
@@ -155,50 +155,50 @@ describe('BackgroundListener', () => {
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
 
-    expect(await timerUpdateStorageService.get()).toEqual(timer.getUpdate())
+    expect(await timerStateStorageService.get()).toEqual(timer.getState())
 
     clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
 
-    expect(await timerUpdateStorageService.get()).toEqual(timer.getUpdate())
+    expect(await timerStateStorageService.get()).toEqual(timer.getState())
   })
 
   it('should restore timer state from storage', async () => {
-    const timerUpdateStorageService = TimerUpdateStorageService.createFake()
-    const targetUpdate: PomodoroTimerUpdate = {
+    const timerStateStorageService = TimerStateStorageService.createFake()
+    const targetUpdate: PomodoroTimerState = {
       remainingSeconds: 1000,
       isRunning: true,
       stage: PomodoroStage.FOCUS,
       numOfPomodoriCompleted: 1
     }
-    await timerUpdateStorageService.save(targetUpdate)
+    await timerStateStorageService.save(targetUpdate)
 
     const { timer } = await startListener(
       newTestPomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 3 }),
         numOfPomodoriPerCycle: 2
       }),
-      timerUpdateStorageService
+      timerStateStorageService
     )
     await flushPromises()
 
-    expect(timer.getUpdate()).toEqual(targetUpdate)
+    expect(timer.getState()).toEqual(targetUpdate)
   })
 })
 
 async function startListener(
   timerConfig = newTestPomodoroTimerConfig(),
-  timerUpdateStorageService = TimerUpdateStorageService.createFake()
+  timerStateStorageService = TimerStateStorageService.createFake()
 ) {
   const { timer, badgeDisplayService, communicationManager, scheduler, reminderService } =
     await startBackgroundListener({
       timerConfig,
-      timerUpdateStorageService
+      timerStateStorageService
     })
 
   return {
     timer,
     badgeDisplayService,
-    timerUpdateStorageService,
+    timerStateStorageService,
     clientPort: communicationManager.clientConnect(),
     scheduler,
     reminderService

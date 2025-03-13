@@ -61,7 +61,7 @@ describe('ReminderPage', () => {
     await flushPromises()
 
     const state = timer.getState()
-    expect(state.remaining).toEqual(new Duration({ seconds: 1 }))
+    expect(state.remainingSeconds).toEqual(new Duration({ seconds: 1 }).remainingSeconds())
     expect(state.isRunning).toBe(true)
     expect(state.stage).toBe(PomodoroStage.SHORT_BREAK)
   })

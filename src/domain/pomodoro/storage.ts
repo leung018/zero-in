@@ -1,14 +1,14 @@
 import { ChromeLocalStorageFactory } from '../../chrome/storage'
 import { FakeChromeLocalStorage, type StorageHandler } from '../../infra/storage'
-import type { PomodoroTimerUpdate } from './timer'
+import type { PomodoroTimerState } from './timer'
 
-export class TimerUpdateStorageService {
+export class TimerStateStorageService {
   static create() {
-    return new TimerUpdateStorageService(ChromeLocalStorageFactory.createStorageHandler())
+    return new TimerStateStorageService(ChromeLocalStorageFactory.createStorageHandler())
   }
 
   static createFake() {
-    return new TimerUpdateStorageService(new FakeChromeLocalStorage())
+    return new TimerStateStorageService(new FakeChromeLocalStorage())
   }
 
   private storageHandler: StorageHandler
@@ -17,17 +17,17 @@ export class TimerUpdateStorageService {
     this.storageHandler = storageHandler
   }
 
-  async get(): Promise<PomodoroTimerUpdate | null> {
-    return this.storageHandler.get('pomodoroTimerUpdate').then((result: any) => {
-      if (result.pomodoroTimerUpdate) {
-        return result.pomodoroTimerUpdate
+  async get(): Promise<PomodoroTimerState | null> {
+    return this.storageHandler.get('pomodoroTimerState').then((result: any) => {
+      if (result.pomodoroTimerState) {
+        return result.pomodoroTimerState
       }
 
       return null
     })
   }
 
-  async save(pomodoroTimerUpdate: PomodoroTimerUpdate): Promise<void> {
-    return this.storageHandler.set({ pomodoroTimerUpdate })
+  async save(pomodoroTimerState: PomodoroTimerState): Promise<void> {
+    return this.storageHandler.set({ pomodoroTimerState })
   }
 }

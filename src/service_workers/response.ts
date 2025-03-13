@@ -1,3 +1,3 @@
-import type { PomodoroTimerUpdate } from '../domain/pomodoro/timer'
+import type { PomodoroTimerState } from '../domain/pomodoro/timer'
 
-export type PomodoroTimerResponse = PomodoroTimerUpdate
+export type PomodoroTimerResponse = PomodoroTimerState

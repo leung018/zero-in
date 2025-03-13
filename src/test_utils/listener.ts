@@ -6,7 +6,7 @@ import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeCommunicationManager } from '../infra/communication'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { BackgroundListener } from '../service_workers/listener'
-import { TimerUpdateStorageService } from '../domain/pomodoro/storage'
+import { TimerStateStorageService } from '../domain/pomodoro/storage'
 
 export async function startBackgroundListener({
   timerConfig = config.getPomodoroTimerConfig(),
@@ -14,7 +14,7 @@ export async function startBackgroundListener({
   reminderService = new FakeActionService(),
   badgeDisplayService = new FakeBadgeDisplayService(),
   communicationManager = new FakeCommunicationManager(),
-  timerUpdateStorageService = TimerUpdateStorageService.createFake()
+  timerStateStorageService = TimerStateStorageService.createFake()
 }) {
   const scheduler = new FakePeriodicTaskScheduler()
   const timer = PomodoroTimer.createFake({
@@ -28,7 +28,7 @@ export async function startBackgroundListener({
     badgeDisplayService,
     redirectTogglingService,
     communicationManager,
-    timerUpdateStorageService
+    timerStateStorageService
   })
   return listener.start().then(() => {
     return { scheduler, timer, reminderService, badgeDisplayService, communicationManager }

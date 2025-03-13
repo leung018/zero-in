@@ -16,8 +16,7 @@ import { PomodoroStage } from '../domain/pomodoro/stage'
 import config from '../config'
 import { MultipleActionService } from '../infra/multiple_actions'
 import { ChromeNotificationService } from '../chrome/notification'
-import { TimerUpdateStorageService } from '../domain/pomodoro/storage'
-import { Duration } from '../domain/pomodoro/duration'
+import { TimerStateStorageService } from '../domain/pomodoro/storage'
 
 export class BackgroundListener {
   private redirectTogglingService: BrowsingControlTogglingService
@@ -25,7 +24,7 @@ export class BackgroundListener {
   private timer: PomodoroTimer
   private reminderService: ActionService
   private badgeDisplayService: BadgeDisplayService
-  private timerUpdateStorageService: TimerUpdateStorageService
+  private timerStateStorageService: TimerStateStorageService
 
   static create() {
     const reminderService = new MultipleActionService([
@@ -39,7 +38,7 @@ export class BackgroundListener {
       redirectTogglingService: BrowsingControlTogglingService.create(),
       reminderService,
       badgeDisplayService: new ChromeBadgeDisplayService(),
-      timerUpdateStorageService: TimerUpdateStorageService.create()
+      timerStateStorageService: TimerStateStorageService.create()
     })
   }
 
@@ -49,7 +48,7 @@ export class BackgroundListener {
     redirectTogglingService = BrowsingControlTogglingService.createFake(),
     reminderService = new FakeActionService(),
     badgeDisplayService = new FakeBadgeDisplayService(),
-    timerUpdateStorageService = TimerUpdateStorageService.createFake()
+    timerStateStorageService = TimerStateStorageService.createFake()
   } = {}) {
     return new BackgroundListener({
       communicationManager,
@@ -57,7 +56,7 @@ export class BackgroundListener {
       redirectTogglingService,
       reminderService,
       badgeDisplayService,
-      timerUpdateStorageService
+      timerStateStorageService
     })
   }
 
@@ -67,31 +66,31 @@ export class BackgroundListener {
     redirectTogglingService,
     reminderService,
     badgeDisplayService,
-    timerUpdateStorageService
+    timerStateStorageService
   }: {
     communicationManager: CommunicationManager
     timer: PomodoroTimer
     redirectTogglingService: BrowsingControlTogglingService
     reminderService: ActionService
     badgeDisplayService: BadgeDisplayService
-    timerUpdateStorageService: TimerUpdateStorageService
+    timerStateStorageService: TimerStateStorageService
   }) {
     this.communicationManager = communicationManager
     this.redirectTogglingService = redirectTogglingService
     this.reminderService = reminderService
     this.badgeDisplayService = badgeDisplayService
-    this.timerUpdateStorageService = timerUpdateStorageService
+    this.timerStateStorageService = timerStateStorageService
 
     this.timer = timer
   }
 
   async start() {
-    return this.timerUpdateStorageService
+    return this.timerStateStorageService
       .get()
       .then((update) => {
         if (update) {
           this.timer.setState({
-            remaining: new Duration({ seconds: update.remainingSeconds }),
+            remainingSeconds: update.remainingSeconds,
             isRunning: update.isRunning,
             stage: update.stage,
             numOfPomodoriCompleted: update.numOfPomodoriCompleted
@@ -101,8 +100,8 @@ export class BackgroundListener {
           this.reminderService.trigger()
           this.badgeDisplayService.clearBadge()
         })
-        this.timer.subscribeTimerUpdate((newStatus) => {
-          this.timerUpdateStorageService.save(newStatus)
+        this.timer.subscribeTimerState((newStatus) => {
+          this.timerStateStorageService.save(newStatus)
 
           if (newStatus.isRunning) {
             this.badgeDisplayService.displayBadge({
@@ -126,12 +125,12 @@ export class BackgroundListener {
                   break
                 }
                 case WorkRequestName.LISTEN_TO_TIMER: {
-                  const subscriptionId = this.timer.subscribeTimerUpdate((update) => {
+                  const subscriptionId = this.timer.subscribeTimerState((update) => {
                     backgroundPort.send(update)
                   })
                   backgroundPort.onDisconnect(() => {
                     console.debug('Connection closed, unsubscribing timer update.')
-                    this.timer.unsubscribeTimerUpdate(subscriptionId)
+                    this.timer.unsubscribeTimerState(subscriptionId)
                   })
                   break
                 }
