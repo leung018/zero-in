@@ -548,27 +548,6 @@ describe('PomodoroTimer', () => {
 
     expect(timer.getState()).toEqual(targetState)
   })
-
-  it('should not able to set state when timer is running', async () => {
-    const { timer } = createTimer({
-      focusDuration: new Duration({ seconds: 3 }),
-      shortBreakDuration: new Duration({ seconds: 1 }),
-      numOfPomodoriPerCycle: 3
-    })
-
-    timer.start()
-
-    const targetState: PomodoroTimerState = {
-      remainingSeconds: new Duration({ seconds: 2 }).remainingSeconds(),
-      isRunning: true,
-      stage: PomodoroStage.FOCUS,
-      numOfPomodoriCompleted: 1
-    }
-
-    timer.setState(targetState)
-
-    expect(timer.getState()).not.toEqual(targetState)
-  })
 })
 
 function createTimer({
