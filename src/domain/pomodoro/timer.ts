@@ -45,7 +45,7 @@ export class PomodoroTimer {
 
   private pomodoroRecordStorageService: PomodoroRecordStorageService
 
-  private timerUpdateSubscriptionManager = new SubscriptionManager<PomodoroTimerUpdate>()
+  private timerStateSubscriptionManager = new SubscriptionManager<PomodoroTimerState>()
 
   private onStageComplete: () => void = () => {}
 
@@ -77,15 +77,6 @@ export class PomodoroTimer {
 
   getState(): Readonly<PomodoroTimerState> {
     return {
-      remaining: this.remaining,
-      isRunning: this.isRunning,
-      stage: this.stage,
-      numOfPomodoriCompleted: this.numOfPomodoriCompleted
-    }
-  }
-
-  getUpdate(): PomodoroTimerUpdate {
-    return {
       remainingSeconds: this.remaining.remainingSeconds(),
       isRunning: this.isRunning,
       stage: this.stage,
@@ -107,16 +98,16 @@ export class PomodoroTimer {
     this.scheduler.scheduleTask(() => {
       this.advanceTime(timerUnit)
       if (this.remaining.totalMilliseconds % 1000 === 0) {
-        this.broadcastTimerUpdate()
+        this.broadcastTimerState()
       }
     }, timerUnit.totalMilliseconds)
     this.isRunning = true
-    this.broadcastTimerUpdate()
+    this.broadcastTimerState()
   }
 
   pause() {
     this.stopRunning()
-    this.broadcastTimerUpdate()
+    this.broadcastTimerState()
   }
 
   private advanceTime(duration: Duration) {
@@ -132,18 +123,18 @@ export class PomodoroTimer {
     this.scheduler.stopTask()
   }
 
-  subscribeTimerUpdate(callback: (update: PomodoroTimerUpdate) => void) {
-    const subscriptionId = this.timerUpdateSubscriptionManager.subscribe(callback)
-    this.timerUpdateSubscriptionManager.publish(this.getUpdate(), subscriptionId)
+  subscribeTimerState(callback: (state: PomodoroTimerState) => void) {
+    const subscriptionId = this.timerStateSubscriptionManager.subscribe(callback)
+    this.timerStateSubscriptionManager.publish(this.getState(), subscriptionId)
     return subscriptionId
   }
 
-  unsubscribeTimerUpdate(subscriptionId: number) {
-    this.timerUpdateSubscriptionManager.unsubscribe(subscriptionId)
+  unsubscribeTimerState(subscriptionId: number) {
+    this.timerStateSubscriptionManager.unsubscribe(subscriptionId)
   }
 
   getSubscriptionCount() {
-    return this.timerUpdateSubscriptionManager.getSubscriptionCount()
+    return this.timerStateSubscriptionManager.getSubscriptionCount()
   }
 
   setOnStageComplete(callback: () => void) {
@@ -191,8 +182,8 @@ export class PomodoroTimer {
     this.start()
   }
 
-  private broadcastTimerUpdate() {
-    this.timerUpdateSubscriptionManager.broadcast(this.getUpdate())
+  private broadcastTimerState() {
+    this.timerStateSubscriptionManager.broadcast(this.getState())
   }
 
   private completeCurrentStage() {
@@ -236,6 +227,16 @@ export class PomodoroTimer {
     this.stage = PomodoroStage.FOCUS
     this.remaining = this.config.focusDuration
   }
+
+  setState(state: PomodoroTimerState) {
+    this.remaining = new Duration({ seconds: state.remainingSeconds })
+    this.stage = state.stage
+    this.numOfPomodoriCompleted = state.numOfPomodoriCompleted
+
+    if (state.isRunning) {
+      this.start()
+    }
+  }
 }
 
 class SubscriptionManager<Arguments> {
@@ -270,13 +271,6 @@ class SubscriptionManager<Arguments> {
 }
 
 export type PomodoroTimerState = {
-  remaining: Duration
-  isRunning: boolean
-  stage: PomodoroStage
-  numOfPomodoriCompleted: number
-}
-
-export type PomodoroTimerUpdate = {
   remainingSeconds: number
   isRunning: boolean
   stage: PomodoroStage

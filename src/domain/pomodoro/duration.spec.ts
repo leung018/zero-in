@@ -5,7 +5,7 @@ import { assertToThrowError } from '../../test_utils/check_error'
 describe('Duration', () => {
   it('should build duration from minutes, seconds or milliseconds', () => {
     const duration = new Duration({ minutes: 10, seconds: 30, milliseconds: 1000 })
-    expect(duration.remainingSeconds()).toEqual(10 * 60 + 31)
+    expect(duration.remainingSeconds()).toBe(10 * 60 + 31)
     expect(duration.totalMilliseconds).toBe(631000)
   })
 
