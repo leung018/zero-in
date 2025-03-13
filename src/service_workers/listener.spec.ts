@@ -46,13 +46,11 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toEqual(expected)
 
     scheduler.advanceTime(1000)
-    await flushPromises()
 
     // remaining 24:59 still display 25
     expect(badgeDisplayService.getDisplayedBadge()).toEqual(expected)
 
     scheduler.advanceTime(59000)
-    await flushPromises()
 
     // change to 24 only when remaining 24:00
     expected = {
@@ -180,7 +178,6 @@ describe('BackgroundListener', () => {
       }),
       timerStateStorageService
     )
-    await flushPromises()
 
     expect(timer.getState()).toEqual(targetUpdate)
   })

@@ -275,13 +275,11 @@ describe('PomodoroTimer', () => {
 
     timer.start()
     scheduler.advanceTime(3000)
-    await flushPromises()
 
     expect(triggeredCount).toBe(1)
 
     timer.start()
     scheduler.advanceTime(1000)
-    await flushPromises()
 
     expect(triggeredCount).toBe(2)
   })
