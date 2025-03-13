@@ -5,6 +5,7 @@ import { PomodoroStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
 import { flushPromises } from '@vue/test-utils'
 import { PomodoroRecordStorageService } from './record/storage'
+import type { PomodoroTimerConfig } from './config'
 
 describe('PomodoroTimer', () => {
   it('should initial state is set correctly', () => {
@@ -13,12 +14,13 @@ describe('PomodoroTimer', () => {
     })
     scheduler.advanceTime(1000) // if the timer is not started, the time should not change
 
-    expect(timer.getState()).toEqual({
+    const expected: PomodoroTimerState = {
       remainingSeconds: new Duration({ minutes: 10 }).remainingSeconds(),
       isRunning: false,
       stage: PomodoroStage.FOCUS,
       numOfPomodoriCompleted: 0
-    })
+    }
+    expect(timer.getState()).toEqual(expected)
   })
 
   it('should round up to seconds of duration in the config', () => {
@@ -31,12 +33,13 @@ describe('PomodoroTimer', () => {
       numOfPomodoriPerCycle: 5
     })
 
-    expect(timer.getConfig()).toEqual({
+    const expected: PomodoroTimerConfig = {
       focusDuration: new Duration({ seconds: 11 }),
       shortBreakDuration: new Duration({ seconds: 4 }),
       longBreakDuration: new Duration({ seconds: 3 }),
       numOfPomodoriPerCycle: 5
-    })
+    }
+    expect(timer.getConfig()).toEqual(expected)
   })
 
   it('should able to start focus', () => {
@@ -46,12 +49,13 @@ describe('PomodoroTimer', () => {
     timer.start()
     scheduler.advanceTime(1001)
 
-    expect(timer.getState()).toEqual({
+    const expected: PomodoroTimerState = {
       remainingSeconds: new Duration({ minutes: 9, seconds: 59 }).remainingSeconds(),
       isRunning: true,
       stage: PomodoroStage.FOCUS,
       numOfPomodoriCompleted: 0
-    })
+    }
+    expect(timer.getState()).toEqual(expected)
   })
 
   it("should extra call of start won't affect the timer", () => {
@@ -78,12 +82,13 @@ describe('PomodoroTimer', () => {
     timer.pause()
     scheduler.advanceTime(1000)
 
-    expect(timer.getState()).toEqual({
+    const expected: PomodoroTimerState = {
       remainingSeconds: new Duration({ minutes: 9, seconds: 59 }).remainingSeconds(),
       isRunning: false,
       stage: PomodoroStage.FOCUS,
       numOfPomodoriCompleted: 0
-    })
+    }
+    expect(timer.getState()).toEqual(expected)
   })
 
   it('should pause and start remain accuracy to 100ms', () => {
@@ -115,7 +120,7 @@ describe('PomodoroTimer', () => {
     timer.start()
     scheduler.advanceTime(2000)
 
-    expect(updates).toEqual([
+    const expectedUpdates: PomodoroTimerState[] = [
       {
         remainingSeconds: 3,
         isRunning: false,
@@ -140,17 +145,19 @@ describe('PomodoroTimer', () => {
         stage: PomodoroStage.FOCUS,
         numOfPomodoriCompleted: 0
       }
-    ])
+    ]
+    expect(updates).toEqual(expectedUpdates)
 
     scheduler.advanceTime(2000)
 
     expect(updates.length).toBe(5)
-    expect(updates[4]).toEqual({
+    const expectedLastUpdate: PomodoroTimerState = {
       remainingSeconds: 5,
       isRunning: false,
       stage: PomodoroStage.SHORT_BREAK,
       numOfPomodoriCompleted: 1
-    })
+    }
+    expect(updates[4]).toEqual(expectedLastUpdate)
   })
 
   it('should receive immediate update whenever timer pause', () => {
@@ -287,12 +294,13 @@ describe('PomodoroTimer', () => {
     timer.start()
     scheduler.advanceTime(3000)
 
-    expect(timer.getState()).toEqual({
+    const expected: PomodoroTimerState = {
       remainingSeconds: 1,
       isRunning: false,
       stage: PomodoroStage.SHORT_BREAK,
       numOfPomodoriCompleted: 1
-    })
+    }
+    expect(timer.getState()).toEqual(expected)
   })
 
   it('should switch back to focus after break duration is passed', () => {
@@ -305,12 +313,13 @@ describe('PomodoroTimer', () => {
     timer.start()
     scheduler.advanceTime(1000)
 
-    expect(timer.getState()).toEqual({
+    const expected: PomodoroTimerState = {
       remainingSeconds: 3,
       isRunning: false,
       stage: PomodoroStage.FOCUS,
       numOfPomodoriCompleted: 1
-    })
+    }
+    expect(timer.getState()).toEqual(expected)
   })
 
   it('should start long break after number of pomodori per cycle is passed', () => {
@@ -334,12 +343,13 @@ describe('PomodoroTimer', () => {
     scheduler.advanceTime(3000)
 
     // Long Break
-    expect(timer.getState()).toEqual({
+    const expected: PomodoroTimerState = {
       remainingSeconds: 2,
       isRunning: false,
       stage: PomodoroStage.LONG_BREAK,
       numOfPomodoriCompleted: 2
-    })
+    }
+    expect(timer.getState()).toEqual(expected)
   })
 
   it('should reset the cycle after long break', () => {
@@ -367,12 +377,13 @@ describe('PomodoroTimer', () => {
     scheduler.advanceTime(2000)
 
     // After Long Break, it should reset to Focus
-    expect(timer.getState()).toEqual({
+    let expected: PomodoroTimerState = {
       remainingSeconds: 3,
       isRunning: false,
       stage: PomodoroStage.FOCUS,
       numOfPomodoriCompleted: 0
-    })
+    }
+    expect(timer.getState()).toEqual(expected)
 
     // 1st Focus
     timer.start()
@@ -387,12 +398,13 @@ describe('PomodoroTimer', () => {
     scheduler.advanceTime(3000)
 
     // Long Break again
-    expect(timer.getState()).toEqual({
+    expected = {
       remainingSeconds: 2,
       isRunning: false,
       stage: PomodoroStage.LONG_BREAK,
       numOfPomodoriCompleted: 2
-    })
+    }
+    expect(timer.getState()).toEqual(expected)
   })
 
   it('should able to jump to short break', () => {
@@ -409,12 +421,13 @@ describe('PomodoroTimer', () => {
     timer.restartShortBreak()
     scheduler.advanceTime(1000)
 
-    expect(timer.getState()).toEqual({
+    const expected: PomodoroTimerState = {
       remainingSeconds: 1,
       isRunning: true,
       stage: PomodoroStage.SHORT_BREAK,
       numOfPomodoriCompleted: 0
-    })
+    }
+    expect(timer.getState()).toEqual(expected)
   })
 
   it('should able to jump to long break', () => {
@@ -436,12 +449,13 @@ describe('PomodoroTimer', () => {
     timer.restartLongBreak()
     scheduler.advanceTime(500)
 
-    expect(timer.getState()).toEqual({
-      remainingSeconds: new Duration({ seconds: 1, milliseconds: 500 }).remainingSeconds(),
+    const expected: PomodoroTimerState = {
+      remainingSeconds: 2,
       isRunning: true,
       stage: PomodoroStage.LONG_BREAK,
       numOfPomodoriCompleted: 1
-    })
+    }
+    expect(timer.getState()).toEqual(expected)
 
     scheduler.advanceTime(1500)
 
@@ -460,12 +474,13 @@ describe('PomodoroTimer', () => {
     timer.restartLongBreak()
     timer.restartFocus()
 
-    expect(timer.getState()).toEqual({
+    const expected: PomodoroTimerState = {
       remainingSeconds: 10,
       isRunning: true,
       stage: PomodoroStage.FOCUS,
       numOfPomodoriCompleted: 0
-    })
+    }
+    expect(timer.getState()).toEqual(expected)
   })
 
   it('should able to jump to specific focus', () => {

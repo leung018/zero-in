@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { WorkRequestName } from './request'
-import { type BadgeColor } from '../infra/badge'
+import { type Badge, type BadgeColor } from '../infra/badge'
 import { Duration } from '../domain/pomodoro/duration'
 import { flushPromises } from '@vue/test-utils'
 import config from '../config'
@@ -39,28 +39,27 @@ describe('BackgroundListener', () => {
 
     const focusBadgeColor: BadgeColor = config.getBadgeColorConfig().focusBadgeColor
 
-    expect(badgeDisplayService.getDisplayedBadge()).toEqual({
+    let expected: Badge = {
       text: '25',
       color: focusBadgeColor
-    })
+    }
+    expect(badgeDisplayService.getDisplayedBadge()).toEqual(expected)
 
     scheduler.advanceTime(1000)
     await flushPromises()
 
     // remaining 24:59 still display 25
-    expect(badgeDisplayService.getDisplayedBadge()).toEqual({
-      text: '25',
-      color: focusBadgeColor
-    })
+    expect(badgeDisplayService.getDisplayedBadge()).toEqual(expected)
 
     scheduler.advanceTime(59000)
     await flushPromises()
 
     // change to 24 only when remaining 24:00
-    expect(badgeDisplayService.getDisplayedBadge()).toEqual({
+    expected = {
       text: '24',
       color: focusBadgeColor
-    })
+    }
+    expect(badgeDisplayService.getDisplayedBadge()).toEqual(expected)
   })
 
   it('should remove badge when the timer is paused', async () => {
@@ -104,10 +103,11 @@ describe('BackgroundListener', () => {
     // start short break
     clientPort.send({ name: WorkRequestName.START_TIMER })
 
-    expect(badgeDisplayService.getDisplayedBadge()).toEqual({
+    const expected: Badge = {
       text: '2',
       color: config.getBadgeColorConfig().breakBadgeColor
-    })
+    }
+    expect(badgeDisplayService.getDisplayedBadge()).toEqual(expected)
   })
 
   it('should display long break badge properly', async () => {
@@ -126,10 +126,11 @@ describe('BackgroundListener', () => {
     // start long break
     clientPort.send({ name: WorkRequestName.START_TIMER })
 
-    expect(badgeDisplayService.getDisplayedBadge()).toEqual({
+    const expected: Badge = {
       text: '4',
       color: config.getBadgeColorConfig().breakBadgeColor
-    })
+    }
+    expect(badgeDisplayService.getDisplayedBadge()).toEqual(expected)
   })
 
   it('should trigger reminderService when time is up', async () => {
