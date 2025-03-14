@@ -14,12 +14,12 @@ import { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/stora
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
     const { scheduler, timer, wrapper } = await mountPage({
-      timerConfig: {
+      timerConfig: newTestPomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
         longBreakDuration: new Duration({ seconds: 2 }),
         numOfPomodoriPerCycle: 2
-      }
+      })
     })
 
     timer.start()
