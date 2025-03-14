@@ -17,18 +17,7 @@ export class ChromeCommunicationManager implements CommunicationManager {
 function mapChromePortToPort(chromePort: chrome.runtime.Port) {
   return {
     send: (message: any) => {
-      try {
-        chromePort.postMessage(message)
-      } catch (error) {
-        // Below require manual testing
-        if (
-          error instanceof Error &&
-          error.message === 'Attempting to use a disconnected port object'
-        ) {
-          return
-        }
-        throw error
-      }
+      return chromePort.postMessage(message)
     },
     onMessage: (callback: (message: any) => void) => {
       return chromePort.onMessage.addListener(callback)
