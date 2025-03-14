@@ -20,11 +20,9 @@ export class PomodoroRecordStorageService {
     this.storageHandler = storageHandler
   }
 
-  async add(record: PomodoroRecord) {
-    const pomodoroRecords = await this.getAll()
-    pomodoroRecords.push(record)
+  async saveAll(records: PomodoroRecord[]) {
     return this.storageHandler.set({
-      pomodoroRecords: pomodoroRecords.map(serializePomodoroRecord)
+      pomodoroRecords: records.map(serializePomodoroRecord)
     })
   }
 

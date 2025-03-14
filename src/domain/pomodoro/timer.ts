@@ -197,7 +197,9 @@ export class PomodoroTimer {
 
   private handleFocusComplete() {
     this.numOfPomodoriCompleted++
-    this.pomodoroRecordStorageService.add(newPomodoroRecord())
+    this.pomodoroRecordStorageService.getAll().then((records) => {
+      this.pomodoroRecordStorageService.saveAll([...records, newPomodoroRecord()])
+    })
 
     if (this.numOfPomodoriCompleted >= this.config.numOfPomodoriPerCycle) {
       this.setToBeginOfLongBreak()

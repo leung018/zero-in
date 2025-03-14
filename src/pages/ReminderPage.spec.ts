@@ -76,9 +76,11 @@ describe('ReminderPage', () => {
 
   it('should display daily completed pomodori', async () => {
     const pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
-    await pomodoroRecordStorageService.add(newPomodoroRecord(new Date(2025, 2, 1, 15, 2)))
-    await pomodoroRecordStorageService.add(newPomodoroRecord(new Date(2025, 2, 1, 15, 3)))
-    await pomodoroRecordStorageService.add(newPomodoroRecord(new Date(2025, 2, 1, 15, 5)))
+    await pomodoroRecordStorageService.saveAll([
+      newPomodoroRecord(new Date(2025, 2, 1, 15, 2)),
+      newPomodoroRecord(new Date(2025, 2, 1, 15, 3)),
+      newPomodoroRecord(new Date(2025, 2, 1, 15, 5))
+    ])
 
     const { wrapper } = await mountPage({
       pomodoroRecordStorageService,
