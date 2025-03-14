@@ -6,7 +6,7 @@ export class ChromeNotificationService implements ActionService {
   trigger(): void {
     chrome.notifications.create({
       type: 'basic',
-      iconUrl: chrome.runtime.getURL('favicon.png'),
+      iconUrl: chrome.runtime.getURL('icon.png'),
       title: 'Task Concentrator',
       message: "Time's up!"
     })
