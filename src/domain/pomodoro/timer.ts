@@ -7,6 +7,7 @@ import {
 import type { PomodoroTimerConfig } from './config'
 import { Duration } from './duration'
 import { newPomodoroRecord } from './record'
+import { PomodoroRecordHousekeeper } from './record/house_keep'
 import { PomodoroRecordStorageService } from './record/storage'
 import { PomodoroStage } from './stage'
 
@@ -197,13 +198,27 @@ export class PomodoroTimer {
 
   private handleFocusComplete() {
     this.numOfPomodoriCompleted++
-    this.pomodoroRecordStorageService.add(newPomodoroRecord())
+    this.updatePomodoroRecords()
 
     if (this.numOfPomodoriCompleted >= this.config.numOfPomodoriPerCycle) {
       this.setToBeginOfLongBreak()
     } else {
       this.setToBeginOfShortBreak()
     }
+  }
+
+  private async updatePomodoroRecords() {
+    return this.pomodoroRecordStorageService
+      .getAll()
+      .then((records) => {
+        this.pomodoroRecordStorageService.saveAll([...records, newPomodoroRecord()])
+      })
+      .then(() => {
+        PomodoroRecordHousekeeper.houseKeep({
+          pomodoroRecordStorageService: this.pomodoroRecordStorageService,
+          houseKeepDays: this.config.pomodoroRecordHouseKeepDays
+        })
+      })
   }
 
   private handleBreakComplete() {

@@ -5,6 +5,7 @@ import StatisticsPage from './StatisticsPage.vue'
 import { Time } from '../domain/time'
 import { FakeActionService } from '../infra/action'
 import { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
+import type { PomodoroRecord } from '../domain/pomodoro/record'
 
 describe('StatisticsPage', () => {
   it('should render saved daily cutoff time', async () => {
@@ -68,15 +69,18 @@ describe('StatisticsPage', () => {
     dailyCutoffTimeStorageService.save(new Time(10, 30))
 
     const pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
-    await pomodoroRecordStorageService.add({ completedAt: new Date(2025, 3, 4, 10, 29) })
+    const records: PomodoroRecord[] = [
+      { completedAt: new Date(2025, 3, 4, 10, 29) },
 
-    await pomodoroRecordStorageService.add({ completedAt: new Date(2025, 3, 4, 10, 30) })
-    await pomodoroRecordStorageService.add({ completedAt: new Date(2025, 3, 4, 10, 31) })
+      { completedAt: new Date(2025, 3, 4, 10, 30) },
+      { completedAt: new Date(2025, 3, 4, 10, 31) },
 
-    await pomodoroRecordStorageService.add({ completedAt: new Date(2025, 3, 6, 11, 0) })
-    await pomodoroRecordStorageService.add({ completedAt: new Date(2025, 3, 7, 10, 29) })
+      { completedAt: new Date(2025, 3, 6, 11, 0) },
+      { completedAt: new Date(2025, 3, 7, 10, 29) },
 
-    await pomodoroRecordStorageService.add({ completedAt: new Date(2025, 3, 11, 8, 24) })
+      { completedAt: new Date(2025, 3, 11, 8, 24) }
+    ]
+    await pomodoroRecordStorageService.saveAll(records)
 
     // When current time hasn't reached the daily cutoff time that day.
     const { wrapper } = mountStatisticsPage({
