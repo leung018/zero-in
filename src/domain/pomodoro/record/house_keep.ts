@@ -1,26 +1,20 @@
 import { PomodoroRecordStorageService } from './storage'
 
 export class PomodoroRecordHousekeeper {
-  private pomodoroRecordStorageService: PomodoroRecordStorageService
-  private houseKeepDays: number
-
-  constructor({
+  static async houseKeep({
+    now = new Date(),
     pomodoroRecordStorageService,
     houseKeepDays
   }: {
+    now?: Date
     pomodoroRecordStorageService: PomodoroRecordStorageService
     houseKeepDays: number
   }) {
-    this.pomodoroRecordStorageService = pomodoroRecordStorageService
-    this.houseKeepDays = houseKeepDays
-  }
-
-  async houseKeep(now: Date = new Date()) {
     const oldestDate = new Date(now)
-    oldestDate.setDate(oldestDate.getDate() - this.houseKeepDays)
+    oldestDate.setDate(oldestDate.getDate() - houseKeepDays)
 
-    const records = await this.pomodoroRecordStorageService.getAll()
+    const records = await pomodoroRecordStorageService.getAll()
     const newRecords = records.filter((record) => record.completedAt >= oldestDate)
-    await this.pomodoroRecordStorageService.saveAll(newRecords)
+    await pomodoroRecordStorageService.saveAll(newRecords)
   }
 }
