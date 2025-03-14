@@ -6,6 +6,7 @@ import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
 import { flushPromises } from '@vue/test-utils'
 import { PomodoroRecordStorageService } from './record/storage'
 import type { PomodoroTimerConfig } from './config'
+import type { PomodoroRecord } from './record'
 
 describe('PomodoroTimer', () => {
   it('should initial state is set correctly', () => {
@@ -30,14 +31,16 @@ describe('PomodoroTimer', () => {
       focusDuration: new Duration({ seconds: 10, milliseconds: 1 }),
       shortBreakDuration: new Duration({ seconds: 3, milliseconds: 1 }),
       longBreakDuration: new Duration({ seconds: 2, milliseconds: 1 }),
-      numOfPomodoriPerCycle: 5
+      numOfPomodoriPerCycle: 5,
+      pomodoroRecordHouseKeepDays: 11
     })
 
     const expected: PomodoroTimerConfig = {
       focusDuration: new Duration({ seconds: 11 }),
       shortBreakDuration: new Duration({ seconds: 4 }),
       longBreakDuration: new Duration({ seconds: 3 }),
-      numOfPomodoriPerCycle: 5
+      numOfPomodoriPerCycle: 5,
+      pomodoroRecordHouseKeepDays: 11
     }
     expect(timer.getConfig()).toEqual(expected)
   })
@@ -543,6 +546,27 @@ describe('PomodoroTimer', () => {
     expect((await pomodoroRecordStorageService.getAll()).length).toBe(1)
   })
 
+  it('should house keep the pomodoro records', async () => {
+    const { timer, scheduler, pomodoroRecordStorageService } = createTimer({
+      focusDuration: new Duration({ seconds: 3 }),
+      pomodoroRecordHouseKeepDays: 10
+    })
+
+    const oldDate = new Date()
+    oldDate.setDate(oldDate.getDate() - 10)
+    const oldRecord: PomodoroRecord = { completedAt: oldDate }
+    await pomodoroRecordStorageService.saveAll([oldRecord])
+
+    // Focus
+    timer.start()
+    scheduler.advanceTime(3000)
+    await flushPromises()
+
+    const newRecords = await pomodoroRecordStorageService.getAll()
+    expect(newRecords.length).toBe(1)
+    expect(newRecords[0].completedAt > oldDate).toBe(true)
+  })
+
   it('should able to set state', async () => {
     const { timer } = createTimer({
       focusDuration: new Duration({ seconds: 3 }),
@@ -588,7 +612,8 @@ function createTimer({
   focusDuration = new Duration({ minutes: 25 }),
   shortBreakDuration = new Duration({ minutes: 5 }),
   longBreakDuration = new Duration({ minutes: 15 }),
-  numOfPomodoriPerCycle = 4
+  numOfPomodoriPerCycle = 4,
+  pomodoroRecordHouseKeepDays = 30
 } = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
   const pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
@@ -599,7 +624,8 @@ function createTimer({
       focusDuration,
       shortBreakDuration,
       longBreakDuration,
-      numOfPomodoriPerCycle
+      numOfPomodoriPerCycle,
+      pomodoroRecordHouseKeepDays
     }
   })
   return {
