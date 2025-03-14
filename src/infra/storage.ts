@@ -1,9 +1,9 @@
-export interface StorageHandler {
+export interface Storage {
   set(obj: any): Promise<void>
   get(key: string): Promise<any>
 }
 
-export class FakeChromeLocalStorage implements StorageHandler {
+export class FakeStorage implements Storage {
   private storage: any = {}
 
   async set(update: any): Promise<void> {
