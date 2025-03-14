@@ -18,7 +18,13 @@ const manifestConfig = {
   },
   options_page: 'options.html',
   permissions: ['storage', 'unlimitedStorage', 'declarativeNetRequest', 'alarms', 'notifications'],
-  host_permissions: ['<all_urls>']
+  host_permissions: ['<all_urls>'],
+  web_accessible_resources: [
+    {
+      resources: ['blocked.html'], // Making blocked template accessible can solve the problem of clicking the blocked domain from the google search results triggering ERR_BLOCKED_BY_CLIENT.
+      matches: ['<all_urls>']
+    }
+  ]
 }
 
 fs.writeFileSync('manifest.json', JSON.stringify(manifestConfig, null, 2))

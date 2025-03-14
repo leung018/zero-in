@@ -52,6 +52,24 @@ test('should able to add blocked domains and block them', async ({ page, extensi
   await assertGoToBlockedTemplate(extraPage, 'https://google.com')
 })
 
+test("should access blocked domain through other websites won't cause ERR_BLOCKED_BY_CLIENT", async ({
+  page,
+  extensionId
+}) => {
+  await goToBlockedDomainsPage(page, extensionId)
+
+  await addBlockedDomain(page, 'facebook.com')
+
+  await page.route('https://google.com/search-results', async (route) => {
+    await route.fulfill({ body: '<a href="https://www.facebook.com">Facebook</a>' })
+  })
+
+  await page.goto('https://google.com/search-results')
+  await page.click('a')
+
+  await assertInBlockedTemplate(page)
+})
+
 test('should able to remove all blocked domains and unblock them', async ({
   page,
   extensionId
