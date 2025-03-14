@@ -198,7 +198,17 @@ export class PomodoroTimer {
 
   private handleFocusComplete() {
     this.numOfPomodoriCompleted++
-    this.pomodoroRecordStorageService
+    this.updatePomodoroRecords()
+
+    if (this.numOfPomodoriCompleted >= this.config.numOfPomodoriPerCycle) {
+      this.setToBeginOfLongBreak()
+    } else {
+      this.setToBeginOfShortBreak()
+    }
+  }
+
+  private async updatePomodoroRecords() {
+    return this.pomodoroRecordStorageService
       .getAll()
       .then((records) => {
         this.pomodoroRecordStorageService.saveAll([...records, newPomodoroRecord()])
@@ -209,12 +219,6 @@ export class PomodoroTimer {
           houseKeepDays: this.config.pomodoroRecordHouseKeepDays
         })
       })
-
-    if (this.numOfPomodoriCompleted >= this.config.numOfPomodoriPerCycle) {
-      this.setToBeginOfLongBreak()
-    } else {
-      this.setToBeginOfShortBreak()
-    }
   }
 
   private handleBreakComplete() {
