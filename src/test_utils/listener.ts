@@ -14,7 +14,8 @@ export async function startBackgroundListener({
   reminderService = new FakeActionService(),
   badgeDisplayService = new FakeBadgeDisplayService(),
   communicationManager = new FakeCommunicationManager(),
-  timerStateStorageService = TimerStateStorageService.createFake()
+  timerStateStorageService = TimerStateStorageService.createFake(),
+  closeTabsService = new FakeActionService()
 }) {
   const scheduler = new FakePeriodicTaskScheduler()
   const timer = PomodoroTimer.createFake({
@@ -28,9 +29,17 @@ export async function startBackgroundListener({
     badgeDisplayService,
     redirectTogglingService,
     communicationManager,
-    timerStateStorageService
+    timerStateStorageService,
+    closeTabsService
   })
   return listener.start().then(() => {
-    return { scheduler, timer, reminderService, badgeDisplayService, communicationManager }
+    return {
+      scheduler,
+      timer,
+      reminderService,
+      badgeDisplayService,
+      communicationManager,
+      closeTabsService
+    }
   })
 }

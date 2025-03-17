@@ -12,14 +12,12 @@ import { getMostRecentDate } from '../util'
 
 const {
   port,
-  closeCurrentTabService,
   soundService,
   pomodoroRecordStorageService,
   dailyCutoffTimeStorageService,
   currentDate
 } = defineProps<{
   port: Port<WorkRequest, PomodoroTimerResponse>
-  closeCurrentTabService: ActionService
   soundService: ActionService
   pomodoroRecordStorageService: PomodoroRecordStorageService
   dailyCutoffTimeStorageService: DailyCutoffTimeStorageService
@@ -71,7 +69,6 @@ const onClickStart = () => {
   port.send({
     name: WorkRequestName.START_TIMER
   })
-  closeCurrentTabService.trigger()
 }
 </script>
 

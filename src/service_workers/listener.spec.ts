@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import { WorkRequestName } from './request'
 import { type Badge, type BadgeColor } from '../infra/badge'
 import { Duration } from '../domain/pomodoro/duration'
-import { flushPromises } from '@vue/test-utils'
 import config from '../config'
 import { startBackgroundListener } from '../test_utils/listener'
 import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
@@ -58,6 +57,16 @@ describe('BackgroundListener', () => {
       color: focusBadgeColor
     }
     expect(badgeDisplayService.getDisplayedBadge()).toEqual(expected)
+  })
+
+  it('should trigger closeTabsService whenever the timer is started', async () => {
+    const { closeTabsService, clientPort } = await startListener()
+
+    expect(closeTabsService.getTriggerCount()).toBe(0)
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+
+    expect(closeTabsService.getTriggerCount()).toBe(1)
   })
 
   it('should remove badge when the timer is paused', async () => {
@@ -187,11 +196,17 @@ async function startListener(
   timerConfig = newTestPomodoroTimerConfig(),
   timerStateStorageService = TimerStateStorageService.createFake()
 ) {
-  const { timer, badgeDisplayService, communicationManager, scheduler, reminderService } =
-    await startBackgroundListener({
-      timerConfig,
-      timerStateStorageService
-    })
+  const {
+    timer,
+    badgeDisplayService,
+    communicationManager,
+    scheduler,
+    reminderService,
+    closeTabsService
+  } = await startBackgroundListener({
+    timerConfig,
+    timerStateStorageService
+  })
 
   return {
     timer,
@@ -199,6 +214,7 @@ async function startListener(
     timerStateStorageService,
     clientPort: communicationManager.clientConnect(),
     scheduler,
-    reminderService
+    reminderService,
+    closeTabsService
   }
 }
