@@ -9,6 +9,7 @@ import SchedulesList from './SchedulesList.vue'
 import { WorkRequestName } from '../../service_workers/request'
 import type { Port } from '../../infra/communication'
 import ContentTemplate from '../components/ContentTemplate.vue'
+import Tip from '../components/Tip.vue'
 
 const { weeklyScheduleStorageService, port } = defineProps<{
   weeklyScheduleStorageService: WeeklyScheduleStorageService
@@ -65,7 +66,11 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
 
 <template>
   <ContentTemplate title="Schedules">
-    <form>
+    <Tip
+      msg="Set the schedules for blocking access to the configured domains to be active. If not set, it
+      will remain active at all times."
+    ></Tip>
+    <form class="mt-4">
       <div class="mb-4">
         <div class="form-group">
           <label>Select Weekdays:</label>
