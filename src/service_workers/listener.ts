@@ -9,7 +9,7 @@ import { BrowsingControlTogglingService } from '../domain/browsing_control_toggl
 import { type PomodoroTimerResponse } from './response'
 import { PomodoroTimer } from '../domain/pomodoro/timer'
 import { FakeActionService, type ActionService } from '../infra/action'
-import { ChromeNewTabReminderService } from '../chrome/new_tab'
+import { ChromeNewTabService } from '../chrome/new_tab'
 import { FakeBadgeDisplayService, type BadgeColor, type BadgeDisplayService } from '../infra/badge'
 import { ChromeBadgeDisplayService } from '../chrome/badge'
 import { PomodoroStage } from '../domain/pomodoro/stage'
@@ -30,7 +30,7 @@ export class BackgroundListener {
 
   static create() {
     const reminderService = new MultipleActionService([
-      new ChromeNewTabReminderService(),
+      new ChromeNewTabService(config.getReminderPageUrl()),
       new ChromeNotificationService()
     ])
 
