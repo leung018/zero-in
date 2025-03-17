@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Weekday } from '../../../domain/schedules'
-import { capitalized } from '../../../util'
+import { Weekday } from '../../domain/schedules'
+import { capitalized } from '../../util'
 
 const weekdaySet = defineModel<Set<Weekday>>({
   required: true

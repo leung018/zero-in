@@ -1,18 +1,18 @@
 import { describe, expect, it, vi } from 'vitest'
-import { WeeklyScheduleStorageService } from '../../../domain/schedules/storage'
+import { WeeklyScheduleStorageService } from '../../domain/schedules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 
-import WeeklySchedulesEditor from './index.vue'
-import { Weekday, WeeklySchedule } from '../../../domain/schedules'
-import { Time } from '../../../domain/time'
-import { FakeBrowsingControlService } from '../../../domain/browsing_control'
-import { BrowsingRulesStorageService } from '../../../domain/browsing_rules/storage'
-import { BrowsingRules } from '../../../domain/browsing_rules'
+import WeeklySchedulesPage from './index.vue'
+import { Weekday, WeeklySchedule } from '../../domain/schedules'
+import { Time } from '../../domain/time'
+import { FakeBrowsingControlService } from '../../domain/browsing_control'
+import { BrowsingRulesStorageService } from '../../domain/browsing_rules/storage'
+import { BrowsingRules } from '../../domain/browsing_rules'
 import { afterEach, beforeEach } from 'node:test'
-import { BrowsingControlTogglingService } from '../../../domain/browsing_control_toggling'
-import { startBackgroundListener } from '../../../test_utils/listener'
+import { BrowsingControlTogglingService } from '../../domain/browsing_control_toggling'
+import { startBackgroundListener } from '../../test_utils/listener'
 
-describe('WeeklySchedulesEditor', () => {
+describe('WeeklySchedulesPage', () => {
   beforeEach(() => {
     vi.useFakeTimers()
   })
@@ -24,7 +24,7 @@ describe('WeeklySchedulesEditor', () => {
   it('should render weekday checkboxes properly', async () => {
     // Add this test because it is easy to make mistake when dealing with Weekday enum
 
-    const { wrapper } = await mountWeeklySchedulesEditor()
+    const { wrapper } = await mountWeeklySchedulesPage()
     const weekdayCheckboxes = wrapper.findAll("[data-test^='check-weekday-']")
     expect(weekdayCheckboxes).toHaveLength(7)
 
@@ -54,7 +54,7 @@ describe('WeeklySchedulesEditor', () => {
       })
     ])
 
-    const { wrapper } = await mountWeeklySchedulesEditor({
+    const { wrapper } = await mountWeeklySchedulesPage({
       weeklyScheduleStorageService
     })
     await flushPromises()
@@ -72,7 +72,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should able to add new weekly schedule', async () => {
-    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesEditor()
+    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesPage()
     const weeklySchedule = new WeeklySchedule({
       weekdaySet: new Set([Weekday.THU, Weekday.FRI]),
       startTime: new Time(10, 0),
@@ -114,7 +114,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should reset input values after adding weekly schedule', async () => {
-    const { wrapper } = await mountWeeklySchedulesEditor()
+    const { wrapper } = await mountWeeklySchedulesPage()
 
     assertAllInputsAreNotSet(wrapper)
 
@@ -128,7 +128,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should prevent add weekly schedule when weekdaySet is not selected', async () => {
-    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesEditor()
+    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesPage()
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set(),
       startTime: new Time(10, 0),
@@ -140,7 +140,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should able to uncheck weekday', async () => {
-    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesEditor()
+    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesPage()
     const sundayCheckbox = wrapper.find(`[data-test='check-weekday-sun']`)
     await sundayCheckbox.setValue(true)
     await sundayCheckbox.setValue(false)
@@ -156,7 +156,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should display error message if start time is not before end time', async () => {
-    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesEditor()
+    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesPage()
 
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set([Weekday.MON]),
@@ -171,7 +171,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should error message display and hide properly', async () => {
-    const { wrapper } = await mountWeeklySchedulesEditor()
+    const { wrapper } = await mountWeeklySchedulesPage()
 
     expect(wrapper.find("[data-test='error-message']").exists()).toBe(false)
 
@@ -193,7 +193,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should able to remove added schedule', async () => {
-    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesEditor()
+    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesPage()
     const originalSchedule = new WeeklySchedule({
       weekdaySet: new Set([Weekday.MON]),
       startTime: new Time(10, 0),
@@ -228,7 +228,7 @@ describe('WeeklySchedulesEditor', () => {
 
     const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
     await browsingRulesStorageService.save(new BrowsingRules({ blockedDomains: ['google.com'] }))
-    const { wrapper, fakeBrowsingControlService } = await mountWeeklySchedulesEditor({
+    const { wrapper, fakeBrowsingControlService } = await mountWeeklySchedulesPage({
       browsingRulesStorageService
     })
 
@@ -255,7 +255,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 })
 
-async function mountWeeklySchedulesEditor({
+async function mountWeeklySchedulesPage({
   weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
   browsingRulesStorageService = BrowsingRulesStorageService.createFake()
 } = {}) {
@@ -269,7 +269,7 @@ async function mountWeeklySchedulesEditor({
   const { communicationManager } = await startBackgroundListener({
     redirectTogglingService
   })
-  const wrapper = mount(WeeklySchedulesEditor, {
+  const wrapper = mount(WeeklySchedulesPage, {
     props: { weeklyScheduleStorageService, port: communicationManager.clientConnect() }
   })
   return {
