@@ -17,6 +17,7 @@ import config from '../config'
 import { MultipleActionService } from '../infra/multiple_actions'
 import { ChromeNotificationService } from '../chrome/notification'
 import { TimerStateStorageService } from '../domain/pomodoro/storage'
+import { ChromeCloseTabsService } from '../chrome/close_tabs'
 
 export class BackgroundListener {
   private redirectTogglingService: BrowsingControlTogglingService
@@ -25,6 +26,7 @@ export class BackgroundListener {
   private reminderService: ActionService
   private badgeDisplayService: BadgeDisplayService
   private timerStateStorageService: TimerStateStorageService
+  private closeTabsService: ActionService
 
   static create() {
     const reminderService = new MultipleActionService([
@@ -38,7 +40,8 @@ export class BackgroundListener {
       redirectTogglingService: BrowsingControlTogglingService.create(),
       reminderService,
       badgeDisplayService: new ChromeBadgeDisplayService(),
-      timerStateStorageService: TimerStateStorageService.create()
+      timerStateStorageService: TimerStateStorageService.create(),
+      closeTabsService: new ChromeCloseTabsService(config.getReminderPageUrl())
     })
   }
 
@@ -48,7 +51,8 @@ export class BackgroundListener {
     redirectTogglingService = BrowsingControlTogglingService.createFake(),
     reminderService = new FakeActionService(),
     badgeDisplayService = new FakeBadgeDisplayService(),
-    timerStateStorageService = TimerStateStorageService.createFake()
+    timerStateStorageService = TimerStateStorageService.createFake(),
+    closeTabsService = new FakeActionService()
   } = {}) {
     return new BackgroundListener({
       communicationManager,
@@ -56,7 +60,8 @@ export class BackgroundListener {
       redirectTogglingService,
       reminderService,
       badgeDisplayService,
-      timerStateStorageService
+      timerStateStorageService,
+      closeTabsService
     })
   }
 
@@ -66,7 +71,8 @@ export class BackgroundListener {
     redirectTogglingService,
     reminderService,
     badgeDisplayService,
-    timerStateStorageService
+    timerStateStorageService,
+    closeTabsService
   }: {
     communicationManager: CommunicationManager
     timer: PomodoroTimer
@@ -74,12 +80,14 @@ export class BackgroundListener {
     reminderService: ActionService
     badgeDisplayService: BadgeDisplayService
     timerStateStorageService: TimerStateStorageService
+    closeTabsService: ActionService
   }) {
     this.communicationManager = communicationManager
     this.redirectTogglingService = redirectTogglingService
     this.reminderService = reminderService
     this.badgeDisplayService = badgeDisplayService
     this.timerStateStorageService = timerStateStorageService
+    this.closeTabsService = closeTabsService
 
     this.timer = timer
   }
@@ -92,6 +100,7 @@ export class BackgroundListener {
             switch (message.name) {
               case WorkRequestName.START_TIMER: {
                 this.timer.start()
+                this.closeTabsService.trigger()
                 break
               }
               case WorkRequestName.TOGGLE_REDIRECT_RULES: {

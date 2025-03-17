@@ -6,6 +6,10 @@ const getBlockedTemplateUrl = () => {
   return chrome.runtime.getURL('blocked.html')
 }
 
+const getReminderPageUrl = () => {
+  return chrome.runtime.getURL('reminder.html')
+}
+
 const getPomodoroTimerConfig = (): PomodoroTimerConfig => {
   return {
     focusDuration: new Duration({ minutes: 25 }),
@@ -35,5 +39,6 @@ const getBadgeColorConfig = (): {
 export default {
   getPomodoroTimerConfig,
   getBlockedTemplateUrl,
-  getBadgeColorConfig
+  getBadgeColorConfig,
+  getReminderPageUrl
 }
