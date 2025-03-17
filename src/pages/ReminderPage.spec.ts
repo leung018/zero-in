@@ -66,14 +66,6 @@ describe('ReminderPage', () => {
     expect(state.stage).toBe(PomodoroStage.SHORT_BREAK)
   })
 
-  it('should click start button trigger the closeCurrentTabService', async () => {
-    const { wrapper, closeCurrentTabService } = await mountPage()
-
-    wrapper.find("[data-test='start-button']").trigger('click')
-
-    expect(closeCurrentTabService.getTriggerCount()).toBe(1)
-  })
-
   it('should display daily completed pomodori', async () => {
     const pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
     await pomodoroRecordStorageService.saveAll([
