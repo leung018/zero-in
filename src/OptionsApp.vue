@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import WeeklySchedulesPage from './pages/WeeklySchedulesPage/index.vue'
 import { WeeklyScheduleStorageService } from './domain/schedules/storage'
-import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
+import BlockingSettingPage from './pages/BlockingSettingPage.vue'
 import StatisticsPage from './pages/StatisticsPage.vue'
 import { computed, onMounted, ref, type Component } from 'vue'
 import { BrowsingRulesStorageService } from './domain/browsing_rules/storage'
@@ -14,8 +13,7 @@ const port = new ChromeCommunicationManager().clientConnect()
 
 enum PATH {
   ROOT = '/',
-  SCHEDULES = '/schedules',
-  BLOCKED_DOMAINS = '/blocked-domains'
+  BLOCKING = '/blocking'
 }
 
 type Route = {
@@ -35,19 +33,12 @@ const routeMap: Record<PATH, Route> = {
       pomodoroRecordStorageService: PomodoroRecordStorageService.create()
     }
   },
-  [PATH.SCHEDULES]: {
-    title: 'Schedules',
-    component: WeeklySchedulesPage,
-    props: {
-      weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
-      port
-    }
-  },
-  [PATH.BLOCKED_DOMAINS]: {
-    title: 'Blocked Domains',
-    component: BlockedDomainsPage,
+  [PATH.BLOCKING]: {
+    title: 'Blocking',
+    component: BlockingSettingPage,
     props: {
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
+      weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
       port
     }
   }

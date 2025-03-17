@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { Weekday, WeeklySchedule } from '../../domain/schedules'
-import type { WeeklyScheduleStorageService } from '../../domain/schedules/storage'
-import { Time } from '../../domain/time'
-import TimeInput from '../components/TimeInput.vue'
+import { Weekday, WeeklySchedule } from '../../../domain/schedules'
+import type { WeeklyScheduleStorageService } from '../../../domain/schedules/storage'
+import { Time } from '../../../domain/time'
+import TimeInput from '../TimeInput.vue'
 import WeekdaysSelector from './WeekdaysSelector.vue'
 import SchedulesList from './SchedulesList.vue'
-import { WorkRequestName } from '../../service_workers/request'
-import type { Port } from '../../infra/communication'
-import ContentTemplate from '../components/ContentTemplate.vue'
+import { WorkRequestName } from '../../../service_workers/request'
+import type { Port } from '../../../infra/communication'
+import ContentTemplate from '../ContentTemplate.vue'
 
 const { weeklyScheduleStorageService, port } = defineProps<{
   weeklyScheduleStorageService: WeeklyScheduleStorageService
@@ -64,7 +64,8 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
 </script>
 
 <template>
-  <ContentTemplate title="Schedules">
+  <div>
+    <h2>Schedules</h2>
     <form>
       <div class="mb-4">
         <div class="form-group">
@@ -91,5 +92,5 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
       <h3>Saved</h3>
       <SchedulesList :weeklySchedules="weeklySchedules" @remove="handleRemove" />
     </div>
-  </ContentTemplate>
+  </div>
 </template>
