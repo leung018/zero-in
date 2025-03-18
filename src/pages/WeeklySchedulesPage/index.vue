@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue'
+import { computed, onBeforeMount, ref } from 'vue'
 import { Weekday, WeeklySchedule } from '../../domain/schedules'
 import type { WeeklyScheduleStorageService } from '../../domain/schedules/storage'
 import { Time } from '../../domain/time'
@@ -23,6 +23,8 @@ const newWeekdaySet = ref<Set<Weekday>>(new Set())
 const weeklySchedules = ref<WeeklySchedule[]>([])
 
 const errorMessage = ref<string | null>(null)
+
+const showSaved = computed(() => weeklySchedules.value.length > 0)
 
 onBeforeMount(async () => {
   weeklySchedules.value = await weeklyScheduleStorageService.getAll()
@@ -93,7 +95,7 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
         {{ errorMessage }}
       </div>
     </form>
-    <div class="mt-4">
+    <div class="mt-4" data-test="saved-schedules-section" v-if="showSaved">
       <h3>Saved</h3>
       <SchedulesList :weeklySchedules="weeklySchedules" @remove="handleRemove" />
     </div>
