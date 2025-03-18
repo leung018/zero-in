@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ChromeCommunicationManager } from './chrome/communication'
-import { DailyCutoffTimeStorageService } from './domain/daily_cutoff_time/storage'
+import { DailyResetTimeStorageService } from './domain/daily_reset_time/storage'
 import ReminderPage from './pages/ReminderPage.vue'
 import { PomodoroRecordStorageService } from './domain/pomodoro/record/storage'
 import { SoundService } from './chrome/sound'
@@ -9,7 +9,7 @@ import { SoundService } from './chrome/sound'
 <template>
   <ReminderPage
     :pomodoroRecordStorageService="PomodoroRecordStorageService.create()"
-    :dailyCutoffTimeStorageService="DailyCutoffTimeStorageService.create()"
+    :dailyResetTimeStorageService="DailyResetTimeStorageService.create()"
     :port="new ChromeCommunicationManager().clientConnect()"
     :soundService="new SoundService()"
     :currentDate="new Date()"

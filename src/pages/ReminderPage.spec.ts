@@ -9,7 +9,7 @@ import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
 import { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
 import { newPomodoroRecord } from '../domain/pomodoro/record'
 import { Time } from '../domain/time'
-import { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/storage'
+import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
@@ -81,7 +81,7 @@ describe('ReminderPage', () => {
     })
     await flushPromises()
 
-    expect(wrapper.find("[data-test='cutoff-time']").text()).toBe('15:03')
+    expect(wrapper.find("[data-test='reset-time']").text()).toBe('15:03')
     expect(wrapper.find("[data-test='daily-completed-pomodori']").text()).toBe('2')
   })
 
@@ -103,8 +103,8 @@ async function mountPage({
   })
   const closeCurrentTabService = new FakeActionService()
   const soundService = new FakeActionService()
-  const dailyCutoffTimeStorageService = DailyCutoffTimeStorageService.createFake()
-  dailyCutoffTimeStorageService.save(dailyCutOffTime)
+  const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
+  dailyResetTimeStorageService.save(dailyCutOffTime)
 
   const wrapper = mount(ReminderPage, {
     props: {
@@ -112,7 +112,7 @@ async function mountPage({
       closeCurrentTabService,
       soundService,
       pomodoroRecordStorageService,
-      dailyCutoffTimeStorageService,
+      dailyResetTimeStorageService,
       currentDate
     }
   })

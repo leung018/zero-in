@@ -3,13 +3,13 @@ import { FakeStorage, type Storage } from '../../infra/storage'
 import { Time } from '../time'
 import { deserializeTime, serializeTime } from '../time/serialize'
 
-export class DailyCutoffTimeStorageService {
+export class DailyResetTimeStorageService {
   static create() {
-    return new DailyCutoffTimeStorageService(ChromeStorageFactory.createLocalStorage())
+    return new DailyResetTimeStorageService(ChromeStorageFactory.createLocalStorage())
   }
 
   static createFake() {
-    return new DailyCutoffTimeStorageService(new FakeStorage())
+    return new DailyResetTimeStorageService(new FakeStorage())
   }
 
   private storage: Storage
@@ -18,9 +18,9 @@ export class DailyCutoffTimeStorageService {
     this.storage = storage
   }
 
-  async save(dailyCutoffTime: Time) {
+  async save(dailyResetTime: Time) {
     return this.storage.set({
-      dailyCutoffTime: serializeTime(dailyCutoffTime)
+      dailyCutoffTime: serializeTime(dailyResetTime)
     })
   }
 

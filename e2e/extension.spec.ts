@@ -180,7 +180,7 @@ test('should close reminder page after timer start', async ({ page, extensionId 
   expect(page.context().pages()).not.toContain(page)
 })
 
-test('should able to save daily cutoff time', async ({ page, extensionId }) => {
+test('should able to save daily reset time', async ({ page, extensionId }) => {
   await goToStatisticsPage(page, extensionId)
 
   await page.getByTestId('time-input').fill('10:30')

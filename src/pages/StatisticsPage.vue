@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/storage'
+import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { ref, onBeforeMount } from 'vue'
 import { Time } from '../domain/time'
 import type { ReloadService } from '@/chrome/reload'
@@ -10,15 +10,15 @@ import { getMostRecentDate } from '../util'
 
 type PomodoroStat = { day: string; completedPomodori: number }
 
-const { dailyCutoffTimeStorageService, reloadService, currentDate, pomodoroRecordStorageService } =
+const { dailyResetTimeStorageService, reloadService, currentDate, pomodoroRecordStorageService } =
   defineProps<{
-    dailyCutoffTimeStorageService: DailyCutoffTimeStorageService
+    dailyResetTimeStorageService: DailyResetTimeStorageService
     reloadService: ReloadService
     currentDate: Date
     pomodoroRecordStorageService: PomodoroRecordStorageService
   }>()
 
-const dailyCutoffTime = ref<Time>(new Time(0, 0))
+const dailyResetTime = ref<Time>(new Time(0, 0))
 const pomodoroStats = ref<PomodoroStat[]>(initialPomodoroStats())
 
 function initialPomodoroStats(): PomodoroStat[] {
@@ -32,14 +32,14 @@ function initialPomodoroStats(): PomodoroStat[] {
 }
 
 onBeforeMount(async () => {
-  dailyCutoffTime.value = await dailyCutoffTimeStorageService.get()
-  await setPomodoroStats(dailyCutoffTime.value)
+  dailyResetTime.value = await dailyResetTimeStorageService.get()
+  await setPomodoroStats(dailyResetTime.value)
 })
 
-async function setPomodoroStats(dailyCutoffTime: Time) {
+async function setPomodoroStats(dailyResetTime: Time) {
   const records = await pomodoroRecordStorageService.getAll()
   let exclusiveEndDate = currentDate
-  const inclusiveStartDate = getMostRecentDate(dailyCutoffTime, exclusiveEndDate)
+  const inclusiveStartDate = getMostRecentDate(dailyResetTime, exclusiveEndDate)
   for (let i = 0; i < pomodoroStats.value.length; i++) {
     pomodoroStats.value[i].completedPomodori = records.filter(
       (record) => record.completedAt >= inclusiveStartDate && record.completedAt < exclusiveEndDate
@@ -51,8 +51,8 @@ async function setPomodoroStats(dailyCutoffTime: Time) {
 }
 
 const onClickSave = async () => {
-  const newTime = dailyCutoffTime.value
-  return dailyCutoffTimeStorageService.save(newTime).then(() => {
+  const newTime = dailyResetTime.value
+  return dailyResetTimeStorageService.save(newTime).then(() => {
     reloadService.trigger()
   })
 }
@@ -60,12 +60,16 @@ const onClickSave = async () => {
 
 <template>
   <ContentTemplate title="Statistics">
-    <BFormGroup label="Set daily cutoff time:">
-      <TimeInput v-model="dailyCutoffTime" data-test="time-input" />
+    <BFormGroup label="Set daily reset time:">
+      <TimeInput v-model="dailyResetTime" data-test="time-input" />
+      <p class="mt-1">
+        <small>
+          The time at which the day resets for tracking completed pomodori is used to adjust the
+          statistics according to your preference.
+        </small>
+      </p>
     </BFormGroup>
-    <BButton variant="primary" class="mt-4" data-test="save-button" @click="onClickSave"
-      >Save</BButton
-    >
+    <BButton variant="primary" data-test="save-button" @click="onClickSave">Save</BButton>
     <div class="mt-4">
       <h3>Last 14 Days Completed Pomodori</h3>
       <table class="table" data-test="stats-table">

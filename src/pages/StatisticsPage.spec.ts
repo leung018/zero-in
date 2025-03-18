@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/storage'
+import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import StatisticsPage from './StatisticsPage.vue'
 import { Time } from '../domain/time'
@@ -8,12 +8,12 @@ import { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
 import type { PomodoroRecord } from '../domain/pomodoro/record'
 
 describe('StatisticsPage', () => {
-  it('should render saved daily cutoff time', async () => {
-    const dailyCutoffTimeStorageService = DailyCutoffTimeStorageService.createFake()
-    dailyCutoffTimeStorageService.save(new Time(10, 30))
+  it('should render saved daily reset time', async () => {
+    const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
+    dailyResetTimeStorageService.save(new Time(10, 30))
 
     const { wrapper } = mountStatisticsPage({
-      dailyCutoffTimeStorageService
+      dailyResetTimeStorageService
     })
     await flushPromises()
 
@@ -23,7 +23,7 @@ describe('StatisticsPage', () => {
 
   it('should render 00:00 if it has not been saved before', async () => {
     const { wrapper } = mountStatisticsPage({
-      dailyCutoffTimeStorageService: DailyCutoffTimeStorageService.createFake() // No saved time before
+      dailyResetTimeStorageService: DailyResetTimeStorageService.createFake() // No saved time before
     })
     await flushPromises()
 
@@ -31,12 +31,12 @@ describe('StatisticsPage', () => {
     expect(timerInput.value).toBe('00:00')
   })
 
-  it('should able to save daily cutoff time', async () => {
-    const { wrapper, dailyCutoffTimeStorageService } = mountStatisticsPage()
+  it('should able to save daily reset time', async () => {
+    const { wrapper, dailyResetTimeStorageService } = mountStatisticsPage()
 
     await saveTime(wrapper, '09:05')
 
-    expect(await dailyCutoffTimeStorageService.get()).toEqual(new Time(9, 5))
+    expect(await dailyResetTimeStorageService.get()).toEqual(new Time(9, 5))
   })
 
   it('should reload page after clicked save', async () => {
@@ -65,8 +65,8 @@ describe('StatisticsPage', () => {
   })
 
   it('should render stat of last 7 day', async () => {
-    const dailyCutoffTimeStorageService = DailyCutoffTimeStorageService.createFake()
-    dailyCutoffTimeStorageService.save(new Time(10, 30))
+    const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
+    dailyResetTimeStorageService.save(new Time(10, 30))
 
     const pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
     const records: PomodoroRecord[] = [
@@ -82,9 +82,9 @@ describe('StatisticsPage', () => {
     ]
     await pomodoroRecordStorageService.saveAll(records)
 
-    // When current time hasn't reached the daily cutoff time that day.
+    // When current time hasn't reached the daily reset time that day.
     const { wrapper } = mountStatisticsPage({
-      dailyCutoffTimeStorageService,
+      dailyResetTimeStorageService,
       currentDate: new Date(2025, 3, 11, 9, 0),
       pomodoroRecordStorageService
     })
@@ -99,9 +99,9 @@ describe('StatisticsPage', () => {
     expect(rows[5].find('[data-test="completed-pomodori-field"]').text()).toBe('0') // 2025-04-05 10:30 - 2025-04-06 10:29
     expect(rows[6].find('[data-test="completed-pomodori-field"]').text()).toBe('2') // 2025-04-04 10:30 - 2025-04-05 10:29
 
-    // When current time has reached the daily cutoff time that day.
+    // When current time has reached the daily reset time that day.
     const { wrapper: newWrapper } = mountStatisticsPage({
-      dailyCutoffTimeStorageService,
+      dailyResetTimeStorageService,
       currentDate: new Date(2025, 3, 11, 10, 30),
       pomodoroRecordStorageService
     })
@@ -119,20 +119,20 @@ describe('StatisticsPage', () => {
 })
 
 function mountStatisticsPage({
-  dailyCutoffTimeStorageService = DailyCutoffTimeStorageService.createFake(),
+  dailyResetTimeStorageService = DailyResetTimeStorageService.createFake(),
   currentDate = new Date(),
   pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
 } = {}) {
   const reloadService = new FakeActionService()
   const wrapper = mount(StatisticsPage, {
     props: {
-      dailyCutoffTimeStorageService,
+      dailyResetTimeStorageService,
       reloadService,
       currentDate,
       pomodoroRecordStorageService
     }
   })
-  return { wrapper, dailyCutoffTimeStorageService, reloadService }
+  return { wrapper, dailyResetTimeStorageService, reloadService }
 }
 
 async function saveTime(wrapper: VueWrapper, newTime: string) {
