@@ -193,11 +193,6 @@ test('should able to save daily reset time', async ({ page, extensionId }) => {
 
   await expect(page.getByTestId('time-input')).toHaveValue('10:30')
 })
-
-async function goToBlockedDomainsPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/options.html#/blocked-domains`)
-}
-
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
   const addButton = page.getByTestId('add-button')
@@ -259,6 +254,10 @@ function sleep(ms: number) {
   })
 }
 
+async function goToBlockedDomainsPage(page: Page, extensionId: string) {
+  await page.goto(`chrome-extension://${extensionId}/options.html`)
+}
+
 async function goToSchedulesPage(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/options.html#/schedules`)
 }
@@ -272,7 +271,7 @@ async function goToReminderPage(page: Page, extensionId: string) {
 }
 
 async function goToStatisticsPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/options.html`)
+  await page.goto(`chrome-extension://${extensionId}/options.html#/statistics`)
 }
 
 // TODO: copy from src/util.ts and find way to share the code between e2e and src, so that we can avoid duplication

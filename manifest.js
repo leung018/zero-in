@@ -23,7 +23,8 @@ const manifestConfig = {
     'declarativeNetRequest',
     'alarms',
     'notifications',
-    'tabs'
+    'tabs',
+    'contextMenus'
   ],
   host_permissions: ['<all_urls>'],
   web_accessible_resources: [
