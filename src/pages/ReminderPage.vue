@@ -6,7 +6,7 @@ import type { ActionService } from '../infra/action'
 import type { PomodoroTimerResponse } from '../service_workers/response'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 import type { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
-import type { DailyCutoffTimeStorageService } from '../domain/daily_cutoff_time/storage'
+import type { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { Time } from '../domain/time'
 import { getMostRecentDate } from '../util'
 
@@ -14,19 +14,19 @@ const {
   port,
   soundService,
   pomodoroRecordStorageService,
-  dailyCutoffTimeStorageService,
+  dailyResetTimeStorageService,
   currentDate
 } = defineProps<{
   port: Port<WorkRequest, PomodoroTimerResponse>
   soundService: ActionService
   pomodoroRecordStorageService: PomodoroRecordStorageService
-  dailyCutoffTimeStorageService: DailyCutoffTimeStorageService
+  dailyResetTimeStorageService: DailyResetTimeStorageService
   currentDate: Date
 }>()
 
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
 const dailyCompletedPomodori = ref(0)
-const dailyCutoffTime = ref(new Time(0, 0))
+const dailyResetTime = ref(new Time(0, 0))
 
 const hintMsg = computed(() => {
   switch (pomodoroStage.value) {
@@ -46,16 +46,16 @@ onBeforeMount(async () => {
   port.send({
     name: WorkRequestName.LISTEN_TO_TIMER
   })
-  dailyCutoffTime.value = await dailyCutoffTimeStorageService.get()
-  dailyCompletedPomodori.value = await getTotalNumOfPomodoriAfter(dailyCutoffTime.value)
+  dailyResetTime.value = await dailyResetTimeStorageService.get()
+  dailyCompletedPomodori.value = await getTotalNumOfPomodoriAfter(dailyResetTime.value)
 })
 
 onMounted(() => {
   soundService.trigger()
 })
 
-async function getTotalNumOfPomodoriAfter(dailyCutoffTime: Time): Promise<number> {
-  const startDate = getMostRecentDate(dailyCutoffTime, currentDate)
+async function getTotalNumOfPomodoriAfter(dailyResetTime: Time): Promise<number> {
+  const startDate = getMostRecentDate(dailyResetTime, currentDate)
 
   const totalNumOfPomodori = (
     await pomodoroRecordStorageService
@@ -81,7 +81,7 @@ const onClickStart = () => {
     <p class="mt-3">
       <span
         >Number of pomodori completed since last
-        <span data-test="cutoff-time">{{ dailyCutoffTime.toHhMmString() }}</span></span
+        <span data-test="reset-time">{{ dailyResetTime.toHhMmString() }}</span></span
       >
       <span class="daily-completed-pomodori ms-2" data-test="daily-completed-pomodori">{{
         dailyCompletedPomodori

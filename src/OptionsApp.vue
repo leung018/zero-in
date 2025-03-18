@@ -6,7 +6,7 @@ import StatisticsPage from './pages/StatisticsPage.vue'
 import { computed, onMounted, ref, type Component } from 'vue'
 import { BrowsingRulesStorageService } from './domain/browsing_rules/storage'
 import { ChromeCommunicationManager } from './chrome/communication'
-import { DailyCutoffTimeStorageService } from './domain/daily_cutoff_time/storage'
+import { DailyResetTimeStorageService } from './domain/daily_reset_time/storage'
 import { ReloadService } from './chrome/reload'
 import { PomodoroRecordStorageService } from './domain/pomodoro/record/storage'
 
@@ -29,7 +29,7 @@ const routeMap: Record<PATH, Route> = {
     title: 'Statistics',
     component: StatisticsPage,
     props: {
-      dailyCutoffTimeStorageService: DailyCutoffTimeStorageService.create(),
+      dailyResetTimeStorageService: DailyResetTimeStorageService.create(),
       reloadService: new ReloadService(),
       currentDate: new Date(),
       pomodoroRecordStorageService: PomodoroRecordStorageService.create()
