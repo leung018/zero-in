@@ -14,8 +14,8 @@ const port = new ChromeCommunicationManager().clientConnect()
 
 enum PATH {
   ROOT = '/',
-  SCHEDULES = '/schedules',
-  BLOCKED_DOMAINS = '/blocked-domains'
+  BLOCKED_DOMAINS = '/blocked-domains',
+  SCHEDULES = '/schedules'
 }
 
 type Route = {

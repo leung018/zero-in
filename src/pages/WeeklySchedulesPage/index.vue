@@ -65,6 +65,12 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
 
 <template>
   <ContentTemplate title="Schedules">
+    <p>
+      <small>
+        Set the schedules for blocking access to the configured domains to be active. If not set, it
+        will remain active at all times.
+      </small>
+    </p>
     <form>
       <div class="mb-4">
         <div class="form-group">
