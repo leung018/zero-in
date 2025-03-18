@@ -172,6 +172,17 @@ test('should pomodoro timer count successfully', async ({ page, extensionId }) =
   await expect(page.getByTestId('timer-display')).toContainText('24:57')
 })
 
+test('should clicking the options button in timer can go to options page', async ({
+  page,
+  extensionId
+}) => {
+  await goToPomodoroTimer(page, extensionId)
+
+  await page.getByTestId('options-button').click()
+
+  assertOpenedOptionsPage(page)
+})
+
 test('should close reminder page after timer start', async ({ page, extensionId }) => {
   await goToReminderPage(page, extensionId)
 
@@ -246,6 +257,12 @@ async function assertNotGoToBlockedTemplate(
     await sleep(intervalMs)
     return assertNotGoToBlockedTemplate(page, targetUrl, retryCount - 1, intervalMs)
   }
+}
+
+function assertOpenedOptionsPage(page: Page) {
+  const pages = page.context().pages()
+  const optionsPage = pages.find((p) => p.url().includes('options.html'))
+  expect(optionsPage).toBeDefined()
 }
 
 function sleep(ms: number) {
