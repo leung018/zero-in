@@ -14,8 +14,8 @@ const port = new ChromeCommunicationManager().clientConnect()
 
 enum PATH {
   ROOT = '/',
-  BLOCKED_DOMAINS = '/blocked-domains',
-  SCHEDULES = '/schedules'
+  SCHEDULES = '/schedules',
+  STATISTICS = '/statistics'
 }
 
 type Route = {
@@ -26,13 +26,11 @@ type Route = {
 
 const routeMap: Record<PATH, Route> = {
   [PATH.ROOT]: {
-    title: 'Statistics',
-    component: StatisticsPage,
+    title: 'Blocked Domains',
+    component: BlockedDomainsPage,
     props: {
-      dailyResetTimeStorageService: DailyResetTimeStorageService.create(),
-      reloadService: new ReloadService(),
-      currentDate: new Date(),
-      pomodoroRecordStorageService: PomodoroRecordStorageService.create()
+      browsingRulesStorageService: BrowsingRulesStorageService.create(),
+      port
     }
   },
   [PATH.SCHEDULES]: {
@@ -43,12 +41,14 @@ const routeMap: Record<PATH, Route> = {
       port
     }
   },
-  [PATH.BLOCKED_DOMAINS]: {
-    title: 'Blocked Domains',
-    component: BlockedDomainsPage,
+  [PATH.STATISTICS]: {
+    title: 'Statistics',
+    component: StatisticsPage,
     props: {
-      browsingRulesStorageService: BrowsingRulesStorageService.create(),
-      port
+      dailyResetTimeStorageService: DailyResetTimeStorageService.create(),
+      reloadService: new ReloadService(),
+      currentDate: new Date(),
+      pomodoroRecordStorageService: PomodoroRecordStorageService.create()
     }
   }
 }
