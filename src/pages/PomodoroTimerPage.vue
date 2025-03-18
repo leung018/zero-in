@@ -103,7 +103,7 @@ const onClickRestartLongBreak = () => {
     <div class="mt-4">
       <BButton variant="dark" v-b-toggle.restart-menu>Restart</BButton>
       <BCollapse class="mt-2" id="restart-menu">
-        <BRow v-for="nth in numOfPomodoriPerCycle - 1" :key="nth">
+        <BRow v-for="nth in numOfPomodoriPerCycle" :key="nth">
           <BCol>
             <BButton
               class="mt-2 w-100"
@@ -113,7 +113,7 @@ const onClickRestartLongBreak = () => {
               >{{ getNumberWithOrdinal(nth) }} Focus</BButton
             >
           </BCol>
-          <BCol>
+          <BCol v-if="nth < numOfPomodoriPerCycle">
             <BButton
               class="mt-2 w-100"
               variant="secondary"
@@ -122,18 +122,7 @@ const onClickRestartLongBreak = () => {
               >{{ getNumberWithOrdinal(nth) }} Break</BButton
             >
           </BCol>
-        </BRow>
-        <BRow>
-          <BCol>
-            <BButton
-              class="mt-2 w-100"
-              variant="primary"
-              data-test="restart-focus"
-              @click="onClickRestartFocus(numOfPomodoriPerCycle)"
-              >{{ getNumberWithOrdinal(numOfPomodoriPerCycle) }} Focus</BButton
-            >
-          </BCol>
-          <BCol>
+          <BCol v-else>
             <BButton
               class="mt-2 w-100"
               variant="secondary"
