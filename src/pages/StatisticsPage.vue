@@ -62,10 +62,14 @@ const onClickSave = async () => {
   <ContentTemplate title="Statistics">
     <BFormGroup label="Set daily cutoff time:">
       <TimeInput v-model="dailyCutoffTime" data-test="time-input" />
+      <p class="mt-1">
+        <small>
+          The time at which the day resets for tracking completed pomodori is used to adjust the
+          statistics according to your preference.
+        </small>
+      </p>
     </BFormGroup>
-    <BButton variant="primary" class="mt-4" data-test="save-button" @click="onClickSave"
-      >Save</BButton
-    >
+    <BButton variant="primary" data-test="save-button" @click="onClickSave">Save</BButton>
     <div class="mt-4">
       <h3>Last 14 Days Completed Pomodori</h3>
       <table class="table" data-test="stats-table">
