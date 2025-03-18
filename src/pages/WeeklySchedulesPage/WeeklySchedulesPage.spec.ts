@@ -71,6 +71,15 @@ describe('WeeklySchedulesPage', () => {
     ])
   })
 
+  it('should hide saved schedules section when no schedule', async () => {
+    const { wrapper } = await mountWeeklySchedulesPage()
+    expect(wrapper.find("[data-test='saved-schedules-section']").exists()).toBe(false)
+
+    await addWeeklySchedule(wrapper)
+
+    expect(wrapper.find("[data-test='saved-schedules-section']").exists()).toBe(true)
+  })
+
   it('should able to add new weekly schedule', async () => {
     const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesPage()
     const weeklySchedule = new WeeklySchedule({
@@ -285,6 +294,10 @@ async function addWeeklySchedule(
     weekdaySet: ReadonlySet<Weekday>
     startTime: Time
     endTime: Time
+  } = {
+    weekdaySet: new Set([Weekday.MON]),
+    startTime: new Time(10, 0),
+    endTime: new Time(12, 0)
   }
 ) {
   for (const weekday of weeklyScheduleInput.weekdaySet) {
