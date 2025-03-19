@@ -19,7 +19,6 @@ const manifestConfig = {
   options_page: 'options.html',
   permissions: [
     'storage',
-    'unlimitedStorage',
     'declarativeNetRequest',
     'alarms',
     'notifications',
