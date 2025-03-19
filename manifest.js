@@ -10,8 +10,11 @@ const manifestConfig = {
   action: {
     default_popup: 'popup.html',
     default_icon: {
-      32: 'icon.png' // I am using a 120x120 icon because I reuse the same image for iconUrl of notification. See src/chrome/notifications.ts about the notification.
+      32: 'icon.png'
     }
+  },
+  icons: {
+    128: 'icon.png'
   },
   background: {
     service_worker: 'src/service_workers/index.ts'
