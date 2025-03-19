@@ -8,10 +8,7 @@ const manifestConfig = {
   version: process.env.VERSION || '0.1',
   version_name: process.env.TAG_NAME || 'local',
   action: {
-    default_popup: 'popup.html',
-    default_icon: {
-      32: 'icon.png'
-    }
+    default_popup: 'popup.html'
   },
   icons: {
     128: 'icon.png'
