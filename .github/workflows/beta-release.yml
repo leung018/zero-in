@@ -24,6 +24,11 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: ./yarn.lock
       - run: yarn install --immutable
+      - name: Extract Version
+        run: |
+          # Remove 'v' prefix and anything after a hyphen
+          VERSION=$(echo "${{ env.TAG_NAME }}" | sed -E 's/^v//; s/-.*//')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Build
         run: yarn build
       - name: Compress

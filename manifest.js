@@ -5,7 +5,7 @@ const manifestConfig = {
   manifest_version: 3,
   name: process.env.NAME || 'Task Concentrator',
   description: process.env.DESCRIPTION || 'TODO: Write a description',
-  version: process.env.TAG_NAME || '0.1',
+  version: process.env.VERSION || '0.1',
   version_name: process.env.TAG_NAME || 'local',
   action: {
     default_popup: 'popup.html',
