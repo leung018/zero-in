@@ -85,7 +85,7 @@ test('should able to remove all blocked domains and unblock them', async ({
   await assertNotGoToBlockedTemplate(page, 'https://google.com')
 })
 
-test('should able to persist blocked schedules and update ui', async ({ page, extensionId }) => {
+test('should able to persist blocking schedules and update ui', async ({ page, extensionId }) => {
   await goToSchedulesPage(page, extensionId)
 
   // Add a schedule
