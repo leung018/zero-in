@@ -3,13 +3,13 @@ import { BrowsingRules } from '../domain/browsing_rules'
 import type { BrowsingControlService } from '../domain/browsing_control'
 
 export class ChromeBrowsingControlService implements BrowsingControlService {
-  private browsingRules: BrowsingRules = new BrowsingRules({})
+  private static browsingRules: BrowsingRules = new BrowsingRules({})
 
-  private onTabUpdatedListener = (tabId: number, _: unknown, tab: chrome.tabs.Tab) => {
+  private static onTabUpdatedListener = (tabId: number, _: unknown, tab: chrome.tabs.Tab) => {
     if (tab.url) {
       const url = new URL(tab.url)
 
-      for (const domain of this.browsingRules.blockedDomains) {
+      for (const domain of ChromeBrowsingControlService.browsingRules.blockedDomains) {
         if (url.hostname.includes(domain)) {
           chrome.tabs.update(tabId, {
             url: config.getBlockedTemplateUrl()
@@ -20,30 +20,30 @@ export class ChromeBrowsingControlService implements BrowsingControlService {
   }
 
   async setAndActivateNewRules(browsingRules: BrowsingRules): Promise<void> {
-    const promises = [
-      this.redirectAllActiveTabs(browsingRules),
-      this.redirectFutureRequests(browsingRules)
-    ]
+    ChromeBrowsingControlService.browsingRules = browsingRules
+    const promises = [this.redirectAllActiveTabs(), this.redirectFutureRequests()]
     await Promise.all(promises)
   }
 
-  deactivateExistingRules = async (): Promise<void> => {
-    return chrome.tabs.onUpdated.removeListener(this.onTabUpdatedListener)
+  async deactivateExistingRules(): Promise<void> {
+    ChromeBrowsingControlService.browsingRules = new BrowsingRules({})
+    return chrome.tabs.onUpdated.removeListener(ChromeBrowsingControlService.onTabUpdatedListener)
   }
 
-  private async redirectFutureRequests(browsingRules: BrowsingRules) {
-    this.browsingRules = browsingRules
-    return chrome.tabs.onUpdated.addListener(this.onTabUpdatedListener)
+  private async redirectFutureRequests() {
+    if (!chrome.tabs.onUpdated.hasListener(ChromeBrowsingControlService.onTabUpdatedListener)) {
+      return chrome.tabs.onUpdated.addListener(ChromeBrowsingControlService.onTabUpdatedListener)
+    }
   }
 
-  private async redirectAllActiveTabs(browsingRules: BrowsingRules): Promise<void> {
+  private async redirectAllActiveTabs(): Promise<void> {
     const tabs = await this.queryAllTabs()
     const promises: Promise<unknown>[] = []
     tabs.forEach((tab) => {
       if (tab && tab.url && tab.id) {
         const url = new URL(tab.url)
 
-        for (const domain of browsingRules.blockedDomains) {
+        for (const domain of ChromeBrowsingControlService.browsingRules.blockedDomains) {
           // FIXME: This is not a good way to check the domain. It should be more strict.
           if (url.hostname.includes(domain)) {
             promises.push(
