@@ -71,7 +71,7 @@ const onClickSave = async () => {
     </BFormGroup>
     <BButton variant="primary" data-test="save-button" @click="onClickSave">Save</BButton>
     <div class="mt-4">
-      <h3>Last 14 Days Completed Pomodori</h3>
+      <h3>Last 7 Days Completed Pomodori</h3>
       <table class="table" data-test="stats-table">
         <thead>
           <tr>
