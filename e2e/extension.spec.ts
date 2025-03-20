@@ -128,29 +128,9 @@ test('should able to disable blocking according to schedule', async ({ page, ext
     await route.fulfill({ body: 'This is fake google.com' })
   })
 
-  let startHours: number
-  let endHours: number
-  // FIXME: I can't find a way to mock the time in the test. Clock in playwright doesn't modify the time in service worker.
-  // i.e. I choose to compute hours so that current time must not be in the schedule.
-  const now = new Date()
-  // eslint-disable-next-line playwright/no-conditional-in-test
-  if (now.getHours() >= 21) {
-    startHours = 1
-    endHours = 2
-  } else {
-    startHours = now.getHours() + 2
-    endHours = now.getHours() + 3
-  }
-
   await goToSchedulesPage(page, extensionId)
 
-  await page.getByTestId('check-weekday-mon').check()
-
-  await page.getByTestId('start-time-input').fill(`${formatNumber(startHours)}:00`)
-
-  await page.getByTestId('end-time-input').fill(`${formatNumber(endHours)}:00`)
-
-  await page.getByTestId('add-button').click()
+  await addNonActiveSchedule(page)
 
   await assertNotGoToBlockedTemplate(page, 'https://google.com')
 })
@@ -215,6 +195,30 @@ async function addBlockedDomain(page: Page, domain: string) {
 async function removeBlockedDomain(page: Page, domain: string) {
   const removeButton = page.getByTestId(`remove-${domain}`)
   await removeButton.click()
+}
+
+async function addNonActiveSchedule(page: Page) {
+  let startHours: number
+  let endHours: number
+
+  // FIXME: I can't find a way to mock the time in the test. Clock in playwright doesn't modify the time in service worker.
+  // i.e. I choose to compute hours so that current time must not be in the schedule.
+  const now = new Date()
+  if (now.getHours() >= 21) {
+    startHours = 1
+    endHours = 2
+  } else {
+    startHours = now.getHours() + 2
+    endHours = now.getHours() + 3
+  }
+
+  await page.getByTestId('check-weekday-mon').check()
+
+  await page.getByTestId('start-time-input').fill(`${formatNumber(startHours)}:00`)
+
+  await page.getByTestId('end-time-input').fill(`${formatNumber(endHours)}:00`)
+
+  await page.getByTestId('add-button').click()
 }
 
 const TEXT_IN_BLOCKED_TEMPLATE = 'Stay Focused'
