@@ -1,54 +1,42 @@
 import config from '../config'
-import type { BrowsingRules } from '../domain/browsing_rules'
+import { BrowsingRules } from '../domain/browsing_rules'
 import type { BrowsingControlService } from '../domain/browsing_control'
 
-const REDIRECT_RULE_ID = 1
-
 export class ChromeBrowsingControlService implements BrowsingControlService {
+  private browsingRules: BrowsingRules = new BrowsingRules({})
+
+  private onTabUpdatedListener = (tabId: number, _: unknown, tab: chrome.tabs.Tab) => {
+    if (tab.url) {
+      const url = new URL(tab.url)
+
+      for (const domain of this.browsingRules.blockedDomains) {
+        if (url.hostname.includes(domain)) {
+          chrome.tabs.update(tabId, {
+            url: config.getBlockedTemplateUrl()
+          })
+        }
+      }
+    }
+  }
+
   async setAndActivateNewRules(browsingRules: BrowsingRules): Promise<void> {
-    const targetUrl = config.getBlockedTemplateUrl()
     const promises = [
-      this.redirectAllActiveTabs(browsingRules, targetUrl),
-      this.redirectFutureRequests(browsingRules, targetUrl)
+      this.redirectAllActiveTabs(browsingRules),
+      this.redirectFutureRequests(browsingRules)
     ]
     await Promise.all(promises)
   }
 
-  async deactivateExistingRules(): Promise<void> {
-    return chrome.declarativeNetRequest.updateDynamicRules({
-      removeRuleIds: [REDIRECT_RULE_ID]
-    })
+  deactivateExistingRules = async (): Promise<void> => {
+    return chrome.tabs.onUpdated.removeListener(this.onTabUpdatedListener)
   }
 
-  private async redirectFutureRequests(
-    browsingRules: BrowsingRules,
-    targetUrl: string
-  ): Promise<void> {
-    const rule: chrome.declarativeNetRequest.Rule = {
-      id: REDIRECT_RULE_ID,
-      priority: 1,
-      action: {
-        type: 'redirect',
-        redirect: {
-          url: targetUrl
-        }
-      },
-      condition: {
-        requestDomains: [...browsingRules.blockedDomains],
-        resourceTypes: ['main_frame']
-      }
-    }
-
-    return chrome.declarativeNetRequest.updateDynamicRules({
-      addRules: browsingRules.blockedDomains.length > 0 ? [rule] : undefined,
-      removeRuleIds: [1]
-    })
+  private async redirectFutureRequests(browsingRules: BrowsingRules) {
+    this.browsingRules = browsingRules
+    return chrome.tabs.onUpdated.addListener(this.onTabUpdatedListener)
   }
 
-  private async redirectAllActiveTabs(
-    browsingRules: BrowsingRules,
-    targetUrl: string
-  ): Promise<void> {
+  private async redirectAllActiveTabs(browsingRules: BrowsingRules): Promise<void> {
     const tabs = await this.queryAllTabs()
     const promises: Promise<unknown>[] = []
     tabs.forEach((tab) => {
@@ -60,7 +48,7 @@ export class ChromeBrowsingControlService implements BrowsingControlService {
           if (url.hostname.includes(domain)) {
             promises.push(
               chrome.tabs.update(tab.id, {
-                url: targetUrl
+                url: config.getBlockedTemplateUrl()
               })
             )
           }
