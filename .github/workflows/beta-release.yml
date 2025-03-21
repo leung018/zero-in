@@ -5,8 +5,9 @@ on:
     tags:
       - '*-beta.*'
       - '*-beta'
-    branches-ignore:
-      - '!main'
+    branches:
+      - main
+
 jobs:
   release:
     permissions:
