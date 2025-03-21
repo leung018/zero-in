@@ -156,7 +156,6 @@ test('should pomodoro timer count successfully', async ({ page, extensionId }) =
 
   await expect(page.getByTestId('timer-display')).toContainText('24:59')
 
-  // FIXME: Below test catch the bug related to subscription of timer state from service worker. Better catch the bug in unit test instead.
   await page.getByTestId('pause-button').click()
   await page.reload()
   await page.getByTestId('start-button').click()
