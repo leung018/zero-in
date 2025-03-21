@@ -14,6 +14,13 @@ describe('BrowsingRules', () => {
     expect(browsingRules.blockedDomains).toEqual(['example.com', 'facebook.com'])
   })
 
+  it('should extract domain from input properly', () => {
+    const browsingRules = new BrowsingRules({
+      blockedDomains: ['www.example.com', 'www.facebook.com', 'https://youtube.com']
+    })
+    expect(browsingRules.blockedDomains).toEqual(['example.com', 'facebook.com', 'youtube.com'])
+  })
+
   it('should be able to automatically trim input', () => {
     const browsingRules = new BrowsingRules({
       blockedDomains: ['  example.com  ', 'facebook.com  ']

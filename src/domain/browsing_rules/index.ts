@@ -5,7 +5,10 @@ export class BrowsingRules {
 
   constructor({ blockedDomains = [] }: { blockedDomains?: ReadonlyArray<string> } = {}) {
     this._blockedDomains = deduplicated(
-      blockedDomains.map((domain) => domain.trim()).filter((domain) => domain !== '')
+      blockedDomains
+        .map((domain) => domain.trim())
+        .filter((domain) => domain !== '')
+        .map(getDomain)
     )
   }
 
