@@ -16,19 +16,6 @@ jobs:
       DESCRIPTION: THIS EXTENSION IS FOR BETA TESTING
     steps:
       - uses: actions/checkout@v4
-      - name: Get branch name
-        run: |
-          BRANCH=$(git branch -r --contains ${{ github.ref }} --format "%(refname:lstrip=3)")
-          git branch -r --contains ${{ github.ref }}
-          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
-          echo "Branch is $BRANCH"
-      - name: Check if branch is main
-        run: |
-          echo "Branch is $BRANCH"
-          if [ "$BRANCH" != "main" ]; then
-            echo "This tag is not on the main branch. Exiting."
-            exit 1
-          fi
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
