@@ -33,18 +33,25 @@ describe('BrowsingRules', () => {
     expect(browsingRules.blockedDomains).toEqual(['example.com', 'facebook.com'])
   })
 
-  it('should isUrlBlocked check if the url is blocked', () => {
-    expect(
-      new BrowsingRules({ blockedDomains: ['example.com'] }).isUrlBlocked('https://www.example.com')
-    ).toBe(true)
-    expect(
-      new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] }).isUrlBlocked(
-        'https://example.com'
+  describe('isUrlBlocked', () => {
+    it('should return false if url is not blocked', () => {
+      expect(new BrowsingRules().isUrlBlocked('https://www.example.com')).toBe(false)
+      expect(
+        new BrowsingRules({ blockedDomains: ['facebook.com'] }).isUrlBlocked('https://example.com')
+      ).toBe(false)
+    })
+
+    it('should return true if url is blocked', () => {
+      expect(
+        new BrowsingRules({ blockedDomains: ['example.com'] }).isUrlBlocked(
+          'https://www.example.com'
+        )
+      ).toBe(true)
+      expect(
+        new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] }).isUrlBlocked(
+          'https://example.com'
+        )
       )
-    ).toBe(true)
-    expect(
-      new BrowsingRules({ blockedDomains: ['example.com'] }).isUrlBlocked('https://facebook.com')
-    ).toBe(false)
-    expect(new BrowsingRules().isUrlBlocked('https://www.example.com')).toBe(false)
+    })
   })
 })
