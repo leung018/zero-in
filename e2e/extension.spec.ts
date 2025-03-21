@@ -168,7 +168,7 @@ test('should clicking the options button in timer can go to options page', async
 
   await page.getByTestId('options-button').click()
 
-  assertOpenedOptionsPage(page)
+  await assertOpenedOptionsPage(page)
 })
 
 test('should close reminder page after timer start', async ({ page, extensionId }) => {
@@ -176,7 +176,9 @@ test('should close reminder page after timer start', async ({ page, extensionId 
 
   await page.getByTestId('start-button').click()
 
-  expect(page.context().pages()).not.toContain(page)
+  await assertWithRetry(async () => {
+    expect(page.context().pages()).not.toContain(page)
+  })
 })
 
 test('should able to save daily reset time', async ({ page, extensionId }) => {
@@ -262,10 +264,12 @@ async function assertNotGoToBlockedTemplate(page: Page, targetUrl: string) {
   })
 }
 
-function assertOpenedOptionsPage(page: Page) {
-  const pages = page.context().pages()
-  const optionsPage = pages.find((p) => p.url().includes('options.html'))
-  expect(optionsPage).toBeDefined()
+async function assertOpenedOptionsPage(page: Page) {
+  return assertWithRetry(async () => {
+    const pages = page.context().pages()
+    const optionsPage = pages.find((p) => p.url().includes('options.html'))
+    expect(optionsPage).toBeDefined()
+  })
 }
 
 function sleep(ms: number) {
