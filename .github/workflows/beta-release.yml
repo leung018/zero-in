@@ -19,6 +19,7 @@ jobs:
       - name: Get branch name
         run: |
           BRANCH=$(git branch -r --contains ${{ github.ref }} --format "%(refname:lstrip=3)")
+          echo $(git branch -r --contains ${{ github.ref }})
           echo "BRANCH=$BRANCH" >> $GITHUB_ENV
           echo "Branch is $BRANCH"
       - name: Check if branch is main
