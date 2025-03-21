@@ -171,13 +171,23 @@ test('should clicking the options button in timer can go to options page', async
   await assertOpenedOptionsPage(page)
 })
 
-test('should close reminder page after timer start', async ({ page, extensionId }) => {
+test('should close tab service function properly and wont close irrelevant page', async ({
+  page,
+  extensionId
+}) => {
   await goToReminderPage(page, extensionId)
+
+  const extraPage = await page.context().newPage()
+  await extraPage.route('https://google.com', async (route) => {
+    await route.fulfill({ body: 'This is fake google.com' })
+  })
+  await extraPage.goto('https://google.com')
 
   await page.getByTestId('start-button').click()
 
   await assertWithRetry(async () => {
     expect(page.context().pages()).not.toContain(page)
+    expect(page.context().pages()).toContain(extraPage)
   })
 })
 
