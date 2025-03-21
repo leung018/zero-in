@@ -31,25 +31,36 @@ test('should able to persist blocked domains and update ui', async ({ page, exte
   await expect(domains.nth(0)).toHaveText('xyz.com')
 })
 
-test('should able to add blocked domains and block them', async ({ page, extensionId }) => {
-  const extraPage = await page.context().newPage()
-  for (const p of [page, extraPage]) {
+test('should blocking of browsing control function properly', async ({ page, extensionId }) => {
+  const extraPage1 = await page.context().newPage()
+  const extraPage2 = await page.context().newPage()
+  for (const p of [page, extraPage1, extraPage2]) {
     await p.route('https://google.com', async (route) => {
       await route.fulfill({ body: 'This is fake google.com' })
     })
+    await p.route('https://facebook.com', async (route) => {
+      await route.fulfill({ body: 'This is fake facebook.com' })
+    })
   }
-  await extraPage.goto('https://google.com')
-  await expect(extraPage.locator('body')).toContainText('This is fake google.com')
+  await extraPage1.goto('https://google.com')
+  await expect(extraPage1.locator('body')).toContainText('This is fake google.com')
+
+  await extraPage2.goto('https://facebook.com')
+  await expect(extraPage2.locator('body')).toContainText('This is fake facebook.com')
 
   // Add blocked Domain
   await goToBlockedDomainsPage(page, extensionId)
   await addBlockedDomain(page, 'google.com')
 
   // Previous page which is in google.com should be blocked
-  await assertInBlockedTemplate(extraPage)
+  await assertInBlockedTemplate(extraPage1)
 
   // Future request to google.com should be blocked
-  await assertGoToBlockedTemplate(extraPage, 'https://google.com')
+  await assertGoToBlockedTemplate(extraPage1, 'https://google.com')
+
+  // Facebook should not be blocked
+  await expect(extraPage2.locator('body')).toContainText('This is fake facebook.com')
+  await assertNotGoToBlockedTemplate(extraPage2, 'https://facebook.com')
 })
 
 test("should access blocked domain through other websites won't cause ERR_BLOCKED_BY_CLIENT", async ({
@@ -70,10 +81,7 @@ test("should access blocked domain through other websites won't cause ERR_BLOCKE
   await assertInBlockedTemplate(page)
 })
 
-test('should able to remove all blocked domains and unblock them', async ({
-  page,
-  extensionId
-}) => {
+test('should browsing control able to unblock domain', async ({ page, extensionId }) => {
   await goToBlockedDomainsPage(page, extensionId)
 
   await addBlockedDomain(page, 'google.com')
@@ -85,7 +93,7 @@ test('should able to remove all blocked domains and unblock them', async ({
   await assertNotGoToBlockedTemplate(page, 'https://google.com')
 })
 
-test('should able to persist blocked schedules and update ui', async ({ page, extensionId }) => {
+test('should able to persist blocking schedules and update ui', async ({ page, extensionId }) => {
   await goToSchedulesPage(page, extensionId)
 
   // Add a schedule
@@ -128,29 +136,9 @@ test('should able to disable blocking according to schedule', async ({ page, ext
     await route.fulfill({ body: 'This is fake google.com' })
   })
 
-  let startHours: number
-  let endHours: number
-  // FIXME: I can't find a way to mock the time in the test. Clock in playwright doesn't modify the time in service worker.
-  // i.e. I choose to compute hours so that current time must not be in the schedule.
-  const now = new Date()
-  // eslint-disable-next-line playwright/no-conditional-in-test
-  if (now.getHours() >= 21) {
-    startHours = 1
-    endHours = 2
-  } else {
-    startHours = now.getHours() + 2
-    endHours = now.getHours() + 3
-  }
-
   await goToSchedulesPage(page, extensionId)
 
-  await page.getByTestId('check-weekday-mon').check()
-
-  await page.getByTestId('start-time-input').fill(`${formatNumber(startHours)}:00`)
-
-  await page.getByTestId('end-time-input').fill(`${formatNumber(endHours)}:00`)
-
-  await page.getByTestId('add-button').click()
+  await addNonActiveSchedule(page)
 
   await assertNotGoToBlockedTemplate(page, 'https://google.com')
 })
@@ -204,6 +192,7 @@ test('should able to save daily reset time', async ({ page, extensionId }) => {
 
   await expect(page.getByTestId('time-input')).toHaveValue('10:30')
 })
+
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
   const addButton = page.getByTestId('add-button')
@@ -215,6 +204,30 @@ async function addBlockedDomain(page: Page, domain: string) {
 async function removeBlockedDomain(page: Page, domain: string) {
   const removeButton = page.getByTestId(`remove-${domain}`)
   await removeButton.click()
+}
+
+async function addNonActiveSchedule(page: Page) {
+  let startHours: number
+  let endHours: number
+
+  // FIXME: I can't find a way to mock the time in the test. Clock in playwright doesn't modify the time in service worker.
+  // i.e. I choose to compute hours so that current time must not be in the schedule.
+  const now = new Date()
+  if (now.getHours() >= 21) {
+    startHours = 1
+    endHours = 2
+  } else {
+    startHours = now.getHours() + 2
+    endHours = now.getHours() + 3
+  }
+
+  await page.getByTestId('check-weekday-mon').check()
+
+  await page.getByTestId('start-time-input').fill(`${formatNumber(startHours)}:00`)
+
+  await page.getByTestId('end-time-input').fill(`${formatNumber(endHours)}:00`)
+
+  await page.getByTestId('add-button').click()
 }
 
 const TEXT_IN_BLOCKED_TEMPLATE = 'Stay Focused'

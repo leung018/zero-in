@@ -10,6 +10,11 @@ export class BrowsingRules {
   get blockedDomains(): ReadonlyArray<string> {
     return this._blockedDomains
   }
+
+  isUrlBlocked(url: string): boolean {
+    const urlDomain = new URL(url).hostname
+    return this._blockedDomains.some((domain) => urlDomain.includes(domain)) // FIXME: This is not a good way to check the domain. It should be more strict.
+  }
 }
 
 function deduplicated(inputs: string[]): string[] {

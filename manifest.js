@@ -25,7 +25,6 @@ const manifestConfig = {
     'tabs',
     'contextMenus'
   ],
-  host_permissions: ['<all_urls>'],
   web_accessible_resources: [
     {
       resources: ['blocked.html'], // Making blocked template accessible can solve the problem of clicking the blocked domain from the google search results triggering ERR_BLOCKED_BY_CLIENT.
