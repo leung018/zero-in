@@ -71,6 +71,10 @@ test("should access blocked domain through other websites won't cause ERR_BLOCKE
 
   await addBlockedDomain(page, 'facebook.com')
 
+  await page.route('https://facebook.com', async (route) => {
+    await route.fulfill({ body: 'This is fake facebook.com' })
+  })
+
   await page.route('https://google.com/search-results', async (route) => {
     await route.fulfill({ body: '<a href="https://www.facebook.com">Facebook</a>' })
   })
@@ -152,7 +156,6 @@ test('should pomodoro timer count successfully', async ({ page, extensionId }) =
 
   await expect(page.getByTestId('timer-display')).toContainText('24:59')
 
-  // FIXME: Below test catch the bug related to subscription of timer state from service worker. Better catch the bug in unit test instead.
   await page.getByTestId('pause-button').click()
   await page.reload()
   await page.getByTestId('start-button').click()
@@ -168,15 +171,27 @@ test('should clicking the options button in timer can go to options page', async
 
   await page.getByTestId('options-button').click()
 
-  assertOpenedOptionsPage(page)
+  await assertOpenedOptionsPage(page)
 })
 
-test('should close reminder page after timer start', async ({ page, extensionId }) => {
+test('should close tab service function properly and wont close irrelevant page', async ({
+  page,
+  extensionId
+}) => {
   await goToReminderPage(page, extensionId)
+
+  const extraPage = await page.context().newPage()
+  await extraPage.route('https://google.com', async (route) => {
+    await route.fulfill({ body: 'This is fake google.com' })
+  })
+  await extraPage.goto('https://google.com')
 
   await page.getByTestId('start-button').click()
 
-  expect(page.context().pages()).not.toContain(page)
+  await assertWithRetry(async () => {
+    expect(page.context().pages()).not.toContain(page)
+    expect(page.context().pages()).toContain(extraPage)
+  })
 })
 
 test('should able to save daily reset time', async ({ page, extensionId }) => {
@@ -236,46 +251,38 @@ async function assertInBlockedTemplate(page: Page) {
   await expect(page.locator('body')).toContainText(TEXT_IN_BLOCKED_TEMPLATE)
 }
 
-async function assertGoToBlockedTemplate(
-  page: Page,
-  targetUrl: string,
-  retryCount = 3,
-  intervalMs = 100
-) {
-  await page.goto(targetUrl)
+async function assertWithRetry(assert: () => Promise<void>, retryCount = 3, intervalMs = 100) {
   try {
+    await assert()
+  } catch (Exception) {
+    if (retryCount <= 0) {
+      throw Exception
+    }
+    await sleep(intervalMs)
+    return assertWithRetry(assert, retryCount - 1, intervalMs)
+  }
+}
+
+async function assertGoToBlockedTemplate(page: Page, targetUrl: string) {
+  return assertWithRetry(async () => {
+    await page.goto(targetUrl)
     expect(await page.locator('body').textContent()).toContain(TEXT_IN_BLOCKED_TEMPLATE)
-  } catch (Exception) {
-    if (retryCount <= 0) {
-      throw Exception
-    }
-    await sleep(intervalMs)
-    return assertGoToBlockedTemplate(page, targetUrl, retryCount - 1, intervalMs)
-  }
+  })
 }
 
-async function assertNotGoToBlockedTemplate(
-  page: Page,
-  targetUrl: string,
-  retryCount = 3,
-  intervalMs = 100
-) {
-  await page.goto(targetUrl)
-  try {
+async function assertNotGoToBlockedTemplate(page: Page, targetUrl: string) {
+  return assertWithRetry(async () => {
+    await page.goto(targetUrl)
     expect(await page.locator('body').textContent()).not.toContain(TEXT_IN_BLOCKED_TEMPLATE)
-  } catch (Exception) {
-    if (retryCount <= 0) {
-      throw Exception
-    }
-    await sleep(intervalMs)
-    return assertNotGoToBlockedTemplate(page, targetUrl, retryCount - 1, intervalMs)
-  }
+  })
 }
 
-function assertOpenedOptionsPage(page: Page) {
-  const pages = page.context().pages()
-  const optionsPage = pages.find((p) => p.url().includes('options.html'))
-  expect(optionsPage).toBeDefined()
+async function assertOpenedOptionsPage(page: Page) {
+  return assertWithRetry(async () => {
+    const pages = page.context().pages()
+    const optionsPage = pages.find((p) => p.url().includes('options.html'))
+    expect(optionsPage).toBeDefined()
+  })
 }
 
 function sleep(ms: number) {
