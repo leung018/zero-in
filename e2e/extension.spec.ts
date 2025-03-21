@@ -31,25 +31,36 @@ test('should able to persist blocked domains and update ui', async ({ page, exte
   await expect(domains.nth(0)).toHaveText('xyz.com')
 })
 
-test('should able to add blocked domains and block them', async ({ page, extensionId }) => {
-  const extraPage = await page.context().newPage()
-  for (const p of [page, extraPage]) {
+test('should blocking of browsing control function properly', async ({ page, extensionId }) => {
+  const extraPage1 = await page.context().newPage()
+  const extraPage2 = await page.context().newPage()
+  for (const p of [page, extraPage1, extraPage2]) {
     await p.route('https://google.com', async (route) => {
       await route.fulfill({ body: 'This is fake google.com' })
     })
+    await p.route('https://facebook.com', async (route) => {
+      await route.fulfill({ body: 'This is fake facebook.com' })
+    })
   }
-  await extraPage.goto('https://google.com')
-  await expect(extraPage.locator('body')).toContainText('This is fake google.com')
+  await extraPage1.goto('https://google.com')
+  await expect(extraPage1.locator('body')).toContainText('This is fake google.com')
+
+  await extraPage2.goto('https://facebook.com')
+  await expect(extraPage2.locator('body')).toContainText('This is fake facebook.com')
 
   // Add blocked Domain
   await goToBlockedDomainsPage(page, extensionId)
   await addBlockedDomain(page, 'google.com')
 
   // Previous page which is in google.com should be blocked
-  await assertInBlockedTemplate(extraPage)
+  await assertInBlockedTemplate(extraPage1)
 
   // Future request to google.com should be blocked
-  await assertGoToBlockedTemplate(extraPage, 'https://google.com')
+  await assertGoToBlockedTemplate(extraPage1, 'https://google.com')
+
+  // Facebook should not be blocked
+  await expect(extraPage2.locator('body')).toContainText('This is fake facebook.com')
+  await assertNotGoToBlockedTemplate(extraPage2, 'https://facebook.com')
 })
 
 test("should access blocked domain through other websites won't cause ERR_BLOCKED_BY_CLIENT", async ({
@@ -70,10 +81,7 @@ test("should access blocked domain through other websites won't cause ERR_BLOCKE
   await assertInBlockedTemplate(page)
 })
 
-test('should able to remove all blocked domains and unblock them', async ({
-  page,
-  extensionId
-}) => {
+test('should browsing control able to unblock domain', async ({ page, extensionId }) => {
   await goToBlockedDomainsPage(page, extensionId)
 
   await addBlockedDomain(page, 'google.com')
