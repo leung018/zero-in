@@ -71,6 +71,10 @@ test("should access blocked domain through other websites won't cause ERR_BLOCKE
 
   await addBlockedDomain(page, 'facebook.com')
 
+  await page.route('https://facebook.com', async (route) => {
+    await route.fulfill({ body: 'This is fake facebook.com' })
+  })
+
   await page.route('https://google.com/search-results', async (route) => {
     await route.fulfill({ body: '<a href="https://www.facebook.com">Facebook</a>' })
   })
