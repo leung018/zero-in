@@ -192,6 +192,7 @@ test('should able to save daily reset time', async ({ page, extensionId }) => {
 
   await expect(page.getByTestId('time-input')).toHaveValue('10:30')
 })
+
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
   const addButton = page.getByTestId('add-button')
