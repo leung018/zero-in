@@ -5,6 +5,8 @@ on:
     tags:
       - '*-beta.*'
       - '*-beta'
+    branches:
+      - main
 
 jobs:
   release:
