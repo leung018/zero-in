@@ -236,40 +236,30 @@ async function assertInBlockedTemplate(page: Page) {
   await expect(page.locator('body')).toContainText(TEXT_IN_BLOCKED_TEMPLATE)
 }
 
-async function assertGoToBlockedTemplate(
-  page: Page,
-  targetUrl: string,
-  retryCount = 3,
-  intervalMs = 100
-) {
-  await page.goto(targetUrl)
+async function assertWithRetry(assert: () => Promise<void>, retryCount = 3, intervalMs = 100) {
   try {
-    expect(await page.locator('body').textContent()).toContain(TEXT_IN_BLOCKED_TEMPLATE)
+    await assert()
   } catch (Exception) {
     if (retryCount <= 0) {
       throw Exception
     }
     await sleep(intervalMs)
-    return assertGoToBlockedTemplate(page, targetUrl, retryCount - 1, intervalMs)
+    return assertWithRetry(assert, retryCount - 1, intervalMs)
   }
 }
 
-async function assertNotGoToBlockedTemplate(
-  page: Page,
-  targetUrl: string,
-  retryCount = 3,
-  intervalMs = 100
-) {
-  await page.goto(targetUrl)
-  try {
+async function assertGoToBlockedTemplate(page: Page, targetUrl: string) {
+  return assertWithRetry(async () => {
+    await page.goto(targetUrl)
+    expect(await page.locator('body').textContent()).toContain(TEXT_IN_BLOCKED_TEMPLATE)
+  })
+}
+
+async function assertNotGoToBlockedTemplate(page: Page, targetUrl: string) {
+  return assertWithRetry(async () => {
+    await page.goto(targetUrl)
     expect(await page.locator('body').textContent()).not.toContain(TEXT_IN_BLOCKED_TEMPLATE)
-  } catch (Exception) {
-    if (retryCount <= 0) {
-      throw Exception
-    }
-    await sleep(intervalMs)
-    return assertNotGoToBlockedTemplate(page, targetUrl, retryCount - 1, intervalMs)
-  }
+  })
 }
 
 function assertOpenedOptionsPage(page: Page) {
