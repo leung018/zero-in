@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatNumber, getMostRecentDate, getNumberWithOrdinal } from './util'
+import { formatNumber, getDomain, getMostRecentDate, getNumberWithOrdinal } from './util'
 import { Time } from './domain/time'
 
 describe('formatNumber', () => {
@@ -54,5 +54,33 @@ describe('getMostRecentDate', () => {
     expect(getMostRecentDate(new Time(15, 0), new Date('2021-01-01T14:59:00'))).toEqual(
       new Date('2020-12-31T15:00:00')
     )
+  })
+})
+
+describe('getDomain', () => {
+  it('should extract domain from URL with protocol and www', () => {
+    expect(getDomain('https://www.example.com')).toBe('example.com')
+    expect(getDomain('http://www.example.com')).toBe('example.com')
+  })
+
+  it('should extract domain from URL with protocol but without www', () => {
+    expect(getDomain('https://example.com')).toBe('example.com')
+    expect(getDomain('http://example.com')).toBe('example.com')
+  })
+
+  it('should extract domain from URL without protocol but with www', () => {
+    expect(getDomain('www.example.com')).toBe('example.com')
+  })
+
+  it('should extract domain from URL without protocol and www', () => {
+    expect(getDomain('example.com')).toBe('example.com')
+  })
+
+  it('should extract domain and ignore paths', () => {
+    expect(getDomain('https://www.example.com/path/to/resource')).toBe('example.com')
+  })
+
+  it('should keep subdomain', () => {
+    expect(getDomain('subdomain.example.com')).toBe('subdomain.example.com')
   })
 })

@@ -1,9 +1,14 @@
+import { getDomain } from '../../util'
+
 export class BrowsingRules {
   private _blockedDomains: ReadonlyArray<string>
 
   constructor({ blockedDomains = [] }: { blockedDomains?: ReadonlyArray<string> } = {}) {
     this._blockedDomains = deduplicated(
-      blockedDomains.map((domain) => domain.trim()).filter((domain) => domain !== '')
+      blockedDomains
+        .map((domain) => domain.trim())
+        .filter((domain) => domain !== '')
+        .map(getDomain)
     )
   }
 
@@ -12,8 +17,8 @@ export class BrowsingRules {
   }
 
   isUrlBlocked(url: string): boolean {
-    const urlDomain = new URL(url).hostname
-    return this._blockedDomains.some((domain) => urlDomain.includes(domain)) // FIXME: This is not a good way to check the domain. It should be more strict.
+    const urlDomain = getDomain(url)
+    return this._blockedDomains.some((domain) => domain === urlDomain)
   }
 }
 
