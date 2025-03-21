@@ -39,6 +39,9 @@ describe('BrowsingRules', () => {
       expect(
         new BrowsingRules({ blockedDomains: ['facebook.com'] }).isUrlBlocked('https://example.com')
       ).toBe(false)
+      expect(
+        new BrowsingRules({ blockedDomains: ['google.com'] }).isUrlBlocked('https://google.company')
+      ).toBe(false)
     })
 
     it('should return true if url is blocked', () => {

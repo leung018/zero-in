@@ -1,3 +1,5 @@
+import { getDomain } from '../../util'
+
 export class BrowsingRules {
   private _blockedDomains: ReadonlyArray<string>
 
@@ -12,8 +14,8 @@ export class BrowsingRules {
   }
 
   isUrlBlocked(url: string): boolean {
-    const urlDomain = new URL(url).hostname
-    return this._blockedDomains.some((domain) => urlDomain.includes(domain)) // FIXME: This is not a good way to check the domain. It should be more strict.
+    const urlDomain = getDomain(url)
+    return this._blockedDomains.some((domain) => domain === urlDomain)
   }
 }
 
