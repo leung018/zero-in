@@ -3,18 +3,18 @@ import { BrowsingRules } from '../domain/browsing_rules'
 import type { BrowsingControlService } from '../domain/browsing_control'
 
 export class ChromeBrowsingControlService implements BrowsingControlService {
-  private static browsingRules: BrowsingRules = new BrowsingRules({})
+  // Use a bit manual testing if you modify this class because e2e test is hard to cover all the bugs perfectly.
+
+  // I use static because so that the call of different instance of this class won't cause bug.
+  // But note that only use this class in service worker. If this class is reused within different thread, it will cause unexpected behavior.
+  private static browsingRules: BrowsingRules = new BrowsingRules()
 
   private static onTabUpdatedListener = (tabId: number, _: unknown, tab: chrome.tabs.Tab) => {
     if (tab.url) {
-      const url = new URL(tab.url)
-
-      for (const domain of ChromeBrowsingControlService.browsingRules.blockedDomains) {
-        if (url.hostname.includes(domain)) {
-          chrome.tabs.update(tabId, {
-            url: config.getBlockedTemplateUrl()
-          })
-        }
+      if (ChromeBrowsingControlService.browsingRules.isUrlBlocked(tab.url)) {
+        chrome.tabs.update(tabId, {
+          url: config.getBlockedTemplateUrl()
+        })
       }
     }
   }
@@ -41,17 +41,12 @@ export class ChromeBrowsingControlService implements BrowsingControlService {
     const promises: Promise<unknown>[] = []
     tabs.forEach((tab) => {
       if (tab && tab.url && tab.id) {
-        const url = new URL(tab.url)
-
-        for (const domain of ChromeBrowsingControlService.browsingRules.blockedDomains) {
-          // FIXME: This is not a good way to check the domain. It should be more strict.
-          if (url.hostname.includes(domain)) {
-            promises.push(
-              chrome.tabs.update(tab.id, {
-                url: config.getBlockedTemplateUrl()
-              })
-            )
-          }
+        if (ChromeBrowsingControlService.browsingRules.isUrlBlocked(tab.url)) {
+          promises.push(
+            chrome.tabs.update(tab.id, {
+              url: config.getBlockedTemplateUrl()
+            })
+          )
         }
       }
     })
