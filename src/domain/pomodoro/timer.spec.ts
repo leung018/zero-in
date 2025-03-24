@@ -654,6 +654,27 @@ describe('PomodoroTimer', () => {
 
     expect(updates[updates.length - 1].remainingSeconds).toBe(2)
   })
+
+  it('should able to add callback when pomodoro records updated', async () => {
+    const { timer, scheduler } = createTimer(
+      newConfig({
+        focusDuration: new Duration({ seconds: 1 })
+      })
+    )
+
+    let triggerCount = 0
+    timer.setOnPomodoroRecordsUpdate(() => {
+      triggerCount++
+    })
+
+    expect(triggerCount).toBe(0)
+
+    timer.start()
+    scheduler.advanceTime(1000)
+    await flushPromises()
+
+    expect(triggerCount).toBe(1)
+  })
 })
 
 const newConfig = newTestPomodoroTimerConfig

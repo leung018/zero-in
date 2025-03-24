@@ -50,6 +50,8 @@ export class PomodoroTimer {
 
   private onStageComplete: () => void = () => {}
 
+  private onPomodoroRecordsUpdate: () => void = () => {}
+
   private constructor({
     timerConfig,
     scheduler,
@@ -142,6 +144,10 @@ export class PomodoroTimer {
     this.onStageComplete = callback
   }
 
+  setOnPomodoroRecordsUpdate(callback: () => void) {
+    this.onPomodoroRecordsUpdate = callback
+  }
+
   restartShortBreak(nth?: number) {
     if (nth != null) {
       this.resetNumOfPomodoriCompleted(nth)
@@ -219,6 +225,7 @@ export class PomodoroTimer {
           houseKeepDays: this.config.pomodoroRecordHouseKeepDays
         })
       })
+      .then(this.onPomodoroRecordsUpdate)
   }
 
   private handleBreakComplete() {
