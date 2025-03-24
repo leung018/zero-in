@@ -128,7 +128,7 @@ function mountStatisticsPage({
     props: {
       dailyResetTimeStorageService,
       reloadService,
-      currentDate,
+      getCurrentDate: () => currentDate,
       pomodoroRecordStorageService
     }
   })

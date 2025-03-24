@@ -10,13 +10,17 @@ import { getMostRecentDate } from '../util'
 
 type PomodoroStat = { day: string; completedPomodori: number }
 
-const { dailyResetTimeStorageService, reloadService, currentDate, pomodoroRecordStorageService } =
-  defineProps<{
-    dailyResetTimeStorageService: DailyResetTimeStorageService
-    reloadService: ReloadService
-    currentDate: Date
-    pomodoroRecordStorageService: PomodoroRecordStorageService
-  }>()
+const {
+  dailyResetTimeStorageService,
+  reloadService,
+  getCurrentDate,
+  pomodoroRecordStorageService
+} = defineProps<{
+  dailyResetTimeStorageService: DailyResetTimeStorageService
+  reloadService: ReloadService
+  getCurrentDate: () => Date
+  pomodoroRecordStorageService: PomodoroRecordStorageService
+}>()
 
 const dailyResetTime = ref<Time>(new Time(0, 0))
 const pomodoroStats = ref<PomodoroStat[]>(initialPomodoroStats())
@@ -38,7 +42,7 @@ onBeforeMount(async () => {
 
 async function setPomodoroStats(dailyResetTime: Time) {
   const records = await pomodoroRecordStorageService.getAll()
-  let exclusiveEndDate = currentDate
+  let exclusiveEndDate = getCurrentDate()
   const inclusiveStartDate = getMostRecentDate(dailyResetTime, exclusiveEndDate)
   for (let i = 0; i < pomodoroStats.value.length; i++) {
     pomodoroStats.value[i].completedPomodori = records.filter(

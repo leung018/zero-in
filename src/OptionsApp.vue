@@ -47,7 +47,7 @@ const routeMap: Record<PATH, Route> = {
     props: {
       dailyResetTimeStorageService: DailyResetTimeStorageService.create(),
       reloadService: new ReloadService(),
-      currentDate: new Date(),
+      getCurrentDate: () => new Date(),
       pomodoroRecordStorageService: PomodoroRecordStorageService.create()
     }
   }
