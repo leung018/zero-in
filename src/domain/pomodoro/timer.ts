@@ -48,9 +48,9 @@ export class PomodoroTimer {
 
   private timerStateSubscriptionManager = new SubscriptionManager<PomodoroTimerState>()
 
-  private onStageComplete: () => void = () => {}
+  private pomodoroRecordsUpdateSubscriptionManager = new SubscriptionManager()
 
-  private onPomodoroRecordsUpdate: () => void = () => {}
+  private onStageComplete: () => void = () => {}
 
   private constructor({
     timerConfig,
@@ -144,8 +144,9 @@ export class PomodoroTimer {
     this.onStageComplete = callback
   }
 
-  setOnPomodoroRecordsUpdate(callback: () => void) {
-    this.onPomodoroRecordsUpdate = callback
+  subscribePomodoroRecordsUpdate(callback: () => void) {
+    const subscriptionId = this.pomodoroRecordsUpdateSubscriptionManager.subscribe(callback)
+    return subscriptionId
   }
 
   restartShortBreak(nth?: number) {
@@ -225,7 +226,9 @@ export class PomodoroTimer {
           houseKeepDays: this.config.pomodoroRecordHouseKeepDays
         })
       })
-      .then(this.onPomodoroRecordsUpdate)
+      .then(() => {
+        this.pomodoroRecordsUpdateSubscriptionManager.broadcast(undefined)
+      })
   }
 
   private handleBreakComplete() {

@@ -663,7 +663,7 @@ describe('PomodoroTimer', () => {
     )
 
     let triggerCount = 0
-    timer.setOnPomodoroRecordsUpdate(() => {
+    timer.subscribePomodoroRecordsUpdate(() => {
       triggerCount++
     })
 
