@@ -6,7 +6,7 @@ import {
   type Port
 } from '../infra/communication'
 import { BrowsingControlTogglingService } from '../domain/browsing_control_toggling'
-import { type PomodoroTimerResponse } from './response'
+import { WorkResponseName, type WorkResponse } from './response'
 import { PomodoroTimer } from '../domain/pomodoro/timer'
 import { FakeActionService, type ActionService } from '../infra/action'
 import { ChromeNewTabService } from '../chrome/new_tab'
@@ -95,7 +95,7 @@ export class BackgroundListener {
   async start() {
     return this.setUpTimerRelated().then(() => {
       this.communicationManager.onNewClientConnect(
-        (backgroundPort: Port<PomodoroTimerResponse, WorkRequest>) => {
+        (backgroundPort: Port<WorkResponse, WorkRequest>) => {
           const listener = (message: WorkRequest) => {
             switch (message.name) {
               case WorkRequestName.START_TIMER: {
@@ -109,7 +109,10 @@ export class BackgroundListener {
               }
               case WorkRequestName.LISTEN_TO_TIMER: {
                 const subscriptionId = this.timer.subscribeTimerState((update) => {
-                  backgroundPort.send(update)
+                  backgroundPort.send({
+                    name: WorkResponseName.TIMER_STATE,
+                    payload: update
+                  })
                 })
                 backgroundPort.onDisconnect(() => {
                   console.debug('Connection closed, unsubscribing timer update.')
