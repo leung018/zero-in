@@ -6,13 +6,15 @@ import { Time } from '../domain/time'
 import { FakeActionService } from '../infra/action'
 import { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
 import type { PomodoroRecord } from '../domain/pomodoro/record'
+import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
+import { startBackgroundListener } from '../test_utils/listener'
 
 describe('StatisticsPage', () => {
   it('should render saved daily reset time', async () => {
     const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
     dailyResetTimeStorageService.save(new Time(10, 30))
 
-    const { wrapper } = mountStatisticsPage({
+    const { wrapper } = await mountStatisticsPage({
       dailyResetTimeStorageService
     })
     await flushPromises()
@@ -22,7 +24,7 @@ describe('StatisticsPage', () => {
   })
 
   it('should render 00:00 if it has not been saved before', async () => {
-    const { wrapper } = mountStatisticsPage({
+    const { wrapper } = await mountStatisticsPage({
       dailyResetTimeStorageService: DailyResetTimeStorageService.createFake() // No saved time before
     })
     await flushPromises()
@@ -32,7 +34,7 @@ describe('StatisticsPage', () => {
   })
 
   it('should able to save daily reset time', async () => {
-    const { wrapper, dailyResetTimeStorageService } = mountStatisticsPage()
+    const { wrapper, dailyResetTimeStorageService } = await mountStatisticsPage()
 
     await saveTime(wrapper, '09:05')
 
@@ -40,7 +42,7 @@ describe('StatisticsPage', () => {
   })
 
   it('should reload page after clicked save', async () => {
-    const { wrapper, reloadService } = mountStatisticsPage()
+    const { wrapper, reloadService } = await mountStatisticsPage()
 
     expect(reloadService.getTriggerCount()).toBe(0)
 
@@ -50,7 +52,7 @@ describe('StatisticsPage', () => {
   })
 
   it('should render stats table with rows represent last 7 days', async () => {
-    const { wrapper } = mountStatisticsPage()
+    const { wrapper } = await mountStatisticsPage()
 
     const rows = wrapper.find('tbody').findAll('tr')
     expect(rows).toHaveLength(7)
@@ -83,7 +85,7 @@ describe('StatisticsPage', () => {
     await pomodoroRecordStorageService.saveAll(records)
 
     // When current time hasn't reached the daily reset time that day.
-    const { wrapper } = mountStatisticsPage({
+    const { wrapper } = await mountStatisticsPage({
       dailyResetTimeStorageService,
       currentDate: new Date(2025, 3, 11, 9, 0),
       pomodoroRecordStorageService
@@ -100,7 +102,7 @@ describe('StatisticsPage', () => {
     expect(rows[6].find('[data-test="completed-pomodori-field"]').text()).toBe('2') // 2025-04-04 10:30 - 2025-04-05 10:29
 
     // When current time has reached the daily reset time that day.
-    const { wrapper: newWrapper } = mountStatisticsPage({
+    const { wrapper: newWrapper } = await mountStatisticsPage({
       dailyResetTimeStorageService,
       currentDate: new Date(2025, 3, 11, 10, 30),
       pomodoroRecordStorageService
@@ -118,11 +120,15 @@ describe('StatisticsPage', () => {
   })
 })
 
-function mountStatisticsPage({
+async function mountStatisticsPage({
+  timerConfig = newTestPomodoroTimerConfig(),
   dailyResetTimeStorageService = DailyResetTimeStorageService.createFake(),
   currentDate = new Date(),
   pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
 } = {}) {
+  const { scheduler, timer, communicationManager } = await startBackgroundListener({
+    timerConfig
+  })
   const reloadService = new FakeActionService()
   const wrapper = mount(StatisticsPage, {
     props: {
@@ -132,7 +138,7 @@ function mountStatisticsPage({
       pomodoroRecordStorageService
     }
   })
-  return { wrapper, dailyResetTimeStorageService, reloadService }
+  return { wrapper, scheduler, timer, dailyResetTimeStorageService, reloadService }
 }
 
 async function saveTime(wrapper: VueWrapper, newTime: string) {
