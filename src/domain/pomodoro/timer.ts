@@ -149,6 +149,10 @@ export class PomodoroTimer {
     return subscriptionId
   }
 
+  unsubscribePomodoroRecordsUpdate(subscriptionId: number) {
+    return this.pomodoroRecordsUpdateSubscriptionManager.unsubscribe(subscriptionId)
+  }
+
   restartShortBreak(nth?: number) {
     if (nth != null) {
       this.resetNumOfPomodoriCompleted(nth)

@@ -675,6 +675,27 @@ describe('PomodoroTimer', () => {
 
     expect(triggerCount).toBe(1)
   })
+
+  it('should able to unsubscribe from pomodoro records update', async () => {
+    const { timer, scheduler } = createTimer(
+      newConfig({
+        focusDuration: new Duration({ seconds: 1 })
+      })
+    )
+
+    let triggerCount = 0
+    const subscriptionId = timer.subscribePomodoroRecordsUpdate(() => {
+      triggerCount++
+    })
+
+    timer.unsubscribePomodoroRecordsUpdate(subscriptionId)
+
+    timer.start()
+    scheduler.advanceTime(1000)
+    await flushPromises()
+
+    expect(triggerCount).toBe(0)
+  })
 })
 
 const newConfig = newTestPomodoroTimerConfig
