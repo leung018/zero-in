@@ -121,7 +121,11 @@ describe('StatisticsPage', () => {
   })
 
   it('should reload statistics after completed a pomodoro', async () => {
+    const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
+    await dailyResetTimeStorageService.save(new Time(9, 30))
+
     const { wrapper, scheduler, timer } = await mountStatisticsPage({
+      dailyResetTimeStorageService,
       timerConfig: newTestPomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 1 })
       }),
