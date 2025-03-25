@@ -6,7 +6,7 @@ import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeCommunicationManager } from '../infra/communication'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { BackgroundListener } from '../service_workers/listener'
-import { TimerStateStorageService } from '../domain/pomodoro/storage'
+import { PomodoroTimerStateStorageService } from '../domain/pomodoro/storage'
 import { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
 import type { PomodoroTimerConfig } from '../domain/pomodoro/config'
 import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
@@ -17,7 +17,7 @@ export async function startBackgroundListener({
   reminderService = new FakeActionService(),
   badgeDisplayService = new FakeBadgeDisplayService(),
   communicationManager = new FakeCommunicationManager(),
-  timerStateStorageService = TimerStateStorageService.createFake(),
+  timerStateStorageService = PomodoroTimerStateStorageService.createFake(),
   timerConfigStorageService = PomodoroTimerConfigStorageService.createFake(),
   closeTabsService = new FakeActionService(),
   pomodoroRecordStorageService = PomodoroRecordStorageService.createFake(),
@@ -28,7 +28,7 @@ export async function startBackgroundListener({
   reminderService?: FakeActionService
   badgeDisplayService?: FakeBadgeDisplayService
   communicationManager?: FakeCommunicationManager
-  timerStateStorageService?: TimerStateStorageService
+  timerStateStorageService?: PomodoroTimerStateStorageService
   timerConfigStorageService?: PomodoroTimerConfigStorageService
   closeTabsService?: FakeActionService
   pomodoroRecordStorageService?: PomodoroRecordStorageService

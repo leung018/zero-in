@@ -5,7 +5,7 @@ import { Duration } from '../domain/pomodoro/duration'
 import config from '../config'
 import { startBackgroundListener } from '../test_utils/listener'
 import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
-import { TimerStateStorageService } from '../domain/pomodoro/storage'
+import { PomodoroTimerStateStorageService } from '../domain/pomodoro/storage'
 import type { PomodoroTimerState } from '../domain/pomodoro/timer'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
@@ -187,7 +187,7 @@ describe('BackgroundListener', () => {
   })
 
   it('should restore timer state from storage', async () => {
-    const timerStateStorageService = TimerStateStorageService.createFake()
+    const timerStateStorageService = PomodoroTimerStateStorageService.createFake()
     const targetUpdate: PomodoroTimerState = {
       remainingSeconds: 1000,
       isRunning: true,
@@ -238,7 +238,7 @@ describe('BackgroundListener', () => {
 
 async function startListener({
   timerConfig = newTestPomodoroTimerConfig(),
-  timerStateStorageService = TimerStateStorageService.createFake()
+  timerStateStorageService = PomodoroTimerStateStorageService.createFake()
 } = {}) {
   const {
     timer,

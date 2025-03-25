@@ -16,7 +16,7 @@ import { PomodoroStage } from '../domain/pomodoro/stage'
 import config from '../config'
 import { MultipleActionService } from '../infra/multiple_actions'
 import { ChromeNotificationService } from '../chrome/notification'
-import { TimerStateStorageService } from '../domain/pomodoro/storage'
+import { PomodoroTimerStateStorageService } from '../domain/pomodoro/storage'
 import { ChromeCloseTabsService } from '../chrome/close_tabs'
 import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
 
@@ -26,7 +26,7 @@ export class BackgroundListener {
   private timer: PomodoroTimer
   private reminderService: ActionService
   private badgeDisplayService: BadgeDisplayService
-  private timerStateStorageService: TimerStateStorageService
+  private timerStateStorageService: PomodoroTimerStateStorageService
   private timerConfigStorageService: PomodoroTimerConfigStorageService
   private closeTabsService: ActionService
 
@@ -42,7 +42,7 @@ export class BackgroundListener {
       redirectTogglingService: BrowsingControlTogglingService.create(),
       reminderService,
       badgeDisplayService: new ChromeBadgeDisplayService(),
-      timerStateStorageService: TimerStateStorageService.create(),
+      timerStateStorageService: PomodoroTimerStateStorageService.create(),
       timerConfigStorageService: PomodoroTimerConfigStorageService.createFake(), // FIXME: Change to create
       closeTabsService: new ChromeCloseTabsService(config.getReminderPageUrl())
     })
@@ -54,7 +54,7 @@ export class BackgroundListener {
     redirectTogglingService = BrowsingControlTogglingService.createFake(),
     reminderService = new FakeActionService(),
     badgeDisplayService = new FakeBadgeDisplayService(),
-    timerStateStorageService = TimerStateStorageService.createFake(),
+    timerStateStorageService = PomodoroTimerStateStorageService.createFake(),
     timerConfigStorageService = PomodoroTimerConfigStorageService.createFake(),
     closeTabsService = new FakeActionService()
   } = {}) {
@@ -85,7 +85,7 @@ export class BackgroundListener {
     redirectTogglingService: BrowsingControlTogglingService
     reminderService: ActionService
     badgeDisplayService: BadgeDisplayService
-    timerStateStorageService: TimerStateStorageService
+    timerStateStorageService: PomodoroTimerStateStorageService
     timerConfigStorageService: PomodoroTimerConfigStorageService
     closeTabsService: ActionService
   }) {
