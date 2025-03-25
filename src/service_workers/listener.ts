@@ -98,24 +98,18 @@ export class BackgroundListener {
         (backgroundPort: Port<WorkResponse, WorkRequest>) => {
           const listener = (message: WorkRequest) => {
             switch (message.name) {
+              case WorkRequestName.TOGGLE_REDIRECT_RULES: {
+                this.redirectTogglingService.run()
+                break
+              }
               case WorkRequestName.START_TIMER: {
                 this.timer.start()
                 this.closeTabsService.trigger()
                 break
               }
-              case WorkRequestName.TOGGLE_REDIRECT_RULES: {
-                this.redirectTogglingService.run()
-                break
-              }
-              case WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE: {
-                const subscriptionId = this.timer.subscribePomodoroRecordsUpdate(() => {
-                  backgroundPort.send({
-                    name: WorkResponseName.POMODORO_RECORDS_UPDATED
-                  })
-                })
-                backgroundPort.onDisconnect(() => {
-                  this.timer.unsubscribePomodoroRecordsUpdate(subscriptionId)
-                })
+              case WorkRequestName.PAUSE_TIMER: {
+                this.timer.pause()
+                this.badgeDisplayService.clearBadge()
                 break
               }
               case WorkRequestName.LISTEN_TO_TIMER: {
@@ -131,9 +125,15 @@ export class BackgroundListener {
                 })
                 break
               }
-              case WorkRequestName.PAUSE_TIMER: {
-                this.timer.pause()
-                this.badgeDisplayService.clearBadge()
+              case WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE: {
+                const subscriptionId = this.timer.subscribePomodoroRecordsUpdate(() => {
+                  backgroundPort.send({
+                    name: WorkResponseName.POMODORO_RECORDS_UPDATED
+                  })
+                })
+                backgroundPort.onDisconnect(() => {
+                  this.timer.unsubscribePomodoroRecordsUpdate(subscriptionId)
+                })
                 break
               }
               case WorkRequestName.RESTART_FOCUS: {
