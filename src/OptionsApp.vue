@@ -48,7 +48,8 @@ const routeMap: Record<PATH, Route> = {
       dailyResetTimeStorageService: DailyResetTimeStorageService.create(),
       reloadService: new ReloadService(),
       getCurrentDate: () => new Date(),
-      pomodoroRecordStorageService: PomodoroRecordStorageService.create()
+      pomodoroRecordStorageService: PomodoroRecordStorageService.create(),
+      port
     }
   }
 }
