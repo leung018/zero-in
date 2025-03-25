@@ -9,6 +9,7 @@ import { BackgroundListener } from '../service_workers/listener'
 import { TimerStateStorageService } from '../domain/pomodoro/storage'
 import { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
 import type { PomodoroTimerConfig } from '../domain/pomodoro/config'
+import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
 
 export async function startBackgroundListener({
   timerConfig = config.getPomodoroTimerConfig(),
@@ -17,6 +18,7 @@ export async function startBackgroundListener({
   badgeDisplayService = new FakeBadgeDisplayService(),
   communicationManager = new FakeCommunicationManager(),
   timerStateStorageService = TimerStateStorageService.createFake(),
+  timerConfigStorageService = PomodoroTimerConfigStorageService.createFake(),
   closeTabsService = new FakeActionService(),
   pomodoroRecordStorageService = PomodoroRecordStorageService.createFake(),
   getCurrentDate = undefined
@@ -27,6 +29,7 @@ export async function startBackgroundListener({
   badgeDisplayService?: FakeBadgeDisplayService
   communicationManager?: FakeCommunicationManager
   timerStateStorageService?: TimerStateStorageService
+  timerConfigStorageService?: PomodoroTimerConfigStorageService
   closeTabsService?: FakeActionService
   pomodoroRecordStorageService?: PomodoroRecordStorageService
   getCurrentDate?: () => Date
@@ -46,6 +49,7 @@ export async function startBackgroundListener({
     redirectTogglingService,
     communicationManager,
     timerStateStorageService,
+    timerConfigStorageService,
     closeTabsService
   })
   return listener.start().then(() => {
@@ -55,7 +59,8 @@ export async function startBackgroundListener({
       reminderService,
       badgeDisplayService,
       communicationManager,
-      closeTabsService
+      closeTabsService,
+      timerConfigStorageService
     }
   })
 }
