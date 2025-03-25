@@ -39,12 +39,32 @@ describe('PomodoroTimer', () => {
       })
     )
 
-    const expected: PomodoroTimerConfig = {
+    let expected: PomodoroTimerConfig = {
       focusDuration: new Duration({ seconds: 11 }),
       shortBreakDuration: new Duration({ seconds: 4 }),
       longBreakDuration: new Duration({ seconds: 3 }),
       numOfPomodoriPerCycle: 5,
       pomodoroRecordHouseKeepDays: 11
+    }
+    expect(timer.getConfig()).toEqual(expected)
+
+    // Set operation have same effects
+    timer.setConfig(
+      newConfig({
+        focusDuration: new Duration({ minutes: 5, milliseconds: 1 }),
+        shortBreakDuration: new Duration({ minutes: 2, milliseconds: 1 }),
+        longBreakDuration: new Duration({ minutes: 3, milliseconds: 1 }),
+        numOfPomodoriPerCycle: 4,
+        pomodoroRecordHouseKeepDays: 10
+      })
+    )
+
+    expected = {
+      focusDuration: new Duration({ minutes: 5, seconds: 1 }),
+      shortBreakDuration: new Duration({ minutes: 2, seconds: 1 }),
+      longBreakDuration: new Duration({ minutes: 3, seconds: 1 }),
+      numOfPomodoriPerCycle: 4,
+      pomodoroRecordHouseKeepDays: 10
     }
     expect(timer.getConfig()).toEqual(expected)
   })
