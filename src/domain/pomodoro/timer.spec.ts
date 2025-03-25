@@ -274,18 +274,18 @@ describe('PomodoroTimer', () => {
     expect(updates2.length).toBeLessThan(updates1.length)
   })
 
-  it('should getSubscriptionCount is reflecting number of subscription', () => {
+  it('should getTimerStateSubscriptionCount is reflecting number of subscription', () => {
     const { timer } = createTimer()
-    expect(timer.getSubscriptionCount()).toBe(0)
+    expect(timer.getTimerStateSubscriptionCount()).toBe(0)
 
     const subscriptionId = timer.subscribeTimerState(() => {})
     timer.subscribeTimerState(() => {})
 
-    expect(timer.getSubscriptionCount()).toBe(2)
+    expect(timer.getTimerStateSubscriptionCount()).toBe(2)
 
     timer.unsubscribeTimerState(subscriptionId)
 
-    expect(timer.getSubscriptionCount()).toBe(1)
+    expect(timer.getTimerStateSubscriptionCount()).toBe(1)
   })
 
   it('should able to trigger callback when stage transit', async () => {
@@ -695,6 +695,20 @@ describe('PomodoroTimer', () => {
     await flushPromises()
 
     expect(triggerCount).toBe(0)
+  })
+
+  it('should getPomodoroRecordsSubscriptionCount is reflecting number of subscription', () => {
+    const { timer } = createTimer()
+    expect(timer.getPomodoroRecordsUpdateSubscriptionCount()).toBe(0)
+
+    const subscriptionId = timer.subscribePomodoroRecordsUpdate(() => {})
+    timer.subscribePomodoroRecordsUpdate(() => {})
+
+    expect(timer.getPomodoroRecordsUpdateSubscriptionCount()).toBe(2)
+
+    timer.unsubscribePomodoroRecordsUpdate(subscriptionId)
+
+    expect(timer.getPomodoroRecordsUpdateSubscriptionCount()).toBe(1)
   })
 })
 

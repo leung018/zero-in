@@ -14,15 +14,15 @@ describe('BackgroundListener', () => {
   it('should remove subscription when disconnect fired', async () => {
     const { timer, clientPort } = await startListener()
 
-    const initialSubscriptionCount = timer.getSubscriptionCount()
+    const initialSubscriptionCount = timer.getTimerStateSubscriptionCount()
 
     clientPort.send({ name: WorkRequestName.LISTEN_TO_TIMER })
 
-    expect(timer.getSubscriptionCount()).toBe(initialSubscriptionCount + 1)
+    expect(timer.getTimerStateSubscriptionCount()).toBe(initialSubscriptionCount + 1)
 
     clientPort.disconnect()
 
-    expect(timer.getSubscriptionCount()).toBe(initialSubscriptionCount)
+    expect(timer.getTimerStateSubscriptionCount()).toBe(initialSubscriptionCount)
   })
 
   it('should display badge when the timer is started', async () => {
