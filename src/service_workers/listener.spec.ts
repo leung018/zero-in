@@ -11,7 +11,7 @@ import { PomodoroStage } from '../domain/pomodoro/stage'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
-  it('should remove subscription when disconnect fired', async () => {
+  it('should remove timer state subscription when disconnect fired', async () => {
     const { timer, clientPort } = await startListener()
 
     const initialSubscriptionCount = timer.getTimerStateSubscriptionCount()
@@ -23,6 +23,20 @@ describe('BackgroundListener', () => {
     clientPort.disconnect()
 
     expect(timer.getTimerStateSubscriptionCount()).toBe(initialSubscriptionCount)
+  })
+
+  it('should remove pomodoro record update subscription when disconnect fired', async () => {
+    const { timer, clientPort } = await startListener()
+
+    const initialSubscriptionCount = timer.getPomodoroRecordsUpdateSubscriptionCount()
+
+    clientPort.send({ name: WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE })
+
+    expect(timer.getPomodoroRecordsUpdateSubscriptionCount()).toBe(initialSubscriptionCount + 1)
+
+    clientPort.disconnect()
+
+    expect(timer.getPomodoroRecordsUpdateSubscriptionCount()).toBe(initialSubscriptionCount)
   })
 
   it('should display badge when the timer is started', async () => {

@@ -108,10 +108,13 @@ export class BackgroundListener {
                 break
               }
               case WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE: {
-                this.timer.subscribePomodoroRecordsUpdate(() => {
+                const subscriptionId = this.timer.subscribePomodoroRecordsUpdate(() => {
                   backgroundPort.send({
                     name: WorkResponseName.POMODORO_RECORDS_UPDATED
                   })
+                })
+                backgroundPort.onDisconnect(() => {
+                  this.timer.unsubscribePomodoroRecordsUpdate(subscriptionId)
                 })
                 break
               }
