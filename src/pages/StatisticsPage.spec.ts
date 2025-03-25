@@ -6,8 +6,9 @@ import { Time } from '../domain/time'
 import { FakeActionService } from '../infra/action'
 import { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
 import type { PomodoroRecord } from '../domain/pomodoro/record'
-import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
+import { newTestPomodoroTimerConfig, type PomodoroTimerConfig } from '../domain/pomodoro/config'
 import { startBackgroundListener } from '../test_utils/listener'
+import { Duration } from '../domain/pomodoro/duration'
 
 describe('StatisticsPage', () => {
   it('should render saved daily reset time', async () => {
@@ -118,24 +119,58 @@ describe('StatisticsPage', () => {
     expect(newRows[5].find('[data-test="completed-pomodori-field"]').text()).toBe('2') // 2025-04-06 10:30 - 2025-04-07 10:29
     expect(newRows[6].find('[data-test="completed-pomodori-field"]').text()).toBe('0') // 2025-04-05 10:30 - 2025-04-06 10:29
   })
+
+  it('should reload statistics after completed a pomodoro', async () => {
+    const { wrapper, scheduler, timer } = await mountStatisticsPage({
+      timerConfig: newTestPomodoroTimerConfig({
+        focusDuration: new Duration({ seconds: 1 })
+      }),
+      currentDate: new Date(2025, 3, 4, 10, 30)
+    })
+    await flushPromises()
+    timer.start()
+
+    let rows = wrapper.find('tbody').findAll('tr')
+    expect(rows[0].find('[data-test="completed-pomodori-field"]').text()).toBe('0')
+
+    scheduler.advanceTime(1001)
+    await flushPromises()
+
+    rows = wrapper.find('tbody').findAll('tr')
+    expect(rows[0].find('[data-test="completed-pomodori-field"]').text()).toBe('1')
+  })
 })
 
 async function mountStatisticsPage({
   timerConfig = newTestPomodoroTimerConfig(),
   dailyResetTimeStorageService = DailyResetTimeStorageService.createFake(),
-  currentDate = new Date(),
+  currentDate = null,
   pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
+}: {
+  timerConfig?: PomodoroTimerConfig
+  dailyResetTimeStorageService?: DailyResetTimeStorageService
+  currentDate?: Date | null
+  pomodoroRecordStorageService?: PomodoroRecordStorageService
 } = {}) {
+  const getCurrentDate = () => {
+    if (currentDate) {
+      return currentDate
+    }
+    return new Date()
+  }
   const { scheduler, timer, communicationManager } = await startBackgroundListener({
-    timerConfig
+    timerConfig,
+    pomodoroRecordStorageService,
+    getCurrentDate
   })
   const reloadService = new FakeActionService()
   const wrapper = mount(StatisticsPage, {
     props: {
       dailyResetTimeStorageService,
       reloadService,
-      getCurrentDate: () => currentDate,
-      pomodoroRecordStorageService
+      getCurrentDate,
+      pomodoroRecordStorageService,
+      port: communicationManager.clientConnect()
     }
   })
   return { wrapper, scheduler, timer, dailyResetTimeStorageService, reloadService }

@@ -23,12 +23,19 @@ export class PomodoroTimer {
   static createFake({
     scheduler = new FakePeriodicTaskScheduler(),
     pomodoroRecordStorageService = PomodoroRecordStorageService.createFake(),
-    timerConfig = config.getPomodoroTimerConfig()
+    timerConfig = config.getPomodoroTimerConfig(),
+    getCurrentDate = undefined
+  }: {
+    scheduler?: PeriodicTaskScheduler
+    pomodoroRecordStorageService?: PomodoroRecordStorageService
+    timerConfig?: PomodoroTimerConfig
+    getCurrentDate?: () => Date
   } = {}) {
     return new PomodoroTimer({
       timerConfig,
       pomodoroRecordStorageService,
-      scheduler
+      scheduler,
+      getCurrentDate
     })
   }
 
@@ -52,14 +59,18 @@ export class PomodoroTimer {
 
   private onStageComplete: () => void = () => {}
 
+  private getCurrentDate: () => Date
+
   private constructor({
     timerConfig,
     scheduler,
-    pomodoroRecordStorageService
+    pomodoroRecordStorageService,
+    getCurrentDate = () => new Date()
   }: {
     timerConfig: PomodoroTimerConfig
     scheduler: PeriodicTaskScheduler
     pomodoroRecordStorageService: PomodoroRecordStorageService
+    getCurrentDate?: () => Date
   }) {
     this.config = {
       ...timerConfig,
@@ -70,6 +81,7 @@ export class PomodoroTimer {
     this.remaining = timerConfig.focusDuration
     this.scheduler = scheduler
     this.pomodoroRecordStorageService = pomodoroRecordStorageService
+    this.getCurrentDate = getCurrentDate
   }
 
   private roundUpToSeconds(duration: Duration): Duration {
@@ -222,7 +234,10 @@ export class PomodoroTimer {
     return this.pomodoroRecordStorageService
       .getAll()
       .then((records) => {
-        this.pomodoroRecordStorageService.saveAll([...records, newPomodoroRecord()])
+        this.pomodoroRecordStorageService.saveAll([
+          ...records,
+          newPomodoroRecord(this.getCurrentDate())
+        ])
       })
       .then(() => {
         PomodoroRecordHousekeeper.houseKeep({

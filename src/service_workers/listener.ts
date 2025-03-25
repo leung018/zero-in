@@ -107,6 +107,14 @@ export class BackgroundListener {
                 this.redirectTogglingService.run()
                 break
               }
+              case WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE: {
+                this.timer.subscribePomodoroRecordsUpdate(() => {
+                  backgroundPort.send({
+                    name: WorkResponseName.POMODORO_RECORDS_UPDATED
+                  })
+                })
+                break
+              }
               case WorkRequestName.LISTEN_TO_TIMER: {
                 const subscriptionId = this.timer.subscribeTimerState((update) => {
                   backgroundPort.send({

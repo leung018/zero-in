@@ -7,6 +7,9 @@ import TimeInput from './components/TimeInput.vue'
 import ContentTemplate from './components/ContentTemplate.vue'
 import type { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
 import { getMostRecentDate } from '../util'
+import type { Port } from '@/infra/communication'
+import { WorkRequestName, type WorkRequest } from '../service_workers/request'
+import { WorkResponseName, type WorkResponse } from '../service_workers/response'
 
 type PomodoroStat = { day: string; completedPomodori: number }
 
@@ -14,12 +17,14 @@ const {
   dailyResetTimeStorageService,
   reloadService,
   getCurrentDate,
-  pomodoroRecordStorageService
+  pomodoroRecordStorageService,
+  port
 } = defineProps<{
   dailyResetTimeStorageService: DailyResetTimeStorageService
   reloadService: ReloadService
   getCurrentDate: () => Date
   pomodoroRecordStorageService: PomodoroRecordStorageService
+  port: Port<WorkRequest, WorkResponse>
 }>()
 
 const dailyResetTime = ref<Time>(new Time(0, 0))
@@ -38,18 +43,29 @@ function initialPomodoroStats(): PomodoroStat[] {
 onBeforeMount(async () => {
   dailyResetTime.value = await dailyResetTimeStorageService.get()
   await setPomodoroStats(dailyResetTime.value)
+
+  port.onMessage((message) => {
+    if (message.name !== WorkResponseName.POMODORO_RECORDS_UPDATED) {
+      return
+    }
+    setPomodoroStats(dailyResetTime.value)
+  })
+
+  port.send({
+    name: WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE
+  })
 })
 
 async function setPomodoroStats(dailyResetTime: Time) {
   const records = await pomodoroRecordStorageService.getAll()
-  let exclusiveEndDate = getCurrentDate()
-  const inclusiveStartDate = getMostRecentDate(dailyResetTime, exclusiveEndDate)
+  let inclusiveEndDate = getCurrentDate()
+  const inclusiveStartDate = getMostRecentDate(dailyResetTime, inclusiveEndDate)
   for (let i = 0; i < pomodoroStats.value.length; i++) {
     pomodoroStats.value[i].completedPomodori = records.filter(
-      (record) => record.completedAt >= inclusiveStartDate && record.completedAt < exclusiveEndDate
+      (record) => record.completedAt >= inclusiveStartDate && record.completedAt <= inclusiveEndDate
     ).length
 
-    exclusiveEndDate = new Date(inclusiveStartDate)
+    inclusiveEndDate = new Date(inclusiveStartDate)
     inclusiveStartDate.setDate(inclusiveStartDate.getDate() - 1)
   }
 }

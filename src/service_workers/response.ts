@@ -12,5 +12,5 @@ type WorkResponsePayloadMap = {
 
 export type WorkResponse = {
   name: WorkResponseName
-  payload: WorkResponsePayloadMap[WorkResponseName]
+  payload?: WorkResponsePayloadMap[WorkResponseName]
 }
