@@ -3,7 +3,7 @@ import { computed, onBeforeMount, onMounted, ref } from 'vue'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import type { Port } from '../infra/communication'
 import type { ActionService } from '../infra/action'
-import type { PomodoroTimerResponse } from '../service_workers/response'
+import { WorkResponseName, type WorkResponse } from '../service_workers/response'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 import type { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
 import type { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
@@ -17,7 +17,7 @@ const {
   dailyResetTimeStorageService,
   currentDate
 } = defineProps<{
-  port: Port<WorkRequest, PomodoroTimerResponse>
+  port: Port<WorkRequest, WorkResponse>
   soundService: ActionService
   pomodoroRecordStorageService: PomodoroRecordStorageService
   dailyResetTimeStorageService: DailyResetTimeStorageService
@@ -41,7 +41,10 @@ const hintMsg = computed(() => {
 
 onBeforeMount(async () => {
   port.onMessage((message) => {
-    pomodoroStage.value = message.stage
+    if (message.name !== WorkResponseName.TIMER_STATE || !message.payload) {
+      return
+    }
+    pomodoroStage.value = message.payload.stage
   })
   port.send({
     name: WorkRequestName.LISTEN_TO_TIMER

@@ -5,7 +5,8 @@ export enum WorkRequestName {
   PAUSE_TIMER,
   RESTART_FOCUS,
   RESTART_SHORT_BREAK,
-  RESTART_LONG_BREAK
+  RESTART_LONG_BREAK,
+  LISTEN_TO_POMODORO_RECORDS_UPDATE
 }
 
 export type RestartNthPayload = {
@@ -20,6 +21,7 @@ export type WorkRequestPayloadMap = {
   [WorkRequestName.RESTART_FOCUS]: RestartNthPayload
   [WorkRequestName.RESTART_SHORT_BREAK]: RestartNthPayload
   [WorkRequestName.RESTART_LONG_BREAK]: undefined
+  [WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE]: undefined
 }
 
 export type WorkRequest = {

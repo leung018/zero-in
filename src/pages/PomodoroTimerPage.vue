@@ -4,11 +4,11 @@ import { formatNumber, getNumberWithOrdinal } from '../util'
 import { computed, onBeforeMount, ref } from 'vue'
 import type { Port } from '@/infra/communication'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'
-import { type PomodoroTimerResponse } from '../service_workers/response'
+import { WorkResponseName, type WorkResponse } from '../service_workers/response'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 
 const { port } = defineProps<{
-  port: Port<WorkRequest, PomodoroTimerResponse>
+  port: Port<WorkRequest, WorkResponse>
   numOfPomodoriPerCycle: number
 }>()
 
@@ -37,10 +37,14 @@ const currentStage = computed(() => {
 
 onBeforeMount(() => {
   port.onMessage((message) => {
-    pomodoroStage.value = message.stage
-    durationLeft.value = new Duration({ seconds: message.remainingSeconds })
-    isRunning.value = message.isRunning
-    numOfPomodoriCompleted.value = message.numOfPomodoriCompleted
+    if (message.name !== WorkResponseName.TIMER_STATE || !message.payload) {
+      return
+    }
+
+    pomodoroStage.value = message.payload.stage
+    durationLeft.value = new Duration({ seconds: message.payload.remainingSeconds })
+    isRunning.value = message.payload.isRunning
+    numOfPomodoriCompleted.value = message.payload.numOfPomodoriCompleted
   })
   port.send({
     name: WorkRequestName.LISTEN_TO_TIMER

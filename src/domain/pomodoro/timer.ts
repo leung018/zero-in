@@ -23,12 +23,19 @@ export class PomodoroTimer {
   static createFake({
     scheduler = new FakePeriodicTaskScheduler(),
     pomodoroRecordStorageService = PomodoroRecordStorageService.createFake(),
-    timerConfig = config.getPomodoroTimerConfig()
+    timerConfig = config.getPomodoroTimerConfig(),
+    getCurrentDate = undefined
+  }: {
+    scheduler?: PeriodicTaskScheduler
+    pomodoroRecordStorageService?: PomodoroRecordStorageService
+    timerConfig?: PomodoroTimerConfig
+    getCurrentDate?: () => Date
   } = {}) {
     return new PomodoroTimer({
       timerConfig,
       pomodoroRecordStorageService,
-      scheduler
+      scheduler,
+      getCurrentDate
     })
   }
 
@@ -48,16 +55,22 @@ export class PomodoroTimer {
 
   private timerStateSubscriptionManager = new SubscriptionManager<PomodoroTimerState>()
 
+  private pomodoroRecordsUpdateSubscriptionManager = new SubscriptionManager()
+
   private onStageComplete: () => void = () => {}
+
+  private getCurrentDate: () => Date
 
   private constructor({
     timerConfig,
     scheduler,
-    pomodoroRecordStorageService
+    pomodoroRecordStorageService,
+    getCurrentDate = () => new Date()
   }: {
     timerConfig: PomodoroTimerConfig
     scheduler: PeriodicTaskScheduler
     pomodoroRecordStorageService: PomodoroRecordStorageService
+    getCurrentDate?: () => Date
   }) {
     this.config = {
       ...timerConfig,
@@ -68,6 +81,7 @@ export class PomodoroTimer {
     this.remaining = timerConfig.focusDuration
     this.scheduler = scheduler
     this.pomodoroRecordStorageService = pomodoroRecordStorageService
+    this.getCurrentDate = getCurrentDate
   }
 
   private roundUpToSeconds(duration: Duration): Duration {
@@ -134,12 +148,25 @@ export class PomodoroTimer {
     this.timerStateSubscriptionManager.unsubscribe(subscriptionId)
   }
 
-  getSubscriptionCount() {
+  getTimerStateSubscriptionCount() {
     return this.timerStateSubscriptionManager.getSubscriptionCount()
   }
 
   setOnStageComplete(callback: () => void) {
     this.onStageComplete = callback
+  }
+
+  subscribePomodoroRecordsUpdate(callback: () => void) {
+    const subscriptionId = this.pomodoroRecordsUpdateSubscriptionManager.subscribe(callback)
+    return subscriptionId
+  }
+
+  unsubscribePomodoroRecordsUpdate(subscriptionId: number) {
+    return this.pomodoroRecordsUpdateSubscriptionManager.unsubscribe(subscriptionId)
+  }
+
+  getPomodoroRecordsUpdateSubscriptionCount() {
+    return this.pomodoroRecordsUpdateSubscriptionManager.getSubscriptionCount()
   }
 
   restartShortBreak(nth?: number) {
@@ -211,13 +238,19 @@ export class PomodoroTimer {
     return this.pomodoroRecordStorageService
       .getAll()
       .then((records) => {
-        this.pomodoroRecordStorageService.saveAll([...records, newPomodoroRecord()])
+        this.pomodoroRecordStorageService.saveAll([
+          ...records,
+          newPomodoroRecord(this.getCurrentDate())
+        ])
       })
       .then(() => {
         PomodoroRecordHousekeeper.houseKeep({
           pomodoroRecordStorageService: this.pomodoroRecordStorageService,
           houseKeepDays: this.config.pomodoroRecordHouseKeepDays
         })
+      })
+      .then(() => {
+        this.pomodoroRecordsUpdateSubscriptionManager.broadcast(undefined)
       })
   }
 

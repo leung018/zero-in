@@ -23,6 +23,8 @@ function mapChromePortToPort(chromePort: chrome.runtime.Port) {
       return chromePort.onMessage.addListener(callback)
     },
     onDisconnect: (callback: () => void) => {
+      // To verify the below line, can observe the debug logging when disconnect is fired in listener.
+      // I don't plan to e2e test it because it is not behavior that the user may care about. It belongs to some optimization instead.
       return chromePort.onDisconnect.addListener(callback)
     }
   }

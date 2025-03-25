@@ -6,7 +6,7 @@ import {
   type Port
 } from '../infra/communication'
 import { BrowsingControlTogglingService } from '../domain/browsing_control_toggling'
-import { type PomodoroTimerResponse } from './response'
+import { WorkResponseName, type WorkResponse } from './response'
 import { PomodoroTimer } from '../domain/pomodoro/timer'
 import { FakeActionService, type ActionService } from '../infra/action'
 import { ChromeNewTabService } from '../chrome/new_tab'
@@ -95,21 +95,29 @@ export class BackgroundListener {
   async start() {
     return this.setUpTimerRelated().then(() => {
       this.communicationManager.onNewClientConnect(
-        (backgroundPort: Port<PomodoroTimerResponse, WorkRequest>) => {
+        (backgroundPort: Port<WorkResponse, WorkRequest>) => {
           const listener = (message: WorkRequest) => {
             switch (message.name) {
+              case WorkRequestName.TOGGLE_REDIRECT_RULES: {
+                this.redirectTogglingService.run()
+                break
+              }
               case WorkRequestName.START_TIMER: {
                 this.timer.start()
                 this.closeTabsService.trigger()
                 break
               }
-              case WorkRequestName.TOGGLE_REDIRECT_RULES: {
-                this.redirectTogglingService.run()
+              case WorkRequestName.PAUSE_TIMER: {
+                this.timer.pause()
+                this.badgeDisplayService.clearBadge()
                 break
               }
               case WorkRequestName.LISTEN_TO_TIMER: {
                 const subscriptionId = this.timer.subscribeTimerState((update) => {
-                  backgroundPort.send(update)
+                  backgroundPort.send({
+                    name: WorkResponseName.TIMER_STATE,
+                    payload: update
+                  })
                 })
                 backgroundPort.onDisconnect(() => {
                   console.debug('Connection closed, unsubscribing timer update.')
@@ -117,9 +125,15 @@ export class BackgroundListener {
                 })
                 break
               }
-              case WorkRequestName.PAUSE_TIMER: {
-                this.timer.pause()
-                this.badgeDisplayService.clearBadge()
+              case WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE: {
+                const subscriptionId = this.timer.subscribePomodoroRecordsUpdate(() => {
+                  backgroundPort.send({
+                    name: WorkResponseName.POMODORO_RECORDS_UPDATED
+                  })
+                })
+                backgroundPort.onDisconnect(() => {
+                  this.timer.unsubscribePomodoroRecordsUpdate(subscriptionId)
+                })
                 break
               }
               case WorkRequestName.RESTART_FOCUS: {
