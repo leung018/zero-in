@@ -36,6 +36,22 @@ export class PomodoroTimerConfig {
     numOfPomodoriPerCycle: number
     pomodoroRecordHouseKeepDays: number
   }) {
+    if (
+      focusDuration.totalMilliseconds < 1000 ||
+      shortBreakDuration.totalMilliseconds < 1000 ||
+      longBreakDuration.totalMilliseconds < 1000
+    ) {
+      throw new Error('Duration must not be less than 1 second')
+    }
+
+    if (numOfPomodoriPerCycle < 1) {
+      throw new Error('Number of pomodori per cycle must be greater than 0')
+    }
+
+    if (pomodoroRecordHouseKeepDays < 1) {
+      throw new Error('Pomodoro record house keep days must be greater than 0')
+    }
+
     this.focusDuration = focusDuration
     this.shortBreakDuration = shortBreakDuration
     this.longBreakDuration = longBreakDuration
