@@ -109,6 +109,12 @@ export class PomodoroTimer {
 
   setConfig(config: PomodoroTimerConfig) {
     this.config = this.newInternalConfig(config)
+    this.setState({
+      remainingSeconds: this.config.focusDuration.remainingSeconds(),
+      isRunning: false,
+      stage: PomodoroStage.FOCUS,
+      numOfPomodoriCompleted: 0
+    })
   }
 
   start() {

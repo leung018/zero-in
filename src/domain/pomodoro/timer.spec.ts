@@ -69,6 +69,31 @@ describe('PomodoroTimer', () => {
     expect(timer.getConfig()).toEqual(expected)
   })
 
+  it('should setConfig reset the state too', () => {
+    const { timer, scheduler } = createTimer(
+      newConfig({
+        focusDuration: new Duration({ minutes: 10 }),
+        numOfPomodoriPerCycle: 4
+      })
+    )
+    timer.restartFocus(3)
+    scheduler.advanceTime(1000)
+
+    timer.setConfig(
+      newConfig({
+        focusDuration: new Duration({ minutes: 4, seconds: 59, milliseconds: 1 })
+      })
+    )
+
+    const expected: PomodoroTimerState = {
+      remainingSeconds: new Duration({ minutes: 5 }).remainingSeconds(),
+      isRunning: false,
+      stage: PomodoroStage.FOCUS,
+      numOfPomodoriCompleted: 0
+    }
+    expect(timer.getState()).toEqual(expected)
+  })
+
   it('should able to start focus', () => {
     const { timer, scheduler } = createTimer(
       newConfig({
