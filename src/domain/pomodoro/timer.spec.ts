@@ -5,7 +5,7 @@ import { PomodoroStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
 import { flushPromises } from '@vue/test-utils'
 import { PomodoroRecordStorageService } from './record/storage'
-import { newTestPomodoroTimerConfig, type PomodoroTimerConfig } from './config'
+import { PomodoroTimerConfig } from './config'
 import type { PomodoroRecord } from './record'
 
 describe('PomodoroTimer', () => {
@@ -790,7 +790,7 @@ describe('PomodoroTimer', () => {
   })
 })
 
-const newConfig = newTestPomodoroTimerConfig
+const newConfig = PomodoroTimerConfig.newTestInstance
 
 const newState = ({
   remainingSeconds = 300,

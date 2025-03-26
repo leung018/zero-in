@@ -6,7 +6,7 @@ import { Time } from '../domain/time'
 import { FakeActionService } from '../infra/action'
 import { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
 import type { PomodoroRecord } from '../domain/pomodoro/record'
-import { newTestPomodoroTimerConfig, type PomodoroTimerConfig } from '../domain/pomodoro/config'
+import { PomodoroTimerConfig } from '../domain/pomodoro/config'
 import { startBackgroundListener } from '../test_utils/listener'
 import { Duration } from '../domain/pomodoro/duration'
 
@@ -126,7 +126,7 @@ describe('StatisticsPage', () => {
 
     const { wrapper, scheduler, timer } = await mountStatisticsPage({
       dailyResetTimeStorageService,
-      timerConfig: newTestPomodoroTimerConfig({
+      timerConfig: PomodoroTimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 1 })
       }),
       currentDate: new Date(2025, 3, 4, 10, 30)
@@ -146,7 +146,7 @@ describe('StatisticsPage', () => {
 })
 
 async function mountStatisticsPage({
-  timerConfig = newTestPomodoroTimerConfig(),
+  timerConfig = PomodoroTimerConfig.newTestInstance(),
   dailyResetTimeStorageService = DailyResetTimeStorageService.createFake(),
   currentDate = null,
   pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
