@@ -291,6 +291,8 @@ export class PomodoroTimer {
 
     if (state.isRunning) {
       this.start()
+    } else {
+      this.pause()
     }
   }
 }

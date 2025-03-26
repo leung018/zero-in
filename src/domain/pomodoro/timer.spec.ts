@@ -675,6 +675,32 @@ describe('PomodoroTimer', () => {
     expect(updates[updates.length - 1].remainingSeconds).toBe(2)
   })
 
+  it('should stop publishing the new state if newState is not running', async () => {
+    const { timer, scheduler } = createTimer()
+
+    const updates: PomodoroTimerState[] = []
+    timer.subscribeTimerState((newState) => {
+      updates.push(newState)
+    })
+
+    timer.start()
+    scheduler.advanceTime(1000)
+
+    const targetState: PomodoroTimerState = {
+      remainingSeconds: 200,
+      isRunning: false,
+      stage: PomodoroStage.FOCUS,
+      numOfPomodoriCompleted: 0
+    }
+
+    timer.setState(targetState)
+    const originalUpdatesLength = updates.length
+
+    scheduler.advanceTime(3000)
+
+    expect(updates.length).toBe(originalUpdatesLength)
+  })
+
   it('should able to add callback when pomodoro records updated', async () => {
     const { timer, scheduler } = createTimer(
       newConfig({
