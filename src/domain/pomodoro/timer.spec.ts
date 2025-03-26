@@ -652,6 +652,16 @@ describe('PomodoroTimer', () => {
     timer.setState(targetState)
 
     expect(timer.getState()).toEqual(targetState)
+
+    const targetState2: PomodoroTimerState = {
+      remainingSeconds: 1,
+      isRunning: false,
+      stage: PomodoroStage.SHORT_BREAK,
+      numOfPomodoriCompleted: 2
+    }
+    timer.setState(targetState2)
+
+    expect(timer.getState()).toEqual(targetState2)
   })
 
   it('should able to publishing the new state if newState is running', async () => {
