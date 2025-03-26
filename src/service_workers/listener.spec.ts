@@ -8,7 +8,6 @@ import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
 import { PomodoroTimerStateStorageService } from '../domain/pomodoro/storage'
 import type { PomodoroTimerState } from '../domain/pomodoro/timer'
 import { PomodoroStage } from '../domain/pomodoro/stage'
-import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
 import { flushPromises } from '@vue/test-utils'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
