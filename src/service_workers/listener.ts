@@ -30,7 +30,7 @@ export class BackgroundListener {
 
     return BackgroundListener._start({
       communicationManager: new ChromeCommunicationManager(),
-      newTimer: (timerConfig) => {
+      timerFactory: (timerConfig) => {
         return PomodoroTimer.create({ timerConfig })
       },
       redirectTogglingService: BrowsingControlTogglingService.create(),
@@ -43,7 +43,7 @@ export class BackgroundListener {
   }
 
   static async startFake({
-    newTimer = (timerConfig: PomodoroTimerConfig) => PomodoroTimer.createFake({ timerConfig }),
+    timerFactory = (timerConfig: PomodoroTimerConfig) => PomodoroTimer.createFake({ timerConfig }),
     communicationManager = new FakeCommunicationManager(),
     redirectTogglingService = BrowsingControlTogglingService.createFake(),
     reminderService = new FakeActionService(),
@@ -54,7 +54,7 @@ export class BackgroundListener {
   } = {}) {
     return BackgroundListener._start({
       communicationManager,
-      newTimer,
+      timerFactory,
       redirectTogglingService,
       reminderService,
       badgeDisplayService,
@@ -66,7 +66,7 @@ export class BackgroundListener {
 
   private static async _start({
     communicationManager,
-    newTimer,
+    timerFactory,
     redirectTogglingService,
     reminderService,
     badgeDisplayService,
@@ -75,7 +75,7 @@ export class BackgroundListener {
     closeTabsService
   }: {
     communicationManager: CommunicationManager
-    newTimer: (timerConfig: PomodoroTimerConfig) => PomodoroTimer
+    timerFactory: (timerConfig: PomodoroTimerConfig) => PomodoroTimer
     redirectTogglingService: BrowsingControlTogglingService
     reminderService: ActionService
     badgeDisplayService: BadgeDisplayService
@@ -84,7 +84,7 @@ export class BackgroundListener {
     closeTabsService: ActionService
   }) {
     const timerConfig = await timerConfigStorageService.get()
-    const timer = newTimer(timerConfig)
+    const timer = timerFactory(timerConfig)
     const backupState = await timerStateStorageService.get()
     if (backupState) {
       timer.setState(backupState)
