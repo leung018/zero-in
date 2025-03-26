@@ -12,10 +12,10 @@ import { PomodoroRecordStorageService } from './record/storage'
 import { PomodoroStage } from './stage'
 
 export class PomodoroTimer {
-  static create() {
+  static create({ timerConfig = config.getPomodoroTimerConfig() } = {}) {
     return new PomodoroTimer({
       scheduler: new PeriodicTaskSchedulerImpl(),
-      timerConfig: config.getPomodoroTimerConfig(),
+      timerConfig,
       pomodoroRecordStorageService: PomodoroRecordStorageService.create()
     })
   }

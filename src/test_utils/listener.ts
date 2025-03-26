@@ -35,14 +35,17 @@ export async function startBackgroundListener({
   getCurrentDate?: () => Date
 }) {
   const scheduler = new FakePeriodicTaskScheduler()
-  const timer = PomodoroTimer.createFake({
-    scheduler,
-    pomodoroRecordStorageService,
-    getCurrentDate
-  })
   await timerConfigStorageService.save(timerConfig)
-  const listener = BackgroundListener.createFake({
-    timer,
+  const newTimer = (tc: PomodoroTimerConfig) => {
+    return PomodoroTimer.createFake({
+      scheduler,
+      pomodoroRecordStorageService,
+      timerConfig: tc,
+      getCurrentDate
+    })
+  }
+  return BackgroundListener.startFake({
+    newTimer,
     reminderService,
     badgeDisplayService,
     redirectTogglingService,
@@ -50,8 +53,7 @@ export async function startBackgroundListener({
     timerStateStorageService,
     timerConfigStorageService,
     closeTabsService
-  })
-  return listener.start().then(() => {
+  }).then((timer) => {
     return {
       scheduler,
       timer,
