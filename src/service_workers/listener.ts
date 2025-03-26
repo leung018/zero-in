@@ -101,6 +101,15 @@ export class BackgroundListener {
   }
 
   async start() {
+    await this.timerConfigStorageService.get().then((config) => {
+      this.timer.setConfig(config)
+      this.timer.setState({
+        remainingSeconds: config.focusDuration.remainingSeconds(),
+        isRunning: false,
+        stage: PomodoroStage.FOCUS,
+        numOfPomodoriCompleted: 0
+      })
+    })
     return this.setUpTimerRelated().then(() => {
       this.communicationManager.onNewClientConnect(
         (backgroundPort: Port<WorkResponse, WorkRequest>) => {
