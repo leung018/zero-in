@@ -39,7 +39,7 @@ describe('PomodoroTimer', () => {
       })
     )
 
-    const expected: PomodoroTimerConfig = {
+    let expected: PomodoroTimerConfig = {
       focusDuration: new Duration({ seconds: 11 }),
       shortBreakDuration: new Duration({ seconds: 4 }),
       longBreakDuration: new Duration({ seconds: 3 }),
@@ -47,6 +47,51 @@ describe('PomodoroTimer', () => {
       pomodoroRecordHouseKeepDays: 11
     }
     expect(timer.getConfig()).toEqual(expected)
+
+    // Set operation have same effects
+    timer.setConfig(
+      newConfig({
+        focusDuration: new Duration({ minutes: 5, milliseconds: 1 }),
+        shortBreakDuration: new Duration({ minutes: 2, milliseconds: 1 }),
+        longBreakDuration: new Duration({ minutes: 3, milliseconds: 1 }),
+        numOfPomodoriPerCycle: 4,
+        pomodoroRecordHouseKeepDays: 10
+      })
+    )
+
+    expected = {
+      focusDuration: new Duration({ minutes: 5, seconds: 1 }),
+      shortBreakDuration: new Duration({ minutes: 2, seconds: 1 }),
+      longBreakDuration: new Duration({ minutes: 3, seconds: 1 }),
+      numOfPomodoriPerCycle: 4,
+      pomodoroRecordHouseKeepDays: 10
+    }
+    expect(timer.getConfig()).toEqual(expected)
+  })
+
+  it('should setConfig reset the state too', () => {
+    const { timer, scheduler } = createTimer(
+      newConfig({
+        focusDuration: new Duration({ minutes: 10 }),
+        numOfPomodoriPerCycle: 4
+      })
+    )
+    timer.restartFocus(3)
+    scheduler.advanceTime(1000)
+
+    timer.setConfig(
+      newConfig({
+        focusDuration: new Duration({ minutes: 4, seconds: 59, milliseconds: 1 })
+      })
+    )
+
+    const expected: PomodoroTimerState = {
+      remainingSeconds: new Duration({ minutes: 5 }).remainingSeconds(),
+      isRunning: false,
+      stage: PomodoroStage.FOCUS,
+      numOfPomodoriCompleted: 0
+    }
+    expect(timer.getState()).toEqual(expected)
   })
 
   it('should able to start focus', () => {
@@ -632,27 +677,60 @@ describe('PomodoroTimer', () => {
     timer.setState(targetState)
 
     expect(timer.getState()).toEqual(targetState)
+
+    const targetState2: PomodoroTimerState = {
+      remainingSeconds: 1,
+      isRunning: false,
+      stage: PomodoroStage.SHORT_BREAK,
+      numOfPomodoriCompleted: 2
+    }
+    timer.setState(targetState2)
+
+    expect(timer.getState()).toEqual(targetState2)
   })
 
-  it('should able to publishing the new state if newState is running', async () => {
+  it('should start the timer if newState is running', async () => {
     const { timer, scheduler } = createTimer()
 
-    const targetState: PomodoroTimerState = {
+    const targetState = newState({
       remainingSeconds: 3,
-      isRunning: true,
-      stage: PomodoroStage.FOCUS,
-      numOfPomodoriCompleted: 0
-    }
+      isRunning: true
+    })
 
     const updates: PomodoroTimerState[] = []
-    timer.subscribeTimerState((newState) => {
-      updates.push(newState)
+    timer.subscribeTimerState((state) => {
+      updates.push(state)
     })
 
     timer.setState(targetState)
     scheduler.advanceTime(1000)
 
     expect(updates[updates.length - 1].remainingSeconds).toBe(2)
+  })
+
+  it('should pause the timer if newState is not running', async () => {
+    const { timer, scheduler } = createTimer()
+
+    const updates: PomodoroTimerState[] = []
+    timer.subscribeTimerState((state) => {
+      updates.push(state)
+    })
+
+    timer.start()
+    scheduler.advanceTime(1000)
+
+    const targetState = newState({
+      remainingSeconds: 200,
+      isRunning: false
+    })
+
+    timer.setState(targetState)
+    const originalUpdatesLength = updates.length
+
+    scheduler.advanceTime(3000)
+
+    expect(updates.length).toBe(originalUpdatesLength)
+    expect(timer.getState().remainingSeconds).toBe(200)
   })
 
   it('should able to add callback when pomodoro records updated', async () => {
@@ -713,6 +791,20 @@ describe('PomodoroTimer', () => {
 })
 
 const newConfig = newTestPomodoroTimerConfig
+
+const newState = ({
+  remainingSeconds = 300,
+  isRunning = false,
+  stage = PomodoroStage.FOCUS,
+  numOfPomodoriCompleted = 0
+} = {}): PomodoroTimerState => {
+  return {
+    remainingSeconds,
+    isRunning,
+    stage,
+    numOfPomodoriCompleted
+  }
+}
 
 function createTimer(timerConfig = newConfig()) {
   const scheduler = new FakePeriodicTaskScheduler()

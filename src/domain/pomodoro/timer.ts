@@ -12,10 +12,10 @@ import { PomodoroRecordStorageService } from './record/storage'
 import { PomodoroStage } from './stage'
 
 export class PomodoroTimer {
-  static create() {
+  static create({ timerConfig = config.getPomodoroTimerConfig() } = {}) {
     return new PomodoroTimer({
       scheduler: new PeriodicTaskSchedulerImpl(),
-      timerConfig: config.getPomodoroTimerConfig(),
+      timerConfig,
       pomodoroRecordStorageService: PomodoroRecordStorageService.create()
     })
   }
@@ -72,16 +72,20 @@ export class PomodoroTimer {
     pomodoroRecordStorageService: PomodoroRecordStorageService
     getCurrentDate?: () => Date
   }) {
-    this.config = {
-      ...timerConfig,
-      focusDuration: this.roundUpToSeconds(timerConfig.focusDuration),
-      shortBreakDuration: this.roundUpToSeconds(timerConfig.shortBreakDuration),
-      longBreakDuration: this.roundUpToSeconds(timerConfig.longBreakDuration)
-    }
+    this.config = this.newInternalConfig(timerConfig)
     this.remaining = timerConfig.focusDuration
     this.scheduler = scheduler
     this.pomodoroRecordStorageService = pomodoroRecordStorageService
     this.getCurrentDate = getCurrentDate
+  }
+
+  private newInternalConfig(config: PomodoroTimerConfig): PomodoroTimerConfig {
+    return {
+      ...config,
+      focusDuration: this.roundUpToSeconds(config.focusDuration),
+      shortBreakDuration: this.roundUpToSeconds(config.shortBreakDuration),
+      longBreakDuration: this.roundUpToSeconds(config.longBreakDuration)
+    }
   }
 
   private roundUpToSeconds(duration: Duration): Duration {
@@ -101,6 +105,16 @@ export class PomodoroTimer {
 
   getConfig(): Readonly<PomodoroTimerConfig> {
     return this.config
+  }
+
+  setConfig(config: PomodoroTimerConfig) {
+    this.config = this.newInternalConfig(config)
+    this.setState({
+      remainingSeconds: this.config.focusDuration.remainingSeconds(),
+      isRunning: false,
+      stage: PomodoroStage.FOCUS,
+      numOfPomodoriCompleted: 0
+    })
   }
 
   start() {
@@ -283,6 +297,8 @@ export class PomodoroTimer {
 
     if (state.isRunning) {
       this.start()
+    } else {
+      this.pause()
     }
   }
 }

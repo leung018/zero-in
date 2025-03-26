@@ -2,13 +2,13 @@ import { ChromeStorageFactory } from '../../chrome/storage'
 import { FakeStorage, type Storage } from '../../infra/storage'
 import type { PomodoroTimerState } from './timer'
 
-export class TimerStateStorageService {
+export class PomodoroTimerStateStorageService {
   static create() {
-    return new TimerStateStorageService(ChromeStorageFactory.createLocalStorage())
+    return new PomodoroTimerStateStorageService(ChromeStorageFactory.createLocalStorage())
   }
 
   static createFake() {
-    return new TimerStateStorageService(new FakeStorage())
+    return new PomodoroTimerStateStorageService(new FakeStorage())
   }
 
   private storage: Storage
