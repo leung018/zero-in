@@ -4,7 +4,7 @@ import { type Badge, type BadgeColor } from '../infra/badge'
 import { Duration } from '../domain/pomodoro/duration'
 import config from '../config'
 import { startBackgroundListener } from '../test_utils/listener'
-import { newTestPomodoroTimerConfig } from '../domain/pomodoro/config'
+import { PomodoroTimerConfig } from '../domain/pomodoro/config'
 import { PomodoroTimerStateStorageService } from '../domain/pomodoro/storage'
 import type { PomodoroTimerState } from '../domain/pomodoro/timer'
 import { PomodoroStage } from '../domain/pomodoro/stage'
@@ -42,7 +42,7 @@ describe('BackgroundListener', () => {
 
   it('should display badge when the timer is started', async () => {
     const { badgeDisplayService, scheduler, clientPort } = await startListener({
-      timerConfig: newTestPomodoroTimerConfig({
+      timerConfig: PomodoroTimerConfig.newTestInstance({
         focusDuration: new Duration({ minutes: 25 })
       })
     })
@@ -98,7 +98,7 @@ describe('BackgroundListener', () => {
 
   it('should remove badge when the timer is finished', async () => {
     const { badgeDisplayService, scheduler, clientPort } = await startListener({
-      timerConfig: newTestPomodoroTimerConfig({
+      timerConfig: PomodoroTimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 1 })
       })
     })
@@ -111,7 +111,7 @@ describe('BackgroundListener', () => {
 
   it('should display short break badge properly', async () => {
     const { badgeDisplayService, scheduler, clientPort } = await startListener({
-      timerConfig: newTestPomodoroTimerConfig({
+      timerConfig: PomodoroTimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ minutes: 2 }),
         longBreakDuration: new Duration({ minutes: 4 }),
@@ -134,7 +134,7 @@ describe('BackgroundListener', () => {
 
   it('should display long break badge properly', async () => {
     const { badgeDisplayService, scheduler, clientPort } = await startListener({
-      timerConfig: newTestPomodoroTimerConfig({
+      timerConfig: PomodoroTimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ minutes: 2 }),
         longBreakDuration: new Duration({ minutes: 4 }),
@@ -157,7 +157,7 @@ describe('BackgroundListener', () => {
 
   it('should trigger reminderService when time is up', async () => {
     const { reminderService, scheduler, clientPort } = await startListener({
-      timerConfig: newTestPomodoroTimerConfig({
+      timerConfig: PomodoroTimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 })
       })
     })
@@ -170,7 +170,7 @@ describe('BackgroundListener', () => {
 
   it('should back up update to storage', async () => {
     const { timerStateStorageService, scheduler, clientPort, timer } = await startListener({
-      timerConfig: newTestPomodoroTimerConfig({
+      timerConfig: PomodoroTimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 })
       })
     })
@@ -196,7 +196,7 @@ describe('BackgroundListener', () => {
     await timerStateStorageService.save(targetUpdate)
 
     const { timer } = await startListener({
-      timerConfig: newTestPomodoroTimerConfig({
+      timerConfig: PomodoroTimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         numOfPomodoriPerCycle: 2
       }),
@@ -208,7 +208,7 @@ describe('BackgroundListener', () => {
 
   it('should able to reset timer config', async () => {
     const { timer, clientPort, timerConfigStorageService } = await startListener({
-      timerConfig: newTestPomodoroTimerConfig({
+      timerConfig: PomodoroTimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 1 }),
         shortBreakDuration: new Duration({ seconds: 2 }),
         longBreakDuration: new Duration({ seconds: 3 }),
@@ -217,7 +217,7 @@ describe('BackgroundListener', () => {
       })
     })
 
-    const newConfig = newTestPomodoroTimerConfig({
+    const newConfig = PomodoroTimerConfig.newTestInstance({
       focusDuration: new Duration({ seconds: 4 }),
       shortBreakDuration: new Duration({ seconds: 5 }),
       longBreakDuration: new Duration({ seconds: 6 }),
@@ -236,7 +236,7 @@ describe('BackgroundListener', () => {
 })
 
 async function startListener({
-  timerConfig = newTestPomodoroTimerConfig(),
+  timerConfig = PomodoroTimerConfig.newTestInstance(),
   timerStateStorageService = PomodoroTimerStateStorageService.createFake()
 } = {}) {
   const {
