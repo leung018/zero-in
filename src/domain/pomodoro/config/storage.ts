@@ -1,8 +1,13 @@
 import type { PomodoroTimerConfig } from '.'
+import { ChromeStorageFactory } from '../../../chrome/storage'
 import config from '../../../config'
 import { FakeStorage, type Storage } from '../../../infra/storage'
 
 export class PomodoroTimerConfigStorageService {
+  static create() {
+    return new PomodoroTimerConfigStorageService(ChromeStorageFactory.createLocalStorage())
+  }
+
   static createFake() {
     return new PomodoroTimerConfigStorageService(new FakeStorage())
   }
@@ -19,7 +24,7 @@ export class PomodoroTimerConfigStorageService {
         return result.pomodoroTimerConfig
       }
 
-      return config.getPomodoroTimerConfig()
+      return config.getDefaultPomodoroTimerConfig()
     })
   }
 

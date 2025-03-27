@@ -12,7 +12,7 @@ import type { PomodoroTimerConfig } from '../domain/pomodoro/config'
 import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
 
 export async function startBackgroundListener({
-  timerConfig = config.getPomodoroTimerConfig(),
+  timerConfig = config.getDefaultPomodoroTimerConfig(),
   redirectTogglingService = BrowsingControlTogglingService.createFake(),
   reminderService = new FakeActionService(),
   badgeDisplayService = new FakeBadgeDisplayService(),

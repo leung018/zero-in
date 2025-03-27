@@ -31,13 +31,13 @@ export class BackgroundListener {
     return BackgroundListener._start({
       communicationManager: new ChromeCommunicationManager(),
       timerFactory: (timerConfig) => {
-        return PomodoroTimer.create({ timerConfig })
+        return PomodoroTimer.create(timerConfig)
       },
       redirectTogglingService: BrowsingControlTogglingService.create(),
       reminderService,
       badgeDisplayService: new ChromeBadgeDisplayService(),
       timerStateStorageService: PomodoroTimerStateStorageService.create(),
-      timerConfigStorageService: PomodoroTimerConfigStorageService.createFake(), // FIXME: Change to create
+      timerConfigStorageService: PomodoroTimerConfigStorageService.create(),
       closeTabsService: new ChromeCloseTabsService(config.getReminderPageUrl())
     })
   }
