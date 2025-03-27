@@ -37,7 +37,7 @@ export class BackgroundListener {
       reminderService,
       badgeDisplayService: new ChromeBadgeDisplayService(),
       timerStateStorageService: PomodoroTimerStateStorageService.create(),
-      timerConfigStorageService: PomodoroTimerConfigStorageService.createFake(), // FIXME: Change to create
+      timerConfigStorageService: PomodoroTimerConfigStorageService.create(),
       closeTabsService: new ChromeCloseTabsService(config.getReminderPageUrl())
     })
   }

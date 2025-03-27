@@ -6,16 +6,18 @@ import type { Port } from '@/infra/communication'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 import { WorkResponseName, type WorkResponse } from '../service_workers/response'
 import { PomodoroStage } from '../domain/pomodoro/stage'
+import type { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
 
-const { port } = defineProps<{
+const { port, timerConfigStorageService } = defineProps<{
   port: Port<WorkRequest, WorkResponse>
-  numOfPomodoriPerCycle: number
+  timerConfigStorageService: PomodoroTimerConfigStorageService
 }>()
 
 const durationLeft = ref<Duration>(new Duration({ seconds: 0 }))
 const isRunning = ref(false)
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
 const numOfPomodoriCompleted = ref(0)
+const numOfPomodoriPerCycle = ref(0)
 
 const displayTime = computed(() => {
   const totalSeconds = durationLeft.value.remainingSeconds()
@@ -35,7 +37,11 @@ const currentStage = computed(() => {
   }
 })
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
+  timerConfigStorageService.get().then((timerConfig) => {
+    numOfPomodoriPerCycle.value = timerConfig.numOfPomodoriPerCycle
+  })
+
   port.onMessage((message) => {
     if (message.name !== WorkResponseName.TIMER_STATE || !message.payload) {
       return

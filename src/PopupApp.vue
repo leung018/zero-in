@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ChromeCommunicationManager } from './chrome/communication'
 import config from './config'
+import { PomodoroTimerConfigStorageService } from './domain/pomodoro/config/storage'
 import PomodoroTimerPage from './pages/PomodoroTimerPage.vue'
 
 const openOptionsPage = () => {
@@ -20,7 +21,7 @@ const openOptionsPage = () => {
     </BButton>
     <PomodoroTimerPage
       :port="new ChromeCommunicationManager().clientConnect()"
-      :num-of-pomodori-per-cycle="config.getDefaultPomodoroTimerConfig().numOfPomodoriPerCycle"
+      :timerConfigStorageService="PomodoroTimerConfigStorageService.createFake()"
     />
   </div>
 </template>

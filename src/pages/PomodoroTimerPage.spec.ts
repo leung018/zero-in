@@ -5,6 +5,7 @@ import { Duration } from '../domain/pomodoro/duration'
 import { FakeCommunicationManager } from '../infra/communication'
 import { startBackgroundListener } from '../test_utils/listener'
 import { PomodoroTimerConfig } from '../domain/pomodoro/config'
+import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
 
 describe('PomodoroTimerPage', () => {
   it('should display initial stage and remaining time properly', async () => {
@@ -212,6 +213,7 @@ describe('PomodoroTimerPage', () => {
         numOfPomodoriPerCycle: 3
       })
     )
+    await flushPromises()
 
     const focusButtons = wrapper.findAll("[data-test='restart-focus']")
 
@@ -235,6 +237,7 @@ describe('PomodoroTimerPage', () => {
         numOfPomodoriPerCycle: 3
       })
     )
+    await flushPromises()
 
     await restartFocus(wrapper, 2)
     assertCurrentStage(wrapper, '2nd Focus')
@@ -252,6 +255,7 @@ describe('PomodoroTimerPage', () => {
         numOfPomodoriPerCycle: 4
       })
     )
+    await flushPromises()
 
     await restartShortBreak(wrapper, 1)
     assertCurrentStage(wrapper, '1st Short Break')
@@ -269,6 +273,7 @@ describe('PomodoroTimerPage', () => {
         numOfPomodoriPerCycle: 4
       })
     )
+    await flushPromises()
 
     await restartLongBreak(wrapper)
     assertCurrentStage(wrapper, 'Long Break')
@@ -276,24 +281,25 @@ describe('PomodoroTimerPage', () => {
 })
 
 async function startListenerAndMountPage(timerConfig = PomodoroTimerConfig.newTestInstance()) {
-  const { scheduler, communicationManager } = await startBackgroundListener({
-    timerConfig
-  })
+  const { scheduler, communicationManager, timerConfigStorageService } =
+    await startBackgroundListener({
+      timerConfig
+    })
   const wrapper = mountPage({
     port: communicationManager.clientConnect(),
-    numOfPomodoriPerCycle: timerConfig.numOfPomodoriPerCycle
+    timerConfigStorageService
   })
   return { wrapper, scheduler, communicationManager }
 }
 
 function mountPage({
   port = new FakeCommunicationManager().clientConnect(),
-  numOfPomodoriPerCycle = 4
+  timerConfigStorageService = PomodoroTimerConfigStorageService.createFake()
 } = {}) {
   return mount(PomodoroTimerPage, {
     props: {
       port,
-      numOfPomodoriPerCycle
+      timerConfigStorageService
     }
   })
 }
