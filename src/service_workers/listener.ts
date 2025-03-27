@@ -31,7 +31,7 @@ export class BackgroundListener {
     return BackgroundListener._start({
       communicationManager: new ChromeCommunicationManager(),
       timerFactory: (timerConfig) => {
-        return PomodoroTimer.create({ timerConfig })
+        return PomodoroTimer.create(timerConfig)
       },
       redirectTogglingService: BrowsingControlTogglingService.create(),
       reminderService,
