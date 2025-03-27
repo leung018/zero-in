@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [
     vue(),
     webExtension({
-      additionalInputs: ['reminder.html']
+      additionalInputs: ['reminder.html', 'testing-config.html']
     }),
     Components({
       resolvers: [IconsResolve(), BootstrapVueNextResolver()],
