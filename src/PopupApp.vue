@@ -20,7 +20,7 @@ const openOptionsPage = () => {
     </BButton>
     <PomodoroTimerPage
       :port="new ChromeCommunicationManager().clientConnect()"
-      :num-of-pomodori-per-cycle="config.getPomodoroTimerConfig().numOfPomodoriPerCycle"
+      :num-of-pomodori-per-cycle="config.getDefaultPomodoroTimerConfig().numOfPomodoriPerCycle"
     />
   </div>
 </template>

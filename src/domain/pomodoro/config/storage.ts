@@ -19,7 +19,7 @@ export class PomodoroTimerConfigStorageService {
         return result.pomodoroTimerConfig
       }
 
-      return config.getPomodoroTimerConfig()
+      return config.getDefaultPomodoroTimerConfig()
     })
   }
 
