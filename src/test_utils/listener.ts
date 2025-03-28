@@ -12,6 +12,7 @@ import type { PomodoroTimerConfig } from '../domain/pomodoro/config'
 import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
 
 export async function startBackgroundListener({
+  pomodoroRecordHouseKeepDays = 30,
   timerConfig = config.getDefaultPomodoroTimerConfig(),
   redirectTogglingService = BrowsingControlTogglingService.createFake(),
   reminderService = new FakeActionService(),
@@ -23,6 +24,7 @@ export async function startBackgroundListener({
   pomodoroRecordStorageService = PomodoroRecordStorageService.createFake(),
   getCurrentDate = undefined
 }: {
+  pomodoroRecordHouseKeepDays?: number
   timerConfig?: PomodoroTimerConfig
   redirectTogglingService?: BrowsingControlTogglingService
   reminderService?: FakeActionService
@@ -46,6 +48,7 @@ export async function startBackgroundListener({
   }
   return BackgroundListener.startFake({
     timerFactory,
+    pomodoroRecordHouseKeepDays,
     reminderService,
     badgeDisplayService,
     redirectTogglingService,
@@ -61,7 +64,8 @@ export async function startBackgroundListener({
       badgeDisplayService,
       communicationManager,
       closeTabsService,
-      timerConfigStorageService
+      timerConfigStorageService,
+      pomodoroRecordStorageService
     }
   })
 }

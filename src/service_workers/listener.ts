@@ -30,6 +30,7 @@ export class BackgroundListener {
 
     return BackgroundListener._start({
       communicationManager: new ChromeCommunicationManager(),
+      pomodoroRecordHouseKeepDays: config.getPomodoroRecordHouseKeepDays(),
       timerFactory: (timerConfig) => {
         return PomodoroTimer.create(timerConfig)
       },
@@ -44,6 +45,7 @@ export class BackgroundListener {
 
   static async startFake({
     timerFactory = (timerConfig: PomodoroTimerConfig) => PomodoroTimer.createFake({ timerConfig }),
+    pomodoroRecordHouseKeepDays = 30,
     communicationManager = new FakeCommunicationManager(),
     redirectTogglingService = BrowsingControlTogglingService.createFake(),
     reminderService = new FakeActionService(),
@@ -54,6 +56,7 @@ export class BackgroundListener {
   } = {}) {
     return BackgroundListener._start({
       communicationManager,
+      pomodoroRecordHouseKeepDays,
       timerFactory,
       redirectTogglingService,
       reminderService,
@@ -66,6 +69,7 @@ export class BackgroundListener {
 
   private static async _start({
     communicationManager,
+    pomodoroRecordHouseKeepDays,
     timerFactory,
     redirectTogglingService,
     reminderService,
@@ -75,6 +79,7 @@ export class BackgroundListener {
     closeTabsService
   }: {
     communicationManager: CommunicationManager
+    pomodoroRecordHouseKeepDays: number
     timerFactory: (timerConfig: PomodoroTimerConfig) => PomodoroTimer
     redirectTogglingService: BrowsingControlTogglingService
     reminderService: ActionService
@@ -83,7 +88,10 @@ export class BackgroundListener {
     timerConfigStorageService: PomodoroTimerConfigStorageService
     closeTabsService: ActionService
   }) {
-    const timerConfig = await timerConfigStorageService.get()
+    const timerConfig = {
+      ...(await timerConfigStorageService.get()),
+      pomodoroRecordHouseKeepDays
+    }
     const timer = timerFactory(timerConfig)
     const backupState = await timerStateStorageService.get()
     if (backupState) {
