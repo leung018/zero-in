@@ -82,7 +82,6 @@ const onClickSave = async () => {
         >
           Save
         </b-button>
-        <b-button variant="success" type="button">Reset to Default</b-button>
       </div>
     </form>
   </div>
