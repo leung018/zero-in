@@ -261,8 +261,7 @@ describe('BackgroundListener', () => {
         focusDuration: new Duration({ seconds: 1 }),
         shortBreakDuration: new Duration({ seconds: 2 }),
         longBreakDuration: new Duration({ seconds: 3 }),
-        numOfPomodoriPerCycle: 1,
-        pomodoroRecordHouseKeepDays: 5
+        numOfPomodoriPerCycle: 1
       })
     })
 
@@ -270,8 +269,7 @@ describe('BackgroundListener', () => {
       focusDuration: new Duration({ seconds: 4 }),
       shortBreakDuration: new Duration({ seconds: 5 }),
       longBreakDuration: new Duration({ seconds: 6 }),
-      numOfPomodoriPerCycle: 2,
-      pomodoroRecordHouseKeepDays: 6
+      numOfPomodoriPerCycle: 2
     })
     await timerConfigStorageService.save(newConfig)
 
