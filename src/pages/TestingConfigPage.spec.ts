@@ -22,6 +22,40 @@ describe('TestingConfigPage', () => {
     assertInputValue(wrapper, 'long-break-duration', '14')
     assertInputValue(wrapper, 'num-of-pomodori-per-cycle', '3')
   })
+
+  it('should update timer config', async () => {
+    const { timerConfigStorageService, wrapper } = await mountPage(
+      new PomodoroTimerConfig({
+        focusDuration: new Duration({ seconds: 24 }),
+        shortBreakDuration: new Duration({ seconds: 4 }),
+        longBreakDuration: new Duration({ seconds: 14 }),
+        numOfPomodoriPerCycle: 3
+      })
+    )
+    await flushPromises()
+
+    const newFocusDuration = 30
+    const newShortBreakDuration = 5
+    const newLongBreakDuration = 15
+    const newNumOfPomodoriPerCycle = 4
+
+    await wrapper.find('[data-test="focus-duration"]').setValue(newFocusDuration)
+    await wrapper.find('[data-test="short-break-duration"]').setValue(newShortBreakDuration)
+    await wrapper.find('[data-test="long-break-duration"]').setValue(newLongBreakDuration)
+    await wrapper.find('[data-test="num-of-pomodori-per-cycle"]').setValue(newNumOfPomodoriPerCycle)
+
+    await wrapper.find('[data-test="save-button"]').trigger('click')
+    await flushPromises()
+
+    expect(await timerConfigStorageService.get()).toEqual(
+      new PomodoroTimerConfig({
+        focusDuration: new Duration({ seconds: newFocusDuration }),
+        shortBreakDuration: new Duration({ seconds: newShortBreakDuration }),
+        longBreakDuration: new Duration({ seconds: newLongBreakDuration }),
+        numOfPomodoriPerCycle: newNumOfPomodoriPerCycle
+      })
+    )
+  })
 })
 
 async function mountPage(initialTimerConfig: PomodoroTimerConfig) {
