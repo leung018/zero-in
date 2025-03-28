@@ -10,6 +10,7 @@ import { newPomodoroRecord } from './record'
 import { PomodoroRecordHousekeeper } from './record/house_keep'
 import { PomodoroRecordStorageService } from './record/storage'
 import { PomodoroStage } from './stage'
+import { SubscriptionManager } from '../../utils/subscription'
 
 export class PomodoroTimer {
   static create(timerConfig: PomodoroTimerConfig) {
@@ -300,37 +301,6 @@ export class PomodoroTimer {
     } else {
       this.pause()
     }
-  }
-}
-
-class SubscriptionManager<Arguments> {
-  private callbackMap = new Map<number, (args: Arguments) => void>()
-
-  subscribe(callback: (args: Arguments) => void) {
-    const subscriptionId = this.getSubscriptionCount() + 1
-    this.callbackMap.set(subscriptionId, callback)
-    return subscriptionId
-  }
-
-  unsubscribe(subscriptionId: number) {
-    this.callbackMap.delete(subscriptionId)
-  }
-
-  broadcast(args: Arguments) {
-    this.callbackMap.forEach((callback) => {
-      callback(args)
-    })
-  }
-
-  publish(args: Arguments, subscriptionId: number) {
-    const callback = this.callbackMap.get(subscriptionId)
-    if (callback) {
-      callback(args)
-    }
-  }
-
-  getSubscriptionCount() {
-    return this.callbackMap.size
   }
 }
 
