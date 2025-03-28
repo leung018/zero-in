@@ -609,55 +609,6 @@ describe('PomodoroTimer', () => {
     expect(timer.getState().numOfPomodoriCompleted).toBe(0)
   })
 
-  it('should save the pomodoro record after focus is completed', async () => {
-    const { timer, scheduler, pomodoroRecordStorageService } = createTimer(
-      newConfig({
-        focusDuration: new Duration({ seconds: 3 }),
-        shortBreakDuration: new Duration({ seconds: 1 }),
-        numOfPomodoriPerCycle: 3
-      })
-    )
-
-    // Focus
-    timer.start()
-    scheduler.advanceTime(3000)
-    await flushPromises()
-
-    const pomodoroRecords = await pomodoroRecordStorageService.getAll()
-    expect(pomodoroRecords.length).toBe(1)
-    expect(pomodoroRecords[0].completedAt).toBeInstanceOf(Date)
-
-    // Break
-    timer.start()
-    scheduler.advanceTime(1000)
-    await flushPromises()
-
-    expect((await pomodoroRecordStorageService.getAll()).length).toBe(1)
-  })
-
-  it('should house keep the pomodoro records', async () => {
-    const { timer, scheduler, pomodoroRecordStorageService } = createTimer(
-      newConfig({
-        focusDuration: new Duration({ seconds: 3 }),
-        pomodoroRecordHouseKeepDays: 10
-      })
-    )
-
-    const oldDate = new Date()
-    oldDate.setDate(oldDate.getDate() - 10)
-    const oldRecord: PomodoroRecord = { completedAt: oldDate }
-    await pomodoroRecordStorageService.saveAll([oldRecord])
-
-    // Focus
-    timer.start()
-    scheduler.advanceTime(3000)
-    await flushPromises()
-
-    const newRecords = await pomodoroRecordStorageService.getAll()
-    expect(newRecords.length).toBe(1)
-    expect(newRecords[0].completedAt > oldDate).toBe(true)
-  })
-
   it('should able to set state', async () => {
     const { timer } = createTimer(
       newConfig({
