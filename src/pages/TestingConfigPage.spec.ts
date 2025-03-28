@@ -3,7 +3,7 @@ import { PomodoroTimerConfig } from '../domain/pomodoro/config'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import TestingConfigPage from './TestingConfigPage.vue'
 import { Duration } from '../domain/pomodoro/duration'
-import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
+import { startBackgroundListener } from '../test_utils/listener'
 
 describe('TestingConfigPage', () => {
   it('should render timer config', async () => {
@@ -24,7 +24,7 @@ describe('TestingConfigPage', () => {
   })
 
   it('should update timer config', async () => {
-    const { timerConfigStorageService, wrapper } = await mountPage(
+    const { timerConfigStorageService, wrapper, timer } = await mountPage(
       new PomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 24 }),
         shortBreakDuration: new Duration({ seconds: 4 }),
@@ -47,26 +47,30 @@ describe('TestingConfigPage', () => {
     await wrapper.find('[data-test="save-button"]').trigger('click')
     await flushPromises()
 
-    expect(await timerConfigStorageService.get()).toEqual(
-      new PomodoroTimerConfig({
-        focusDuration: new Duration({ seconds: newFocusDuration }),
-        shortBreakDuration: new Duration({ seconds: newShortBreakDuration }),
-        longBreakDuration: new Duration({ seconds: newLongBreakDuration }),
-        numOfPomodoriPerCycle: newNumOfPomodoriPerCycle
-      })
-    )
+    const newConfig = new PomodoroTimerConfig({
+      focusDuration: new Duration({ seconds: newFocusDuration }),
+      shortBreakDuration: new Duration({ seconds: newShortBreakDuration }),
+      longBreakDuration: new Duration({ seconds: newLongBreakDuration }),
+      numOfPomodoriPerCycle: newNumOfPomodoriPerCycle
+    })
+    expect(await timerConfigStorageService.get()).toEqual(newConfig)
+
+    // Should listener also reload the timer with new config
+    expect(timer.getConfig()).toEqual(newConfig)
   })
 })
 
 async function mountPage(initialTimerConfig: PomodoroTimerConfig) {
-  const timerConfigStorageService = PomodoroTimerConfigStorageService.createFake()
-  await timerConfigStorageService.save(initialTimerConfig)
+  const { timerConfigStorageService, timer, communicationManager } = await startBackgroundListener({
+    timerConfig: initialTimerConfig
+  })
   const wrapper = mount(TestingConfigPage, {
     props: {
+      port: communicationManager.clientConnect(),
       timerConfigStorageService
     }
   })
-  return { timerConfigStorageService, wrapper }
+  return { timerConfigStorageService, wrapper, timer }
 }
 
 function assertInputValue(wrapper: VueWrapper, dataTest: string, value: string) {

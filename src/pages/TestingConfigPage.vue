@@ -3,8 +3,12 @@ import { PomodoroTimerConfig } from '../domain/pomodoro/config'
 import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
 import { defineProps, onBeforeMount, ref } from 'vue'
 import { Duration } from '../domain/pomodoro/duration'
+import type { Port } from '../infra/communication'
+import { WorkRequestName, type WorkRequest } from '../service_workers/request'
+import type { WorkResponse } from '@/service_workers/response'
 
-const { timerConfigStorageService } = defineProps<{
+const { timerConfigStorageService, port } = defineProps<{
+  port: Port<WorkRequest, WorkResponse>
   timerConfigStorageService: PomodoroTimerConfigStorageService
 }>()
 
@@ -30,6 +34,9 @@ const onClickSave = async () => {
     numOfPomodoriPerCycle: numOfPomodoriPerCycle.value
   })
   await timerConfigStorageService.save(timerConfig)
+  port.send({
+    name: WorkRequestName.RESET_TIMER_CONFIG
+  })
 }
 </script>
 
