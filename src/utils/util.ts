@@ -1,4 +1,6 @@
-import type { Time } from './domain/time'
+import type { Time } from '../domain/time'
+
+// TODO: move below to separate files
 
 export function capitalized(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()

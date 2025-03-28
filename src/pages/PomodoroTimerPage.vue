@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Duration } from '../domain/pomodoro/duration'
-import { formatNumber, getNumberWithOrdinal } from '../util'
+import { formatNumber, getNumberWithOrdinal } from '../utils/util'
 import { computed, onBeforeMount, ref } from 'vue'
 import type { Port } from '@/infra/communication'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'

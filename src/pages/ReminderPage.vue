@@ -8,7 +8,7 @@ import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 import type { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
 import type { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { Time } from '../domain/time'
-import { getMostRecentDate } from '../util'
+import { getMostRecentDate } from '../utils/util'
 
 const {
   port,

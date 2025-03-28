@@ -1,0 +1,6 @@
+Record the design decision made but which haven't been finished yet.
+Remove it when finished.
+
+(DD/MM/YYYY)
+28/03/2025: Move timer subscription into listener And decouple houseKeepRecordDays from timerConfig
+28/03/2025: Remove dependency of timer in listener.spec.ts

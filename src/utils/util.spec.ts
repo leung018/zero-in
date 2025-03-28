@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { formatNumber, getDomain, getMostRecentDate, getNumberWithOrdinal } from './util'
-import { Time } from './domain/time'
+import { Time } from '../domain/time'
 
 describe('formatNumber', () => {
   it('should format number', () => {

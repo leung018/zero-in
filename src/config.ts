@@ -15,10 +15,11 @@ const getDefaultPomodoroTimerConfig = () => {
     focusDuration: new Duration({ minutes: 25 }),
     shortBreakDuration: new Duration({ minutes: 5 }),
     longBreakDuration: new Duration({ minutes: 15 }),
-    numOfPomodoriPerCycle: 4,
-    pomodoroRecordHouseKeepDays: 30
+    numOfPomodoriPerCycle: 4
   })
 }
+
+const getPomodoroRecordHouseKeepDays = () => 30
 
 const getBadgeColorConfig = (): {
   focusBadgeColor: BadgeColor
@@ -38,6 +39,7 @@ const getBadgeColorConfig = (): {
 
 export default {
   getDefaultPomodoroTimerConfig,
+  getPomodoroRecordHouseKeepDays,
   getBlockedTemplateUrl,
   getBadgeColorConfig,
   getReminderPageUrl
