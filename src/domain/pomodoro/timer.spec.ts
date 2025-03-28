@@ -340,20 +340,20 @@ describe('PomodoroTimer', () => {
         shortBreakDuration: new Duration({ seconds: 1 })
       })
     )
-    let triggeredCount = 0
-    timer.setOnStageComplete(() => {
-      triggeredCount++
+    let lastStage: PomodoroStage | null = null
+    timer.setOnStageComplete((stage) => {
+      lastStage = stage
     })
 
     timer.start()
     scheduler.advanceTime(3000)
 
-    expect(triggeredCount).toBe(1)
+    expect(lastStage).toBe(PomodoroStage.FOCUS)
 
     timer.start()
     scheduler.advanceTime(1000)
 
-    expect(triggeredCount).toBe(2)
+    expect(lastStage).toBe(PomodoroStage.SHORT_BREAK)
   })
 
   it('should switch to break after focus duration is passed', () => {

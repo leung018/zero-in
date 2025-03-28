@@ -58,7 +58,7 @@ export class PomodoroTimer {
 
   private pomodoroRecordsUpdateSubscriptionManager = new SubscriptionManager()
 
-  private onStageComplete: () => void = () => {}
+  private onStageComplete: (stage: PomodoroStage) => void = () => {}
 
   private getCurrentDate: () => Date
 
@@ -167,7 +167,7 @@ export class PomodoroTimer {
     return this.timerStateSubscriptionManager.getSubscriptionCount()
   }
 
-  setOnStageComplete(callback: () => void) {
+  setOnStageComplete(callback: (completedStage: PomodoroStage) => void) {
     this.onStageComplete = callback
   }
 
@@ -230,12 +230,12 @@ export class PomodoroTimer {
   }
 
   private completeCurrentStage() {
+    this.onStageComplete(this.stage)
     if (this.stage === PomodoroStage.FOCUS) {
       this.handleFocusComplete()
     } else {
       this.handleBreakComplete()
     }
-    this.onStageComplete()
   }
 
   private handleFocusComplete() {
