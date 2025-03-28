@@ -98,7 +98,7 @@ export class BackgroundListener {
       timer.setState(backupState)
     }
 
-    new BackgroundListener({
+    const listener = new BackgroundListener({
       communicationManager,
       timer,
       redirectTogglingService,
@@ -107,9 +107,11 @@ export class BackgroundListener {
       timerStateStorageService,
       timerConfigStorageService,
       closeTabsService
-    }).start()
+    })
 
-    return timer
+    listener.start()
+
+    return { timer, listener }
   }
 
   private redirectTogglingService: BrowsingControlTogglingService
@@ -171,6 +173,10 @@ export class BackgroundListener {
         })
       }
     })
+  }
+
+  getPomodoroRecordsUpdateSubscriptionCount() {
+    return this.timer.getPomodoroRecordsUpdateSubscriptionCount()
   }
 
   private setUpListener() {

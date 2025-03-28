@@ -76,17 +76,17 @@ describe('BackgroundListener', () => {
   })
 
   it('should remove pomodoro record update subscription when disconnect fired', async () => {
-    const { timer, clientPort } = await startListener()
+    const { listener, clientPort } = await startListener()
 
-    const initialSubscriptionCount = timer.getPomodoroRecordsUpdateSubscriptionCount()
+    const initialSubscriptionCount = listener.getPomodoroRecordsUpdateSubscriptionCount()
 
     clientPort.send({ name: WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE })
 
-    expect(timer.getPomodoroRecordsUpdateSubscriptionCount()).toBe(initialSubscriptionCount + 1)
+    expect(listener.getPomodoroRecordsUpdateSubscriptionCount()).toBe(initialSubscriptionCount + 1)
 
     clientPort.disconnect()
 
-    expect(timer.getPomodoroRecordsUpdateSubscriptionCount()).toBe(initialSubscriptionCount)
+    expect(listener.getPomodoroRecordsUpdateSubscriptionCount()).toBe(initialSubscriptionCount)
   })
 
   it('should display badge when the timer is started', async () => {
@@ -291,6 +291,7 @@ async function startListener({
 } = {}) {
   const {
     timer,
+    listener,
     badgeDisplayService,
     communicationManager,
     scheduler,
@@ -306,6 +307,7 @@ async function startListener({
 
   return {
     timer,
+    listener,
     badgeDisplayService,
     timerStateStorageService,
     timerConfigStorageService,

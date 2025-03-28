@@ -56,10 +56,11 @@ export async function startBackgroundListener({
     timerStateStorageService,
     timerConfigStorageService,
     closeTabsService
-  }).then((timer) => {
+  }).then(({ timer, listener }) => {
     return {
       scheduler,
       timer,
+      listener,
       reminderService,
       badgeDisplayService,
       communicationManager,
