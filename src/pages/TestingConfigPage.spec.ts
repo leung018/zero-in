@@ -8,12 +8,11 @@ import { Duration } from '../domain/pomodoro/duration'
 describe('TestingConfigPage', () => {
   it('should render timer config', async () => {
     const { wrapper } = await mountPage(
-      new PomodoroTimerConfig({
+      PomodoroTimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 24 }),
         shortBreakDuration: new Duration({ seconds: 4 }),
         longBreakDuration: new Duration({ seconds: 14 }),
-        numOfPomodoriPerCycle: 3,
-        pomodoroRecordHouseKeepDays: 99
+        numOfPomodoriPerCycle: 3
       })
     )
     await flushPromises()
@@ -22,7 +21,6 @@ describe('TestingConfigPage', () => {
     assertInputValue(wrapper, 'short-break-duration', '4')
     assertInputValue(wrapper, 'long-break-duration', '14')
     assertInputValue(wrapper, 'num-of-pomodori-per-cycle', '3')
-    assertInputValue(wrapper, 'pomodoro-record-house-keep-days', '99')
   })
 })
 

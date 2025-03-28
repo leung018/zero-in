@@ -53,14 +53,6 @@ onBeforeMount(async () => {
           :value="timerConfig.numOfPomodoriPerCycle"
         ></b-form-input>
       </b-form-group>
-      <b-form-group label="Pomodoro Record House Keep Days">
-        <b-form-input
-          type="number"
-          min="1"
-          data-test="pomodoro-record-house-keep-days"
-          :value="timerConfig.pomodoroRecordHouseKeepDays"
-        ></b-form-input>
-      </b-form-group>
       <div class="mt-4">
         <b-button variant="danger" type="button" class="me-2" data-test="save-button"
           >Save</b-button
