@@ -1,0 +1,4 @@
+Record the design decision made but which haven't been finished yet.
+Remove it when finished.
+
+28/03/2025: Move timer subscription into listener And decouple houseKeepRecordDays from timerConfig
