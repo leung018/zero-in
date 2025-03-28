@@ -41,21 +41,21 @@ export async function startBackgroundListener({
   const timerFactory = (tc: PomodoroTimerConfig) => {
     return PomodoroTimer.createFake({
       scheduler,
-      pomodoroRecordStorageService,
-      timerConfig: tc,
-      getCurrentDate
+      timerConfig: tc
     })
   }
   return BackgroundListener.startFake({
     timerFactory,
     pomodoroRecordHouseKeepDays,
+    pomodoroRecordStorageService,
     reminderService,
     badgeDisplayService,
     redirectTogglingService,
     communicationManager,
     timerStateStorageService,
     timerConfigStorageService,
-    closeTabsService
+    closeTabsService,
+    getCurrentDate
   }).then(({ timer, listener }) => {
     return {
       scheduler,

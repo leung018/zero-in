@@ -3,8 +3,6 @@ import { PomodoroTimer, type PomodoroTimerState } from './timer'
 import { Duration } from './duration'
 import { PomodoroStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
-import { flushPromises } from '@vue/test-utils'
-import { PomodoroRecordStorageService } from './record/storage'
 import { PomodoroTimerConfig } from './config'
 
 describe('PomodoroTimer', () => {
@@ -682,62 +680,6 @@ describe('PomodoroTimer', () => {
     expect(updates.length).toBe(originalUpdatesLength)
     expect(timer.getState().remainingSeconds).toBe(200)
   })
-
-  it('should able to add callback when pomodoro records updated', async () => {
-    const { timer, scheduler } = createTimer(
-      newConfig({
-        focusDuration: new Duration({ seconds: 1 })
-      })
-    )
-
-    let triggerCount = 0
-    timer.subscribePomodoroRecordsUpdate(() => {
-      triggerCount++
-    })
-
-    expect(triggerCount).toBe(0)
-
-    timer.start()
-    scheduler.advanceTime(1000)
-    await flushPromises()
-
-    expect(triggerCount).toBe(1)
-  })
-
-  it('should able to unsubscribe from pomodoro records update', async () => {
-    const { timer, scheduler } = createTimer(
-      newConfig({
-        focusDuration: new Duration({ seconds: 1 })
-      })
-    )
-
-    let triggerCount = 0
-    const subscriptionId = timer.subscribePomodoroRecordsUpdate(() => {
-      triggerCount++
-    })
-
-    timer.unsubscribePomodoroRecordsUpdate(subscriptionId)
-
-    timer.start()
-    scheduler.advanceTime(1000)
-    await flushPromises()
-
-    expect(triggerCount).toBe(0)
-  })
-
-  it('should getPomodoroRecordsSubscriptionCount is reflecting number of subscription', () => {
-    const { timer } = createTimer()
-    expect(timer.getPomodoroRecordsUpdateSubscriptionCount()).toBe(0)
-
-    const subscriptionId = timer.subscribePomodoroRecordsUpdate(() => {})
-    timer.subscribePomodoroRecordsUpdate(() => {})
-
-    expect(timer.getPomodoroRecordsUpdateSubscriptionCount()).toBe(2)
-
-    timer.unsubscribePomodoroRecordsUpdate(subscriptionId)
-
-    expect(timer.getPomodoroRecordsUpdateSubscriptionCount()).toBe(1)
-  })
 })
 
 const newConfig = PomodoroTimerConfig.newTestInstance
@@ -758,14 +700,11 @@ const newState = ({
 
 function createTimer(timerConfig = newConfig()) {
   const scheduler = new FakePeriodicTaskScheduler()
-  const pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
   const timer = PomodoroTimer.createFake({
     scheduler,
-    pomodoroRecordStorageService,
     timerConfig
   })
   return {
-    pomodoroRecordStorageService,
     scheduler,
     timer
   }
