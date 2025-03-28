@@ -8,7 +8,7 @@ import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/sto
 describe('TestingConfigPage', () => {
   it('should render timer config', async () => {
     const { wrapper } = await mountPage(
-      PomodoroTimerConfig.newTestInstance({
+      new PomodoroTimerConfig({
         focusDuration: new Duration({ seconds: 24 }),
         shortBreakDuration: new Duration({ seconds: 4 }),
         longBreakDuration: new Duration({ seconds: 14 }),
