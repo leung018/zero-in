@@ -31,8 +31,7 @@ describe('PomodoroTimer', () => {
         focusDuration: new Duration({ seconds: 10, milliseconds: 1 }),
         shortBreakDuration: new Duration({ seconds: 3, milliseconds: 1 }),
         longBreakDuration: new Duration({ seconds: 2, milliseconds: 1 }),
-        numOfPomodoriPerCycle: 5,
-        pomodoroRecordHouseKeepDays: 11
+        numOfPomodoriPerCycle: 5
       })
     )
 
@@ -40,8 +39,7 @@ describe('PomodoroTimer', () => {
       focusDuration: new Duration({ seconds: 11 }),
       shortBreakDuration: new Duration({ seconds: 4 }),
       longBreakDuration: new Duration({ seconds: 3 }),
-      numOfPomodoriPerCycle: 5,
-      pomodoroRecordHouseKeepDays: 11
+      numOfPomodoriPerCycle: 5
     }
     expect(timer.getConfig()).toEqual(expected)
 
@@ -51,8 +49,7 @@ describe('PomodoroTimer', () => {
         focusDuration: new Duration({ minutes: 5, milliseconds: 1 }),
         shortBreakDuration: new Duration({ minutes: 2, milliseconds: 1 }),
         longBreakDuration: new Duration({ minutes: 3, milliseconds: 1 }),
-        numOfPomodoriPerCycle: 4,
-        pomodoroRecordHouseKeepDays: 10
+        numOfPomodoriPerCycle: 4
       })
     )
 
@@ -60,8 +57,7 @@ describe('PomodoroTimer', () => {
       focusDuration: new Duration({ minutes: 5, seconds: 1 }),
       shortBreakDuration: new Duration({ minutes: 2, seconds: 1 }),
       longBreakDuration: new Duration({ minutes: 3, seconds: 1 }),
-      numOfPomodoriPerCycle: 4,
-      pomodoroRecordHouseKeepDays: 10
+      numOfPomodoriPerCycle: 4
     }
     expect(timer.getConfig()).toEqual(expected)
   })

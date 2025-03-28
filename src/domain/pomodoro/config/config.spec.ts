@@ -30,26 +30,16 @@ describe('PomodoroTimerConfig', () => {
     }).toThrowError('Number of pomodori per cycle must be greater than 0')
   })
 
-  it('should house keep day must be greater than 0', () => {
-    expect(() => {
-      PomodoroTimerConfig.newTestInstance({
-        pomodoroRecordHouseKeepDays: 0
-      })
-    }).toThrowError('Pomodoro record house keep days must be greater than 0')
-  })
-
   it('should create instance for valid input', () => {
     const config = new PomodoroTimerConfig({
       focusDuration: new Duration({ seconds: 1 }),
       shortBreakDuration: new Duration({ seconds: 1 }),
       longBreakDuration: new Duration({ seconds: 1 }),
-      numOfPomodoriPerCycle: 1,
-      pomodoroRecordHouseKeepDays: 1
+      numOfPomodoriPerCycle: 1
     })
     expect(config.focusDuration).toEqual(new Duration({ seconds: 1 }))
     expect(config.shortBreakDuration).toEqual(new Duration({ seconds: 1 }))
     expect(config.longBreakDuration).toEqual(new Duration({ seconds: 1 }))
     expect(config.numOfPomodoriPerCycle).toBe(1)
-    expect(config.pomodoroRecordHouseKeepDays).toBe(1)
   })
 })
