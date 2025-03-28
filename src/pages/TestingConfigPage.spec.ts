@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { startBackgroundListener } from '../test_utils/listener'
 import { PomodoroTimerConfig } from '../domain/pomodoro/config'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import TestingConfigPage from './TestingConfigPage.vue'
 import { Duration } from '../domain/pomodoro/duration'
+import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
 
 describe('TestingConfigPage', () => {
   it('should render timer config', async () => {
@@ -25,9 +25,8 @@ describe('TestingConfigPage', () => {
 })
 
 async function mountPage(initialTimerConfig: PomodoroTimerConfig) {
-  const { timerConfigStorageService } = await startBackgroundListener({
-    timerConfig: initialTimerConfig
-  })
+  const timerConfigStorageService = PomodoroTimerConfigStorageService.createFake()
+  await timerConfigStorageService.save(initialTimerConfig)
   const wrapper = mount(TestingConfigPage, {
     props: {
       timerConfigStorageService
