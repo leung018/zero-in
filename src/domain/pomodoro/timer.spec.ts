@@ -6,7 +6,6 @@ import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
 import { flushPromises } from '@vue/test-utils'
 import { PomodoroRecordStorageService } from './record/storage'
 import { PomodoroTimerConfig } from './config'
-import type { PomodoroRecord } from './record'
 
 describe('PomodoroTimer', () => {
   it('should initial state is set correctly', () => {
