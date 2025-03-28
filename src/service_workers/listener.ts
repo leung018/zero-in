@@ -139,12 +139,12 @@ export class BackgroundListener {
 
     listener.start()
 
-    return { timer, listener }
+    return listener
   }
 
   private redirectTogglingService: BrowsingControlTogglingService
   private communicationManager: CommunicationManager
-  private timer: PomodoroTimer
+  readonly timer: PomodoroTimer // TODO: Make it private when removed the dependency on timer in tests of listener
   private reminderService: ActionService
   private badgeDisplayService: BadgeDisplayService
   private timerStateStorageService: PomodoroTimerStateStorageService
