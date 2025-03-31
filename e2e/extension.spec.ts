@@ -276,7 +276,7 @@ async function addNonActiveSchedule(page: Page) {
   let startHours: number
   let endHours: number
 
-  // FIXME: I can't find a way to mock the time in the test. Clock in playwright doesn't modify the time in service worker.
+  // I can't find a way to mock the time in the test. Clock in playwright doesn't modify the time in service worker.
   // i.e. I choose to compute hours so that current time must not be in the schedule.
   const now = new Date()
   if (now.getHours() >= 21) {
