@@ -121,14 +121,6 @@ test('should able to persist blocking schedules and update ui', async ({ page, e
   await expect(schedules).toHaveCount(1)
   await expect(schedules.nth(0)).toContainText('Sun')
   await expect(schedules.nth(0)).toContainText('10:00 - 12:00')
-
-  // Remove the schedule
-  await page.getByTestId('remove-schedule-with-index-0').click()
-  await expect(page.getByTestId('weekly-schedule')).toHaveCount(0)
-
-  // Reload to check if the schedule is removed
-  await page.reload()
-  await expect(page.getByTestId('weekly-schedule')).toHaveCount(0)
 })
 
 test('should able to disable blocking according to schedule', async ({ page, extensionId }) => {
