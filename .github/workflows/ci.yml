@@ -9,6 +9,9 @@ name: Continuous Integration
 jobs:
   checks:
     runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' || 
+      (github.event_name == 'push' && github.actor != '${{ github.actor }}')
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
