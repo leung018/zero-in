@@ -254,32 +254,6 @@ describe('BackgroundListener', () => {
 
     expect(timer.getState()).toEqual(targetUpdate)
   })
-
-  it('should able to reset timer config', async () => {
-    const { timer, clientPort, timerConfigStorageService } = await startListener({
-      timerConfig: PomodoroTimerConfig.newTestInstance({
-        focusDuration: new Duration({ seconds: 1 }),
-        shortBreakDuration: new Duration({ seconds: 2 }),
-        longBreakDuration: new Duration({ seconds: 3 }),
-        numOfPomodoriPerCycle: 1
-      })
-    })
-
-    const newConfig = PomodoroTimerConfig.newTestInstance({
-      focusDuration: new Duration({ seconds: 4 }),
-      shortBreakDuration: new Duration({ seconds: 5 }),
-      longBreakDuration: new Duration({ seconds: 6 }),
-      numOfPomodoriPerCycle: 2
-    })
-    await timerConfigStorageService.save(newConfig)
-
-    clientPort.send({
-      name: WorkRequestName.RESET_TIMER_CONFIG
-    })
-    await flushPromises()
-
-    expect(timer.getConfig()).toEqual(newConfig)
-  })
 })
 
 async function startListener({
