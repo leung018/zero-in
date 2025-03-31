@@ -166,7 +166,7 @@ test('should clicking the options button in timer can go to options page', async
   await assertOpenedOptionsPage(page)
 })
 
-test('should close tab service function properly and wont close irrelevant page', async ({
+test('should close tab function properly after clicking start on reminder page', async ({
   page,
   extensionId
 }) => {
@@ -217,7 +217,10 @@ test('should able to change pomodoro timer config', async ({ page, extensionId }
   await expect(page.getByTestId('num-of-pomodori-per-cycle')).toHaveValue('3')
 })
 
-test('should pomodoro record service persist the record', async ({ page, extensionId }) => {
+test('should able to persist the pomodoro record and show it on statistics', async ({
+  page,
+  extensionId
+}) => {
   await goToTestingConfigPage(page, extensionId)
   await changeFocusDuration(page, 1)
 
