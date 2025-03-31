@@ -225,6 +225,26 @@ test('should able to change pomodoro timer config', async ({ page, extensionId }
   await expect(page.getByTestId('num-of-pomodori-per-cycle')).toHaveValue('3')
 })
 
+test('should pomodoro record service persist the record', async ({ page, extensionId }) => {
+  await goToTestingConfigPage(page, extensionId)
+  await changeFocusDuration(page, 1)
+
+  await goToPomodoroTimer(page, extensionId)
+  await page.getByTestId('start-button').click()
+
+  await sleep(1000)
+  await goToStatisticsPage(page, extensionId)
+  const results = page.getByTestId('completed-pomodori-field')
+
+  try {
+    await expect(results.nth(0)).toHaveText('1')
+  } catch (e) {
+    // To prevent corner case that after completed the pomodoro, it passed the daily reset time and counted the pomodoro as record of yesterday
+    // eslint-disable-next-line playwright/no-conditional-expect
+    await expect(results.nth(1)).toHaveText('1')
+  }
+})
+
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
   const addButton = page.getByTestId('add-button')
@@ -266,6 +286,12 @@ const TEXT_IN_BLOCKED_TEMPLATE = 'Stay Focused'
 
 async function assertInBlockedTemplate(page: Page) {
   await expect(page.locator('body')).toContainText(TEXT_IN_BLOCKED_TEMPLATE)
+}
+
+async function changeFocusDuration(page: Page, seconds: number) {
+  const input = page.getByTestId('focus-duration')
+  await input.fill(seconds.toString())
+  await page.getByTestId('save-button').click()
 }
 
 async function assertWithRetry(assert: () => Promise<void>, retryCount = 3, intervalMs = 100) {
