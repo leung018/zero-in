@@ -240,6 +240,25 @@ test('should able to persist the pomodoro record and show it on statistics', asy
   }
 })
 
+test('should able to open new tab of reminder page when timer is finished', async ({
+  page,
+  extensionId
+}) => {
+  await goToTestingConfigPage(page, extensionId)
+  await changeFocusDuration(page, 1)
+
+  await goToPomodoroTimer(page, extensionId)
+  await page.getByTestId('start-button').click()
+
+  await sleep(1000)
+
+  await assertWithRetry(async () => {
+    const pages = page.context().pages()
+    const reminderPage = pages.find((p) => p.url().includes('reminder.html'))
+    expect(reminderPage).toBeDefined()
+  })
+})
+
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
   const addButton = page.getByTestId('add-button')
