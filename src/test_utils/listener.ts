@@ -7,12 +7,12 @@ import { FakeCommunicationManager } from '../infra/communication'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { BackgroundListener } from '../service_workers/listener'
 import { PomodoroTimerStateStorageService } from '../domain/pomodoro/storage'
-import { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
+import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
 import type { PomodoroTimerConfig } from '../domain/pomodoro/config'
 import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
 
 export async function startBackgroundListener({
-  pomodoroRecordHouseKeepDays = 30,
+  focusSessionRecordHouseKeepDays = 30,
   timerConfig = config.getDefaultPomodoroTimerConfig(),
   redirectTogglingService = BrowsingControlTogglingService.createFake(),
   reminderService = new FakeActionService(),
@@ -21,10 +21,10 @@ export async function startBackgroundListener({
   timerStateStorageService = PomodoroTimerStateStorageService.createFake(),
   timerConfigStorageService = PomodoroTimerConfigStorageService.createFake(),
   closeTabsService = new FakeActionService(),
-  pomodoroRecordStorageService = PomodoroRecordStorageService.createFake(),
+  focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake(),
   getCurrentDate = undefined
 }: {
-  pomodoroRecordHouseKeepDays?: number
+  focusSessionRecordHouseKeepDays?: number
   timerConfig?: PomodoroTimerConfig
   redirectTogglingService?: BrowsingControlTogglingService
   reminderService?: FakeActionService
@@ -33,7 +33,7 @@ export async function startBackgroundListener({
   timerStateStorageService?: PomodoroTimerStateStorageService
   timerConfigStorageService?: PomodoroTimerConfigStorageService
   closeTabsService?: FakeActionService
-  pomodoroRecordStorageService?: PomodoroRecordStorageService
+  focusSessionRecordStorageService?: FocusSessionRecordStorageService
   getCurrentDate?: () => Date
 }) {
   const scheduler = new FakePeriodicTaskScheduler()
@@ -46,8 +46,8 @@ export async function startBackgroundListener({
   }
   return BackgroundListener.startFake({
     timerFactory,
-    pomodoroRecordHouseKeepDays,
-    pomodoroRecordStorageService,
+    focusSessionRecordHouseKeepDays,
+    focusSessionRecordStorageService,
     reminderService,
     badgeDisplayService,
     redirectTogglingService,
@@ -66,7 +66,7 @@ export async function startBackgroundListener({
       communicationManager,
       closeTabsService,
       timerConfigStorageService,
-      pomodoroRecordStorageService
+      focusSessionRecordStorageService
     }
   })
 }

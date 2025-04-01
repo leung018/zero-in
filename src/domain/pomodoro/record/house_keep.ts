@@ -1,20 +1,20 @@
-import { PomodoroRecordStorageService } from './storage'
+import { FocusSessionRecordStorageService } from './storage'
 
-export class PomodoroRecordHousekeeper {
+export class FocusSessionRecordHousekeeper {
   static async houseKeep({
     now = new Date(),
-    pomodoroRecordStorageService,
+    focusSessionRecordStorageService,
     houseKeepDays
   }: {
     now?: Date
-    pomodoroRecordStorageService: PomodoroRecordStorageService
+    focusSessionRecordStorageService: FocusSessionRecordStorageService
     houseKeepDays: number
   }) {
     const oldestDate = new Date(now)
     oldestDate.setDate(oldestDate.getDate() - houseKeepDays)
 
-    const records = await pomodoroRecordStorageService.getAll()
+    const records = await focusSessionRecordStorageService.getAll()
     const newRecords = records.filter((record) => record.completedAt >= oldestDate)
-    await pomodoroRecordStorageService.saveAll(newRecords)
+    await focusSessionRecordStorageService.saveAll(newRecords)
   }
 }

@@ -19,7 +19,7 @@ const getDefaultPomodoroTimerConfig = () => {
   })
 }
 
-const getPomodoroRecordHouseKeepDays = () => 30
+const getFocusSessionRecordHouseKeepDays = () => 30
 
 const getBadgeColorConfig = (): {
   focusBadgeColor: BadgeColor
@@ -39,7 +39,7 @@ const getBadgeColorConfig = (): {
 
 export default {
   getDefaultPomodoroTimerConfig,
-  getPomodoroRecordHouseKeepDays,
+  getFocusSessionRecordHouseKeepDays,
   getBlockedTemplateUrl,
   getBadgeColorConfig,
   getReminderPageUrl

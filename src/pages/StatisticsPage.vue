@@ -5,7 +5,7 @@ import { Time } from '../domain/time'
 import type { ReloadService } from '@/chrome/reload'
 import TimeInput from './components/TimeInput.vue'
 import ContentTemplate from './components/ContentTemplate.vue'
-import type { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
+import type { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
 import { getMostRecentDate } from '../utils/util'
 import type { Port } from '@/infra/communication'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'
@@ -17,13 +17,13 @@ const {
   dailyResetTimeStorageService,
   reloadService,
   getCurrentDate,
-  pomodoroRecordStorageService,
+  focusSessionRecordStorageService,
   port
 } = defineProps<{
   dailyResetTimeStorageService: DailyResetTimeStorageService
   reloadService: ReloadService
   getCurrentDate: () => Date
-  pomodoroRecordStorageService: PomodoroRecordStorageService
+  focusSessionRecordStorageService: FocusSessionRecordStorageService
   port: Port<WorkRequest, WorkResponse>
 }>()
 
@@ -57,7 +57,7 @@ onBeforeMount(async () => {
 })
 
 async function setPomodoroStats(dailyResetTime: Time) {
-  const records = await pomodoroRecordStorageService.getAll()
+  const records = await focusSessionRecordStorageService.getAll()
   let inclusiveEndDate = getCurrentDate()
   const inclusiveStartDate = getMostRecentDate(dailyResetTime, inclusiveEndDate)
   for (let i = 0; i < pomodoroStats.value.length; i++) {

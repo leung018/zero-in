@@ -9,7 +9,7 @@ import { PomodoroTimerStateStorageService } from '../domain/pomodoro/storage'
 import type { PomodoroTimerState } from '../domain/pomodoro/timer'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import { flushPromises } from '@vue/test-utils'
-import type { PomodoroRecord } from '../domain/pomodoro/record'
+import type { FocusSessionRecord } from '../domain/pomodoro/record'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -28,7 +28,7 @@ describe('BackgroundListener', () => {
   })
 
   it('should save the pomodoro record after focus is completed', async () => {
-    const { scheduler, clientPort, pomodoroRecordStorageService } = await startListener({
+    const { scheduler, clientPort, focusSessionRecordStorageService } = await startListener({
       timerConfig: PomodoroTimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 })
@@ -40,37 +40,37 @@ describe('BackgroundListener', () => {
     scheduler.advanceTime(3000)
     await flushPromises()
 
-    const pomodoroRecords = await pomodoroRecordStorageService.getAll()
-    expect(pomodoroRecords.length).toBe(1)
-    expect(pomodoroRecords[0].completedAt).toBeInstanceOf(Date)
+    const focusSessionRecords = await focusSessionRecordStorageService.getAll()
+    expect(focusSessionRecords.length).toBe(1)
+    expect(focusSessionRecords[0].completedAt).toBeInstanceOf(Date)
 
     // Break
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
     await flushPromises()
 
-    expect((await pomodoroRecordStorageService.getAll()).length).toBe(1)
+    expect((await focusSessionRecordStorageService.getAll()).length).toBe(1)
   })
 
   it('should house keep the pomodoro records', async () => {
-    const { scheduler, pomodoroRecordStorageService, clientPort } = await startListener({
+    const { scheduler, focusSessionRecordStorageService, clientPort } = await startListener({
       timerConfig: PomodoroTimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 })
       }),
-      pomodoroRecordHouseKeepDays: 10
+      focusSessionRecordHouseKeepDays: 10
     })
 
     const oldDate = new Date()
     oldDate.setDate(oldDate.getDate() - 10)
-    const oldRecord: PomodoroRecord = { completedAt: oldDate }
-    await pomodoroRecordStorageService.saveAll([oldRecord])
+    const oldRecord: FocusSessionRecord = { completedAt: oldDate }
+    await focusSessionRecordStorageService.saveAll([oldRecord])
 
     // Focus
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(3000)
     await flushPromises()
 
-    const newRecords = await pomodoroRecordStorageService.getAll()
+    const newRecords = await focusSessionRecordStorageService.getAll()
     expect(newRecords.length).toBe(1)
     expect(newRecords[0].completedAt > oldDate).toBe(true)
   })
@@ -78,15 +78,17 @@ describe('BackgroundListener', () => {
   it('should remove pomodoro record update subscription when disconnect fired', async () => {
     const { listener, clientPort } = await startListener()
 
-    const initialSubscriptionCount = listener.getPomodoroRecordsUpdateSubscriptionCount()
+    const initialSubscriptionCount = listener.getFocusSessionRecordsUpdateSubscriptionCount()
 
     clientPort.send({ name: WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE })
 
-    expect(listener.getPomodoroRecordsUpdateSubscriptionCount()).toBe(initialSubscriptionCount + 1)
+    expect(listener.getFocusSessionRecordsUpdateSubscriptionCount()).toBe(
+      initialSubscriptionCount + 1
+    )
 
     clientPort.disconnect()
 
-    expect(listener.getPomodoroRecordsUpdateSubscriptionCount()).toBe(initialSubscriptionCount)
+    expect(listener.getFocusSessionRecordsUpdateSubscriptionCount()).toBe(initialSubscriptionCount)
   })
 
   it('should display badge when the timer is started', async () => {
@@ -259,7 +261,7 @@ describe('BackgroundListener', () => {
 async function startListener({
   timerConfig = PomodoroTimerConfig.newTestInstance(),
   timerStateStorageService = PomodoroTimerStateStorageService.createFake(),
-  pomodoroRecordHouseKeepDays = 30
+  focusSessionRecordHouseKeepDays = 30
 } = {}) {
   const {
     timer,
@@ -270,11 +272,11 @@ async function startListener({
     reminderService,
     closeTabsService,
     timerConfigStorageService,
-    pomodoroRecordStorageService
+    focusSessionRecordStorageService
   } = await startBackgroundListener({
     timerConfig,
     timerStateStorageService,
-    pomodoroRecordHouseKeepDays
+    focusSessionRecordHouseKeepDays
   })
 
   return {
@@ -283,7 +285,7 @@ async function startListener({
     badgeDisplayService,
     timerStateStorageService,
     timerConfigStorageService,
-    pomodoroRecordStorageService,
+    focusSessionRecordStorageService,
     clientPort: communicationManager.clientConnect(),
     scheduler,
     reminderService,

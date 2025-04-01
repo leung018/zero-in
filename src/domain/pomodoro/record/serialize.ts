@@ -1,18 +1,20 @@
-import type { PomodoroRecord } from '.'
+import type { FocusSessionRecord } from '.'
 
-type SerializedPomodoroRecord = {
+type SerializedFocusSessionRecord = {
   completedAt: string
 }
 
-export function serializePomodoroRecord(record: PomodoroRecord): SerializedPomodoroRecord {
+export function serializeFocusSessionRecord(
+  record: FocusSessionRecord
+): SerializedFocusSessionRecord {
   return {
     completedAt: record.completedAt.toUTCString()
   }
 }
 
-export function deserializePomodoroRecord(
-  serializedRecord: SerializedPomodoroRecord
-): PomodoroRecord {
+export function deserializeFocusSessionRecord(
+  serializedRecord: SerializedFocusSessionRecord
+): FocusSessionRecord {
   return {
     completedAt: new Date(serializedRecord.completedAt)
   }

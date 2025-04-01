@@ -5,7 +5,7 @@ import type { Port } from '../infra/communication'
 import type { ActionService } from '../infra/action'
 import { WorkResponseName, type WorkResponse } from '../service_workers/response'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'
-import type { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
+import type { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
 import type { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { Time } from '../domain/time'
 import { getMostRecentDate } from '../utils/util'
@@ -13,13 +13,13 @@ import { getMostRecentDate } from '../utils/util'
 const {
   port,
   soundService,
-  pomodoroRecordStorageService,
+  focusSessionRecordStorageService,
   dailyResetTimeStorageService,
   currentDate
 } = defineProps<{
   port: Port<WorkRequest, WorkResponse>
   soundService: ActionService
-  pomodoroRecordStorageService: PomodoroRecordStorageService
+  focusSessionRecordStorageService: FocusSessionRecordStorageService
   dailyResetTimeStorageService: DailyResetTimeStorageService
   currentDate: Date
 }>()
@@ -61,7 +61,7 @@ async function getTotalNumOfPomodoriAfter(dailyResetTime: Time): Promise<number>
   const startDate = getMostRecentDate(dailyResetTime, currentDate)
 
   const totalNumOfPomodori = (
-    await pomodoroRecordStorageService
+    await focusSessionRecordStorageService
       .getAll()
       .then((records) => records.filter((record) => record.completedAt >= startDate))
   ).length

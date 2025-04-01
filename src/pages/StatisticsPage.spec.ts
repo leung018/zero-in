@@ -4,8 +4,8 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import StatisticsPage from './StatisticsPage.vue'
 import { Time } from '../domain/time'
 import { FakeActionService } from '../infra/action'
-import { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
-import type { PomodoroRecord } from '../domain/pomodoro/record'
+import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
+import type { FocusSessionRecord } from '../domain/pomodoro/record'
 import { PomodoroTimerConfig } from '../domain/pomodoro/config'
 import { startBackgroundListener } from '../test_utils/listener'
 import { Duration } from '../domain/pomodoro/duration'
@@ -71,8 +71,8 @@ describe('StatisticsPage', () => {
     const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
     dailyResetTimeStorageService.save(new Time(10, 30))
 
-    const pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
-    const records: PomodoroRecord[] = [
+    const focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
+    const records: FocusSessionRecord[] = [
       { completedAt: new Date(2025, 3, 4, 10, 29) },
 
       { completedAt: new Date(2025, 3, 4, 10, 30) },
@@ -83,13 +83,13 @@ describe('StatisticsPage', () => {
 
       { completedAt: new Date(2025, 3, 11, 8, 24) }
     ]
-    await pomodoroRecordStorageService.saveAll(records)
+    await focusSessionRecordStorageService.saveAll(records)
 
     // When current time hasn't reached the daily reset time that day.
     const { wrapper } = await mountStatisticsPage({
       dailyResetTimeStorageService,
       currentDate: new Date(2025, 3, 11, 9, 0),
-      pomodoroRecordStorageService
+      focusSessionRecordStorageService
     })
     await flushPromises()
 
@@ -106,7 +106,7 @@ describe('StatisticsPage', () => {
     const { wrapper: newWrapper } = await mountStatisticsPage({
       dailyResetTimeStorageService,
       currentDate: new Date(2025, 3, 11, 10, 30),
-      pomodoroRecordStorageService
+      focusSessionRecordStorageService
     })
     await flushPromises()
 
@@ -149,12 +149,12 @@ async function mountStatisticsPage({
   timerConfig = PomodoroTimerConfig.newTestInstance(),
   dailyResetTimeStorageService = DailyResetTimeStorageService.createFake(),
   currentDate = null,
-  pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
+  focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
 }: {
   timerConfig?: PomodoroTimerConfig
   dailyResetTimeStorageService?: DailyResetTimeStorageService
   currentDate?: Date | null
-  pomodoroRecordStorageService?: PomodoroRecordStorageService
+  focusSessionRecordStorageService?: FocusSessionRecordStorageService
 } = {}) {
   const getCurrentDate = () => {
     if (currentDate) {
@@ -164,7 +164,7 @@ async function mountStatisticsPage({
   }
   const { scheduler, timer, communicationManager } = await startBackgroundListener({
     timerConfig,
-    pomodoroRecordStorageService,
+    focusSessionRecordStorageService,
     getCurrentDate
   })
   const reloadService = new FakeActionService()
@@ -173,7 +173,7 @@ async function mountStatisticsPage({
       dailyResetTimeStorageService,
       reloadService,
       getCurrentDate,
-      pomodoroRecordStorageService,
+      focusSessionRecordStorageService,
       port: communicationManager.clientConnect()
     }
   })
