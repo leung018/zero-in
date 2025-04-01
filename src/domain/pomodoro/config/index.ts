@@ -39,8 +39,8 @@ export class TimerConfig {
       throw new Error('Duration must not be less than 1 second')
     }
 
-    if (focusSessionsPerCycle < 0) {
-      focusSessionsPerCycle = 0
+    if (focusSessionsPerCycle < 1) {
+      focusSessionsPerCycle = 1
     }
 
     this.focusDuration = focusDuration
