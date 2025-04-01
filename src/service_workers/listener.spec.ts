@@ -5,8 +5,8 @@ import { Duration } from '../domain/pomodoro/duration'
 import config from '../config'
 import { startBackgroundListener } from '../test_utils/listener'
 import { TimerConfig } from '../domain/pomodoro/config'
-import { PomodoroTimerStateStorageService } from '../domain/pomodoro/storage'
-import type { PomodoroTimerState } from '../domain/pomodoro/timer'
+import { TimerStateStorageService } from '../domain/pomodoro/storage'
+import type { TimerState } from '../domain/pomodoro/timer'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import { flushPromises } from '@vue/test-utils'
 import type { FocusSessionRecord } from '../domain/pomodoro/record'
@@ -237,8 +237,8 @@ describe('BackgroundListener', () => {
   })
 
   it('should restore timer state from storage', async () => {
-    const timerStateStorageService = PomodoroTimerStateStorageService.createFake()
-    const targetUpdate: PomodoroTimerState = {
+    const timerStateStorageService = TimerStateStorageService.createFake()
+    const targetUpdate: TimerState = {
       remainingSeconds: 1000,
       isRunning: true,
       stage: PomodoroStage.FOCUS,
@@ -260,7 +260,7 @@ describe('BackgroundListener', () => {
 
 async function startListener({
   timerConfig = TimerConfig.newTestInstance(),
-  timerStateStorageService = PomodoroTimerStateStorageService.createFake(),
+  timerStateStorageService = TimerStateStorageService.createFake(),
   focusSessionRecordHouseKeepDays = 30
 } = {}) {
   const {

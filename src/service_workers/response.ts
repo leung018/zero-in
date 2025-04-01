@@ -1,4 +1,4 @@
-import type { PomodoroTimerState } from '../domain/pomodoro/timer'
+import type { TimerState } from '../domain/pomodoro/timer'
 
 export enum WorkResponseName {
   TIMER_STATE,
@@ -6,7 +6,7 @@ export enum WorkResponseName {
 }
 
 type WorkResponsePayloadMap = {
-  [WorkResponseName.TIMER_STATE]: PomodoroTimerState
+  [WorkResponseName.TIMER_STATE]: TimerState
   [WorkResponseName.POMODORO_RECORDS_UPDATED]: undefined
 }
 

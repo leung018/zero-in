@@ -16,7 +16,7 @@ import { PomodoroStage } from '../domain/pomodoro/stage'
 import config from '../config'
 import { MultipleActionService } from '../infra/multiple_actions'
 import { ChromeNotificationService } from '../chrome/notification'
-import { PomodoroTimerStateStorageService } from '../domain/pomodoro/storage'
+import { TimerStateStorageService } from '../domain/pomodoro/storage'
 import { ChromeCloseTabsService } from '../chrome/close_tabs'
 import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
 import type { TimerConfig } from '../domain/pomodoro/config'
@@ -42,7 +42,7 @@ export class BackgroundListener {
       redirectTogglingService: BrowsingControlTogglingService.create(),
       reminderService,
       badgeDisplayService: new ChromeBadgeDisplayService(),
-      timerStateStorageService: PomodoroTimerStateStorageService.create(),
+      timerStateStorageService: TimerStateStorageService.create(),
       timerConfigStorageService: TimerConfigStorageService.create(),
       closeTabsService: new ChromeCloseTabsService(config.getReminderPageUrl())
     })
@@ -56,7 +56,7 @@ export class BackgroundListener {
     redirectTogglingService = BrowsingControlTogglingService.createFake(),
     reminderService = new FakeActionService(),
     badgeDisplayService = new FakeBadgeDisplayService(),
-    timerStateStorageService = PomodoroTimerStateStorageService.createFake(),
+    timerStateStorageService = TimerStateStorageService.createFake(),
     timerConfigStorageService = TimerConfigStorageService.createFake(),
     closeTabsService = new FakeActionService(),
     getCurrentDate = undefined
@@ -68,7 +68,7 @@ export class BackgroundListener {
     redirectTogglingService?: BrowsingControlTogglingService
     reminderService?: ActionService
     badgeDisplayService?: BadgeDisplayService
-    timerStateStorageService?: PomodoroTimerStateStorageService
+    timerStateStorageService?: TimerStateStorageService
     timerConfigStorageService?: TimerConfigStorageService
     closeTabsService?: ActionService
     getCurrentDate?: () => Date
@@ -108,7 +108,7 @@ export class BackgroundListener {
     redirectTogglingService: BrowsingControlTogglingService
     reminderService: ActionService
     badgeDisplayService: BadgeDisplayService
-    timerStateStorageService: PomodoroTimerStateStorageService
+    timerStateStorageService: TimerStateStorageService
     timerConfigStorageService: TimerConfigStorageService
     closeTabsService: ActionService
     getCurrentDate?: () => Date
@@ -147,7 +147,7 @@ export class BackgroundListener {
   readonly timer: PomodoroTimer // TODO: Make it private when removed the dependency on timer in tests of listener
   private reminderService: ActionService
   private badgeDisplayService: BadgeDisplayService
-  private timerStateStorageService: PomodoroTimerStateStorageService
+  private timerStateStorageService: TimerStateStorageService
   private timerConfigStorageService: TimerConfigStorageService
   private closeTabsService: ActionService
 
@@ -174,7 +174,7 @@ export class BackgroundListener {
     redirectTogglingService: BrowsingControlTogglingService
     reminderService: ActionService
     badgeDisplayService: BadgeDisplayService
-    timerStateStorageService: PomodoroTimerStateStorageService
+    timerStateStorageService: TimerStateStorageService
     timerConfigStorageService: TimerConfigStorageService
     focusSessionRecordStorageService: FocusSessionRecordStorageService
     focusSessionRecordHouseKeepDays: number

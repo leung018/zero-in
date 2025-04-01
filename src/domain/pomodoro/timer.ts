@@ -42,7 +42,7 @@ export class PomodoroTimer {
 
   private scheduler: PeriodicTaskScheduler
 
-  private timerStateSubscriptionManager = new SubscriptionManager<PomodoroTimerState>()
+  private timerStateSubscriptionManager = new SubscriptionManager<TimerState>()
 
   private onStageComplete: (stage: PomodoroStage) => void = () => {}
 
@@ -73,7 +73,7 @@ export class PomodoroTimer {
     })
   }
 
-  getState(): Readonly<PomodoroTimerState> {
+  getState(): Readonly<TimerState> {
     return {
       remainingSeconds: this.remaining.remainingSeconds(),
       isRunning: this.isRunning,
@@ -131,7 +131,7 @@ export class PomodoroTimer {
     this.scheduler.stopTask()
   }
 
-  subscribeTimerState(callback: (state: PomodoroTimerState) => void) {
+  subscribeTimerState(callback: (state: TimerState) => void) {
     const subscriptionId = this.timerStateSubscriptionManager.subscribe(callback)
     this.timerStateSubscriptionManager.publish(this.getState(), subscriptionId)
     return subscriptionId
@@ -235,7 +235,7 @@ export class PomodoroTimer {
     this.remaining = this.config.focusDuration
   }
 
-  setState(state: PomodoroTimerState) {
+  setState(state: TimerState) {
     this.remaining = new Duration({ seconds: state.remainingSeconds })
     this.stage = state.stage
     this.numOfPomodoriCompleted = state.numOfPomodoriCompleted
@@ -248,7 +248,7 @@ export class PomodoroTimer {
   }
 }
 
-export type PomodoroTimerState = {
+export type TimerState = {
   remainingSeconds: number
   isRunning: boolean
   stage: PomodoroStage
