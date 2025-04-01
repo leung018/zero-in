@@ -146,7 +146,7 @@ describe('PomodoroTimerPage', () => {
     scheduler.advanceTime(2000)
     await flushPromises()
 
-    assertCurrentStage(wrapper, '1st Short Break')
+    assertCurrentStage(wrapper, '1st Break')
 
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:01')
 
@@ -258,13 +258,13 @@ describe('PomodoroTimerPage', () => {
     await flushPromises()
 
     await restartShortBreak(wrapper, 1)
-    assertCurrentStage(wrapper, '1st Short Break')
+    assertCurrentStage(wrapper, '1st Break')
 
     await restartShortBreak(wrapper, 2)
-    assertCurrentStage(wrapper, '2nd Short Break')
+    assertCurrentStage(wrapper, '2nd Break')
 
     await restartShortBreak(wrapper, 3)
-    assertCurrentStage(wrapper, '3rd Short Break')
+    assertCurrentStage(wrapper, '3rd Break')
   })
 
   it('should able to restart long break', async () => {
