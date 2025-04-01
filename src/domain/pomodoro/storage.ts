@@ -2,7 +2,7 @@ import { ChromeStorageFactory } from '../../chrome/storage'
 import { FakeStorage, type Storage } from '../../infra/storage'
 import type { TimerState } from './timer'
 
-const STORAGE_KEY = 'TimerState'
+const STORAGE_KEY = 'timerState'
 
 export class TimerStateStorageService {
   static create() {
