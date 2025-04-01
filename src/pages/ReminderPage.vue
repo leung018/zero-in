@@ -95,7 +95,7 @@ const onClickStart = () => {
 
 <style scoped>
 .container {
-  max-width: 400px;
+  max-width: 430px;
 }
 
 .alert {
