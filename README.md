@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A Chrome extension that helps users stay focused by implementing website restriction features and a timer supporting the Pomodoro Technique.
+A Chrome extension that helps users stay focused with website restriction features and a timer that supports time-based focus and break intervals.
 
 I am planning to release this extension on the Chrome Web Store later. If you have interest in the current development version, you can download the extension from the [Releases](https://github.com/leung018/task-concentrator/releases). Download the `task-concentrator-dev-latest.zip` file, unzip it, and load the extension in Chrome by enabling the Developer mode in the Extensions page.
 

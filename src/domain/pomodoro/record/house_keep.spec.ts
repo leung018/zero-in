@@ -1,25 +1,25 @@
 import { describe, expect, it } from 'vitest'
-import { PomodoroRecordStorageService } from './storage'
-import { PomodoroRecordHousekeeper } from './house_keep'
-import type { PomodoroRecord } from '.'
+import { FocusSessionRecordStorageService } from './storage'
+import { FocusSessionRecordHousekeeper } from './house_keep'
+import type { FocusSessionRecord } from '.'
 
-describe('PomodoroRecordHousekeeper', () => {
+describe('FocusSessionRecordHousekeeper', () => {
   it('should delete records older than specific periods', async () => {
-    const pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
+    const focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
 
-    const originalRecords: PomodoroRecord[] = [
+    const originalRecords: FocusSessionRecord[] = [
       { completedAt: new Date('2025-02-03T10:59:59') },
       { completedAt: new Date('2025-02-04T11:00:00') }
     ]
-    await pomodoroRecordStorageService.saveAll(originalRecords)
+    await focusSessionRecordStorageService.saveAll(originalRecords)
 
-    await PomodoroRecordHousekeeper.houseKeep({
+    await FocusSessionRecordHousekeeper.houseKeep({
       now: new Date('2025-02-14T11:00:00'),
-      pomodoroRecordStorageService,
+      focusSessionRecordStorageService,
       houseKeepDays: 10
     })
 
-    const newRecords = await pomodoroRecordStorageService.getAll()
+    const newRecords = await focusSessionRecordStorageService.getAll()
     expect(newRecords).toEqual([originalRecords[1]])
   })
 })

@@ -6,18 +6,18 @@ import type { Port } from '@/infra/communication'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 import { WorkResponseName, type WorkResponse } from '../service_workers/response'
 import { PomodoroStage } from '../domain/pomodoro/stage'
-import type { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
+import type { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
 
 const { port, timerConfigStorageService } = defineProps<{
   port: Port<WorkRequest, WorkResponse>
-  timerConfigStorageService: PomodoroTimerConfigStorageService
+  timerConfigStorageService: TimerConfigStorageService
 }>()
 
 const durationLeft = ref<Duration>(new Duration({ seconds: 0 }))
 const isRunning = ref(false)
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
 const numOfPomodoriCompleted = ref(0)
-const numOfPomodoriPerCycle = ref(0)
+const focusSessionsPerCycle = ref(0)
 
 const displayTime = computed(() => {
   const totalSeconds = durationLeft.value.remainingSeconds()
@@ -29,7 +29,7 @@ const displayTime = computed(() => {
 const currentStage = computed(() => {
   switch (pomodoroStage.value) {
     case PomodoroStage.SHORT_BREAK:
-      return `${getNumberWithOrdinal(numOfPomodoriCompleted.value)} Short Break`
+      return `${getNumberWithOrdinal(numOfPomodoriCompleted.value)} Break`
     case PomodoroStage.LONG_BREAK:
       return 'Long Break'
     default:
@@ -39,7 +39,7 @@ const currentStage = computed(() => {
 
 onBeforeMount(async () => {
   timerConfigStorageService.get().then((timerConfig) => {
-    numOfPomodoriPerCycle.value = timerConfig.numOfPomodoriPerCycle
+    focusSessionsPerCycle.value = timerConfig.focusSessionsPerCycle
   })
 
   port.onMessage((message) => {
@@ -113,7 +113,7 @@ const onClickRestartLongBreak = () => {
     <div class="mt-4">
       <BButton variant="dark" v-b-toggle.restart-menu>Restart</BButton>
       <BCollapse class="mt-2" id="restart-menu">
-        <BRow v-for="nth in numOfPomodoriPerCycle" :key="nth">
+        <BRow v-for="nth in focusSessionsPerCycle" :key="nth">
           <BCol>
             <BButton
               class="mt-2 w-100"
@@ -123,7 +123,7 @@ const onClickRestartLongBreak = () => {
               >{{ getNumberWithOrdinal(nth) }} Focus</BButton
             >
           </BCol>
-          <BCol v-if="nth < numOfPomodoriPerCycle">
+          <BCol v-if="nth < focusSessionsPerCycle">
             <BButton
               class="mt-2 w-100"
               variant="secondary"

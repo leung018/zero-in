@@ -18,11 +18,11 @@ import { MultipleActionService } from '../infra/multiple_actions'
 import { ChromeNotificationService } from '../chrome/notification'
 import { PomodoroTimerStateStorageService } from '../domain/pomodoro/storage'
 import { ChromeCloseTabsService } from '../chrome/close_tabs'
-import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
-import type { PomodoroTimerConfig } from '../domain/pomodoro/config'
-import { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
-import { newPomodoroRecord } from '../domain/pomodoro/record'
-import { PomodoroRecordHousekeeper } from '../domain/pomodoro/record/house_keep'
+import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
+import type { TimerConfig } from '../domain/pomodoro/config'
+import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
+import { newFocusSessionRecord } from '../domain/pomodoro/record'
+import { FocusSessionRecordHousekeeper } from '../domain/pomodoro/record/house_keep'
 import { SubscriptionManager } from '../utils/subscription'
 
 export class BackgroundListener {
@@ -34,8 +34,8 @@ export class BackgroundListener {
 
     return BackgroundListener._start({
       communicationManager: new ChromeCommunicationManager(),
-      pomodoroRecordHouseKeepDays: config.getPomodoroRecordHouseKeepDays(),
-      pomodoroRecordStorageService: PomodoroRecordStorageService.create(),
+      focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
+      focusSessionRecordStorageService: FocusSessionRecordStorageService.create(),
       timerFactory: (timerConfig) => {
         return PomodoroTimer.create(timerConfig)
       },
@@ -43,40 +43,40 @@ export class BackgroundListener {
       reminderService,
       badgeDisplayService: new ChromeBadgeDisplayService(),
       timerStateStorageService: PomodoroTimerStateStorageService.create(),
-      timerConfigStorageService: PomodoroTimerConfigStorageService.create(),
+      timerConfigStorageService: TimerConfigStorageService.create(),
       closeTabsService: new ChromeCloseTabsService(config.getReminderPageUrl())
     })
   }
 
   static async startFake({
-    timerFactory = (timerConfig: PomodoroTimerConfig) => PomodoroTimer.createFake({ timerConfig }),
-    pomodoroRecordHouseKeepDays = 30,
-    pomodoroRecordStorageService = PomodoroRecordStorageService.createFake(),
+    timerFactory = (timerConfig: TimerConfig) => PomodoroTimer.createFake({ timerConfig }),
+    focusSessionRecordHouseKeepDays = 30,
+    focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake(),
     communicationManager = new FakeCommunicationManager(),
     redirectTogglingService = BrowsingControlTogglingService.createFake(),
     reminderService = new FakeActionService(),
     badgeDisplayService = new FakeBadgeDisplayService(),
     timerStateStorageService = PomodoroTimerStateStorageService.createFake(),
-    timerConfigStorageService = PomodoroTimerConfigStorageService.createFake(),
+    timerConfigStorageService = TimerConfigStorageService.createFake(),
     closeTabsService = new FakeActionService(),
     getCurrentDate = undefined
   }: {
-    timerFactory?: (timerConfig: PomodoroTimerConfig) => PomodoroTimer
-    pomodoroRecordHouseKeepDays?: number
-    pomodoroRecordStorageService?: PomodoroRecordStorageService
+    timerFactory?: (timerConfig: TimerConfig) => PomodoroTimer
+    focusSessionRecordHouseKeepDays?: number
+    focusSessionRecordStorageService?: FocusSessionRecordStorageService
     communicationManager?: CommunicationManager
     redirectTogglingService?: BrowsingControlTogglingService
     reminderService?: ActionService
     badgeDisplayService?: BadgeDisplayService
     timerStateStorageService?: PomodoroTimerStateStorageService
-    timerConfigStorageService?: PomodoroTimerConfigStorageService
+    timerConfigStorageService?: TimerConfigStorageService
     closeTabsService?: ActionService
     getCurrentDate?: () => Date
   } = {}) {
     return BackgroundListener._start({
       communicationManager,
-      pomodoroRecordHouseKeepDays,
-      pomodoroRecordStorageService,
+      focusSessionRecordHouseKeepDays,
+      focusSessionRecordStorageService,
       timerFactory,
       redirectTogglingService,
       reminderService,
@@ -90,8 +90,8 @@ export class BackgroundListener {
 
   private static async _start({
     communicationManager,
-    pomodoroRecordHouseKeepDays,
-    pomodoroRecordStorageService,
+    focusSessionRecordHouseKeepDays,
+    focusSessionRecordStorageService,
     timerFactory,
     redirectTogglingService,
     reminderService,
@@ -102,20 +102,20 @@ export class BackgroundListener {
     getCurrentDate = () => new Date()
   }: {
     communicationManager: CommunicationManager
-    pomodoroRecordHouseKeepDays: number
-    pomodoroRecordStorageService: PomodoroRecordStorageService
-    timerFactory: (timerConfig: PomodoroTimerConfig) => PomodoroTimer
+    focusSessionRecordHouseKeepDays: number
+    focusSessionRecordStorageService: FocusSessionRecordStorageService
+    timerFactory: (timerConfig: TimerConfig) => PomodoroTimer
     redirectTogglingService: BrowsingControlTogglingService
     reminderService: ActionService
     badgeDisplayService: BadgeDisplayService
     timerStateStorageService: PomodoroTimerStateStorageService
-    timerConfigStorageService: PomodoroTimerConfigStorageService
+    timerConfigStorageService: TimerConfigStorageService
     closeTabsService: ActionService
     getCurrentDate?: () => Date
   }) {
     const timerConfig = {
       ...(await timerConfigStorageService.get()),
-      pomodoroRecordHouseKeepDays
+      focusSessionRecordHouseKeepDays
     }
     const timer = timerFactory(timerConfig)
     const backupState = await timerStateStorageService.get()
@@ -132,8 +132,8 @@ export class BackgroundListener {
       badgeDisplayService,
       timerStateStorageService,
       timerConfigStorageService,
-      pomodoroRecordStorageService,
-      pomodoroRecordHouseKeepDays,
+      focusSessionRecordStorageService,
+      focusSessionRecordHouseKeepDays,
       closeTabsService
     })
 
@@ -148,12 +148,12 @@ export class BackgroundListener {
   private reminderService: ActionService
   private badgeDisplayService: BadgeDisplayService
   private timerStateStorageService: PomodoroTimerStateStorageService
-  private timerConfigStorageService: PomodoroTimerConfigStorageService
+  private timerConfigStorageService: TimerConfigStorageService
   private closeTabsService: ActionService
 
-  private pomodoroRecordStorageService: PomodoroRecordStorageService
-  private pomodoroRecordHouseKeepDays: number
-  private pomodoroRecordsUpdateSubscriptionManager = new SubscriptionManager()
+  private focusSessionRecordStorageService: FocusSessionRecordStorageService
+  private focusSessionRecordHouseKeepDays: number
+  private focusSessionRecordsUpdateSubscriptionManager = new SubscriptionManager()
   private getCurrentDate: () => Date
 
   private constructor({
@@ -164,8 +164,8 @@ export class BackgroundListener {
     badgeDisplayService,
     timerStateStorageService,
     timerConfigStorageService,
-    pomodoroRecordStorageService,
-    pomodoroRecordHouseKeepDays,
+    focusSessionRecordStorageService,
+    focusSessionRecordHouseKeepDays,
     closeTabsService,
     getCurrentDate
   }: {
@@ -175,9 +175,9 @@ export class BackgroundListener {
     reminderService: ActionService
     badgeDisplayService: BadgeDisplayService
     timerStateStorageService: PomodoroTimerStateStorageService
-    timerConfigStorageService: PomodoroTimerConfigStorageService
-    pomodoroRecordStorageService: PomodoroRecordStorageService
-    pomodoroRecordHouseKeepDays: number
+    timerConfigStorageService: TimerConfigStorageService
+    focusSessionRecordStorageService: FocusSessionRecordStorageService
+    focusSessionRecordHouseKeepDays: number
     closeTabsService: ActionService
     getCurrentDate: () => Date
   }) {
@@ -188,8 +188,8 @@ export class BackgroundListener {
     this.timerStateStorageService = timerStateStorageService
     this.timerConfigStorageService = timerConfigStorageService
     this.closeTabsService = closeTabsService
-    this.pomodoroRecordStorageService = pomodoroRecordStorageService
-    this.pomodoroRecordHouseKeepDays = pomodoroRecordHouseKeepDays
+    this.focusSessionRecordStorageService = focusSessionRecordStorageService
+    this.focusSessionRecordHouseKeepDays = focusSessionRecordHouseKeepDays
     this.getCurrentDate = getCurrentDate
 
     this.timer = timer
@@ -206,7 +206,7 @@ export class BackgroundListener {
       this.badgeDisplayService.clearBadge()
 
       if (completedStage === PomodoroStage.FOCUS) {
-        this.updatePomodoroRecords()
+        this.updateFocusSessionRecords()
       }
     })
     this.timer.subscribeTimerState((newState) => {
@@ -221,28 +221,28 @@ export class BackgroundListener {
     })
   }
 
-  private async updatePomodoroRecords() {
-    return this.pomodoroRecordStorageService
+  private async updateFocusSessionRecords() {
+    return this.focusSessionRecordStorageService
       .getAll()
       .then((records) => {
-        this.pomodoroRecordStorageService.saveAll([
+        this.focusSessionRecordStorageService.saveAll([
           ...records,
-          newPomodoroRecord(this.getCurrentDate())
+          newFocusSessionRecord(this.getCurrentDate())
         ])
       })
       .then(() => {
-        PomodoroRecordHousekeeper.houseKeep({
-          pomodoroRecordStorageService: this.pomodoroRecordStorageService,
-          houseKeepDays: this.pomodoroRecordHouseKeepDays
+        FocusSessionRecordHousekeeper.houseKeep({
+          focusSessionRecordStorageService: this.focusSessionRecordStorageService,
+          houseKeepDays: this.focusSessionRecordHouseKeepDays
         })
       })
       .then(() => {
-        this.pomodoroRecordsUpdateSubscriptionManager.broadcast(undefined)
+        this.focusSessionRecordsUpdateSubscriptionManager.broadcast(undefined)
       })
   }
 
-  getPomodoroRecordsUpdateSubscriptionCount() {
-    return this.pomodoroRecordsUpdateSubscriptionManager.getSubscriptionCount()
+  getFocusSessionRecordsUpdateSubscriptionCount() {
+    return this.focusSessionRecordsUpdateSubscriptionManager.getSubscriptionCount()
   }
 
   private setUpListener() {
@@ -278,13 +278,15 @@ export class BackgroundListener {
               break
             }
             case WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE: {
-              const subscriptionId = this.pomodoroRecordsUpdateSubscriptionManager.subscribe(() => {
-                backgroundPort.send({
-                  name: WorkResponseName.POMODORO_RECORDS_UPDATED
-                })
-              })
+              const subscriptionId = this.focusSessionRecordsUpdateSubscriptionManager.subscribe(
+                () => {
+                  backgroundPort.send({
+                    name: WorkResponseName.POMODORO_RECORDS_UPDATED
+                  })
+                }
+              )
               backgroundPort.onDisconnect(() => {
-                this.pomodoroRecordsUpdateSubscriptionManager.unsubscribe(subscriptionId)
+                this.focusSessionRecordsUpdateSubscriptionManager.unsubscribe(subscriptionId)
               })
               break
             }

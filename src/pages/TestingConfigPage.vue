@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { PomodoroTimerConfig } from '../domain/pomodoro/config'
-import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
+import { TimerConfig } from '../domain/pomodoro/config'
+import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
 import { defineProps, onBeforeMount, ref } from 'vue'
 import { Duration } from '../domain/pomodoro/duration'
 import type { Port } from '../infra/communication'
@@ -9,13 +9,13 @@ import type { WorkResponse } from '@/service_workers/response'
 
 const { timerConfigStorageService, port } = defineProps<{
   port: Port<WorkRequest, WorkResponse>
-  timerConfigStorageService: PomodoroTimerConfigStorageService
+  timerConfigStorageService: TimerConfigStorageService
 }>()
 
 const focusDurationSeconds = ref(0)
 const shortBreakDurationSeconds = ref(0)
 const longBreakDurationSeconds = ref(0)
-const numOfPomodoriPerCycle = ref(0)
+const focusSessionsPerCycle = ref(0)
 
 onBeforeMount(async () => {
   const timerConfig = await timerConfigStorageService.get()
@@ -23,15 +23,15 @@ onBeforeMount(async () => {
   focusDurationSeconds.value = timerConfig.focusDuration.remainingSeconds()
   shortBreakDurationSeconds.value = timerConfig.shortBreakDuration.remainingSeconds()
   longBreakDurationSeconds.value = timerConfig.longBreakDuration.remainingSeconds()
-  numOfPomodoriPerCycle.value = timerConfig.numOfPomodoriPerCycle
+  focusSessionsPerCycle.value = timerConfig.focusSessionsPerCycle
 })
 
 const onClickSave = async () => {
-  const timerConfig = new PomodoroTimerConfig({
+  const timerConfig = new TimerConfig({
     focusDuration: new Duration({ seconds: focusDurationSeconds.value }),
     shortBreakDuration: new Duration({ seconds: shortBreakDurationSeconds.value }),
     longBreakDuration: new Duration({ seconds: longBreakDurationSeconds.value }),
-    numOfPomodoriPerCycle: numOfPomodoriPerCycle.value
+    focusSessionsPerCycle: focusSessionsPerCycle.value
   })
   await timerConfigStorageService.save(timerConfig)
   port.send({
@@ -76,7 +76,7 @@ const onClickSave = async () => {
           type="number"
           min="1"
           data-test="num-of-pomodori-per-cycle"
-          v-model.number="numOfPomodoriPerCycle"
+          v-model.number="focusSessionsPerCycle"
         ></b-form-input>
       </b-form-group>
       <div class="mt-4">

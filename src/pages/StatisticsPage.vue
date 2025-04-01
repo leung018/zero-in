@@ -5,7 +5,7 @@ import { Time } from '../domain/time'
 import type { ReloadService } from '@/chrome/reload'
 import TimeInput from './components/TimeInput.vue'
 import ContentTemplate from './components/ContentTemplate.vue'
-import type { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
+import type { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
 import { getMostRecentDate } from '../utils/util'
 import type { Port } from '@/infra/communication'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'
@@ -17,13 +17,13 @@ const {
   dailyResetTimeStorageService,
   reloadService,
   getCurrentDate,
-  pomodoroRecordStorageService,
+  focusSessionRecordStorageService,
   port
 } = defineProps<{
   dailyResetTimeStorageService: DailyResetTimeStorageService
   reloadService: ReloadService
   getCurrentDate: () => Date
-  pomodoroRecordStorageService: PomodoroRecordStorageService
+  focusSessionRecordStorageService: FocusSessionRecordStorageService
   port: Port<WorkRequest, WorkResponse>
 }>()
 
@@ -57,7 +57,7 @@ onBeforeMount(async () => {
 })
 
 async function setPomodoroStats(dailyResetTime: Time) {
-  const records = await pomodoroRecordStorageService.getAll()
+  const records = await focusSessionRecordStorageService.getAll()
   let inclusiveEndDate = getCurrentDate()
   const inclusiveStartDate = getMostRecentDate(dailyResetTime, inclusiveEndDate)
   for (let i = 0; i < pomodoroStats.value.length; i++) {
@@ -84,19 +84,19 @@ const onClickSave = async () => {
       <TimeInput v-model="dailyResetTime" data-test="time-input" />
       <p class="mt-1">
         <small>
-          The time at which the day resets for tracking completed pomodori is used to adjust the
-          statistics according to your preference.
+          The daily reset time for tracking completed focus sessions is used to adjust statistics
+          based on your preference.
         </small>
       </p>
     </BFormGroup>
     <BButton variant="primary" data-test="save-button" @click="onClickSave">Save</BButton>
     <div class="mt-4">
-      <h3>Last 7 Days Completed Pomodori</h3>
+      <h3>Focus Sessions Completed in the Last 7 Days</h3>
       <table class="table" data-test="stats-table">
         <thead>
           <tr>
             <th>Day</th>
-            <th>Completed Pomodori</th>
+            <th>Focus Sessions Completed</th>
           </tr>
         </thead>
         <tbody>

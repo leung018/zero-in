@@ -1,15 +1,17 @@
 import { FakeStorage, type Storage } from '../../../infra/storage'
-import type { PomodoroRecord } from '.'
+import type { FocusSessionRecord } from '.'
 import { ChromeStorageFactory } from '../../../chrome/storage'
-import { deserializePomodoroRecord, serializePomodoroRecord } from './serialize'
+import { deserializeFocusSessionRecord, serializeFocusSessionRecord } from './serialize'
 
-export class PomodoroRecordStorageService {
+const STORAGE_KEY = 'focusSessionRecords'
+
+export class FocusSessionRecordStorageService {
   static create() {
-    return new PomodoroRecordStorageService(ChromeStorageFactory.createLocalStorage())
+    return new FocusSessionRecordStorageService(ChromeStorageFactory.createLocalStorage())
   }
 
   static createFake() {
-    return new PomodoroRecordStorageService(new FakeStorage())
+    return new FocusSessionRecordStorageService(new FakeStorage())
   }
 
   private storage: Storage
@@ -18,16 +20,16 @@ export class PomodoroRecordStorageService {
     this.storage = storage
   }
 
-  async saveAll(records: PomodoroRecord[]) {
+  async saveAll(records: FocusSessionRecord[]) {
     return this.storage.set({
-      pomodoroRecords: records.map(serializePomodoroRecord)
+      [STORAGE_KEY]: records.map(serializeFocusSessionRecord)
     })
   }
 
-  async getAll(): Promise<PomodoroRecord[]> {
-    return this.storage.get('pomodoroRecords').then((result: any) => {
-      if (result.pomodoroRecords) {
-        return result.pomodoroRecords.map(deserializePomodoroRecord)
+  async getAll(): Promise<FocusSessionRecord[]> {
+    return this.storage.get(STORAGE_KEY).then((result: any) => {
+      if (result[STORAGE_KEY]) {
+        return result[STORAGE_KEY].map(deserializeFocusSessionRecord)
       } else {
         return []
       }

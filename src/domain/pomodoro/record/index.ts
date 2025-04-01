@@ -1,8 +1,8 @@
-export type PomodoroRecord = {
+export type FocusSessionRecord = {
   readonly completedAt: Date
 }
 
-export function newPomodoroRecord(completedAt: Date = new Date()): PomodoroRecord {
+export function newFocusSessionRecord(completedAt: Date = new Date()): FocusSessionRecord {
   return {
     completedAt
   }

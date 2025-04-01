@@ -5,20 +5,20 @@ import { Duration } from '../domain/pomodoro/duration'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import { startBackgroundListener } from '../test_utils/listener'
 import { FakeActionService } from '../infra/action'
-import { PomodoroTimerConfig } from '../domain/pomodoro/config'
-import { PomodoroRecordStorageService } from '../domain/pomodoro/record/storage'
-import { newPomodoroRecord } from '../domain/pomodoro/record'
+import { TimerConfig } from '../domain/pomodoro/config'
+import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
+import { newFocusSessionRecord } from '../domain/pomodoro/record'
 import { Time } from '../domain/time'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
     const { scheduler, timer, wrapper } = await mountPage({
-      timerConfig: PomodoroTimerConfig.newTestInstance({
+      timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
         longBreakDuration: new Duration({ seconds: 2 }),
-        numOfPomodoriPerCycle: 2
+        focusSessionsPerCycle: 2
       })
     })
 
@@ -43,10 +43,10 @@ describe('ReminderPage', () => {
 
   it('should click start button to start timer again', async () => {
     const { scheduler, timer, wrapper } = await mountPage({
-      timerConfig: PomodoroTimerConfig.newTestInstance({
+      timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 2 }),
-        numOfPomodoriPerCycle: 4
+        focusSessionsPerCycle: 4
       })
     })
 
@@ -67,15 +67,15 @@ describe('ReminderPage', () => {
   })
 
   it('should display daily completed pomodori', async () => {
-    const pomodoroRecordStorageService = PomodoroRecordStorageService.createFake()
-    await pomodoroRecordStorageService.saveAll([
-      newPomodoroRecord(new Date(2025, 2, 1, 15, 2)),
-      newPomodoroRecord(new Date(2025, 2, 1, 15, 3)),
-      newPomodoroRecord(new Date(2025, 2, 1, 15, 5))
+    const focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
+    await focusSessionRecordStorageService.saveAll([
+      newFocusSessionRecord(new Date(2025, 2, 1, 15, 2)),
+      newFocusSessionRecord(new Date(2025, 2, 1, 15, 3)),
+      newFocusSessionRecord(new Date(2025, 2, 1, 15, 5))
     ])
 
     const { wrapper } = await mountPage({
-      pomodoroRecordStorageService,
+      focusSessionRecordStorageService,
       dailyCutOffTime: new Time(15, 3),
       currentDate: new Date(2025, 2, 2, 14, 0)
     })
@@ -93,8 +93,8 @@ describe('ReminderPage', () => {
 })
 
 async function mountPage({
-  timerConfig = PomodoroTimerConfig.newTestInstance(),
-  pomodoroRecordStorageService = PomodoroRecordStorageService.createFake(),
+  timerConfig = TimerConfig.newTestInstance(),
+  focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake(),
   dailyCutOffTime = new Time(0, 0),
   currentDate = new Date()
 } = {}) {
@@ -111,7 +111,7 @@ async function mountPage({
       port: communicationManager.clientConnect(),
       closeCurrentTabService,
       soundService,
-      pomodoroRecordStorageService,
+      focusSessionRecordStorageService,
       dailyResetTimeStorageService,
       currentDate
     }

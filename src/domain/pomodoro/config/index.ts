@@ -1,35 +1,35 @@
 import { Duration } from '../duration'
 
-export class PomodoroTimerConfig {
+export class TimerConfig {
   static newTestInstance({
     focusDuration = new Duration({ minutes: 25 }),
     shortBreakDuration = new Duration({ minutes: 5 }),
     longBreakDuration = new Duration({ minutes: 15 }),
-    numOfPomodoriPerCycle = 4
-  } = {}): PomodoroTimerConfig {
-    return new PomodoroTimerConfig({
+    focusSessionsPerCycle = 4
+  } = {}): TimerConfig {
+    return new TimerConfig({
       focusDuration,
       shortBreakDuration,
       longBreakDuration,
-      numOfPomodoriPerCycle
+      focusSessionsPerCycle
     })
   }
 
   readonly focusDuration: Duration
   readonly shortBreakDuration: Duration
   readonly longBreakDuration: Duration
-  readonly numOfPomodoriPerCycle: number
+  readonly focusSessionsPerCycle: number
 
   constructor({
     focusDuration,
     shortBreakDuration,
     longBreakDuration,
-    numOfPomodoriPerCycle
+    focusSessionsPerCycle
   }: {
     focusDuration: Duration
     shortBreakDuration: Duration
     longBreakDuration: Duration
-    numOfPomodoriPerCycle: number
+    focusSessionsPerCycle: number
   }) {
     if (
       focusDuration.totalMilliseconds < 1000 ||
@@ -39,13 +39,13 @@ export class PomodoroTimerConfig {
       throw new Error('Duration must not be less than 1 second')
     }
 
-    if (numOfPomodoriPerCycle < 1) {
+    if (focusSessionsPerCycle < 1) {
       throw new Error('Number of pomodori per cycle must be greater than 0')
     }
 
     this.focusDuration = focusDuration
     this.shortBreakDuration = shortBreakDuration
     this.longBreakDuration = longBreakDuration
-    this.numOfPomodoriPerCycle = numOfPomodoriPerCycle
+    this.focusSessionsPerCycle = focusSessionsPerCycle
   }
 }

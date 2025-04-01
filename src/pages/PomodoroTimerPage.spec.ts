@@ -4,13 +4,13 @@ import { expect, describe, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
 import { FakeCommunicationManager } from '../infra/communication'
 import { startBackgroundListener } from '../test_utils/listener'
-import { PomodoroTimerConfig } from '../domain/pomodoro/config'
-import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
+import { TimerConfig } from '../domain/pomodoro/config'
+import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
 
 describe('PomodoroTimerPage', () => {
   it('should display initial stage and remaining time properly', async () => {
     const { wrapper } = await startListenerAndMountPage(
-      PomodoroTimerConfig.newTestInstance({
+      TimerConfig.newTestInstance({
         focusDuration: new Duration({ minutes: 9 })
       })
     )
@@ -22,7 +22,7 @@ describe('PomodoroTimerPage', () => {
 
   it('should reduce the time after timer is started', async () => {
     const { wrapper, scheduler } = await startListenerAndMountPage(
-      PomodoroTimerConfig.newTestInstance({
+      TimerConfig.newTestInstance({
         focusDuration: new Duration({ minutes: 25 })
       })
     )
@@ -36,7 +36,7 @@ describe('PomodoroTimerPage', () => {
 
   it('should reopened timer page can update the component if the timer is started already', async () => {
     const { wrapper, scheduler, communicationManager } = await startListenerAndMountPage(
-      PomodoroTimerConfig.newTestInstance({
+      TimerConfig.newTestInstance({
         focusDuration: new Duration({ minutes: 10 })
       })
     )
@@ -76,7 +76,7 @@ describe('PomodoroTimerPage', () => {
 
   it('should able to pause the timer', async () => {
     const { wrapper, scheduler, communicationManager } = await startListenerAndMountPage(
-      PomodoroTimerConfig.newTestInstance({
+      TimerConfig.newTestInstance({
         focusDuration: new Duration({ minutes: 10 })
       })
     )
@@ -115,7 +115,7 @@ describe('PomodoroTimerPage', () => {
 
   it('should able to restart timer', async () => {
     const { wrapper, scheduler } = await startListenerAndMountPage(
-      PomodoroTimerConfig.newTestInstance({
+      TimerConfig.newTestInstance({
         focusDuration: new Duration({ minutes: 10 })
       })
     )
@@ -134,10 +134,10 @@ describe('PomodoroTimerPage', () => {
 
   it('should display hint of break if focus duration has passed', async () => {
     const { wrapper, scheduler } = await startListenerAndMountPage(
-      PomodoroTimerConfig.newTestInstance({
+      TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 2 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
-        numOfPomodoriPerCycle: 4
+        focusSessionsPerCycle: 4
       })
     )
 
@@ -146,7 +146,7 @@ describe('PomodoroTimerPage', () => {
     scheduler.advanceTime(2000)
     await flushPromises()
 
-    assertCurrentStage(wrapper, '1st Short Break')
+    assertCurrentStage(wrapper, '1st Break')
 
     expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:01')
 
@@ -158,7 +158,7 @@ describe('PomodoroTimerPage', () => {
 
   it('should prevent bug of last second pause and restart may freezing the component', async () => {
     const { wrapper, scheduler } = await startListenerAndMountPage(
-      PomodoroTimerConfig.newTestInstance({
+      TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 2 })
       })
@@ -180,11 +180,11 @@ describe('PomodoroTimerPage', () => {
 
   it('should display hint of long break', async () => {
     const { wrapper, scheduler } = await startListenerAndMountPage(
-      PomodoroTimerConfig.newTestInstance({
+      TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
         longBreakDuration: new Duration({ seconds: 2 }),
-        numOfPomodoriPerCycle: 2
+        focusSessionsPerCycle: 2
       })
     )
 
@@ -209,8 +209,8 @@ describe('PomodoroTimerPage', () => {
 
   it('should render restart focus and short break buttons properly', async () => {
     const { wrapper } = await startListenerAndMountPage(
-      PomodoroTimerConfig.newTestInstance({
-        numOfPomodoriPerCycle: 3
+      TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 3
       })
     )
     await flushPromises()
@@ -233,8 +233,8 @@ describe('PomodoroTimerPage', () => {
 
   it('should able to restart the focus', async () => {
     const { wrapper } = await startListenerAndMountPage(
-      PomodoroTimerConfig.newTestInstance({
-        numOfPomodoriPerCycle: 3
+      TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 3
       })
     )
     await flushPromises()
@@ -251,26 +251,26 @@ describe('PomodoroTimerPage', () => {
 
   it('should able to restart the short break', async () => {
     const { wrapper } = await startListenerAndMountPage(
-      PomodoroTimerConfig.newTestInstance({
-        numOfPomodoriPerCycle: 4
+      TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 4
       })
     )
     await flushPromises()
 
     await restartShortBreak(wrapper, 1)
-    assertCurrentStage(wrapper, '1st Short Break')
+    assertCurrentStage(wrapper, '1st Break')
 
     await restartShortBreak(wrapper, 2)
-    assertCurrentStage(wrapper, '2nd Short Break')
+    assertCurrentStage(wrapper, '2nd Break')
 
     await restartShortBreak(wrapper, 3)
-    assertCurrentStage(wrapper, '3rd Short Break')
+    assertCurrentStage(wrapper, '3rd Break')
   })
 
   it('should able to restart long break', async () => {
     const { wrapper } = await startListenerAndMountPage(
-      PomodoroTimerConfig.newTestInstance({
-        numOfPomodoriPerCycle: 4
+      TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 4
       })
     )
     await flushPromises()
@@ -280,7 +280,7 @@ describe('PomodoroTimerPage', () => {
   })
 })
 
-async function startListenerAndMountPage(timerConfig = PomodoroTimerConfig.newTestInstance()) {
+async function startListenerAndMountPage(timerConfig = TimerConfig.newTestInstance()) {
   const { scheduler, communicationManager, timerConfigStorageService } =
     await startBackgroundListener({
       timerConfig
@@ -294,7 +294,7 @@ async function startListenerAndMountPage(timerConfig = PomodoroTimerConfig.newTe
 
 function mountPage({
   port = new FakeCommunicationManager().clientConnect(),
-  timerConfigStorageService = PomodoroTimerConfigStorageService.createFake()
+  timerConfigStorageService = TimerConfigStorageService.createFake()
 } = {}) {
   return mount(PomodoroTimerPage, {
     props: {

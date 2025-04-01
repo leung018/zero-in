@@ -8,7 +8,7 @@ import { BrowsingRulesStorageService } from './domain/browsing_rules/storage'
 import { ChromeCommunicationManager } from './chrome/communication'
 import { DailyResetTimeStorageService } from './domain/daily_reset_time/storage'
 import { ReloadService } from './chrome/reload'
-import { PomodoroRecordStorageService } from './domain/pomodoro/record/storage'
+import { FocusSessionRecordStorageService } from './domain/pomodoro/record/storage'
 
 const port = new ChromeCommunicationManager().clientConnect()
 
@@ -48,7 +48,7 @@ const routeMap: Record<PATH, Route> = {
       dailyResetTimeStorageService: DailyResetTimeStorageService.create(),
       reloadService: new ReloadService(),
       getCurrentDate: () => new Date(),
-      pomodoroRecordStorageService: PomodoroRecordStorageService.create(),
+      focusSessionRecordStorageService: FocusSessionRecordStorageService.create(),
       port
     }
   }
