@@ -3,7 +3,7 @@ import { TimerConfig } from '.'
 import { Duration } from '../duration'
 
 describe('TimerConfig', () => {
-  it('should reject 0 duration', () => {
+  it('should reject duration less than 1 second', () => {
     const expectedError = 'Duration must not be less than 1 second'
     expect(() => {
       TimerConfig.newTestInstance({
@@ -22,12 +22,20 @@ describe('TimerConfig', () => {
     }).toThrowError(expectedError)
   })
 
-  it('should reject number of pomodori per cycle less than 1', () => {
-    expect(() => {
-      TimerConfig.newTestInstance({
-        focusSessionsPerCycle: 0
-      })
-    }).toThrowError('Number of pomodori per cycle must be greater than 0')
+  it('should set to 1 if focusSessionsPerCycle less than 0', () => {
+    let config = TimerConfig.newTestInstance({
+      focusSessionsPerCycle: 0
+    })
+    expect(config.focusSessionsPerCycle).toBe(1)
+
+    config = TimerConfig.newTestInstance({
+      focusSessionsPerCycle: 1
+    })
+    expect(config.focusSessionsPerCycle).toBe(1)
+    config = TimerConfig.newTestInstance({
+      focusSessionsPerCycle: 10
+    })
+    expect(config.focusSessionsPerCycle).toBe(10)
   })
 
   it('should create instance for valid input', () => {

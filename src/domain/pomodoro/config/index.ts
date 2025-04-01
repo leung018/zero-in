@@ -40,7 +40,7 @@ export class TimerConfig {
     }
 
     if (focusSessionsPerCycle < 1) {
-      throw new Error('Number of pomodori per cycle must be greater than 0')
+      focusSessionsPerCycle = 1
     }
 
     this.focusDuration = focusDuration
