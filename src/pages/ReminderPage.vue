@@ -83,7 +83,7 @@ const onClickStart = () => {
     <BButton variant="success" data-test="start-button" @click="onClickStart">Start</BButton>
     <p class="mt-3">
       <span
-        >Number of pomodori completed since last
+        >Number of focus sessions completed since last
         <span data-test="reset-time">{{ dailyResetTime.toHhMmString() }}</span></span
       >
       <span class="daily-completed-pomodori ms-2" data-test="daily-completed-pomodori">{{

@@ -84,19 +84,19 @@ const onClickSave = async () => {
       <TimeInput v-model="dailyResetTime" data-test="time-input" />
       <p class="mt-1">
         <small>
-          The time at which the day resets for tracking completed pomodori is used to adjust the
-          statistics according to your preference.
+          The daily reset time for tracking completed focus sessions is used to adjust statistics
+          based on your preference.
         </small>
       </p>
     </BFormGroup>
     <BButton variant="primary" data-test="save-button" @click="onClickSave">Save</BButton>
     <div class="mt-4">
-      <h3>Last 7 Days Completed Pomodori</h3>
+      <h3>Focus Sessions Completed in the Last 7 Days</h3>
       <table class="table" data-test="stats-table">
         <thead>
           <tr>
             <th>Day</th>
-            <th>Completed Pomodori</th>
+            <th>Focus Sessions Completed</th>
           </tr>
         </thead>
         <tbody>
