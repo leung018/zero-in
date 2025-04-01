@@ -20,14 +20,14 @@ export class PomodoroRecordStorageService {
 
   async saveAll(records: PomodoroRecord[]) {
     return this.storage.set({
-      pomodoroRecords: records.map(serializePomodoroRecord)
+      focusSessionRecords: records.map(serializePomodoroRecord)
     })
   }
 
   async getAll(): Promise<PomodoroRecord[]> {
-    return this.storage.get('pomodoroRecords').then((result: any) => {
-      if (result.pomodoroRecords) {
-        return result.pomodoroRecords.map(deserializePomodoroRecord)
+    return this.storage.get('focusSessionRecords').then((result: any) => {
+      if (result.focusSessionRecords) {
+        return result.focusSessionRecords.map(deserializePomodoroRecord)
       } else {
         return []
       }
