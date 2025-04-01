@@ -2,6 +2,20 @@ import { BackgroundListener } from './listener'
 import { BrowsingControlTogglingService } from '../domain/browsing_control_toggling'
 import { ChromeNewTabService } from '../chrome/new_tab'
 
+// TODO: Little hack for the migration of storage key. Will remove it later
+changeStorageKey('pomodoroTimerState', 'timerState')
+changeStorageKey('pomodoroRecords', 'focusSessionRecords')
+
+function changeStorageKey(oldKey: string, newKey: string) {
+  chrome.storage.local.get(oldKey, (result) => {
+    if (result[oldKey]) {
+      chrome.storage.local.set({ [newKey]: result[oldKey] }, () => {
+        chrome.storage.local.remove(oldKey)
+      })
+    }
+  })
+}
+
 // Noted that e2e tests are hard to cover all of the below related to chrome api properly. Better use a bit manual testing if needed.
 
 const redirectTogglingService = BrowsingControlTogglingService.create()
