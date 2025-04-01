@@ -3,6 +3,8 @@ import type { PomodoroRecord } from '.'
 import { ChromeStorageFactory } from '../../../chrome/storage'
 import { deserializePomodoroRecord, serializePomodoroRecord } from './serialize'
 
+const STORAGE_KEY = 'focusSessionRecords'
+
 export class PomodoroRecordStorageService {
   static create() {
     return new PomodoroRecordStorageService(ChromeStorageFactory.createLocalStorage())
@@ -20,14 +22,14 @@ export class PomodoroRecordStorageService {
 
   async saveAll(records: PomodoroRecord[]) {
     return this.storage.set({
-      focusSessionRecords: records.map(serializePomodoroRecord)
+      [STORAGE_KEY]: records.map(serializePomodoroRecord)
     })
   }
 
   async getAll(): Promise<PomodoroRecord[]> {
-    return this.storage.get('focusSessionRecords').then((result: any) => {
-      if (result.focusSessionRecords) {
-        return result.focusSessionRecords.map(deserializePomodoroRecord)
+    return this.storage.get(STORAGE_KEY).then((result: any) => {
+      if (result[STORAGE_KEY]) {
+        return result[STORAGE_KEY].map(deserializePomodoroRecord)
       } else {
         return []
       }
