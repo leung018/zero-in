@@ -12,7 +12,7 @@ describe('TestingConfigPage', () => {
         focusDuration: new Duration({ seconds: 24 }),
         shortBreakDuration: new Duration({ seconds: 4 }),
         longBreakDuration: new Duration({ seconds: 14 }),
-        numOfPomodoriPerCycle: 3
+        focusSessionsPerCycle: 3
       })
     )
     await flushPromises()
@@ -29,7 +29,7 @@ describe('TestingConfigPage', () => {
         focusDuration: new Duration({ seconds: 24 }),
         shortBreakDuration: new Duration({ seconds: 4 }),
         longBreakDuration: new Duration({ seconds: 14 }),
-        numOfPomodoriPerCycle: 3
+        focusSessionsPerCycle: 3
       })
     )
     await flushPromises()
@@ -51,7 +51,7 @@ describe('TestingConfigPage', () => {
       focusDuration: new Duration({ seconds: newFocusDuration }),
       shortBreakDuration: new Duration({ seconds: newShortBreakDuration }),
       longBreakDuration: new Duration({ seconds: newLongBreakDuration }),
-      numOfPomodoriPerCycle: newNumOfPomodoriPerCycle
+      focusSessionsPerCycle: newNumOfPomodoriPerCycle
     })
     expect(await timerConfigStorageService.get()).toEqual(newConfig)
 

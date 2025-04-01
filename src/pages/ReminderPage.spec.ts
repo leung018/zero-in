@@ -18,7 +18,7 @@ describe('ReminderPage', () => {
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
         longBreakDuration: new Duration({ seconds: 2 }),
-        numOfPomodoriPerCycle: 2
+        focusSessionsPerCycle: 2
       })
     })
 
@@ -46,7 +46,7 @@ describe('ReminderPage', () => {
       timerConfig: PomodoroTimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 2 }),
-        numOfPomodoriPerCycle: 4
+        focusSessionsPerCycle: 4
       })
     })
 

@@ -168,7 +168,7 @@ export class PomodoroTimer {
   }
 
   private resetNumOfPomodoriCompleted(n: number) {
-    const upperLimit = this.config.numOfPomodoriPerCycle - 1
+    const upperLimit = this.config.focusSessionsPerCycle - 1
     n = Math.min(upperLimit, n)
     n = Math.max(0, n)
     this.numOfPomodoriCompleted = n
@@ -206,7 +206,7 @@ export class PomodoroTimer {
   private handleFocusComplete() {
     this.numOfPomodoriCompleted++
 
-    if (this.numOfPomodoriCompleted >= this.config.numOfPomodoriPerCycle) {
+    if (this.numOfPomodoriCompleted >= this.config.focusSessionsPerCycle) {
       this.setToBeginOfLongBreak()
     } else {
       this.setToBeginOfShortBreak()

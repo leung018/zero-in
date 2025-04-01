@@ -5,7 +5,7 @@ type SerializedPomodoroTimerConfig = {
   focusDurationSeconds: number
   shortBreakDurationSeconds: number
   longBreakDurationSeconds: number
-  numOfPomodoriPerCycle: number
+  focusSessionsPerCycle: number
 }
 
 export function serializePomodoroTimerConfig(
@@ -15,7 +15,7 @@ export function serializePomodoroTimerConfig(
     focusDurationSeconds: config.focusDuration.remainingSeconds(),
     shortBreakDurationSeconds: config.shortBreakDuration.remainingSeconds(),
     longBreakDurationSeconds: config.longBreakDuration.remainingSeconds(),
-    numOfPomodoriPerCycle: config.numOfPomodoriPerCycle
+    focusSessionsPerCycle: config.focusSessionsPerCycle
   }
 }
 
@@ -26,6 +26,6 @@ export function deserializePomodoroTimerConfig(
     focusDuration: new Duration({ seconds: data.focusDurationSeconds }),
     shortBreakDuration: new Duration({ seconds: data.shortBreakDurationSeconds }),
     longBreakDuration: new Duration({ seconds: data.longBreakDurationSeconds }),
-    numOfPomodoriPerCycle: data.numOfPomodoriPerCycle
+    focusSessionsPerCycle: data.focusSessionsPerCycle
   })
 }

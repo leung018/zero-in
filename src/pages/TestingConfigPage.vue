@@ -15,7 +15,7 @@ const { timerConfigStorageService, port } = defineProps<{
 const focusDurationSeconds = ref(0)
 const shortBreakDurationSeconds = ref(0)
 const longBreakDurationSeconds = ref(0)
-const numOfPomodoriPerCycle = ref(0)
+const focusSessionsPerCycle = ref(0)
 
 onBeforeMount(async () => {
   const timerConfig = await timerConfigStorageService.get()
@@ -23,7 +23,7 @@ onBeforeMount(async () => {
   focusDurationSeconds.value = timerConfig.focusDuration.remainingSeconds()
   shortBreakDurationSeconds.value = timerConfig.shortBreakDuration.remainingSeconds()
   longBreakDurationSeconds.value = timerConfig.longBreakDuration.remainingSeconds()
-  numOfPomodoriPerCycle.value = timerConfig.numOfPomodoriPerCycle
+  focusSessionsPerCycle.value = timerConfig.focusSessionsPerCycle
 })
 
 const onClickSave = async () => {
@@ -31,7 +31,7 @@ const onClickSave = async () => {
     focusDuration: new Duration({ seconds: focusDurationSeconds.value }),
     shortBreakDuration: new Duration({ seconds: shortBreakDurationSeconds.value }),
     longBreakDuration: new Duration({ seconds: longBreakDurationSeconds.value }),
-    numOfPomodoriPerCycle: numOfPomodoriPerCycle.value
+    focusSessionsPerCycle: focusSessionsPerCycle.value
   })
   await timerConfigStorageService.save(timerConfig)
   port.send({
@@ -76,7 +76,7 @@ const onClickSave = async () => {
           type="number"
           min="1"
           data-test="num-of-pomodori-per-cycle"
-          v-model.number="numOfPomodoriPerCycle"
+          v-model.number="focusSessionsPerCycle"
         ></b-form-input>
       </b-form-group>
       <div class="mt-4">

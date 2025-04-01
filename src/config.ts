@@ -15,7 +15,7 @@ const getDefaultPomodoroTimerConfig = () => {
     focusDuration: new Duration({ minutes: 25 }),
     shortBreakDuration: new Duration({ minutes: 5 }),
     longBreakDuration: new Duration({ minutes: 15 }),
-    numOfPomodoriPerCycle: 4
+    focusSessionsPerCycle: 4
   })
 }
 

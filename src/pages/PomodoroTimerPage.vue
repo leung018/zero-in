@@ -17,7 +17,7 @@ const durationLeft = ref<Duration>(new Duration({ seconds: 0 }))
 const isRunning = ref(false)
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
 const numOfPomodoriCompleted = ref(0)
-const numOfPomodoriPerCycle = ref(0)
+const focusSessionsPerCycle = ref(0)
 
 const displayTime = computed(() => {
   const totalSeconds = durationLeft.value.remainingSeconds()
@@ -39,7 +39,7 @@ const currentStage = computed(() => {
 
 onBeforeMount(async () => {
   timerConfigStorageService.get().then((timerConfig) => {
-    numOfPomodoriPerCycle.value = timerConfig.numOfPomodoriPerCycle
+    focusSessionsPerCycle.value = timerConfig.focusSessionsPerCycle
   })
 
   port.onMessage((message) => {
@@ -113,7 +113,7 @@ const onClickRestartLongBreak = () => {
     <div class="mt-4">
       <BButton variant="dark" v-b-toggle.restart-menu>Restart</BButton>
       <BCollapse class="mt-2" id="restart-menu">
-        <BRow v-for="nth in numOfPomodoriPerCycle" :key="nth">
+        <BRow v-for="nth in focusSessionsPerCycle" :key="nth">
           <BCol>
             <BButton
               class="mt-2 w-100"
@@ -123,7 +123,7 @@ const onClickRestartLongBreak = () => {
               >{{ getNumberWithOrdinal(nth) }} Focus</BButton
             >
           </BCol>
-          <BCol v-if="nth < numOfPomodoriPerCycle">
+          <BCol v-if="nth < focusSessionsPerCycle">
             <BButton
               class="mt-2 w-100"
               variant="secondary"

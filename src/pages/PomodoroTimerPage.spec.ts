@@ -137,7 +137,7 @@ describe('PomodoroTimerPage', () => {
       PomodoroTimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 2 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
-        numOfPomodoriPerCycle: 4
+        focusSessionsPerCycle: 4
       })
     )
 
@@ -184,7 +184,7 @@ describe('PomodoroTimerPage', () => {
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
         longBreakDuration: new Duration({ seconds: 2 }),
-        numOfPomodoriPerCycle: 2
+        focusSessionsPerCycle: 2
       })
     )
 
@@ -210,7 +210,7 @@ describe('PomodoroTimerPage', () => {
   it('should render restart focus and short break buttons properly', async () => {
     const { wrapper } = await startListenerAndMountPage(
       PomodoroTimerConfig.newTestInstance({
-        numOfPomodoriPerCycle: 3
+        focusSessionsPerCycle: 3
       })
     )
     await flushPromises()
@@ -234,7 +234,7 @@ describe('PomodoroTimerPage', () => {
   it('should able to restart the focus', async () => {
     const { wrapper } = await startListenerAndMountPage(
       PomodoroTimerConfig.newTestInstance({
-        numOfPomodoriPerCycle: 3
+        focusSessionsPerCycle: 3
       })
     )
     await flushPromises()
@@ -252,7 +252,7 @@ describe('PomodoroTimerPage', () => {
   it('should able to restart the short break', async () => {
     const { wrapper } = await startListenerAndMountPage(
       PomodoroTimerConfig.newTestInstance({
-        numOfPomodoriPerCycle: 4
+        focusSessionsPerCycle: 4
       })
     )
     await flushPromises()
@@ -270,7 +270,7 @@ describe('PomodoroTimerPage', () => {
   it('should able to restart long break', async () => {
     const { wrapper } = await startListenerAndMountPage(
       PomodoroTimerConfig.newTestInstance({
-        numOfPomodoriPerCycle: 4
+        focusSessionsPerCycle: 4
       })
     )
     await flushPromises()

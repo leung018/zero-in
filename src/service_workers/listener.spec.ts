@@ -166,7 +166,7 @@ describe('BackgroundListener', () => {
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ minutes: 2 }),
         longBreakDuration: new Duration({ minutes: 4 }),
-        numOfPomodoriPerCycle: 2
+        focusSessionsPerCycle: 2
       })
     })
 
@@ -189,7 +189,7 @@ describe('BackgroundListener', () => {
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ minutes: 2 }),
         longBreakDuration: new Duration({ minutes: 4 }),
-        numOfPomodoriPerCycle: 1
+        focusSessionsPerCycle: 1
       })
     })
 
@@ -249,7 +249,7 @@ describe('BackgroundListener', () => {
     const { timer } = await startListener({
       timerConfig: PomodoroTimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
-        numOfPomodoriPerCycle: 2
+        focusSessionsPerCycle: 2
       }),
       timerStateStorageService
     })
