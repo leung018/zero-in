@@ -20,7 +20,7 @@ const openOptionsPage = () => {
     </BButton>
     <PomodoroTimerPage
       :port="new ChromeCommunicationManager().clientConnect()"
-      :timerConfigStorageService="TimerConfigStorageService.createFake()"
+      :timerConfigStorageService="TimerConfigStorageService.create()"
     />
   </div>
 </template>
