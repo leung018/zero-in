@@ -18,8 +18,8 @@ import { MultipleActionService } from '../infra/multiple_actions'
 import { ChromeNotificationService } from '../chrome/notification'
 import { PomodoroTimerStateStorageService } from '../domain/pomodoro/storage'
 import { ChromeCloseTabsService } from '../chrome/close_tabs'
-import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
-import type { PomodoroTimerConfig } from '../domain/pomodoro/config'
+import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
+import type { TimerConfig } from '../domain/pomodoro/config'
 import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
 import { newFocusSessionRecord } from '../domain/pomodoro/record'
 import { FocusSessionRecordHousekeeper } from '../domain/pomodoro/record/house_keep'
@@ -43,13 +43,13 @@ export class BackgroundListener {
       reminderService,
       badgeDisplayService: new ChromeBadgeDisplayService(),
       timerStateStorageService: PomodoroTimerStateStorageService.create(),
-      timerConfigStorageService: PomodoroTimerConfigStorageService.create(),
+      timerConfigStorageService: TimerConfigStorageService.create(),
       closeTabsService: new ChromeCloseTabsService(config.getReminderPageUrl())
     })
   }
 
   static async startFake({
-    timerFactory = (timerConfig: PomodoroTimerConfig) => PomodoroTimer.createFake({ timerConfig }),
+    timerFactory = (timerConfig: TimerConfig) => PomodoroTimer.createFake({ timerConfig }),
     focusSessionRecordHouseKeepDays = 30,
     focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake(),
     communicationManager = new FakeCommunicationManager(),
@@ -57,11 +57,11 @@ export class BackgroundListener {
     reminderService = new FakeActionService(),
     badgeDisplayService = new FakeBadgeDisplayService(),
     timerStateStorageService = PomodoroTimerStateStorageService.createFake(),
-    timerConfigStorageService = PomodoroTimerConfigStorageService.createFake(),
+    timerConfigStorageService = TimerConfigStorageService.createFake(),
     closeTabsService = new FakeActionService(),
     getCurrentDate = undefined
   }: {
-    timerFactory?: (timerConfig: PomodoroTimerConfig) => PomodoroTimer
+    timerFactory?: (timerConfig: TimerConfig) => PomodoroTimer
     focusSessionRecordHouseKeepDays?: number
     focusSessionRecordStorageService?: FocusSessionRecordStorageService
     communicationManager?: CommunicationManager
@@ -69,7 +69,7 @@ export class BackgroundListener {
     reminderService?: ActionService
     badgeDisplayService?: BadgeDisplayService
     timerStateStorageService?: PomodoroTimerStateStorageService
-    timerConfigStorageService?: PomodoroTimerConfigStorageService
+    timerConfigStorageService?: TimerConfigStorageService
     closeTabsService?: ActionService
     getCurrentDate?: () => Date
   } = {}) {
@@ -104,12 +104,12 @@ export class BackgroundListener {
     communicationManager: CommunicationManager
     focusSessionRecordHouseKeepDays: number
     focusSessionRecordStorageService: FocusSessionRecordStorageService
-    timerFactory: (timerConfig: PomodoroTimerConfig) => PomodoroTimer
+    timerFactory: (timerConfig: TimerConfig) => PomodoroTimer
     redirectTogglingService: BrowsingControlTogglingService
     reminderService: ActionService
     badgeDisplayService: BadgeDisplayService
     timerStateStorageService: PomodoroTimerStateStorageService
-    timerConfigStorageService: PomodoroTimerConfigStorageService
+    timerConfigStorageService: TimerConfigStorageService
     closeTabsService: ActionService
     getCurrentDate?: () => Date
   }) {
@@ -148,7 +148,7 @@ export class BackgroundListener {
   private reminderService: ActionService
   private badgeDisplayService: BadgeDisplayService
   private timerStateStorageService: PomodoroTimerStateStorageService
-  private timerConfigStorageService: PomodoroTimerConfigStorageService
+  private timerConfigStorageService: TimerConfigStorageService
   private closeTabsService: ActionService
 
   private focusSessionRecordStorageService: FocusSessionRecordStorageService
@@ -175,7 +175,7 @@ export class BackgroundListener {
     reminderService: ActionService
     badgeDisplayService: BadgeDisplayService
     timerStateStorageService: PomodoroTimerStateStorageService
-    timerConfigStorageService: PomodoroTimerConfigStorageService
+    timerConfigStorageService: TimerConfigStorageService
     focusSessionRecordStorageService: FocusSessionRecordStorageService
     focusSessionRecordHouseKeepDays: number
     closeTabsService: ActionService

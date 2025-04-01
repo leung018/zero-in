@@ -4,13 +4,13 @@ import {
   PeriodicTaskSchedulerImpl,
   type PeriodicTaskScheduler
 } from '../../infra/scheduler'
-import type { PomodoroTimerConfig } from './config'
+import type { TimerConfig } from './config'
 import { Duration } from './duration'
 import { PomodoroStage } from './stage'
 import { SubscriptionManager } from '../../utils/subscription'
 
 export class PomodoroTimer {
-  static create(timerConfig: PomodoroTimerConfig) {
+  static create(timerConfig: TimerConfig) {
     return new PomodoroTimer({
       scheduler: new PeriodicTaskSchedulerImpl(),
       timerConfig
@@ -19,10 +19,10 @@ export class PomodoroTimer {
 
   static createFake({
     scheduler = new FakePeriodicTaskScheduler(),
-    timerConfig = config.getDefaultPomodoroTimerConfig()
+    timerConfig = config.getDefaultTimerConfig()
   }: {
     scheduler?: PeriodicTaskScheduler
-    timerConfig?: PomodoroTimerConfig
+    timerConfig?: TimerConfig
   } = {}) {
     return new PomodoroTimer({
       timerConfig,
@@ -32,7 +32,7 @@ export class PomodoroTimer {
 
   private stage: PomodoroStage = PomodoroStage.FOCUS
 
-  private config: PomodoroTimerConfig
+  private config: TimerConfig
 
   private isRunning: boolean = false
 
@@ -50,7 +50,7 @@ export class PomodoroTimer {
     timerConfig,
     scheduler
   }: {
-    timerConfig: PomodoroTimerConfig
+    timerConfig: TimerConfig
     scheduler: PeriodicTaskScheduler
   }) {
     this.config = this.newInternalConfig(timerConfig)
@@ -58,7 +58,7 @@ export class PomodoroTimer {
     this.scheduler = scheduler
   }
 
-  private newInternalConfig(config: PomodoroTimerConfig): PomodoroTimerConfig {
+  private newInternalConfig(config: TimerConfig): TimerConfig {
     return {
       ...config,
       focusDuration: this.roundUpToSeconds(config.focusDuration),
@@ -82,11 +82,11 @@ export class PomodoroTimer {
     }
   }
 
-  getConfig(): Readonly<PomodoroTimerConfig> {
+  getConfig(): Readonly<TimerConfig> {
     return this.config
   }
 
-  setConfig(config: PomodoroTimerConfig) {
+  setConfig(config: TimerConfig) {
     this.config = this.newInternalConfig(config)
     this.setState({
       remainingSeconds: this.config.focusDuration.remainingSeconds(),

@@ -8,37 +8,37 @@ import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { BackgroundListener } from '../service_workers/listener'
 import { PomodoroTimerStateStorageService } from '../domain/pomodoro/storage'
 import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
-import type { PomodoroTimerConfig } from '../domain/pomodoro/config'
-import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
+import type { TimerConfig } from '../domain/pomodoro/config'
+import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
 
 export async function startBackgroundListener({
   focusSessionRecordHouseKeepDays = 30,
-  timerConfig = config.getDefaultPomodoroTimerConfig(),
+  timerConfig = config.getDefaultTimerConfig(),
   redirectTogglingService = BrowsingControlTogglingService.createFake(),
   reminderService = new FakeActionService(),
   badgeDisplayService = new FakeBadgeDisplayService(),
   communicationManager = new FakeCommunicationManager(),
   timerStateStorageService = PomodoroTimerStateStorageService.createFake(),
-  timerConfigStorageService = PomodoroTimerConfigStorageService.createFake(),
+  timerConfigStorageService = TimerConfigStorageService.createFake(),
   closeTabsService = new FakeActionService(),
   focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake(),
   getCurrentDate = undefined
 }: {
   focusSessionRecordHouseKeepDays?: number
-  timerConfig?: PomodoroTimerConfig
+  timerConfig?: TimerConfig
   redirectTogglingService?: BrowsingControlTogglingService
   reminderService?: FakeActionService
   badgeDisplayService?: FakeBadgeDisplayService
   communicationManager?: FakeCommunicationManager
   timerStateStorageService?: PomodoroTimerStateStorageService
-  timerConfigStorageService?: PomodoroTimerConfigStorageService
+  timerConfigStorageService?: TimerConfigStorageService
   closeTabsService?: FakeActionService
   focusSessionRecordStorageService?: FocusSessionRecordStorageService
   getCurrentDate?: () => Date
 }) {
   const scheduler = new FakePeriodicTaskScheduler()
   await timerConfigStorageService.save(timerConfig)
-  const timerFactory = (tc: PomodoroTimerConfig) => {
+  const timerFactory = (tc: TimerConfig) => {
     return PomodoroTimer.createFake({
       scheduler,
       timerConfig: tc

@@ -5,7 +5,7 @@ import { Duration } from '../domain/pomodoro/duration'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import { startBackgroundListener } from '../test_utils/listener'
 import { FakeActionService } from '../infra/action'
-import { PomodoroTimerConfig } from '../domain/pomodoro/config'
+import { TimerConfig } from '../domain/pomodoro/config'
 import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
 import { newFocusSessionRecord } from '../domain/pomodoro/record'
 import { Time } from '../domain/time'
@@ -14,7 +14,7 @@ import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
     const { scheduler, timer, wrapper } = await mountPage({
-      timerConfig: PomodoroTimerConfig.newTestInstance({
+      timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
         longBreakDuration: new Duration({ seconds: 2 }),
@@ -43,7 +43,7 @@ describe('ReminderPage', () => {
 
   it('should click start button to start timer again', async () => {
     const { scheduler, timer, wrapper } = await mountPage({
-      timerConfig: PomodoroTimerConfig.newTestInstance({
+      timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 2 }),
         focusSessionsPerCycle: 4
@@ -93,7 +93,7 @@ describe('ReminderPage', () => {
 })
 
 async function mountPage({
-  timerConfig = PomodoroTimerConfig.newTestInstance(),
+  timerConfig = TimerConfig.newTestInstance(),
   focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake(),
   dailyCutOffTime = new Time(0, 0),
   currentDate = new Date()

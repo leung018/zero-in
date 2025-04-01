@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PomodoroTimerConfig } from '../domain/pomodoro/config'
+import { TimerConfig } from '../domain/pomodoro/config'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import TestingConfigPage from './TestingConfigPage.vue'
 import { Duration } from '../domain/pomodoro/duration'
@@ -8,7 +8,7 @@ import { startBackgroundListener } from '../test_utils/listener'
 describe('TestingConfigPage', () => {
   it('should render timer config', async () => {
     const { wrapper } = await mountPage(
-      new PomodoroTimerConfig({
+      new TimerConfig({
         focusDuration: new Duration({ seconds: 24 }),
         shortBreakDuration: new Duration({ seconds: 4 }),
         longBreakDuration: new Duration({ seconds: 14 }),
@@ -25,7 +25,7 @@ describe('TestingConfigPage', () => {
 
   it('should update timer config', async () => {
     const { timerConfigStorageService, wrapper, timer } = await mountPage(
-      new PomodoroTimerConfig({
+      new TimerConfig({
         focusDuration: new Duration({ seconds: 24 }),
         shortBreakDuration: new Duration({ seconds: 4 }),
         longBreakDuration: new Duration({ seconds: 14 }),
@@ -47,7 +47,7 @@ describe('TestingConfigPage', () => {
     await wrapper.find('[data-test="save-button"]').trigger('click')
     await flushPromises()
 
-    const newConfig = new PomodoroTimerConfig({
+    const newConfig = new TimerConfig({
       focusDuration: new Duration({ seconds: newFocusDuration }),
       shortBreakDuration: new Duration({ seconds: newShortBreakDuration }),
       longBreakDuration: new Duration({ seconds: newLongBreakDuration }),
@@ -60,7 +60,7 @@ describe('TestingConfigPage', () => {
   })
 })
 
-async function mountPage(initialTimerConfig: PomodoroTimerConfig) {
+async function mountPage(initialTimerConfig: TimerConfig) {
   const { timerConfigStorageService, timer, communicationManager } = await startBackgroundListener({
     timerConfig: initialTimerConfig
   })

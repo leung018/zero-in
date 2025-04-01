@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { PomodoroTimerConfig } from '../domain/pomodoro/config'
-import { PomodoroTimerConfigStorageService } from '../domain/pomodoro/config/storage'
+import { TimerConfig } from '../domain/pomodoro/config'
+import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
 import { defineProps, onBeforeMount, ref } from 'vue'
 import { Duration } from '../domain/pomodoro/duration'
 import type { Port } from '../infra/communication'
@@ -9,7 +9,7 @@ import type { WorkResponse } from '@/service_workers/response'
 
 const { timerConfigStorageService, port } = defineProps<{
   port: Port<WorkRequest, WorkResponse>
-  timerConfigStorageService: PomodoroTimerConfigStorageService
+  timerConfigStorageService: TimerConfigStorageService
 }>()
 
 const focusDurationSeconds = ref(0)
@@ -27,7 +27,7 @@ onBeforeMount(async () => {
 })
 
 const onClickSave = async () => {
-  const timerConfig = new PomodoroTimerConfig({
+  const timerConfig = new TimerConfig({
     focusDuration: new Duration({ seconds: focusDurationSeconds.value }),
     shortBreakDuration: new Duration({ seconds: shortBreakDurationSeconds.value }),
     longBreakDuration: new Duration({ seconds: longBreakDurationSeconds.value }),

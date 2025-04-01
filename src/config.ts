@@ -1,4 +1,4 @@
-import { PomodoroTimerConfig } from './domain/pomodoro/config'
+import { TimerConfig } from './domain/pomodoro/config'
 import { Duration } from './domain/pomodoro/duration'
 import type { BadgeColor } from './infra/badge'
 
@@ -10,8 +10,8 @@ const getReminderPageUrl = () => {
   return chrome.runtime.getURL('reminder.html')
 }
 
-const getDefaultPomodoroTimerConfig = () => {
-  return new PomodoroTimerConfig({
+const getDefaultTimerConfig = () => {
+  return new TimerConfig({
     focusDuration: new Duration({ minutes: 25 }),
     shortBreakDuration: new Duration({ minutes: 5 }),
     longBreakDuration: new Duration({ minutes: 15 }),
@@ -38,7 +38,7 @@ const getBadgeColorConfig = (): {
 }
 
 export default {
-  getDefaultPomodoroTimerConfig,
+  getDefaultTimerConfig,
   getFocusSessionRecordHouseKeepDays,
   getBlockedTemplateUrl,
   getBadgeColorConfig,

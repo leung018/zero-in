@@ -3,7 +3,7 @@ import { PomodoroTimer, type PomodoroTimerState } from './timer'
 import { Duration } from './duration'
 import { PomodoroStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
-import { PomodoroTimerConfig } from './config'
+import { TimerConfig } from './config'
 
 describe('PomodoroTimer', () => {
   it('should initial state is set correctly', () => {
@@ -35,7 +35,7 @@ describe('PomodoroTimer', () => {
       })
     )
 
-    let expected: PomodoroTimerConfig = {
+    let expected: TimerConfig = {
       focusDuration: new Duration({ seconds: 11 }),
       shortBreakDuration: new Duration({ seconds: 4 }),
       longBreakDuration: new Duration({ seconds: 3 }),
@@ -678,7 +678,7 @@ describe('PomodoroTimer', () => {
   })
 })
 
-const newConfig = PomodoroTimerConfig.newTestInstance
+const newConfig = TimerConfig.newTestInstance
 
 const newState = ({
   remainingSeconds = 300,

@@ -1,13 +1,13 @@
 import { Duration } from '../duration'
 
-export class PomodoroTimerConfig {
+export class TimerConfig {
   static newTestInstance({
     focusDuration = new Duration({ minutes: 25 }),
     shortBreakDuration = new Duration({ minutes: 5 }),
     longBreakDuration = new Duration({ minutes: 15 }),
     focusSessionsPerCycle = 4
-  } = {}): PomodoroTimerConfig {
-    return new PomodoroTimerConfig({
+  } = {}): TimerConfig {
+    return new TimerConfig({
       focusDuration,
       shortBreakDuration,
       longBreakDuration,

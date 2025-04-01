@@ -1,18 +1,18 @@
-import type { PomodoroTimerConfig } from '.'
+import type { TimerConfig } from '.'
 import { ChromeStorageFactory } from '../../../chrome/storage'
 import config from '../../../config'
 import { FakeStorage, type Storage } from '../../../infra/storage'
-import { deserializePomodoroTimerConfig, serializePomodoroTimerConfig } from './serialize'
+import { deserializeTimerConfig, serializeTimerConfig } from './serialize'
 
 const STORAGE_KEY = 'timerConfig'
 
-export class PomodoroTimerConfigStorageService {
+export class TimerConfigStorageService {
   static create() {
-    return new PomodoroTimerConfigStorageService(ChromeStorageFactory.createLocalStorage())
+    return new TimerConfigStorageService(ChromeStorageFactory.createLocalStorage())
   }
 
   static createFake() {
-    return new PomodoroTimerConfigStorageService(new FakeStorage())
+    return new TimerConfigStorageService(new FakeStorage())
   }
 
   private storage: Storage
@@ -21,19 +21,19 @@ export class PomodoroTimerConfigStorageService {
     this.storage = storage
   }
 
-  async get(): Promise<PomodoroTimerConfig> {
+  async get(): Promise<TimerConfig> {
     return this.storage.get(STORAGE_KEY).then((result: any) => {
       if (result[STORAGE_KEY]) {
-        return deserializePomodoroTimerConfig(result[STORAGE_KEY])
+        return deserializeTimerConfig(result[STORAGE_KEY])
       }
 
-      return config.getDefaultPomodoroTimerConfig()
+      return config.getDefaultTimerConfig()
     })
   }
 
-  async save(pomodoroTimerConfig: PomodoroTimerConfig) {
+  async save(timerConfig: TimerConfig) {
     return this.storage.set({
-      [STORAGE_KEY]: serializePomodoroTimerConfig(pomodoroTimerConfig)
+      [STORAGE_KEY]: serializeTimerConfig(timerConfig)
     })
   }
 }
