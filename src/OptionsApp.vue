@@ -3,6 +3,7 @@ import WeeklySchedulesPage from './pages/WeeklySchedulesPage/index.vue'
 import { WeeklyScheduleStorageService } from './domain/schedules/storage'
 import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
 import StatisticsPage from './pages/StatisticsPage.vue'
+import TimerSettingPage from './pages/TimerSettingPage.vue'
 import { computed, onMounted, ref, type Component } from 'vue'
 import { BrowsingRulesStorageService } from './domain/browsing_rules/storage'
 import { ChromeCommunicationManager } from './chrome/communication'
@@ -15,7 +16,8 @@ const port = new ChromeCommunicationManager().clientConnect()
 enum PATH {
   ROOT = '/',
   SCHEDULES = '/schedules',
-  STATISTICS = '/statistics'
+  STATISTICS = '/statistics',
+  TIMER_SETTING = '/timer-setting'
 }
 
 type Route = {
@@ -51,6 +53,11 @@ const routeMap: Record<PATH, Route> = {
       focusSessionRecordStorageService: FocusSessionRecordStorageService.create(),
       port
     }
+  },
+  [PATH.TIMER_SETTING]: {
+    title: 'Timer Setting',
+    component: TimerSettingPage,
+    props: {}
   }
 }
 
