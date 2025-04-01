@@ -22,12 +22,20 @@ describe('TimerConfig', () => {
     }).toThrowError(expectedError)
   })
 
-  it('should reject number of focus session less than 1', () => {
-    expect(() => {
-      TimerConfig.newTestInstance({
-        focusSessionsPerCycle: 0
-      })
-    }).toThrowError('Focus sessions per cycle must be greater than 0')
+  it('should set to 0 if focusSessionsPerCycle is negative', () => {
+    let config = TimerConfig.newTestInstance({
+      focusSessionsPerCycle: -1
+    })
+    expect(config.focusSessionsPerCycle).toBe(0)
+
+    config = TimerConfig.newTestInstance({
+      focusSessionsPerCycle: 0
+    })
+    expect(config.focusSessionsPerCycle).toBe(0)
+    config = TimerConfig.newTestInstance({
+      focusSessionsPerCycle: 10
+    })
+    expect(config.focusSessionsPerCycle).toBe(10)
   })
 
   it('should create instance for valid input', () => {
