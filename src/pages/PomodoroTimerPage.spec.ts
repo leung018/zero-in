@@ -11,7 +11,8 @@ describe('PomodoroTimerPage', () => {
   it('should display initial stage and remaining time properly', async () => {
     const { wrapper } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
-        focusDuration: new Duration({ minutes: 9 })
+        focusDuration: new Duration({ minutes: 9 }),
+        focusSessionsPerCycle: 4
       })
     )
 
