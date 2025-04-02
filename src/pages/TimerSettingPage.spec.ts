@@ -48,6 +48,42 @@ describe('TimerSettingPage', () => {
     expect(wrapper.find('[data-test="short-break-duration"]').isVisible()).toBe(false)
     expect(wrapper.find('[data-test="focus-sessions-per-cycle"]').isVisible()).toBe(false)
   })
+
+  it('should update timer config', async () => {
+    const { timerConfigStorageService, wrapper, timer } = await mountPage(
+      new TimerConfig({
+        focusDuration: new Duration({ minutes: 24 }),
+        shortBreakDuration: new Duration({ minutes: 4 }),
+        longBreakDuration: new Duration({ minutes: 14 }),
+        focusSessionsPerCycle: 3
+      })
+    )
+    await flushPromises()
+
+    const newFocusDuration = 30
+    const newShortBreakDuration = 5
+    const newLongBreakDuration = 15
+    const newNumOfPomodoriPerCycle = 4
+
+    await wrapper.find('[data-test="focus-duration"]').setValue(newFocusDuration)
+    await wrapper.find('[data-test="short-break-duration"]').setValue(newShortBreakDuration)
+    await wrapper.find('[data-test="long-break-duration"]').setValue(newLongBreakDuration)
+    await wrapper.find('[data-test="focus-sessions-per-cycle"]').setValue(newNumOfPomodoriPerCycle)
+
+    await wrapper.find('[data-test="save-button"]').trigger('click')
+    await flushPromises()
+
+    const newConfig = new TimerConfig({
+      focusDuration: new Duration({ minutes: newFocusDuration }),
+      shortBreakDuration: new Duration({ minutes: newShortBreakDuration }),
+      longBreakDuration: new Duration({ minutes: newLongBreakDuration }),
+      focusSessionsPerCycle: newNumOfPomodoriPerCycle
+    })
+    expect(await timerConfigStorageService.get()).toEqual(newConfig)
+
+    // Should listener also reload the timer with new config
+    expect(timer.getConfig()).toEqual(newConfig)
+  })
 })
 
 async function mountPage(initialTimerConfig: TimerConfig) {
@@ -56,6 +92,7 @@ async function mountPage(initialTimerConfig: TimerConfig) {
   })
   const wrapper = await mount(TimerSettingPage, {
     props: {
+      port: communicationManager.clientConnect(),
       timerConfigStorageService
     }
   })
