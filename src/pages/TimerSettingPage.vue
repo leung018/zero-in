@@ -74,7 +74,7 @@ const saveConfig = () => {
         If enabled, the timer will repeat a set number of focus sessions, each followed by a short
         break. After completing the cycle, a long break will occur
       </p>
-      <div v-if="performCycle">
+      <div v-show="performCycle">
         <b-form-group label="Short Break Duration (minutes)" class="mb-3">
           <b-form-input
             v-model.number="shortBreakDurationMinutes"

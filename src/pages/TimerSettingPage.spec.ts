@@ -34,6 +34,28 @@ describe('TimerSettingPage', () => {
 
     assertCheckboxValue(wrapper, 'perform-cycle', false)
   })
+
+  it('should show short break and focus session per cycle when perform-cycle is checked', async () => {
+    const { wrapper } = await mountPage(
+      TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 3
+      })
+    )
+    await flushPromises()
+
+    expect(wrapper.find('[data-test="short-break-duration"]').isVisible()).toBe(true)
+    expect(wrapper.find('[data-test="focus-sessions-per-cycle"]').isVisible()).toBe(true)
+  })
+
+  it('should hide short break and focus session per cycle when perform-cycle is unchecked', async () => {
+    const { wrapper } = await mountPage(
+      TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 1
+      })
+    )
+    expect(wrapper.find('[data-test="short-break-duration"]').isVisible()).toBe(false)
+    expect(wrapper.find('[data-test="focus-sessions-per-cycle"]').isVisible()).toBe(false)
+  })
 })
 
 async function mountPage(initialTimerConfig: TimerConfig) {
