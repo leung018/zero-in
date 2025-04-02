@@ -6,7 +6,7 @@ import TimerSettingPage from './TimerSettingPage.vue'
 import { Duration } from '../domain/pomodoro/duration'
 
 describe('TimerSettingPage', () => {
-  it('should render timer config properly for focus session per cycle more than 1', async () => {
+  it('should render timer config properly', async () => {
     const { wrapper } = await mountPage(
       new TimerConfig({
         focusDuration: new Duration({ minutes: 24 }),
@@ -21,10 +21,22 @@ describe('TimerSettingPage', () => {
     assertInputValue(wrapper, 'short-break-duration', '4')
     assertInputValue(wrapper, 'long-break-duration', '13')
     assertInputValue(wrapper, 'focus-sessions-per-cycle', '3')
-    assertCheckboxValue(wrapper, 'perform-cycle', true)
   })
 
-  it('should uncheck perform-cycle when focus session per cycle less than 1', async () => {
+  it('should check perform cycle, show short break and focus sessions per cycle when focus sessions per cycles higher than 1', async () => {
+    const { wrapper } = await mountPage(
+      TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 2
+      })
+    )
+    await flushPromises()
+
+    assertCheckboxValue(wrapper, 'perform-cycle', true)
+    expect(wrapper.find('[data-test="short-break-duration"]').isVisible()).toBe(true)
+    expect(wrapper.find('[data-test="focus-sessions-per-cycle"]').isVisible()).toBe(true)
+  })
+
+  it('should uncheck perform cycle, hide short break and focus sessions per cycle when focus sessions per cycles equal to 1', async () => {
     const { wrapper } = await mountPage(
       TimerConfig.newTestInstance({
         focusSessionsPerCycle: 1
@@ -33,26 +45,6 @@ describe('TimerSettingPage', () => {
     await flushPromises()
 
     assertCheckboxValue(wrapper, 'perform-cycle', false)
-  })
-
-  it('should show short break and focus session per cycle when perform-cycle is checked', async () => {
-    const { wrapper } = await mountPage(
-      TimerConfig.newTestInstance({
-        focusSessionsPerCycle: 3
-      })
-    )
-    await flushPromises()
-
-    expect(wrapper.find('[data-test="short-break-duration"]').isVisible()).toBe(true)
-    expect(wrapper.find('[data-test="focus-sessions-per-cycle"]').isVisible()).toBe(true)
-  })
-
-  it('should hide short break and focus session per cycle when perform-cycle is unchecked', async () => {
-    const { wrapper } = await mountPage(
-      TimerConfig.newTestInstance({
-        focusSessionsPerCycle: 1
-      })
-    )
     expect(wrapper.find('[data-test="short-break-duration"]').isVisible()).toBe(false)
     expect(wrapper.find('[data-test="focus-sessions-per-cycle"]').isVisible()).toBe(false)
   })
