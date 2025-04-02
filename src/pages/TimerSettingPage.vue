@@ -36,16 +36,23 @@ onBeforeMount(async () => {
 })
 
 const onClickSave = async () => {
+  const originalConfig = await timerConfigStorageService.get()
+
   const config = new TimerConfig({
     focusDuration: new Duration({ minutes: focusDurationMinutes.value }),
-    shortBreakDuration: new Duration({ minutes: shortBreakDurationMinutes.value }),
+    shortBreakDuration: performCycle.value
+      ? new Duration({ minutes: shortBreakDurationMinutes.value })
+      : originalConfig.shortBreakDuration,
     longBreakDuration: new Duration({ minutes: longBreakDurationMinutes.value }),
     focusSessionsPerCycle: performCycle.value ? focusSessionsPerCycle.value : 1
   })
+
   await timerConfigStorageService.save(config)
+
   port.send({
     name: WorkRequestName.RESET_TIMER_CONFIG
   })
+
   reloadService.trigger()
 }
 </script>

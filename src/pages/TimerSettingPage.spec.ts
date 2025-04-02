@@ -87,6 +87,26 @@ describe('TimerSettingPage', () => {
     expect(timer.getConfig()).toEqual(newConfig)
   })
 
+  it('should ignore the value of short break when perform cycle is unchecked', async () => {
+    const { timerConfigStorageService, wrapper } = await mountPage(
+      TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 3,
+        shortBreakDuration: new Duration({ minutes: 4 })
+      })
+    )
+    await flushPromises()
+
+    const newShortBreakDuration = 0
+    await wrapper.find('[data-test="short-break-duration"]').setValue(newShortBreakDuration)
+
+    await wrapper.find('[data-test="perform-cycle"]').setValue(false)
+    await wrapper.find('[data-test="save-button"]').trigger('click')
+    await flushPromises()
+
+    const newConfig = await timerConfigStorageService.get()
+    expect(newConfig.shortBreakDuration).toEqual(new Duration({ minutes: 4 }))
+  })
+
   it('should set focus sessions per cycle to 1 when perform cycle is unchecked', async () => {
     const { timerConfigStorageService, wrapper } = await mountPage(
       TimerConfig.newTestInstance({
