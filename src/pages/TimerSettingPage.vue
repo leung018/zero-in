@@ -119,6 +119,7 @@ const onClickSave = async () => {
       <b-button type="submit" variant="primary" data-test="save-button" @click="onClickSave"
         >Save</b-button
       >
+      <p class="small mt-2"><b>* Caution: After saving, the timer will be reset</b></p>
     </b-form>
   </ContentTemplate>
 </template>
