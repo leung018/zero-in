@@ -29,7 +29,7 @@ const displayTime = computed(() => {
 const currentStage = computed(() => {
   switch (pomodoroStage.value) {
     case PomodoroStage.SHORT_BREAK:
-      return `${getNumberWithOrdinal(numOfPomodoriCompleted.value)} Break`
+      return getShortBreakLabel(numOfPomodoriCompleted.value)
     case PomodoroStage.LONG_BREAK:
       return getLongBreakLabel()
     default:
@@ -49,6 +49,10 @@ function getFocusLabel(nth: number) {
     return `${getNumberWithOrdinal(nth)} Focus`
   }
   return 'Focus'
+}
+
+function getShortBreakLabel(nth: number) {
+  return `${getNumberWithOrdinal(nth)} Break`
 }
 
 onBeforeMount(async () => {
@@ -143,7 +147,7 @@ const onClickRestartLongBreak = () => {
               variant="secondary"
               data-test="restart-short-break"
               @click="onClickRestartShortBreak(nth)"
-              >{{ getNumberWithOrdinal(nth) }} Break</BButton
+              >{{ getShortBreakLabel(nth) }}</BButton
             >
           </BCol>
           <BCol v-else>
