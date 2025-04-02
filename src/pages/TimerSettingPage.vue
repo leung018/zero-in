@@ -38,7 +38,7 @@ const onClickSave = async () => {
     focusDuration: new Duration({ minutes: focusDurationMinutes.value }),
     shortBreakDuration: new Duration({ minutes: shortBreakDurationMinutes.value }),
     longBreakDuration: new Duration({ minutes: longBreakDurationMinutes.value }),
-    focusSessionsPerCycle: focusSessionsPerCycle.value
+    focusSessionsPerCycle: performCycle.value ? focusSessionsPerCycle.value : 1
   })
   await timerConfigStorageService.save(config)
   port.send({

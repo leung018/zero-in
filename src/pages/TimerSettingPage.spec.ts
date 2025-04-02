@@ -84,6 +84,22 @@ describe('TimerSettingPage', () => {
     // Should listener also reload the timer with new config
     expect(timer.getConfig()).toEqual(newConfig)
   })
+
+  it('should set focus sessions per cycle to 1 when perform cycle is unchecked', async () => {
+    const { timerConfigStorageService, wrapper } = await mountPage(
+      TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 3
+      })
+    )
+    await flushPromises()
+
+    await wrapper.find('[data-test="perform-cycle"]').setValue(false)
+    await wrapper.find('[data-test="save-button"]').trigger('click')
+    await flushPromises()
+
+    const newConfig = await timerConfigStorageService.get()
+    expect(newConfig.focusSessionsPerCycle).toBe(1)
+  })
 })
 
 async function mountPage(initialTimerConfig: TimerConfig) {
