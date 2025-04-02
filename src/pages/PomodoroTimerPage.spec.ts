@@ -322,6 +322,24 @@ describe('PomodoroTimerPage', () => {
     await restartLongBreak(wrapper)
     assertCurrentStage(wrapper, 'Long Break')
   })
+
+  it('should able to restart break and focus if focus session per cycle is 1', async () => {
+    const { wrapper } = await startListenerAndMountPage(
+      TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 1
+      })
+    )
+    await flushPromises()
+
+    await restartFocus(wrapper, 1)
+    assertCurrentStage(wrapper, 'Focus')
+
+    await restartLongBreak(wrapper)
+    assertCurrentStage(wrapper, 'Break')
+
+    await restartFocus(wrapper, 1)
+    assertCurrentStage(wrapper, 'Focus')
+  })
 })
 
 async function startListenerAndMountPage(timerConfig = TimerConfig.newTestInstance()) {
