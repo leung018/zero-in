@@ -5,6 +5,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import TimerSettingPage from './TimerSettingPage.vue'
 import { Duration } from '../domain/pomodoro/duration'
 import { assertCheckboxValue, assertInputValue } from '../test_utils/assert'
+import { FakeActionService } from '../infra/action'
 
 describe('TimerSettingPage', () => {
   it('should render timer config properly', async () => {
@@ -101,17 +102,30 @@ describe('TimerSettingPage', () => {
     const newConfig = await timerConfigStorageService.get()
     expect(newConfig.focusSessionsPerCycle).toBe(1)
   })
+
+  it('should reload page after clicked save', async () => {
+    const { wrapper, reloadService } = await mountPage()
+
+    expect(reloadService.getTriggerCount()).toBe(0)
+
+    await wrapper.find('[data-test="save-button"]').trigger('click')
+    await flushPromises()
+
+    expect(reloadService.getTriggerCount()).toBe(1)
+  })
 })
 
-async function mountPage(initialTimerConfig: TimerConfig) {
+async function mountPage(initialTimerConfig: TimerConfig = TimerConfig.newTestInstance()) {
   const { timerConfigStorageService, timer, communicationManager } = await startBackgroundListener({
     timerConfig: initialTimerConfig
   })
+  const reloadService = new FakeActionService()
   const wrapper = await mount(TimerSettingPage, {
     props: {
       port: communicationManager.clientConnect(),
-      timerConfigStorageService
+      timerConfigStorageService,
+      reloadService
     }
   })
-  return { timerConfigStorageService, timer, wrapper, communicationManager }
+  return { timerConfigStorageService, timer, wrapper, communicationManager, reloadService }
 }

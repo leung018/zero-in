@@ -7,10 +7,12 @@ import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
 import type { Port } from '../infra/communication'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 import type { WorkResponse } from '../service_workers/response'
+import type { ActionService } from '@/infra/action'
 
-const { timerConfigStorageService, port } = defineProps<{
+const { timerConfigStorageService, port, reloadService } = defineProps<{
   port: Port<WorkRequest, WorkResponse>
   timerConfigStorageService: TimerConfigStorageService
+  reloadService: ActionService
 }>()
 
 const focusDurationMinutes = ref(25)
@@ -44,6 +46,7 @@ const onClickSave = async () => {
   port.send({
     name: WorkRequestName.RESET_TIMER_CONFIG
   })
+  reloadService.trigger()
 }
 </script>
 
