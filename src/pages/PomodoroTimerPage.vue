@@ -29,13 +29,31 @@ const displayTime = computed(() => {
 const currentStage = computed(() => {
   switch (pomodoroStage.value) {
     case PomodoroStage.SHORT_BREAK:
-      return `${getNumberWithOrdinal(numOfPomodoriCompleted.value)} Break`
+      return getShortBreakLabel(numOfPomodoriCompleted.value)
     case PomodoroStage.LONG_BREAK:
-      return 'Long Break'
+      return getLongBreakLabel()
     default:
-      return `${getNumberWithOrdinal(numOfPomodoriCompleted.value + 1)} Focus`
+      return getFocusLabel(numOfPomodoriCompleted.value + 1)
   }
 })
+
+function getLongBreakLabel() {
+  if (focusSessionsPerCycle.value > 1) {
+    return 'Long Break'
+  }
+  return 'Break'
+}
+
+function getFocusLabel(nth: number) {
+  if (focusSessionsPerCycle.value > 1) {
+    return `${getNumberWithOrdinal(nth)} Focus`
+  }
+  return 'Focus'
+}
+
+function getShortBreakLabel(nth: number) {
+  return `${getNumberWithOrdinal(nth)} Break`
+}
 
 onBeforeMount(async () => {
   timerConfigStorageService.get().then((timerConfig) => {
@@ -120,7 +138,7 @@ const onClickRestartLongBreak = () => {
               variant="primary"
               data-test="restart-focus"
               @click="onClickRestartFocus(nth)"
-              >{{ getNumberWithOrdinal(nth) }} Focus</BButton
+              >{{ getFocusLabel(nth) }}</BButton
             >
           </BCol>
           <BCol v-if="nth < focusSessionsPerCycle">
@@ -129,7 +147,7 @@ const onClickRestartLongBreak = () => {
               variant="secondary"
               data-test="restart-short-break"
               @click="onClickRestartShortBreak(nth)"
-              >{{ getNumberWithOrdinal(nth) }} Break</BButton
+              >{{ getShortBreakLabel(nth) }}</BButton
             >
           </BCol>
           <BCol v-else>
@@ -138,7 +156,7 @@ const onClickRestartLongBreak = () => {
               variant="secondary"
               data-test="restart-long-break"
               @click="onClickRestartLongBreak"
-              >Long Break</BButton
+              >{{ getLongBreakLabel() }}</BButton
             >
           </BCol>
         </BRow>
