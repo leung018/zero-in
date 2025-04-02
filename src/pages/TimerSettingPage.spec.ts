@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { TimerConfig } from '../domain/pomodoro/config'
 import { startBackgroundListener } from '../test_utils/listener'
-import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import TimerSettingPage from './TimerSettingPage.vue'
 import { Duration } from '../domain/pomodoro/duration'
+import { assertCheckboxValue, assertInputValue } from '../test_utils/assert'
 
 describe('TimerSettingPage', () => {
   it('should render timer config properly', async () => {
@@ -17,10 +18,10 @@ describe('TimerSettingPage', () => {
     )
     await flushPromises()
 
-    assertInputValue(wrapper, 'focus-duration', '24')
-    assertInputValue(wrapper, 'short-break-duration', '4')
-    assertInputValue(wrapper, 'long-break-duration', '13')
-    assertInputValue(wrapper, 'focus-sessions-per-cycle', '3')
+    assertInputValue(wrapper, '[data-test="focus-duration"]', '24')
+    assertInputValue(wrapper, '[data-test="short-break-duration"]', '4')
+    assertInputValue(wrapper, '[data-test="long-break-duration"]', '13')
+    assertInputValue(wrapper, '[data-test="focus-sessions-per-cycle"]', '3')
   })
 
   it('should check perform cycle, show short break and focus sessions per cycle when focus sessions per cycles higher than 1', async () => {
@@ -31,7 +32,7 @@ describe('TimerSettingPage', () => {
     )
     await flushPromises()
 
-    assertCheckboxValue(wrapper, 'perform-cycle', true)
+    assertCheckboxValue(wrapper, '[data-test="perform-cycle"]', true)
     expect(wrapper.find('[data-test="short-break-duration"]').isVisible()).toBe(true)
     expect(wrapper.find('[data-test="focus-sessions-per-cycle"]').isVisible()).toBe(true)
   })
@@ -44,7 +45,7 @@ describe('TimerSettingPage', () => {
     )
     await flushPromises()
 
-    assertCheckboxValue(wrapper, 'perform-cycle', false)
+    assertCheckboxValue(wrapper, '[data-test="perform-cycle"]', false)
     expect(wrapper.find('[data-test="short-break-duration"]').isVisible()).toBe(false)
     expect(wrapper.find('[data-test="focus-sessions-per-cycle"]').isVisible()).toBe(false)
   })
@@ -113,14 +114,4 @@ async function mountPage(initialTimerConfig: TimerConfig) {
     }
   })
   return { timerConfigStorageService, timer, wrapper, communicationManager }
-}
-
-function assertInputValue(wrapper: VueWrapper, dataTest: string, value: string) {
-  const input = wrapper.find(`[data-test="${dataTest}"]`).element as HTMLInputElement
-  expect(input.value).toBe(value)
-}
-
-function assertCheckboxValue(wrapper: VueWrapper, dataTest: string, value: boolean) {
-  const checkbox = wrapper.find(`[data-test="${dataTest}"]`).element as HTMLInputElement
-  expect(checkbox.checked).toBe(value)
 }

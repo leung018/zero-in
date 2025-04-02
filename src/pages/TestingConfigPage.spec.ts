@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { TimerConfig } from '../domain/pomodoro/config'
-import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import TestingConfigPage from './TestingConfigPage.vue'
 import { Duration } from '../domain/pomodoro/duration'
 import { startBackgroundListener } from '../test_utils/listener'
+import { assertInputValue } from '../test_utils/assert'
 
 describe('TestingConfigPage', () => {
   it('should render timer config', async () => {
@@ -17,10 +18,10 @@ describe('TestingConfigPage', () => {
     )
     await flushPromises()
 
-    assertInputValue(wrapper, 'focus-duration', '24')
-    assertInputValue(wrapper, 'short-break-duration', '4')
-    assertInputValue(wrapper, 'long-break-duration', '14')
-    assertInputValue(wrapper, 'num-of-pomodori-per-cycle', '3')
+    assertInputValue(wrapper, '[data-test="focus-duration"]', '24')
+    assertInputValue(wrapper, '[data-test="short-break-duration"]', '4')
+    assertInputValue(wrapper, '[data-test="long-break-duration"]', '14')
+    assertInputValue(wrapper, '[data-test="num-of-pomodori-per-cycle"]', '3')
   })
 
   it('should update timer config', async () => {
@@ -71,9 +72,4 @@ async function mountPage(initialTimerConfig: TimerConfig) {
     }
   })
   return { timerConfigStorageService, wrapper, timer }
-}
-
-function assertInputValue(wrapper: VueWrapper, dataTest: string, value: string) {
-  const input = wrapper.find(`[data-test="${dataTest}"]`).element as HTMLInputElement
-  expect(input.value).toBe(value)
 }
