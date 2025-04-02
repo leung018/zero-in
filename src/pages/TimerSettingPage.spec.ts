@@ -21,7 +21,18 @@ describe('TimerSettingPage', () => {
     assertInputValue(wrapper, 'short-break-duration', '4')
     assertInputValue(wrapper, 'long-break-duration', '13')
     assertInputValue(wrapper, 'focus-sessions-per-cycle', '3')
-    assertInputValue(wrapper, 'perform-cycle', 'true')
+    assertCheckboxValue(wrapper, 'perform-cycle', true)
+  })
+
+  it('should uncheck perform-cycle when focus session per cycle less than 1', async () => {
+    const { wrapper } = await mountPage(
+      TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 1
+      })
+    )
+    await flushPromises()
+
+    assertCheckboxValue(wrapper, 'perform-cycle', false)
   })
 })
 
@@ -40,4 +51,9 @@ async function mountPage(initialTimerConfig: TimerConfig) {
 function assertInputValue(wrapper: VueWrapper, dataTest: string, value: string) {
   const input = wrapper.find(`[data-test="${dataTest}"]`).element as HTMLInputElement
   expect(input.value).toBe(value)
+}
+
+function assertCheckboxValue(wrapper: VueWrapper, dataTest: string, value: boolean) {
+  const checkbox = wrapper.find(`[data-test="${dataTest}"]`).element as HTMLInputElement
+  expect(checkbox.checked).toBe(value)
 }

@@ -26,7 +26,7 @@ onBeforeMount(async () => {
   longBreakDurationMinutes.value = durationToMinutes(timerConfig.longBreakDuration)
   focusSessionsPerCycle.value = timerConfig.focusSessionsPerCycle
 
-  performCycle.value = true
+  performCycle.value = timerConfig.focusSessionsPerCycle > 1
 })
 
 const saveConfig = () => {
