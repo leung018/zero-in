@@ -1,40 +1,80 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { TimerConfig } from '../domain/pomodoro/config'
 import { Duration } from '../domain/pomodoro/duration'
 import ContentTemplate from './components/ContentTemplate.vue'
+import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
+import type { Port } from '../infra/communication'
+import { WorkRequestName, type WorkRequest } from '../service_workers/request'
+import type { WorkResponse } from '../service_workers/response'
+import type { ActionService } from '@/infra/action'
 
-const focusDuration = ref(25)
-const shortBreakDuration = ref(5)
-const longBreakDuration = ref(15)
+const { timerConfigStorageService, port, reloadService } = defineProps<{
+  port: Port<WorkRequest, WorkResponse>
+  timerConfigStorageService: TimerConfigStorageService
+  reloadService: ActionService
+}>()
+
+const focusDurationMinutes = ref(25)
+const shortBreakDurationMinutes = ref(5)
+const longBreakDurationMinutes = ref(15)
 const focusSessionsPerCycle = ref(4)
 const performCycle = ref(false)
 
-const saveConfig = () => {
-  try {
-    const config = new TimerConfig({
-      focusDuration: new Duration({ minutes: focusDuration.value }),
-      shortBreakDuration: new Duration({ minutes: shortBreakDuration.value }),
-      longBreakDuration: new Duration({ minutes: longBreakDuration.value }),
-      focusSessionsPerCycle: performCycle.value ? focusSessionsPerCycle.value : 0
-    })
-    console.log('Saved Config:', config)
-    alert('Configuration saved successfully!')
-  } catch (error) {
-    if (error instanceof Error) {
-      alert(error.message)
-    }
-  }
+function durationToMinutes(d: Duration): number {
+  return Math.floor(d.remainingSeconds() / 60)
+}
+
+onBeforeMount(async () => {
+  const timerConfig = await timerConfigStorageService.get()
+  focusDurationMinutes.value = durationToMinutes(timerConfig.focusDuration)
+  shortBreakDurationMinutes.value = durationToMinutes(timerConfig.shortBreakDuration)
+  longBreakDurationMinutes.value = durationToMinutes(timerConfig.longBreakDuration)
+  focusSessionsPerCycle.value = timerConfig.focusSessionsPerCycle
+
+  performCycle.value = timerConfig.focusSessionsPerCycle > 1
+})
+
+const onClickSave = async () => {
+  const originalConfig = await timerConfigStorageService.get()
+
+  const config = new TimerConfig({
+    focusDuration: new Duration({ minutes: focusDurationMinutes.value }),
+    shortBreakDuration: performCycle.value
+      ? new Duration({ minutes: shortBreakDurationMinutes.value })
+      : originalConfig.shortBreakDuration,
+    longBreakDuration: new Duration({ minutes: longBreakDurationMinutes.value }),
+    focusSessionsPerCycle: performCycle.value ? focusSessionsPerCycle.value : 1
+  })
+
+  await timerConfigStorageService.save(config)
+
+  port.send({
+    name: WorkRequestName.RESET_TIMER_CONFIG
+  })
+
+  reloadService.trigger()
 }
 </script>
 
 <template>
   <ContentTemplate title="Timer Setting">
-    <b-form @submit.prevent="saveConfig">
+    <b-form @submit.prevent>
       <b-form-group label="Focus Session Duration (minutes)" class="mb-3">
-        <b-form-input v-model.number="focusDuration" type="number" min="1" required></b-form-input>
+        <b-form-input
+          v-model.number="focusDurationMinutes"
+          type="number"
+          min="1"
+          required
+          data-test="focus-duration"
+        ></b-form-input>
       </b-form-group>
-      <b-form-checkbox id="performCycle" v-model="performCycle" class="mb-3">
+      <b-form-checkbox
+        id="performCycle"
+        v-model="performCycle"
+        class="mb-3"
+        data-test="perform-cycle"
+      >
         Perform Cycle
       </b-form-checkbox>
       <p v-if="!performCycle" class="small">
@@ -44,13 +84,14 @@ const saveConfig = () => {
         If enabled, the timer will repeat a set number of focus sessions, each followed by a short
         break. After completing the cycle, a long break will occur
       </p>
-      <div v-if="performCycle">
+      <div v-show="performCycle">
         <b-form-group label="Short Break Duration (minutes)" class="mb-3">
           <b-form-input
-            v-model.number="shortBreakDuration"
+            v-model.number="shortBreakDurationMinutes"
             type="number"
             min="1"
             required
+            data-test="short-break-duration"
           ></b-form-input>
         </b-form-group>
         <b-form-group label="Focus Sessions Per Cycle" class="mb-3">
@@ -59,6 +100,7 @@ const saveConfig = () => {
             type="number"
             min="2"
             required
+            data-test="focus-sessions-per-cycle"
           ></b-form-input>
         </b-form-group>
       </div>
@@ -67,13 +109,16 @@ const saveConfig = () => {
         class="mb-3"
       >
         <b-form-input
-          v-model.number="longBreakDuration"
+          v-model.number="longBreakDurationMinutes"
           type="number"
           min="1"
           required
+          data-test="long-break-duration"
         ></b-form-input>
       </b-form-group>
-      <b-button type="submit" variant="primary">Save</b-button>
+      <b-button type="submit" variant="primary" data-test="save-button" @click="onClickSave"
+        >Save</b-button
+      >
     </b-form>
   </ContentTemplate>
 </template>

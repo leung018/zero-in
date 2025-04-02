@@ -10,6 +10,7 @@ import { ChromeCommunicationManager } from './chrome/communication'
 import { DailyResetTimeStorageService } from './domain/daily_reset_time/storage'
 import { ReloadService } from './chrome/reload'
 import { FocusSessionRecordStorageService } from './domain/pomodoro/record/storage'
+import { TimerConfigStorageService } from './domain/pomodoro/config/storage'
 
 const port = new ChromeCommunicationManager().clientConnect()
 
@@ -57,7 +58,11 @@ const routeMap: Record<PATH, Route> = {
   [PATH.TIMER_SETTING]: {
     title: 'Timer Setting',
     component: TimerSettingPage,
-    props: {}
+    props: {
+      timerConfigStorageService: TimerConfigStorageService.create(),
+      port,
+      reloadService: new ReloadService()
+    }
   }
 }
 
