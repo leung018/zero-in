@@ -15,6 +15,7 @@ describe('PomodoroTimerPage', () => {
         focusSessionsPerCycle: 4
       })
     )
+    await flushPromises()
 
     assertTimerDisplay(wrapper, '09:00')
 
@@ -155,6 +156,25 @@ describe('PomodoroTimerPage', () => {
       startButtonVisible: true,
       pauseButtonVisible: false
     })
+  })
+
+  it('should display focus and break without Ordinal if focus sessions per cycle is 1', async () => {
+    const { wrapper, scheduler } = await startListenerAndMountPage(
+      TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 2 }),
+        focusSessionsPerCycle: 1
+      })
+    )
+    await flushPromises()
+
+    assertCurrentStage(wrapper, 'Focus')
+
+    await startTimer(wrapper)
+
+    scheduler.advanceTime(2000)
+    await flushPromises()
+
+    assertCurrentStage(wrapper, 'Break')
   })
 
   it('should prevent bug of last second pause and restart may freezing the component', async () => {

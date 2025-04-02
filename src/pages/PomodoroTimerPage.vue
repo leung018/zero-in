@@ -31,9 +31,15 @@ const currentStage = computed(() => {
     case PomodoroStage.SHORT_BREAK:
       return `${getNumberWithOrdinal(numOfPomodoriCompleted.value)} Break`
     case PomodoroStage.LONG_BREAK:
-      return 'Long Break'
+      if (focusSessionsPerCycle.value > 1) {
+        return 'Long Break'
+      }
+      return 'Break'
     default:
-      return `${getNumberWithOrdinal(numOfPomodoriCompleted.value + 1)} Focus`
+      if (focusSessionsPerCycle.value > 1) {
+        return `${getNumberWithOrdinal(numOfPomodoriCompleted.value + 1)} Focus`
+      }
+      return 'Focus'
   }
 })
 
