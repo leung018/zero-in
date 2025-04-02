@@ -31,9 +31,9 @@ const dailyResetTime = ref(new Time(0, 0))
 const hintMsg = computed(() => {
   switch (pomodoroStage.value) {
     case PomodoroStage.SHORT_BREAK:
-      return 'Take a break'
+      return 'Take a short break'
     case PomodoroStage.LONG_BREAK:
-      return 'Take a longer break'
+      return 'Take a break'
     default:
       return 'Start focusing'
   }

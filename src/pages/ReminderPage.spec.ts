@@ -26,7 +26,7 @@ describe('ReminderPage', () => {
     scheduler.advanceTime(3001)
     await flushPromises()
 
-    expect(wrapper.find("[data-test='hint-message']").text()).toContain('Take a break')
+    expect(wrapper.find("[data-test='hint-message']").text()).toContain('Take a short break')
 
     timer.start()
     scheduler.advanceTime(1001)
@@ -38,7 +38,7 @@ describe('ReminderPage', () => {
     scheduler.advanceTime(3001)
     await flushPromises()
 
-    expect(wrapper.find("[data-test='hint-message']").text()).toContain('Take a longer break')
+    expect(wrapper.find("[data-test='hint-message']").text()).toContain('Take a break')
   })
 
   it('should click start button to start timer again', async () => {
