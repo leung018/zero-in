@@ -31,17 +31,25 @@ const currentStage = computed(() => {
     case PomodoroStage.SHORT_BREAK:
       return `${getNumberWithOrdinal(numOfPomodoriCompleted.value)} Break`
     case PomodoroStage.LONG_BREAK:
-      if (focusSessionsPerCycle.value > 1) {
-        return 'Long Break'
-      }
-      return 'Break'
+      return getLongBreakLabel()
     default:
-      if (focusSessionsPerCycle.value > 1) {
-        return `${getNumberWithOrdinal(numOfPomodoriCompleted.value + 1)} Focus`
-      }
-      return 'Focus'
+      return getFocusLabel(numOfPomodoriCompleted.value + 1)
   }
 })
+
+function getLongBreakLabel() {
+  if (focusSessionsPerCycle.value > 1) {
+    return 'Long Break'
+  }
+  return 'Break'
+}
+
+function getFocusLabel(nth: number) {
+  if (focusSessionsPerCycle.value > 1) {
+    return `${getNumberWithOrdinal(nth)} Focus`
+  }
+  return 'Focus'
+}
 
 onBeforeMount(async () => {
   timerConfigStorageService.get().then((timerConfig) => {
@@ -126,7 +134,7 @@ const onClickRestartLongBreak = () => {
               variant="primary"
               data-test="restart-focus"
               @click="onClickRestartFocus(nth)"
-              >{{ getNumberWithOrdinal(nth) }} Focus</BButton
+              >{{ getFocusLabel(nth) }}</BButton
             >
           </BCol>
           <BCol v-if="nth < focusSessionsPerCycle">
@@ -144,7 +152,7 @@ const onClickRestartLongBreak = () => {
               variant="secondary"
               data-test="restart-long-break"
               @click="onClickRestartLongBreak"
-              >Long Break</BButton
+              >{{ getLongBreakLabel() }}</BButton
             >
           </BCol>
         </BRow>

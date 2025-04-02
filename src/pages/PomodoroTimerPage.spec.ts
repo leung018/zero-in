@@ -228,7 +228,7 @@ describe('PomodoroTimerPage', () => {
     assertTimerDisplay(wrapper, '00:02')
   })
 
-  it('should render restart focus and short break buttons properly', async () => {
+  it('should render restart focus and break buttons properly if focus session per cycle larger than 1', async () => {
     const { wrapper } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusSessionsPerCycle: 3
@@ -250,6 +250,29 @@ describe('PomodoroTimerPage', () => {
 
     expect(shortBreakButtons[0].text()).toBe('1st Break')
     expect(shortBreakButtons[1].text()).toBe('2nd Break')
+
+    const longBreakButton = wrapper.find("[data-test='restart-long-break']")
+    expect(longBreakButton.text()).toBe('Long Break')
+  })
+
+  it('should render restart focus and break buttons properly if focus session per cycle is 1', async () => {
+    const { wrapper } = await startListenerAndMountPage(
+      TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 1
+      })
+    )
+    await flushPromises()
+
+    const focusButtons = wrapper.findAll("[data-test='restart-focus']")
+
+    expect(focusButtons).toHaveLength(1)
+    expect(focusButtons[0].text()).toBe('Focus')
+
+    const shortBreakButtons = wrapper.findAll("[data-test='restart-short-break']")
+    expect(shortBreakButtons).toHaveLength(0)
+
+    const longBreakButton = wrapper.find("[data-test='restart-long-break']")
+    expect(longBreakButton.text()).toBe('Break')
   })
 
   it('should able to restart the focus', async () => {
