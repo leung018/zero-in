@@ -2,6 +2,8 @@ on:
   push:
     branches-ignore:
       - main # Because "Require branches to be up to date before merging" is enabled for main. The checking will be completed before pull request can be merged.
+
+  # TODO: Better to add on pull request for PR from forked repository but find way to skip the check if push is triggered the CI already in same commit.
 name: Continuous Integration
 jobs:
   checks:
