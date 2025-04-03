@@ -305,6 +305,7 @@ export class BackgroundListener {
             case WorkRequestName.RESET_TIMER_CONFIG: {
               this.timerConfigStorageService.get().then((config) => {
                 this.timer.setConfig(config)
+                this.badgeDisplayService.clearBadge()
               })
               break
             }

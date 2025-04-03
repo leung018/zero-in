@@ -256,6 +256,23 @@ describe('BackgroundListener', () => {
 
     expect(timer.getState()).toEqual(targetUpdate)
   })
+
+  it('should reset timer config also clear the badge', async () => {
+    const { badgeDisplayService, clientPort } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 3 })
+      })
+    })
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+
+    expect(badgeDisplayService.getDisplayedBadge()).not.toBeNull()
+
+    clientPort.send({ name: WorkRequestName.RESET_TIMER_CONFIG })
+    await flushPromises()
+
+    expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
+  })
 })
 
 async function startListener({
