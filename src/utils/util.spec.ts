@@ -68,6 +68,11 @@ describe('getDomain', () => {
     expect(getDomain('http://example.com')).toBe('example.com')
   })
 
+  it('should extract domain with URL / at the end', () => {
+    expect(getDomain('https://www.example.com/')).toBe('example.com')
+    expect(getDomain('http://example.com/')).toBe('example.com')
+  })
+
   it('should extract domain from URL without protocol but with www', () => {
     expect(getDomain('www.example.com')).toBe('example.com')
   })
