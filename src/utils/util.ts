@@ -48,5 +48,5 @@ export function getDomain(url: string): string {
     return url.split('/')[0]
   }
 
-  return url
+  return url.toLowerCase()
 }
