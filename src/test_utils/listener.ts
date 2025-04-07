@@ -1,6 +1,5 @@
 import config from '../config'
 import { PomodoroTimer } from '../domain/pomodoro/timer'
-import { BrowsingControlTogglingService } from '../domain/browsing_control_toggling'
 import { FakeActionService } from '../infra/action'
 import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeCommunicationManager } from '../infra/communication'
@@ -69,11 +68,6 @@ export async function startBackgroundListener({
     context,
     timerFactory,
     focusSessionRecordHouseKeepDays,
-    browsingControlTogglingService: BrowsingControlTogglingService.createFake({
-      browsingControlService,
-      weeklyScheduleStorageService,
-      browsingRulesStorageService
-    }),
     getCurrentDate
   }).then((listener) => {
     return {
