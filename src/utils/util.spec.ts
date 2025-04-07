@@ -88,4 +88,8 @@ describe('getDomain', () => {
   it('should keep subdomain', () => {
     expect(getDomain('subdomain.example.com')).toBe('subdomain.example.com')
   })
+
+  it('should be case insensitive', () => {
+    expect(getDomain('HTTPS://www.EXAMPLE.com')).toBe('example.com')
+  })
 })
