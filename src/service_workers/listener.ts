@@ -14,7 +14,7 @@ import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/stor
 import { newFocusSessionRecord } from '../domain/pomodoro/record'
 import { FocusSessionRecordHousekeeper } from '../domain/pomodoro/record/house_keep'
 import { SubscriptionManager } from '../utils/subscription'
-import { FakeServicesContext, type ServicesContext, ServicesContextImpl } from '../services_context'
+import { FakeServicesContext, type ServicesContext, ServicesContextImpl } from './services_context'
 
 export class BackgroundListener {
   static async start() {
