@@ -16,7 +16,7 @@ import { FakeBadgeDisplayService, type BadgeDisplayService } from './infra/badge
 import { FakeCommunicationManager, type CommunicationManager } from './infra/communication'
 import { MultipleActionService } from './infra/multiple_actions'
 
-interface ServicesContext {
+export type ServicesContext = {
   readonly communicationManager: CommunicationManager
   readonly reminderService: ActionService
   readonly badgeDisplayService: BadgeDisplayService
@@ -29,7 +29,7 @@ interface ServicesContext {
   readonly weeklyScheduleStorageService: WeeklyScheduleStorageService
 }
 
-class ServiceContextImpl implements ServicesContext {
+export class ServicesContextImpl implements ServicesContext {
   readonly communicationManager = new ChromeCommunicationManager()
   readonly reminderService = new MultipleActionService([
     new ChromeNewTabService(config.getReminderPageUrl()),
@@ -43,18 +43,6 @@ class ServiceContextImpl implements ServicesContext {
   readonly browsingControlService = new ChromeBrowsingControlService()
   readonly browsingRulesStorageService = BrowsingRulesStorageService.create()
   readonly weeklyScheduleStorageService = WeeklyScheduleStorageService.create()
-}
-
-export class ServicesContextProvider {
-  static getContext(): ServicesContext {
-    return new ServiceContextImpl()
-  }
-
-  static inTestSetServicesContext(servicesContext: ServicesContext): void {
-    this.getContext = () => {
-      return servicesContext
-    }
-  }
 }
 
 export class FakeServicesContext implements ServicesContext {

@@ -10,7 +10,7 @@ import { TimerStateStorageService } from '../domain/pomodoro/storage'
 import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
 import type { TimerConfig } from '../domain/pomodoro/config'
 import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
-import { FakeServicesContext, ServicesContextProvider } from '../services_context'
+import { FakeServicesContext } from '../services_context'
 import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { FakeBrowsingControlService } from '../domain/browsing_control'
@@ -57,8 +57,6 @@ export async function startBackgroundListener({
   context.focusSessionRecordStorageService = focusSessionRecordStorageService
   context.closeTabsService = closeTabsService
 
-  ServicesContextProvider.inTestSetServicesContext(context)
-
   const scheduler = new FakePeriodicTaskScheduler()
   await timerConfigStorageService.save(timerConfig)
   const timerFactory = (tc: TimerConfig) => {
@@ -69,6 +67,7 @@ export async function startBackgroundListener({
   }
 
   return BackgroundListener.startFake({
+    context,
     timerFactory,
     focusSessionRecordHouseKeepDays,
     browsingControlTogglingService: BrowsingControlTogglingService.createFake({
