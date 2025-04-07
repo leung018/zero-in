@@ -10,7 +10,6 @@ import { TimerStateStorageService } from '../domain/pomodoro/storage'
 import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
 import type { TimerConfig } from '../domain/pomodoro/config'
 import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
-import { FakeServicesContext } from '../service_workers/services_context'
 import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { FakeBrowsingControlService } from '../domain/browsing_control'
@@ -44,18 +43,18 @@ export async function startBackgroundListener({
   focusSessionRecordStorageService?: FocusSessionRecordStorageService
   getCurrentDate?: () => Date
 }) {
-  const context = new FakeServicesContext()
-
-  context.browsingControlService = browsingControlService
-  context.weeklyScheduleStorageService = weeklyScheduleStorageService
-  context.browsingRulesStorageService = browsingRulesStorageService
-  context.communicationManager = communicationManager
-  context.reminderService = reminderService
-  context.badgeDisplayService = badgeDisplayService
-  context.timerStateStorageService = timerStateStorageService
-  context.timerConfigStorageService = timerConfigStorageService
-  context.focusSessionRecordStorageService = focusSessionRecordStorageService
-  context.closeTabsService = closeTabsService
+  const context = {
+    browsingControlService,
+    weeklyScheduleStorageService,
+    browsingRulesStorageService,
+    communicationManager,
+    reminderService,
+    badgeDisplayService,
+    timerStateStorageService,
+    timerConfigStorageService,
+    focusSessionRecordStorageService,
+    closeTabsService
+  }
 
   const scheduler = new FakePeriodicTaskScheduler()
   await timerConfigStorageService.save(timerConfig)

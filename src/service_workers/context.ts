@@ -5,18 +5,18 @@ import { ChromeCommunicationManager } from '../chrome/communication'
 import { ChromeNewTabService } from '../chrome/new_tab'
 import { ChromeNotificationService } from '../chrome/notification'
 import config from '../config'
-import { FakeBrowsingControlService, type BrowsingControlService } from '../domain/browsing_control'
+import { type BrowsingControlService } from '../domain/browsing_control'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
 import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
 import { TimerStateStorageService } from '../domain/pomodoro/storage'
 import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
-import { FakeActionService, type ActionService } from '../infra/action'
-import { FakeBadgeDisplayService, type BadgeDisplayService } from '../infra/badge'
-import { FakeCommunicationManager, type CommunicationManager } from '../infra/communication'
+import { type ActionService } from '../infra/action'
+import { type BadgeDisplayService } from '../infra/badge'
+import { type CommunicationManager } from '../infra/communication'
 import { MultipleActionService } from '../infra/multiple_actions'
 
-export type ServicesContext = {
+export type ListenerServicesContext = {
   readonly communicationManager: CommunicationManager
   readonly reminderService: ActionService
   readonly badgeDisplayService: BadgeDisplayService
@@ -29,7 +29,7 @@ export type ServicesContext = {
   readonly weeklyScheduleStorageService: WeeklyScheduleStorageService
 }
 
-export class ServicesContextImpl implements ServicesContext {
+export class ListenerServicesContextImpl implements ListenerServicesContext {
   readonly communicationManager = new ChromeCommunicationManager()
   readonly reminderService = new MultipleActionService([
     new ChromeNewTabService(config.getReminderPageUrl()),
@@ -43,17 +43,4 @@ export class ServicesContextImpl implements ServicesContext {
   readonly browsingControlService = new ChromeBrowsingControlService()
   readonly browsingRulesStorageService = BrowsingRulesStorageService.create()
   readonly weeklyScheduleStorageService = WeeklyScheduleStorageService.create()
-}
-
-export class FakeServicesContext implements ServicesContext {
-  communicationManager = new FakeCommunicationManager()
-  reminderService = new FakeActionService()
-  badgeDisplayService = new FakeBadgeDisplayService()
-  timerStateStorageService = TimerStateStorageService.createFake()
-  timerConfigStorageService = TimerConfigStorageService.createFake()
-  focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
-  closeTabsService = new FakeActionService()
-  browsingControlService = new FakeBrowsingControlService()
-  browsingRulesStorageService = BrowsingRulesStorageService.createFake()
-  weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
 }
