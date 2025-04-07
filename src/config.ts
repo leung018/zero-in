@@ -12,9 +12,9 @@ const getReminderPageUrl = () => {
 
 const getDefaultTimerConfig = () => {
   return new TimerConfig({
-    focusDuration: new Duration({ minutes: 25 }),
+    focusDuration: new Duration({ minutes: 26 }),
     shortBreakDuration: new Duration({ minutes: 5 }),
-    longBreakDuration: new Duration({ minutes: 15 }),
+    longBreakDuration: new Duration({ minutes: 19 }),
     focusSessionsPerCycle: 4
   })
 }

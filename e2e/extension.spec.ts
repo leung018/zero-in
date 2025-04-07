@@ -140,6 +140,9 @@ test('should able to disable blocking according to schedule', async ({ page, ext
 })
 
 test('should pomodoro timer count successfully', async ({ page, extensionId }) => {
+  await goToTestingConfigPage(page, extensionId)
+  await changeFocusDuration(page, 60 * 25)
+
   await goToPomodoroTimer(page, extensionId)
 
   await expect(page.getByTestId('timer-display')).toContainText('25:00')
