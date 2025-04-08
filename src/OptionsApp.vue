@@ -58,6 +58,8 @@ function getPathFromWindowLocation(): PATH {
         {{ pathTitles[path] }}
       </BNavItem>
     </BNav>
+    <!-- I don't use an approach of mapping component by path here because the current explicit v-if/v-else-if structure 
+     preserves TypeScript prop validation for each component -->
     <BlockedDomainsPage
       v-if="currentPath === PATH.ROOT"
       :browsing-rules-storage-service="BrowsingRulesStorageService.create()"
