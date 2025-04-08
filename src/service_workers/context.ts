@@ -18,32 +18,32 @@ import { CurrentDateService } from '../infra/current_date'
 import { MultipleActionService } from '../infra/multiple_actions'
 
 export type ListenerServicesContext = {
-  readonly communicationManager: CommunicationManager
-  readonly reminderService: ActionService
-  readonly badgeDisplayService: BadgeDisplayService
-  readonly timerStateStorageService: TimerStateStorageService
-  readonly timerConfigStorageService: TimerConfigStorageService
-  readonly focusSessionRecordStorageService: FocusSessionRecordStorageService
-  readonly closeTabsService: ActionService
-  readonly browsingControlService: BrowsingControlService
-  readonly browsingRulesStorageService: BrowsingRulesStorageService
-  readonly weeklyScheduleStorageService: WeeklyScheduleStorageService
-  readonly currentDateService: CurrentDateService
+  communicationManager: CommunicationManager
+  reminderService: ActionService
+  badgeDisplayService: BadgeDisplayService
+  timerStateStorageService: TimerStateStorageService
+  timerConfigStorageService: TimerConfigStorageService
+  focusSessionRecordStorageService: FocusSessionRecordStorageService
+  closeTabsService: ActionService
+  browsingControlService: BrowsingControlService
+  browsingRulesStorageService: BrowsingRulesStorageService
+  weeklyScheduleStorageService: WeeklyScheduleStorageService
+  currentDateService: CurrentDateService
 }
 
 export class ListenerServicesContextImpl implements ListenerServicesContext {
-  readonly communicationManager = new ChromeCommunicationManager()
-  readonly reminderService = new MultipleActionService([
+  communicationManager = new ChromeCommunicationManager()
+  reminderService = new MultipleActionService([
     new ChromeNewTabService(config.getReminderPageUrl()),
     new ChromeNotificationService()
   ])
-  readonly badgeDisplayService = new ChromeBadgeDisplayService()
-  readonly timerStateStorageService = TimerStateStorageService.create()
-  readonly timerConfigStorageService = TimerConfigStorageService.create()
-  readonly focusSessionRecordStorageService = FocusSessionRecordStorageService.create()
-  readonly closeTabsService = new ChromeCloseTabsService(config.getReminderPageUrl())
-  readonly browsingControlService = new ChromeBrowsingControlService()
-  readonly browsingRulesStorageService = BrowsingRulesStorageService.create()
-  readonly weeklyScheduleStorageService = WeeklyScheduleStorageService.create()
-  readonly currentDateService = CurrentDateService.create()
+  badgeDisplayService = new ChromeBadgeDisplayService()
+  timerStateStorageService = TimerStateStorageService.create()
+  timerConfigStorageService = TimerConfigStorageService.create()
+  focusSessionRecordStorageService = FocusSessionRecordStorageService.create()
+  closeTabsService = new ChromeCloseTabsService(config.getReminderPageUrl())
+  browsingControlService = new ChromeBrowsingControlService()
+  browsingRulesStorageService = BrowsingRulesStorageService.create()
+  weeklyScheduleStorageService = WeeklyScheduleStorageService.create()
+  currentDateService = CurrentDateService.create()
 }
