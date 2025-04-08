@@ -49,7 +49,7 @@ export async function startBackgroundListener({
     scheduler
   })
 
-  return BackgroundListener.startFake({
+  const listener = BackgroundListener.createFake({
     browsingControlService,
     weeklyScheduleStorageService,
     browsingRulesStorageService,
@@ -63,17 +63,17 @@ export async function startBackgroundListener({
     currentDateService,
     timer,
     focusSessionRecordHouseKeepDays
-  }).then((listener) => {
-    return {
-      scheduler,
-      timer: listener.timer,
-      listener,
-      reminderService,
-      badgeDisplayService,
-      communicationManager,
-      closeTabsService,
-      timerConfigStorageService,
-      focusSessionRecordStorageService
-    }
   })
+  await listener.start()
+  return {
+    scheduler,
+    timer: listener.timer,
+    listener,
+    reminderService,
+    badgeDisplayService,
+    communicationManager,
+    closeTabsService,
+    timerConfigStorageService,
+    focusSessionRecordStorageService
+  }
 }

@@ -42,8 +42,8 @@ type ListenerParams = {
 }
 
 export class BackgroundListener {
-  static async start() {
-    const listener = new BackgroundListener({
+  static create() {
+    return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
       reminderService: new MultipleActionService([
         new ChromeNewTabService(config.getReminderPageUrl()),
@@ -61,14 +61,10 @@ export class BackgroundListener {
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
       timer: PomodoroTimer.create()
     })
-    await listener.start()
-    return listener
   }
 
-  static async startFake(params: ListenerParams) {
-    const listener = new BackgroundListener(params)
-    await listener.start()
-    return listener
+  static createFake(params: ListenerParams) {
+    return new BackgroundListener(params)
   }
 
   private browsingControlTogglingService: BrowsingControlTogglingService
@@ -105,7 +101,7 @@ export class BackgroundListener {
     this.timer = params.timer
   }
 
-  private async start() {
+  async start() {
     return this.setUpTimer().then(() => {
       this.setUpListener()
     })

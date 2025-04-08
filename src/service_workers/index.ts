@@ -26,7 +26,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 })
 chrome.alarms.create({ periodInMinutes: 0.5, when: Date.now() })
 
-BackgroundListener.start()
+BackgroundListener.create().start()
 
 chrome.runtime.onStartup.addListener(function () {}) // This is a hack to keep the above run immediately after the browser is closed and reopened
 
