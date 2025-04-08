@@ -59,16 +59,13 @@ export async function startBackgroundListener({
 
   const scheduler = new FakePeriodicTaskScheduler()
   await timerConfigStorageService.save(timerConfig)
-  const timerFactory = (tc: TimerConfig) => {
-    return PomodoroTimer.createFake({
-      scheduler,
-      timerConfig: tc
-    })
-  }
+  const timer = PomodoroTimer.createFake({
+    scheduler
+  })
 
   return BackgroundListener.startFake({
     context,
-    timerFactory,
+    timer,
     focusSessionRecordHouseKeepDays
   }).then((listener) => {
     return {

@@ -9,7 +9,6 @@ import { PomodoroStage } from '../domain/pomodoro/stage'
 import config from '../config'
 import { TimerStateStorageService } from '../domain/pomodoro/storage'
 import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
-import type { TimerConfig } from '../domain/pomodoro/config'
 import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
 import { newFocusSessionRecord } from '../domain/pomodoro/record'
 import { FocusSessionRecordHousekeeper } from '../domain/pomodoro/record/house_keep'
@@ -19,59 +18,30 @@ import type { CurrentDateService } from '../infra/current_date'
 
 export class BackgroundListener {
   static async start() {
-    return BackgroundListener._start({
+    const listener = new BackgroundListener({
       context: new ListenerServicesContextImpl(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
-      timerFactory: (timerConfig) => {
-        return PomodoroTimer.create(timerConfig)
-      }
+      timer: PomodoroTimer.create()
     })
+    await listener.start()
+    return listener
   }
 
   static async startFake({
     context,
-    timerFactory = (timerConfig: TimerConfig) => PomodoroTimer.createFake({ timerConfig }),
+    timer,
     focusSessionRecordHouseKeepDays = 30
   }: {
     context: ListenerServicesContext
-    timerFactory?: (timerConfig: TimerConfig) => PomodoroTimer
+    timer: PomodoroTimer
     focusSessionRecordHouseKeepDays?: number
   }) {
-    return BackgroundListener._start({
-      context,
-      focusSessionRecordHouseKeepDays,
-      timerFactory
-    })
-  }
-
-  private static async _start({
-    context,
-    focusSessionRecordHouseKeepDays,
-    timerFactory
-  }: {
-    context: ListenerServicesContext
-    focusSessionRecordHouseKeepDays: number
-    timerFactory: (timerConfig: TimerConfig) => PomodoroTimer
-  }) {
-    const timerConfig = {
-      ...(await context.timerConfigStorageService.get()),
-      focusSessionRecordHouseKeepDays
-    }
-
-    const timer = timerFactory(timerConfig)
-    const backupState = await context.timerStateStorageService.get()
-    if (backupState) {
-      timer.setState(backupState)
-    }
-
     const listener = new BackgroundListener({
       context,
-      timer,
-      focusSessionRecordHouseKeepDays
+      focusSessionRecordHouseKeepDays,
+      timer
     })
-
-    listener.start()
-
+    await listener.start()
     return listener
   }
 
@@ -117,12 +87,20 @@ export class BackgroundListener {
     this.timer = timer
   }
 
-  private start() {
-    this.setUpTimerSubscriptions()
-    this.setUpListener()
+  private async start() {
+    return this.setUpTimer().then(() => {
+      this.setUpListener()
+    })
   }
 
-  private setUpTimerSubscriptions() {
+  private async setUpTimer() {
+    const timerConfig = await this.timerConfigStorageService.get()
+    this.timer.setConfig(timerConfig)
+    const backupState = await this.timerStateStorageService.get()
+    if (backupState) {
+      this.timer.setState(backupState)
+    }
+
     this.timer.setOnStageComplete((completedStage) => {
       this.reminderService.trigger()
       this.badgeDisplayService.clearBadge()
@@ -131,6 +109,7 @@ export class BackgroundListener {
         this.updateFocusSessionRecords()
       }
     })
+
     this.timer.subscribeTimerState((newState) => {
       this.timerStateStorageService.save(newState)
 

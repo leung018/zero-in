@@ -10,7 +10,7 @@ import { PomodoroStage } from './stage'
 import { SubscriptionManager } from '../../utils/subscription'
 
 export class PomodoroTimer {
-  static create(timerConfig: TimerConfig) {
+  static create(timerConfig: TimerConfig = config.getDefaultTimerConfig()) {
     return new PomodoroTimer({
       scheduler: new PeriodicTaskSchedulerImpl(),
       timerConfig
