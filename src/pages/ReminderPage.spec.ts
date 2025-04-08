@@ -10,6 +10,7 @@ import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/stor
 import { newFocusSessionRecord } from '../domain/pomodoro/record'
 import { Time } from '../domain/time'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
+import { CurrentDateService } from '../infra/current_date'
 
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
@@ -98,8 +99,10 @@ async function mountPage({
   dailyCutOffTime = new Time(0, 0),
   currentDate = new Date()
 } = {}) {
+  const currentDateService = CurrentDateService.createFake(currentDate)
   const { scheduler, timer, communicationManager } = await startBackgroundListener({
-    timerConfig
+    timerConfig,
+    currentDateService
   })
   const closeCurrentTabService = new FakeActionService()
   const soundService = new FakeActionService()
@@ -113,7 +116,7 @@ async function mountPage({
       soundService,
       focusSessionRecordStorageService,
       dailyResetTimeStorageService,
-      currentDate
+      currentDateService
     }
   })
   return { wrapper, scheduler, timer, closeCurrentTabService, soundService }
