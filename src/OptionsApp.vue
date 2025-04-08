@@ -4,7 +4,7 @@ import { WeeklyScheduleStorageService } from './domain/schedules/storage'
 import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
 import StatisticsPage from './pages/StatisticsPage.vue'
 import TimerSettingPage from './pages/TimerSettingPage.vue'
-import { computed, onMounted, ref, type Component } from 'vue'
+import { onMounted, ref } from 'vue'
 import { BrowsingRulesStorageService } from './domain/browsing_rules/storage'
 import { ChromeCommunicationManager } from './chrome/communication'
 import { DailyResetTimeStorageService } from './domain/daily_reset_time/storage'
@@ -14,6 +14,7 @@ import { TimerConfigStorageService } from './domain/pomodoro/config/storage'
 import { CurrentDateService } from './infra/current_date'
 
 const port = new ChromeCommunicationManager().clientConnect()
+const reloadService = new ReloadService()
 
 enum PATH {
   ROOT = '/',
@@ -22,49 +23,11 @@ enum PATH {
   TIMER_SETTING = '/timer-setting'
 }
 
-type Route = {
-  component: Component
-  props: object
-  title: string
-}
-
-const routeMap: Record<PATH, Route> = {
-  [PATH.ROOT]: {
-    title: 'Blocked Domains',
-    component: BlockedDomainsPage,
-    props: {
-      browsingRulesStorageService: BrowsingRulesStorageService.create(),
-      port
-    }
-  },
-  [PATH.SCHEDULES]: {
-    title: 'Schedules',
-    component: WeeklySchedulesPage,
-    props: {
-      weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
-      port
-    }
-  },
-  [PATH.STATISTICS]: {
-    title: 'Statistics',
-    component: StatisticsPage,
-    props: {
-      dailyResetTimeStorageService: DailyResetTimeStorageService.create(),
-      reloadService: new ReloadService(),
-      currentDateService: CurrentDateService.create(),
-      focusSessionRecordStorageService: FocusSessionRecordStorageService.create(),
-      port
-    }
-  },
-  [PATH.TIMER_SETTING]: {
-    title: 'Timer Setting',
-    component: TimerSettingPage,
-    props: {
-      timerConfigStorageService: TimerConfigStorageService.create(),
-      port,
-      reloadService: new ReloadService()
-    }
-  }
+const pathTitles = {
+  [PATH.ROOT]: 'Blocked Domains',
+  [PATH.SCHEDULES]: 'Schedules',
+  [PATH.STATISTICS]: 'Statistics',
+  [PATH.TIMER_SETTING]: 'Timer Setting'
 }
 
 const currentPath = ref<PATH>(PATH.ROOT)
@@ -81,10 +44,6 @@ function getPathFromWindowLocation(): PATH {
   const path = window.location.hash.slice(1)
   return Object.values(PATH).includes(path as PATH) ? (path as PATH) : PATH.ROOT
 }
-
-const currentView = computed(() => {
-  return routeMap[currentPath.value]
-})
 </script>
 
 <template>
@@ -96,9 +55,35 @@ const currentView = computed(() => {
         :href="`#${path}`"
         :active="path === currentPath"
       >
-        {{ routeMap[path].title }}
+        {{ pathTitles[path] }}
       </BNavItem>
     </BNav>
-    <component :is="currentView.component" v-bind="currentView.props" />
+    <BlockedDomainsPage
+      v-if="currentPath === PATH.ROOT"
+      :browsing-rules-storage-service="BrowsingRulesStorageService.create()"
+      :port="port"
+    />
+
+    <WeeklySchedulesPage
+      v-else-if="currentPath === PATH.SCHEDULES"
+      :weekly-schedule-storage-service="WeeklyScheduleStorageService.create()"
+      :port="port"
+    />
+
+    <StatisticsPage
+      v-else-if="currentPath === PATH.STATISTICS"
+      :daily-reset-time-storage-service="DailyResetTimeStorageService.create()"
+      :reload-service="reloadService"
+      :current-date-service="CurrentDateService.create()"
+      :focus-session-record-storage-service="FocusSessionRecordStorageService.create()"
+      :port="port"
+    />
+
+    <TimerSettingPage
+      v-else-if="currentPath === PATH.TIMER_SETTING"
+      :timer-config-storage-service="TimerConfigStorageService.create()"
+      :port="port"
+      :reload-service="reloadService"
+    />
   </main>
 </template>
