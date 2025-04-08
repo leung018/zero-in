@@ -10,19 +10,20 @@ import { getMostRecentDate } from '../utils/util'
 import type { Port } from '@/infra/communication'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 import { WorkResponseName, type WorkResponse } from '../service_workers/response'
+import { CurrentDateService } from '../infra/current_date'
 
 type PomodoroStat = { day: string; completedPomodori: number }
 
 const {
   dailyResetTimeStorageService,
   reloadService,
-  getCurrentDate,
+  currentDateService,
   focusSessionRecordStorageService,
   port
 } = defineProps<{
   dailyResetTimeStorageService: DailyResetTimeStorageService
   reloadService: ReloadService
-  getCurrentDate: () => Date
+  currentDateService: CurrentDateService
   focusSessionRecordStorageService: FocusSessionRecordStorageService
   port: Port<WorkRequest, WorkResponse>
 }>()
@@ -58,7 +59,7 @@ onBeforeMount(async () => {
 
 async function setPomodoroStats(dailyResetTime: Time) {
   const records = await focusSessionRecordStorageService.getAll()
-  let inclusiveEndDate = getCurrentDate()
+  let inclusiveEndDate = currentDateService.getDate()
   const inclusiveStartDate = getMostRecentDate(dailyResetTime, inclusiveEndDate)
   for (let i = 0; i < pomodoroStats.value.length; i++) {
     pomodoroStats.value[i].completedPomodori = records.filter(

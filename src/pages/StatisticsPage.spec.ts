@@ -9,6 +9,7 @@ import type { FocusSessionRecord } from '../domain/pomodoro/record'
 import { TimerConfig } from '../domain/pomodoro/config'
 import { startBackgroundListener } from '../test_utils/listener'
 import { Duration } from '../domain/pomodoro/duration'
+import { CurrentDateService } from '../infra/current_date'
 
 describe('StatisticsPage', () => {
   it('should render saved daily reset time', async () => {
@@ -148,31 +149,26 @@ describe('StatisticsPage', () => {
 async function mountStatisticsPage({
   timerConfig = TimerConfig.newTestInstance(),
   dailyResetTimeStorageService = DailyResetTimeStorageService.createFake(),
-  currentDate = null,
+  currentDate = undefined,
   focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
 }: {
   timerConfig?: TimerConfig
   dailyResetTimeStorageService?: DailyResetTimeStorageService
-  currentDate?: Date | null
+  currentDate?: Date | undefined
   focusSessionRecordStorageService?: FocusSessionRecordStorageService
 } = {}) {
-  const getCurrentDate = () => {
-    if (currentDate) {
-      return currentDate
-    }
-    return new Date()
-  }
+  const currentDateService = CurrentDateService.createFake(currentDate)
   const { scheduler, timer, communicationManager } = await startBackgroundListener({
     timerConfig,
     focusSessionRecordStorageService,
-    getCurrentDate
+    currentDateService
   })
   const reloadService = new FakeActionService()
   const wrapper = mount(StatisticsPage, {
     props: {
       dailyResetTimeStorageService,
       reloadService,
-      getCurrentDate,
+      currentDateService,
       focusSessionRecordStorageService,
       port: communicationManager.clientConnect()
     }

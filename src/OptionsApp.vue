@@ -11,6 +11,7 @@ import { DailyResetTimeStorageService } from './domain/daily_reset_time/storage'
 import { ReloadService } from './chrome/reload'
 import { FocusSessionRecordStorageService } from './domain/pomodoro/record/storage'
 import { TimerConfigStorageService } from './domain/pomodoro/config/storage'
+import { CurrentDateService } from './infra/current_date'
 
 const port = new ChromeCommunicationManager().clientConnect()
 
@@ -50,7 +51,7 @@ const routeMap: Record<PATH, Route> = {
     props: {
       dailyResetTimeStorageService: DailyResetTimeStorageService.create(),
       reloadService: new ReloadService(),
-      getCurrentDate: () => new Date(),
+      currentDateService: CurrentDateService.create(),
       focusSessionRecordStorageService: FocusSessionRecordStorageService.create(),
       port
     }

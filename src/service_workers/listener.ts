@@ -1,148 +1,73 @@
-import { ChromeCommunicationManager } from '../chrome/communication'
 import { type WorkRequest, WorkRequestName } from './request'
-import {
-  FakeCommunicationManager,
-  type CommunicationManager,
-  type Port
-} from '../infra/communication'
+import { type CommunicationManager, type Port } from '../infra/communication'
 import { BrowsingControlTogglingService } from '../domain/browsing_control_toggling'
 import { WorkResponseName, type WorkResponse } from './response'
 import { PomodoroTimer } from '../domain/pomodoro/timer'
-import { FakeActionService, type ActionService } from '../infra/action'
-import { ChromeNewTabService } from '../chrome/new_tab'
-import { FakeBadgeDisplayService, type BadgeColor, type BadgeDisplayService } from '../infra/badge'
-import { ChromeBadgeDisplayService } from '../chrome/badge'
+import { type ActionService } from '../infra/action'
+import { type BadgeColor, type BadgeDisplayService } from '../infra/badge'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import config from '../config'
-import { MultipleActionService } from '../infra/multiple_actions'
-import { ChromeNotificationService } from '../chrome/notification'
 import { TimerStateStorageService } from '../domain/pomodoro/storage'
-import { ChromeCloseTabsService } from '../chrome/close_tabs'
 import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
-import type { TimerConfig } from '../domain/pomodoro/config'
 import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
 import { newFocusSessionRecord } from '../domain/pomodoro/record'
 import { FocusSessionRecordHousekeeper } from '../domain/pomodoro/record/house_keep'
 import { SubscriptionManager } from '../utils/subscription'
+import { CurrentDateService } from '../infra/current_date'
+import type { BrowsingControlService } from '../domain/browsing_control'
+import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
+import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
+import { ChromeCommunicationManager } from '../chrome/communication'
+import { MultipleActionService } from '../infra/multiple_actions'
+import { ChromeNewTabService } from '../chrome/new_tab'
+import { ChromeNotificationService } from '../chrome/notification'
+import { ChromeBadgeDisplayService } from '../chrome/badge'
+import { ChromeCloseTabsService } from '../chrome/close_tabs'
+import { ChromeBrowsingControlService } from '../chrome/browsing_control'
+
+type ListenerParams = {
+  communicationManager: CommunicationManager
+  reminderService: ActionService
+  badgeDisplayService: BadgeDisplayService
+  timerStateStorageService: TimerStateStorageService
+  timerConfigStorageService: TimerConfigStorageService
+  focusSessionRecordStorageService: FocusSessionRecordStorageService
+  closeTabsService: ActionService
+  browsingControlService: BrowsingControlService
+  browsingRulesStorageService: BrowsingRulesStorageService
+  weeklyScheduleStorageService: WeeklyScheduleStorageService
+  currentDateService: CurrentDateService
+  focusSessionRecordHouseKeepDays: number
+  timer: PomodoroTimer
+}
 
 export class BackgroundListener {
-  static async start() {
-    const reminderService = new MultipleActionService([
-      new ChromeNewTabService(config.getReminderPageUrl()),
-      new ChromeNotificationService()
-    ])
-
-    return BackgroundListener._start({
+  static create() {
+    return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
-      focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
-      focusSessionRecordStorageService: FocusSessionRecordStorageService.create(),
-      timerFactory: (timerConfig) => {
-        return PomodoroTimer.create(timerConfig)
-      },
-      redirectTogglingService: BrowsingControlTogglingService.create(),
-      reminderService,
+      reminderService: new MultipleActionService([
+        new ChromeNewTabService(config.getReminderPageUrl()),
+        new ChromeNotificationService()
+      ]),
       badgeDisplayService: new ChromeBadgeDisplayService(),
       timerStateStorageService: TimerStateStorageService.create(),
       timerConfigStorageService: TimerConfigStorageService.create(),
-      closeTabsService: new ChromeCloseTabsService(config.getReminderPageUrl())
+      focusSessionRecordStorageService: FocusSessionRecordStorageService.create(),
+      closeTabsService: new ChromeCloseTabsService(config.getReminderPageUrl()),
+      browsingControlService: new ChromeBrowsingControlService(),
+      browsingRulesStorageService: BrowsingRulesStorageService.create(),
+      weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
+      currentDateService: CurrentDateService.create(),
+      focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
+      timer: PomodoroTimer.create()
     })
   }
 
-  static async startFake({
-    timerFactory = (timerConfig: TimerConfig) => PomodoroTimer.createFake({ timerConfig }),
-    focusSessionRecordHouseKeepDays = 30,
-    focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake(),
-    communicationManager = new FakeCommunicationManager(),
-    redirectTogglingService = BrowsingControlTogglingService.createFake(),
-    reminderService = new FakeActionService(),
-    badgeDisplayService = new FakeBadgeDisplayService(),
-    timerStateStorageService = TimerStateStorageService.createFake(),
-    timerConfigStorageService = TimerConfigStorageService.createFake(),
-    closeTabsService = new FakeActionService(),
-    getCurrentDate = undefined
-  }: {
-    timerFactory?: (timerConfig: TimerConfig) => PomodoroTimer
-    focusSessionRecordHouseKeepDays?: number
-    focusSessionRecordStorageService?: FocusSessionRecordStorageService
-    communicationManager?: CommunicationManager
-    redirectTogglingService?: BrowsingControlTogglingService
-    reminderService?: ActionService
-    badgeDisplayService?: BadgeDisplayService
-    timerStateStorageService?: TimerStateStorageService
-    timerConfigStorageService?: TimerConfigStorageService
-    closeTabsService?: ActionService
-    getCurrentDate?: () => Date
-  } = {}) {
-    return BackgroundListener._start({
-      communicationManager,
-      focusSessionRecordHouseKeepDays,
-      focusSessionRecordStorageService,
-      timerFactory,
-      redirectTogglingService,
-      reminderService,
-      badgeDisplayService,
-      timerStateStorageService,
-      timerConfigStorageService,
-      closeTabsService,
-      getCurrentDate
-    })
+  static createFake(params: ListenerParams) {
+    return new BackgroundListener(params)
   }
 
-  private static async _start({
-    communicationManager,
-    focusSessionRecordHouseKeepDays,
-    focusSessionRecordStorageService,
-    timerFactory,
-    redirectTogglingService,
-    reminderService,
-    badgeDisplayService,
-    timerStateStorageService,
-    timerConfigStorageService,
-    closeTabsService,
-    getCurrentDate = () => new Date()
-  }: {
-    communicationManager: CommunicationManager
-    focusSessionRecordHouseKeepDays: number
-    focusSessionRecordStorageService: FocusSessionRecordStorageService
-    timerFactory: (timerConfig: TimerConfig) => PomodoroTimer
-    redirectTogglingService: BrowsingControlTogglingService
-    reminderService: ActionService
-    badgeDisplayService: BadgeDisplayService
-    timerStateStorageService: TimerStateStorageService
-    timerConfigStorageService: TimerConfigStorageService
-    closeTabsService: ActionService
-    getCurrentDate?: () => Date
-  }) {
-    const timerConfig = {
-      ...(await timerConfigStorageService.get()),
-      focusSessionRecordHouseKeepDays
-    }
-    const timer = timerFactory(timerConfig)
-    const backupState = await timerStateStorageService.get()
-    if (backupState) {
-      timer.setState(backupState)
-    }
-
-    const listener = new BackgroundListener({
-      getCurrentDate,
-      communicationManager,
-      timer,
-      redirectTogglingService,
-      reminderService,
-      badgeDisplayService,
-      timerStateStorageService,
-      timerConfigStorageService,
-      focusSessionRecordStorageService,
-      focusSessionRecordHouseKeepDays,
-      closeTabsService
-    })
-
-    listener.start()
-
-    return listener
-  }
-
-  private redirectTogglingService: BrowsingControlTogglingService
+  private browsingControlTogglingService: BrowsingControlTogglingService
   private communicationManager: CommunicationManager
   readonly timer: PomodoroTimer // TODO: Make it private when removed the dependency on timer in tests of listener
   private reminderService: ActionService
@@ -150,57 +75,46 @@ export class BackgroundListener {
   private timerStateStorageService: TimerStateStorageService
   private timerConfigStorageService: TimerConfigStorageService
   private closeTabsService: ActionService
+  private currentDateService: CurrentDateService
 
   private focusSessionRecordStorageService: FocusSessionRecordStorageService
   private focusSessionRecordHouseKeepDays: number
   private focusSessionRecordsUpdateSubscriptionManager = new SubscriptionManager()
-  private getCurrentDate: () => Date
 
-  private constructor({
-    communicationManager,
-    timer,
-    redirectTogglingService,
-    reminderService,
-    badgeDisplayService,
-    timerStateStorageService,
-    timerConfigStorageService,
-    focusSessionRecordStorageService,
-    focusSessionRecordHouseKeepDays,
-    closeTabsService,
-    getCurrentDate
-  }: {
-    communicationManager: CommunicationManager
-    timer: PomodoroTimer
-    redirectTogglingService: BrowsingControlTogglingService
-    reminderService: ActionService
-    badgeDisplayService: BadgeDisplayService
-    timerStateStorageService: TimerStateStorageService
-    timerConfigStorageService: TimerConfigStorageService
-    focusSessionRecordStorageService: FocusSessionRecordStorageService
-    focusSessionRecordHouseKeepDays: number
-    closeTabsService: ActionService
-    getCurrentDate: () => Date
-  }) {
-    this.communicationManager = communicationManager
-    this.redirectTogglingService = redirectTogglingService
-    this.reminderService = reminderService
-    this.badgeDisplayService = badgeDisplayService
-    this.timerStateStorageService = timerStateStorageService
-    this.timerConfigStorageService = timerConfigStorageService
-    this.closeTabsService = closeTabsService
-    this.focusSessionRecordStorageService = focusSessionRecordStorageService
-    this.focusSessionRecordHouseKeepDays = focusSessionRecordHouseKeepDays
-    this.getCurrentDate = getCurrentDate
+  private constructor(params: ListenerParams) {
+    this.communicationManager = params.communicationManager
+    this.browsingControlTogglingService = new BrowsingControlTogglingService({
+      browsingControlService: params.browsingControlService,
+      browsingRulesStorageService: params.browsingRulesStorageService,
+      weeklyScheduleStorageService: params.weeklyScheduleStorageService,
+      currentDateService: params.currentDateService
+    })
+    this.reminderService = params.reminderService
+    this.badgeDisplayService = params.badgeDisplayService
+    this.timerStateStorageService = params.timerStateStorageService
+    this.timerConfigStorageService = params.timerConfigStorageService
+    this.closeTabsService = params.closeTabsService
+    this.focusSessionRecordStorageService = params.focusSessionRecordStorageService
+    this.focusSessionRecordHouseKeepDays = params.focusSessionRecordHouseKeepDays
+    this.currentDateService = params.currentDateService
 
-    this.timer = timer
+    this.timer = params.timer
   }
 
-  private start() {
-    this.setUpTimerSubscriptions()
-    this.setUpListener()
+  async start() {
+    return this.setUpTimer().then(() => {
+      this.setUpListener()
+    })
   }
 
-  private setUpTimerSubscriptions() {
+  private async setUpTimer() {
+    const timerConfig = await this.timerConfigStorageService.get()
+    this.timer.setConfig(timerConfig)
+    const backupState = await this.timerStateStorageService.get()
+    if (backupState) {
+      this.timer.setState(backupState)
+    }
+
     this.timer.setOnStageComplete((completedStage) => {
       this.reminderService.trigger()
       this.badgeDisplayService.clearBadge()
@@ -209,6 +123,7 @@ export class BackgroundListener {
         this.updateFocusSessionRecords()
       }
     })
+
     this.timer.subscribeTimerState((newState) => {
       this.timerStateStorageService.save(newState)
 
@@ -227,7 +142,7 @@ export class BackgroundListener {
       .then((records) => {
         this.focusSessionRecordStorageService.saveAll([
           ...records,
-          newFocusSessionRecord(this.getCurrentDate())
+          newFocusSessionRecord(this.currentDateService.getDate())
         ])
       })
       .then(() => {
@@ -250,8 +165,8 @@ export class BackgroundListener {
       (backgroundPort: Port<WorkResponse, WorkRequest>) => {
         const listener = (message: WorkRequest) => {
           switch (message.name) {
-            case WorkRequestName.TOGGLE_REDIRECT_RULES: {
-              this.redirectTogglingService.run()
+            case WorkRequestName.TOGGLE_BROWSING_RULES: {
+              this.browsingControlTogglingService.run()
               break
             }
             case WorkRequestName.START_TIMER: {

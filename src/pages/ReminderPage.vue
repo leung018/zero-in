@@ -9,19 +9,20 @@ import type { FocusSessionRecordStorageService } from '../domain/pomodoro/record
 import type { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { Time } from '../domain/time'
 import { getMostRecentDate } from '../utils/util'
+import type { CurrentDateService } from '@/infra/current_date'
 
 const {
   port,
   soundService,
   focusSessionRecordStorageService,
   dailyResetTimeStorageService,
-  currentDate
+  currentDateService
 } = defineProps<{
   port: Port<WorkRequest, WorkResponse>
   soundService: ActionService
   focusSessionRecordStorageService: FocusSessionRecordStorageService
   dailyResetTimeStorageService: DailyResetTimeStorageService
-  currentDate: Date
+  currentDateService: CurrentDateService
 }>()
 
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
@@ -58,7 +59,7 @@ onMounted(() => {
 })
 
 async function getTotalNumOfPomodoriAfter(dailyResetTime: Time): Promise<number> {
-  const startDate = getMostRecentDate(dailyResetTime, currentDate)
+  const startDate = getMostRecentDate(dailyResetTime, currentDateService.getDate())
 
   const totalNumOfPomodori = (
     await focusSessionRecordStorageService

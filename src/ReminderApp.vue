@@ -4,6 +4,7 @@ import { DailyResetTimeStorageService } from './domain/daily_reset_time/storage'
 import ReminderPage from './pages/ReminderPage.vue'
 import { FocusSessionRecordStorageService } from './domain/pomodoro/record/storage'
 import { SoundService } from './chrome/sound'
+import { CurrentDateService } from './infra/current_date'
 </script>
 
 <template>
@@ -12,6 +13,6 @@ import { SoundService } from './chrome/sound'
     :dailyResetTimeStorageService="DailyResetTimeStorageService.create()"
     :port="new ChromeCommunicationManager().clientConnect()"
     :soundService="new SoundService()"
-    :currentDate="new Date()"
+    :currentDateService="CurrentDateService.create()"
   />
 </template>

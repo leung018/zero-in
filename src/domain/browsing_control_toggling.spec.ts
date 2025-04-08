@@ -6,13 +6,11 @@ import { Weekday, WeeklySchedule } from './schedules'
 import { Time } from './time'
 import { WeeklyScheduleStorageService } from './schedules/storage'
 import { BrowsingControlTogglingService } from './browsing_control_toggling'
+import { CurrentDateService } from '../infra/current_date'
 
 describe('BrowsingControlTogglingService', () => {
   it('should toggle according to browsing rules if current time is within schedule', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
-    const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
-    browsingRulesStorageService.save(browsingRules)
-
     const schedules = [
       new WeeklySchedule({
         weekdaySet: new Set([Weekday.MON, Weekday.TUE]),
@@ -20,42 +18,62 @@ describe('BrowsingControlTogglingService', () => {
         endTime: new Time(17, 0)
       })
     ]
-    const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
-    weeklyScheduleStorageService.saveAll(schedules)
 
-    const browsingControlService = new FakeBrowsingControlService()
-
-    const redirectTogglingService = BrowsingControlTogglingService.createFake({
-      browsingRulesStorageService,
-      browsingControlService,
-      weeklyScheduleStorageService
-    })
-
-    await redirectTogglingService.run(new Date('2025-02-03T11:00:00')) // 2025-02-03 is Mon
-
-    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
-
-    await redirectTogglingService.run(new Date('2025-02-03T17:01:00'))
-    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules,
+        currentDate: new Date('2025-02-03T11:00:00')
+      })
+    ).toEqual(browsingRules)
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules,
+        currentDate: new Date('2025-02-03T17:01:00')
+      })
+    ).toBeNull()
   })
 
   it('should always activate when weekly schedules are empty', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
-    const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
-    browsingRulesStorageService.save(browsingRules)
-
-    const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
-
-    const browsingControlService = new FakeBrowsingControlService()
-
-    const redirectTogglingService = BrowsingControlTogglingService.createFake({
-      browsingRulesStorageService,
-      browsingControlService,
-      weeklyScheduleStorageService
-    })
-
-    await redirectTogglingService.run()
-
-    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules: [],
+        currentDate: new Date()
+      })
+    ).toEqual(browsingRules)
   })
 })
+
+async function getBrowsingRulesAfterToggling({
+  browsingRules,
+  schedules,
+  currentDate
+}: {
+  browsingRules: BrowsingRules
+  schedules: WeeklySchedule[]
+  currentDate: Date
+}) {
+  const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
+  browsingRulesStorageService.save(browsingRules)
+
+  const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
+  weeklyScheduleStorageService.saveAll(schedules)
+
+  const currentDateService = CurrentDateService.createFake(currentDate)
+
+  const browsingControlService = new FakeBrowsingControlService()
+
+  const browsingControlTogglingService = BrowsingControlTogglingService.createFake({
+    browsingRulesStorageService,
+    browsingControlService,
+    weeklyScheduleStorageService,
+    currentDateService
+  })
+
+  await browsingControlTogglingService.run()
+
+  return browsingControlService.getActivatedBrowsingRules()
+}

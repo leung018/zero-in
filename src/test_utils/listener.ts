@@ -1,6 +1,5 @@
 import config from '../config'
 import { PomodoroTimer } from '../domain/pomodoro/timer'
-import { BrowsingControlTogglingService } from '../domain/browsing_control_toggling'
 import { FakeActionService } from '../infra/action'
 import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeCommunicationManager } from '../infra/communication'
@@ -10,11 +9,17 @@ import { TimerStateStorageService } from '../domain/pomodoro/storage'
 import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
 import type { TimerConfig } from '../domain/pomodoro/config'
 import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
+import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
+import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
+import { FakeBrowsingControlService } from '../domain/browsing_control'
+import { CurrentDateService } from '../infra/current_date'
 
 export async function startBackgroundListener({
   focusSessionRecordHouseKeepDays = 30,
   timerConfig = config.getDefaultTimerConfig(),
-  redirectTogglingService = BrowsingControlTogglingService.createFake(),
+  browsingControlService = new FakeBrowsingControlService(),
+  weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
+  browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
   reminderService = new FakeActionService(),
   badgeDisplayService = new FakeBadgeDisplayService(),
   communicationManager = new FakeCommunicationManager(),
@@ -22,11 +27,13 @@ export async function startBackgroundListener({
   timerConfigStorageService = TimerConfigStorageService.createFake(),
   closeTabsService = new FakeActionService(),
   focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake(),
-  getCurrentDate = undefined
+  currentDateService = CurrentDateService.createFake()
 }: {
   focusSessionRecordHouseKeepDays?: number
   timerConfig?: TimerConfig
-  redirectTogglingService?: BrowsingControlTogglingService
+  browsingControlService?: FakeBrowsingControlService
+  weeklyScheduleStorageService?: WeeklyScheduleStorageService
+  browsingRulesStorageService?: BrowsingRulesStorageService
   reminderService?: FakeActionService
   badgeDisplayService?: FakeBadgeDisplayService
   communicationManager?: FakeCommunicationManager
@@ -34,39 +41,39 @@ export async function startBackgroundListener({
   timerConfigStorageService?: TimerConfigStorageService
   closeTabsService?: FakeActionService
   focusSessionRecordStorageService?: FocusSessionRecordStorageService
-  getCurrentDate?: () => Date
+  currentDateService?: CurrentDateService
 }) {
   const scheduler = new FakePeriodicTaskScheduler()
   await timerConfigStorageService.save(timerConfig)
-  const timerFactory = (tc: TimerConfig) => {
-    return PomodoroTimer.createFake({
-      scheduler,
-      timerConfig: tc
-    })
-  }
-  return BackgroundListener.startFake({
-    timerFactory,
-    focusSessionRecordHouseKeepDays,
-    focusSessionRecordStorageService,
+  const timer = PomodoroTimer.createFake({
+    scheduler
+  })
+
+  const listener = BackgroundListener.createFake({
+    browsingControlService,
+    weeklyScheduleStorageService,
+    browsingRulesStorageService,
+    communicationManager,
     reminderService,
     badgeDisplayService,
-    redirectTogglingService,
-    communicationManager,
     timerStateStorageService,
     timerConfigStorageService,
+    focusSessionRecordStorageService,
     closeTabsService,
-    getCurrentDate
-  }).then((listener) => {
-    return {
-      scheduler,
-      timer: listener.timer,
-      listener,
-      reminderService,
-      badgeDisplayService,
-      communicationManager,
-      closeTabsService,
-      timerConfigStorageService,
-      focusSessionRecordStorageService
-    }
+    currentDateService,
+    timer,
+    focusSessionRecordHouseKeepDays
   })
+  await listener.start()
+  return {
+    scheduler,
+    timer: listener.timer,
+    listener,
+    reminderService,
+    badgeDisplayService,
+    communicationManager,
+    closeTabsService,
+    timerConfigStorageService,
+    focusSessionRecordStorageService
+  }
 }
