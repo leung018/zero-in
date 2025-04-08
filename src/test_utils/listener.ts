@@ -12,6 +12,7 @@ import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
 import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { FakeBrowsingControlService } from '../domain/browsing_control'
+import { CurrentDateService } from '../infra/current_date'
 
 export async function startBackgroundListener({
   focusSessionRecordHouseKeepDays = 30,
@@ -26,7 +27,7 @@ export async function startBackgroundListener({
   timerConfigStorageService = TimerConfigStorageService.createFake(),
   closeTabsService = new FakeActionService(),
   focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake(),
-  getCurrentDate = undefined
+  currentDateService = CurrentDateService.createFake()
 }: {
   focusSessionRecordHouseKeepDays?: number
   timerConfig?: TimerConfig
@@ -40,7 +41,7 @@ export async function startBackgroundListener({
   timerConfigStorageService?: TimerConfigStorageService
   closeTabsService?: FakeActionService
   focusSessionRecordStorageService?: FocusSessionRecordStorageService
-  getCurrentDate?: () => Date
+  currentDateService?: CurrentDateService
 }) {
   const context = {
     browsingControlService,
@@ -52,7 +53,8 @@ export async function startBackgroundListener({
     timerStateStorageService,
     timerConfigStorageService,
     focusSessionRecordStorageService,
-    closeTabsService
+    closeTabsService,
+    currentDateService
   }
 
   const scheduler = new FakePeriodicTaskScheduler()
@@ -67,8 +69,7 @@ export async function startBackgroundListener({
   return BackgroundListener.startFake({
     context,
     timerFactory,
-    focusSessionRecordHouseKeepDays,
-    getCurrentDate
+    focusSessionRecordHouseKeepDays
   }).then((listener) => {
     return {
       scheduler,

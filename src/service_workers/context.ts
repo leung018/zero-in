@@ -14,6 +14,7 @@ import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { type ActionService } from '../infra/action'
 import { type BadgeDisplayService } from '../infra/badge'
 import { type CommunicationManager } from '../infra/communication'
+import { CurrentDateService } from '../infra/current_date'
 import { MultipleActionService } from '../infra/multiple_actions'
 
 export type ListenerServicesContext = {
@@ -27,6 +28,7 @@ export type ListenerServicesContext = {
   readonly browsingControlService: BrowsingControlService
   readonly browsingRulesStorageService: BrowsingRulesStorageService
   readonly weeklyScheduleStorageService: WeeklyScheduleStorageService
+  readonly currentDateService: CurrentDateService
 }
 
 export class ListenerServicesContextImpl implements ListenerServicesContext {
@@ -43,4 +45,5 @@ export class ListenerServicesContextImpl implements ListenerServicesContext {
   readonly browsingControlService = new ChromeBrowsingControlService()
   readonly browsingRulesStorageService = BrowsingRulesStorageService.create()
   readonly weeklyScheduleStorageService = WeeklyScheduleStorageService.create()
+  readonly currentDateService = CurrentDateService.create()
 }

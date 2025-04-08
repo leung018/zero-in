@@ -15,6 +15,7 @@ import { newFocusSessionRecord } from '../domain/pomodoro/record'
 import { FocusSessionRecordHousekeeper } from '../domain/pomodoro/record/house_keep'
 import { SubscriptionManager } from '../utils/subscription'
 import { type ListenerServicesContext, ListenerServicesContextImpl } from './context'
+import type { CurrentDateService } from '../infra/current_date'
 
 export class BackgroundListener {
   static async start() {
@@ -30,32 +31,27 @@ export class BackgroundListener {
   static async startFake({
     context,
     timerFactory = (timerConfig: TimerConfig) => PomodoroTimer.createFake({ timerConfig }),
-    focusSessionRecordHouseKeepDays = 30,
-    getCurrentDate = undefined
+    focusSessionRecordHouseKeepDays = 30
   }: {
     context: ListenerServicesContext
     timerFactory?: (timerConfig: TimerConfig) => PomodoroTimer
     focusSessionRecordHouseKeepDays?: number
-    getCurrentDate?: () => Date
   }) {
     return BackgroundListener._start({
       context,
       focusSessionRecordHouseKeepDays,
-      timerFactory,
-      getCurrentDate
+      timerFactory
     })
   }
 
   private static async _start({
     context,
     focusSessionRecordHouseKeepDays,
-    timerFactory,
-    getCurrentDate = () => new Date()
+    timerFactory
   }: {
     context: ListenerServicesContext
     focusSessionRecordHouseKeepDays: number
     timerFactory: (timerConfig: TimerConfig) => PomodoroTimer
-    getCurrentDate?: () => Date
   }) {
     const timerConfig = {
       ...(await context.timerConfigStorageService.get()),
@@ -70,7 +66,6 @@ export class BackgroundListener {
 
     const listener = new BackgroundListener({
       context,
-      getCurrentDate,
       timer,
       focusSessionRecordHouseKeepDays
     })
@@ -88,22 +83,20 @@ export class BackgroundListener {
   private timerStateStorageService: TimerStateStorageService
   private timerConfigStorageService: TimerConfigStorageService
   private closeTabsService: ActionService
+  private currentDateService: CurrentDateService
 
   private focusSessionRecordStorageService: FocusSessionRecordStorageService
   private focusSessionRecordHouseKeepDays: number
   private focusSessionRecordsUpdateSubscriptionManager = new SubscriptionManager()
-  private getCurrentDate: () => Date
 
   private constructor({
     context,
     timer,
-    focusSessionRecordHouseKeepDays,
-    getCurrentDate
+    focusSessionRecordHouseKeepDays
   }: {
     context: ListenerServicesContext
     timer: PomodoroTimer
     focusSessionRecordHouseKeepDays: number
-    getCurrentDate: () => Date
   }) {
     this.communicationManager = context.communicationManager
     this.browsingControlTogglingService = new BrowsingControlTogglingService({
@@ -118,7 +111,7 @@ export class BackgroundListener {
     this.closeTabsService = context.closeTabsService
     this.focusSessionRecordStorageService = context.focusSessionRecordStorageService
     this.focusSessionRecordHouseKeepDays = focusSessionRecordHouseKeepDays
-    this.getCurrentDate = getCurrentDate
+    this.currentDateService = context.currentDateService
 
     this.timer = timer
   }
@@ -155,7 +148,7 @@ export class BackgroundListener {
       .then((records) => {
         this.focusSessionRecordStorageService.saveAll([
           ...records,
-          newFocusSessionRecord(this.getCurrentDate())
+          newFocusSessionRecord(this.currentDateService.getDate())
         ])
       })
       .then(() => {
