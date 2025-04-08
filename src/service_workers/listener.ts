@@ -102,7 +102,8 @@ export class BackgroundListener {
     this.browsingControlTogglingService = new BrowsingControlTogglingService({
       browsingControlService: context.browsingControlService,
       browsingRulesStorageService: context.browsingRulesStorageService,
-      weeklyScheduleStorageService: context.weeklyScheduleStorageService
+      weeklyScheduleStorageService: context.weeklyScheduleStorageService,
+      currentDateService: context.currentDateService
     })
     this.reminderService = context.reminderService
     this.badgeDisplayService = context.badgeDisplayService

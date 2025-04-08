@@ -3,50 +3,58 @@ import { BrowsingRulesStorageService } from './browsing_rules/storage'
 import type { WeeklySchedule } from './schedules'
 import { WeeklyScheduleStorageService } from './schedules/storage'
 import { ChromeBrowsingControlService } from '../chrome/browsing_control'
+import { CurrentDateService } from '../infra/current_date'
 
 export class BrowsingControlTogglingService {
   readonly browsingControlService: BrowsingControlService
   readonly browsingRulesStorageService: BrowsingRulesStorageService
   readonly weeklyScheduleStorageService: WeeklyScheduleStorageService
+  readonly currentDateService: CurrentDateService
 
   static create() {
     return new BrowsingControlTogglingService({
       browsingControlService: new ChromeBrowsingControlService(),
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
-      weeklyScheduleStorageService: WeeklyScheduleStorageService.create()
+      weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
+      currentDateService: CurrentDateService.create()
     })
   }
 
   static createFake({
     browsingControlService = new FakeBrowsingControlService(),
     browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
-    weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
+    weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
+    currentDateService = CurrentDateService.createFake()
   } = {}) {
     return new BrowsingControlTogglingService({
       browsingControlService,
       browsingRulesStorageService,
-      weeklyScheduleStorageService
+      weeklyScheduleStorageService,
+      currentDateService
     })
   }
 
   constructor({
     browsingControlService,
     browsingRulesStorageService,
-    weeklyScheduleStorageService
+    weeklyScheduleStorageService,
+    currentDateService
   }: {
     browsingControlService: BrowsingControlService
     browsingRulesStorageService: BrowsingRulesStorageService
     weeklyScheduleStorageService: WeeklyScheduleStorageService
+    currentDateService: CurrentDateService
   }) {
     this.browsingControlService = browsingControlService
     this.browsingRulesStorageService = browsingRulesStorageService
     this.weeklyScheduleStorageService = weeklyScheduleStorageService
+    this.currentDateService = currentDateService
   }
 
-  async run(currentTime: Date = new Date()): Promise<void> {
+  async run(): Promise<void> {
     const schedules = await this.weeklyScheduleStorageService.getAll()
 
-    if (isDateWithinSchedules(currentTime, schedules)) {
+    if (isDateWithinSchedules(this.currentDateService.getDate(), schedules)) {
       return this.browsingRulesStorageService.get().then((browsingRules) => {
         return this.browsingControlService.setAndActivateNewRules(browsingRules)
       })

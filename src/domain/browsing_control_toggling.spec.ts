@@ -6,6 +6,7 @@ import { Weekday, WeeklySchedule } from './schedules'
 import { Time } from './time'
 import { WeeklyScheduleStorageService } from './schedules/storage'
 import { BrowsingControlTogglingService } from './browsing_control_toggling'
+import { CurrentDateService } from '../infra/current_date'
 
 describe('BrowsingControlTogglingService', () => {
   it('should toggle according to browsing rules if current time is within schedule', async () => {
@@ -61,15 +62,18 @@ async function getBrowsingRulesAfterToggling({
   const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
   weeklyScheduleStorageService.saveAll(schedules)
 
+  const currentDateService = CurrentDateService.createFake(currentDate)
+
   const browsingControlService = new FakeBrowsingControlService()
 
   const browsingControlTogglingService = BrowsingControlTogglingService.createFake({
     browsingRulesStorageService,
     browsingControlService,
-    weeklyScheduleStorageService
+    weeklyScheduleStorageService,
+    currentDateService
   })
 
-  await browsingControlTogglingService.run(currentDate)
+  await browsingControlTogglingService.run()
 
   return browsingControlService.getActivatedBrowsingRules()
 }
