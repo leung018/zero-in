@@ -13,13 +13,51 @@ import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/stor
 import { newFocusSessionRecord } from '../domain/pomodoro/record'
 import { FocusSessionRecordHousekeeper } from '../domain/pomodoro/record/house_keep'
 import { SubscriptionManager } from '../utils/subscription'
-import { type ListenerServicesContext, ListenerServicesContextImpl } from './context'
-import type { CurrentDateService } from '../infra/current_date'
+import { CurrentDateService } from '../infra/current_date'
+import type { BrowsingControlService } from '../domain/browsing_control'
+import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
+import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
+import { ChromeCommunicationManager } from '../chrome/communication'
+import { MultipleActionService } from '../infra/multiple_actions'
+import { ChromeNewTabService } from '../chrome/new_tab'
+import { ChromeNotificationService } from '../chrome/notification'
+import { ChromeBadgeDisplayService } from '../chrome/badge'
+import { ChromeCloseTabsService } from '../chrome/close_tabs'
+import { ChromeBrowsingControlService } from '../chrome/browsing_control'
+
+type ListenerParams = {
+  communicationManager: CommunicationManager
+  reminderService: ActionService
+  badgeDisplayService: BadgeDisplayService
+  timerStateStorageService: TimerStateStorageService
+  timerConfigStorageService: TimerConfigStorageService
+  focusSessionRecordStorageService: FocusSessionRecordStorageService
+  closeTabsService: ActionService
+  browsingControlService: BrowsingControlService
+  browsingRulesStorageService: BrowsingRulesStorageService
+  weeklyScheduleStorageService: WeeklyScheduleStorageService
+  currentDateService: CurrentDateService
+  focusSessionRecordHouseKeepDays: number
+  timer: PomodoroTimer
+}
 
 export class BackgroundListener {
   static async start() {
     const listener = new BackgroundListener({
-      context: new ListenerServicesContextImpl(),
+      communicationManager: new ChromeCommunicationManager(),
+      reminderService: new MultipleActionService([
+        new ChromeNewTabService(config.getReminderPageUrl()),
+        new ChromeNotificationService()
+      ]),
+      badgeDisplayService: new ChromeBadgeDisplayService(),
+      timerStateStorageService: TimerStateStorageService.create(),
+      timerConfigStorageService: TimerConfigStorageService.create(),
+      focusSessionRecordStorageService: FocusSessionRecordStorageService.create(),
+      closeTabsService: new ChromeCloseTabsService(config.getReminderPageUrl()),
+      browsingControlService: new ChromeBrowsingControlService(),
+      browsingRulesStorageService: BrowsingRulesStorageService.create(),
+      weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
+      currentDateService: CurrentDateService.create(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
       timer: PomodoroTimer.create()
     })
@@ -27,20 +65,8 @@ export class BackgroundListener {
     return listener
   }
 
-  static async startFake({
-    context,
-    timer,
-    focusSessionRecordHouseKeepDays = 30
-  }: {
-    context: ListenerServicesContext
-    timer: PomodoroTimer
-    focusSessionRecordHouseKeepDays?: number
-  }) {
-    const listener = new BackgroundListener({
-      context,
-      focusSessionRecordHouseKeepDays,
-      timer
-    })
+  static async startFake(params: ListenerParams) {
+    const listener = new BackgroundListener(params)
     await listener.start()
     return listener
   }
@@ -59,32 +85,24 @@ export class BackgroundListener {
   private focusSessionRecordHouseKeepDays: number
   private focusSessionRecordsUpdateSubscriptionManager = new SubscriptionManager()
 
-  private constructor({
-    context,
-    timer,
-    focusSessionRecordHouseKeepDays
-  }: {
-    context: ListenerServicesContext
-    timer: PomodoroTimer
-    focusSessionRecordHouseKeepDays: number
-  }) {
-    this.communicationManager = context.communicationManager
+  private constructor(params: ListenerParams) {
+    this.communicationManager = params.communicationManager
     this.browsingControlTogglingService = new BrowsingControlTogglingService({
-      browsingControlService: context.browsingControlService,
-      browsingRulesStorageService: context.browsingRulesStorageService,
-      weeklyScheduleStorageService: context.weeklyScheduleStorageService,
-      currentDateService: context.currentDateService
+      browsingControlService: params.browsingControlService,
+      browsingRulesStorageService: params.browsingRulesStorageService,
+      weeklyScheduleStorageService: params.weeklyScheduleStorageService,
+      currentDateService: params.currentDateService
     })
-    this.reminderService = context.reminderService
-    this.badgeDisplayService = context.badgeDisplayService
-    this.timerStateStorageService = context.timerStateStorageService
-    this.timerConfigStorageService = context.timerConfigStorageService
-    this.closeTabsService = context.closeTabsService
-    this.focusSessionRecordStorageService = context.focusSessionRecordStorageService
-    this.focusSessionRecordHouseKeepDays = focusSessionRecordHouseKeepDays
-    this.currentDateService = context.currentDateService
+    this.reminderService = params.reminderService
+    this.badgeDisplayService = params.badgeDisplayService
+    this.timerStateStorageService = params.timerStateStorageService
+    this.timerConfigStorageService = params.timerConfigStorageService
+    this.closeTabsService = params.closeTabsService
+    this.focusSessionRecordStorageService = params.focusSessionRecordStorageService
+    this.focusSessionRecordHouseKeepDays = params.focusSessionRecordHouseKeepDays
+    this.currentDateService = params.currentDateService
 
-    this.timer = timer
+    this.timer = params.timer
   }
 
   private async start() {

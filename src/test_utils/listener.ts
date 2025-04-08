@@ -43,7 +43,13 @@ export async function startBackgroundListener({
   focusSessionRecordStorageService?: FocusSessionRecordStorageService
   currentDateService?: CurrentDateService
 }) {
-  const context = {
+  const scheduler = new FakePeriodicTaskScheduler()
+  await timerConfigStorageService.save(timerConfig)
+  const timer = PomodoroTimer.createFake({
+    scheduler
+  })
+
+  return BackgroundListener.startFake({
     browsingControlService,
     weeklyScheduleStorageService,
     browsingRulesStorageService,
@@ -54,17 +60,7 @@ export async function startBackgroundListener({
     timerConfigStorageService,
     focusSessionRecordStorageService,
     closeTabsService,
-    currentDateService
-  }
-
-  const scheduler = new FakePeriodicTaskScheduler()
-  await timerConfigStorageService.save(timerConfig)
-  const timer = PomodoroTimer.createFake({
-    scheduler
-  })
-
-  return BackgroundListener.startFake({
-    context,
+    currentDateService,
     timer,
     focusSessionRecordHouseKeepDays
   }).then((listener) => {
