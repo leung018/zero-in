@@ -4,6 +4,7 @@ import { WeeklyScheduleStorageService } from './domain/schedules/storage'
 import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
 import StatisticsPage from './pages/StatisticsPage.vue'
 import TimerSettingPage from './pages/TimerSettingPage.vue'
+import NotificationPage from './pages/NotificationPage.vue'
 import { onMounted, ref } from 'vue'
 import { BrowsingRulesStorageService } from './domain/browsing_rules/storage'
 import { ChromeCommunicationManager } from './chrome/communication'
@@ -20,14 +21,16 @@ enum PATH {
   ROOT = '/',
   SCHEDULES = '/schedules',
   STATISTICS = '/statistics',
-  TIMER_SETTING = '/timer-setting'
+  TIMER_SETTING = '/timer-setting',
+  NOTIFICATION = '/notification'
 }
 
 const pathTitles = {
   [PATH.ROOT]: 'Blocked Domains',
   [PATH.SCHEDULES]: 'Schedules',
   [PATH.STATISTICS]: 'Statistics',
-  [PATH.TIMER_SETTING]: 'Timer Setting'
+  [PATH.TIMER_SETTING]: 'Timer Setting',
+  [PATH.NOTIFICATION]: 'Notification'
 }
 
 const currentPath = ref<PATH>(PATH.ROOT)
@@ -87,5 +90,7 @@ function getPathFromWindowLocation(): PATH {
       :port="port"
       :reload-service="reloadService"
     />
+
+    <NotificationPage v-else-if="currentPath === PATH.NOTIFICATION" />
   </main>
 </template>
