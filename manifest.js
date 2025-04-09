@@ -17,7 +17,7 @@ const manifestConfig = {
     service_worker: 'src/service_workers/index.ts'
   },
   options_page: 'options.html',
-  permissions: ['storage', 'alarms', 'notifications', 'tabs', 'contextMenus'],
+  permissions: ['storage', 'alarms', 'notifications', 'tabs', 'contextMenus', 'offscreen'],
   web_accessible_resources: [
     {
       resources: ['blocked.html'], // Making blocked template accessible can solve the problem of clicking the blocked domain from the google search results triggering ERR_BLOCKED_BY_CLIENT.

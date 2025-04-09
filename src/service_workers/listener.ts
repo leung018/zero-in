@@ -24,6 +24,7 @@ import { ChromeNotificationService } from '../chrome/notification'
 import { ChromeBadgeDisplayService } from '../chrome/badge'
 import { ChromeCloseTabsService } from '../chrome/close_tabs'
 import { ChromeBrowsingControlService } from '../chrome/browsing_control'
+import { SoundService } from '../chrome/sound'
 
 type ListenerParams = {
   communicationManager: CommunicationManager
@@ -47,7 +48,8 @@ export class BackgroundListener {
       communicationManager: new ChromeCommunicationManager(),
       reminderService: new MultipleActionService([
         new ChromeNewTabService(config.getReminderPageUrl()),
-        new ChromeNotificationService()
+        new ChromeNotificationService(),
+        new SoundService()
       ]),
       badgeDisplayService: new ChromeBadgeDisplayService(),
       timerStateStorageService: TimerStateStorageService.create(),

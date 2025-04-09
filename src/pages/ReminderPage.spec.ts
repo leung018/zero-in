@@ -85,12 +85,6 @@ describe('ReminderPage', () => {
     expect(wrapper.find("[data-test='reset-time']").text()).toBe('15:03')
     expect(wrapper.find("[data-test='daily-completed-pomodori']").text()).toBe('2')
   })
-
-  it('should trigger soundService when mount', async () => {
-    const { soundService } = await mountPage()
-
-    expect(soundService.getTriggerCount()).toBe(1)
-  })
 })
 
 async function mountPage({
@@ -105,7 +99,6 @@ async function mountPage({
     currentDateService
   })
   const closeCurrentTabService = new FakeActionService()
-  const soundService = new FakeActionService()
   const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
   dailyResetTimeStorageService.save(dailyCutOffTime)
 
@@ -113,11 +106,10 @@ async function mountPage({
     props: {
       port: communicationManager.clientConnect(),
       closeCurrentTabService,
-      soundService,
       focusSessionRecordStorageService,
       dailyResetTimeStorageService,
       currentDateService
     }
   })
-  return { wrapper, scheduler, timer, closeCurrentTabService, soundService }
+  return { wrapper, scheduler, timer, closeCurrentTabService }
 }

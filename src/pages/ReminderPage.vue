@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, onMounted, ref } from 'vue'
+import { computed, onBeforeMount, ref } from 'vue'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import type { Port } from '../infra/communication'
-import type { ActionService } from '../infra/action'
 import { WorkResponseName, type WorkResponse } from '../service_workers/response'
 import { WorkRequestName, type WorkRequest } from '../service_workers/request'
 import type { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
@@ -11,19 +10,13 @@ import { Time } from '../domain/time'
 import { getMostRecentDate } from '../utils/util'
 import type { CurrentDateService } from '@/infra/current_date'
 
-const {
-  port,
-  soundService,
-  focusSessionRecordStorageService,
-  dailyResetTimeStorageService,
-  currentDateService
-} = defineProps<{
-  port: Port<WorkRequest, WorkResponse>
-  soundService: ActionService
-  focusSessionRecordStorageService: FocusSessionRecordStorageService
-  dailyResetTimeStorageService: DailyResetTimeStorageService
-  currentDateService: CurrentDateService
-}>()
+const { port, focusSessionRecordStorageService, dailyResetTimeStorageService, currentDateService } =
+  defineProps<{
+    port: Port<WorkRequest, WorkResponse>
+    focusSessionRecordStorageService: FocusSessionRecordStorageService
+    dailyResetTimeStorageService: DailyResetTimeStorageService
+    currentDateService: CurrentDateService
+  }>()
 
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
 const dailyCompletedPomodori = ref(0)
@@ -52,10 +45,6 @@ onBeforeMount(async () => {
   })
   dailyResetTime.value = await dailyResetTimeStorageService.get()
   dailyCompletedPomodori.value = await getTotalNumOfPomodoriAfter(dailyResetTime.value)
-})
-
-onMounted(() => {
-  soundService.trigger()
 })
 
 async function getTotalNumOfPomodoriAfter(dailyResetTime: Time): Promise<number> {
