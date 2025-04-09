@@ -57,8 +57,8 @@ async function updateBrowsingRules(browsingRules: BrowsingRules) {
         />
         <p class="mt-1">
           <small>
-            Enter the domain of the website you would like to limit your browsing to. e.g.
-            "facebook.com", "instagram.com"
+            Enter the domain of the website you would like to limit your browsing to, e.g.
+            "facebook.com", "instagram.com".
           </small>
         </p>
       </div>
