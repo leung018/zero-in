@@ -7,7 +7,8 @@ export class FakeStorage implements Storage {
   private storage: any = {}
 
   async set(update: any): Promise<void> {
-    this.storage = { ...this.storage, ...update }
+    const processedUpdate = JSON.parse(JSON.stringify(update))
+    this.storage = { ...this.storage, ...processedUpdate }
   }
 
   async get(key: string): Promise<any> {
