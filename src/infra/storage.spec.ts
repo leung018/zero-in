@@ -6,8 +6,19 @@ describe('FakeStorage', () => {
     const storage = new FakeStorage()
     await storage.set({ key1: 'value1' })
 
+    const testObj = {
+      num: 123,
+      obj: {
+        key: 'value'
+      }
+    }
+    await storage.set({
+      key2: testObj
+    })
+
     expect(await storage.get('key1')).toEqual({ key1: 'value1' })
-    expect(await storage.get('key2')).toEqual({ key2: undefined })
+    expect(await storage.get('key2')).toEqual({ key2: testObj })
+    expect(await storage.get('nonexistent_key')).toEqual({ nonexistent_key: undefined })
   })
 
   it('should not preserve instance type', async () => {
