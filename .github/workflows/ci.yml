@@ -31,3 +31,20 @@ jobs:
         run: yarn playwright install --with-deps chromium
       - name: End-to-End Tests
         run: xvfb-run yarn test:e2e
+  macos-e2e:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'yarn'
+          cache-dependency-path: ./yarn.lock
+      - run: yarn install --immutable
+      - name: Build
+        run: yarn build-only
+      - name: Install Playwright Browser
+        run: yarn playwright install --with-deps chromium
+      - name: End-to-End Tests (macOS)
+        run: yarn test:e2e
