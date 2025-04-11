@@ -13,6 +13,7 @@ import { ReloadService } from './chrome/reload'
 import { FocusSessionRecordStorageService } from './domain/pomodoro/record/storage'
 import { TimerConfigStorageService } from './domain/pomodoro/config/storage'
 import { CurrentDateService } from './infra/current_date'
+import { NotificationSettingStorageService } from './domain/notification_setting/storage'
 
 const port = new ChromeCommunicationManager().clientConnect()
 const reloadService = new ReloadService()
@@ -91,6 +92,9 @@ function getPathFromWindowLocation(): PATH {
       :reload-service="reloadService"
     />
 
-    <NotificationPage v-else-if="currentPath === PATH.NOTIFICATION" />
+    <NotificationPage
+      v-else-if="currentPath === PATH.NOTIFICATION"
+      :notification-setting-storage-service="NotificationSettingStorageService.create()"
+    />
   </main>
 </template>

@@ -262,6 +262,22 @@ test('should able to open new tab of reminder page when timer is finished', asyn
   })
 })
 
+test('should able to persist and retrieve notification setting', async ({ page, extensionId }) => {
+  await goToNotificationPage(page, extensionId)
+
+  await page.getByTestId('reminder-tab-option').uncheck()
+  await page.getByTestId('desktop-notification-option').check()
+  await page.getByTestId('sound-option').uncheck()
+
+  await page.getByTestId('save-button').click()
+
+  await page.reload()
+
+  await expect(page.getByTestId('reminder-tab-option')).not.toBeChecked()
+  await expect(page.getByTestId('desktop-notification-option')).toBeChecked()
+  await expect(page.getByTestId('sound-option')).not.toBeChecked()
+})
+
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
   const addButton = page.getByTestId('add-button')
@@ -373,6 +389,10 @@ async function goToStatisticsPage(page: Page, extensionId: string) {
 
 async function goToTestingConfigPage(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/testing-config.html`)
+}
+
+async function goToNotificationPage(page: Page, extensionId: string) {
+  await page.goto(`chrome-extension://${extensionId}/options.html#/notification`)
 }
 
 // TODO: copy from src/util.ts and find way to share the code between e2e and src, so that we can avoid duplication
