@@ -1,4 +1,4 @@
-import { ChromeStorageFactory } from '../../chrome/storage'
+import { ChromeStorageProvider } from '../../chrome/storage'
 import { FakeStorage, type Storage } from '../../infra/storage'
 import type { TimerState } from './timer'
 
@@ -6,7 +6,7 @@ const STORAGE_KEY = 'timerState'
 
 export class TimerStateStorageService {
   static create() {
-    return new TimerStateStorageService(ChromeStorageFactory.createLocalStorage())
+    return new TimerStateStorageService(ChromeStorageProvider.getLocalStorage())
   }
 
   static createFake() {

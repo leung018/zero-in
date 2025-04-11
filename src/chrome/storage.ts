@@ -1,7 +1,7 @@
 import { type Storage } from '../infra/storage'
 
-export class ChromeStorageFactory {
-  static createLocalStorage(): Storage {
+export class ChromeStorageProvider {
+  static getLocalStorage(): Storage {
     return chrome.storage.local
   }
 }

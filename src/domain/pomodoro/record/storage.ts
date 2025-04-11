@@ -1,13 +1,13 @@
 import { FakeStorage, type Storage } from '../../../infra/storage'
 import type { FocusSessionRecord } from '.'
-import { ChromeStorageFactory } from '../../../chrome/storage'
+import { ChromeStorageProvider } from '../../../chrome/storage'
 import { deserializeFocusSessionRecord, serializeFocusSessionRecord } from './serialize'
 
 const STORAGE_KEY = 'focusSessionRecords'
 
 export class FocusSessionRecordStorageService {
   static create() {
-    return new FocusSessionRecordStorageService(ChromeStorageFactory.createLocalStorage())
+    return new FocusSessionRecordStorageService(ChromeStorageProvider.getLocalStorage())
   }
 
   static createFake() {

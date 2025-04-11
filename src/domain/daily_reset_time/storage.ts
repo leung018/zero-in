@@ -1,11 +1,11 @@
-import { ChromeStorageFactory } from '../../chrome/storage'
+import { ChromeStorageProvider } from '../../chrome/storage'
 import { FakeStorage, type Storage } from '../../infra/storage'
 import { Time } from '../time'
 import { deserializeTime, serializeTime } from '../time/serialize'
 
 export class DailyResetTimeStorageService {
   static create() {
-    return new DailyResetTimeStorageService(ChromeStorageFactory.createLocalStorage())
+    return new DailyResetTimeStorageService(ChromeStorageProvider.getLocalStorage())
   }
 
   static createFake() {
