@@ -27,8 +27,31 @@ describe('FakeStorage', () => {
     await storage.set({ dummy })
 
     const result = await storage.get('dummy')
-    expect(result.dummy).not.toBeInstanceOf(Dummy)
-    expect(result.dummy).toEqual({})
+    expect(result.dummy).not.toStrictEqual(dummy)
+  })
+
+  it('should remove undefined properties', async () => {
+    const storage = new FakeStorage()
+    await storage.set({
+      key1: {
+        b: undefined
+      }
+    })
+
+    const result = await storage.get('key1')
+    expect(result.key1).toStrictEqual({})
+  })
+
+  it('should preserve null value', async () => {
+    const storage = new FakeStorage()
+    await storage.set({
+      key1: {
+        b: null
+      }
+    })
+
+    const result = await storage.get('key1')
+    expect(result.key1).toStrictEqual({ b: null })
   })
 })
 
