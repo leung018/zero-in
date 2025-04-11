@@ -1,3 +1,4 @@
+import type { NotificationSetting } from './domain/notification_setting'
 import { TimerConfig } from './domain/pomodoro/config'
 import { Duration } from './domain/pomodoro/duration'
 import type { BadgeColor } from './infra/badge'
@@ -17,6 +18,15 @@ const getDefaultTimerConfig = () => {
     longBreakDuration: new Duration({ minutes: 19 }),
     focusSessionsPerCycle: 4
   })
+}
+
+const getDefaultNotificationSetting = () => {
+  const notificationSetting: NotificationSetting = {
+    reminderTab: true,
+    desktopNotification: true,
+    sound: true
+  }
+  return notificationSetting
 }
 
 const getFocusSessionRecordHouseKeepDays = () => 30
@@ -42,5 +52,6 @@ export default {
   getFocusSessionRecordHouseKeepDays,
   getBlockedTemplateUrl,
   getBadgeColorConfig,
-  getReminderPageUrl
+  getReminderPageUrl,
+  getDefaultNotificationSetting
 }
