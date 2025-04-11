@@ -3,3 +3,14 @@ export type NotificationSetting = {
   desktopNotification: boolean
   sound: boolean
 }
+
+export function newTestNotificationSetting(
+  overrides: Partial<NotificationSetting> = {}
+): NotificationSetting {
+  return {
+    reminderTab: true,
+    desktopNotification: true,
+    sound: true,
+    ...overrides
+  }
+}
