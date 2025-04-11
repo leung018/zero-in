@@ -1,4 +1,4 @@
-import { ChromeStorageFactory } from '../../chrome/storage'
+import { ChromeStorageProvider } from '../../chrome/storage'
 import { FakeStorage, type Storage } from '../../infra/storage'
 import { WeeklySchedule } from '.'
 import { deserializeWeeklySchedule, serializeWeeklySchedule } from './serialize'
@@ -9,7 +9,7 @@ export class WeeklyScheduleStorageService {
   }
 
   static create(): WeeklyScheduleStorageService {
-    return new WeeklyScheduleStorageService(ChromeStorageFactory.createLocalStorage())
+    return new WeeklyScheduleStorageService(ChromeStorageProvider.getLocalStorage())
   }
 
   private storage: Storage

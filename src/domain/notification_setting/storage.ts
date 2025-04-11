@@ -1,5 +1,5 @@
 import type { NotificationSetting } from '.'
-import { ChromeStorageFactory } from '../../chrome/storage'
+import { ChromeStorageProvider } from '../../chrome/storage'
 import config from '../../config'
 import { FakeStorage, type Storage } from '../../infra/storage'
 
@@ -7,7 +7,7 @@ const STORAGE_KEY = 'notificationSetting'
 
 export class NotificationSettingStorageService {
   static create() {
-    return new NotificationSettingStorageService(ChromeStorageFactory.createLocalStorage())
+    return new NotificationSettingStorageService(ChromeStorageProvider.getLocalStorage())
   }
 
   static createFake() {

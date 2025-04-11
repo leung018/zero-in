@@ -1,4 +1,4 @@
-import { ChromeStorageFactory } from '../../chrome/storage'
+import { ChromeStorageProvider } from '../../chrome/storage'
 import { FakeStorage, type Storage } from '../../infra/storage'
 import { BrowsingRules } from '.'
 import { deserializeBrowsingRules, serializeBrowsingRules } from './serialize'
@@ -9,7 +9,7 @@ export class BrowsingRulesStorageService {
   }
 
   static create(): BrowsingRulesStorageService {
-    return new BrowsingRulesStorageService(ChromeStorageFactory.createLocalStorage())
+    return new BrowsingRulesStorageService(ChromeStorageProvider.getLocalStorage())
   }
 
   private storage: Storage
