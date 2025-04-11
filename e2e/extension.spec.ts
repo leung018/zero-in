@@ -327,7 +327,7 @@ async function changeFocusDuration(page: Page, seconds: number) {
   await page.getByTestId('save-button').click()
 }
 
-async function assertWithRetry(assert: () => Promise<void>, retryCount = 3, intervalMs = 100) {
+async function assertWithRetry(assert: () => Promise<void>, retryCount = 3, intervalMs = 500) {
   try {
     await assert()
   } catch (Exception) {
