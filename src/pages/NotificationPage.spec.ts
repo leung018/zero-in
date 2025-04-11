@@ -8,6 +8,7 @@ import NotificationPage from './NotificationPage.vue'
 import { assertCheckboxValue } from '../test_utils/assert'
 import { dataTestSelector } from '../test_utils/selector'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
+import { FakeActionService } from '../infra/action'
 
 describe('NotificationPage', () => {
   it('should render the saved notification setting', async () => {
@@ -67,16 +68,31 @@ describe('NotificationPage', () => {
     }
     expect(await notificationSettingStorageService.get()).toEqual(expected)
   })
+
+  it('should trigger reload when click save', async () => {
+    const { wrapper, reloadService } = await mountPage()
+
+    expect(reloadService.getTriggerCount()).toBe(0)
+
+    wrapper.find(dataTestSelector('save-button')).trigger('click')
+    await flushPromises()
+
+    expect(reloadService.getTriggerCount()).toBe(1)
+  })
 })
 
-async function mountPage({ notificationSetting = newTestNotificationSetting() }) {
+async function mountPage({ notificationSetting = newTestNotificationSetting() } = {}) {
   const notificationSettingStorageService = NotificationSettingStorageService.createFake()
   await notificationSettingStorageService.save(notificationSetting)
+
+  const reloadService = new FakeActionService()
+
   const wrapper = mount(NotificationPage, {
     props: {
-      notificationSettingStorageService
+      notificationSettingStorageService,
+      reloadService
     }
   })
   await flushPromises()
-  return { wrapper, notificationSettingStorageService }
+  return { wrapper, notificationSettingStorageService, reloadService }
 }

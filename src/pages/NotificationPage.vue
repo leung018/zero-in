@@ -2,9 +2,11 @@
 import type { NotificationSettingStorageService } from '@/domain/notification_setting/storage'
 import ContentTemplate from './components/ContentTemplate.vue'
 import { onBeforeMount, ref } from 'vue'
+import type { ActionService } from '@/infra/action'
 
-const { notificationSettingStorageService } = defineProps<{
+const { notificationSettingStorageService, reloadService } = defineProps<{
   notificationSettingStorageService: NotificationSettingStorageService
+  reloadService: ActionService
 }>()
 const reminderTab = ref(false)
 const desktopNotification = ref(false)
@@ -25,6 +27,7 @@ const onClickSave = async () => {
   }
 
   await notificationSettingStorageService.save(setting)
+  reloadService.trigger()
 }
 </script>
 

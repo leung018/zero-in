@@ -95,6 +95,7 @@ function getPathFromWindowLocation(): PATH {
     <NotificationPage
       v-else-if="currentPath === PATH.NOTIFICATION"
       :notification-setting-storage-service="NotificationSettingStorageService.create()"
+      :reload-service="reloadService"
     />
   </main>
 </template>
