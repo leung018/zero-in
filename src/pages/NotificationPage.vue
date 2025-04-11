@@ -16,6 +16,16 @@ onBeforeMount(async () => {
   desktopNotification.value = setting.desktopNotification
   sound.value = setting.sound
 })
+
+const onClickSave = async () => {
+  const setting = {
+    reminderTab: reminderTab.value,
+    desktopNotification: desktopNotification.value,
+    sound: sound.value
+  }
+
+  await notificationSettingStorageService.save(setting)
+}
 </script>
 
 <template>
@@ -46,6 +56,6 @@ onBeforeMount(async () => {
       </div>
     </div>
 
-    <BButton variant="primary" data-test="save-button"> Save </BButton>
+    <BButton variant="primary" data-test="save-button" @click="onClickSave"> Save </BButton>
   </ContentTemplate>
 </template>

@@ -1,5 +1,8 @@
-import { describe, it } from 'vitest'
-import { newTestNotificationSetting } from '../domain/notification_setting'
+import { describe, expect, it } from 'vitest'
+import {
+  newTestNotificationSetting,
+  type NotificationSetting
+} from '../domain/notification_setting'
 import { flushPromises, mount } from '@vue/test-utils'
 import NotificationPage from './NotificationPage.vue'
 import { assertCheckboxValue } from '../test_utils/assert'
@@ -20,6 +23,36 @@ describe('NotificationPage', () => {
     assertCheckboxValue(wrapper, dataTestSelector('desktop-notification-option'), false)
     assertCheckboxValue(wrapper, dataTestSelector('sound-option'), true)
   })
+
+  it('should update the notification setting when the user changes the options', async () => {
+    const { wrapper, notificationSettingStorageService } = await mountPage({
+      notificationSetting: {
+        reminderTab: false,
+        desktopNotification: false,
+        sound: false
+      }
+    })
+
+    const reminderTabOption = wrapper.find(dataTestSelector('reminder-tab-option'))
+    const desktopNotificationOption = wrapper.find(dataTestSelector('desktop-notification-option'))
+    const soundOption = wrapper.find(dataTestSelector('sound-option'))
+
+    await Promise.all([
+      reminderTabOption.setValue(true),
+      desktopNotificationOption.setValue(true),
+      soundOption.setValue(true)
+    ])
+
+    wrapper.find(dataTestSelector('save-button')).trigger('click')
+    await flushPromises()
+
+    const expected: NotificationSetting = {
+      reminderTab: true,
+      desktopNotification: true,
+      sound: true
+    }
+    expect(await notificationSettingStorageService.get()).toEqual(expected)
+  })
 })
 
 async function mountPage({ notificationSetting = newTestNotificationSetting() }) {
@@ -31,5 +64,5 @@ async function mountPage({ notificationSetting = newTestNotificationSetting() })
     }
   })
   await flushPromises()
-  return { wrapper }
+  return { wrapper, notificationSettingStorageService }
 }
