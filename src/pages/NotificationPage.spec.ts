@@ -24,7 +24,7 @@ describe('NotificationPage', () => {
 
 async function mountPage({ notificationSetting = newTestNotificationSetting() }) {
   const notificationSettingStorageService = NotificationSettingStorageService.createFake()
-  await notificationSettingStorageService.set(notificationSetting)
+  await notificationSettingStorageService.save(notificationSetting)
   const wrapper = mount(NotificationPage, {
     props: {
       notificationSettingStorageService

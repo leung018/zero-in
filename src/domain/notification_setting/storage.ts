@@ -18,7 +18,7 @@ export class NotificationSettingStorageService {
     return result[STORAGE_KEY] || config.getDefaultNotificationSetting()
   }
 
-  async set(notificationSetting: NotificationSetting): Promise<void> {
+  async save(notificationSetting: NotificationSetting): Promise<void> {
     return this.storage.set({ [STORAGE_KEY]: notificationSetting })
   }
 }

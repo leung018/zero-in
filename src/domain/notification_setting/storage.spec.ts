@@ -16,7 +16,7 @@ describe('NotificationSettingStorageService', () => {
       desktopNotification: false,
       sound: true
     }
-    await service.set(notificationSetting)
+    await service.save(notificationSetting)
     expect(await service.get()).toEqual(notificationSetting)
   })
 })
