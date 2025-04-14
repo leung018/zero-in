@@ -181,6 +181,12 @@ test('should close tab function properly after clicking start on reminder page',
   })
   await extraPage.goto('https://google.com')
 
+  await page.evaluate(() => {
+    //  Add this to make sure e2e test can catch the bug of start button not working when the port is disconnected
+    // @ts-ignore
+    window._port.disconnect()
+  })
+
   await page.getByTestId('start-button').click()
 
   await assertWithRetry(async () => {
