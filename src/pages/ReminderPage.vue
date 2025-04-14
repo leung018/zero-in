@@ -45,6 +45,9 @@ onBeforeMount(async () => {
   })
   dailyResetTime.value = await dailyResetTimeStorageService.get()
   dailyCompletedPomodori.value = await getTotalNumOfPomodoriAfter(dailyResetTime.value)
+
+  // @ts-ignore: Exposing port for e2e test to simulate situation that the port is disconnected
+  window._port = port
 })
 
 async function getTotalNumOfPomodoriAfter(dailyResetTime: Time): Promise<number> {

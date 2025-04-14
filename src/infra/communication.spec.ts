@@ -34,11 +34,7 @@ describe('FakeCommunicationManager', () => {
 
     let lastClientReceivedMsg: any = null
     let lastBackgroundReceivedMsg: any = null
-    let backgroundPort: Port = {
-      send: () => {},
-      onMessage: () => {},
-      onDisconnect: () => {}
-    }
+    let backgroundPort: Port
 
     fakeCommunicationManager.onNewClientConnect((port) => {
       port.onMessage((incomingMessage) => {
@@ -54,6 +50,7 @@ describe('FakeCommunicationManager', () => {
     clientPort.disconnect()
 
     clientPort.send('Hi')
+    // @ts-ignore Below variable should be assigned in above callback. So disable the type check for this line
     backgroundPort.send('Hello')
 
     expect(lastClientReceivedMsg).toBeNull()

@@ -2,6 +2,7 @@ export interface Port<OutgoingMessage = any, IncomingMessage = any> {
   send(message: OutgoingMessage): void
   onMessage(callback: (message: IncomingMessage) => void): void
   onDisconnect(callback: () => void): void
+  disconnect(): void
 }
 
 class FakePort implements Port {
