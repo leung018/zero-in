@@ -10,7 +10,10 @@ import type { TimerState } from '../domain/pomodoro/timer'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import { flushPromises } from '@vue/test-utils'
 import type { FocusSessionRecord } from '../domain/pomodoro/record'
-import { newTestNotificationSetting } from '../domain/notification_setting'
+import {
+  newTestNotificationSetting,
+  type NotificationSetting
+} from '../domain/notification_setting'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -207,30 +210,52 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toEqual(expected)
   })
 
-  it('should trigger notification when time is up', async () => {
-    const { newTabService, soundService, notificationService, scheduler, clientPort } =
-      await startListener({
-        timerConfig: TimerConfig.newTestInstance({
-          focusDuration: new Duration({ seconds: 3 })
-        }),
-        notificationSetting: newTestNotificationSetting({
-          reminderTab: true,
-          desktopNotification: true,
-          sound: true
+  it.each([
+    {
+      input: {
+        reminderTab: true,
+        desktopNotification: true,
+        sound: true
+      },
+      expected: {
+        reminderTabNotificationTriggerCount: 1,
+        desktopNotificationTriggerCount: 1,
+        soundNotificationTriggerCount: 1
+      }
+    }
+  ])(
+    'should trigger notification when time is up',
+    async ({
+      input,
+      expected
+    }: {
+      input: NotificationSetting
+      expected: {
+        reminderTabNotificationTriggerCount: number
+        desktopNotificationTriggerCount: number
+        soundNotificationTriggerCount: number
+      }
+    }) => {
+      const { newTabService, soundService, notificationService, scheduler, clientPort } =
+        await startListener({
+          timerConfig: TimerConfig.newTestInstance({
+            focusDuration: new Duration({ seconds: 3 })
+          }),
+          notificationSetting: input
         })
-      })
 
-    expect(newTabService.getTriggerCount()).toBe(0)
-    expect(soundService.getTriggerCount()).toBe(0)
-    expect(notificationService.getTriggerCount()).toBe(0)
+      expect(newTabService.getTriggerCount()).toBe(0)
+      expect(soundService.getTriggerCount()).toBe(0)
+      expect(notificationService.getTriggerCount()).toBe(0)
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
-    scheduler.advanceTime(3000)
+      clientPort.send({ name: WorkRequestName.START_TIMER })
+      scheduler.advanceTime(3000)
 
-    expect(newTabService.getTriggerCount()).toBe(1)
-    expect(soundService.getTriggerCount()).toBe(1)
-    expect(notificationService.getTriggerCount()).toBe(1)
-  })
+      expect(newTabService.getTriggerCount()).toBe(expected.reminderTabNotificationTriggerCount)
+      expect(soundService.getTriggerCount()).toBe(expected.soundNotificationTriggerCount)
+      expect(notificationService.getTriggerCount()).toBe(expected.desktopNotificationTriggerCount)
+    }
+  )
 
   it('should back up update to storage', async () => {
     const { timerStateStorageService, scheduler, clientPort, timer } = await startListener({
