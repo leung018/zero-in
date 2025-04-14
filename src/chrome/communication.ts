@@ -25,6 +25,8 @@ class ChromePortWrapper implements Port {
 
   send(message: any, retryCount = 0): void {
     if (retryCount > ChromePortWrapper.MAX_RETRIES) {
+      // Hard to cover this case. Can adjust the MAX_RETRIES to 0 and see if the error is logged after disconnect.
+      // See below comment of how to trigger disconnect in console.
       console.error('Max retries reached. Unable to send message.')
       return
     }
@@ -43,10 +45,13 @@ class ChromePortWrapper implements Port {
   }
 
   onDisconnect(callback: () => void): void {
+    // To verify the below line, can observe the debug logging when disconnect is fired in BackgroundListener (check the log in service_worker)
     this.chromePort.onDisconnect.addListener(callback)
   }
 
   disconnect(): void {
+    // Have expose this wrapper to window in a page for e2e test of retry handling. Search for window._port in e2e test for more detail.
+    // So to verify below, can call _port.disconnect() in the page console of that page and check the log in service_worker.
     this.chromePort.disconnect()
   }
 }
