@@ -20,7 +20,7 @@ import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { ChromeCommunicationManager } from '../chrome/communication'
 import { MultipleActionService } from '../infra/multiple_actions'
 import { ChromeNewTabService } from '../chrome/new_tab'
-import { ChromeNotificationService } from '../chrome/notification'
+import { ChromeDesktopNotificationService } from '../chrome/notification'
 import { ChromeBadgeDisplayService } from '../chrome/badge'
 import { ChromeCloseTabsService } from '../chrome/close_tabs'
 import { ChromeBrowsingControlService } from '../chrome/browsing_control'
@@ -29,7 +29,7 @@ import { SoundService } from '../chrome/sound'
 type ListenerParams = {
   communicationManager: CommunicationManager
   newTabService: ActionService
-  notificationService: ActionService
+  desktopNotificationService: ActionService
   soundService: ActionService
   badgeDisplayService: BadgeDisplayService
   timerStateStorageService: TimerStateStorageService
@@ -49,7 +49,7 @@ export class BackgroundListener {
     return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
       newTabService: new ChromeNewTabService(config.getReminderPageUrl()),
-      notificationService: new ChromeNotificationService(),
+      desktopNotificationService: new ChromeDesktopNotificationService(),
       soundService: new SoundService(),
       badgeDisplayService: new ChromeBadgeDisplayService(),
       timerStateStorageService: TimerStateStorageService.create(),
@@ -93,7 +93,7 @@ export class BackgroundListener {
     })
     this.reminderService = new MultipleActionService([
       params.newTabService,
-      params.notificationService,
+      params.desktopNotificationService,
       params.soundService
     ])
     this.badgeDisplayService = params.badgeDisplayService

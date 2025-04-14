@@ -1,7 +1,7 @@
 import type { ActionService } from '../infra/action'
 
 // Require manual testing
-export class ChromeNotificationService implements ActionService {
+export class ChromeDesktopNotificationService implements ActionService {
   trigger(): void {
     chrome.notifications.create('time-up', {
       type: 'basic',
