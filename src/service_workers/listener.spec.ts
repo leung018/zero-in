@@ -222,6 +222,18 @@ describe('BackgroundListener', () => {
         desktopNotificationTriggerCount: 1,
         soundNotificationTriggerCount: 1
       }
+    },
+    {
+      input: {
+        reminderTab: false,
+        desktopNotification: false,
+        sound: false
+      },
+      expected: {
+        reminderTabNotificationTriggerCount: 0,
+        desktopNotificationTriggerCount: 0,
+        soundNotificationTriggerCount: 0
+      }
     }
   ])(
     'should trigger notification when time is up',

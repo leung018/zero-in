@@ -12,11 +12,13 @@ import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { FakeBrowsingControlService } from '../domain/browsing_control'
 import { CurrentDateService } from '../infra/current_date'
+import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 
 export async function startBackgroundListener({
   focusSessionRecordHouseKeepDays = 30,
   timerConfig = config.getDefaultTimerConfig(),
   notificationSetting = config.getDefaultNotificationSetting(),
+  notificationSettingStorageService = NotificationSettingStorageService.createFake(),
   browsingControlService = new FakeBrowsingControlService(),
   weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
   browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
@@ -37,12 +39,15 @@ export async function startBackgroundListener({
     scheduler
   })
 
+  await notificationSettingStorageService.save(notificationSetting)
+
   const listener = BackgroundListener.createFake({
     browsingControlService,
     weeklyScheduleStorageService,
     browsingRulesStorageService,
     communicationManager,
     desktopNotificationService,
+    notificationSettingStorageService,
     newTabService,
     soundService,
     badgeDisplayService,

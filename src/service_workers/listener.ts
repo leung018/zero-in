@@ -25,12 +25,14 @@ import { ChromeBadgeDisplayService } from '../chrome/badge'
 import { ChromeCloseTabsService } from '../chrome/close_tabs'
 import { ChromeBrowsingControlService } from '../chrome/browsing_control'
 import { SoundService } from '../chrome/sound'
+import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 
 type ListenerParams = {
   communicationManager: CommunicationManager
   newTabService: ActionService
   desktopNotificationService: ActionService
   soundService: ActionService
+  notificationSettingStorageService: NotificationSettingStorageService
   badgeDisplayService: BadgeDisplayService
   timerStateStorageService: TimerStateStorageService
   timerConfigStorageService: TimerConfigStorageService
@@ -51,6 +53,7 @@ export class BackgroundListener {
       newTabService: new ChromeNewTabService(config.getReminderPageUrl()),
       desktopNotificationService: new ChromeDesktopNotificationService(),
       soundService: new SoundService(),
+      notificationSettingStorageService: NotificationSettingStorageService.create(),
       badgeDisplayService: new ChromeBadgeDisplayService(),
       timerStateStorageService: TimerStateStorageService.create(),
       timerConfigStorageService: TimerConfigStorageService.create(),
@@ -72,7 +75,6 @@ export class BackgroundListener {
   private browsingControlTogglingService: BrowsingControlTogglingService
   private communicationManager: CommunicationManager
   readonly timer: PomodoroTimer // TODO: Make it private when removed the dependency on timer in tests of listener
-  private reminderService: ActionService
   private badgeDisplayService: BadgeDisplayService
   private timerStateStorageService: TimerStateStorageService
   private timerConfigStorageService: TimerConfigStorageService
@@ -83,6 +85,12 @@ export class BackgroundListener {
   private focusSessionRecordHouseKeepDays: number
   private focusSessionRecordsUpdateSubscriptionManager = new SubscriptionManager()
 
+  private reminderService: ActionService
+  private notificationSettingStorageService: NotificationSettingStorageService
+  private soundService: ActionService
+  private desktopNotificationService: ActionService
+  private newTabService: ActionService
+
   private constructor(params: ListenerParams) {
     this.communicationManager = params.communicationManager
     this.browsingControlTogglingService = new BrowsingControlTogglingService({
@@ -91,11 +99,13 @@ export class BackgroundListener {
       weeklyScheduleStorageService: params.weeklyScheduleStorageService,
       currentDateService: params.currentDateService
     })
-    this.reminderService = new MultipleActionService([
-      params.newTabService,
-      params.desktopNotificationService,
-      params.soundService
-    ])
+
+    this.reminderService = new MultipleActionService([])
+    this.notificationSettingStorageService = params.notificationSettingStorageService
+    this.soundService = params.soundService
+    this.desktopNotificationService = params.desktopNotificationService
+    this.newTabService = params.newTabService
+
     this.badgeDisplayService = params.badgeDisplayService
     this.timerStateStorageService = params.timerStateStorageService
     this.timerConfigStorageService = params.timerConfigStorageService
@@ -108,9 +118,8 @@ export class BackgroundListener {
   }
 
   async start() {
-    return this.setUpTimer().then(() => {
-      this.setUpListener()
-    })
+    await Promise.all([this.setUpTimer(), this.setUpReminder()])
+    this.setUpListener()
   }
 
   private async setUpTimer() {
@@ -140,6 +149,23 @@ export class BackgroundListener {
         })
       }
     })
+  }
+
+  private async setUpReminder() {
+    const notificationSetting = await this.notificationSettingStorageService.get()
+    const services: ActionService[] = []
+
+    if (notificationSetting.reminderTab) {
+      services.push(this.newTabService)
+    }
+    if (notificationSetting.desktopNotification) {
+      services.push(this.desktopNotificationService)
+    }
+    if (notificationSetting.sound) {
+      services.push(this.soundService)
+    }
+
+    this.reminderService = new MultipleActionService(services)
   }
 
   private async updateFocusSessionRecords() {
