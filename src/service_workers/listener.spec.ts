@@ -294,19 +294,7 @@ async function startListener({
   timerStateStorageService = TimerStateStorageService.createFake(),
   focusSessionRecordHouseKeepDays = 30
 } = {}) {
-  const {
-    timer,
-    listener,
-    badgeDisplayService,
-    communicationManager,
-    scheduler,
-    newTabService,
-    soundService,
-    notificationService,
-    closeTabsService,
-    timerConfigStorageService,
-    focusSessionRecordStorageService
-  } = await startBackgroundListener({
+  const props = await startBackgroundListener({
     timerConfig,
     notificationSetting,
     timerStateStorageService,
@@ -314,17 +302,7 @@ async function startListener({
   })
 
   return {
-    timer,
-    listener,
-    badgeDisplayService,
-    timerStateStorageService,
-    timerConfigStorageService,
-    focusSessionRecordStorageService,
-    clientPort: communicationManager.clientConnect(),
-    scheduler,
-    newTabService,
-    soundService,
-    notificationService,
-    closeTabsService
+    ...props,
+    clientPort: props.communicationManager.clientConnect()
   }
 }

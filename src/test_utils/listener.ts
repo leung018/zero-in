@@ -84,6 +84,7 @@ export async function startBackgroundListener({
     badgeDisplayService,
     communicationManager,
     closeTabsService,
+    timerStateStorageService,
     timerConfigStorageService,
     focusSessionRecordStorageService
   }
