@@ -15,19 +15,26 @@ export class ChromeCommunicationManager implements CommunicationManager {
 }
 
 class ChromePortWrapper implements Port {
+  private static MAX_RETRIES = 3
+
   private chromePort: chrome.runtime.Port
 
   constructor(chromePort: chrome.runtime.Port) {
     this.chromePort = chromePort
   }
 
-  send(message: any): void {
+  send(message: any, retryCount = 0): void {
+    if (retryCount > ChromePortWrapper.MAX_RETRIES) {
+      console.error('Max retries reached. Unable to send message.')
+      return
+    }
+
     try {
       this.chromePort.postMessage(message)
     } catch (error) {
       console.error('Error sending message:', error)
       this.chromePort = chrome.runtime.connect()
-      return this.send(message)
+      return this.send(message, retryCount + 1)
     }
   }
 
