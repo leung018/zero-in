@@ -7,13 +7,11 @@ import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { BackgroundListener } from '../service_workers/listener'
 import { TimerStateStorageService } from '../domain/pomodoro/storage'
 import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
-import type { TimerConfig } from '../domain/pomodoro/config'
 import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
 import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { FakeBrowsingControlService } from '../domain/browsing_control'
 import { CurrentDateService } from '../infra/current_date'
-import type { NotificationSetting } from '../domain/notification_setting'
 
 export async function startBackgroundListener({
   focusSessionRecordHouseKeepDays = 30,
@@ -32,24 +30,7 @@ export async function startBackgroundListener({
   closeTabsService = new FakeActionService(),
   focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake(),
   currentDateService = CurrentDateService.createFake()
-}: {
-  focusSessionRecordHouseKeepDays?: number
-  timerConfig?: TimerConfig
-  notificationSetting?: NotificationSetting
-  notificationService?: FakeActionService
-  newTabService?: FakeActionService
-  soundService?: FakeActionService
-  browsingControlService?: FakeBrowsingControlService
-  weeklyScheduleStorageService?: WeeklyScheduleStorageService
-  browsingRulesStorageService?: BrowsingRulesStorageService
-  badgeDisplayService?: FakeBadgeDisplayService
-  communicationManager?: FakeCommunicationManager
-  timerStateStorageService?: TimerStateStorageService
-  timerConfigStorageService?: TimerConfigStorageService
-  closeTabsService?: FakeActionService
-  focusSessionRecordStorageService?: FocusSessionRecordStorageService
-  currentDateService?: CurrentDateService
-}) {
+} = {}) {
   const scheduler = new FakePeriodicTaskScheduler()
   await timerConfigStorageService.save(timerConfig)
   const timer = PomodoroTimer.createFake({
