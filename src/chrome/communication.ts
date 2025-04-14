@@ -3,32 +3,43 @@ import { type CommunicationManager, type Port } from '../infra/communication'
 export class ChromeCommunicationManager implements CommunicationManager {
   clientConnect() {
     const chromePort = chrome.runtime.connect()
-    return mapChromePortToPort(chromePort)
+    return new ChromePortWrapper(chromePort)
   }
 
   onNewClientConnect(callback: (backgroundPort: Port) => void) {
     chrome.runtime.onConnect.addListener((chromePort) => {
-      const port = mapChromePortToPort(chromePort)
+      const port = new ChromePortWrapper(chromePort)
       return callback(port)
     })
   }
 }
 
-function mapChromePortToPort(chromePort: chrome.runtime.Port) {
-  return {
-    send: (message: any) => {
-      return chromePort.postMessage(message)
-    },
-    onMessage: (callback: (message: any) => void) => {
-      return chromePort.onMessage.addListener(callback)
-    },
-    onDisconnect: (callback: () => void) => {
-      // To verify the below line, can observe the debug logging when disconnect is fired in listener.
-      // I don't plan to e2e test it because it is not behavior that the user may care about. It belongs to some optimization instead.
-      return chromePort.onDisconnect.addListener(callback)
-    },
-    disconnect: () => {
-      return chromePort.disconnect()
+class ChromePortWrapper implements Port {
+  private chromePort: chrome.runtime.Port
+
+  constructor(chromePort: chrome.runtime.Port) {
+    this.chromePort = chromePort
+  }
+
+  send(message: any): void {
+    try {
+      this.chromePort.postMessage(message)
+    } catch (error) {
+      console.error('Error sending message:', error)
+      this.chromePort = chrome.runtime.connect()
+      return this.send(message)
     }
+  }
+
+  onMessage(callback: (message: any) => void): void {
+    this.chromePort.onMessage.addListener(callback)
+  }
+
+  onDisconnect(callback: () => void): void {
+    this.chromePort.onDisconnect.addListener(callback)
+  }
+
+  disconnect(): void {
+    this.chromePort.disconnect()
   }
 }
