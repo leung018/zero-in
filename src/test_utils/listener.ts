@@ -13,14 +13,18 @@ import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { FakeBrowsingControlService } from '../domain/browsing_control'
 import { CurrentDateService } from '../infra/current_date'
+import type { NotificationSetting } from '../domain/notification_setting'
 
 export async function startBackgroundListener({
   focusSessionRecordHouseKeepDays = 30,
   timerConfig = config.getDefaultTimerConfig(),
+  notificationSetting = config.getDefaultNotificationSetting(),
   browsingControlService = new FakeBrowsingControlService(),
   weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
   browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
-  reminderService = new FakeActionService(),
+  notificationService = new FakeActionService(),
+  newTabService = new FakeActionService(),
+  soundService = new FakeActionService(),
   badgeDisplayService = new FakeBadgeDisplayService(),
   communicationManager = new FakeCommunicationManager(),
   timerStateStorageService = TimerStateStorageService.createFake(),
@@ -31,10 +35,13 @@ export async function startBackgroundListener({
 }: {
   focusSessionRecordHouseKeepDays?: number
   timerConfig?: TimerConfig
+  notificationSetting?: NotificationSetting
+  notificationService?: FakeActionService
+  newTabService?: FakeActionService
+  soundService?: FakeActionService
   browsingControlService?: FakeBrowsingControlService
   weeklyScheduleStorageService?: WeeklyScheduleStorageService
   browsingRulesStorageService?: BrowsingRulesStorageService
-  reminderService?: FakeActionService
   badgeDisplayService?: FakeBadgeDisplayService
   communicationManager?: FakeCommunicationManager
   timerStateStorageService?: TimerStateStorageService
@@ -54,7 +61,9 @@ export async function startBackgroundListener({
     weeklyScheduleStorageService,
     browsingRulesStorageService,
     communicationManager,
-    reminderService,
+    notificationService,
+    newTabService,
+    soundService,
     badgeDisplayService,
     timerStateStorageService,
     timerConfigStorageService,
@@ -69,7 +78,9 @@ export async function startBackgroundListener({
     scheduler,
     timer: listener.timer,
     listener,
-    reminderService,
+    notificationService,
+    newTabService,
+    soundService,
     badgeDisplayService,
     communicationManager,
     closeTabsService,

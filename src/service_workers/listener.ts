@@ -28,7 +28,9 @@ import { SoundService } from '../chrome/sound'
 
 type ListenerParams = {
   communicationManager: CommunicationManager
-  reminderService: ActionService
+  newTabService: ActionService
+  notificationService: ActionService
+  soundService: ActionService
   badgeDisplayService: BadgeDisplayService
   timerStateStorageService: TimerStateStorageService
   timerConfigStorageService: TimerConfigStorageService
@@ -46,11 +48,9 @@ export class BackgroundListener {
   static create() {
     return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
-      reminderService: new MultipleActionService([
-        new ChromeNewTabService(config.getReminderPageUrl()),
-        new ChromeNotificationService(),
-        new SoundService()
-      ]),
+      newTabService: new ChromeNewTabService(config.getReminderPageUrl()),
+      notificationService: new ChromeNotificationService(),
+      soundService: new SoundService(),
       badgeDisplayService: new ChromeBadgeDisplayService(),
       timerStateStorageService: TimerStateStorageService.create(),
       timerConfigStorageService: TimerConfigStorageService.create(),
@@ -91,7 +91,11 @@ export class BackgroundListener {
       weeklyScheduleStorageService: params.weeklyScheduleStorageService,
       currentDateService: params.currentDateService
     })
-    this.reminderService = params.reminderService
+    this.reminderService = new MultipleActionService([
+      params.newTabService,
+      params.notificationService,
+      params.soundService
+    ])
     this.badgeDisplayService = params.badgeDisplayService
     this.timerStateStorageService = params.timerStateStorageService
     this.timerConfigStorageService = params.timerConfigStorageService

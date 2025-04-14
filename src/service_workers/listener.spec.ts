@@ -10,6 +10,7 @@ import type { TimerState } from '../domain/pomodoro/timer'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import { flushPromises } from '@vue/test-utils'
 import type { FocusSessionRecord } from '../domain/pomodoro/record'
+import { newTestNotificationSetting } from '../domain/notification_setting'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -206,17 +207,29 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toEqual(expected)
   })
 
-  it('should trigger reminderService when time is up', async () => {
-    const { reminderService, scheduler, clientPort } = await startListener({
-      timerConfig: TimerConfig.newTestInstance({
-        focusDuration: new Duration({ seconds: 3 })
+  it('should trigger notification when time is up', async () => {
+    const { newTabService, soundService, notificationService, scheduler, clientPort } =
+      await startListener({
+        timerConfig: TimerConfig.newTestInstance({
+          focusDuration: new Duration({ seconds: 3 })
+        }),
+        notificationSetting: newTestNotificationSetting({
+          reminderTab: true,
+          desktopNotification: true,
+          sound: true
+        })
       })
-    })
+
+    expect(newTabService.getTriggerCount()).toBe(0)
+    expect(soundService.getTriggerCount()).toBe(0)
+    expect(notificationService.getTriggerCount()).toBe(0)
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(3000)
 
-    expect(reminderService.getTriggerCount()).toBe(1)
+    expect(newTabService.getTriggerCount()).toBe(1)
+    expect(soundService.getTriggerCount()).toBe(1)
+    expect(notificationService.getTriggerCount()).toBe(1)
   })
 
   it('should back up update to storage', async () => {
@@ -277,6 +290,7 @@ describe('BackgroundListener', () => {
 
 async function startListener({
   timerConfig = TimerConfig.newTestInstance(),
+  notificationSetting = newTestNotificationSetting(),
   timerStateStorageService = TimerStateStorageService.createFake(),
   focusSessionRecordHouseKeepDays = 30
 } = {}) {
@@ -286,12 +300,15 @@ async function startListener({
     badgeDisplayService,
     communicationManager,
     scheduler,
-    reminderService,
+    newTabService,
+    soundService,
+    notificationService,
     closeTabsService,
     timerConfigStorageService,
     focusSessionRecordStorageService
   } = await startBackgroundListener({
     timerConfig,
+    notificationSetting,
     timerStateStorageService,
     focusSessionRecordHouseKeepDays
   })
@@ -305,7 +322,9 @@ async function startListener({
     focusSessionRecordStorageService,
     clientPort: communicationManager.clientConnect(),
     scheduler,
-    reminderService,
+    newTabService,
+    soundService,
+    notificationService,
     closeTabsService
   }
 }
