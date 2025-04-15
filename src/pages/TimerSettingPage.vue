@@ -73,11 +73,11 @@ const onClickSave = async () => {
         Cycle Mode
       </b-form-checkbox>
       <p v-if="!cycleMode" class="small">
-        If disabled, the timer will switch between focus sessions and breaks.
+        If disabled, it will alternate between focus sessions and breaks.
       </p>
       <p v-if="cycleMode" class="small">
-        If enabled, the timer repeats your focus sessions and short breaks, then ends with a long
-        break.
+        If enabled, it will repeat the set focus sessions and short breaks, end with a long break,
+        then continue from the beginning.
       </p>
       <div v-show="cycleMode">
         <b-form-group label="Short Break Duration (minutes)" class="mb-3">
