@@ -248,22 +248,29 @@ describe('BackgroundListener', () => {
         soundNotificationTriggerCount: number
       }
     }) => {
-      const { newTabService, soundService, desktopNotificationService, scheduler, clientPort } =
-        await startListener({
-          timerConfig: TimerConfig.newTestInstance({
-            focusDuration: new Duration({ seconds: 3 })
-          }),
-          notificationSetting: input
-        })
+      const {
+        reminderTabService,
+        soundService,
+        desktopNotificationService,
+        scheduler,
+        clientPort
+      } = await startListener({
+        timerConfig: TimerConfig.newTestInstance({
+          focusDuration: new Duration({ seconds: 3 })
+        }),
+        notificationSetting: input
+      })
 
-      expect(newTabService.getTriggerCount()).toBe(0)
+      expect(reminderTabService.getTriggerCount()).toBe(0)
       expect(soundService.getTriggerCount()).toBe(0)
       expect(desktopNotificationService.getTriggerCount()).toBe(0)
 
       clientPort.send({ name: WorkRequestName.START_TIMER })
       scheduler.advanceTime(3000)
 
-      expect(newTabService.getTriggerCount()).toBe(expected.reminderTabNotificationTriggerCount)
+      expect(reminderTabService.getTriggerCount()).toBe(
+        expected.reminderTabNotificationTriggerCount
+      )
       expect(soundService.getTriggerCount()).toBe(expected.soundNotificationTriggerCount)
       expect(desktopNotificationService.getTriggerCount()).toBe(
         expected.desktopNotificationTriggerCount

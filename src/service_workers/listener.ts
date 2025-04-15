@@ -29,7 +29,7 @@ import { NotificationSettingStorageService } from '../domain/notification_settin
 
 type ListenerParams = {
   communicationManager: CommunicationManager
-  newTabService: ActionService
+  reminderTabService: ActionService
   desktopNotificationService: ActionService
   soundService: ActionService
   notificationSettingStorageService: NotificationSettingStorageService
@@ -50,7 +50,7 @@ export class BackgroundListener {
   static create() {
     return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
-      newTabService: new ChromeNewTabService(config.getReminderPageUrl()),
+      reminderTabService: new ChromeNewTabService(config.getReminderPageUrl()),
       desktopNotificationService: new ChromeDesktopNotificationService(),
       soundService: new SoundService(),
       notificationSettingStorageService: NotificationSettingStorageService.create(),
@@ -89,7 +89,7 @@ export class BackgroundListener {
   private notificationSettingStorageService: NotificationSettingStorageService
   private soundService: ActionService
   private desktopNotificationService: ActionService
-  private newTabService: ActionService
+  private reminderTabService: ActionService
 
   private constructor(params: ListenerParams) {
     this.communicationManager = params.communicationManager
@@ -104,7 +104,7 @@ export class BackgroundListener {
     this.notificationSettingStorageService = params.notificationSettingStorageService
     this.soundService = params.soundService
     this.desktopNotificationService = params.desktopNotificationService
-    this.newTabService = params.newTabService
+    this.reminderTabService = params.reminderTabService
 
     this.badgeDisplayService = params.badgeDisplayService
     this.timerStateStorageService = params.timerStateStorageService
@@ -156,7 +156,7 @@ export class BackgroundListener {
     const services: ActionService[] = []
 
     if (notificationSetting.reminderTab) {
-      services.push(this.newTabService)
+      services.push(this.reminderTabService)
     }
     if (notificationSetting.desktopNotification) {
       services.push(this.desktopNotificationService)
