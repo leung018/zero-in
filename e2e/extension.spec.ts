@@ -56,11 +56,11 @@ test('should blocking of browsing control function properly', async ({ page, ext
   await assertInBlockedTemplate(extraPage1)
 
   // Future request to google.com should be blocked
-  await assertGoToBlockedTemplate(extraPage1, 'https://google.com')
+  await goToAndVerifyIsBlocked(extraPage1, 'https://google.com')
 
   // Facebook should not be blocked
   await expect(extraPage2.locator('body')).toContainText('This is fake facebook.com')
-  await assertNotGoToBlockedTemplate(extraPage2, 'https://facebook.com')
+  await goToAndVerifyIsAllowed(extraPage2, 'https://facebook.com')
 })
 
 test("should access blocked domain through other websites won't cause ERR_BLOCKED_BY_CLIENT", async ({
@@ -94,7 +94,7 @@ test('should browsing control able to unblock domain', async ({ page, extensionI
   await page.route('https://google.com', async (route) => {
     await route.fulfill({ body: 'This is fake google.com' })
   })
-  await assertNotGoToBlockedTemplate(page, 'https://google.com')
+  await goToAndVerifyIsAllowed(page, 'https://google.com')
 })
 
 test('should able to persist blocking schedules and update ui', async ({ page, extensionId }) => {
@@ -134,7 +134,7 @@ test('should able to disable blocking according to schedule', async ({ page, ext
 
   await addNonActiveSchedule(page)
 
-  await assertNotGoToBlockedTemplate(page, 'https://google.com')
+  await goToAndVerifyIsAllowed(page, 'https://google.com')
 })
 
 test('should pomodoro timer count successfully', async ({ page, extensionId }) => {
@@ -343,14 +343,14 @@ async function assertWithRetry(assert: () => Promise<void>, retryCount = 3, inte
   }
 }
 
-async function assertGoToBlockedTemplate(page: Page, targetUrl: string) {
+async function goToAndVerifyIsBlocked(page: Page, targetUrl: string) {
   return assertWithRetry(async () => {
     await page.goto(targetUrl)
     expect(await page.locator('body').textContent()).toContain(TEXT_IN_BLOCKED_TEMPLATE)
   })
 }
 
-async function assertNotGoToBlockedTemplate(page: Page, targetUrl: string) {
+async function goToAndVerifyIsAllowed(page: Page, targetUrl: string) {
   return assertWithRetry(async () => {
     await page.goto(targetUrl)
     expect(await page.locator('body').textContent()).not.toContain(TEXT_IN_BLOCKED_TEMPLATE)
