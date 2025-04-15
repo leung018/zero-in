@@ -3,7 +3,7 @@ import {
   newTestNotificationSetting,
   type NotificationSetting
 } from '../domain/notification_setting'
-import { flushPromises, mount } from '@vue/test-utils'
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import NotificationPage from './NotificationPage.vue'
 import { assertCheckboxValue } from '../test_utils/assert'
 import { dataTestSelector } from '../test_utils/selector'
@@ -51,18 +51,11 @@ describe('NotificationPage', () => {
       }
     })
 
-    const reminderTabOption = wrapper.find(dataTestSelector('reminder-tab-option'))
-    const desktopNotificationOption = wrapper.find(dataTestSelector('desktop-notification-option'))
-    const soundOption = wrapper.find(dataTestSelector('sound-option'))
-
-    await Promise.all([
-      reminderTabOption.setValue(true),
-      desktopNotificationOption.setValue(true),
-      soundOption.setValue(true)
-    ])
-
-    wrapper.find(dataTestSelector('save-button')).trigger('click')
-    await flushPromises()
+    await saveNotificationSetting(wrapper, {
+      reminderTab: true,
+      desktopNotification: true,
+      sound: true
+    })
 
     const expected: NotificationSetting = {
       reminderTab: true,
@@ -91,19 +84,13 @@ describe('NotificationPage', () => {
       })
     })
 
-    const reminderTabOption = wrapper.find(dataTestSelector('reminder-tab-option'))
-    const desktopNotificationOption = wrapper.find(dataTestSelector('desktop-notification-option'))
-    const soundOption = wrapper.find(dataTestSelector('sound-option'))
+    await saveNotificationSetting(wrapper, {
+      reminderTab: false,
+      desktopNotification: true,
+      sound: false
+    })
 
-    await Promise.all([
-      reminderTabOption.setValue(false),
-      desktopNotificationOption.setValue(true),
-      soundOption.setValue(false)
-    ])
-
-    wrapper.find(dataTestSelector('save-button')).trigger('click')
-    await flushPromises()
-
+    // Start the timer and finish the focus session. Notification should be triggered when finish focus session
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
 
@@ -112,12 +99,12 @@ describe('NotificationPage', () => {
     expect(soundService.getTriggerCount()).toBe(0)
   })
 
-  it('should trigger reload when click save', async () => {
+  it('should trigger reload after save', async () => {
     const { wrapper, reloadService } = await mountPage()
 
     expect(reloadService.getTriggerCount()).toBe(0)
 
-    wrapper.find(dataTestSelector('save-button')).trigger('click')
+    await saveNotificationSetting(wrapper)
     await flushPromises()
 
     expect(reloadService.getTriggerCount()).toBe(1)
@@ -161,4 +148,22 @@ async function mountPage({
     soundService,
     reminderTabService
   }
+}
+
+async function saveNotificationSetting(
+  wrapper: VueWrapper,
+  notificationSetting = newTestNotificationSetting()
+) {
+  const reminderTabOption = wrapper.find(dataTestSelector('reminder-tab-option'))
+  const desktopNotificationOption = wrapper.find(dataTestSelector('desktop-notification-option'))
+  const soundOption = wrapper.find(dataTestSelector('sound-option'))
+
+  await Promise.all([
+    reminderTabOption.setValue(notificationSetting.reminderTab),
+    desktopNotificationOption.setValue(notificationSetting.desktopNotification),
+    soundOption.setValue(notificationSetting.sound)
+  ])
+
+  wrapper.find(dataTestSelector('save-button')).trigger('click')
+  await flushPromises()
 }
