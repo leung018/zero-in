@@ -20,15 +20,19 @@ import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { ChromeCommunicationManager } from '../chrome/communication'
 import { MultipleActionService } from '../infra/multiple_actions'
 import { ChromeNewTabService } from '../chrome/new_tab'
-import { ChromeNotificationService } from '../chrome/notification'
+import { ChromeDesktopNotificationService } from '../chrome/notification'
 import { ChromeBadgeDisplayService } from '../chrome/badge'
 import { ChromeCloseTabsService } from '../chrome/close_tabs'
 import { ChromeBrowsingControlService } from '../chrome/browsing_control'
 import { SoundService } from '../chrome/sound'
+import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 
 type ListenerParams = {
   communicationManager: CommunicationManager
-  reminderService: ActionService
+  reminderTabService: ActionService
+  desktopNotificationService: ActionService
+  soundService: ActionService
+  notificationSettingStorageService: NotificationSettingStorageService
   badgeDisplayService: BadgeDisplayService
   timerStateStorageService: TimerStateStorageService
   timerConfigStorageService: TimerConfigStorageService
@@ -46,11 +50,10 @@ export class BackgroundListener {
   static create() {
     return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
-      reminderService: new MultipleActionService([
-        new ChromeNewTabService(config.getReminderPageUrl()),
-        new ChromeNotificationService(),
-        new SoundService()
-      ]),
+      reminderTabService: new ChromeNewTabService(config.getReminderPageUrl()),
+      desktopNotificationService: new ChromeDesktopNotificationService(),
+      soundService: new SoundService(),
+      notificationSettingStorageService: NotificationSettingStorageService.create(),
       badgeDisplayService: new ChromeBadgeDisplayService(),
       timerStateStorageService: TimerStateStorageService.create(),
       timerConfigStorageService: TimerConfigStorageService.create(),
@@ -72,7 +75,6 @@ export class BackgroundListener {
   private browsingControlTogglingService: BrowsingControlTogglingService
   private communicationManager: CommunicationManager
   readonly timer: PomodoroTimer // TODO: Make it private when removed the dependency on timer in tests of listener
-  private reminderService: ActionService
   private badgeDisplayService: BadgeDisplayService
   private timerStateStorageService: TimerStateStorageService
   private timerConfigStorageService: TimerConfigStorageService
@@ -83,6 +85,12 @@ export class BackgroundListener {
   private focusSessionRecordHouseKeepDays: number
   private focusSessionRecordsUpdateSubscriptionManager = new SubscriptionManager()
 
+  private notificationService: ActionService
+  private notificationSettingStorageService: NotificationSettingStorageService
+  private soundService: ActionService
+  private desktopNotificationService: ActionService
+  private reminderTabService: ActionService
+
   private constructor(params: ListenerParams) {
     this.communicationManager = params.communicationManager
     this.browsingControlTogglingService = new BrowsingControlTogglingService({
@@ -91,7 +99,13 @@ export class BackgroundListener {
       weeklyScheduleStorageService: params.weeklyScheduleStorageService,
       currentDateService: params.currentDateService
     })
-    this.reminderService = params.reminderService
+
+    this.notificationService = new MultipleActionService([])
+    this.notificationSettingStorageService = params.notificationSettingStorageService
+    this.soundService = params.soundService
+    this.desktopNotificationService = params.desktopNotificationService
+    this.reminderTabService = params.reminderTabService
+
     this.badgeDisplayService = params.badgeDisplayService
     this.timerStateStorageService = params.timerStateStorageService
     this.timerConfigStorageService = params.timerConfigStorageService
@@ -104,9 +118,8 @@ export class BackgroundListener {
   }
 
   async start() {
-    return this.setUpTimer().then(() => {
-      this.setUpListener()
-    })
+    await Promise.all([this.setUpTimer(), this.setUpNotification()])
+    this.setUpListener()
   }
 
   private async setUpTimer() {
@@ -118,7 +131,7 @@ export class BackgroundListener {
     }
 
     this.timer.setOnStageComplete((completedStage) => {
-      this.reminderService.trigger()
+      this.notificationService.trigger()
       this.badgeDisplayService.clearBadge()
 
       if (completedStage === PomodoroStage.FOCUS) {
@@ -136,6 +149,23 @@ export class BackgroundListener {
         })
       }
     })
+  }
+
+  private async setUpNotification() {
+    const notificationSetting = await this.notificationSettingStorageService.get()
+    const services: ActionService[] = []
+
+    if (notificationSetting.reminderTab) {
+      services.push(this.reminderTabService)
+    }
+    if (notificationSetting.desktopNotification) {
+      services.push(this.desktopNotificationService)
+    }
+    if (notificationSetting.sound) {
+      services.push(this.soundService)
+    }
+
+    this.notificationService = new MultipleActionService(services)
   }
 
   private async updateFocusSessionRecords() {
@@ -224,6 +254,10 @@ export class BackgroundListener {
                 this.timer.setConfig(config)
                 this.badgeDisplayService.clearBadge()
               })
+              break
+            }
+            case WorkRequestName.RESET_NOTIFICATION: {
+              this.setUpNotification()
               break
             }
           }

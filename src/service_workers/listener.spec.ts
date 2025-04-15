@@ -10,6 +10,10 @@ import type { TimerState } from '../domain/pomodoro/timer'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import { flushPromises } from '@vue/test-utils'
 import type { FocusSessionRecord } from '../domain/pomodoro/record'
+import {
+  newTestNotificationSetting,
+  type NotificationSetting
+} from '../domain/notification_setting'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -206,18 +210,73 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toEqual(expected)
   })
 
-  it('should trigger reminderService when time is up', async () => {
-    const { reminderService, scheduler, clientPort } = await startListener({
-      timerConfig: TimerConfig.newTestInstance({
-        focusDuration: new Duration({ seconds: 3 })
+  it.each([
+    {
+      input: {
+        reminderTab: true,
+        desktopNotification: true,
+        sound: true
+      },
+      expected: {
+        reminderTabNotificationTriggerCount: 1,
+        desktopNotificationTriggerCount: 1,
+        soundNotificationTriggerCount: 1
+      }
+    },
+    {
+      input: {
+        reminderTab: false,
+        desktopNotification: false,
+        sound: false
+      },
+      expected: {
+        reminderTabNotificationTriggerCount: 0,
+        desktopNotificationTriggerCount: 0,
+        soundNotificationTriggerCount: 0
+      }
+    }
+  ])(
+    'should trigger notification when time is up',
+    async ({
+      input,
+      expected
+    }: {
+      input: NotificationSetting
+      expected: {
+        reminderTabNotificationTriggerCount: number
+        desktopNotificationTriggerCount: number
+        soundNotificationTriggerCount: number
+      }
+    }) => {
+      const {
+        reminderTabService,
+        soundService,
+        desktopNotificationService,
+        scheduler,
+        clientPort
+      } = await startListener({
+        timerConfig: TimerConfig.newTestInstance({
+          focusDuration: new Duration({ seconds: 3 })
+        }),
+        notificationSetting: input
       })
-    })
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
-    scheduler.advanceTime(3000)
+      expect(reminderTabService.getTriggerCount()).toBe(0)
+      expect(soundService.getTriggerCount()).toBe(0)
+      expect(desktopNotificationService.getTriggerCount()).toBe(0)
 
-    expect(reminderService.getTriggerCount()).toBe(1)
-  })
+      clientPort.send({ name: WorkRequestName.START_TIMER })
+      scheduler.advanceTime(3000)
+
+      expect(reminderTabService.getTriggerCount()).toBe(
+        expected.reminderTabNotificationTriggerCount
+      )
+      expect(soundService.getTriggerCount()).toBe(expected.soundNotificationTriggerCount)
+      expect(desktopNotificationService.getTriggerCount()).toBe(
+        expected.desktopNotificationTriggerCount
+      )
+    }
+  )
 
   it('should back up update to storage', async () => {
     const { timerStateStorageService, scheduler, clientPort, timer } = await startListener({
@@ -277,35 +336,19 @@ describe('BackgroundListener', () => {
 
 async function startListener({
   timerConfig = TimerConfig.newTestInstance(),
+  notificationSetting = newTestNotificationSetting(),
   timerStateStorageService = TimerStateStorageService.createFake(),
   focusSessionRecordHouseKeepDays = 30
 } = {}) {
-  const {
-    timer,
-    listener,
-    badgeDisplayService,
-    communicationManager,
-    scheduler,
-    reminderService,
-    closeTabsService,
-    timerConfigStorageService,
-    focusSessionRecordStorageService
-  } = await startBackgroundListener({
+  const props = await startBackgroundListener({
     timerConfig,
+    notificationSetting,
     timerStateStorageService,
     focusSessionRecordHouseKeepDays
   })
 
   return {
-    timer,
-    listener,
-    badgeDisplayService,
-    timerStateStorageService,
-    timerConfigStorageService,
-    focusSessionRecordStorageService,
-    clientPort: communicationManager.clientConnect(),
-    scheduler,
-    reminderService,
-    closeTabsService
+    ...props,
+    clientPort: props.communicationManager.clientConnect()
   }
 }

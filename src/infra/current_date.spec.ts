@@ -6,7 +6,7 @@ describe('CurrentDateService', () => {
     const currentDateService = CurrentDateService.create()
 
     const date1 = currentDateService.getDate()
-    await new Promise((resolve) => setTimeout(resolve, 1))
+    await new Promise((resolve) => setTimeout(resolve, 2))
     const date2 = currentDateService.getDate()
 
     expect(date1.getTime()).toBeLessThan(date2.getTime())
