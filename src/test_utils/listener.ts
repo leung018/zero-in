@@ -67,6 +67,7 @@ export async function startBackgroundListener({
     desktopNotificationService,
     reminderTabService,
     soundService,
+    notificationSettingStorageService,
     badgeDisplayService,
     communicationManager,
     closeTabsService,

@@ -3,10 +3,14 @@ import type { NotificationSettingStorageService } from '@/domain/notification_se
 import ContentTemplate from './components/ContentTemplate.vue'
 import { onBeforeMount, ref } from 'vue'
 import type { ActionService } from '@/infra/action'
+import type { Port } from '@/infra/communication'
+import { WorkRequestName, type WorkRequest } from '../service_workers/request'
+import type { WorkResponse } from '@/service_workers/response'
 
-const { notificationSettingStorageService, reloadService } = defineProps<{
+const { notificationSettingStorageService, reloadService, port } = defineProps<{
   notificationSettingStorageService: NotificationSettingStorageService
   reloadService: ActionService
+  port: Port<WorkRequest, WorkResponse>
 }>()
 const reminderTab = ref(false)
 const desktopNotification = ref(false)
@@ -27,6 +31,8 @@ const onClickSave = async () => {
   }
 
   await notificationSettingStorageService.save(setting)
+  port.send({ name: WorkRequestName.RESET_NOTIFICATION })
+
   reloadService.trigger()
 }
 </script>

@@ -256,6 +256,10 @@ export class BackgroundListener {
               })
               break
             }
+            case WorkRequestName.RESET_NOTIFICATION: {
+              this.setUpNotification()
+              break
+            }
           }
         }
         backgroundPort.onMessage(listener)
