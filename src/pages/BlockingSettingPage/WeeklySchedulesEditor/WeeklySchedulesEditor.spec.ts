@@ -1,15 +1,15 @@
 import { describe, expect, it, vi } from 'vitest'
-import { WeeklyScheduleStorageService } from 'src/domain/schedules/storage'
+import { WeeklyScheduleStorageService } from '@/domain/schedules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 
 import WeeklySchedulesEditor from './index.vue'
-import { Weekday, WeeklySchedule } from 'src/domain/schedules'
-import { Time } from 'src/domain/time'
-import { FakeBrowsingControlService } from 'src/domain/browsing_control'
-import { BrowsingRulesStorageService } from 'src/domain/browsing_rules/storage'
-import { BrowsingRules } from 'src/domain/browsing_rules'
+import { Weekday, WeeklySchedule } from '@/domain/schedules'
+import { Time } from '@/domain/time'
+import { FakeBrowsingControlService } from '@/domain/browsing_control'
+import { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
+import { BrowsingRules } from '@/domain/browsing_rules'
 import { afterEach, beforeEach } from 'node:test'
-import { startBackgroundListener } from 'src/test_utils/listener'
+import { startBackgroundListener } from '@/test_utils/listener'
 
 describe('WeeklySchedulesEditor', () => {
   beforeEach(() => {

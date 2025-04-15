@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
 import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
-import { BrowsingRulesStorageService } from 'src/domain/browsing_rules/storage'
+import { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
-import { BrowsingRules } from 'src/domain/browsing_rules'
-import { FakeBrowsingControlService } from 'src/domain/browsing_control'
-import { startBackgroundListener } from 'src/test_utils/listener'
+import { BrowsingRules } from '@/domain/browsing_rules'
+import { FakeBrowsingControlService } from '@/domain/browsing_control'
+import { startBackgroundListener } from '@/test_utils/listener'
 
 describe('BlockedDomainsEditor', () => {
   it('should render blocked domains', async () => {

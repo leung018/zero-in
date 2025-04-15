@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Port } from '@/infra/communication'
-import { BrowsingRulesStorageService } from 'src/domain/browsing_rules/storage'
-import { WeeklyScheduleStorageService } from 'src/domain/schedules/storage'
+import { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
+import { WeeklyScheduleStorageService } from '@/domain/schedules/storage'
 import ContentTemplate from '../components/ContentTemplate.vue'
 import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
 import WeeklySchedulesEditor from './WeeklySchedulesEditor/index.vue'
