@@ -129,7 +129,7 @@ async function addBlockedDomain(wrapper: VueWrapper, domain: string) {
   const inputElement = wrapper.find("[data-test='blocked-domain-input']")
   await inputElement.setValue(domain)
 
-  const addButton = wrapper.find("[data-test='add-button']")
+  const addButton = wrapper.find("[data-test='add-domain-button']")
   addButton.trigger('click')
   await flushPromises()
 }

@@ -107,7 +107,7 @@ test('should able to persist blocking schedules and update ui', async ({ page, e
 
   await page.getByTestId('end-time-input').fill('12:00')
 
-  await page.getByTestId('add-button').click()
+  await page.getByTestId('add-schedule-button').click()
 
   let schedules = page.getByTestId('weekly-schedule')
   await expect(schedules).toHaveCount(1)
@@ -286,7 +286,7 @@ test('should able to persist and retrieve notification setting', async ({ page, 
 
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
-  const addButton = page.getByTestId('add-button')
+  const addButton = page.getByTestId('add-domain-button')
 
   await input.fill(domain)
   await addButton.click()
@@ -318,7 +318,7 @@ async function addNonActiveSchedule(page: Page) {
 
   await page.getByTestId('end-time-input').fill(`${formatNumber(endHours)}:00`)
 
-  await page.getByTestId('add-button').click()
+  await page.getByTestId('add-schedule-button').click()
 }
 
 const TEXT_IN_BLOCKED_TEMPLATE = 'Stay Focused'
@@ -378,7 +378,7 @@ async function goToBlockedDomainsPage(page: Page, extensionId: string) {
 }
 
 async function goToSchedulesPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/options.html#/schedules`)
+  await page.goto(`chrome-extension://${extensionId}/options.html`)
 }
 
 async function goToPomodoroTimer(page: Page, extensionId: string) {

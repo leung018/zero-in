@@ -311,7 +311,7 @@ async function addWeeklySchedule(
   const endTimeInput = wrapper.find("[data-test='end-time-input']")
   endTimeInput.setValue(endTime.toHhMmString())
 
-  const addButton = wrapper.find("[data-test='add-button']")
+  const addButton = wrapper.find("[data-test='add-schedule-button']")
   await addButton.trigger('click')
   await flushPromises()
 }

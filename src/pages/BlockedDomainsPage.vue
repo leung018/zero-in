@@ -61,7 +61,7 @@ async function updateBrowsingRules(browsingRules: BrowsingRules) {
         </small>
       </p>
     </div>
-    <BButton variant="primary" data-test="add-button" @click="onClickAdd" type="submit"
+    <BButton variant="primary" data-test="add-domain-button" @click="onClickAdd" type="submit"
       >Add</BButton
     >
   </form>
