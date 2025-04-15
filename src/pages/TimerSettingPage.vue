@@ -69,20 +69,15 @@ const onClickSave = async () => {
           data-test="focus-duration"
         ></b-form-input>
       </b-form-group>
-      <b-form-checkbox
-        id="performCycle"
-        v-model="performCycle"
-        class="mb-3"
-        data-test="perform-cycle"
-      >
-        Perform Cycle
+      <b-form-checkbox v-model="performCycle" class="mb-3" data-test="perform-cycle">
+        Cycle Mode
       </b-form-checkbox>
       <p v-if="!performCycle" class="small">
-        If disabled, the timer will switch between focus sessions and break.
+        If disabled, the timer will switch between focus sessions and breaks.
       </p>
       <p v-if="performCycle" class="small">
-        If enabled, the timer will repeat a set number of focus sessions, each followed by a short
-        break. After completing the cycle, a long break will occur.
+        If enabled, the timer repeats your focus sessions and short breaks, then ends with a long
+        break.
       </p>
       <div v-show="performCycle">
         <b-form-group label="Short Break Duration (minutes)" class="mb-3">
