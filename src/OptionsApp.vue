@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import WeeklySchedulesPage from './pages/WeeklySchedulesPage/index.vue'
 import { WeeklyScheduleStorageService } from './domain/schedules/storage'
-import BlockedDomainsPage from './pages/BlockedDomainsPage.vue'
+import BlockingSettingPage from './pages/BlockingSettingPage.vue'
 import StatisticsPage from './pages/StatisticsPage.vue'
 import TimerSettingPage from './pages/TimerSettingPage.vue'
 import NotificationPage from './pages/NotificationPage.vue'
 import { onMounted, ref } from 'vue'
-import { BrowsingRulesStorageService } from './domain/browsing_rules/storage'
 import { ChromeCommunicationManager } from './chrome/communication'
 import { DailyResetTimeStorageService } from './domain/daily_reset_time/storage'
 import { ReloadService } from './chrome/reload'
@@ -20,15 +19,13 @@ const reloadService = new ReloadService()
 
 enum PATH {
   ROOT = '/',
-  SCHEDULES = '/schedules',
   STATISTICS = '/statistics',
   TIMER_SETTING = '/timer-setting',
   NOTIFICATION = '/notification'
 }
 
 const pathTitles = {
-  [PATH.ROOT]: 'Blocked Domains',
-  [PATH.SCHEDULES]: 'Schedules',
+  [PATH.ROOT]: 'Blocking',
   [PATH.STATISTICS]: 'Statistics',
   [PATH.TIMER_SETTING]: 'Timer Setting',
   [PATH.NOTIFICATION]: 'Notification'
@@ -64,17 +61,7 @@ function getPathFromWindowLocation(): PATH {
     </BNav>
     <!-- I don't use an approach of mapping component by path here because the current explicit v-if/v-else-if structure 
      preserves TypeScript prop validation for each component -->
-    <BlockedDomainsPage
-      v-if="currentPath === PATH.ROOT"
-      :browsing-rules-storage-service="BrowsingRulesStorageService.create()"
-      :port="port"
-    />
-
-    <WeeklySchedulesPage
-      v-else-if="currentPath === PATH.SCHEDULES"
-      :weekly-schedule-storage-service="WeeklyScheduleStorageService.create()"
-      :port="port"
-    />
+    <BlockingSettingPage v-if="currentPath === PATH.ROOT" :port="port" />
 
     <StatisticsPage
       v-else-if="currentPath === PATH.STATISTICS"

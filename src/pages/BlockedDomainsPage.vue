@@ -4,7 +4,6 @@ import type { BrowsingRulesStorageService } from '@/domain/browsing_rules/storag
 import { BrowsingRules } from '../domain/browsing_rules'
 import { WorkRequestName } from '../service_workers/request'
 import type { Port } from '../infra/communication'
-import ContentTemplate from './components/ContentTemplate.vue'
 
 const { browsingRulesStorageService, port } = defineProps<{
   port: Port
@@ -44,43 +43,42 @@ async function updateBrowsingRules(browsingRules: BrowsingRules) {
 </script>
 
 <template>
-  <ContentTemplate title="Blocked Domains">
-    <form class="mb-4" @submit.prevent>
-      <div class="mb-3">
-        <input
-          v-model="newDomain"
-          type="text"
-          class="form-control"
-          data-test="blocked-domain-input"
-          placeholder="Enter your domain"
-          required
-        />
-        <p class="mt-1">
-          <small>
-            Enter the domain of the website you would like to limit your browsing to, e.g.
-            "facebook.com", "instagram.com".
-          </small>
-        </p>
-      </div>
-      <BButton variant="primary" data-test="add-button" @click="onClickAdd" type="submit"
-        >Add</BButton
+  <h2 class="mb-3 mt-3">Blocked Domains</h2>
+  <form class="mb-4" @submit.prevent>
+    <div class="mb-3">
+      <input
+        v-model="newDomain"
+        type="text"
+        class="form-control"
+        data-test="blocked-domain-input"
+        placeholder="Enter your domain"
+        required
+      />
+      <p class="mt-1">
+        <small>
+          Enter the domain of the website you would like to limit your browsing to, e.g.
+          "facebook.com", "instagram.com".
+        </small>
+      </p>
+    </div>
+    <BButton variant="primary" data-test="add-button" @click="onClickAdd" type="submit"
+      >Add</BButton
+    >
+  </form>
+  <ul class="list-group">
+    <li
+      v-for="domain in blockedDomains"
+      :key="domain"
+      class="list-group-item d-flex justify-content-between align-items-center"
+    >
+      <span data-test="blocked-domain">{{ domain }}</span>
+      <BButton
+        class="bg-transparent text-danger border-0"
+        :data-test="`remove-${domain}`"
+        @click="onClickRemove(domain)"
       >
-    </form>
-    <ul class="list-group">
-      <li
-        v-for="domain in blockedDomains"
-        :key="domain"
-        class="list-group-item d-flex justify-content-between align-items-center"
-      >
-        <span data-test="blocked-domain">{{ domain }}</span>
-        <BButton
-          class="bg-transparent text-danger border-0"
-          :data-test="`remove-${domain}`"
-          @click="onClickRemove(domain)"
-        >
-          X
-        </BButton>
-      </li>
-    </ul>
-  </ContentTemplate>
+        X
+      </BButton>
+    </li>
+  </ul>
 </template>
