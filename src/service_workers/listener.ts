@@ -85,7 +85,7 @@ export class BackgroundListener {
   private focusSessionRecordHouseKeepDays: number
   private focusSessionRecordsUpdateSubscriptionManager = new SubscriptionManager()
 
-  private reminderService: ActionService
+  private notificationService: ActionService
   private notificationSettingStorageService: NotificationSettingStorageService
   private soundService: ActionService
   private desktopNotificationService: ActionService
@@ -100,7 +100,7 @@ export class BackgroundListener {
       currentDateService: params.currentDateService
     })
 
-    this.reminderService = new MultipleActionService([])
+    this.notificationService = new MultipleActionService([])
     this.notificationSettingStorageService = params.notificationSettingStorageService
     this.soundService = params.soundService
     this.desktopNotificationService = params.desktopNotificationService
@@ -118,7 +118,7 @@ export class BackgroundListener {
   }
 
   async start() {
-    await Promise.all([this.setUpTimer(), this.setUpReminder()])
+    await Promise.all([this.setUpTimer(), this.setUpNotification()])
     this.setUpListener()
   }
 
@@ -131,7 +131,7 @@ export class BackgroundListener {
     }
 
     this.timer.setOnStageComplete((completedStage) => {
-      this.reminderService.trigger()
+      this.notificationService.trigger()
       this.badgeDisplayService.clearBadge()
 
       if (completedStage === PomodoroStage.FOCUS) {
@@ -151,7 +151,7 @@ export class BackgroundListener {
     })
   }
 
-  private async setUpReminder() {
+  private async setUpNotification() {
     const notificationSetting = await this.notificationSettingStorageService.get()
     const services: ActionService[] = []
 
@@ -165,7 +165,7 @@ export class BackgroundListener {
       services.push(this.soundService)
     }
 
-    this.reminderService = new MultipleActionService(services)
+    this.notificationService = new MultipleActionService(services)
   }
 
   private async updateFocusSessionRecords() {
