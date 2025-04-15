@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
-import { Weekday, WeeklySchedule } from '../../domain/schedules'
-import type { WeeklyScheduleStorageService } from '../../domain/schedules/storage'
-import { Time } from '../../domain/time'
-import TimeInput from '../components/TimeInput.vue'
+import { Weekday, WeeklySchedule } from '../../../domain/schedules'
+import type { WeeklyScheduleStorageService } from '../../../domain/schedules/storage'
+import { Time } from '../../../domain/time'
+import TimeInput from '../../components/TimeInput.vue'
 import WeekdaysSelector from './WeekdaysSelector.vue'
 import SchedulesList from './SchedulesList.vue'
-import { WorkRequestName } from '../../service_workers/request'
-import type { Port } from '../../infra/communication'
+import { WorkRequestName } from '../../../service_workers/request'
+import type { Port } from '../../../infra/communication'
 
 const { weeklyScheduleStorageService, port } = defineProps<{
   weeklyScheduleStorageService: WeeklyScheduleStorageService

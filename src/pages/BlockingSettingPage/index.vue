@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Port } from '@/infra/communication'
-import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
-import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
-import ContentTemplate from './components/ContentTemplate.vue'
-import BlockedDomainsPage from './BlockedDomainsPage.vue'
-import WeeklySchedulesPage from './WeeklySchedulesPage/index.vue'
+import { BrowsingRulesStorageService } from 'src/domain/browsing_rules/storage'
+import { WeeklyScheduleStorageService } from 'src/domain/schedules/storage'
+import ContentTemplate from '../components/ContentTemplate.vue'
+import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
+import WeeklySchedulesEditor from './WeeklySchedulesEditor/index.vue'
 
 const { port } = defineProps<{
   port: Port
@@ -14,13 +14,13 @@ const { port } = defineProps<{
 <template>
   <ContentTemplate title="Blocking">
     <BCard class="mb-4 shadow-sm">
-      <BlockedDomainsPage
+      <BlockedDomainsEditor
         :browsing-rules-storage-service="BrowsingRulesStorageService.create()"
         :port="port"
       />
     </BCard>
     <BCard class="mb-4 shadow-sm">
-      <WeeklySchedulesPage
+      <WeeklySchedulesEditor
         :weekly-schedule-storage-service="WeeklyScheduleStorageService.create()"
         :port="port"
       />

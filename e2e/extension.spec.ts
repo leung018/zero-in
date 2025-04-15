@@ -5,7 +5,7 @@ import { test, expect } from './fixtures.js'
 test.describe.configure({ mode: 'parallel' })
 
 test('should able to persist blocked domains and update ui', async ({ page, extensionId }) => {
-  await goToBlockedDomainsPage(page, extensionId)
+  await goToBlockedDomainsEditor(page, extensionId)
 
   // Add two domains
   await addBlockedDomain(page, 'abc.com')
@@ -49,7 +49,7 @@ test('should blocking of browsing control function properly', async ({ page, ext
   await expect(extraPage2.locator('body')).toContainText('This is fake facebook.com')
 
   // Add blocked Domain
-  await goToBlockedDomainsPage(page, extensionId)
+  await goToBlockedDomainsEditor(page, extensionId)
   await addBlockedDomain(page, 'google.com')
 
   // Previous page which is in google.com should be blocked
@@ -67,7 +67,7 @@ test("should access blocked domain through other websites won't cause ERR_BLOCKE
   page,
   extensionId
 }) => {
-  await goToBlockedDomainsPage(page, extensionId)
+  await goToBlockedDomainsEditor(page, extensionId)
 
   await addBlockedDomain(page, 'facebook.com')
 
@@ -86,7 +86,7 @@ test("should access blocked domain through other websites won't cause ERR_BLOCKE
 })
 
 test('should browsing control able to unblock domain', async ({ page, extensionId }) => {
-  await goToBlockedDomainsPage(page, extensionId)
+  await goToBlockedDomainsEditor(page, extensionId)
 
   await addBlockedDomain(page, 'google.com')
   await removeBlockedDomain(page, 'google.com')
@@ -124,7 +124,7 @@ test('should able to persist blocking schedules and update ui', async ({ page, e
 })
 
 test('should able to disable blocking according to schedule', async ({ page, extensionId }) => {
-  await goToBlockedDomainsPage(page, extensionId)
+  await goToBlockedDomainsEditor(page, extensionId)
 
   await addBlockedDomain(page, 'google.com')
 
@@ -373,7 +373,7 @@ function sleep(ms: number) {
   })
 }
 
-async function goToBlockedDomainsPage(page: Page, extensionId: string) {
+async function goToBlockedDomainsEditor(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/options.html`)
 }
 

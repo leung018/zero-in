@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import WeeklySchedulesPage from './pages/WeeklySchedulesPage/index.vue'
-import { WeeklyScheduleStorageService } from './domain/schedules/storage'
-import BlockingSettingPage from './pages/BlockingSettingPage.vue'
+import BlockingSettingPage from './pages/BlockingSettingPage/index.vue'
 import StatisticsPage from './pages/StatisticsPage.vue'
 import TimerSettingPage from './pages/TimerSettingPage.vue'
 import NotificationPage from './pages/NotificationPage.vue'
