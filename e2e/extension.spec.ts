@@ -5,7 +5,7 @@ import { test, expect } from './fixtures.js'
 test.describe.configure({ mode: 'parallel' })
 
 test('should able to persist blocked domains and update ui', async ({ page, extensionId }) => {
-  await goToBlockedDomainsPage(page, extensionId)
+  await goToBlockingSettingPage(page, extensionId)
 
   // Add two domains
   await addBlockedDomain(page, 'abc.com')
@@ -49,25 +49,25 @@ test('should blocking of browsing control function properly', async ({ page, ext
   await expect(extraPage2.locator('body')).toContainText('This is fake facebook.com')
 
   // Add blocked Domain
-  await goToBlockedDomainsPage(page, extensionId)
+  await goToBlockingSettingPage(page, extensionId)
   await addBlockedDomain(page, 'google.com')
 
   // Previous page which is in google.com should be blocked
   await assertInBlockedTemplate(extraPage1)
 
   // Future request to google.com should be blocked
-  await assertGoToBlockedTemplate(extraPage1, 'https://google.com')
+  await goToAndVerifyIsBlocked(extraPage1, 'https://google.com')
 
   // Facebook should not be blocked
   await expect(extraPage2.locator('body')).toContainText('This is fake facebook.com')
-  await assertNotGoToBlockedTemplate(extraPage2, 'https://facebook.com')
+  await goToAndVerifyIsAllowed(extraPage2, 'https://facebook.com')
 })
 
 test("should access blocked domain through other websites won't cause ERR_BLOCKED_BY_CLIENT", async ({
   page,
   extensionId
 }) => {
-  await goToBlockedDomainsPage(page, extensionId)
+  await goToBlockingSettingPage(page, extensionId)
 
   await addBlockedDomain(page, 'facebook.com')
 
@@ -86,7 +86,7 @@ test("should access blocked domain through other websites won't cause ERR_BLOCKE
 })
 
 test('should browsing control able to unblock domain', async ({ page, extensionId }) => {
-  await goToBlockedDomainsPage(page, extensionId)
+  await goToBlockingSettingPage(page, extensionId)
 
   await addBlockedDomain(page, 'google.com')
   await removeBlockedDomain(page, 'google.com')
@@ -94,11 +94,11 @@ test('should browsing control able to unblock domain', async ({ page, extensionI
   await page.route('https://google.com', async (route) => {
     await route.fulfill({ body: 'This is fake google.com' })
   })
-  await assertNotGoToBlockedTemplate(page, 'https://google.com')
+  await goToAndVerifyIsAllowed(page, 'https://google.com')
 })
 
 test('should able to persist blocking schedules and update ui', async ({ page, extensionId }) => {
-  await goToSchedulesPage(page, extensionId)
+  await goToBlockingSettingPage(page, extensionId)
 
   // Add a schedule
   await page.getByTestId('check-weekday-sun').check()
@@ -107,7 +107,7 @@ test('should able to persist blocking schedules and update ui', async ({ page, e
 
   await page.getByTestId('end-time-input').fill('12:00')
 
-  await page.getByTestId('add-button').click()
+  await page.getByTestId('add-schedule-button').click()
 
   let schedules = page.getByTestId('weekly-schedule')
   await expect(schedules).toHaveCount(1)
@@ -124,7 +124,7 @@ test('should able to persist blocking schedules and update ui', async ({ page, e
 })
 
 test('should able to disable blocking according to schedule', async ({ page, extensionId }) => {
-  await goToBlockedDomainsPage(page, extensionId)
+  await goToBlockingSettingPage(page, extensionId)
 
   await addBlockedDomain(page, 'google.com')
 
@@ -132,11 +132,9 @@ test('should able to disable blocking according to schedule', async ({ page, ext
     await route.fulfill({ body: 'This is fake google.com' })
   })
 
-  await goToSchedulesPage(page, extensionId)
-
   await addNonActiveSchedule(page)
 
-  await assertNotGoToBlockedTemplate(page, 'https://google.com')
+  await goToAndVerifyIsAllowed(page, 'https://google.com')
 })
 
 test('should pomodoro timer count successfully', async ({ page, extensionId }) => {
@@ -286,7 +284,7 @@ test('should able to persist and retrieve notification setting', async ({ page, 
 
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
-  const addButton = page.getByTestId('add-button')
+  const addButton = page.getByTestId('add-domain-button')
 
   await input.fill(domain)
   await addButton.click()
@@ -318,7 +316,7 @@ async function addNonActiveSchedule(page: Page) {
 
   await page.getByTestId('end-time-input').fill(`${formatNumber(endHours)}:00`)
 
-  await page.getByTestId('add-button').click()
+  await page.getByTestId('add-schedule-button').click()
 }
 
 const TEXT_IN_BLOCKED_TEMPLATE = 'Stay Focused'
@@ -345,14 +343,14 @@ async function assertWithRetry(assert: () => Promise<void>, retryCount = 3, inte
   }
 }
 
-async function assertGoToBlockedTemplate(page: Page, targetUrl: string) {
+async function goToAndVerifyIsBlocked(page: Page, targetUrl: string) {
   return assertWithRetry(async () => {
     await page.goto(targetUrl)
     expect(await page.locator('body').textContent()).toContain(TEXT_IN_BLOCKED_TEMPLATE)
   })
 }
 
-async function assertNotGoToBlockedTemplate(page: Page, targetUrl: string) {
+async function goToAndVerifyIsAllowed(page: Page, targetUrl: string) {
   return assertWithRetry(async () => {
     await page.goto(targetUrl)
     expect(await page.locator('body').textContent()).not.toContain(TEXT_IN_BLOCKED_TEMPLATE)
@@ -373,12 +371,8 @@ function sleep(ms: number) {
   })
 }
 
-async function goToBlockedDomainsPage(page: Page, extensionId: string) {
+async function goToBlockingSettingPage(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/options.html`)
-}
-
-async function goToSchedulesPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/options.html#/schedules`)
 }
 
 async function goToPomodoroTimer(page: Page, extensionId: string) {

@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
-import { Weekday, WeeklySchedule } from '../../domain/schedules'
-import type { WeeklyScheduleStorageService } from '../../domain/schedules/storage'
-import { Time } from '../../domain/time'
-import TimeInput from '../components/TimeInput.vue'
+import { Weekday, WeeklySchedule } from '../../../domain/schedules'
+import type { WeeklyScheduleStorageService } from '../../../domain/schedules/storage'
+import { Time } from '../../../domain/time'
+import TimeInput from '../../components/TimeInput.vue'
 import WeekdaysSelector from './WeekdaysSelector.vue'
 import SchedulesList from './SchedulesList.vue'
-import { WorkRequestName } from '../../service_workers/request'
-import type { Port } from '../../infra/communication'
-import ContentTemplate from '../components/ContentTemplate.vue'
+import { WorkRequestName } from '../../../service_workers/request'
+import type { Port } from '../../../infra/communication'
 
 const { weeklyScheduleStorageService, port } = defineProps<{
   weeklyScheduleStorageService: WeeklyScheduleStorageService
@@ -66,38 +65,37 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
 </script>
 
 <template>
-  <ContentTemplate title="Schedules">
-    <p>
-      <small>
-        Set the schedules for blocking access to the configured domains to be active. If not set, it
-        will remain active at all times.
-      </small>
-    </p>
-    <form>
-      <div class="mb-4">
-        <div class="form-group">
-          <label>Select Weekdays:</label>
-          <WeekdaysSelector class="d-flex flex-wrap" v-model="newWeekdaySet" />
-        </div>
-
-        <div class="form-group">
-          <label>Start Time:</label>
-          <TimeInput class="d-flex" v-model="newStartTime" data-test="start-time-input" />
-        </div>
-
-        <div class="form-group">
-          <label>End Time:</label>
-          <TimeInput class="d-flex" v-model="newEndTime" data-test="end-time-input" />
-        </div>
+  <h2 class="mb-3 mt-3">Schedules</h2>
+  <p>
+    <small>
+      Set the schedules for blocking access to the configured domains to be active. If not set, it
+      will remain active at all times.
+    </small>
+  </p>
+  <form>
+    <div class="mb-4">
+      <div class="form-group">
+        <label>Select Weekdays:</label>
+        <WeekdaysSelector class="d-flex flex-wrap" v-model="newWeekdaySet" />
       </div>
-      <BButton variant="primary" data-test="add-button" @click="onClickAdd">Add</BButton>
-      <div v-if="errorMessage" class="text-danger mt-2" data-test="error-message">
-        {{ errorMessage }}
+
+      <div class="form-group">
+        <label>Start Time:</label>
+        <TimeInput class="d-flex" v-model="newStartTime" data-test="start-time-input" />
       </div>
-    </form>
-    <div class="mt-4" data-test="saved-schedules-section" v-if="showSaved">
-      <h3>Saved</h3>
-      <SchedulesList :weeklySchedules="weeklySchedules" @remove="handleRemove" />
+
+      <div class="form-group">
+        <label>End Time:</label>
+        <TimeInput class="d-flex" v-model="newEndTime" data-test="end-time-input" />
+      </div>
     </div>
-  </ContentTemplate>
+    <BButton variant="primary" data-test="add-schedule-button" @click="onClickAdd">Add</BButton>
+    <div v-if="errorMessage" class="text-danger mt-2" data-test="error-message">
+      {{ errorMessage }}
+    </div>
+  </form>
+  <div class="mt-4" data-test="saved-schedules-section" v-if="showSaved">
+    <h3>Saved</h3>
+    <SchedulesList :weeklySchedules="weeklySchedules" @remove="handleRemove" />
+  </div>
 </template>

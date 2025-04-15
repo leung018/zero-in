@@ -1,27 +1,27 @@
 import { describe, expect, it } from 'vitest'
 
-import BlockedDomainsPage from './BlockedDomainsPage.vue'
-import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
+import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
+import { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
-import { BrowsingRules } from '../domain/browsing_rules'
-import { FakeBrowsingControlService } from '../domain/browsing_control'
-import { startBackgroundListener } from '../test_utils/listener'
+import { BrowsingRules } from '@/domain/browsing_rules'
+import { FakeBrowsingControlService } from '@/domain/browsing_control'
+import { startBackgroundListener } from '@/test_utils/listener'
 
-describe('BlockedDomainsPage', () => {
+describe('BlockedDomainsEditor', () => {
   it('should render blocked domains', async () => {
     const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
     await browsingRulesStorageService.save(
       new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
 
-    const { wrapper } = await mountBlockedDomainsPage({ browsingRulesStorageService })
+    const { wrapper } = await mountBlockedDomainsEditor({ browsingRulesStorageService })
     await flushPromises()
 
     assertDomainsDisplayed(wrapper, ['example.com', 'facebook.com'])
   })
 
   it('should able to add new blocked domain', async () => {
-    const { wrapper, browsingRulesStorageService } = await mountBlockedDomainsPage()
+    const { wrapper, browsingRulesStorageService } = await mountBlockedDomainsEditor()
 
     await addBlockedDomain(wrapper, 'example.com')
 
@@ -40,7 +40,7 @@ describe('BlockedDomainsPage', () => {
   })
 
   it('should clear input box after adding new domain', async () => {
-    const { wrapper } = await mountBlockedDomainsPage()
+    const { wrapper } = await mountBlockedDomainsEditor()
 
     await addBlockedDomain(wrapper, 'example.com')
 
@@ -50,7 +50,7 @@ describe('BlockedDomainsPage', () => {
   })
 
   it('should not save blocked domain when input box is empty', async () => {
-    const { wrapper, browsingRulesStorageService } = await mountBlockedDomainsPage()
+    const { wrapper, browsingRulesStorageService } = await mountBlockedDomainsEditor()
 
     await addBlockedDomain(wrapper, '')
     await addBlockedDomain(wrapper, '  ')
@@ -60,7 +60,7 @@ describe('BlockedDomainsPage', () => {
   })
 
   it('should save domain in trimmed format', async () => {
-    const { wrapper, browsingRulesStorageService } = await mountBlockedDomainsPage()
+    const { wrapper, browsingRulesStorageService } = await mountBlockedDomainsEditor()
 
     await addBlockedDomain(wrapper, '  example.com  ')
     assertDomainsDisplayed(wrapper, ['example.com'])
@@ -74,7 +74,7 @@ describe('BlockedDomainsPage', () => {
       new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
 
-    const { wrapper } = await mountBlockedDomainsPage({ browsingRulesStorageService })
+    const { wrapper } = await mountBlockedDomainsEditor({ browsingRulesStorageService })
     await flushPromises()
 
     await removeBlockedDomain(wrapper, 'example.com')
@@ -84,7 +84,7 @@ describe('BlockedDomainsPage', () => {
   })
 
   it('should update activated redirect when domain is added', async () => {
-    const { fakeBrowsingControlService, wrapper } = await mountBlockedDomainsPage()
+    const { fakeBrowsingControlService, wrapper } = await mountBlockedDomainsEditor()
 
     await addBlockedDomain(wrapper, 'example.com')
     expect(fakeBrowsingControlService.getActivatedBrowsingRules()).toEqual(
@@ -98,7 +98,7 @@ describe('BlockedDomainsPage', () => {
       new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     )
 
-    const { wrapper, fakeBrowsingControlService } = await mountBlockedDomainsPage({
+    const { wrapper, fakeBrowsingControlService } = await mountBlockedDomainsEditor({
       browsingRulesStorageService
     })
     await flushPromises()
@@ -110,7 +110,7 @@ describe('BlockedDomainsPage', () => {
   })
 })
 
-async function mountBlockedDomainsPage({
+async function mountBlockedDomainsEditor({
   browsingRulesStorageService = BrowsingRulesStorageService.createFake()
 } = {}) {
   const fakeBrowsingControlService = new FakeBrowsingControlService()
@@ -118,7 +118,7 @@ async function mountBlockedDomainsPage({
     browsingControlService: fakeBrowsingControlService,
     browsingRulesStorageService
   })
-  const wrapper = mount(BlockedDomainsPage, {
+  const wrapper = mount(BlockedDomainsEditor, {
     props: { browsingRulesStorageService, port: communicationManager.clientConnect() }
   })
 
@@ -129,7 +129,7 @@ async function addBlockedDomain(wrapper: VueWrapper, domain: string) {
   const inputElement = wrapper.find("[data-test='blocked-domain-input']")
   await inputElement.setValue(domain)
 
-  const addButton = wrapper.find("[data-test='add-button']")
+  const addButton = wrapper.find("[data-test='add-domain-button']")
   addButton.trigger('click')
   await flushPromises()
 }

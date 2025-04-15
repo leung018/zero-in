@@ -19,7 +19,7 @@ const focusDurationMinutes = ref(25)
 const shortBreakDurationMinutes = ref(5)
 const longBreakDurationMinutes = ref(15)
 const focusSessionsPerCycle = ref(4)
-const performCycle = ref(false)
+const cycleMode = ref(false)
 
 function durationToMinutes(d: Duration): number {
   return Math.floor(d.remainingSeconds() / 60)
@@ -32,7 +32,7 @@ onBeforeMount(async () => {
   longBreakDurationMinutes.value = durationToMinutes(timerConfig.longBreakDuration)
   focusSessionsPerCycle.value = timerConfig.focusSessionsPerCycle
 
-  performCycle.value = timerConfig.focusSessionsPerCycle > 1
+  cycleMode.value = timerConfig.focusSessionsPerCycle > 1
 })
 
 const onClickSave = async () => {
@@ -40,11 +40,11 @@ const onClickSave = async () => {
 
   const config = new TimerConfig({
     focusDuration: new Duration({ minutes: focusDurationMinutes.value }),
-    shortBreakDuration: performCycle.value
+    shortBreakDuration: cycleMode.value
       ? new Duration({ minutes: shortBreakDurationMinutes.value })
       : originalConfig.shortBreakDuration,
     longBreakDuration: new Duration({ minutes: longBreakDurationMinutes.value }),
-    focusSessionsPerCycle: performCycle.value ? focusSessionsPerCycle.value : 1
+    focusSessionsPerCycle: cycleMode.value ? focusSessionsPerCycle.value : 1
   })
 
   await timerConfigStorageService.save(config)
@@ -69,22 +69,17 @@ const onClickSave = async () => {
           data-test="focus-duration"
         ></b-form-input>
       </b-form-group>
-      <b-form-checkbox
-        id="performCycle"
-        v-model="performCycle"
-        class="mb-3"
-        data-test="perform-cycle"
-      >
-        Perform Cycle
+      <b-form-checkbox v-model="cycleMode" class="mb-3" data-test="perform-cycle">
+        Cycle Mode
       </b-form-checkbox>
-      <p v-if="!performCycle" class="small">
-        If disabled, the timer will switch between focus sessions and break.
+      <p v-if="!cycleMode" class="small">
+        If disabled, it will alternate between focus sessions and breaks.
       </p>
-      <p v-if="performCycle" class="small">
-        If enabled, the timer will repeat a set number of focus sessions, each followed by a short
-        break. After completing the cycle, a long break will occur.
+      <p v-if="cycleMode" class="small">
+        If enabled, it will repeat the set focus sessions and short breaks, end with a long break,
+        then continue from the beginning.
       </p>
-      <div v-show="performCycle">
+      <div v-show="cycleMode">
         <b-form-group label="Short Break Duration (minutes)" class="mb-3">
           <b-form-input
             v-model.number="shortBreakDurationMinutes"
@@ -105,7 +100,7 @@ const onClickSave = async () => {
         </b-form-group>
       </div>
       <b-form-group
-        :label="performCycle ? 'Long Break Duration (minutes)' : 'Break Duration (minutes)'"
+        :label="cycleMode ? 'Long Break Duration (minutes)' : 'Break Duration (minutes)'"
         class="mb-3"
       >
         <b-form-input

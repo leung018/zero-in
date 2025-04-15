@@ -13,6 +13,6 @@ const { title } = defineProps<{
 
 <style scoped>
 .container {
-  max-width: 500px;
+  max-width: 530px;
 }
 </style>
