@@ -5,7 +5,7 @@ import { test, expect } from './fixtures.js'
 test.describe.configure({ mode: 'parallel' })
 
 test('should able to persist blocked domains and update ui', async ({ page, extensionId }) => {
-  await goToBlockedDomainsEditor(page, extensionId)
+  await goToBlockingSettingPage(page, extensionId)
 
   // Add two domains
   await addBlockedDomain(page, 'abc.com')
@@ -49,7 +49,7 @@ test('should blocking of browsing control function properly', async ({ page, ext
   await expect(extraPage2.locator('body')).toContainText('This is fake facebook.com')
 
   // Add blocked Domain
-  await goToBlockedDomainsEditor(page, extensionId)
+  await goToBlockingSettingPage(page, extensionId)
   await addBlockedDomain(page, 'google.com')
 
   // Previous page which is in google.com should be blocked
@@ -67,7 +67,7 @@ test("should access blocked domain through other websites won't cause ERR_BLOCKE
   page,
   extensionId
 }) => {
-  await goToBlockedDomainsEditor(page, extensionId)
+  await goToBlockingSettingPage(page, extensionId)
 
   await addBlockedDomain(page, 'facebook.com')
 
@@ -86,7 +86,7 @@ test("should access blocked domain through other websites won't cause ERR_BLOCKE
 })
 
 test('should browsing control able to unblock domain', async ({ page, extensionId }) => {
-  await goToBlockedDomainsEditor(page, extensionId)
+  await goToBlockingSettingPage(page, extensionId)
 
   await addBlockedDomain(page, 'google.com')
   await removeBlockedDomain(page, 'google.com')
@@ -98,7 +98,7 @@ test('should browsing control able to unblock domain', async ({ page, extensionI
 })
 
 test('should able to persist blocking schedules and update ui', async ({ page, extensionId }) => {
-  await goToWeeklySchedulesEditor(page, extensionId)
+  await goToBlockingSettingPage(page, extensionId)
 
   // Add a schedule
   await page.getByTestId('check-weekday-sun').check()
@@ -124,15 +124,13 @@ test('should able to persist blocking schedules and update ui', async ({ page, e
 })
 
 test('should able to disable blocking according to schedule', async ({ page, extensionId }) => {
-  await goToBlockedDomainsEditor(page, extensionId)
+  await goToBlockingSettingPage(page, extensionId)
 
   await addBlockedDomain(page, 'google.com')
 
   await page.route('https://google.com', async (route) => {
     await route.fulfill({ body: 'This is fake google.com' })
   })
-
-  await goToWeeklySchedulesEditor(page, extensionId)
 
   await addNonActiveSchedule(page)
 
@@ -373,11 +371,7 @@ function sleep(ms: number) {
   })
 }
 
-async function goToBlockedDomainsEditor(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/options.html`)
-}
-
-async function goToWeeklySchedulesEditor(page: Page, extensionId: string) {
+async function goToBlockingSettingPage(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/options.html`)
 }
 
