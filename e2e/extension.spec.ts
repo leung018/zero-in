@@ -98,7 +98,7 @@ test('should browsing control able to unblock domain', async ({ page, extensionI
 })
 
 test('should able to persist blocking schedules and update ui', async ({ page, extensionId }) => {
-  await goToSchedulesPage(page, extensionId)
+  await goToWeeklySchedulesEditor(page, extensionId)
 
   // Add a schedule
   await page.getByTestId('check-weekday-sun').check()
@@ -132,7 +132,7 @@ test('should able to disable blocking according to schedule', async ({ page, ext
     await route.fulfill({ body: 'This is fake google.com' })
   })
 
-  await goToSchedulesPage(page, extensionId)
+  await goToWeeklySchedulesEditor(page, extensionId)
 
   await addNonActiveSchedule(page)
 
@@ -377,7 +377,7 @@ async function goToBlockedDomainsEditor(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/options.html`)
 }
 
-async function goToSchedulesPage(page: Page, extensionId: string) {
+async function goToWeeklySchedulesEditor(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/options.html`)
 }
 
