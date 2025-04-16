@@ -23,12 +23,10 @@ export class BrowsingRulesStorageService {
   }
 
   async get(): Promise<BrowsingRules> {
-    return this.storage.get('browsingRules').then((result: any) => {
-      if (result.browsingRules) {
-        return deserializeBrowsingRules(result.browsingRules)
-      }
-
-      return new BrowsingRules()
-    })
+    const result = await this.storage.get('browsingRules')
+    if (result.browsingRules) {
+      return deserializeBrowsingRules(result.browsingRules)
+    }
+    return new BrowsingRules()
   }
 }

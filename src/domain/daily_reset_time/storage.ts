@@ -25,12 +25,10 @@ export class DailyResetTimeStorageService {
   }
 
   async get(): Promise<Time> {
-    return this.storage.get('dailyCutoffTime').then((result) => {
-      if (result.dailyCutoffTime) {
-        return deserializeTime(result.dailyCutoffTime)
-      }
-
-      return new Time(0, 0)
-    })
+    const result = await this.storage.get('dailyCutoffTime')
+    if (result.dailyCutoffTime) {
+      return deserializeTime(result.dailyCutoffTime)
+    }
+    return new Time(0, 0)
   }
 }

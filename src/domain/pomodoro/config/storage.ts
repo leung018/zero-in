@@ -22,13 +22,12 @@ export class TimerConfigStorageService {
   }
 
   async get(): Promise<TimerConfig> {
-    return this.storage.get(STORAGE_KEY).then((result: any) => {
-      if (result[STORAGE_KEY]) {
-        return deserializeTimerConfig(result[STORAGE_KEY])
-      }
+    const result = await this.storage.get(STORAGE_KEY)
+    if (result[STORAGE_KEY]) {
+      return deserializeTimerConfig(result[STORAGE_KEY])
+    }
 
-      return config.getDefaultTimerConfig()
-    })
+    return config.getDefaultTimerConfig()
   }
 
   async save(timerConfig: TimerConfig) {

@@ -20,13 +20,11 @@ export class TimerStateStorageService {
   }
 
   async get(): Promise<TimerState | null> {
-    return this.storage.get(STORAGE_KEY).then((result: any) => {
-      if (result[STORAGE_KEY]) {
-        return result[STORAGE_KEY]
-      }
-
-      return null
-    })
+    const result = await this.storage.get(STORAGE_KEY)
+    if (result[STORAGE_KEY]) {
+      return result[STORAGE_KEY]
+    }
+    return null
   }
 
   async save(timerState: TimerState): Promise<void> {

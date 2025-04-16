@@ -25,12 +25,12 @@ export class WeeklyScheduleStorageService {
   }
 
   async getAll(): Promise<WeeklySchedule[]> {
-    return this.storage.get('weeklySchedules').then((result: any) => {
-      if (result.weeklySchedules) {
-        return result.weeklySchedules.map(deserializeWeeklySchedule)
-      }
+    const result = await this.storage.get('weeklySchedules')
 
-      return []
-    })
+    if (result.weeklySchedules) {
+      return result.weeklySchedules.map(deserializeWeeklySchedule)
+    }
+
+    return []
   }
 }
