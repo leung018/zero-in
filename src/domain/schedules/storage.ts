@@ -3,6 +3,8 @@ import { FakeStorage, type Storage } from '../../infra/storage'
 import { WeeklySchedule } from '.'
 import { deserializeWeeklySchedule, serializeWeeklySchedule } from './serialize'
 
+const STORAGE_KEY = 'weeklySchedules'
+
 export class WeeklyScheduleStorageService {
   static createFake(): WeeklyScheduleStorageService {
     return new WeeklyScheduleStorageService(new FakeStorage())
@@ -20,15 +22,15 @@ export class WeeklyScheduleStorageService {
 
   async saveAll(weeklySchedules: WeeklySchedule[]): Promise<void> {
     return this.storage.set({
-      weeklySchedules: weeklySchedules.map(serializeWeeklySchedule)
+      [STORAGE_KEY]: weeklySchedules.map(serializeWeeklySchedule)
     })
   }
 
   async getAll(): Promise<WeeklySchedule[]> {
-    const result = await this.storage.get('weeklySchedules')
+    const result = await this.storage.get(STORAGE_KEY)
 
-    if (result.weeklySchedules) {
-      return result.weeklySchedules.map(deserializeWeeklySchedule)
+    if (result[STORAGE_KEY]) {
+      return result[STORAGE_KEY].map(deserializeWeeklySchedule)
     }
 
     return []

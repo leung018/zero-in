@@ -4,7 +4,6 @@ Remove it when finished.
 (DD/MM/YYYY)
 28/03/2025: Move timer subscription into listener And decouple houseKeepRecordDays from timerConfig
 28/03/2025: Remove dependency of timer in listener.spec.ts
-01/04/2025: Use STORAGE_KEY const in StorageService
 01/04/2025: Remove pomodoro in naming
 02/04/2025: Use assertInputValue and assertCheckboxValue
 11/04/2025: StorageService layer add unit tests
