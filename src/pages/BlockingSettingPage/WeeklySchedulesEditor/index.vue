@@ -79,12 +79,12 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
         <WeekdaysSelector class="d-flex flex-wrap" v-model="newWeekdaySet" />
       </div>
 
-      <div class="form-group">
+      <div class="form-group mt-2">
         <label>Start Time:</label>
         <TimeInput class="d-flex" v-model="newStartTime" data-test="start-time-input" />
       </div>
 
-      <div class="form-group">
+      <div class="form-group mt-1">
         <label>End Time:</label>
         <TimeInput class="d-flex" v-model="newEndTime" data-test="end-time-input" />
       </div>
