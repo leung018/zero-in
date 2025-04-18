@@ -6,7 +6,6 @@ Remove it when finished.
 28/03/2025: Remove dependency of timer in listener.spec.ts
 01/04/2025: Remove pomodoro in naming
 02/04/2025: Use assertInputValue and assertCheckboxValue
-11/04/2025: StorageService layer add unit tests
 11/04/2025: Use dataTestSelector
 11/04/2025: After StorageService added unit tests, can direct pass domain object into mount method
 11/04/2025: Move flushPromises into mount
