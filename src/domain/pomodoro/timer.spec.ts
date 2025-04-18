@@ -169,7 +169,7 @@ describe('PomodoroTimer', () => {
       })
     )
     const updates: TimerState[] = []
-    timer.subscribeTimerState((update) => {
+    timer.setOnTimerUpdate((update) => {
       updates.push(update)
     })
 
@@ -223,7 +223,7 @@ describe('PomodoroTimer', () => {
       })
     )
     const updates: TimerState[] = []
-    timer.subscribeTimerState((update) => {
+    timer.setOnTimerUpdate((update) => {
       updates.push(update)
     })
 
@@ -247,7 +247,7 @@ describe('PomodoroTimer', () => {
       })
     )
     const updates: TimerState[] = []
-    timer.subscribeTimerState((update) => {
+    timer.setOnTimerUpdate((update) => {
       updates.push(update)
     })
 
@@ -279,7 +279,7 @@ describe('PomodoroTimer', () => {
     timer.start()
     scheduler.advanceTime(1005)
 
-    timer.subscribeTimerState((update) => {
+    timer.setOnTimerUpdate((update) => {
       updates.push(update)
     })
 
@@ -605,7 +605,7 @@ describe('PomodoroTimer', () => {
     })
 
     const updates: TimerState[] = []
-    timer.subscribeTimerState((state) => {
+    timer.setOnTimerUpdate((state) => {
       updates.push(state)
     })
 
@@ -619,7 +619,7 @@ describe('PomodoroTimer', () => {
     const { timer, scheduler } = createTimer()
 
     const updates: TimerState[] = []
-    timer.subscribeTimerState((state) => {
+    timer.setOnTimerUpdate((state) => {
       updates.push(state)
     })
 

@@ -142,7 +142,7 @@ export class BackgroundListener {
       }
     })
 
-    this.timer.subscribeTimerState((newState) => {
+    this.timer.setOnTimerUpdate((newState) => {
       this.timerStateStorageService.save(newState)
       this.timerStateSubscriptionManager.broadcast(newState)
 
