@@ -200,6 +200,10 @@ export class BackgroundListener {
     return this.timerStateSubscriptionManager.getSubscriptionCount()
   }
 
+  getTimerState() {
+    return this.timer.getState()
+  }
+
   private setUpListener() {
     this.communicationManager.onNewClientConnect(
       (backgroundPort: Port<WorkResponse, WorkRequest>) => {
