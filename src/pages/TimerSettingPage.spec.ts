@@ -17,7 +17,6 @@ describe('TimerSettingPage', () => {
         focusSessionsPerCycle: 3
       })
     )
-    await flushPromises()
 
     assertInputValue(wrapper, '[data-test="focus-duration"]', '24')
     assertInputValue(wrapper, '[data-test="short-break-duration"]', '4')
@@ -31,7 +30,6 @@ describe('TimerSettingPage', () => {
         focusSessionsPerCycle: 2
       })
     )
-    await flushPromises()
 
     assertCheckboxValue(wrapper, '[data-test="perform-cycle"]', true)
     expect(wrapper.find('[data-test="short-break-duration"]').isVisible()).toBe(true)
@@ -44,7 +42,6 @@ describe('TimerSettingPage', () => {
         focusSessionsPerCycle: 1
       })
     )
-    await flushPromises()
 
     assertCheckboxValue(wrapper, '[data-test="perform-cycle"]', false)
     expect(wrapper.find('[data-test="short-break-duration"]').isVisible()).toBe(false)
@@ -60,7 +57,6 @@ describe('TimerSettingPage', () => {
         focusSessionsPerCycle: 3
       })
     )
-    await flushPromises()
 
     const newFocusDuration = 30
     const newShortBreakDuration = 5
@@ -94,7 +90,6 @@ describe('TimerSettingPage', () => {
         shortBreakDuration: new Duration({ minutes: 4 })
       })
     )
-    await flushPromises()
 
     const newShortBreakDuration = 0
     await wrapper.find('[data-test="short-break-duration"]').setValue(newShortBreakDuration)
@@ -113,7 +108,6 @@ describe('TimerSettingPage', () => {
         focusSessionsPerCycle: 3
       })
     )
-    await flushPromises()
 
     await wrapper.find('[data-test="perform-cycle"]').setValue(false)
     await wrapper.find('[data-test="save-button"]').trigger('click')
@@ -140,12 +134,13 @@ async function mountPage(initialTimerConfig: TimerConfig = TimerConfig.newTestIn
     timerConfig: initialTimerConfig
   })
   const reloadService = new FakeActionService()
-  const wrapper = await mount(TimerSettingPage, {
+  const wrapper = mount(TimerSettingPage, {
     props: {
       port: communicationManager.clientConnect(),
       timerConfigStorageService,
       reloadService
     }
   })
+  await flushPromises()
   return { timerConfigStorageService, timer, wrapper, communicationManager, reloadService }
 }

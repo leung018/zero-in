@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { WeeklyScheduleStorageService } from '@/domain/schedules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 
@@ -8,18 +8,10 @@ import { Time } from '@/domain/time'
 import { FakeBrowsingControlService } from '@/domain/browsing_control'
 import { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { BrowsingRules } from '@/domain/browsing_rules'
-import { afterEach, beforeEach } from 'node:test'
 import { startBackgroundListener } from '@/test_utils/listener'
+import { CurrentDateService } from '../../../infra/current_date'
 
 describe('WeeklySchedulesEditor', () => {
-  beforeEach(() => {
-    vi.useFakeTimers()
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
-  })
-
   it('should render weekday checkboxes properly', async () => {
     // Add this test because it is easy to make mistake when dealing with Weekday enum
 
@@ -39,24 +31,20 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should render weekly schedules', async () => {
-    const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
-    weeklyScheduleStorageService.saveAll([
-      new WeeklySchedule({
-        weekdaySet: new Set([Weekday.MON, Weekday.TUE]),
-        startTime: new Time(7, 0),
-        endTime: new Time(9, 1)
-      }),
-      new WeeklySchedule({
-        weekdaySet: new Set([Weekday.WED]),
-        startTime: new Time(6, 2),
-        endTime: new Time(8, 4)
-      })
-    ])
-
     const { wrapper } = await mountWeeklySchedulesEditor({
-      weeklyScheduleStorageService
+      weeklySchedules: [
+        new WeeklySchedule({
+          weekdaySet: new Set([Weekday.MON, Weekday.TUE]),
+          startTime: new Time(7, 0),
+          endTime: new Time(9, 1)
+        }),
+        new WeeklySchedule({
+          weekdaySet: new Set([Weekday.WED]),
+          startTime: new Time(6, 2),
+          endTime: new Time(8, 4)
+        })
+      ]
     })
-    await flushPromises()
 
     assertSchedulesDisplayed(wrapper, [
       {
@@ -71,7 +59,9 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should hide saved schedules section when no schedule', async () => {
-    const { wrapper } = await mountWeeklySchedulesEditor()
+    const { wrapper } = await mountWeeklySchedulesEditor({
+      weeklySchedules: []
+    })
     expect(wrapper.find("[data-test='saved-schedules-section']").exists()).toBe(false)
 
     await addWeeklySchedule(wrapper)
@@ -80,7 +70,9 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should able to add new weekly schedule', async () => {
-    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesEditor()
+    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesEditor({
+      weeklySchedules: []
+    })
     const weeklySchedule = new WeeklySchedule({
       weekdaySet: new Set([Weekday.THU, Weekday.FRI]),
       startTime: new Time(10, 0),
@@ -136,7 +128,9 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should prevent add weekly schedule when weekdaySet is not selected', async () => {
-    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesEditor()
+    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesEditor({
+      weeklySchedules: []
+    })
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set(),
       startTime: new Time(10, 0),
@@ -148,7 +142,9 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should able to uncheck weekday', async () => {
-    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesEditor()
+    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesEditor({
+      weeklySchedules: []
+    })
     const sundayCheckbox = wrapper.find(`[data-test='check-weekday-sun']`)
     await sundayCheckbox.setValue(true)
     await sundayCheckbox.setValue(false)
@@ -164,7 +160,9 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should display error message if start time is not before end time', async () => {
-    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesEditor()
+    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesEditor({
+      weeklySchedules: []
+    })
 
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set([Weekday.MON]),
@@ -201,22 +199,21 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should able to remove added schedule', async () => {
-    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesEditor()
     const originalSchedule = new WeeklySchedule({
       weekdaySet: new Set([Weekday.MON]),
       startTime: new Time(10, 0),
       endTime: new Time(12, 0)
     })
-
-    await addWeeklySchedule(wrapper, originalSchedule)
-    await addWeeklySchedule(
-      wrapper,
-      new WeeklySchedule({
-        weekdaySet: new Set([Weekday.TUE]),
-        startTime: new Time(10, 0),
-        endTime: new Time(12, 0)
-      })
-    )
+    const { wrapper, weeklyScheduleStorageService } = await mountWeeklySchedulesEditor({
+      weeklySchedules: [
+        originalSchedule,
+        new WeeklySchedule({
+          weekdaySet: new Set([Weekday.TUE]),
+          startTime: new Time(10, 0),
+          endTime: new Time(12, 0)
+        })
+      ]
+    })
 
     const removeButton = wrapper.find(`[data-test='remove-schedule-with-index-1']`)
     await removeButton.trigger('click')
@@ -232,21 +229,22 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should add or remove schedule affect the activated redirect', async () => {
-    vi.setSystemTime(new Date('2025-02-03T11:00:00')) // 2025-02-03 is Monday
-
-    const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
-    await browsingRulesStorageService.save(new BrowsingRules({ blockedDomains: ['google.com'] }))
     const { wrapper, fakeBrowsingControlService } = await mountWeeklySchedulesEditor({
-      browsingRulesStorageService
+      browsingRules: new BrowsingRules({ blockedDomains: ['google.com'] }),
+      weeklySchedules: [
+        new WeeklySchedule({
+          weekdaySet: new Set([Weekday.TUE]),
+          startTime: new Time(10, 30),
+          endTime: new Time(12, 0)
+        })
+      ],
+      currentDate: new Date('2025-02-03T11:00:00') // 2025-02-03 is Monday
     })
+
+    expect(await fakeBrowsingControlService.getActivatedBrowsingRules()).toBeNull()
 
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set([Weekday.MON]),
-      startTime: new Time(10, 30),
-      endTime: new Time(12, 0)
-    })
-    await addWeeklySchedule(wrapper, {
-      weekdaySet: new Set([Weekday.TUE]),
       startTime: new Time(10, 30),
       endTime: new Time(12, 0)
     })
@@ -255,7 +253,7 @@ describe('WeeklySchedulesEditor', () => {
       new BrowsingRules({ blockedDomains: ['google.com'] })
     )
 
-    const removeButton = wrapper.find(`[data-test='remove-schedule-with-index-0']`) // Remove Monday
+    const removeButton = wrapper.find(`[data-test='remove-schedule-with-index-1']`) // Remove Monday
     await removeButton.trigger('click')
     await flushPromises()
 
@@ -264,19 +262,34 @@ describe('WeeklySchedulesEditor', () => {
 })
 
 async function mountWeeklySchedulesEditor({
-  weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
-  browsingRulesStorageService = BrowsingRulesStorageService.createFake()
+  browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] }),
+  weeklySchedules = [
+    new WeeklySchedule({
+      weekdaySet: new Set([Weekday.MON]),
+      startTime: new Time(10, 0),
+      endTime: new Time(12, 0)
+    })
+  ],
+  currentDate = new Date()
 } = {}) {
+  const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
+  const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
+
+  await weeklyScheduleStorageService.saveAll(weeklySchedules)
+  await browsingRulesStorageService.save(browsingRules)
+
   const fakeBrowsingControlService = new FakeBrowsingControlService()
 
   const { communicationManager } = await startBackgroundListener({
     browsingControlService: fakeBrowsingControlService,
     weeklyScheduleStorageService,
-    browsingRulesStorageService
+    browsingRulesStorageService,
+    currentDateService: CurrentDateService.createFake(currentDate)
   })
   const wrapper = mount(WeeklySchedulesEditor, {
     props: { weeklyScheduleStorageService, port: communicationManager.clientConnect() }
   })
+  await flushPromises()
   return {
     wrapper,
     weeklyScheduleStorageService,

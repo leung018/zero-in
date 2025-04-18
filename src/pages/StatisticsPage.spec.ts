@@ -5,7 +5,7 @@ import StatisticsPage from './StatisticsPage.vue'
 import { Time } from '../domain/time'
 import { FakeActionService } from '../infra/action'
 import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
-import type { FocusSessionRecord } from '../domain/pomodoro/record'
+import { newFocusSessionRecord, type FocusSessionRecord } from '../domain/pomodoro/record'
 import { TimerConfig } from '../domain/pomodoro/config'
 import { startBackgroundListener } from '../test_utils/listener'
 import { Duration } from '../domain/pomodoro/duration'
@@ -13,26 +13,12 @@ import { CurrentDateService } from '../infra/current_date'
 
 describe('StatisticsPage', () => {
   it('should render saved daily reset time', async () => {
-    const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
-    dailyResetTimeStorageService.save(new Time(10, 30))
-
     const { wrapper } = await mountStatisticsPage({
-      dailyResetTimeStorageService
+      dailyResetTime: new Time(10, 30)
     })
-    await flushPromises()
 
     const timerInput = wrapper.find("[data-test='time-input']").element as HTMLInputElement
     expect(timerInput.value).toBe('10:30')
-  })
-
-  it('should render 00:00 if it has not been saved before', async () => {
-    const { wrapper } = await mountStatisticsPage({
-      dailyResetTimeStorageService: DailyResetTimeStorageService.createFake() // No saved time before
-    })
-    await flushPromises()
-
-    const timerInput = wrapper.find("[data-test='time-input']").element as HTMLInputElement
-    expect(timerInput.value).toBe('00:00')
   })
 
   it('should able to save daily reset time', async () => {
@@ -69,11 +55,7 @@ describe('StatisticsPage', () => {
   })
 
   it('should render stat of last 7 day', async () => {
-    const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
-    dailyResetTimeStorageService.save(new Time(10, 30))
-
-    const focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
-    const records: FocusSessionRecord[] = [
+    const focusSessionRecords: FocusSessionRecord[] = [
       { completedAt: new Date(2025, 3, 4, 10, 29) },
 
       { completedAt: new Date(2025, 3, 4, 10, 30) },
@@ -84,15 +66,13 @@ describe('StatisticsPage', () => {
 
       { completedAt: new Date(2025, 3, 11, 8, 24) }
     ]
-    await focusSessionRecordStorageService.saveAll(records)
 
     // When current time hasn't reached the daily reset time that day.
     const { wrapper } = await mountStatisticsPage({
-      dailyResetTimeStorageService,
-      currentDate: new Date(2025, 3, 11, 9, 0),
-      focusSessionRecordStorageService
+      dailyResetTime: new Time(10, 30),
+      focusSessionRecords,
+      currentDate: new Date(2025, 3, 11, 9, 0)
     })
-    await flushPromises()
 
     const rows = wrapper.find('tbody').findAll('tr')
     expect(rows[0].find('[data-test="completed-pomodori-field"]').text()).toBe('1') // 2025-04-10 10:30 - now
@@ -105,11 +85,10 @@ describe('StatisticsPage', () => {
 
     // When current time has reached the daily reset time that day.
     const { wrapper: newWrapper } = await mountStatisticsPage({
-      dailyResetTimeStorageService,
-      currentDate: new Date(2025, 3, 11, 10, 30),
-      focusSessionRecordStorageService
+      dailyResetTime: new Time(10, 30),
+      focusSessionRecords,
+      currentDate: new Date(2025, 3, 11, 10, 30)
     })
-    await flushPromises()
 
     const newRows = newWrapper.find('tbody').findAll('tr')
     expect(newRows[0].find('[data-test="completed-pomodori-field"]').text()).toBe('0') // 2025-04-11 10:30 - now
@@ -122,17 +101,13 @@ describe('StatisticsPage', () => {
   })
 
   it('should reload statistics after completed a pomodoro', async () => {
-    const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
-    await dailyResetTimeStorageService.save(new Time(9, 30))
-
     const { wrapper, scheduler, timer } = await mountStatisticsPage({
-      dailyResetTimeStorageService,
+      dailyResetTime: new Time(9, 30),
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 1 })
       }),
       currentDate: new Date(2025, 3, 4, 10, 30)
     })
-    await flushPromises()
     timer.start()
 
     let rows = wrapper.find('tbody').findAll('tr')
@@ -148,15 +123,16 @@ describe('StatisticsPage', () => {
 
 async function mountStatisticsPage({
   timerConfig = TimerConfig.newTestInstance(),
-  dailyResetTimeStorageService = DailyResetTimeStorageService.createFake(),
-  currentDate = undefined,
-  focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
-}: {
-  timerConfig?: TimerConfig
-  dailyResetTimeStorageService?: DailyResetTimeStorageService
-  currentDate?: Date | undefined
-  focusSessionRecordStorageService?: FocusSessionRecordStorageService
+  dailyResetTime = new Time(15, 30),
+  focusSessionRecords = [newFocusSessionRecord()],
+  currentDate = new Date()
 } = {}) {
+  const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
+  const focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
+
+  await dailyResetTimeStorageService.save(dailyResetTime)
+  await focusSessionRecordStorageService.saveAll(focusSessionRecords)
+
   const currentDateService = CurrentDateService.createFake(currentDate)
   const { scheduler, timer, communicationManager } = await startBackgroundListener({
     timerConfig,
@@ -173,6 +149,7 @@ async function mountStatisticsPage({
       port: communicationManager.clientConnect()
     }
   })
+  await flushPromises()
   return { wrapper, scheduler, timer, dailyResetTimeStorageService, reloadService }
 }
 

@@ -105,7 +105,6 @@ describe('NotificationPage', () => {
     expect(reloadService.getTriggerCount()).toBe(0)
 
     await saveNotificationSetting(wrapper)
-    await flushPromises()
 
     expect(reloadService.getTriggerCount()).toBe(1)
   })
