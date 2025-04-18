@@ -17,6 +17,6 @@ describe('NotificationSettingStorageService', () => {
       sound: true
     }
     await service.save(notificationSetting)
-    expect(await service.get()).toEqual(notificationSetting)
+    expect(await service.get()).toStrictEqual(notificationSetting)
   })
 })

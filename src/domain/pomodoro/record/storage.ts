@@ -27,12 +27,10 @@ export class FocusSessionRecordStorageService {
   }
 
   async getAll(): Promise<FocusSessionRecord[]> {
-    return this.storage.get(STORAGE_KEY).then((result: any) => {
-      if (result[STORAGE_KEY]) {
-        return result[STORAGE_KEY].map(deserializeFocusSessionRecord)
-      } else {
-        return []
-      }
-    })
+    const result = await this.storage.get(STORAGE_KEY)
+    if (result[STORAGE_KEY]) {
+      return result[STORAGE_KEY].map(deserializeFocusSessionRecord)
+    }
+    return []
   }
 }

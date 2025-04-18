@@ -3,6 +3,8 @@ import { FakeStorage, type Storage } from '../../infra/storage'
 import { BrowsingRules } from '.'
 import { deserializeBrowsingRules, serializeBrowsingRules } from './serialize'
 
+const STORAGE_KEY = 'browsingRules'
+
 export class BrowsingRulesStorageService {
   static createFake(): BrowsingRulesStorageService {
     return new BrowsingRulesStorageService(new FakeStorage())
@@ -19,16 +21,14 @@ export class BrowsingRulesStorageService {
   }
 
   async save(browsingRules: BrowsingRules): Promise<void> {
-    return this.storage.set({ browsingRules: serializeBrowsingRules(browsingRules) })
+    return this.storage.set({ [STORAGE_KEY]: serializeBrowsingRules(browsingRules) })
   }
 
   async get(): Promise<BrowsingRules> {
-    return this.storage.get('browsingRules').then((result: any) => {
-      if (result.browsingRules) {
-        return deserializeBrowsingRules(result.browsingRules)
-      }
-
-      return new BrowsingRules()
-    })
+    const result = await this.storage.get(STORAGE_KEY)
+    if (result[STORAGE_KEY]) {
+      return deserializeBrowsingRules(result[STORAGE_KEY])
+    }
+    return new BrowsingRules()
   }
 }

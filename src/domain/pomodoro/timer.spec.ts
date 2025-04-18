@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { PomodoroTimer, type TimerState } from './timer'
+import { PomodoroTimer } from './timer'
 import { Duration } from './duration'
 import { PomodoroStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
 import { TimerConfig } from './config'
+import type { TimerState } from './state'
 
 describe('PomodoroTimer', () => {
   it('should initial state is set correctly', () => {
