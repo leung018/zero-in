@@ -48,7 +48,9 @@ describe('BlockedDomainsEditor', () => {
   })
 
   it('should not save blocked domain when input box is empty', async () => {
-    const { wrapper, browsingRulesStorageService } = await mountBlockedDomainsEditor()
+    const { wrapper, browsingRulesStorageService } = await mountBlockedDomainsEditor({
+      browsingRules: new BrowsingRules()
+    })
 
     await addBlockedDomain(wrapper, '')
     await addBlockedDomain(wrapper, '  ')
@@ -58,7 +60,9 @@ describe('BlockedDomainsEditor', () => {
   })
 
   it('should save domain in trimmed format', async () => {
-    const { wrapper, browsingRulesStorageService } = await mountBlockedDomainsEditor()
+    const { wrapper, browsingRulesStorageService } = await mountBlockedDomainsEditor({
+      browsingRules: new BrowsingRules()
+    })
 
     await addBlockedDomain(wrapper, '  example.com  ')
     assertDomainsDisplayed(wrapper, ['example.com'])
@@ -101,7 +105,7 @@ describe('BlockedDomainsEditor', () => {
 })
 
 async function mountBlockedDomainsEditor({
-  browsingRules = new BrowsingRules({ blockedDomains: [] })
+  browsingRules = new BrowsingRules({ blockedDomains: ['abc.com'] })
 } = {}) {
   const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
   await browsingRulesStorageService.save(browsingRules)
