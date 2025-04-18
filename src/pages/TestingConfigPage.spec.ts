@@ -16,7 +16,6 @@ describe('TestingConfigPage', () => {
         focusSessionsPerCycle: 3
       })
     )
-    await flushPromises()
 
     assertInputValue(wrapper, '[data-test="focus-duration"]', '24')
     assertInputValue(wrapper, '[data-test="short-break-duration"]', '4')
@@ -33,7 +32,6 @@ describe('TestingConfigPage', () => {
         focusSessionsPerCycle: 3
       })
     )
-    await flushPromises()
 
     const newFocusDuration = 30
     const newShortBreakDuration = 5
@@ -71,5 +69,6 @@ async function mountPage(initialTimerConfig: TimerConfig) {
       timerConfigStorageService
     }
   })
+  await flushPromises()
   return { timerConfigStorageService, wrapper, timer }
 }
