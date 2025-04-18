@@ -26,6 +26,7 @@ import { ChromeCloseTabsService } from '../chrome/close_tabs'
 import { ChromeBrowsingControlService } from '../chrome/browsing_control'
 import { SoundService } from '../chrome/sound'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
+import type { TimerState } from '../domain/pomodoro/state'
 
 type ListenerParams = {
   communicationManager: CommunicationManager
@@ -80,6 +81,8 @@ export class BackgroundListener {
   private timerConfigStorageService: TimerConfigStorageService
   private closeTabsService: ActionService
   private currentDateService: CurrentDateService
+
+  private timerStateSubscriptionManager = new SubscriptionManager<TimerState>()
 
   private focusSessionRecordStorageService: FocusSessionRecordStorageService
   private focusSessionRecordHouseKeepDays: number
@@ -141,6 +144,7 @@ export class BackgroundListener {
 
     this.timer.subscribeTimerState((newState) => {
       this.timerStateStorageService.save(newState)
+      this.timerStateSubscriptionManager.broadcast(newState)
 
       if (newState.isRunning) {
         this.badgeDisplayService.displayBadge({
@@ -193,7 +197,7 @@ export class BackgroundListener {
   }
 
   getTimerStateSubscriptionCount() {
-    return this.timer.getTimerStateSubscriptionCount()
+    return this.timerStateSubscriptionManager.getSubscriptionCount()
   }
 
   private setUpListener() {
@@ -216,15 +220,16 @@ export class BackgroundListener {
               break
             }
             case WorkRequestName.LISTEN_TO_TIMER: {
-              const subscriptionId = this.timer.subscribeTimerState((update) => {
+              const subscriptionId = this.timerStateSubscriptionManager.subscribe((newState) => {
                 backgroundPort.send({
                   name: WorkResponseName.TIMER_STATE,
-                  payload: update
+                  payload: newState
                 })
               })
+              this.timerStateSubscriptionManager.broadcast(this.timer.getState())
               backgroundPort.onDisconnect(() => {
                 console.debug('Connection closed, unsubscribing timer update.')
-                this.timer.unsubscribeTimerState(subscriptionId)
+                this.timerStateSubscriptionManager.unsubscribe(subscriptionId)
               })
               break
             }
