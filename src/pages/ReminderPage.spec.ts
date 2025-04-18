@@ -68,15 +68,12 @@ describe('ReminderPage', () => {
   })
 
   it('should display daily completed pomodori', async () => {
-    const focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
-    await focusSessionRecordStorageService.saveAll([
-      newFocusSessionRecord(new Date(2025, 2, 1, 15, 2)),
-      newFocusSessionRecord(new Date(2025, 2, 1, 15, 3)),
-      newFocusSessionRecord(new Date(2025, 2, 1, 15, 5))
-    ])
-
     const { wrapper } = await mountPage({
-      focusSessionRecordStorageService,
+      focusSessionRecords: [
+        newFocusSessionRecord(new Date(2025, 2, 1, 15, 2)),
+        newFocusSessionRecord(new Date(2025, 2, 1, 15, 3)),
+        newFocusSessionRecord(new Date(2025, 2, 1, 15, 5))
+      ],
       dailyCutOffTime: new Time(15, 3),
       currentDate: new Date(2025, 2, 2, 14, 0)
     })
@@ -89,7 +86,7 @@ describe('ReminderPage', () => {
 
 async function mountPage({
   timerConfig = TimerConfig.newTestInstance(),
-  focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake(),
+  focusSessionRecords = [newFocusSessionRecord()],
   dailyCutOffTime = new Time(0, 0),
   currentDate = new Date()
 } = {}) {
@@ -100,7 +97,9 @@ async function mountPage({
   })
   const closeCurrentTabService = new FakeActionService()
   const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
-  dailyResetTimeStorageService.save(dailyCutOffTime)
+  await dailyResetTimeStorageService.save(dailyCutOffTime)
+  const focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
+  await focusSessionRecordStorageService.saveAll(focusSessionRecords)
 
   const wrapper = mount(ReminderPage, {
     props: {
@@ -111,5 +110,6 @@ async function mountPage({
       currentDateService
     }
   })
+  await flushPromises()
   return { wrapper, scheduler, timer, closeCurrentTabService }
 }
