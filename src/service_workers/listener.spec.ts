@@ -19,18 +19,18 @@ import type { WorkResponse } from './response'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
-  it('should remove timer state subscription when disconnect fired', async () => {
-    const { timer, clientPort } = await startListener()
+  it('should able to subscribe or unsubscribe to timer state', async () => {
+    const { listener, clientPort } = await startListener()
 
-    const initialSubscriptionCount = timer.getTimerStateSubscriptionCount()
+    const initialSubscriptionCount = listener.getTimerStateSubscriptionCount()
 
     clientPort.send({ name: WorkRequestName.LISTEN_TO_TIMER })
 
-    expect(timer.getTimerStateSubscriptionCount()).toBe(initialSubscriptionCount + 1)
+    expect(listener.getTimerStateSubscriptionCount()).toBe(initialSubscriptionCount + 1)
 
     clientPort.disconnect()
 
-    expect(timer.getTimerStateSubscriptionCount()).toBe(initialSubscriptionCount)
+    expect(listener.getTimerStateSubscriptionCount()).toBe(initialSubscriptionCount)
   })
 
   it('should save the pomodoro record after focus is completed', async () => {
@@ -81,7 +81,7 @@ describe('BackgroundListener', () => {
     expect(newRecords[0].completedAt > oldDate).toBe(true)
   })
 
-  it('should remove pomodoro record update subscription when disconnect fired', async () => {
+  it('should able to subscribe or unsubscribe to focus session records update', async () => {
     const { listener, clientPort } = await startListener()
 
     const initialSubscriptionCount = listener.getFocusSessionRecordsUpdateSubscriptionCount()
