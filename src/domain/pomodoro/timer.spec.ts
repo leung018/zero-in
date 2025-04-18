@@ -289,44 +289,6 @@ describe('PomodoroTimer', () => {
       new Duration({ minutes: 9, seconds: 59 }).remainingSeconds()
     )
   })
-
-  it('should able to unsubscribe updates', () => {
-    const { timer, scheduler } = createTimer(
-      newConfig({
-        focusDuration: new Duration({ minutes: 10 })
-      })
-    )
-    const updates1: TimerState[] = []
-    const updates2: TimerState[] = []
-    timer.subscribeTimerState((update) => {
-      updates1.push(update)
-    })
-    const subscriptionId2 = timer.subscribeTimerState((update) => {
-      updates2.push(update)
-    })
-
-    timer.unsubscribeTimerState(subscriptionId2)
-
-    timer.start()
-    scheduler.advanceTime(250)
-
-    expect(updates2.length).toBeLessThan(updates1.length)
-  })
-
-  it('should getTimerStateSubscriptionCount is reflecting number of subscription', () => {
-    const { timer } = createTimer()
-    expect(timer.getTimerStateSubscriptionCount()).toBe(0)
-
-    const subscriptionId = timer.subscribeTimerState(() => {})
-    timer.subscribeTimerState(() => {})
-
-    expect(timer.getTimerStateSubscriptionCount()).toBe(2)
-
-    timer.unsubscribeTimerState(subscriptionId)
-
-    expect(timer.getTimerStateSubscriptionCount()).toBe(1)
-  })
-
   it('should able to trigger callback when stage transit', async () => {
     const { timer, scheduler } = createTimer(
       newConfig({

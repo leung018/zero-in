@@ -138,14 +138,6 @@ export class PomodoroTimer {
     return subscriptionId
   }
 
-  unsubscribeTimerState(subscriptionId: number) {
-    this.timerStateSubscriptionManager.unsubscribe(subscriptionId)
-  }
-
-  getTimerStateSubscriptionCount() {
-    return this.timerStateSubscriptionManager.getSubscriptionCount()
-  }
-
   setOnStageComplete(callback: (completedStage: PomodoroStage) => void) {
     this.onStageComplete = callback
   }
