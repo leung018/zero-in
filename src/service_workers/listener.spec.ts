@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { WorkRequestName } from './request'
+import { WorkRequestName, type WorkRequest } from './request'
 import { type Badge, type BadgeColor } from '../infra/badge'
 import { Duration } from '../domain/pomodoro/duration'
 import config from '../config'
@@ -14,6 +14,8 @@ import {
   newTestNotificationSetting,
   type NotificationSetting
 } from '../domain/notification_setting'
+import type { Port } from '../infra/communication'
+import type { WorkResponse } from './response'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -137,6 +139,30 @@ describe('BackgroundListener', () => {
     clientPort.send({ name: WorkRequestName.START_TIMER })
 
     expect(closeTabsService.getTriggerCount()).toBe(1)
+
+    clientPort.send({
+      name: WorkRequestName.RESTART_FOCUS,
+      payload: {
+        nth: 1
+      }
+    })
+
+    expect(closeTabsService.getTriggerCount()).toBe(2)
+
+    clientPort.send({
+      name: WorkRequestName.RESTART_SHORT_BREAK,
+      payload: {
+        nth: 1
+      }
+    })
+
+    expect(closeTabsService.getTriggerCount()).toBe(3)
+
+    clientPort.send({
+      name: WorkRequestName.RESTART_LONG_BREAK
+    })
+
+    expect(closeTabsService.getTriggerCount()).toBe(4)
   })
 
   it('should remove badge when the timer is paused', async () => {
@@ -347,8 +373,10 @@ async function startListener({
     focusSessionRecordHouseKeepDays
   })
 
+  const clientPort: Port<WorkRequest, WorkResponse> = props.communicationManager.clientConnect()
+
   return {
     ...props,
-    clientPort: props.communicationManager.clientConnect()
+    clientPort
   }
 }
