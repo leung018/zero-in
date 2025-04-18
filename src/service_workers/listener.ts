@@ -192,6 +192,10 @@ export class BackgroundListener {
     return this.focusSessionRecordsUpdateSubscriptionManager.getSubscriptionCount()
   }
 
+  getTimerStateSubscriptionCount() {
+    return this.timer.getTimerStateSubscriptionCount()
+  }
+
   private setUpListener() {
     this.communicationManager.onNewClientConnect(
       (backgroundPort: Port<WorkResponse, WorkRequest>) => {
