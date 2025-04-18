@@ -34,7 +34,7 @@ class ChromePortWrapper implements Port {
     try {
       this.chromePort.postMessage(message)
     } catch (error) {
-      console.error('Error sending message:', error)
+      console.info('Error when sending message. Will retry. Error:', error)
       this.chromePort = chrome.runtime.connect()
       return this.send(message, retryCount + 1)
     }
