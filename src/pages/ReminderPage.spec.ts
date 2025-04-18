@@ -77,7 +77,6 @@ describe('ReminderPage', () => {
       dailyCutOffTime: new Time(15, 3),
       currentDate: new Date(2025, 2, 2, 14, 0)
     })
-    await flushPromises()
 
     expect(wrapper.find("[data-test='reset-time']").text()).toBe('15:03')
     expect(wrapper.find("[data-test='daily-completed-pomodori']").text()).toBe('2')

@@ -15,7 +15,6 @@ describe('PomodoroTimerPage', () => {
         focusSessionsPerCycle: 4
       })
     )
-    await flushPromises()
 
     assertTimerDisplay(wrapper, '09:00')
 
@@ -45,7 +44,7 @@ describe('PomodoroTimerPage', () => {
 
     await startTimer(wrapper)
 
-    const newWrapper = mountPage({ port: communicationManager.clientConnect() })
+    const newWrapper = await mountPage({ port: communicationManager.clientConnect() })
 
     scheduler.advanceTime(1001)
     await flushPromises()
@@ -68,7 +67,7 @@ describe('PomodoroTimerPage', () => {
       pauseButtonVisible: true
     })
 
-    const newWrapper = mountPage({ port: communicationManager.clientConnect() })
+    const newWrapper = await mountPage({ port: communicationManager.clientConnect() })
 
     assertControlVisibility(newWrapper, {
       startButtonVisible: false,
@@ -93,7 +92,7 @@ describe('PomodoroTimerPage', () => {
 
     assertTimerDisplay(wrapper, '09:59')
 
-    const newWrapper = mountPage({ port: communicationManager.clientConnect() })
+    const newWrapper = await mountPage({ port: communicationManager.clientConnect() })
     assertTimerDisplay(newWrapper, '09:59')
   })
 
@@ -108,7 +107,7 @@ describe('PomodoroTimerPage', () => {
       pauseButtonVisible: false
     })
 
-    const newWrapper = mountPage({ port: communicationManager.clientConnect() })
+    const newWrapper = await mountPage({ port: communicationManager.clientConnect() })
     assertControlVisibility(newWrapper, {
       startButtonVisible: true,
       pauseButtonVisible: false
@@ -165,7 +164,6 @@ describe('PomodoroTimerPage', () => {
         focusSessionsPerCycle: 1
       })
     )
-    await flushPromises()
 
     assertCurrentStage(wrapper, 'Focus')
 
@@ -234,7 +232,6 @@ describe('PomodoroTimerPage', () => {
         focusSessionsPerCycle: 3
       })
     )
-    await flushPromises()
 
     const focusButtons = wrapper.findAll("[data-test='restart-focus']")
 
@@ -261,7 +258,6 @@ describe('PomodoroTimerPage', () => {
         focusSessionsPerCycle: 1
       })
     )
-    await flushPromises()
 
     const focusButtons = wrapper.findAll("[data-test='restart-focus']")
 
@@ -281,7 +277,6 @@ describe('PomodoroTimerPage', () => {
         focusSessionsPerCycle: 3
       })
     )
-    await flushPromises()
 
     await restartFocus(wrapper, 2)
     assertCurrentStage(wrapper, '2nd Focus')
@@ -299,7 +294,6 @@ describe('PomodoroTimerPage', () => {
         focusSessionsPerCycle: 4
       })
     )
-    await flushPromises()
 
     await restartShortBreak(wrapper, 1)
     assertCurrentStage(wrapper, '1st Break')
@@ -317,7 +311,6 @@ describe('PomodoroTimerPage', () => {
         focusSessionsPerCycle: 4
       })
     )
-    await flushPromises()
 
     await restartLongBreak(wrapper)
     assertCurrentStage(wrapper, 'Long Break')
@@ -329,7 +322,6 @@ describe('PomodoroTimerPage', () => {
         focusSessionsPerCycle: 1
       })
     )
-    await flushPromises()
 
     await restartFocus(wrapper, 1)
     assertCurrentStage(wrapper, 'Focus')
@@ -347,23 +339,25 @@ async function startListenerAndMountPage(timerConfig = TimerConfig.newTestInstan
     await startBackgroundListener({
       timerConfig
     })
-  const wrapper = mountPage({
+  const wrapper = await mountPage({
     port: communicationManager.clientConnect(),
     timerConfigStorageService
   })
   return { wrapper, scheduler, communicationManager }
 }
 
-function mountPage({
+async function mountPage({
   port = new FakeCommunicationManager().clientConnect(),
   timerConfigStorageService = TimerConfigStorageService.createFake()
 } = {}) {
-  return mount(PomodoroTimerPage, {
+  const wrapper = mount(PomodoroTimerPage, {
     props: {
       port,
       timerConfigStorageService
     }
   })
+  await flushPromises()
+  return wrapper
 }
 
 async function startTimer(wrapper: VueWrapper) {

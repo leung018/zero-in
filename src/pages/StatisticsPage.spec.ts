@@ -108,7 +108,6 @@ describe('StatisticsPage', () => {
       }),
       currentDate: new Date(2025, 3, 4, 10, 30)
     })
-    await flushPromises()
     timer.start()
 
     let rows = wrapper.find('tbody').findAll('tr')
