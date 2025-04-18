@@ -62,7 +62,7 @@ export async function startBackgroundListener({
   await listener.start()
   return {
     scheduler,
-    timer: listener.timer,
+    timer,
     listener,
     desktopNotificationService,
     reminderTabService,
