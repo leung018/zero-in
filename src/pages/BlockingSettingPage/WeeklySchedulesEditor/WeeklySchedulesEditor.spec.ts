@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { WeeklyScheduleStorageService } from '@/domain/schedules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 
@@ -8,18 +8,10 @@ import { Time } from '@/domain/time'
 import { FakeBrowsingControlService } from '@/domain/browsing_control'
 import { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { BrowsingRules } from '@/domain/browsing_rules'
-import { afterEach, beforeEach } from 'node:test'
 import { startBackgroundListener } from '@/test_utils/listener'
+import { CurrentDateService } from '../../../infra/current_date'
 
 describe('WeeklySchedulesEditor', () => {
-  beforeEach(() => {
-    vi.useFakeTimers()
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
-  })
-
   it('should render weekday checkboxes properly', async () => {
     // Add this test because it is easy to make mistake when dealing with Weekday enum
 
@@ -237,8 +229,6 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should add or remove schedule affect the activated redirect', async () => {
-    vi.setSystemTime(new Date('2025-02-03T11:00:00')) // 2025-02-03 is Monday
-
     const { wrapper, fakeBrowsingControlService } = await mountWeeklySchedulesEditor({
       browsingRules: new BrowsingRules({ blockedDomains: ['google.com'] }),
       weeklySchedules: [
@@ -247,7 +237,8 @@ describe('WeeklySchedulesEditor', () => {
           startTime: new Time(10, 30),
           endTime: new Time(12, 0)
         })
-      ]
+      ],
+      currentDate: new Date('2025-02-03T11:00:00') // 2025-02-03 is Monday
     })
 
     expect(await fakeBrowsingControlService.getActivatedBrowsingRules()).toBeNull()
@@ -278,7 +269,8 @@ async function mountWeeklySchedulesEditor({
       startTime: new Time(10, 0),
       endTime: new Time(12, 0)
     })
-  ]
+  ],
+  currentDate = new Date()
 } = {}) {
   const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
   const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
@@ -291,7 +283,8 @@ async function mountWeeklySchedulesEditor({
   const { communicationManager } = await startBackgroundListener({
     browsingControlService: fakeBrowsingControlService,
     weeklyScheduleStorageService,
-    browsingRulesStorageService
+    browsingRulesStorageService,
+    currentDateService: CurrentDateService.createFake(currentDate)
   })
   const wrapper = mount(WeeklySchedulesEditor, {
     props: { weeklyScheduleStorageService, port: communicationManager.clientConnect() }
