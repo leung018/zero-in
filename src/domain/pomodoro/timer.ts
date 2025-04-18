@@ -8,6 +8,7 @@ import type { TimerConfig } from './config'
 import { Duration } from './duration'
 import { PomodoroStage } from './stage'
 import { SubscriptionManager } from '../../utils/subscription'
+import type { TimerState } from './state'
 
 export class PomodoroTimer {
   static create(timerConfig: TimerConfig = config.getDefaultTimerConfig()) {
@@ -246,11 +247,4 @@ export class PomodoroTimer {
       this.pause()
     }
   }
-}
-
-export type TimerState = {
-  remainingSeconds: number
-  isRunning: boolean
-  stage: PomodoroStage
-  numOfPomodoriCompleted: number
 }

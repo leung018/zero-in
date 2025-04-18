@@ -1,6 +1,6 @@
-import { ChromeStorageProvider } from '../../chrome/storage'
-import { FakeStorage, type Storage } from '../../infra/storage'
-import type { TimerState } from './timer'
+import { ChromeStorageProvider } from '../../../chrome/storage'
+import { FakeStorage, type Storage } from '../../../infra/storage'
+import type { TimerState } from '.'
 
 const STORAGE_KEY = 'timerState'
 

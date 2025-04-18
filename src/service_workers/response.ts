@@ -1,4 +1,4 @@
-import type { TimerState } from '../domain/pomodoro/timer'
+import type { TimerState } from '@/domain/pomodoro/state'
 
 export enum WorkResponseName {
   TIMER_STATE,
