@@ -75,7 +75,7 @@ export class BackgroundListener {
 
   private browsingControlTogglingService: BrowsingControlTogglingService
   private communicationManager: CommunicationManager
-  readonly timer: PomodoroTimer // TODO: Make it private when removed the dependency on timer in tests of listener
+  private timer: PomodoroTimer
   private badgeDisplayService: BadgeDisplayService
   private timerStateStorageService: TimerStateStorageService
   private timerConfigStorageService: TimerConfigStorageService
@@ -198,6 +198,10 @@ export class BackgroundListener {
 
   getTimerStateSubscriptionCount() {
     return this.timerStateSubscriptionManager.getSubscriptionCount()
+  }
+
+  getTimerState() {
+    return this.timer.getState()
   }
 
   private setUpListener() {

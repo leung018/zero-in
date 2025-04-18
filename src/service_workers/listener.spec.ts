@@ -304,8 +304,8 @@ describe('BackgroundListener', () => {
     }
   )
 
-  it('should back up update to storage', async () => {
-    const { timerStateStorageService, scheduler, clientPort, timer } = await startListener({
+  it('should getTimerState sync with timer', async () => {
+    const { listener, clientPort, scheduler } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 })
       })
@@ -314,24 +314,37 @@ describe('BackgroundListener', () => {
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
 
-    expect(await timerStateStorageService.get()).toEqual(timer.getState())
+    expect(listener.getTimerState().remainingSeconds).toBe(2)
+  })
+
+  it('should back up update of timer to storage', async () => {
+    const { timerStateStorageService, scheduler, clientPort, listener } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 3 })
+      })
+    })
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(1000)
+
+    expect(await timerStateStorageService.get()).toEqual(listener.getTimerState())
 
     clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
 
-    expect(await timerStateStorageService.get()).toEqual(timer.getState())
+    expect(await timerStateStorageService.get()).toEqual(listener.getTimerState())
   })
 
   it('should restore timer state from storage', async () => {
     const timerStateStorageService = TimerStateStorageService.createFake()
-    const targetUpdate: TimerState = {
+    const targetState: TimerState = {
       remainingSeconds: 1000,
       isRunning: true,
       stage: PomodoroStage.FOCUS,
       numOfPomodoriCompleted: 1
     }
-    await timerStateStorageService.save(targetUpdate)
+    await timerStateStorageService.save(targetState)
 
-    const { timer } = await startListener({
+    const { listener } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         focusSessionsPerCycle: 2
@@ -339,7 +352,7 @@ describe('BackgroundListener', () => {
       timerStateStorageService
     })
 
-    expect(timer.getState()).toEqual(targetUpdate)
+    expect(listener.getTimerState()).toEqual(targetState)
   })
 
   it('should reset timer config also clear the badge', async () => {
