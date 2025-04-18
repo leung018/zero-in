@@ -81,7 +81,7 @@ describe('BackgroundListener', () => {
     expect(newRecords[0].completedAt > oldDate).toBe(true)
   })
 
-  it('should remove pomodoro record update subscription when disconnect fired', async () => {
+  it('should able to subscribe or unsubscribe to focus session records update', async () => {
     const { listener, clientPort } = await startListener()
 
     const initialSubscriptionCount = listener.getFocusSessionRecordsUpdateSubscriptionCount()
