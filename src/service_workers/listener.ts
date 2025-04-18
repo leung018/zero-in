@@ -213,6 +213,9 @@ export class BackgroundListener {
             }
             case WorkRequestName.LISTEN_TO_TIMER: {
               const subscriptionId = this.timer.subscribeTimerState((update) => {
+                console.debug(
+                  `Sending timer update from service worker: ${update.remainingSeconds} seconds`
+                )
                 backgroundPort.send({
                   name: WorkResponseName.TIMER_STATE,
                   payload: update
