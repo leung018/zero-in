@@ -68,7 +68,7 @@ describe('BrowsingControlTogglingService', () => {
       })
     ).toBeNull()
 
-    // Otherwise, the browsing rules should be activated
+    // Otherwise, the browsing rules should be activated according to the schedules
     expect(
       await getBrowsingRulesAfterToggling({
         browsingRules,
