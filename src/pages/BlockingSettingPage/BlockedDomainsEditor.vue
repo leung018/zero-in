@@ -44,7 +44,7 @@ async function updateBrowsingRules(browsingRules: BrowsingRules) {
 
 <template>
   <h2 class="mb-3 mt-3">Blocked Domains</h2>
-  <form class="mb-4" @submit.prevent>
+  <form @submit.prevent>
     <div class="mb-3">
       <input
         v-model="newDomain"
@@ -64,7 +64,7 @@ async function updateBrowsingRules(browsingRules: BrowsingRules) {
       >Add</BButton
     >
   </form>
-  <ul class="list-group">
+  <ul class="list-group mt-4" v-if="blockedDomains.length > 0">
     <li
       v-for="domain in blockedDomains"
       :key="domain"
