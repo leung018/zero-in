@@ -7,6 +7,7 @@ import { Time } from './time'
 import { WeeklyScheduleStorageService } from './schedules/storage'
 import { BrowsingControlTogglingService } from './browsing_control_toggling'
 import { CurrentDateService } from '../infra/current_date'
+import { PomodoroStage } from './pomodoro/stage'
 
 describe('BrowsingControlTogglingService', () => {
   it('should toggle according to browsing rules if current time is within schedule', async () => {
@@ -23,14 +24,16 @@ describe('BrowsingControlTogglingService', () => {
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules,
-        currentDate: new Date('2025-02-03T11:00:00')
+        currentDate: new Date('2025-02-03T11:00:00'),
+        shouldPauseBlockingDuringBreaks: false
       })
     ).toEqual(browsingRules)
     expect(
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules,
-        currentDate: new Date('2025-02-03T17:01:00')
+        currentDate: new Date('2025-02-03T17:01:00'),
+        shouldPauseBlockingDuringBreaks: false
       })
     ).toBeNull()
   })
@@ -41,21 +44,26 @@ describe('BrowsingControlTogglingService', () => {
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules: [],
-        currentDate: new Date()
+        currentDate: new Date(),
+        shouldPauseBlockingDuringBreaks: false
       })
     ).toEqual(browsingRules)
   })
 })
 
 async function getBrowsingRulesAfterToggling({
-  browsingRules,
-  schedules,
-  currentDate
-}: {
-  browsingRules: BrowsingRules
-  schedules: WeeklySchedule[]
-  currentDate: Date
-}) {
+  browsingRules = new BrowsingRules(),
+  schedules = [
+    new WeeklySchedule({
+      weekdaySet: new Set([Weekday.MON]),
+      startTime: new Time(0, 0),
+      endTime: new Time(23, 59)
+    })
+  ],
+  currentDate = new Date(),
+  shouldPauseBlockingDuringBreaks = false,
+  timerSubState = newTimerSubState()
+} = {}) {
   const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
   browsingRulesStorageService.save(browsingRules)
 
@@ -76,4 +84,11 @@ async function getBrowsingRulesAfterToggling({
   await browsingControlTogglingService.run()
 
   return browsingControlService.getActivatedBrowsingRules()
+}
+
+function newTimerSubState({ isRunning = false, stage = PomodoroStage.FOCUS } = {}) {
+  return {
+    isRunning,
+    stage
+  }
 }
