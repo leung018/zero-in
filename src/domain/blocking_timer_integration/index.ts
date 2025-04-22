@@ -1,3 +1,3 @@
-export type TimerIntegrationSetting = {
+export type BlockingTimerIntegration = {
   shouldPauseBlockingDuringBreaks: boolean
 }
