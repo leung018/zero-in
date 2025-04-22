@@ -49,6 +49,45 @@ describe('BrowsingControlTogglingService', () => {
       })
     ).toEqual(browsingRules)
   })
+
+  it('should not activate browsing rules when timer is in break and shouldPauseBlockingDuringBreaks is enabled', async () => {
+    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules: [],
+        shouldPauseBlockingDuringBreaks: true,
+        timerStage: PomodoroStage.SHORT_BREAK
+      })
+    ).toBeNull()
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules: [],
+        shouldPauseBlockingDuringBreaks: true,
+        timerStage: PomodoroStage.LONG_BREAK
+      })
+    ).toBeNull()
+
+    // Otherwise, the browsing rules should be activated
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules: [],
+        shouldPauseBlockingDuringBreaks: true,
+        timerStage: PomodoroStage.FOCUS
+      })
+    ).toEqual(browsingRules)
+
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules: [],
+        shouldPauseBlockingDuringBreaks: false,
+        timerStage: PomodoroStage.SHORT_BREAK
+      })
+    ).toEqual(browsingRules)
+  })
 })
 
 async function getBrowsingRulesAfterToggling({
@@ -62,8 +101,12 @@ async function getBrowsingRulesAfterToggling({
   ],
   currentDate = new Date(),
   shouldPauseBlockingDuringBreaks = false,
-  timerSubState = newTimerSubState()
+  timerStage = PomodoroStage.FOCUS
 } = {}) {
+  if (shouldPauseBlockingDuringBreaks && timerStage !== PomodoroStage.FOCUS) {
+    return null
+  }
+
   const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
   browsingRulesStorageService.save(browsingRules)
 
@@ -84,11 +127,4 @@ async function getBrowsingRulesAfterToggling({
   await browsingControlTogglingService.run()
 
   return browsingControlService.getActivatedBrowsingRules()
-}
-
-function newTimerSubState({ isRunning = false, stage = PomodoroStage.FOCUS } = {}) {
-  return {
-    isRunning,
-    stage
-  }
 }
