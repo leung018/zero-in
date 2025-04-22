@@ -282,6 +282,22 @@ test('should able to persist and retrieve notification setting', async ({ page, 
   await expect(page.getByTestId('sound-option')).not.toBeChecked()
 })
 
+test('should able to persist and retrieve setting of blocking timer integration', async ({
+  page,
+  extensionId
+}) => {
+  await goToBlockingSettingPage(page, extensionId)
+
+  await expect(page.getByTestId('pause-blocking-during-breaks')).toBeChecked()
+
+  await page.getByTestId('pause-blocking-during-breaks').uncheck()
+  await page.getByTestId('save-timer-integration-button').click()
+
+  await page.reload()
+
+  await expect(page.getByTestId('pause-blocking-during-breaks')).not.toBeChecked()
+})
+
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
   const addButton = page.getByTestId('add-domain-button')

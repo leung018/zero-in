@@ -6,10 +6,10 @@ import { ChromeBrowsingControlService } from '../chrome/browsing_control'
 import { CurrentDateService } from '../infra/current_date'
 
 export class BrowsingControlTogglingService {
-  readonly browsingControlService: BrowsingControlService
-  readonly browsingRulesStorageService: BrowsingRulesStorageService
-  readonly weeklyScheduleStorageService: WeeklyScheduleStorageService
-  readonly currentDateService: CurrentDateService
+  private browsingControlService: BrowsingControlService
+  private browsingRulesStorageService: BrowsingRulesStorageService
+  private weeklyScheduleStorageService: WeeklyScheduleStorageService
+  private currentDateService: CurrentDateService
 
   static create() {
     return new BrowsingControlTogglingService({

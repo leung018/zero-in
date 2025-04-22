@@ -65,7 +65,6 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
 </script>
 
 <template>
-  <h2 class="mb-3 mt-3">Schedules</h2>
   <p>
     <small>
       Set the schedules for blocking access to the configured domains to be active. If not set, it

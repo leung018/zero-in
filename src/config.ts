@@ -29,6 +29,12 @@ const getDefaultNotificationSetting = () => {
   return notificationSetting
 }
 
+const getDefaultBlockingTimerIntegration = () => {
+  return {
+    shouldPauseBlockingDuringBreaks: true
+  }
+}
+
 const getFocusSessionRecordHouseKeepDays = () => 30
 
 const getBadgeColorConfig = (): {
@@ -53,5 +59,6 @@ export default {
   getBlockedTemplateUrl,
   getBadgeColorConfig,
   getReminderPageUrl,
-  getDefaultNotificationSetting
+  getDefaultNotificationSetting,
+  getDefaultBlockingTimerIntegration
 }
