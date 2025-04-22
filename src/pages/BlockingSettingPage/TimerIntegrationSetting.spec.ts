@@ -1,4 +1,4 @@
-import { describe, it} from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import TimerIntegrationSetting from './TimerIntegrationSetting.vue'
 import config from '../../config'
@@ -14,6 +14,24 @@ describe('TimerIntegrationSetting', () => {
       }
     })
     assertCheckboxValue(wrapper, dataTestSelector('pause-blocking-during-breaks'), false)
+  })
+
+  it('should persist setting after clicking save', async () => {
+    const { wrapper, blockingTimerIntegrationStorageService } = await mountTimerIntegrationSetting({
+      blockingTimerIntegration: {
+        shouldPauseBlockingDuringBreaks: false
+      }
+    })
+
+    const checkbox = wrapper.find(dataTestSelector('pause-blocking-during-breaks'))
+    await checkbox.setValue(true)
+    const saveButton = wrapper.find(dataTestSelector('save-timer-integration-button'))
+    await saveButton.trigger('click')
+    await flushPromises()
+
+    expect(
+      (await blockingTimerIntegrationStorageService.get()).shouldPauseBlockingDuringBreaks
+    ).toBe(true)
   })
 })
 

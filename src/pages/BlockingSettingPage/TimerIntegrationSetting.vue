@@ -12,10 +12,23 @@ onBeforeMount(async () => {
   const blockingTimerIntegration = await blockingTimerIntegrationStorageService.get()
   shouldPauseBlockingDuringBreaks.value = blockingTimerIntegration.shouldPauseBlockingDuringBreaks
 })
+
+async function onClickSave() {
+  await blockingTimerIntegrationStorageService.save({
+    shouldPauseBlockingDuringBreaks: shouldPauseBlockingDuringBreaks.value
+  })
+}
 </script>
 
 <template>
   <BFormCheckbox v-model="shouldPauseBlockingDuringBreaks" data-test="pause-blocking-during-breaks">
     Pause blocking during breaks
   </BFormCheckbox>
+  <BButton
+    variant="primary"
+    @click="onClickSave"
+    data-test="save-timer-integration-button"
+    class="mt-3"
+    >Save</BButton
+  >
 </template>
