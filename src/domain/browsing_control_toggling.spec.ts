@@ -8,6 +8,8 @@ import { WeeklyScheduleStorageService } from './schedules/storage'
 import { BrowsingControlTogglingService } from './browsing_control_toggling'
 import { CurrentDateService } from '../infra/current_date'
 import { PomodoroStage } from './pomodoro/stage'
+import type { BlockingTimerIntegration } from './blocking_timer_integration'
+import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 
 describe('BrowsingControlTogglingService', () => {
   const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
@@ -102,25 +104,29 @@ async function getBrowsingRulesAfterToggling({
   shouldPauseBlockingDuringBreaks = false,
   timerStage = PomodoroStage.FOCUS
 } = {}) {
-  if (shouldPauseBlockingDuringBreaks && timerStage !== PomodoroStage.FOCUS) {
-    return null
-  }
-
   const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
-  browsingRulesStorageService.save(browsingRules)
+  await browsingRulesStorageService.save(browsingRules)
 
   const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
-  weeklyScheduleStorageService.saveAll(schedules)
+  await weeklyScheduleStorageService.saveAll(schedules)
 
   const currentDateService = CurrentDateService.createFake(currentDate)
 
   const browsingControlService = new FakeBrowsingControlService()
 
+  const blockingTimerIntegration: BlockingTimerIntegration = {
+    shouldPauseBlockingDuringBreaks
+  }
+  const blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake()
+  await blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
+
   const browsingControlTogglingService = BrowsingControlTogglingService.createFake({
     browsingRulesStorageService,
     browsingControlService,
     weeklyScheduleStorageService,
-    currentDateService
+    currentDateService,
+    blockingTimerIntegrationStorageService,
+    timerStageGetter: { getTimerStage: () => timerStage }
   })
 
   await browsingControlTogglingService.run()

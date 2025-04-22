@@ -27,6 +27,7 @@ import { ChromeBrowsingControlService } from '../chrome/browsing_control'
 import { SoundService } from '../chrome/sound'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 import type { TimerState } from '../domain/pomodoro/state'
+import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
 
 type ListenerParams = {
   communicationManager: CommunicationManager
@@ -100,6 +101,8 @@ export class BackgroundListener {
       browsingControlService: params.browsingControlService,
       browsingRulesStorageService: params.browsingRulesStorageService,
       weeklyScheduleStorageService: params.weeklyScheduleStorageService,
+      blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.createFake(), // TODO: Fix this dependency
+      timerStageGetter: { getTimerStage: () => params.timer.getState().stage },
       currentDateService: params.currentDateService
     })
 
