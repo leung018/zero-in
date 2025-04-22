@@ -5,10 +5,13 @@ import { WeeklyScheduleStorageService } from '@/domain/schedules/storage'
 import ContentTemplate from '../components/ContentTemplate.vue'
 import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
 import WeeklySchedulesEditor from './WeeklySchedulesEditor/index.vue'
+import { ref } from 'vue'
 
 const { port } = defineProps<{
   port: Port
 }>()
+
+const disableBlockingDuringBreaks = ref(true)
 </script>
 
 <template>
@@ -18,6 +21,12 @@ const { port } = defineProps<{
         :browsing-rules-storage-service="BrowsingRulesStorageService.create()"
         :port="port"
       />
+    </BCard>
+    <BCard class="mb-4 shadow-sm">
+      <h2 class="mb-3 mt-3">Timer Integration</h2>
+      <BFormCheckbox v-model="disableBlockingDuringBreaks">
+        Pause blocking during breaks
+      </BFormCheckbox>
     </BCard>
     <BCard class="mb-4 shadow-sm">
       <WeeklySchedulesEditor
