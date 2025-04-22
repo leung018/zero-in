@@ -5,6 +5,7 @@ import config from '../../config'
 import { BlockingTimerIntegrationStorageService } from '../../domain/blocking_timer_integration/storage'
 import { assertCheckboxValue } from '../../test_utils/assert'
 import { dataTestSelector } from '../../test_utils/selector'
+import { FakeActionService } from '../../infra/action'
 
 describe('TimerIntegrationSetting', () => {
   it('should render saved setting', async () => {
@@ -33,6 +34,18 @@ describe('TimerIntegrationSetting', () => {
       (await blockingTimerIntegrationStorageService.get()).shouldPauseBlockingDuringBreaks
     ).toBe(true)
   })
+
+  it('should trigger reload when clicking save', async () => {
+    const { wrapper, reloadService } = await mountTimerIntegrationSetting()
+
+    expect(reloadService.getTriggerCount()).toBe(0)
+
+    const saveButton = wrapper.find(dataTestSelector('save-timer-integration-button'))
+    await saveButton.trigger('click')
+    await flushPromises()
+
+    expect(reloadService.getTriggerCount()).toBe(1)
+  })
 })
 
 async function mountTimerIntegrationSetting({
@@ -40,14 +53,19 @@ async function mountTimerIntegrationSetting({
 } = {}) {
   const blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake()
   await blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
+
+  const reloadService = new FakeActionService()
+
   const wrapper = mount(TimerIntegrationSetting, {
     props: {
-      blockingTimerIntegrationStorageService
+      blockingTimerIntegrationStorageService,
+      reloadService
     }
   })
   await flushPromises()
   return {
     wrapper,
-    blockingTimerIntegrationStorageService
+    blockingTimerIntegrationStorageService,
+    reloadService
   }
 }

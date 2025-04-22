@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import type { BlockingTimerIntegrationStorageService } from '../../domain/blocking_timer_integration/storage'
+import type { ActionService } from '@/infra/action'
 
-const { blockingTimerIntegrationStorageService } = defineProps<{
+const { blockingTimerIntegrationStorageService, reloadService } = defineProps<{
   blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
+  reloadService: ActionService
 }>()
 
 const shouldPauseBlockingDuringBreaks = ref(true)
@@ -17,6 +19,7 @@ async function onClickSave() {
   await blockingTimerIntegrationStorageService.save({
     shouldPauseBlockingDuringBreaks: shouldPauseBlockingDuringBreaks.value
   })
+  reloadService.trigger()
 }
 </script>
 
