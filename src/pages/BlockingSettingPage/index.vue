@@ -6,7 +6,7 @@ import ContentTemplate from '../components/ContentTemplate.vue'
 import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
 import WeeklySchedulesEditor from './WeeklySchedulesEditor/index.vue'
 import TimerIntegrationSetting from './TimerIntegrationSetting.vue'
-
+import { BlockingTimerIntegrationStorageService } from '@/domain/blocking_timer_integration/storage'
 const { port } = defineProps<{
   port: Port
 }>()
@@ -23,7 +23,11 @@ const { port } = defineProps<{
     </BCard>
     <BCard class="mb-4 shadow-sm">
       <h2 class="mb-3 mt-1">Timer Integration</h2>
-      <TimerIntegrationSetting />
+      <TimerIntegrationSetting
+        :blocking-timer-integration-storage-service="
+          BlockingTimerIntegrationStorageService.create()
+        "
+      />
     </BCard>
     <BCard class="mb-4 shadow-sm">
       <h2 class="mb-3 mt-1">Schedules</h2>
