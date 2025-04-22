@@ -10,8 +10,9 @@ import { CurrentDateService } from '../infra/current_date'
 import { PomodoroStage } from './pomodoro/stage'
 
 describe('BrowsingControlTogglingService', () => {
+  const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
+
   it('should toggle according to browsing rules if current time is within schedule', async () => {
-    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     const schedules = [
       new WeeklySchedule({
         weekdaySet: new Set([Weekday.MON, Weekday.TUE]),
@@ -39,7 +40,6 @@ describe('BrowsingControlTogglingService', () => {
   })
 
   it('should always activate when weekly schedules are empty', async () => {
-    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     expect(
       await getBrowsingRulesAfterToggling({
         browsingRules,
@@ -51,7 +51,6 @@ describe('BrowsingControlTogglingService', () => {
   })
 
   it('should not activate browsing rules when timer is in break and shouldPauseBlockingDuringBreaks is enabled', async () => {
-    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     expect(
       await getBrowsingRulesAfterToggling({
         browsingRules,
