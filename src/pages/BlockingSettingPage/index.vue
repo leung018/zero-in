@@ -15,18 +15,18 @@ const { port } = defineProps<{
 <template>
   <ContentTemplate title="Blocking">
     <BCard class="mb-4 shadow-sm">
-      <h2 class="mb-3 mt-3">Blocked Domains</h2>
+      <h2 class="mb-3 mt-1">Blocked Domains</h2>
       <BlockedDomainsEditor
         :browsing-rules-storage-service="BrowsingRulesStorageService.create()"
         :port="port"
       />
     </BCard>
     <BCard class="mb-4 shadow-sm">
-      <h2 class="mb-3 mt-3">Timer Integration</h2>
+      <h2 class="mb-3 mt-1">Timer Integration</h2>
       <TimerIntegrationSetting />
     </BCard>
     <BCard class="mb-4 shadow-sm">
-      <h2 class="mb-3 mt-3">Schedules</h2>
+      <h2 class="mb-3 mt-1">Schedules</h2>
       <WeeklySchedulesEditor
         :weekly-schedule-storage-service="WeeklyScheduleStorageService.create()"
         :port="port"
