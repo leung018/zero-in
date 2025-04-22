@@ -43,6 +43,7 @@ type ListenerParams = {
   browsingControlService: BrowsingControlService
   browsingRulesStorageService: BrowsingRulesStorageService
   weeklyScheduleStorageService: WeeklyScheduleStorageService
+  blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
   currentDateService: CurrentDateService
   focusSessionRecordHouseKeepDays: number
   timer: PomodoroTimer
@@ -65,6 +66,7 @@ export class BackgroundListener {
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
       weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
       currentDateService: CurrentDateService.create(),
+      blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.create(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
       timer: PomodoroTimer.create()
     })
@@ -101,7 +103,7 @@ export class BackgroundListener {
       browsingControlService: params.browsingControlService,
       browsingRulesStorageService: params.browsingRulesStorageService,
       weeklyScheduleStorageService: params.weeklyScheduleStorageService,
-      blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.createFake(), // TODO: Fix this dependency
+      blockingTimerIntegrationStorageService: params.blockingTimerIntegrationStorageService,
       timerStageGetter: { getTimerStage: () => params.timer.getState().stage },
       currentDateService: params.currentDateService
     })
