@@ -16,6 +16,10 @@ import {
 } from '../domain/notification_setting'
 import type { Port } from '../infra/communication'
 import type { WorkResponse } from './response'
+import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
+import { BrowsingRules } from '../domain/browsing_rules'
+import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
+import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -371,19 +375,65 @@ describe('BackgroundListener', () => {
 
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
+
+  it('should toggle browsing control when timer ever timer duration is finished', async () => {
+    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
+
+    const { browsingControlService, clientPort, scheduler, listener } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 3 }),
+        shortBreakDuration: new Duration({ seconds: 1 })
+      }),
+      browsingRules,
+      weeklySchedules: []
+    })
+
+    listener.toggleBrowsingRules()
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(3000)
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(1000)
+    await flushPromises()
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+  })
 })
 
 async function startListener({
   timerConfig = TimerConfig.newTestInstance(),
   notificationSetting = newTestNotificationSetting(),
   timerStateStorageService = TimerStateStorageService.createFake(),
-  focusSessionRecordHouseKeepDays = 30
+  focusSessionRecordHouseKeepDays = 30,
+  shouldPauseBlockingDuringBreaks = true,
+  browsingRules = new BrowsingRules(),
+  weeklySchedules = []
 } = {}) {
+  const blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake()
+  await blockingTimerIntegrationStorageService.save({
+    shouldPauseBlockingDuringBreaks
+  })
+
+  const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
+  await weeklyScheduleStorageService.saveAll(weeklySchedules)
+
+  const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
+  await browsingRulesStorageService.save(browsingRules)
+
   const props = await startBackgroundListener({
     timerConfig,
     notificationSetting,
     timerStateStorageService,
-    focusSessionRecordHouseKeepDays
+    focusSessionRecordHouseKeepDays,
+    blockingTimerIntegrationStorageService,
+    browsingRulesStorageService,
+    weeklyScheduleStorageService
   })
 
   const clientPort: Port<WorkRequest, WorkResponse> = props.communicationManager.clientConnect()

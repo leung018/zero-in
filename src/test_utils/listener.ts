@@ -20,6 +20,7 @@ export async function startBackgroundListener({
   timerConfig = config.getDefaultTimerConfig(),
   notificationSetting = config.getDefaultNotificationSetting(),
   notificationSettingStorageService = NotificationSettingStorageService.createFake(),
+  blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake(),
   browsingControlService = new FakeBrowsingControlService(),
   weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
   browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
@@ -59,7 +60,7 @@ export async function startBackgroundListener({
     currentDateService,
     timer,
     focusSessionRecordHouseKeepDays,
-    blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.createFake()
+    blockingTimerIntegrationStorageService
   })
   await listener.start()
   return {
@@ -75,6 +76,7 @@ export async function startBackgroundListener({
     closeTabsService,
     timerStateStorageService,
     timerConfigStorageService,
-    focusSessionRecordStorageService
+    focusSessionRecordStorageService,
+    browsingControlService
   }
 }

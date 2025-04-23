@@ -141,6 +141,7 @@ export class BackgroundListener {
     this.timer.setOnStageComplete((completedStage) => {
       this.notificationService.trigger()
       this.badgeDisplayService.clearBadge()
+      this.toggleBrowsingRules()
 
       if (completedStage === PomodoroStage.FOCUS) {
         this.updateFocusSessionRecords()
