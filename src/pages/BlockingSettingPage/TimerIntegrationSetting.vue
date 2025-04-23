@@ -2,10 +2,14 @@
 import { onBeforeMount, ref } from 'vue'
 import type { BlockingTimerIntegrationStorageService } from '../../domain/blocking_timer_integration/storage'
 import type { ActionService } from '@/infra/action'
+import type { Port } from '@/infra/communication'
+import { WorkRequestName, type WorkRequest } from '@/service_workers/request'
+import type { WorkResponse } from '@/service_workers/response'
 
-const { blockingTimerIntegrationStorageService, reloadService } = defineProps<{
+const { blockingTimerIntegrationStorageService, reloadService, port } = defineProps<{
   blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
   reloadService: ActionService
+  port: Port<WorkRequest, WorkResponse>
 }>()
 
 const shouldPauseBlockingDuringBreaks = ref(true)
@@ -18,6 +22,9 @@ onBeforeMount(async () => {
 async function onClickSave() {
   await blockingTimerIntegrationStorageService.save({
     shouldPauseBlockingDuringBreaks: shouldPauseBlockingDuringBreaks.value
+  })
+  port.send({
+    name: WorkRequestName.TOGGLE_BROWSING_RULES
   })
   reloadService.trigger()
 }
