@@ -29,6 +29,7 @@ const { port } = defineProps<{
           BlockingTimerIntegrationStorageService.create()
         "
         :reload-service="new ReloadService()"
+        :port="port"
       />
     </BCard>
     <BCard class="mb-4 shadow-sm">
