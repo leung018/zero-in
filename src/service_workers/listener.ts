@@ -104,7 +104,7 @@ export class BackgroundListener {
       browsingRulesStorageService: params.browsingRulesStorageService,
       weeklyScheduleStorageService: params.weeklyScheduleStorageService,
       blockingTimerIntegrationStorageService: params.blockingTimerIntegrationStorageService,
-      timerSubStateGetter: { getTimerSubState: () => params.timer.getState() },
+      timerStageGetter: { getTimerStage: () => params.timer.getState().stage },
       currentDateService: params.currentDateService
     })
 

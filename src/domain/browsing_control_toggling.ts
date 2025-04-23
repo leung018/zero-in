@@ -7,11 +7,8 @@ import { CurrentDateService } from '../infra/current_date'
 import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 import { PomodoroStage } from './pomodoro/stage'
 
-interface TimerSubStateGetter {
-  getTimerSubState(): {
-    stage: PomodoroStage
-    isRunning: boolean
-  }
+interface TimerStageGetter {
+  getTimerStage(): PomodoroStage
 }
 
 export class BrowsingControlTogglingService {
@@ -19,7 +16,7 @@ export class BrowsingControlTogglingService {
   private browsingRulesStorageService: BrowsingRulesStorageService
   private weeklyScheduleStorageService: WeeklyScheduleStorageService
   private blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
-  private timerSubStateGetter: TimerSubStateGetter
+  private timerStageGetter: TimerStageGetter
   private currentDateService: CurrentDateService
 
   static create() {
@@ -28,14 +25,7 @@ export class BrowsingControlTogglingService {
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
       weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
       blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.create(),
-      timerSubStateGetter: {
-        getTimerSubState: () => {
-          return {
-            stage: PomodoroStage.FOCUS,
-            isRunning: false
-          }
-        }
-      }, // TODO: Fix this dependency
+      timerStageGetter: { getTimerStage: () => PomodoroStage.FOCUS },
       currentDateService: CurrentDateService.create()
     })
   }
@@ -45,9 +35,7 @@ export class BrowsingControlTogglingService {
     browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
     weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
     blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake(),
-    timerSubStateGetter = {
-      getTimerSubState: () => ({ stage: PomodoroStage.FOCUS, isRunning: false })
-    },
+    timerStageGetter = { getTimerStage: () => PomodoroStage.FOCUS as PomodoroStage },
     currentDateService = CurrentDateService.createFake()
   } = {}) {
     return new BrowsingControlTogglingService({
@@ -55,7 +43,7 @@ export class BrowsingControlTogglingService {
       browsingRulesStorageService,
       weeklyScheduleStorageService,
       blockingTimerIntegrationStorageService,
-      timerSubStateGetter,
+      timerStageGetter,
       currentDateService
     })
   }
@@ -65,32 +53,30 @@ export class BrowsingControlTogglingService {
     browsingRulesStorageService,
     weeklyScheduleStorageService,
     blockingTimerIntegrationStorageService,
-    timerSubStateGetter: timerStageGetter,
+    timerStageGetter,
     currentDateService
   }: {
     browsingControlService: BrowsingControlService
     browsingRulesStorageService: BrowsingRulesStorageService
     weeklyScheduleStorageService: WeeklyScheduleStorageService
     blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
-    timerSubStateGetter: TimerSubStateGetter
+    timerStageGetter: TimerStageGetter
     currentDateService: CurrentDateService
   }) {
     this.browsingControlService = browsingControlService
     this.browsingRulesStorageService = browsingRulesStorageService
     this.weeklyScheduleStorageService = weeklyScheduleStorageService
     this.blockingTimerIntegrationStorageService = blockingTimerIntegrationStorageService
-    this.timerSubStateGetter = timerStageGetter
+    this.timerStageGetter = timerStageGetter
     this.currentDateService = currentDateService
   }
 
   async run(): Promise<void> {
     const blockingTimerIntegration = await this.blockingTimerIntegrationStorageService.get()
-    const timerSubState = this.timerSubStateGetter.getTimerSubState()
 
     if (
       blockingTimerIntegration.shouldPauseBlockingDuringBreaks &&
-      timerSubState.stage !== PomodoroStage.FOCUS &&
-      timerSubState.isRunning
+      this.timerStageGetter.getTimerStage() !== PomodoroStage.FOCUS
     ) {
       return this.browsingControlService.deactivateExistingRules()
     }

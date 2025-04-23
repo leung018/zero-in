@@ -52,13 +52,13 @@ describe('BrowsingControlTogglingService', () => {
     ).toEqual(browsingRules)
   })
 
-  it('should not activate browsing rules when timer is running break and shouldPauseBlockingDuringBreaks is enabled', async () => {
+  it('should not activate browsing rules when timer is in break and shouldPauseBlockingDuringBreaks is enabled', async () => {
     expect(
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules: [],
         shouldPauseBlockingDuringBreaks: true,
-        timerSubState: newTimerSubState({ stage: PomodoroStage.SHORT_BREAK, isRunning: true })
+        timerStage: PomodoroStage.SHORT_BREAK
       })
     ).toBeNull()
     expect(
@@ -66,7 +66,7 @@ describe('BrowsingControlTogglingService', () => {
         browsingRules,
         schedules: [],
         shouldPauseBlockingDuringBreaks: true,
-        timerSubState: newTimerSubState({ stage: PomodoroStage.LONG_BREAK, isRunning: true })
+        timerStage: PomodoroStage.LONG_BREAK
       })
     ).toBeNull()
 
@@ -76,7 +76,7 @@ describe('BrowsingControlTogglingService', () => {
         browsingRules,
         schedules: [],
         shouldPauseBlockingDuringBreaks: true,
-        timerSubState: newTimerSubState({ stage: PomodoroStage.FOCUS, isRunning: true })
+        timerStage: PomodoroStage.FOCUS
       })
     ).toEqual(browsingRules)
 
@@ -84,22 +84,12 @@ describe('BrowsingControlTogglingService', () => {
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules: [],
-        shouldPauseBlockingDuringBreaks: true,
-        timerSubState: newTimerSubState({ stage: PomodoroStage.SHORT_BREAK, isRunning: false })
+        shouldPauseBlockingDuringBreaks: false,
+        timerStage: PomodoroStage.SHORT_BREAK
       })
     ).toEqual(browsingRules)
   })
 })
-
-function newTimerSubState({ stage = PomodoroStage.FOCUS, isRunning = true } = {}): {
-  stage: PomodoroStage
-  isRunning: boolean
-} {
-  return {
-    stage,
-    isRunning
-  }
-}
 
 async function getBrowsingRulesAfterToggling({
   browsingRules = new BrowsingRules(),
@@ -112,7 +102,7 @@ async function getBrowsingRulesAfterToggling({
   ],
   currentDate = new Date(),
   shouldPauseBlockingDuringBreaks = false,
-  timerSubState = newTimerSubState()
+  timerStage = PomodoroStage.FOCUS
 } = {}) {
   const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
   await browsingRulesStorageService.save(browsingRules)
@@ -136,7 +126,7 @@ async function getBrowsingRulesAfterToggling({
     weeklyScheduleStorageService,
     currentDateService,
     blockingTimerIntegrationStorageService,
-    timerSubStateGetter: { getTimerSubState: () => timerSubState }
+    timerStageGetter: { getTimerStage: () => timerStage }
   })
 
   await browsingControlTogglingService.run()
