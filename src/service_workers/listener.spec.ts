@@ -20,6 +20,7 @@ import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer
 import { BrowsingRules } from '../domain/browsing_rules'
 import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
+import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -426,14 +427,17 @@ async function startListener({
   const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
   await browsingRulesStorageService.save(browsingRules)
 
+  const notificationSettingStorageService = NotificationSettingStorageService.createFake()
+  await notificationSettingStorageService.save(notificationSetting)
+
   const props = await startBackgroundListener({
     timerConfig,
-    notificationSetting,
     timerStateStorageService,
     focusSessionRecordHouseKeepDays,
     blockingTimerIntegrationStorageService,
     browsingRulesStorageService,
-    weeklyScheduleStorageService
+    weeklyScheduleStorageService,
+    notificationSettingStorageService
   })
 
   const clientPort: Port<WorkRequest, WorkResponse> = props.communicationManager.clientConnect()

@@ -18,7 +18,6 @@ import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer
 export async function startBackgroundListener({
   focusSessionRecordHouseKeepDays = 30,
   timerConfig = config.getDefaultTimerConfig(),
-  notificationSetting = config.getDefaultNotificationSetting(),
   notificationSettingStorageService = NotificationSettingStorageService.createFake(),
   blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake(),
   browsingControlService = new FakeBrowsingControlService(),
@@ -40,8 +39,6 @@ export async function startBackgroundListener({
   const timer = PomodoroTimer.createFake({
     scheduler
   })
-
-  await notificationSettingStorageService.save(notificationSetting)
 
   const listener = BackgroundListener.createFake({
     browsingControlService,
