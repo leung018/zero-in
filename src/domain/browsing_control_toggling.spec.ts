@@ -7,10 +7,14 @@ import { Time } from './time'
 import { WeeklyScheduleStorageService } from './schedules/storage'
 import { BrowsingControlTogglingService } from './browsing_control_toggling'
 import { CurrentDateService } from '../infra/current_date'
+import { PomodoroStage } from './pomodoro/stage'
+import type { BlockingTimerIntegration } from './blocking_timer_integration'
+import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 
 describe('BrowsingControlTogglingService', () => {
+  const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
+
   it('should toggle according to browsing rules if current time is within schedule', async () => {
-    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     const schedules = [
       new WeeklySchedule({
         weekdaySet: new Set([Weekday.MON, Weekday.TUE]),
@@ -23,54 +27,106 @@ describe('BrowsingControlTogglingService', () => {
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules,
-        currentDate: new Date('2025-02-03T11:00:00')
+        currentDate: new Date('2025-02-03T11:00:00'),
+        shouldPauseBlockingDuringBreaks: false
       })
     ).toEqual(browsingRules)
     expect(
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules,
-        currentDate: new Date('2025-02-03T17:01:00')
+        currentDate: new Date('2025-02-03T17:01:00'),
+        shouldPauseBlockingDuringBreaks: false
       })
     ).toBeNull()
   })
 
   it('should always activate when weekly schedules are empty', async () => {
-    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     expect(
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules: [],
-        currentDate: new Date()
+        currentDate: new Date(),
+        shouldPauseBlockingDuringBreaks: false
+      })
+    ).toEqual(browsingRules)
+  })
+
+  it('should not activate browsing rules when timer is in break and shouldPauseBlockingDuringBreaks is enabled', async () => {
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules: [],
+        shouldPauseBlockingDuringBreaks: true,
+        timerStage: PomodoroStage.SHORT_BREAK
+      })
+    ).toBeNull()
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules: [],
+        shouldPauseBlockingDuringBreaks: true,
+        timerStage: PomodoroStage.LONG_BREAK
+      })
+    ).toBeNull()
+
+    // Otherwise, the browsing rules should be activated according to the schedules
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules: [],
+        shouldPauseBlockingDuringBreaks: true,
+        timerStage: PomodoroStage.FOCUS
+      })
+    ).toEqual(browsingRules)
+
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules: [],
+        shouldPauseBlockingDuringBreaks: false,
+        timerStage: PomodoroStage.SHORT_BREAK
       })
     ).toEqual(browsingRules)
   })
 })
 
 async function getBrowsingRulesAfterToggling({
-  browsingRules,
-  schedules,
-  currentDate
-}: {
-  browsingRules: BrowsingRules
-  schedules: WeeklySchedule[]
-  currentDate: Date
-}) {
+  browsingRules = new BrowsingRules(),
+  schedules = [
+    new WeeklySchedule({
+      weekdaySet: new Set([Weekday.MON]),
+      startTime: new Time(0, 0),
+      endTime: new Time(23, 59)
+    })
+  ],
+  currentDate = new Date(),
+  shouldPauseBlockingDuringBreaks = false,
+  timerStage = PomodoroStage.FOCUS
+} = {}) {
   const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
-  browsingRulesStorageService.save(browsingRules)
+  await browsingRulesStorageService.save(browsingRules)
 
   const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
-  weeklyScheduleStorageService.saveAll(schedules)
+  await weeklyScheduleStorageService.saveAll(schedules)
 
   const currentDateService = CurrentDateService.createFake(currentDate)
 
   const browsingControlService = new FakeBrowsingControlService()
 
+  const blockingTimerIntegration: BlockingTimerIntegration = {
+    shouldPauseBlockingDuringBreaks
+  }
+  const blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake()
+  await blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
+
   const browsingControlTogglingService = BrowsingControlTogglingService.createFake({
     browsingRulesStorageService,
     browsingControlService,
     weeklyScheduleStorageService,
-    currentDateService
+    currentDateService,
+    blockingTimerIntegrationStorageService,
+    timerStageGetter: { getTimerStage: () => timerStage }
   })
 
   await browsingControlTogglingService.run()

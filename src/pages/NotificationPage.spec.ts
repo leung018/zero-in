@@ -12,6 +12,7 @@ import { startBackgroundListener } from '../test_utils/listener'
 import { TimerConfig } from '../domain/pomodoro/config'
 import { WorkRequestName } from '../service_workers/request'
 import { Duration } from '../domain/pomodoro/duration'
+import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 
 describe('NotificationPage', () => {
   it('should render the saved notification setting', async () => {
@@ -116,15 +117,17 @@ async function mountPage({
 } = {}) {
   const reloadService = new FakeActionService()
 
+  const notificationSettingStorageService = NotificationSettingStorageService.createFake()
+  await notificationSettingStorageService.save(notificationSetting)
+
   const {
     scheduler,
     communicationManager,
-    notificationSettingStorageService,
     desktopNotificationService,
     soundService,
     reminderTabService
   } = await startBackgroundListener({
-    notificationSetting,
+    notificationSettingStorageService,
     timerConfig
   })
   const clientPort = communicationManager.clientConnect()

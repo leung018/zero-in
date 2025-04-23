@@ -27,6 +27,7 @@ import { ChromeBrowsingControlService } from '../chrome/browsing_control'
 import { SoundService } from '../chrome/sound'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 import type { TimerState } from '../domain/pomodoro/state'
+import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
 
 type ListenerParams = {
   communicationManager: CommunicationManager
@@ -42,6 +43,7 @@ type ListenerParams = {
   browsingControlService: BrowsingControlService
   browsingRulesStorageService: BrowsingRulesStorageService
   weeklyScheduleStorageService: WeeklyScheduleStorageService
+  blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
   currentDateService: CurrentDateService
   focusSessionRecordHouseKeepDays: number
   timer: PomodoroTimer
@@ -64,6 +66,7 @@ export class BackgroundListener {
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
       weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
       currentDateService: CurrentDateService.create(),
+      blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.create(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
       timer: PomodoroTimer.create()
     })
@@ -100,6 +103,8 @@ export class BackgroundListener {
       browsingControlService: params.browsingControlService,
       browsingRulesStorageService: params.browsingRulesStorageService,
       weeklyScheduleStorageService: params.weeklyScheduleStorageService,
+      blockingTimerIntegrationStorageService: params.blockingTimerIntegrationStorageService,
+      timerStageGetter: { getTimerStage: () => params.timer.getState().stage },
       currentDateService: params.currentDateService
     })
 
@@ -136,6 +141,7 @@ export class BackgroundListener {
     this.timer.setOnStageComplete((completedStage) => {
       this.notificationService.trigger()
       this.badgeDisplayService.clearBadge()
+      this.toggleBrowsingRules()
 
       if (completedStage === PomodoroStage.FOCUS) {
         this.updateFocusSessionRecords()
@@ -204,13 +210,17 @@ export class BackgroundListener {
     return this.timer.getState()
   }
 
+  toggleBrowsingRules() {
+    this.browsingControlTogglingService.run()
+  }
+
   private setUpListener() {
     this.communicationManager.onNewClientConnect(
       (backgroundPort: Port<WorkResponse, WorkRequest>) => {
         const listener = (message: WorkRequest) => {
           switch (message.name) {
             case WorkRequestName.TOGGLE_BROWSING_RULES: {
-              this.browsingControlTogglingService.run()
+              this.toggleBrowsingRules()
               break
             }
             case WorkRequestName.START_TIMER: {

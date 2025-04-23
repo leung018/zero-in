@@ -13,12 +13,13 @@ import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { FakeBrowsingControlService } from '../domain/browsing_control'
 import { CurrentDateService } from '../infra/current_date'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
+import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
 
 export async function startBackgroundListener({
   focusSessionRecordHouseKeepDays = 30,
   timerConfig = config.getDefaultTimerConfig(),
-  notificationSetting = config.getDefaultNotificationSetting(),
   notificationSettingStorageService = NotificationSettingStorageService.createFake(),
+  blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake(),
   browsingControlService = new FakeBrowsingControlService(),
   weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
   browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
@@ -39,8 +40,6 @@ export async function startBackgroundListener({
     scheduler
   })
 
-  await notificationSettingStorageService.save(notificationSetting)
-
   const listener = BackgroundListener.createFake({
     browsingControlService,
     weeklyScheduleStorageService,
@@ -57,7 +56,8 @@ export async function startBackgroundListener({
     closeTabsService,
     currentDateService,
     timer,
-    focusSessionRecordHouseKeepDays
+    focusSessionRecordHouseKeepDays,
+    blockingTimerIntegrationStorageService
   })
   await listener.start()
   return {
@@ -73,6 +73,7 @@ export async function startBackgroundListener({
     closeTabsService,
     timerStateStorageService,
     timerConfigStorageService,
-    focusSessionRecordStorageService
+    focusSessionRecordStorageService,
+    browsingControlService
   }
 }
