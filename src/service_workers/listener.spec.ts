@@ -415,24 +415,24 @@ async function startListener({
   browsingRules = new BrowsingRules(),
   weeklySchedules = []
 } = {}) {
-  const props = await setUpListener({
+  const context = await setUpListener({
     timerConfig,
     focusSessionRecordHouseKeepDays
   })
 
-  await props.blockingTimerIntegrationStorageService.save({
+  await context.blockingTimerIntegrationStorageService.save({
     shouldPauseBlockingDuringBreaks
   })
-  await props.weeklyScheduleStorageService.saveAll(weeklySchedules)
-  await props.browsingRulesStorageService.save(browsingRules)
-  await props.notificationSettingStorageService.save(notificationSetting)
+  await context.weeklyScheduleStorageService.saveAll(weeklySchedules)
+  await context.browsingRulesStorageService.save(browsingRules)
+  await context.notificationSettingStorageService.save(notificationSetting)
 
-  await props.listener.start()
+  await context.listener.start()
 
-  const clientPort: Port<WorkRequest, WorkResponse> = props.communicationManager.clientConnect()
+  const clientPort: Port<WorkRequest, WorkResponse> = context.communicationManager.clientConnect()
 
   return {
-    ...props,
+    ...context,
     clientPort
   }
 }
