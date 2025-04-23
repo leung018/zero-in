@@ -8,7 +8,7 @@ import NotificationPage from './NotificationPage.vue'
 import { assertCheckboxValue } from '../test_utils/assert'
 import { dataTestSelector } from '../test_utils/selector'
 import { FakeActionService } from '../infra/action'
-import { startBackgroundListener } from '../test_utils/listener'
+import { setUpListener } from '../test_utils/listener'
 import { TimerConfig } from '../domain/pomodoro/config'
 import { WorkRequestName } from '../service_workers/request'
 import { Duration } from '../domain/pomodoro/duration'
@@ -117,19 +117,22 @@ async function mountPage({
 } = {}) {
   const reloadService = new FakeActionService()
 
-  const notificationSettingStorageService = NotificationSettingStorageService.createFake()
-  await notificationSettingStorageService.save(notificationSetting)
-
   const {
     scheduler,
     communicationManager,
     desktopNotificationService,
     soundService,
-    reminderTabService
-  } = await startBackgroundListener({
+    reminderTabService,
     notificationSettingStorageService,
+    listener
+  } = await setUpListener({
     timerConfig
   })
+
+  await notificationSettingStorageService.save(notificationSetting)
+
+  await listener.start()
+
   const clientPort = communicationManager.clientConnect()
 
   const wrapper = mount(NotificationPage, {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { TimerConfig } from '../domain/pomodoro/config'
-import { startBackgroundListener } from '../test_utils/listener'
+import { setUpListener } from '../test_utils/listener'
 import { flushPromises, mount } from '@vue/test-utils'
 import TimerSettingPage from './TimerSettingPage.vue'
 import { Duration } from '../domain/pomodoro/duration'
@@ -130,9 +130,11 @@ describe('TimerSettingPage', () => {
 })
 
 async function mountPage(initialTimerConfig: TimerConfig = TimerConfig.newTestInstance()) {
-  const { timerConfigStorageService, timer, communicationManager } = await startBackgroundListener({
+  const { timerConfigStorageService, timer, communicationManager, listener } = await setUpListener({
     timerConfig: initialTimerConfig
   })
+  await listener.start()
+
   const reloadService = new FakeActionService()
   const wrapper = mount(TimerSettingPage, {
     props: {

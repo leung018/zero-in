@@ -1,14 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { WeeklyScheduleStorageService } from '@/domain/schedules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 
 import WeeklySchedulesEditor from './index.vue'
 import { Weekday, WeeklySchedule } from '@/domain/schedules'
 import { Time } from '@/domain/time'
-import { FakeBrowsingControlService } from '@/domain/browsing_control'
-import { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { BrowsingRules } from '@/domain/browsing_rules'
-import { startBackgroundListener } from '@/test_utils/listener'
+import { setUpListener } from '@/test_utils/listener'
 import { CurrentDateService } from '../../../infra/current_date'
 
 describe('WeeklySchedulesEditor', () => {
@@ -229,7 +226,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should add or remove schedule affect the activated redirect', async () => {
-    const { wrapper, fakeBrowsingControlService } = await mountWeeklySchedulesEditor({
+    const { wrapper, browsingControlService } = await mountWeeklySchedulesEditor({
       browsingRules: new BrowsingRules({ blockedDomains: ['google.com'] }),
       weeklySchedules: [
         new WeeklySchedule({
@@ -241,7 +238,7 @@ describe('WeeklySchedulesEditor', () => {
       currentDate: new Date('2025-02-03T11:00:00') // 2025-02-03 is Monday
     })
 
-    expect(await fakeBrowsingControlService.getActivatedBrowsingRules()).toBeNull()
+    expect(await browsingControlService.getActivatedBrowsingRules()).toBeNull()
 
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set([Weekday.MON]),
@@ -249,7 +246,7 @@ describe('WeeklySchedulesEditor', () => {
       endTime: new Time(12, 0)
     })
 
-    expect(fakeBrowsingControlService.getActivatedBrowsingRules()).toEqual(
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(
       new BrowsingRules({ blockedDomains: ['google.com'] })
     )
 
@@ -257,7 +254,7 @@ describe('WeeklySchedulesEditor', () => {
     await removeButton.trigger('click')
     await flushPromises()
 
-    await expect(fakeBrowsingControlService.getActivatedBrowsingRules()).toBeNull()
+    await expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
   })
 })
 
@@ -272,20 +269,21 @@ async function mountWeeklySchedulesEditor({
   ],
   currentDate = new Date()
 } = {}) {
-  const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
-  const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
+  const {
+    communicationManager,
+    listener,
+    weeklyScheduleStorageService,
+    browsingRulesStorageService,
+    browsingControlService
+  } = await setUpListener({
+    currentDateService: CurrentDateService.createFake(currentDate)
+  })
 
   await weeklyScheduleStorageService.saveAll(weeklySchedules)
   await browsingRulesStorageService.save(browsingRules)
 
-  const fakeBrowsingControlService = new FakeBrowsingControlService()
+  await listener.start()
 
-  const { communicationManager } = await startBackgroundListener({
-    browsingControlService: fakeBrowsingControlService,
-    weeklyScheduleStorageService,
-    browsingRulesStorageService,
-    currentDateService: CurrentDateService.createFake(currentDate)
-  })
   const wrapper = mount(WeeklySchedulesEditor, {
     props: { weeklyScheduleStorageService, port: communicationManager.clientConnect() }
   })
@@ -293,7 +291,7 @@ async function mountWeeklySchedulesEditor({
   return {
     wrapper,
     weeklyScheduleStorageService,
-    fakeBrowsingControlService
+    browsingControlService
   }
 }
 

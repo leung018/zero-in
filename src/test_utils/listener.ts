@@ -15,7 +15,7 @@ import { CurrentDateService } from '../infra/current_date'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
 
-export async function startBackgroundListener({
+export async function setUpListener({
   focusSessionRecordHouseKeepDays = 30,
   timerConfig = config.getDefaultTimerConfig(),
   notificationSettingStorageService = NotificationSettingStorageService.createFake(),
@@ -59,7 +59,7 @@ export async function startBackgroundListener({
     focusSessionRecordHouseKeepDays,
     blockingTimerIntegrationStorageService
   })
-  await listener.start()
+
   return {
     scheduler,
     timer,
@@ -74,6 +74,9 @@ export async function startBackgroundListener({
     timerStateStorageService,
     timerConfigStorageService,
     focusSessionRecordStorageService,
-    browsingControlService
+    browsingControlService,
+    browsingRulesStorageService,
+    blockingTimerIntegrationStorageService,
+    weeklyScheduleStorageService
   }
 }

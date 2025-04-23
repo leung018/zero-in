@@ -3,7 +3,7 @@ import ReminderPage from './ReminderPage.vue'
 import { describe, expect, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
 import { PomodoroStage } from '../domain/pomodoro/stage'
-import { startBackgroundListener } from '../test_utils/listener'
+import { setUpListener } from '../test_utils/listener'
 import { FakeActionService } from '../infra/action'
 import { TimerConfig } from '../domain/pomodoro/config'
 import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
@@ -90,15 +90,19 @@ async function mountPage({
   currentDate = new Date()
 } = {}) {
   const currentDateService = CurrentDateService.createFake(currentDate)
-  const { scheduler, timer, communicationManager } = await startBackgroundListener({
-    timerConfig,
-    currentDateService
-  })
-  const closeCurrentTabService = new FakeActionService()
+  const { scheduler, timer, communicationManager, listener, focusSessionRecordStorageService } =
+    await setUpListener({
+      timerConfig,
+      currentDateService
+    })
   const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
   await dailyResetTimeStorageService.save(dailyCutOffTime)
-  const focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
+
   await focusSessionRecordStorageService.saveAll(focusSessionRecords)
+
+  await listener.start()
+
+  const closeCurrentTabService = new FakeActionService()
 
   const wrapper = mount(ReminderPage, {
     props: {

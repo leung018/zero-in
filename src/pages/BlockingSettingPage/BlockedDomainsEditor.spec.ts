@@ -1,11 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
 import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
-import { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { BrowsingRules } from '@/domain/browsing_rules'
-import { FakeBrowsingControlService } from '@/domain/browsing_control'
-import { startBackgroundListener } from '@/test_utils/listener'
+import { setUpListener } from '@/test_utils/listener'
 
 describe('BlockedDomainsEditor', () => {
   it('should render blocked domains', async () => {
@@ -82,23 +80,23 @@ describe('BlockedDomainsEditor', () => {
   })
 
   it('should update activated redirect when domain is added', async () => {
-    const { fakeBrowsingControlService, wrapper } = await mountBlockedDomainsEditor({
+    const { browsingControlService, wrapper } = await mountBlockedDomainsEditor({
       browsingRules: new BrowsingRules()
     })
 
     await addBlockedDomain(wrapper, 'example.com')
-    expect(fakeBrowsingControlService.getActivatedBrowsingRules()).toEqual(
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(
       new BrowsingRules({ blockedDomains: ['example.com'] })
     )
   })
 
   it('should update activated redirect when domain is removed', async () => {
-    const { wrapper, fakeBrowsingControlService } = await mountBlockedDomainsEditor({
+    const { wrapper, browsingControlService } = await mountBlockedDomainsEditor({
       browsingRules: new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
     })
 
     await removeBlockedDomain(wrapper, 'example.com')
-    expect(fakeBrowsingControlService.getActivatedBrowsingRules()).toEqual(
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(
       new BrowsingRules({ blockedDomains: ['facebook.com'] })
     )
   })
@@ -107,18 +105,17 @@ describe('BlockedDomainsEditor', () => {
 async function mountBlockedDomainsEditor({
   browsingRules = new BrowsingRules({ blockedDomains: ['abc.com'] })
 } = {}) {
-  const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
+  const { browsingRulesStorageService, communicationManager, browsingControlService, listener } =
+    await setUpListener()
   await browsingRulesStorageService.save(browsingRules)
-  const fakeBrowsingControlService = new FakeBrowsingControlService()
-  const { communicationManager } = await startBackgroundListener({
-    browsingControlService: fakeBrowsingControlService,
-    browsingRulesStorageService
-  })
+
+  await listener.start()
+
   const wrapper = mount(BlockedDomainsEditor, {
     props: { browsingRulesStorageService, port: communicationManager.clientConnect() }
   })
   await flushPromises()
-  return { wrapper, browsingRulesStorageService, fakeBrowsingControlService }
+  return { wrapper, browsingRulesStorageService, browsingControlService }
 }
 
 async function addBlockedDomain(wrapper: VueWrapper, domain: string) {
