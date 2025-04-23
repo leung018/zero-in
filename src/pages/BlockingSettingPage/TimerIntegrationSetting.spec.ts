@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { flushPromises, mount } from '@vue/test-utils'
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import TimerIntegrationSetting from './TimerIntegrationSetting.vue'
 import config from '../../config'
 import { BlockingTimerIntegrationStorageService } from '../../domain/blocking_timer_integration/storage'
@@ -13,6 +13,7 @@ import { WeeklyScheduleStorageService } from '../../domain/schedules/storage'
 import { newTestTimerState } from '../../domain/pomodoro/state'
 import { PomodoroStage } from '../../domain/pomodoro/stage'
 import { TimerStateStorageService } from '../../domain/pomodoro/state/storage'
+import type { BlockingTimerIntegration } from '../../domain/blocking_timer_integration'
 
 describe('TimerIntegrationSetting', () => {
   it('should render saved setting', async () => {
@@ -31,11 +32,9 @@ describe('TimerIntegrationSetting', () => {
       }
     })
 
-    const checkbox = wrapper.find(dataTestSelector('pause-blocking-during-breaks'))
-    await checkbox.setValue(true)
-    const saveButton = wrapper.find(dataTestSelector('save-timer-integration-button'))
-    await saveButton.trigger('click')
-    await flushPromises()
+    await saveBlockingTimerIntegration(wrapper, {
+      shouldPauseBlockingDuringBreaks: true
+    })
 
     expect(
       (await blockingTimerIntegrationStorageService.get()).shouldPauseBlockingDuringBreaks
@@ -47,9 +46,7 @@ describe('TimerIntegrationSetting', () => {
 
     expect(reloadService.getTriggerCount()).toBe(0)
 
-    const saveButton = wrapper.find(dataTestSelector('save-timer-integration-button'))
-    await saveButton.trigger('click')
-    await flushPromises()
+    await saveBlockingTimerIntegration(wrapper)
 
     expect(reloadService.getTriggerCount()).toBe(1)
   })
@@ -73,11 +70,9 @@ describe('TimerIntegrationSetting', () => {
 
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
 
-    const checkbox = wrapper.find(dataTestSelector('pause-blocking-during-breaks'))
-    await checkbox.setValue(true)
-    const saveButton = wrapper.find(dataTestSelector('save-timer-integration-button'))
-    await saveButton.trigger('click')
-    await flushPromises()
+    await saveBlockingTimerIntegration(wrapper, {
+      shouldPauseBlockingDuringBreaks: true
+    })
 
     expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
   })
@@ -125,4 +120,17 @@ async function mountTimerIntegrationSetting({
     blockingTimerIntegrationStorageService,
     reloadService
   }
+}
+
+async function saveBlockingTimerIntegration(
+  wrapper: VueWrapper,
+  blockingTimerIntegration: BlockingTimerIntegration = {
+    shouldPauseBlockingDuringBreaks: false
+  }
+) {
+  const checkbox = wrapper.find(dataTestSelector('pause-blocking-during-breaks'))
+  await checkbox.setValue(blockingTimerIntegration.shouldPauseBlockingDuringBreaks)
+  const saveButton = wrapper.find(dataTestSelector('save-timer-integration-button'))
+  await saveButton.trigger('click')
+  await flushPromises()
 }
