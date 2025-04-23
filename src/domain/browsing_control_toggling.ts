@@ -2,7 +2,6 @@ import { FakeBrowsingControlService, type BrowsingControlService } from './brows
 import { BrowsingRulesStorageService } from './browsing_rules/storage'
 import type { WeeklySchedule } from './schedules'
 import { WeeklyScheduleStorageService } from './schedules/storage'
-import { ChromeBrowsingControlService } from '../chrome/browsing_control'
 import { CurrentDateService } from '../infra/current_date'
 import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 import { PomodoroStage } from './pomodoro/stage'
@@ -18,17 +17,6 @@ export class BrowsingControlTogglingService {
   private blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
   private timerStageGetter: TimerStageGetter
   private currentDateService: CurrentDateService
-
-  static create() {
-    return new BrowsingControlTogglingService({
-      browsingControlService: new ChromeBrowsingControlService(),
-      browsingRulesStorageService: BrowsingRulesStorageService.create(),
-      weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
-      blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.create(),
-      timerStageGetter: { getTimerStage: () => PomodoroStage.FOCUS },
-      currentDateService: CurrentDateService.create()
-    })
-  }
 
   static createFake({
     browsingControlService = new FakeBrowsingControlService(),

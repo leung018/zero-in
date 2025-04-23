@@ -209,13 +209,17 @@ export class BackgroundListener {
     return this.timer.getState()
   }
 
+  toggleBrowsingRules() {
+    this.browsingControlTogglingService.run()
+  }
+
   private setUpListener() {
     this.communicationManager.onNewClientConnect(
       (backgroundPort: Port<WorkResponse, WorkRequest>) => {
         const listener = (message: WorkRequest) => {
           switch (message.name) {
             case WorkRequestName.TOGGLE_BROWSING_RULES: {
-              this.browsingControlTogglingService.run()
+              this.toggleBrowsingRules()
               break
             }
             case WorkRequestName.START_TIMER: {
