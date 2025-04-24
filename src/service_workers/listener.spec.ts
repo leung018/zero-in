@@ -1,26 +1,21 @@
-import { describe, expect, it } from 'vitest'
-import { WorkRequestName, type WorkRequest } from './request'
-import { type Badge, type BadgeColor } from '../infra/badge'
-import { Duration } from '../domain/pomodoro/duration'
-import config from '../config'
-import { setUpListener } from '../test_utils/listener'
-import { TimerConfig } from '../domain/pomodoro/config'
-import { TimerStateStorageService } from '../domain/pomodoro/state/storage'
-import type { TimerState } from '../domain/pomodoro/state'
-import { PomodoroStage } from '../domain/pomodoro/stage'
 import { flushPromises } from '@vue/test-utils'
-import type { FocusSessionRecord } from '../domain/pomodoro/record'
+import { describe, expect, it } from 'vitest'
+import config from '../config'
+import { BrowsingRules } from '../domain/browsing_rules'
 import {
   newTestNotificationSetting,
   type NotificationSetting
 } from '../domain/notification_setting'
+import { TimerConfig } from '../domain/pomodoro/config'
+import { Duration } from '../domain/pomodoro/duration'
+import type { FocusSessionRecord } from '../domain/pomodoro/record'
+import { PomodoroStage } from '../domain/pomodoro/stage'
+import type { TimerState } from '../domain/pomodoro/state'
+import { type Badge, type BadgeColor } from '../infra/badge'
 import type { Port } from '../infra/communication'
+import { setUpListener } from '../test_utils/listener'
+import { WorkRequestName, type WorkRequest } from './request'
 import type { WorkResponse } from './response'
-import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
-import { BrowsingRules } from '../domain/browsing_rules'
-import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
-import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
-import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
