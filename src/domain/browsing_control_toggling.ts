@@ -5,11 +5,6 @@ import { WeeklyScheduleStorageService } from './schedules/storage'
 import { CurrentDateService } from '../infra/current_date'
 import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 import { PomodoroStage } from './pomodoro/stage'
-
-interface TimerStageGetter {
-  getTimerStage(): PomodoroStage
-}
-
 interface TimerInfoGetter {
   getTimerInfo(): {
     timerStage: PomodoroStage
@@ -25,7 +20,6 @@ export class BrowsingControlTogglingService {
   private browsingRulesStorageService: BrowsingRulesStorageService
   private weeklyScheduleStorageService: WeeklyScheduleStorageService
   private blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
-  private timerStageGetter: TimerStageGetter
   private timerInfoGetter: TimerInfoGetter
   private currentDateService: CurrentDateService
 
@@ -34,7 +28,6 @@ export class BrowsingControlTogglingService {
     browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
     weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
     blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake(),
-    timerStageGetter = { getTimerStage: () => PomodoroStage.FOCUS as PomodoroStage },
     timerInfoGetter = {
       getTimerInfo: () => ({
         timerStage: PomodoroStage.FOCUS,
@@ -51,7 +44,6 @@ export class BrowsingControlTogglingService {
       browsingRulesStorageService,
       weeklyScheduleStorageService,
       blockingTimerIntegrationStorageService,
-      timerStageGetter,
       timerInfoGetter,
       currentDateService
     })
@@ -62,7 +54,6 @@ export class BrowsingControlTogglingService {
     browsingRulesStorageService,
     weeklyScheduleStorageService,
     blockingTimerIntegrationStorageService,
-    timerStageGetter,
     timerInfoGetter = {
       getTimerInfo: () => ({
         timerStage: PomodoroStage.FOCUS,
@@ -78,7 +69,6 @@ export class BrowsingControlTogglingService {
     browsingRulesStorageService: BrowsingRulesStorageService
     weeklyScheduleStorageService: WeeklyScheduleStorageService
     blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
-    timerStageGetter: TimerStageGetter
     timerInfoGetter?: TimerInfoGetter
     currentDateService: CurrentDateService
   }) {
@@ -86,7 +76,6 @@ export class BrowsingControlTogglingService {
     this.browsingRulesStorageService = browsingRulesStorageService
     this.weeklyScheduleStorageService = weeklyScheduleStorageService
     this.blockingTimerIntegrationStorageService = blockingTimerIntegrationStorageService
-    this.timerStageGetter = timerStageGetter
     this.timerInfoGetter = timerInfoGetter
     this.currentDateService = currentDateService
   }

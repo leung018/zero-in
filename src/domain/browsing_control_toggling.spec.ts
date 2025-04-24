@@ -208,7 +208,6 @@ async function getBrowsingRulesAfterToggling({
     weeklyScheduleStorageService,
     currentDateService,
     blockingTimerIntegrationStorageService,
-    timerStageGetter: { getTimerStage: () => timerInfo.timerStage },
     timerInfoGetter: { getTimerInfo: () => timerInfo }
   })
 
