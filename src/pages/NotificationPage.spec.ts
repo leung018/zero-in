@@ -1,18 +1,17 @@
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import {
   newTestNotificationSetting,
   type NotificationSetting
 } from '../domain/notification_setting'
-import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
-import NotificationPage from './NotificationPage.vue'
-import { assertCheckboxValue } from '../test_utils/assert'
-import { dataTestSelector } from '../test_utils/selector'
-import { FakeActionService } from '../infra/action'
-import { setUpListener } from '../test_utils/listener'
 import { TimerConfig } from '../domain/pomodoro/config'
-import { WorkRequestName } from '../service_workers/request'
 import { Duration } from '../domain/pomodoro/duration'
-import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
+import { FakeActionService } from '../infra/action'
+import { WorkRequestName } from '../service_workers/request'
+import { assertCheckboxValue } from '../test_utils/assert'
+import { setUpListener } from '../test_utils/listener'
+import { dataTestSelector } from '../test_utils/selector'
+import NotificationPage from './NotificationPage.vue'
 
 describe('NotificationPage', () => {
   it('should render the saved notification setting', async () => {

@@ -1,15 +1,14 @@
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
-import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
-import StatisticsPage from './StatisticsPage.vue'
+import { TimerConfig } from '../domain/pomodoro/config'
+import { Duration } from '../domain/pomodoro/duration'
+import { newFocusSessionRecord, type FocusSessionRecord } from '../domain/pomodoro/record'
 import { Time } from '../domain/time'
 import { FakeActionService } from '../infra/action'
-import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
-import { newFocusSessionRecord, type FocusSessionRecord } from '../domain/pomodoro/record'
-import { TimerConfig } from '../domain/pomodoro/config'
-import { setUpListener } from '../test_utils/listener'
-import { Duration } from '../domain/pomodoro/duration'
 import { CurrentDateService } from '../infra/current_date'
+import { setUpListener } from '../test_utils/listener'
+import StatisticsPage from './StatisticsPage.vue'
 
 describe('StatisticsPage', () => {
   it('should render saved daily reset time', async () => {
