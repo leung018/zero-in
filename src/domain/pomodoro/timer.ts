@@ -7,7 +7,6 @@ import {
 import type { TimerConfig } from './config'
 import { Duration } from './duration'
 import { PomodoroStage } from './stage'
-import { SubscriptionManager } from '../../utils/subscription'
 import type { TimerState } from './state'
 
 export class PomodoroTimer {
@@ -42,8 +41,6 @@ export class PomodoroTimer {
   private numOfPomodoriCompleted: number = 0
 
   private scheduler: PeriodicTaskScheduler
-
-  private timerStateSubscriptionManager = new SubscriptionManager<TimerState>()
 
   private onStageComplete: (stage: PomodoroStage) => void = () => {}
 
