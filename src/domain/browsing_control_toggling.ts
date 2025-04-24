@@ -5,9 +5,14 @@ import { WeeklyScheduleStorageService } from './schedules/storage'
 import { CurrentDateService } from '../infra/current_date'
 import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 import { PomodoroStage } from './pomodoro/stage'
-
-interface TimerStageGetter {
-  getTimerStage(): PomodoroStage
+interface TimerInfoGetter {
+  getTimerInfo(): {
+    timerStage: PomodoroStage
+    isRunning: boolean
+    remainingSeconds: number
+    longBreakSeconds: number
+    shortBreakSeconds: number
+  }
 }
 
 export class BrowsingControlTogglingService {
@@ -15,7 +20,7 @@ export class BrowsingControlTogglingService {
   private browsingRulesStorageService: BrowsingRulesStorageService
   private weeklyScheduleStorageService: WeeklyScheduleStorageService
   private blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
-  private timerStageGetter: TimerStageGetter
+  private timerInfoGetter: TimerInfoGetter
   private currentDateService: CurrentDateService
 
   static createFake({
@@ -23,7 +28,15 @@ export class BrowsingControlTogglingService {
     browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
     weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
     blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake(),
-    timerStageGetter = { getTimerStage: () => PomodoroStage.FOCUS as PomodoroStage },
+    timerInfoGetter = {
+      getTimerInfo: () => ({
+        timerStage: PomodoroStage.FOCUS,
+        isRunning: false,
+        remainingSeconds: 0,
+        longBreakSeconds: 0,
+        shortBreakSeconds: 0
+      })
+    },
     currentDateService = CurrentDateService.createFake()
   } = {}) {
     return new BrowsingControlTogglingService({
@@ -31,7 +44,7 @@ export class BrowsingControlTogglingService {
       browsingRulesStorageService,
       weeklyScheduleStorageService,
       blockingTimerIntegrationStorageService,
-      timerStageGetter,
+      timerInfoGetter,
       currentDateService
     })
   }
@@ -41,31 +54,36 @@ export class BrowsingControlTogglingService {
     browsingRulesStorageService,
     weeklyScheduleStorageService,
     blockingTimerIntegrationStorageService,
-    timerStageGetter,
+    timerInfoGetter = {
+      getTimerInfo: () => ({
+        timerStage: PomodoroStage.FOCUS,
+        isRunning: false,
+        remainingSeconds: 0,
+        longBreakSeconds: 0,
+        shortBreakSeconds: 0
+      })
+    },
     currentDateService
   }: {
     browsingControlService: BrowsingControlService
     browsingRulesStorageService: BrowsingRulesStorageService
     weeklyScheduleStorageService: WeeklyScheduleStorageService
     blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
-    timerStageGetter: TimerStageGetter
+    timerInfoGetter?: TimerInfoGetter
     currentDateService: CurrentDateService
   }) {
     this.browsingControlService = browsingControlService
     this.browsingRulesStorageService = browsingRulesStorageService
     this.weeklyScheduleStorageService = weeklyScheduleStorageService
     this.blockingTimerIntegrationStorageService = blockingTimerIntegrationStorageService
-    this.timerStageGetter = timerStageGetter
+    this.timerInfoGetter = timerInfoGetter
     this.currentDateService = currentDateService
   }
 
   async run(): Promise<void> {
     const blockingTimerIntegration = await this.blockingTimerIntegrationStorageService.get()
 
-    if (
-      blockingTimerIntegration.shouldPauseBlockingDuringBreaks &&
-      this.timerStageGetter.getTimerStage() !== PomodoroStage.FOCUS
-    ) {
+    if (blockingTimerIntegration.shouldPauseBlockingDuringBreaks && this.isInBreak()) {
       return this.browsingControlService.deactivateExistingRules()
     }
 
@@ -78,6 +96,31 @@ export class BrowsingControlTogglingService {
     }
 
     return this.browsingControlService.deactivateExistingRules()
+  }
+
+  private isInBreak(): boolean {
+    const timerInfo = this.timerInfoGetter.getTimerInfo()
+    if (timerInfo.timerStage === PomodoroStage.FOCUS) {
+      return false
+    }
+    if (timerInfo.isRunning) {
+      return true
+    }
+
+    // If user hasn't pressed the start of the timer even the stage is break, still is not in break yet.
+    if (
+      timerInfo.timerStage === PomodoroStage.SHORT_BREAK &&
+      timerInfo.shortBreakSeconds <= timerInfo.remainingSeconds
+    ) {
+      return false
+    }
+    if (
+      timerInfo.timerStage === PomodoroStage.LONG_BREAK &&
+      timerInfo.longBreakSeconds <= timerInfo.remainingSeconds
+    ) {
+      return false
+    }
+    return true
   }
 }
 

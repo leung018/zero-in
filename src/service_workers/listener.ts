@@ -104,7 +104,19 @@ export class BackgroundListener {
       browsingRulesStorageService: params.browsingRulesStorageService,
       weeklyScheduleStorageService: params.weeklyScheduleStorageService,
       blockingTimerIntegrationStorageService: params.blockingTimerIntegrationStorageService,
-      timerStageGetter: { getTimerStage: () => params.timer.getState().stage },
+      timerInfoGetter: {
+        getTimerInfo: () => {
+          const timerState = params.timer.getState()
+          const timerConfig = params.timer.getConfig()
+          return {
+            timerStage: timerState.stage,
+            isRunning: timerState.isRunning,
+            remainingSeconds: timerState.remainingSeconds,
+            longBreakSeconds: timerConfig.longBreakDuration.remainingSeconds(),
+            shortBreakSeconds: timerConfig.shortBreakDuration.remainingSeconds()
+          }
+        }
+      },
       currentDateService: params.currentDateService
     })
 
@@ -225,7 +237,7 @@ export class BackgroundListener {
             }
             case WorkRequestName.START_TIMER: {
               this.timer.start()
-              this.closeTabsService.trigger()
+              this.actionsAfterTimerStart()
               break
             }
             case WorkRequestName.PAUSE_TIMER: {
@@ -262,17 +274,17 @@ export class BackgroundListener {
             }
             case WorkRequestName.RESTART_FOCUS: {
               this.timer.restartFocus(message.payload?.nth)
-              this.closeTabsService.trigger()
+              this.actionsAfterTimerStart()
               break
             }
             case WorkRequestName.RESTART_SHORT_BREAK: {
               this.timer.restartShortBreak(message.payload?.nth)
-              this.closeTabsService.trigger()
+              this.actionsAfterTimerStart()
               break
             }
             case WorkRequestName.RESTART_LONG_BREAK: {
               this.timer.restartLongBreak()
-              this.closeTabsService.trigger()
+              this.actionsAfterTimerStart()
               break
             }
             case WorkRequestName.RESET_TIMER_CONFIG: {
@@ -291,6 +303,11 @@ export class BackgroundListener {
         backgroundPort.onMessage(listener)
       }
     )
+  }
+
+  private actionsAfterTimerStart() {
+    this.closeTabsService.trigger()
+    this.toggleBrowsingRules()
   }
 }
 

@@ -52,44 +52,126 @@ describe('BrowsingControlTogglingService', () => {
     ).toEqual(browsingRules)
   })
 
-  it('should not activate browsing rules when timer is in break and shouldPauseBlockingDuringBreaks is enabled', async () => {
-    expect(
-      await getBrowsingRulesAfterToggling({
-        browsingRules,
-        schedules: [],
-        shouldPauseBlockingDuringBreaks: true,
-        timerStage: PomodoroStage.SHORT_BREAK
-      })
-    ).toBeNull()
-    expect(
-      await getBrowsingRulesAfterToggling({
-        browsingRules,
-        schedules: [],
-        shouldPauseBlockingDuringBreaks: true,
-        timerStage: PomodoroStage.LONG_BREAK
-      })
-    ).toBeNull()
+  it.each([
+    newTimerInfo({
+      timerStage: PomodoroStage.SHORT_BREAK,
+      isRunning: true,
+      remainingSeconds: 99,
+      shortBreakSeconds: 99
+    }),
+    newTimerInfo({
+      timerStage: PomodoroStage.LONG_BREAK,
+      isRunning: true,
+      remainingSeconds: 99,
+      longBreakSeconds: 99
+    }),
+    newTimerInfo({
+      timerStage: PomodoroStage.SHORT_BREAK,
+      isRunning: false,
+      remainingSeconds: 98,
+      shortBreakSeconds: 99
+    }),
+    newTimerInfo({
+      timerStage: PomodoroStage.LONG_BREAK,
+      isRunning: false,
+      remainingSeconds: 98,
+      longBreakSeconds: 99
+    }),
+    newTimerInfo({
+      timerStage: PomodoroStage.SHORT_BREAK,
+      isRunning: true,
+      remainingSeconds: 0,
+      shortBreakSeconds: 99
+    }),
+    newTimerInfo({
+      timerStage: PomodoroStage.LONG_BREAK,
+      isRunning: true,
+      remainingSeconds: 0,
+      longBreakSeconds: 99
+    })
+  ])(
+    'should not activate browsing rules when timer is in break and shouldPauseBlockingDuringBreaks is enabled',
+    async (timerInfo) => {
+      expect(
+        await getBrowsingRulesAfterToggling({
+          browsingRules,
+          schedules: [],
+          shouldPauseBlockingDuringBreaks: true,
+          timerInfo
+        })
+      ).toBeNull()
+    }
+  )
 
-    // Otherwise, the browsing rules should be activated according to the schedules
-    expect(
-      await getBrowsingRulesAfterToggling({
-        browsingRules,
-        schedules: [],
-        shouldPauseBlockingDuringBreaks: true,
+  it.each([
+    {
+      shouldPauseBlockingDuringBreaks: true,
+      timerInfo: newTimerInfo({
         timerStage: PomodoroStage.FOCUS
       })
-    ).toEqual(browsingRules)
-
-    expect(
-      await getBrowsingRulesAfterToggling({
-        browsingRules,
-        schedules: [],
-        shouldPauseBlockingDuringBreaks: false,
-        timerStage: PomodoroStage.SHORT_BREAK
+    },
+    {
+      shouldPauseBlockingDuringBreaks: false,
+      timerInfo: newTimerInfo({
+        timerStage: PomodoroStage.SHORT_BREAK,
+        isRunning: true
       })
-    ).toEqual(browsingRules)
-  })
+    },
+    {
+      shouldPauseBlockingDuringBreaks: false,
+      timerInfo: newTimerInfo({
+        timerStage: PomodoroStage.LONG_BREAK,
+        isRunning: true
+      })
+    },
+    {
+      shouldPauseBlockingDuringBreaks: true,
+      timerInfo: newTimerInfo({
+        timerStage: PomodoroStage.SHORT_BREAK,
+        isRunning: false,
+        remainingSeconds: 99,
+        shortBreakSeconds: 99
+      })
+    },
+    {
+      shouldPauseBlockingDuringBreaks: true,
+      timerInfo: newTimerInfo({
+        timerStage: PomodoroStage.LONG_BREAK,
+        isRunning: false,
+        remainingSeconds: 99,
+        longBreakSeconds: 99
+      })
+    }
+  ])(
+    'should activate browsing rule if timer is not in break or shouldPauseBlockingDuringBreaks is disabled',
+    async ({ shouldPauseBlockingDuringBreaks, timerInfo }) => {
+      expect(
+        await getBrowsingRulesAfterToggling({
+          browsingRules,
+          schedules: [],
+          shouldPauseBlockingDuringBreaks,
+          timerInfo
+        })
+      ).toEqual(browsingRules)
+    }
+  )
 })
+
+function newTimerInfo({
+  timerStage = PomodoroStage.FOCUS,
+  isRunning = false,
+  remainingSeconds = 99,
+  longBreakSeconds = 999,
+  shortBreakSeconds = 499
+} = {}) {
+  return {
+    timerStage,
+    isRunning,
+    remainingSeconds,
+    longBreakSeconds,
+    shortBreakSeconds
+  }
+}
 
 async function getBrowsingRulesAfterToggling({
   browsingRules = new BrowsingRules(),
@@ -102,7 +184,7 @@ async function getBrowsingRulesAfterToggling({
   ],
   currentDate = new Date(),
   shouldPauseBlockingDuringBreaks = false,
-  timerStage = PomodoroStage.FOCUS
+  timerInfo = newTimerInfo()
 } = {}) {
   const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
   await browsingRulesStorageService.save(browsingRules)
@@ -126,7 +208,7 @@ async function getBrowsingRulesAfterToggling({
     weeklyScheduleStorageService,
     currentDateService,
     blockingTimerIntegrationStorageService,
-    timerStageGetter: { getTimerStage: () => timerStage }
+    timerInfoGetter: { getTimerInfo: () => timerInfo }
   })
 
   await browsingControlTogglingService.run()

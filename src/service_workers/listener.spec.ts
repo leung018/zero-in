@@ -1,26 +1,21 @@
-import { describe, expect, it } from 'vitest'
-import { WorkRequestName, type WorkRequest } from './request'
-import { type Badge, type BadgeColor } from '../infra/badge'
-import { Duration } from '../domain/pomodoro/duration'
-import config from '../config'
-import { setUpListener } from '../test_utils/listener'
-import { TimerConfig } from '../domain/pomodoro/config'
-import { TimerStateStorageService } from '../domain/pomodoro/state/storage'
-import type { TimerState } from '../domain/pomodoro/state'
-import { PomodoroStage } from '../domain/pomodoro/stage'
 import { flushPromises } from '@vue/test-utils'
-import type { FocusSessionRecord } from '../domain/pomodoro/record'
+import { describe, expect, it } from 'vitest'
+import config from '../config'
+import { BrowsingRules } from '../domain/browsing_rules'
 import {
   newTestNotificationSetting,
   type NotificationSetting
 } from '../domain/notification_setting'
+import { TimerConfig } from '../domain/pomodoro/config'
+import { Duration } from '../domain/pomodoro/duration'
+import type { FocusSessionRecord } from '../domain/pomodoro/record'
+import { PomodoroStage } from '../domain/pomodoro/stage'
+import type { TimerState } from '../domain/pomodoro/state'
+import { type Badge, type BadgeColor } from '../infra/badge'
 import type { Port } from '../infra/communication'
+import { setUpListener } from '../test_utils/listener'
+import { WorkRequestName, type WorkRequest } from './request'
 import type { WorkResponse } from './response'
-import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
-import { BrowsingRules } from '../domain/browsing_rules'
-import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
-import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
-import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -377,7 +372,7 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
 
-  it('should toggle browsing control when timer ever timer duration is finished', async () => {
+  it('should toggle browsing control when start break or finish break', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
 
     const { browsingControlService, clientPort, scheduler, listener } = await startListener({
@@ -385,6 +380,7 @@ describe('BackgroundListener', () => {
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 })
       }),
+      shouldPauseBlockingDuringBreaks: true,
       browsingRules,
       weeklySchedules: []
     })
@@ -398,12 +394,53 @@ describe('BackgroundListener', () => {
     scheduler.advanceTime(3000)
     await flushPromises()
 
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+
+    // Start break
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
     expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
 
+    // End break
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
     await flushPromises()
+
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+  })
+
+  it('should toggle browsing control whenever restart', async () => {
+    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
+
+    const { browsingControlService, clientPort, listener } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 4
+      }),
+      browsingRules,
+      shouldPauseBlockingDuringBreaks: true,
+      weeklySchedules: []
+    })
+
+    listener.toggleBrowsingRules()
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+
+    clientPort.send({ name: WorkRequestName.RESTART_SHORT_BREAK, payload: { nth: 1 } })
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+
+    clientPort.send({ name: WorkRequestName.RESTART_FOCUS, payload: { nth: 1 } })
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+
+    clientPort.send({ name: WorkRequestName.RESTART_LONG_BREAK })
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
   })
 })
 

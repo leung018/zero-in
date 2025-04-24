@@ -55,7 +55,8 @@ describe('TimerIntegrationSetting', () => {
         shouldPauseBlockingDuringBreaks: false
       },
       timerState: newTestTimerState({
-        stage: PomodoroStage.SHORT_BREAK
+        stage: PomodoroStage.SHORT_BREAK,
+        isRunning: true
       }),
       browsingRules,
       weeklySchedules: []
