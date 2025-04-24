@@ -409,6 +409,39 @@ describe('BackgroundListener', () => {
 
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
   })
+
+  it('should toggle browsing control whenever restart', async () => {
+    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
+
+    const { browsingControlService, clientPort, listener } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 4
+      }),
+      browsingRules,
+      shouldPauseBlockingDuringBreaks: true,
+      weeklySchedules: []
+    })
+
+    listener.toggleBrowsingRules()
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+
+    clientPort.send({ name: WorkRequestName.RESTART_SHORT_BREAK, payload: { nth: 1 } })
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+
+    clientPort.send({ name: WorkRequestName.RESTART_FOCUS, payload: { nth: 1 } })
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+
+    clientPort.send({ name: WorkRequestName.RESTART_LONG_BREAK })
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+  })
 })
 
 async function startListener({
