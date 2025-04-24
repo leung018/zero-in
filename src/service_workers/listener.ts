@@ -238,6 +238,7 @@ export class BackgroundListener {
             case WorkRequestName.START_TIMER: {
               this.timer.start()
               this.closeTabsService.trigger()
+              this.toggleBrowsingRules()
               break
             }
             case WorkRequestName.PAUSE_TIMER: {

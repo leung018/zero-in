@@ -372,34 +372,43 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
 
-  // it('should toggle browsing control when ever timer duration is finished', async () => {
-  //   const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
+  it('should toggle browsing control when start break or finish break', async () => {
+    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
 
-  //   const { browsingControlService, clientPort, scheduler, listener } = await startListener({
-  //     timerConfig: TimerConfig.newTestInstance({
-  //       focusDuration: new Duration({ seconds: 3 }),
-  //       shortBreakDuration: new Duration({ seconds: 1 })
-  //     }),
-  //     browsingRules,
-  //     weeklySchedules: []
-  //   })
+    const { browsingControlService, clientPort, scheduler, listener } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 3 }),
+        shortBreakDuration: new Duration({ seconds: 1 })
+      }),
+      shouldPauseBlockingDuringBreaks: true,
+      browsingRules,
+      weeklySchedules: []
+    })
 
-  //   listener.toggleBrowsingRules()
-  //   await flushPromises()
+    listener.toggleBrowsingRules()
+    await flushPromises()
 
-  //   expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
 
-  //   clientPort.send({ name: WorkRequestName.START_TIMER })
-  //   scheduler.advanceTime(3000)
-  //   await flushPromises()
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(3000)
+    await flushPromises()
 
-  //   expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
 
-  //   clientPort.send({ name: WorkRequestName.START_TIMER })
-  //   scheduler.advanceTime(1000)
-  //   await flushPromises()
-  //   expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
-  // })
+    // Start break
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+
+    // End break
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(1000)
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+  })
 })
 
 async function startListener({
