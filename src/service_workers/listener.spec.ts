@@ -372,7 +372,7 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
 
-  it('should toggle browsing control when timer ever timer duration is finished', async () => {
+  it('should toggle browsing control when ever timer duration is finished', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
 
     const { browsingControlService, clientPort, scheduler, listener } = await startListener({
