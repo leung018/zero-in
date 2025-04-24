@@ -3,7 +3,7 @@ import { TimerConfig } from '../domain/pomodoro/config'
 import { flushPromises, mount } from '@vue/test-utils'
 import TestingConfigPage from './TestingConfigPage.vue'
 import { Duration } from '../domain/pomodoro/duration'
-import { startBackgroundListener } from '../test_utils/listener'
+import { setUpListener } from '../test_utils/listener'
 import { assertInputValue } from '../test_utils/assert'
 
 describe('TestingConfigPage', () => {
@@ -60,9 +60,10 @@ describe('TestingConfigPage', () => {
 })
 
 async function mountPage(initialTimerConfig: TimerConfig) {
-  const { timerConfigStorageService, timer, communicationManager } = await startBackgroundListener({
+  const { timerConfigStorageService, timer, communicationManager, listener } = await setUpListener({
     timerConfig: initialTimerConfig
   })
+  await listener.start()
   const wrapper = mount(TestingConfigPage, {
     props: {
       port: communicationManager.clientConnect(),

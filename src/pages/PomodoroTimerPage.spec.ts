@@ -3,7 +3,7 @@ import PomodoroTimerPage from './PomodoroTimerPage.vue'
 import { expect, describe, it } from 'vitest'
 import { Duration } from '../domain/pomodoro/duration'
 import { FakeCommunicationManager } from '../infra/communication'
-import { startBackgroundListener } from '../test_utils/listener'
+import { setUpListener } from '../test_utils/listener'
 import { TimerConfig } from '../domain/pomodoro/config'
 import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
 
@@ -335,10 +335,11 @@ describe('PomodoroTimerPage', () => {
 })
 
 async function startListenerAndMountPage(timerConfig = TimerConfig.newTestInstance()) {
-  const { scheduler, communicationManager, timerConfigStorageService } =
-    await startBackgroundListener({
+  const { scheduler, communicationManager, timerConfigStorageService, listener } =
+    await setUpListener({
       timerConfig
     })
+  await listener.start()
   const wrapper = await mountPage({
     port: communicationManager.clientConnect(),
     timerConfigStorageService

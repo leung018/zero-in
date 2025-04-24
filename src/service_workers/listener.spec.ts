@@ -3,7 +3,7 @@ import { WorkRequestName, type WorkRequest } from './request'
 import { type Badge, type BadgeColor } from '../infra/badge'
 import { Duration } from '../domain/pomodoro/duration'
 import config from '../config'
-import { startBackgroundListener } from '../test_utils/listener'
+import { setUpListener } from '../test_utils/listener'
 import { TimerConfig } from '../domain/pomodoro/config'
 import { TimerStateStorageService } from '../domain/pomodoro/state/storage'
 import type { TimerState } from '../domain/pomodoro/state'
@@ -340,7 +340,13 @@ describe('BackgroundListener', () => {
   })
 
   it('should restore timer state from storage', async () => {
-    const timerStateStorageService = TimerStateStorageService.createFake()
+    const { listener, timerStateStorageService } = await setUpListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 3 }),
+        focusSessionsPerCycle: 2
+      })
+    })
+
     const targetState: TimerState = {
       remainingSeconds: 1000,
       isRunning: true,
@@ -349,13 +355,7 @@ describe('BackgroundListener', () => {
     }
     await timerStateStorageService.save(targetState)
 
-    const { listener } = await startListener({
-      timerConfig: TimerConfig.newTestInstance({
-        focusDuration: new Duration({ seconds: 3 }),
-        focusSessionsPerCycle: 2
-      }),
-      timerStateStorageService
-    })
+    await listener.start()
 
     expect(listener.getTimerState()).toEqual(targetState)
   })
@@ -410,40 +410,29 @@ describe('BackgroundListener', () => {
 async function startListener({
   timerConfig = TimerConfig.newTestInstance(),
   notificationSetting = newTestNotificationSetting(),
-  timerStateStorageService = TimerStateStorageService.createFake(),
   focusSessionRecordHouseKeepDays = 30,
   shouldPauseBlockingDuringBreaks = true,
   browsingRules = new BrowsingRules(),
   weeklySchedules = []
 } = {}) {
-  const blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake()
-  await blockingTimerIntegrationStorageService.save({
+  const context = await setUpListener({
+    timerConfig,
+    focusSessionRecordHouseKeepDays
+  })
+
+  await context.blockingTimerIntegrationStorageService.save({
     shouldPauseBlockingDuringBreaks
   })
+  await context.weeklyScheduleStorageService.saveAll(weeklySchedules)
+  await context.browsingRulesStorageService.save(browsingRules)
+  await context.notificationSettingStorageService.save(notificationSetting)
 
-  const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
-  await weeklyScheduleStorageService.saveAll(weeklySchedules)
+  await context.listener.start()
 
-  const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
-  await browsingRulesStorageService.save(browsingRules)
-
-  const notificationSettingStorageService = NotificationSettingStorageService.createFake()
-  await notificationSettingStorageService.save(notificationSetting)
-
-  const props = await startBackgroundListener({
-    timerConfig,
-    timerStateStorageService,
-    focusSessionRecordHouseKeepDays,
-    blockingTimerIntegrationStorageService,
-    browsingRulesStorageService,
-    weeklyScheduleStorageService,
-    notificationSettingStorageService
-  })
-
-  const clientPort: Port<WorkRequest, WorkResponse> = props.communicationManager.clientConnect()
+  const clientPort: Port<WorkRequest, WorkResponse> = context.communicationManager.clientConnect()
 
   return {
-    ...props,
+    ...context,
     clientPort
   }
 }

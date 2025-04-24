@@ -1,11 +1,11 @@
+import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { TimerConfig } from '../domain/pomodoro/config'
-import { startBackgroundListener } from '../test_utils/listener'
-import { flushPromises, mount } from '@vue/test-utils'
-import TimerSettingPage from './TimerSettingPage.vue'
 import { Duration } from '../domain/pomodoro/duration'
-import { assertCheckboxValue, assertInputValue } from '../test_utils/assert'
 import { FakeActionService } from '../infra/action'
+import { assertCheckboxValue, assertInputValue } from '../test_utils/assert'
+import { setUpListener } from '../test_utils/listener'
+import TimerSettingPage from './TimerSettingPage.vue'
 
 describe('TimerSettingPage', () => {
   it('should render timer config properly', async () => {
@@ -130,9 +130,11 @@ describe('TimerSettingPage', () => {
 })
 
 async function mountPage(initialTimerConfig: TimerConfig = TimerConfig.newTestInstance()) {
-  const { timerConfigStorageService, timer, communicationManager } = await startBackgroundListener({
+  const { timerConfigStorageService, timer, communicationManager, listener } = await setUpListener({
     timerConfig: initialTimerConfig
   })
+  await listener.start()
+
   const reloadService = new FakeActionService()
   const wrapper = mount(TimerSettingPage, {
     props: {

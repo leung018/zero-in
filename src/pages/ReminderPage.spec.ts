@@ -1,16 +1,15 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import ReminderPage from './ReminderPage.vue'
 import { describe, expect, it } from 'vitest'
-import { Duration } from '../domain/pomodoro/duration'
-import { PomodoroStage } from '../domain/pomodoro/stage'
-import { startBackgroundListener } from '../test_utils/listener'
-import { FakeActionService } from '../infra/action'
-import { TimerConfig } from '../domain/pomodoro/config'
-import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
-import { newFocusSessionRecord } from '../domain/pomodoro/record'
-import { Time } from '../domain/time'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
+import { TimerConfig } from '../domain/pomodoro/config'
+import { Duration } from '../domain/pomodoro/duration'
+import { newFocusSessionRecord } from '../domain/pomodoro/record'
+import { PomodoroStage } from '../domain/pomodoro/stage'
+import { Time } from '../domain/time'
+import { FakeActionService } from '../infra/action'
 import { CurrentDateService } from '../infra/current_date'
+import { setUpListener } from '../test_utils/listener'
+import ReminderPage from './ReminderPage.vue'
 
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
@@ -90,15 +89,19 @@ async function mountPage({
   currentDate = new Date()
 } = {}) {
   const currentDateService = CurrentDateService.createFake(currentDate)
-  const { scheduler, timer, communicationManager } = await startBackgroundListener({
-    timerConfig,
-    currentDateService
-  })
-  const closeCurrentTabService = new FakeActionService()
+  const { scheduler, timer, communicationManager, listener, focusSessionRecordStorageService } =
+    await setUpListener({
+      timerConfig,
+      currentDateService
+    })
   const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
   await dailyResetTimeStorageService.save(dailyCutOffTime)
-  const focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
+
   await focusSessionRecordStorageService.saveAll(focusSessionRecords)
+
+  await listener.start()
+
+  const closeCurrentTabService = new FakeActionService()
 
   const wrapper = mount(ReminderPage, {
     props: {
