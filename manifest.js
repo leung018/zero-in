@@ -3,6 +3,7 @@ import process from 'process'
 
 const manifestConfig = {
   manifest_version: 3,
+  minimum_chrome_version: '114',
   name: process.env.NAME || 'Task Concentrator',
   description: process.env.DESCRIPTION || 'TODO: Write a description',
   version: process.env.VERSION || '0.1',
