@@ -105,6 +105,19 @@ export class BackgroundListener {
       weeklyScheduleStorageService: params.weeklyScheduleStorageService,
       blockingTimerIntegrationStorageService: params.blockingTimerIntegrationStorageService,
       timerStageGetter: { getTimerStage: () => params.timer.getState().stage },
+      timerInfoGetter: {
+        getTimerInfo: () => {
+          const timerState = params.timer.getState()
+          const timerConfig = params.timer.getConfig()
+          return {
+            timerStage: timerState.stage,
+            isRunning: timerState.isRunning,
+            remainingSeconds: timerState.remainingSeconds,
+            longBreakSeconds: timerConfig.longBreakDuration.remainingSeconds(),
+            shortBreakSeconds: timerConfig.shortBreakDuration.remainingSeconds()
+          }
+        }
+      },
       currentDateService: params.currentDateService
     })
 
