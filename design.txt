@@ -3,4 +3,3 @@ Remove it when finished.
 
 (DD/MM/YYYY)
 01/04/2025: Remove pomodoro in naming
-02/04/2025: Use assertInputValue and assertCheckboxValue
