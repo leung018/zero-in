@@ -2,8 +2,12 @@ import { expect } from 'vitest'
 import { DOMWrapper, VueWrapper } from '@vue/test-utils'
 
 export function assertInputValue(wrapper: VueWrapper, selector: string, value: string) {
-  const input = wrapper.find(selector).element as HTMLInputElement
-  expect(input.value).toBe(value)
+  const input = wrapper.find(selector)
+  assertIsValue(input, value)
+}
+
+export function assertIsValue(input: DOMWrapper<Element>, value: string) {
+  expect((input.element as HTMLInputElement).value).toBe(value)
 }
 
 export function assertCheckboxValue(wrapper: VueWrapper, selector: string, value: boolean) {
