@@ -20,7 +20,7 @@ import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { ChromeCommunicationManager } from '../chrome/communication'
 import { MultipleActionService } from '../infra/multiple_actions'
 import { ChromeNewTabService } from '../chrome/new_tab'
-import { ChromeDesktopNotificationService } from '../chrome/notification'
+import { ChromeDesktopNotifier } from '../chrome/notification'
 import { ChromeBadgeDisplayService } from '../chrome/badge'
 import { ChromeCloseTabsService } from '../chrome/close_tabs'
 import { ChromeBrowsingControlService } from '../chrome/browsing_control'
@@ -28,11 +28,12 @@ import { SoundService } from '../chrome/sound'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 import type { TimerState } from '../domain/pomodoro/state'
 import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
+import { DesktopNotificationService, type DesktopNotifier } from '../infra/desktop_notification'
 
 type ListenerParams = {
   communicationManager: CommunicationManager
   reminderTabService: ActionService
-  desktopNotificationService: ActionService
+  desktopNotifier: DesktopNotifier
   soundService: ActionService
   notificationSettingStorageService: NotificationSettingStorageService
   badgeDisplayService: BadgeDisplayService
@@ -55,7 +56,6 @@ export class BackgroundListener {
     return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
       reminderTabService: new ChromeNewTabService(config.getReminderPageUrl()),
-      desktopNotificationService: new ChromeDesktopNotificationService(),
       soundService: new SoundService(),
       notificationSettingStorageService: NotificationSettingStorageService.create(),
       badgeDisplayService: new ChromeBadgeDisplayService(),
@@ -69,7 +69,8 @@ export class BackgroundListener {
       currentDateService: CurrentDateService.create(),
       blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.create(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
-      timer: PomodoroTimer.create()
+      timer: PomodoroTimer.create(),
+      desktopNotifier: new ChromeDesktopNotifier()
     })
   }
 
@@ -124,7 +125,14 @@ export class BackgroundListener {
     this.notificationService = new MultipleActionService([])
     this.notificationSettingStorageService = params.notificationSettingStorageService
     this.soundService = params.soundService
-    this.desktopNotificationService = params.desktopNotificationService
+    this.desktopNotificationService = new DesktopNotificationService({
+      desktopNotifier: params.desktopNotifier,
+      onClickStartNext: () => {
+        // TODO: Think of how to use unit test cover below
+        this.timer.start()
+        this.actionsAfterTimerStart()
+      }
+    })
     this.reminderTabService = params.reminderTabService
 
     this.badgeDisplayService = params.badgeDisplayService

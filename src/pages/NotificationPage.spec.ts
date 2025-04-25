@@ -66,23 +66,17 @@ describe('NotificationPage', () => {
   })
 
   it('should update the notification behavior after clicking save', async () => {
-    const {
-      wrapper,
-      clientPort,
-      scheduler,
-      desktopNotificationService,
-      soundService,
-      reminderTabService
-    } = await mountPage({
-      notificationSetting: {
-        reminderTab: true,
-        desktopNotification: false,
-        sound: true
-      },
-      timerConfig: TimerConfig.newTestInstance({
-        focusDuration: new Duration({ seconds: 1 })
+    const { wrapper, clientPort, scheduler, desktopNotifier, soundService, reminderTabService } =
+      await mountPage({
+        notificationSetting: {
+          reminderTab: true,
+          desktopNotification: false,
+          sound: true
+        },
+        timerConfig: TimerConfig.newTestInstance({
+          focusDuration: new Duration({ seconds: 1 })
+        })
       })
-    })
 
     await saveNotificationSetting(wrapper, {
       reminderTab: false,
@@ -95,7 +89,7 @@ describe('NotificationPage', () => {
     scheduler.advanceTime(1000)
 
     expect(reminderTabService.getTriggerCount()).toBe(0)
-    expect(desktopNotificationService.getTriggerCount()).toBe(1)
+    expect(desktopNotifier.getTriggerCount()).toBe(1)
     expect(soundService.getTriggerCount()).toBe(0)
   })
 
@@ -119,7 +113,7 @@ async function mountPage({
   const {
     scheduler,
     communicationManager,
-    desktopNotificationService,
+    desktopNotifier,
     soundService,
     reminderTabService,
     notificationSettingStorageService,
@@ -148,7 +142,7 @@ async function mountPage({
     reloadService,
     clientPort,
     scheduler,
-    desktopNotificationService,
+    desktopNotifier,
     soundService,
     reminderTabService
   }
