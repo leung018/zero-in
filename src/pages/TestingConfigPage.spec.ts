@@ -4,7 +4,8 @@ import { flushPromises, mount } from '@vue/test-utils'
 import TestingConfigPage from './TestingConfigPage.vue'
 import { Duration } from '../domain/pomodoro/duration'
 import { setUpListener } from '../test_utils/listener'
-import { assertInputValue } from '../test_utils/assert'
+import { assertSelectorInputValue } from '../test_utils/assert'
+import { dataTestSelector } from '../test_utils/selector'
 
 describe('TestingConfigPage', () => {
   it('should render timer config', async () => {
@@ -17,10 +18,10 @@ describe('TestingConfigPage', () => {
       })
     )
 
-    assertInputValue(wrapper, '[data-test="focus-duration"]', '24')
-    assertInputValue(wrapper, '[data-test="short-break-duration"]', '4')
-    assertInputValue(wrapper, '[data-test="long-break-duration"]', '14')
-    assertInputValue(wrapper, '[data-test="num-of-pomodori-per-cycle"]', '3')
+    assertSelectorInputValue(wrapper, dataTestSelector('focus-duration'), '24')
+    assertSelectorInputValue(wrapper, dataTestSelector('short-break-duration'), '4')
+    assertSelectorInputValue(wrapper, dataTestSelector('long-break-duration'), '14')
+    assertSelectorInputValue(wrapper, dataTestSelector('num-of-pomodori-per-cycle'), '3')
   })
 
   it('should update timer config', async () => {
@@ -38,12 +39,14 @@ describe('TestingConfigPage', () => {
     const newLongBreakDuration = 15
     const newNumOfPomodoriPerCycle = 4
 
-    await wrapper.find('[data-test="focus-duration"]').setValue(newFocusDuration)
-    await wrapper.find('[data-test="short-break-duration"]').setValue(newShortBreakDuration)
-    await wrapper.find('[data-test="long-break-duration"]').setValue(newLongBreakDuration)
-    await wrapper.find('[data-test="num-of-pomodori-per-cycle"]').setValue(newNumOfPomodoriPerCycle)
+    await wrapper.find(dataTestSelector('focus-duration')).setValue(newFocusDuration)
+    await wrapper.find(dataTestSelector('short-break-duration')).setValue(newShortBreakDuration)
+    await wrapper.find(dataTestSelector('long-break-duration')).setValue(newLongBreakDuration)
+    await wrapper
+      .find(dataTestSelector('num-of-pomodori-per-cycle'))
+      .setValue(newNumOfPomodoriPerCycle)
 
-    await wrapper.find('[data-test="save-button"]').trigger('click')
+    await wrapper.find(dataTestSelector('save-button')).trigger('click')
     await flushPromises()
 
     const newConfig = new TimerConfig({

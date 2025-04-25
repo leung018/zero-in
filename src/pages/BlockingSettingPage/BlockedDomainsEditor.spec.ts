@@ -4,6 +4,8 @@ import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { BrowsingRules } from '@/domain/browsing_rules'
 import { setUpListener } from '@/test_utils/listener'
+import { dataTestSelector } from '../../test_utils/selector'
+import { assertSelectorInputValue } from '../../test_utils/assert'
 
 describe('BlockedDomainsEditor', () => {
   it('should render blocked domains', async () => {
@@ -40,9 +42,7 @@ describe('BlockedDomainsEditor', () => {
 
     await addBlockedDomain(wrapper, 'example.com')
 
-    const inputElement = wrapper.find("[data-test='blocked-domain-input']")
-      .element as HTMLInputElement
-    expect(inputElement.value).toBe('')
+    assertSelectorInputValue(wrapper, dataTestSelector('blocked-domain-input'), '')
   })
 
   it('should not save blocked domain when input box is empty', async () => {
@@ -119,10 +119,10 @@ async function mountBlockedDomainsEditor({
 }
 
 async function addBlockedDomain(wrapper: VueWrapper, domain: string) {
-  const inputElement = wrapper.find("[data-test='blocked-domain-input']")
+  const inputElement = wrapper.find(dataTestSelector('blocked-domain-input'))
   await inputElement.setValue(domain)
 
-  const addButton = wrapper.find("[data-test='add-domain-button']")
+  const addButton = wrapper.find(dataTestSelector('add-domain-button'))
   addButton.trigger('click')
   await flushPromises()
 }
@@ -134,7 +134,7 @@ async function removeBlockedDomain(wrapper: VueWrapper, domain: string) {
 }
 
 function assertDomainsDisplayed(wrapper: VueWrapper, domains: string[]) {
-  const blockedDomains = wrapper.findAll("[data-test='blocked-domain']")
+  const blockedDomains = wrapper.findAll(dataTestSelector('blocked-domain'))
   expect(blockedDomains.length).toBe(domains.length)
 
   for (let i = 0; i < domains.length; i++) {

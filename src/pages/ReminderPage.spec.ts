@@ -10,6 +10,7 @@ import { FakeActionService } from '../infra/action'
 import { CurrentDateService } from '../infra/current_date'
 import { setUpListener } from '../test_utils/listener'
 import ReminderPage from './ReminderPage.vue'
+import { dataTestSelector } from '../test_utils/selector'
 
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
@@ -26,19 +27,19 @@ describe('ReminderPage', () => {
     scheduler.advanceTime(3001)
     await flushPromises()
 
-    expect(wrapper.find("[data-test='hint-message']").text()).toContain('Take a short break')
+    expect(wrapper.find(dataTestSelector('hint-message')).text()).toContain('Take a short break')
 
     timer.start()
     scheduler.advanceTime(1001)
     await flushPromises()
 
-    expect(wrapper.find("[data-test='hint-message']").text()).toContain('Start focusing')
+    expect(wrapper.find(dataTestSelector('hint-message')).text()).toContain('Start focusing')
 
     timer.start()
     scheduler.advanceTime(3001)
     await flushPromises()
 
-    expect(wrapper.find("[data-test='hint-message']").text()).toContain('Take a break')
+    expect(wrapper.find(dataTestSelector('hint-message')).text()).toContain('Take a break')
   })
 
   it('should click start button to start timer again', async () => {
@@ -56,7 +57,7 @@ describe('ReminderPage', () => {
 
     expect(timer.getState().isRunning).toBe(false)
 
-    wrapper.find("[data-test='start-button']").trigger('click')
+    wrapper.find(dataTestSelector('start-button')).trigger('click')
     scheduler.advanceTime(1000)
     await flushPromises()
 
@@ -77,8 +78,8 @@ describe('ReminderPage', () => {
       currentDate: new Date(2025, 2, 2, 14, 0)
     })
 
-    expect(wrapper.find("[data-test='reset-time']").text()).toBe('15:03')
-    expect(wrapper.find("[data-test='daily-completed-pomodori']").text()).toBe('2')
+    expect(wrapper.find(dataTestSelector('reset-time')).text()).toBe('15:03')
+    expect(wrapper.find(dataTestSelector('daily-completed-pomodori')).text()).toBe('2')
   })
 })
 

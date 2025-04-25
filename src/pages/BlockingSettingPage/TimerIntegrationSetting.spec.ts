@@ -6,7 +6,7 @@ import { BrowsingRules } from '../../domain/browsing_rules'
 import { PomodoroStage } from '../../domain/pomodoro/stage'
 import { newTestTimerState } from '../../domain/pomodoro/state'
 import { FakeActionService } from '../../infra/action'
-import { assertCheckboxValue } from '../../test_utils/assert'
+import { assertSelectorCheckboxValue } from '../../test_utils/assert'
 import { setUpListener } from '../../test_utils/listener'
 import { dataTestSelector } from '../../test_utils/selector'
 import TimerIntegrationSetting from './TimerIntegrationSetting.vue'
@@ -18,7 +18,7 @@ describe('TimerIntegrationSetting', () => {
         shouldPauseBlockingDuringBreaks: false
       }
     })
-    assertCheckboxValue(wrapper, dataTestSelector('pause-blocking-during-breaks'), false)
+    assertSelectorCheckboxValue(wrapper, dataTestSelector('pause-blocking-during-breaks'), false)
   })
 
   it('should persist setting after clicking save', async () => {
