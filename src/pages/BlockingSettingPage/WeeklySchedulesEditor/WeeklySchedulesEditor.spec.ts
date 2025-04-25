@@ -8,6 +8,7 @@ import { BrowsingRules } from '@/domain/browsing_rules'
 import { setUpListener } from '@/test_utils/listener'
 import { CurrentDateService } from '../../../infra/current_date'
 import { dataTestSelector } from '../../../test_utils/selector'
+import { assertInputValue } from '../../../test_utils/assert'
 
 describe('WeeklySchedulesEditor', () => {
   it('should render weekday checkboxes properly', async () => {
@@ -331,13 +332,8 @@ async function addWeeklySchedule(
 }
 
 function assertAllInputsAreNotSet(wrapper: VueWrapper) {
-  const startTimeInputElement = wrapper.find(dataTestSelector('start-time-input'))
-    .element as HTMLInputElement
-  const endTimeInputElement = wrapper.find(dataTestSelector('end-time-input'))
-    .element as HTMLInputElement
-
-  expect(startTimeInputElement.value).toBe('00:00')
-  expect(endTimeInputElement.value).toBe('00:00')
+  assertInputValue(wrapper, dataTestSelector('start-time-input'), '00:00')
+  assertInputValue(wrapper, dataTestSelector('end-time-input'), '00:00')
 
   const weekdayCheckboxes = wrapper.findAll("[data-test^='check-weekday-']")
   for (const weekdayCheckbox of weekdayCheckboxes) {
