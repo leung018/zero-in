@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest"
-import { formatNumber, getNumberWithOrdinal } from "./format"
+import { describe, expect, it } from 'vitest'
+import { formatNumber, getNumberWithOrdinal } from './format'
 
 describe('formatNumber', () => {
   it('should format number', () => {
