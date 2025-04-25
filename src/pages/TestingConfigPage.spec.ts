@@ -4,7 +4,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import TestingConfigPage from './TestingConfigPage.vue'
 import { Duration } from '../domain/pomodoro/duration'
 import { setUpListener } from '../test_utils/listener'
-import { assertInputValue } from '../test_utils/assert'
+import { assertSelectorInputValue } from '../test_utils/assert'
 import { dataTestSelector } from '../test_utils/selector'
 
 describe('TestingConfigPage', () => {
@@ -18,10 +18,10 @@ describe('TestingConfigPage', () => {
       })
     )
 
-    assertInputValue(wrapper, dataTestSelector('focus-duration'), '24')
-    assertInputValue(wrapper, dataTestSelector('short-break-duration'), '4')
-    assertInputValue(wrapper, dataTestSelector('long-break-duration'), '14')
-    assertInputValue(wrapper, dataTestSelector('num-of-pomodori-per-cycle'), '3')
+    assertSelectorInputValue(wrapper, dataTestSelector('focus-duration'), '24')
+    assertSelectorInputValue(wrapper, dataTestSelector('short-break-duration'), '4')
+    assertSelectorInputValue(wrapper, dataTestSelector('long-break-duration'), '14')
+    assertSelectorInputValue(wrapper, dataTestSelector('num-of-pomodori-per-cycle'), '3')
   })
 
   it('should update timer config', async () => {

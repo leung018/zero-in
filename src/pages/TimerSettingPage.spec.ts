@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { TimerConfig } from '../domain/pomodoro/config'
 import { Duration } from '../domain/pomodoro/duration'
 import { FakeActionService } from '../infra/action'
-import { assertCheckboxValue, assertInputValue } from '../test_utils/assert'
+import { assertSelectorCheckboxValue, assertSelectorInputValue } from '../test_utils/assert'
 import { setUpListener } from '../test_utils/listener'
 import TimerSettingPage from './TimerSettingPage.vue'
 import { dataTestSelector } from '../test_utils/selector'
@@ -19,10 +19,10 @@ describe('TimerSettingPage', () => {
       })
     )
 
-    assertInputValue(wrapper, dataTestSelector('focus-duration'), '24')
-    assertInputValue(wrapper, dataTestSelector('short-break-duration'), '4')
-    assertInputValue(wrapper, dataTestSelector('long-break-duration'), '13')
-    assertInputValue(wrapper, dataTestSelector('focus-sessions-per-cycle'), '3')
+    assertSelectorInputValue(wrapper, dataTestSelector('focus-duration'), '24')
+    assertSelectorInputValue(wrapper, dataTestSelector('short-break-duration'), '4')
+    assertSelectorInputValue(wrapper, dataTestSelector('long-break-duration'), '13')
+    assertSelectorInputValue(wrapper, dataTestSelector('focus-sessions-per-cycle'), '3')
   })
 
   it('should check perform cycle, show short break and focus sessions per cycle when focus sessions per cycles higher than 1', async () => {
@@ -32,7 +32,7 @@ describe('TimerSettingPage', () => {
       })
     )
 
-    assertCheckboxValue(wrapper, dataTestSelector('perform-cycle'), true)
+    assertSelectorCheckboxValue(wrapper, dataTestSelector('perform-cycle'), true)
     expect(wrapper.find(dataTestSelector('short-break-duration')).isVisible()).toBe(true)
     expect(wrapper.find(dataTestSelector('focus-sessions-per-cycle')).isVisible()).toBe(true)
   })
@@ -44,7 +44,7 @@ describe('TimerSettingPage', () => {
       })
     )
 
-    assertCheckboxValue(wrapper, dataTestSelector('perform-cycle'), false)
+    assertSelectorCheckboxValue(wrapper, dataTestSelector('perform-cycle'), false)
     expect(wrapper.find(dataTestSelector('short-break-duration')).isVisible()).toBe(false)
     expect(wrapper.find(dataTestSelector('focus-sessions-per-cycle')).isVisible()).toBe(false)
   })

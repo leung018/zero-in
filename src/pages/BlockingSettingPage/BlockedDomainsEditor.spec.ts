@@ -5,7 +5,7 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { BrowsingRules } from '@/domain/browsing_rules'
 import { setUpListener } from '@/test_utils/listener'
 import { dataTestSelector } from '../../test_utils/selector'
-import { assertInputValue } from '../../test_utils/assert'
+import { assertSelectorInputValue } from '../../test_utils/assert'
 
 describe('BlockedDomainsEditor', () => {
   it('should render blocked domains', async () => {
@@ -42,7 +42,7 @@ describe('BlockedDomainsEditor', () => {
 
     await addBlockedDomain(wrapper, 'example.com')
 
-    assertInputValue(wrapper, dataTestSelector('blocked-domain-input'), '')
+    assertSelectorInputValue(wrapper, dataTestSelector('blocked-domain-input'), '')
   })
 
   it('should not save blocked domain when input box is empty', async () => {

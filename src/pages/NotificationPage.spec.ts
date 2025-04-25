@@ -8,7 +8,7 @@ import { TimerConfig } from '../domain/pomodoro/config'
 import { Duration } from '../domain/pomodoro/duration'
 import { FakeActionService } from '../infra/action'
 import { WorkRequestName } from '../service_workers/request'
-import { assertCheckboxValue } from '../test_utils/assert'
+import { assertSelectorCheckboxValue } from '../test_utils/assert'
 import { setUpListener } from '../test_utils/listener'
 import { dataTestSelector } from '../test_utils/selector'
 import NotificationPage from './NotificationPage.vue'
@@ -23,9 +23,9 @@ describe('NotificationPage', () => {
       }
     })
 
-    assertCheckboxValue(wrapper, dataTestSelector('reminder-tab-option'), true)
-    assertCheckboxValue(wrapper, dataTestSelector('desktop-notification-option'), false)
-    assertCheckboxValue(wrapper, dataTestSelector('sound-option'), true)
+    assertSelectorCheckboxValue(wrapper, dataTestSelector('reminder-tab-option'), true)
+    assertSelectorCheckboxValue(wrapper, dataTestSelector('desktop-notification-option'), false)
+    assertSelectorCheckboxValue(wrapper, dataTestSelector('sound-option'), true)
 
     wrapper = (
       await mountPage({
@@ -37,9 +37,9 @@ describe('NotificationPage', () => {
       })
     ).wrapper
 
-    assertCheckboxValue(wrapper, dataTestSelector('reminder-tab-option'), false)
-    assertCheckboxValue(wrapper, dataTestSelector('desktop-notification-option'), true)
-    assertCheckboxValue(wrapper, dataTestSelector('sound-option'), false)
+    assertSelectorCheckboxValue(wrapper, dataTestSelector('reminder-tab-option'), false)
+    assertSelectorCheckboxValue(wrapper, dataTestSelector('desktop-notification-option'), true)
+    assertSelectorCheckboxValue(wrapper, dataTestSelector('sound-option'), false)
   })
 
   it('should update the notification setting when the user changes the options', async () => {

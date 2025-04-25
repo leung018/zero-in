@@ -10,7 +10,7 @@ import { CurrentDateService } from '../infra/current_date'
 import { setUpListener } from '../test_utils/listener'
 import StatisticsPage from './StatisticsPage.vue'
 import { dataTestSelector } from '../test_utils/selector'
-import { assertInputValue } from '../test_utils/assert'
+import { assertSelectorInputValue } from '../test_utils/assert'
 
 describe('StatisticsPage', () => {
   it('should render saved daily reset time', async () => {
@@ -18,7 +18,7 @@ describe('StatisticsPage', () => {
       dailyResetTime: new Time(10, 30)
     })
 
-    assertInputValue(wrapper, dataTestSelector('time-input'), '10:30')
+    assertSelectorInputValue(wrapper, dataTestSelector('time-input'), '10:30')
   })
 
   it('should able to save daily reset time', async () => {
