@@ -29,10 +29,10 @@ export class WeeklySchedule {
     endTime: Time
   }) {
     if (weekdaySet.size === 0) {
-      throw new WeeklyScheduleInvalidInputError('weekdaySet must not be empty')
+      throw new Error('weekdaySet must not be empty')
     }
     if (!startTime.isBefore(endTime)) {
-      throw new WeeklyScheduleInvalidInputError('startTime must be before endTime')
+      throw new Error('startTime must be before endTime')
     }
 
     this.weekdaySet = weekdaySet
@@ -61,5 +61,3 @@ export class WeeklySchedule {
 function timesAreEqual(time1: Time, time2: Time): boolean {
   return time1.hour === time2.hour && time1.minute === time2.minute
 }
-
-export class WeeklyScheduleInvalidInputError extends Error {}

@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Duration, DurationInvalidInputError } from './duration'
-import { assertToThrowError } from '../../test_utils/check_error'
+import { Duration } from './duration'
 
 describe('Duration', () => {
   it('should build duration from minutes, seconds or milliseconds', () => {
@@ -21,19 +20,10 @@ describe('Duration', () => {
 
   it('should prevent negative duration to created', () => {
     const errMsg = 'Duration cannot be negative'
-    assertToThrowError(
-      () => new Duration({ minutes: 0, seconds: -1 }),
-      new DurationInvalidInputError(errMsg)
-    )
-    assertToThrowError(
-      () => new Duration({ minutes: -1, seconds: 0 }),
-      new DurationInvalidInputError(errMsg)
-    )
-    assertToThrowError(
-      () => new Duration({ minutes: 0, seconds: 0, milliseconds: -1 }),
-      new DurationInvalidInputError(errMsg)
-    )
-    new Duration({ milliseconds: 0 }) // should not throw error
+    expect(() => new Duration({ minutes: 0, seconds: -1 })).toThrow(errMsg)
+    expect(() => new Duration({ minutes: -1, seconds: 0 })).toThrow(errMsg)
+    expect(() => new Duration({ minutes: 0, seconds: 0, milliseconds: -1 })).toThrow(errMsg)
+    expect(() => new Duration({ milliseconds: 0 })).not.toThrow()
   })
 
   it('should subtract return new duration that is subtracted', () => {
