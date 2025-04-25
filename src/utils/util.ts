@@ -9,16 +9,3 @@ export function getDomain(url: string): string {
 
   return url.toLowerCase()
 }
-
-export function isPrimitive(value: unknown): boolean {
-  const type = typeof value
-  return (
-    value === null ||
-    type === 'string' ||
-    type === 'number' ||
-    type === 'boolean' ||
-    type === 'undefined' ||
-    type === 'symbol' ||
-    type === 'bigint'
-  )
-}
