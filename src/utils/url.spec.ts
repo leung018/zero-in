@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getDomain, isPrimitive } from './util'
+import { getDomain } from './url'
 
 describe('getDomain', () => {
   it('should extract domain from URL with www', () => {
