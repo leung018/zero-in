@@ -1,16 +1,15 @@
 <script setup lang="ts">
+import type { ActionService } from '@/infra/action'
+import type { ClientPort } from '@/service_workers/listener'
 import { onBeforeMount, ref } from 'vue'
 import { TimerConfig } from '../domain/pomodoro/config'
-import { Duration } from '../domain/pomodoro/duration'
-import ContentTemplate from './components/ContentTemplate.vue'
 import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
-import type { Port } from '../infra/communication'
-import { WorkRequestName, type WorkRequest } from '../service_workers/request'
-import type { WorkResponse } from '../service_workers/response'
-import type { ActionService } from '@/infra/action'
+import { Duration } from '../domain/pomodoro/duration'
+import { WorkRequestName } from '../service_workers/request'
+import ContentTemplate from './components/ContentTemplate.vue'
 
 const { timerConfigStorageService, port, reloadService } = defineProps<{
-  port: Port<WorkRequest, WorkResponse>
+  port: ClientPort
   timerConfigStorageService: TimerConfigStorageService
   reloadService: ActionService
 }>()

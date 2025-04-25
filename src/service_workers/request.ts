@@ -15,20 +15,36 @@ export type RestartNthPayload = {
   nth: number
 }
 
-export type WorkRequestPayloadMap = {
-  [WorkRequestName.TOGGLE_BROWSING_RULES]: undefined
-  [WorkRequestName.START_TIMER]: undefined
-  [WorkRequestName.LISTEN_TO_TIMER]: undefined
-  [WorkRequestName.PAUSE_TIMER]: undefined
-  [WorkRequestName.RESTART_FOCUS]: RestartNthPayload
-  [WorkRequestName.RESTART_SHORT_BREAK]: RestartNthPayload
-  [WorkRequestName.RESTART_LONG_BREAK]: undefined
-  [WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE]: undefined
-  [WorkRequestName.RESET_TIMER_CONFIG]: undefined
-  [WorkRequestName.RESET_NOTIFICATION]: undefined
-}
-
-export type WorkRequest = {
-  name: WorkRequestName
-  payload?: WorkRequestPayloadMap[WorkRequestName]
-}
+export type WorkRequest =
+  | {
+      name: WorkRequestName.TOGGLE_BROWSING_RULES
+    }
+  | {
+      name: WorkRequestName.START_TIMER
+    }
+  | {
+      name: WorkRequestName.LISTEN_TO_TIMER
+    }
+  | {
+      name: WorkRequestName.PAUSE_TIMER
+    }
+  | {
+      name: WorkRequestName.RESTART_FOCUS
+      payload: RestartNthPayload
+    }
+  | {
+      name: WorkRequestName.RESTART_SHORT_BREAK
+      payload: RestartNthPayload
+    }
+  | {
+      name: WorkRequestName.RESTART_LONG_BREAK
+    }
+  | {
+      name: WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE
+    }
+  | {
+      name: WorkRequestName.RESET_TIMER_CONFIG
+    }
+  | {
+      name: WorkRequestName.RESET_NOTIFICATION
+    }

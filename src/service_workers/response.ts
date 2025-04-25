@@ -5,12 +5,11 @@ export enum WorkResponseName {
   POMODORO_RECORDS_UPDATED
 }
 
-type WorkResponsePayloadMap = {
-  [WorkResponseName.TIMER_STATE]: TimerState
-  [WorkResponseName.POMODORO_RECORDS_UPDATED]: undefined
-}
-
-export type WorkResponse = {
-  name: WorkResponseName
-  payload?: WorkResponsePayloadMap[WorkResponseName]
-}
+export type WorkResponse =
+  | {
+      name: WorkResponseName.TIMER_STATE
+      payload: TimerState
+    }
+  | {
+      name: WorkResponseName.POMODORO_RECORDS_UPDATED
+    }

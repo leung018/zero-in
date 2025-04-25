@@ -16,6 +16,7 @@ import type { Port } from '../infra/communication'
 import { setUpListener } from '../test_utils/listener'
 import { WorkRequestName, type WorkRequest } from './request'
 import type { WorkResponse } from './response'
+import type { ClientPort } from './listener'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -466,7 +467,7 @@ async function startListener({
 
   await context.listener.start()
 
-  const clientPort: Port<WorkRequest, WorkResponse> = context.communicationManager.clientConnect()
+  const clientPort: ClientPort = context.communicationManager.clientConnect()
 
   return {
     ...context,
