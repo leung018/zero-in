@@ -13,7 +13,7 @@ export class Duration {
     this.totalMilliseconds = minutes * 60 * 1000 + seconds * 1000 + milliseconds
 
     if (this.totalMilliseconds < 0) {
-      throw new DurationInvalidInputError('Duration cannot be negative')
+      throw new Error('Duration cannot be negative')
     }
   }
 
@@ -33,5 +33,3 @@ export class Duration {
     return this.totalMilliseconds === 0
   }
 }
-
-export class DurationInvalidInputError extends Error {}

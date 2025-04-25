@@ -21,19 +21,10 @@ describe('Duration', () => {
 
   it('should prevent negative duration to created', () => {
     const errMsg = 'Duration cannot be negative'
-    assertToThrowError(
-      () => new Duration({ minutes: 0, seconds: -1 }),
-      new DurationInvalidInputError(errMsg)
-    )
-    assertToThrowError(
-      () => new Duration({ minutes: -1, seconds: 0 }),
-      new DurationInvalidInputError(errMsg)
-    )
-    assertToThrowError(
-      () => new Duration({ minutes: 0, seconds: 0, milliseconds: -1 }),
-      new DurationInvalidInputError(errMsg)
-    )
-    new Duration({ milliseconds: 0 }) // should not throw error
+    expect(() => new Duration({ minutes: 0, seconds: -1 })).toThrow(errMsg)
+    expect(() => new Duration({ minutes: -1, seconds: 0 })).toThrow(errMsg)
+    expect(() => new Duration({ minutes: 0, seconds: 0, milliseconds: -1 })).toThrow(errMsg)
+    expect(() => new Duration({ milliseconds: 0 })).not.toThrow()
   })
 
   it('should subtract return new duration that is subtracted', () => {
