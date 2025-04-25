@@ -10,10 +10,10 @@ export class Time {
 
   constructor(hour: number, minute: number) {
     if (hour < 0 || hour >= 24) {
-      throw new TimeInvalidInputError('Invalid hour')
+      throw new Error('Invalid hour')
     }
     if (minute < 0 || minute >= 60) {
-      throw new TimeInvalidInputError('Invalid minute')
+      throw new Error('Invalid minute')
     }
 
     this.hour = hour
@@ -30,5 +30,3 @@ export class Time {
     return formatNumber(this.hour) + ':' + formatNumber(this.minute)
   }
 }
-
-export class TimeInvalidInputError extends Error {}
