@@ -2,8 +2,7 @@ import { expect } from 'vitest'
 import { DOMWrapper, VueWrapper } from '@vue/test-utils'
 
 export function assertInputValue(wrapper: VueWrapper, selector: string, value: string) {
-  const input = wrapper.find(selector)
-  assertIsValue(input, value)
+  assertIsValue(wrapper.find(selector), value)
 }
 
 export function assertIsValue(input: DOMWrapper<Element>, value: string) {
@@ -11,11 +10,9 @@ export function assertIsValue(input: DOMWrapper<Element>, value: string) {
 }
 
 export function assertCheckboxValue(wrapper: VueWrapper, selector: string, value: boolean) {
-  const checkbox = wrapper.find(selector)
-  assertIsChecked(checkbox, value)
+  assertIsChecked(wrapper.find(selector), value)
 }
 
 export function assertIsChecked(checkbox: DOMWrapper<Element>, value: boolean) {
-  const checked = (checkbox.element as HTMLInputElement).checked
-  expect(checked).toBe(value)
+  expect((checkbox.element as HTMLInputElement).checked).toBe(value)
 }
