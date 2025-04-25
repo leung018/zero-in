@@ -7,6 +7,7 @@ import { Time } from '@/domain/time'
 import { BrowsingRules } from '@/domain/browsing_rules'
 import { setUpListener } from '@/test_utils/listener'
 import { CurrentDateService } from '../../../infra/current_date'
+import { dataTestSelector } from '../../../test_utils/selector'
 
 describe('WeeklySchedulesEditor', () => {
   it('should render weekday checkboxes properly', async () => {
@@ -16,7 +17,7 @@ describe('WeeklySchedulesEditor', () => {
     const weekdayCheckboxes = wrapper.findAll("[data-test^='check-weekday-']")
     expect(weekdayCheckboxes).toHaveLength(7)
 
-    const weekdayCheckboxLabels = wrapper.findAll("[data-test='weekday-label']")
+    const weekdayCheckboxLabels = wrapper.findAll(dataTestSelector('weekday-label'))
     expect(weekdayCheckboxLabels).toHaveLength(7)
     expect(weekdayCheckboxLabels[0].text()).toBe('Sun')
     expect(weekdayCheckboxLabels[1].text()).toBe('Mon')
@@ -59,11 +60,11 @@ describe('WeeklySchedulesEditor', () => {
     const { wrapper } = await mountWeeklySchedulesEditor({
       weeklySchedules: []
     })
-    expect(wrapper.find("[data-test='saved-schedules-section']").exists()).toBe(false)
+    expect(wrapper.find(dataTestSelector('saved-schedules-section')).exists()).toBe(false)
 
     await addWeeklySchedule(wrapper)
 
-    expect(wrapper.find("[data-test='saved-schedules-section']").exists()).toBe(true)
+    expect(wrapper.find(dataTestSelector('saved-schedules-section')).exists()).toBe(true)
   })
 
   it('should able to add new weekly schedule', async () => {
@@ -135,7 +136,9 @@ describe('WeeklySchedulesEditor', () => {
     })
 
     expect(await weeklyScheduleStorageService.getAll()).toEqual([])
-    expect(wrapper.find("[data-test='error-message']").text()).toContain('Please select weekdays')
+    expect(wrapper.find(dataTestSelector('error-message')).text()).toContain(
+      'Please select weekdays'
+    )
   })
 
   it('should able to uncheck weekday', async () => {
@@ -168,7 +171,7 @@ describe('WeeklySchedulesEditor', () => {
     })
 
     expect(await weeklyScheduleStorageService.getAll()).toEqual([])
-    expect(wrapper.find("[data-test='error-message']").text()).toContain(
+    expect(wrapper.find(dataTestSelector('error-message')).text()).toContain(
       'Start time must be before end time'
     )
   })
@@ -176,7 +179,7 @@ describe('WeeklySchedulesEditor', () => {
   it('should error message display and hide properly', async () => {
     const { wrapper } = await mountWeeklySchedulesEditor()
 
-    expect(wrapper.find("[data-test='error-message']").exists()).toBe(false)
+    expect(wrapper.find(dataTestSelector('error-message')).exists()).toBe(false)
 
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set([Weekday.MON]),
@@ -184,7 +187,7 @@ describe('WeeklySchedulesEditor', () => {
       endTime: new Time(9, 0)
     })
 
-    expect(wrapper.find("[data-test='error-message']").exists()).toBe(true)
+    expect(wrapper.find(dataTestSelector('error-message')).exists()).toBe(true)
 
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set([Weekday.MON]),
@@ -192,7 +195,7 @@ describe('WeeklySchedulesEditor', () => {
       endTime: new Time(10, 0)
     })
 
-    expect(wrapper.find("[data-test='error-message']").exists()).toBe(false)
+    expect(wrapper.find(dataTestSelector('error-message')).exists()).toBe(false)
   })
 
   it('should able to remove added schedule', async () => {
@@ -316,21 +319,21 @@ async function addWeeklySchedule(
 
   const { startTime, endTime } = weeklyScheduleInput
 
-  const startTimeInput = wrapper.find("[data-test='start-time-input']")
+  const startTimeInput = wrapper.find(dataTestSelector('start-time-input'))
   startTimeInput.setValue(startTime.toHhMmString())
 
-  const endTimeInput = wrapper.find("[data-test='end-time-input']")
+  const endTimeInput = wrapper.find(dataTestSelector('end-time-input'))
   endTimeInput.setValue(endTime.toHhMmString())
 
-  const addButton = wrapper.find("[data-test='add-schedule-button']")
+  const addButton = wrapper.find(dataTestSelector('add-schedule-button'))
   await addButton.trigger('click')
   await flushPromises()
 }
 
 function assertAllInputsAreNotSet(wrapper: VueWrapper) {
-  const startTimeInputElement = wrapper.find("[data-test='start-time-input']")
+  const startTimeInputElement = wrapper.find(dataTestSelector('start-time-input'))
     .element as HTMLInputElement
-  const endTimeInputElement = wrapper.find("[data-test='end-time-input']")
+  const endTimeInputElement = wrapper.find(dataTestSelector('end-time-input'))
     .element as HTMLInputElement
 
   expect(startTimeInputElement.value).toBe('00:00')
@@ -350,7 +353,7 @@ function assertSchedulesDisplayed(
     displayedTime: string
   }[]
 ) {
-  const weeklySchedules = wrapper.findAll("[data-test='weekly-schedule']")
+  const weeklySchedules = wrapper.findAll(dataTestSelector('weekly-schedule'))
   expect(weeklySchedules).toHaveLength(expected.length)
 
   for (let i = 0; i < expected.length; i++) {

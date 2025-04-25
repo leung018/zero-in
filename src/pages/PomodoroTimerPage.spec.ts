@@ -6,6 +6,7 @@ import { FakeCommunicationManager } from '../infra/communication'
 import { setUpListener } from '../test_utils/listener'
 import { TimerConfig } from '../domain/pomodoro/config'
 import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
+import { dataTestSelector } from '../test_utils/selector'
 
 describe('PomodoroTimerPage', () => {
   it('should display initial stage and remaining time properly', async () => {
@@ -149,7 +150,7 @@ describe('PomodoroTimerPage', () => {
 
     assertCurrentStage(wrapper, '1st Break')
 
-    expect(wrapper.find("[data-test='timer-display']").text()).toBe('00:01')
+    expect(wrapper.find(dataTestSelector('timer-display')).text()).toBe('00:01')
 
     assertControlVisibility(wrapper, {
       startButtonVisible: true,
@@ -233,7 +234,7 @@ describe('PomodoroTimerPage', () => {
       })
     )
 
-    const focusButtons = wrapper.findAll("[data-test='restart-focus']")
+    const focusButtons = wrapper.findAll(dataTestSelector('restart-focus'))
 
     expect(focusButtons).toHaveLength(3)
 
@@ -241,14 +242,14 @@ describe('PomodoroTimerPage', () => {
     expect(focusButtons[1].text()).toBe('2nd Focus')
     expect(focusButtons[2].text()).toBe('3rd Focus')
 
-    const shortBreakButtons = wrapper.findAll("[data-test='restart-short-break']")
+    const shortBreakButtons = wrapper.findAll(dataTestSelector('restart-short-break'))
 
     expect(shortBreakButtons).toHaveLength(2)
 
     expect(shortBreakButtons[0].text()).toBe('1st Break')
     expect(shortBreakButtons[1].text()).toBe('2nd Break')
 
-    const longBreakButton = wrapper.find("[data-test='restart-long-break']")
+    const longBreakButton = wrapper.find(dataTestSelector('restart-long-break'))
     expect(longBreakButton.text()).toBe('Long Break')
   })
 
@@ -259,15 +260,15 @@ describe('PomodoroTimerPage', () => {
       })
     )
 
-    const focusButtons = wrapper.findAll("[data-test='restart-focus']")
+    const focusButtons = wrapper.findAll(dataTestSelector('restart-focus'))
 
     expect(focusButtons).toHaveLength(1)
     expect(focusButtons[0].text()).toBe('Focus')
 
-    const shortBreakButtons = wrapper.findAll("[data-test='restart-short-break']")
+    const shortBreakButtons = wrapper.findAll(dataTestSelector('restart-short-break'))
     expect(shortBreakButtons).toHaveLength(0)
 
-    const longBreakButton = wrapper.find("[data-test='restart-long-break']")
+    const longBreakButton = wrapper.find(dataTestSelector('restart-long-break'))
     expect(longBreakButton.text()).toBe('Break')
   })
 
@@ -362,42 +363,42 @@ async function mountPage({
 }
 
 async function startTimer(wrapper: VueWrapper) {
-  const startButton = wrapper.find("[data-test='start-button']")
+  const startButton = wrapper.find(dataTestSelector('start-button'))
   startButton.trigger('click')
   await flushPromises()
 }
 
 async function pauseTimer(wrapper: VueWrapper) {
-  const pauseButton = wrapper.find("[data-test='pause-button']")
+  const pauseButton = wrapper.find(dataTestSelector('pause-button'))
   pauseButton.trigger('click')
   await flushPromises()
 }
 
 async function restartFocus(wrapper: VueWrapper, nth: number) {
-  const restartButtons = wrapper.findAll("[data-test='restart-focus']")
+  const restartButtons = wrapper.findAll(dataTestSelector('restart-focus'))
   restartButtons[nth - 1].trigger('click')
   await flushPromises()
 }
 
 async function restartShortBreak(wrapper: VueWrapper, nth: number) {
-  const restartButtons = wrapper.findAll("[data-test='restart-short-break']")
+  const restartButtons = wrapper.findAll(dataTestSelector('restart-short-break'))
   restartButtons[nth - 1].trigger('click')
   await flushPromises()
 }
 
 async function restartLongBreak(wrapper: VueWrapper) {
-  const restartButton = wrapper.find("[data-test='restart-long-break']")
+  const restartButton = wrapper.find(dataTestSelector('restart-long-break'))
   restartButton.trigger('click')
   await flushPromises()
 }
 
 function assertTimerDisplay(wrapper: VueWrapper, time: string) {
-  const timerDisplay = wrapper.find("[data-test='timer-display']")
+  const timerDisplay = wrapper.find(dataTestSelector('timer-display'))
   expect(timerDisplay.text()).toBe(time)
 }
 
 function assertCurrentStage(wrapper: VueWrapper, stage: string) {
-  const pomodoroStage = wrapper.find("[data-test='current-stage']")
+  const pomodoroStage = wrapper.find(dataTestSelector('current-stage'))
   expect(pomodoroStage.text()).toBe(stage)
 }
 
@@ -408,6 +409,6 @@ function assertControlVisibility(
     pauseButtonVisible
   }: { startButtonVisible: boolean; pauseButtonVisible: boolean }
 ) {
-  expect(wrapper.find("[data-test='start-button']").exists()).toBe(startButtonVisible)
-  expect(wrapper.find("[data-test='pause-button']").exists()).toBe(pauseButtonVisible)
+  expect(wrapper.find(dataTestSelector('start-button')).exists()).toBe(startButtonVisible)
+  expect(wrapper.find(dataTestSelector('pause-button')).exists()).toBe(pauseButtonVisible)
 }

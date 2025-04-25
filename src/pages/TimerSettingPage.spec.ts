@@ -6,6 +6,7 @@ import { FakeActionService } from '../infra/action'
 import { assertCheckboxValue, assertInputValue } from '../test_utils/assert'
 import { setUpListener } from '../test_utils/listener'
 import TimerSettingPage from './TimerSettingPage.vue'
+import { dataTestSelector } from '../test_utils/selector'
 
 describe('TimerSettingPage', () => {
   it('should render timer config properly', async () => {
@@ -18,10 +19,10 @@ describe('TimerSettingPage', () => {
       })
     )
 
-    assertInputValue(wrapper, '[data-test="focus-duration"]', '24')
-    assertInputValue(wrapper, '[data-test="short-break-duration"]', '4')
-    assertInputValue(wrapper, '[data-test="long-break-duration"]', '13')
-    assertInputValue(wrapper, '[data-test="focus-sessions-per-cycle"]', '3')
+    assertInputValue(wrapper, dataTestSelector('focus-duration'), '24')
+    assertInputValue(wrapper, dataTestSelector('short-break-duration'), '4')
+    assertInputValue(wrapper, dataTestSelector('long-break-duration'), '13')
+    assertInputValue(wrapper, dataTestSelector('focus-sessions-per-cycle'), '3')
   })
 
   it('should check perform cycle, show short break and focus sessions per cycle when focus sessions per cycles higher than 1', async () => {
@@ -31,9 +32,9 @@ describe('TimerSettingPage', () => {
       })
     )
 
-    assertCheckboxValue(wrapper, '[data-test="perform-cycle"]', true)
-    expect(wrapper.find('[data-test="short-break-duration"]').isVisible()).toBe(true)
-    expect(wrapper.find('[data-test="focus-sessions-per-cycle"]').isVisible()).toBe(true)
+    assertCheckboxValue(wrapper, dataTestSelector('perform-cycle'), true)
+    expect(wrapper.find(dataTestSelector('short-break-duration')).isVisible()).toBe(true)
+    expect(wrapper.find(dataTestSelector('focus-sessions-per-cycle')).isVisible()).toBe(true)
   })
 
   it('should uncheck perform cycle, hide short break and focus sessions per cycle when focus sessions per cycles equal to 1', async () => {
@@ -43,9 +44,9 @@ describe('TimerSettingPage', () => {
       })
     )
 
-    assertCheckboxValue(wrapper, '[data-test="perform-cycle"]', false)
-    expect(wrapper.find('[data-test="short-break-duration"]').isVisible()).toBe(false)
-    expect(wrapper.find('[data-test="focus-sessions-per-cycle"]').isVisible()).toBe(false)
+    assertCheckboxValue(wrapper, dataTestSelector('perform-cycle'), false)
+    expect(wrapper.find(dataTestSelector('short-break-duration')).isVisible()).toBe(false)
+    expect(wrapper.find(dataTestSelector('focus-sessions-per-cycle')).isVisible()).toBe(false)
   })
 
   it('should update timer config', async () => {
@@ -63,12 +64,14 @@ describe('TimerSettingPage', () => {
     const newLongBreakDuration = 15
     const newNumOfPomodoriPerCycle = 4
 
-    await wrapper.find('[data-test="focus-duration"]').setValue(newFocusDuration)
-    await wrapper.find('[data-test="short-break-duration"]').setValue(newShortBreakDuration)
-    await wrapper.find('[data-test="long-break-duration"]').setValue(newLongBreakDuration)
-    await wrapper.find('[data-test="focus-sessions-per-cycle"]').setValue(newNumOfPomodoriPerCycle)
+    await wrapper.find(dataTestSelector('focus-duration')).setValue(newFocusDuration)
+    await wrapper.find(dataTestSelector('short-break-duration')).setValue(newShortBreakDuration)
+    await wrapper.find(dataTestSelector('long-break-duration')).setValue(newLongBreakDuration)
+    await wrapper
+      .find(dataTestSelector('focus-sessions-per-cycle'))
+      .setValue(newNumOfPomodoriPerCycle)
 
-    await wrapper.find('[data-test="save-button"]').trigger('click')
+    await wrapper.find(dataTestSelector('save-button')).trigger('click')
     await flushPromises()
 
     const newConfig = new TimerConfig({
@@ -92,10 +95,10 @@ describe('TimerSettingPage', () => {
     )
 
     const newShortBreakDuration = 0
-    await wrapper.find('[data-test="short-break-duration"]').setValue(newShortBreakDuration)
+    await wrapper.find(dataTestSelector('short-break-duration')).setValue(newShortBreakDuration)
 
-    await wrapper.find('[data-test="perform-cycle"]').setValue(false)
-    await wrapper.find('[data-test="save-button"]').trigger('click')
+    await wrapper.find(dataTestSelector('perform-cycle')).setValue(false)
+    await wrapper.find(dataTestSelector('save-button')).trigger('click')
     await flushPromises()
 
     const newConfig = await timerConfigStorageService.get()
@@ -109,8 +112,8 @@ describe('TimerSettingPage', () => {
       })
     )
 
-    await wrapper.find('[data-test="perform-cycle"]').setValue(false)
-    await wrapper.find('[data-test="save-button"]').trigger('click')
+    await wrapper.find(dataTestSelector('perform-cycle')).setValue(false)
+    await wrapper.find(dataTestSelector('save-button')).trigger('click')
     await flushPromises()
 
     const newConfig = await timerConfigStorageService.get()
@@ -122,7 +125,7 @@ describe('TimerSettingPage', () => {
 
     expect(reloadService.getTriggerCount()).toBe(0)
 
-    await wrapper.find('[data-test="save-button"]').trigger('click')
+    await wrapper.find(dataTestSelector('save-button')).trigger('click')
     await flushPromises()
 
     expect(reloadService.getTriggerCount()).toBe(1)
