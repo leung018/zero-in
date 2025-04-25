@@ -8,7 +8,7 @@ import { PomodoroStage } from '../domain/pomodoro/stage'
 import { Time } from '../domain/time'
 import { WorkRequestName } from '../service_workers/request'
 import { WorkResponseName } from '../service_workers/response'
-import { getMostRecentDate } from '../utils/util'
+import { getMostRecentDate } from '@/utils/date'
 
 const { port, focusSessionRecordStorageService, dailyResetTimeStorageService, currentDateService } =
   defineProps<{

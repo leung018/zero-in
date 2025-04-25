@@ -6,7 +6,7 @@ import { Duration } from '../domain/pomodoro/duration'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import { WorkRequestName } from '../service_workers/request'
 import { WorkResponseName } from '../service_workers/response'
-import { formatNumber, getNumberWithOrdinal } from '../utils/util'
+import { formatNumber, getNumberWithOrdinal } from '@/utils/format'
 
 const { port, timerConfigStorageService } = defineProps<{
   port: ClientPort

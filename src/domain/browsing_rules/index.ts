@@ -1,4 +1,4 @@
-import { getDomain } from '../../utils/util'
+import { getDomain } from '../../utils/url'
 
 export class BrowsingRules {
   private _blockedDomains: ReadonlyArray<string>
