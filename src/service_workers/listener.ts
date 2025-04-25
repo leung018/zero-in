@@ -49,6 +49,7 @@ type ListenerParams = {
   timer: PomodoroTimer
 }
 
+export type ClientPort = Port<WorkRequest, WorkResponse>
 export class BackgroundListener {
   static create() {
     return new BackgroundListener({

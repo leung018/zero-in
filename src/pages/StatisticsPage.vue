@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
-import { ref, onBeforeMount } from 'vue'
-import { Time } from '../domain/time'
 import type { ReloadService } from '@/chrome/reload'
-import TimeInput from './components/TimeInput.vue'
-import ContentTemplate from './components/ContentTemplate.vue'
+import type { ClientPort } from '@/service_workers/listener'
+import { onBeforeMount, ref } from 'vue'
+import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import type { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
-import { getMostRecentDate } from '../utils/util'
-import type { Port } from '@/infra/communication'
-import { WorkRequestName, type WorkRequest } from '../service_workers/request'
-import { WorkResponseName, type WorkResponse } from '../service_workers/response'
+import { Time } from '../domain/time'
 import { CurrentDateService } from '../infra/current_date'
+import { WorkRequestName } from '../service_workers/request'
+import { WorkResponseName } from '../service_workers/response'
+import { getMostRecentDate } from '../utils/util'
+import ContentTemplate from './components/ContentTemplate.vue'
+import TimeInput from './components/TimeInput.vue'
 
 type PomodoroStat = { day: string; completedPomodori: number }
 
@@ -25,7 +25,7 @@ const {
   reloadService: ReloadService
   currentDateService: CurrentDateService
   focusSessionRecordStorageService: FocusSessionRecordStorageService
-  port: Port<WorkRequest, WorkResponse>
+  port: ClientPort
 }>()
 
 const dailyResetTime = ref<Time>(new Time(0, 0))

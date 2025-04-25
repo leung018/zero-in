@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, ref } from 'vue'
-import { PomodoroStage } from '../domain/pomodoro/stage'
-import type { Port } from '../infra/communication'
-import { WorkResponseName, type WorkResponse } from '../service_workers/response'
-import { WorkRequestName, type WorkRequest } from '../service_workers/request'
-import type { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
-import type { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
-import { Time } from '../domain/time'
-import { getMostRecentDate } from '../utils/util'
 import type { CurrentDateService } from '@/infra/current_date'
+import type { ClientPort } from '@/service_workers/listener'
+import { computed, onBeforeMount, ref } from 'vue'
+import type { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
+import type { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
+import { PomodoroStage } from '../domain/pomodoro/stage'
+import { Time } from '../domain/time'
+import { WorkRequestName } from '../service_workers/request'
+import { WorkResponseName } from '../service_workers/response'
+import { getMostRecentDate } from '../utils/util'
 
 const { port, focusSessionRecordStorageService, dailyResetTimeStorageService, currentDateService } =
   defineProps<{
-    port: Port<WorkRequest, WorkResponse>
+    port: ClientPort
     focusSessionRecordStorageService: FocusSessionRecordStorageService
     dailyResetTimeStorageService: DailyResetTimeStorageService
     currentDateService: CurrentDateService

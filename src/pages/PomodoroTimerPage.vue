@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { Duration } from '../domain/pomodoro/duration'
-import { formatNumber, getNumberWithOrdinal } from '../utils/util'
+import type { ClientPort } from '@/service_workers/listener'
 import { computed, onBeforeMount, ref } from 'vue'
-import type { Port } from '@/infra/communication'
-import { WorkRequestName, type WorkRequest } from '../service_workers/request'
-import { WorkResponseName, type WorkResponse } from '../service_workers/response'
-import { PomodoroStage } from '../domain/pomodoro/stage'
 import type { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
+import { Duration } from '../domain/pomodoro/duration'
+import { PomodoroStage } from '../domain/pomodoro/stage'
+import { WorkRequestName } from '../service_workers/request'
+import { WorkResponseName } from '../service_workers/response'
+import { formatNumber, getNumberWithOrdinal } from '../utils/util'
 
 const { port, timerConfigStorageService } = defineProps<{
-  port: Port<WorkRequest, WorkResponse>
+  port: ClientPort
   timerConfigStorageService: TimerConfigStorageService
 }>()
 

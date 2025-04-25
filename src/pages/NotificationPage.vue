@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import type { NotificationSettingStorageService } from '@/domain/notification_setting/storage'
-import ContentTemplate from './components/ContentTemplate.vue'
-import { onBeforeMount, ref } from 'vue'
 import type { ActionService } from '@/infra/action'
-import type { Port } from '@/infra/communication'
-import { WorkRequestName, type WorkRequest } from '../service_workers/request'
-import type { WorkResponse } from '@/service_workers/response'
+import type { ClientPort } from '@/service_workers/listener'
+import { onBeforeMount, ref } from 'vue'
+import { WorkRequestName } from '../service_workers/request'
+import ContentTemplate from './components/ContentTemplate.vue'
 
 const { notificationSettingStorageService, reloadService, port } = defineProps<{
   notificationSettingStorageService: NotificationSettingStorageService
   reloadService: ActionService
-  port: Port<WorkRequest, WorkResponse>
+  port: ClientPort
 }>()
 const reminderTab = ref(false)
 const desktopNotification = ref(false)
