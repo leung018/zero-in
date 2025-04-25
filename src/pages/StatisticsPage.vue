@@ -8,7 +8,7 @@ import { Time } from '../domain/time'
 import { CurrentDateService } from '../infra/current_date'
 import { WorkRequestName } from '../service_workers/request'
 import { WorkResponseName } from '../service_workers/response'
-import { getMostRecentDate } from '../utils/util'
+import { getMostRecentDate } from '@/utils/date'
 import ContentTemplate from './components/ContentTemplate.vue'
 import TimeInput from './components/TimeInput.vue'
 
