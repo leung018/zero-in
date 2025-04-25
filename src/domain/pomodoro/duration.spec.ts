@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Duration, DurationInvalidInputError } from './duration'
-import { assertToThrowError } from '../../test_utils/check_error'
+import { Duration } from './duration'
 
 describe('Duration', () => {
   it('should build duration from minutes, seconds or milliseconds', () => {

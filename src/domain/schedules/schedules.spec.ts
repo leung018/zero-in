@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { Weekday, WeeklySchedule, WeeklyScheduleInvalidInputError } from '.'
+import { Weekday, WeeklySchedule } from '.'
 import { Time } from '../time'
-import { assertToThrowError } from '../../test_utils/check_error'
 
 describe('WeeklySchedules', () => {
   it('should reject empty weekday set', () => {
