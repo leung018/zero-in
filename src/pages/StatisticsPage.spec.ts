@@ -32,11 +32,11 @@ describe('StatisticsPage', () => {
   it('should reload page after clicked save', async () => {
     const { wrapper, reloadService } = await mountStatisticsPage()
 
-    expect(reloadService.getTriggerCount()).toBe(0)
+    expect(reloadService.getSimulatedTriggerCount()).toBe(0)
 
     await saveTime(wrapper, '15:05')
 
-    expect(reloadService.getTriggerCount()).toBe(1)
+    expect(reloadService.getSimulatedTriggerCount()).toBe(1)
   })
 
   it('should render stats table with rows represent last 7 days', async () => {

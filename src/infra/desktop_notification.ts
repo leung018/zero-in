@@ -8,7 +8,7 @@ export interface DesktopNotifier {
     listener: (notificationId: string, buttonIndex: number) => void
   ) => void
 
-  getTriggerCount: () => number
+  getSimulatedTriggerCount: () => number
 }
 
 export class FakeDesktopNotifier implements DesktopNotifier {
@@ -20,7 +20,7 @@ export class FakeDesktopNotifier implements DesktopNotifier {
 
   addButtonClickedListener() {}
 
-  getTriggerCount() {
+  getSimulatedTriggerCount() {
     return this.triggerCount
   }
 }
@@ -68,8 +68,8 @@ export class DesktopNotificationService implements ActionService {
     this.onClickStartNext = onClickStartNext
   }
 
-  getTriggerCount(): number {
-    return this.desktopNotifier.getTriggerCount()
+  getSimulatedTriggerCount(): number {
+    return this.desktopNotifier.getSimulatedTriggerCount()
   }
 }
 

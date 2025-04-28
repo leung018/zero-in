@@ -133,11 +133,11 @@ describe('BackgroundListener', () => {
   it('should trigger closeTabsService when the timer is started', async () => {
     const { closeTabsService, clientPort } = await startListener()
 
-    expect(closeTabsService.getTriggerCount()).toBe(0)
+    expect(closeTabsService.getSimulatedTriggerCount()).toBe(0)
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
 
-    expect(closeTabsService.getTriggerCount()).toBe(1)
+    expect(closeTabsService.getSimulatedTriggerCount()).toBe(1)
   })
 
   it('should remove badge when the timer is paused', async () => {
@@ -262,18 +262,18 @@ describe('BackgroundListener', () => {
         notificationSetting: input
       })
 
-      expect(reminderTabService.getTriggerCount()).toBe(0)
-      expect(soundService.getTriggerCount()).toBe(0)
-      expect(desktopNotificationService.getTriggerCount()).toBe(0)
+      expect(reminderTabService.getSimulatedTriggerCount()).toBe(0)
+      expect(soundService.getSimulatedTriggerCount()).toBe(0)
+      expect(desktopNotificationService.getSimulatedTriggerCount()).toBe(0)
 
       clientPort.send({ name: WorkRequestName.START_TIMER })
       scheduler.advanceTime(3000)
 
-      expect(reminderTabService.getTriggerCount()).toBe(
+      expect(reminderTabService.getSimulatedTriggerCount()).toBe(
         expected.reminderTabNotificationTriggerCount
       )
-      expect(soundService.getTriggerCount()).toBe(expected.soundNotificationTriggerCount)
-      expect(desktopNotificationService.getTriggerCount()).toBe(
+      expect(soundService.getSimulatedTriggerCount()).toBe(expected.soundNotificationTriggerCount)
+      expect(desktopNotificationService.getSimulatedTriggerCount()).toBe(
         expected.desktopNotificationTriggerCount
       )
     }
