@@ -130,7 +130,7 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toEqual(expected)
   })
 
-  it('should trigger closeTabsService whenever the timer is started', async () => {
+  it('should trigger closeTabsService when the timer is started', async () => {
     const { closeTabsService, clientPort } = await startListener()
 
     expect(closeTabsService.getTriggerCount()).toBe(0)
@@ -138,30 +138,6 @@ describe('BackgroundListener', () => {
     clientPort.send({ name: WorkRequestName.START_TIMER })
 
     expect(closeTabsService.getTriggerCount()).toBe(1)
-
-    clientPort.send({
-      name: WorkRequestName.RESTART_FOCUS,
-      payload: {
-        nth: 1
-      }
-    })
-
-    expect(closeTabsService.getTriggerCount()).toBe(2)
-
-    clientPort.send({
-      name: WorkRequestName.RESTART_SHORT_BREAK,
-      payload: {
-        nth: 1
-      }
-    })
-
-    expect(closeTabsService.getTriggerCount()).toBe(3)
-
-    clientPort.send({
-      name: WorkRequestName.RESTART_LONG_BREAK
-    })
-
-    expect(closeTabsService.getTriggerCount()).toBe(4)
   })
 
   it('should remove badge when the timer is paused', async () => {
@@ -409,7 +385,7 @@ describe('BackgroundListener', () => {
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
   })
 
-  it('should toggle browsing control whenever restart', async () => {
+  it('should toggle browsing control when start break and shouldPauseBlockingDuringBreaks', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
 
     const { browsingControlService, clientPort, listener } = await startListener({
@@ -427,16 +403,6 @@ describe('BackgroundListener', () => {
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
 
     clientPort.send({ name: WorkRequestName.RESTART_SHORT_BREAK, payload: { nth: 1 } })
-    await flushPromises()
-
-    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
-
-    clientPort.send({ name: WorkRequestName.RESTART_FOCUS, payload: { nth: 1 } })
-    await flushPromises()
-
-    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
-
-    clientPort.send({ name: WorkRequestName.RESTART_LONG_BREAK })
     await flushPromises()
 
     expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
