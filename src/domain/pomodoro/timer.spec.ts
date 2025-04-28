@@ -639,6 +639,39 @@ describe('PomodoroTimer', () => {
     expect(updates.length).toBe(originalUpdatesLength)
     expect(timer.getState().remainingSeconds).toBe(200)
   })
+
+  it('should after set onTimerStart callback, every time timer start running, it should be called', () => {
+    const { timer } = createTimer()
+
+    let triggerCount = 0
+    const onTimerStart = () => {
+      triggerCount++
+    }
+
+    timer.setOnTimerStart(onTimerStart)
+
+    timer.start()
+    expect(triggerCount).toBe(1)
+
+    timer.restartFocus()
+    expect(triggerCount).toBe(2)
+
+    timer.restartShortBreak()
+    expect(triggerCount).toBe(3)
+
+    timer.restartLongBreak()
+    expect(triggerCount).toBe(4)
+
+    timer.pause()
+    expect(triggerCount).toBe(4)
+    timer.setState({
+      remainingSeconds: 100,
+      isRunning: true,
+      stage: PomodoroStage.FOCUS,
+      numOfPomodoriCompleted: 0
+    })
+    expect(triggerCount).toBe(5)
+  })
 })
 
 const newConfig = TimerConfig.newTestInstance

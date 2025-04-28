@@ -46,6 +46,8 @@ export class PomodoroTimer {
 
   private onTimerUpdate: (state: TimerState) => void = () => {}
 
+  private onTimerStart: () => void = () => {}
+
   private constructor({
     timerConfig,
     scheduler
@@ -110,6 +112,8 @@ export class PomodoroTimer {
       }
     }, timerUnit.totalMilliseconds)
     this.isRunning = true
+
+    this.onTimerStart()
     this.notifyTimerUpdate()
   }
 
@@ -129,6 +133,10 @@ export class PomodoroTimer {
   private stopRunning() {
     this.isRunning = false
     this.scheduler.stopTask()
+  }
+
+  setOnTimerStart(callback: () => void) {
+    this.onTimerStart = callback
   }
 
   setOnTimerUpdate(callback: (state: TimerState) => void) {
