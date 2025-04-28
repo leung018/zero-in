@@ -87,6 +87,17 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
         <label>End Time:</label>
         <TimeInput class="d-flex" v-model="newEndTime" data-test="end-time-input" />
       </div>
+
+      <div class="form-group mt-2">
+        <label>Target Focus Sessions (optional):</label>
+        <input type="number" class="form-control" min="1" data-test="target-sessions-input" />
+        <p class="mt-1">
+          <small>
+            If you set a target number of focus sessions and complete them, blocking will be
+            disabled for the remainder of the schedule.
+          </small>
+        </p>
+      </div>
     </div>
     <BButton variant="primary" data-test="add-schedule-button" @click="onClickAdd">Add</BButton>
     <div v-if="errorMessage" class="text-danger mt-2" data-test="error-message">
