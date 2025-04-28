@@ -407,6 +407,28 @@ describe('BackgroundListener', () => {
 
     expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
   })
+
+  it('should trigger timer start when click startNext on desktop notification', async () => {
+    const { scheduler, clientPort, desktopNotificationService, listener } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 3 }),
+        focusSessionsPerCycle: 3
+      }),
+      notificationSetting: newTestNotificationSetting({
+        desktopNotification: true
+      })
+    })
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(3000)
+    await flushPromises()
+
+    desktopNotificationService.simulateClickStartNext()
+    await flushPromises()
+
+    expect(listener.getTimerState().isRunning).toBe(true)
+    expect(listener.getTimerState().stage).toBe(PomodoroStage.SHORT_BREAK)
+  })
 })
 
 async function startListener({

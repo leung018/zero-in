@@ -71,6 +71,14 @@ export class DesktopNotificationService implements ActionService {
   getSimulatedTriggerCount(): number {
     return this.desktopNotifier.getSimulatedTriggerCount()
   }
+
+  simulateClickStartNext(): void {
+    this.simulateButtonClicked(0)
+  }
+
+  private simulateButtonClicked(buttonIndex: number): void {
+    this.buttonClickedListener(NOTIFICATION_ID, buttonIndex)
+  }
 }
 
 const NOTIFICATION_ID = 'time-up'

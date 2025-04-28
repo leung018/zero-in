@@ -96,7 +96,7 @@ export class BackgroundListener {
   private notificationService: ActionService
   private notificationSettingStorageService: NotificationSettingStorageService
   private soundService: ActionService
-  private desktopNotificationService: ActionService
+  private desktopNotificationService: DesktopNotificationService
   private reminderTabService: ActionService
 
   private constructor(params: ListenerParams) {
@@ -126,6 +126,10 @@ export class BackgroundListener {
     this.notificationSettingStorageService = params.notificationSettingStorageService
     this.soundService = params.soundService
     this.desktopNotificationService = params.desktopNotificationService
+    this.desktopNotificationService.setOnClickStartNext(() => {
+      params.timer.start()
+    })
+
     this.reminderTabService = params.reminderTabService
 
     this.badgeDisplayService = params.badgeDisplayService
