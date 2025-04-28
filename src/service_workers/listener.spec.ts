@@ -12,11 +12,9 @@ import type { FocusSessionRecord } from '../domain/pomodoro/record'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import type { TimerState } from '../domain/pomodoro/state'
 import { type Badge, type BadgeColor } from '../infra/badge'
-import type { Port } from '../infra/communication'
 import { setUpListener } from '../test_utils/listener'
-import { WorkRequestName, type WorkRequest } from './request'
-import type { WorkResponse } from './response'
 import type { ClientPort } from './listener'
+import { WorkRequestName } from './request'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -132,38 +130,14 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toEqual(expected)
   })
 
-  it('should trigger closeTabsService whenever the timer is started', async () => {
+  it('should trigger closeTabsService when the timer is started', async () => {
     const { closeTabsService, clientPort } = await startListener()
 
-    expect(closeTabsService.getTriggerCount()).toBe(0)
+    expect(closeTabsService.getSimulatedTriggerCount()).toBe(0)
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
 
-    expect(closeTabsService.getTriggerCount()).toBe(1)
-
-    clientPort.send({
-      name: WorkRequestName.RESTART_FOCUS,
-      payload: {
-        nth: 1
-      }
-    })
-
-    expect(closeTabsService.getTriggerCount()).toBe(2)
-
-    clientPort.send({
-      name: WorkRequestName.RESTART_SHORT_BREAK,
-      payload: {
-        nth: 1
-      }
-    })
-
-    expect(closeTabsService.getTriggerCount()).toBe(3)
-
-    clientPort.send({
-      name: WorkRequestName.RESTART_LONG_BREAK
-    })
-
-    expect(closeTabsService.getTriggerCount()).toBe(4)
+    expect(closeTabsService.getSimulatedTriggerCount()).toBe(1)
   })
 
   it('should remove badge when the timer is paused', async () => {
@@ -288,18 +262,18 @@ describe('BackgroundListener', () => {
         notificationSetting: input
       })
 
-      expect(reminderTabService.getTriggerCount()).toBe(0)
-      expect(soundService.getTriggerCount()).toBe(0)
-      expect(desktopNotificationService.getTriggerCount()).toBe(0)
+      expect(reminderTabService.getSimulatedTriggerCount()).toBe(0)
+      expect(soundService.getSimulatedTriggerCount()).toBe(0)
+      expect(desktopNotificationService.getSimulatedTriggerCount()).toBe(0)
 
       clientPort.send({ name: WorkRequestName.START_TIMER })
       scheduler.advanceTime(3000)
 
-      expect(reminderTabService.getTriggerCount()).toBe(
+      expect(reminderTabService.getSimulatedTriggerCount()).toBe(
         expected.reminderTabNotificationTriggerCount
       )
-      expect(soundService.getTriggerCount()).toBe(expected.soundNotificationTriggerCount)
-      expect(desktopNotificationService.getTriggerCount()).toBe(
+      expect(soundService.getSimulatedTriggerCount()).toBe(expected.soundNotificationTriggerCount)
+      expect(desktopNotificationService.getSimulatedTriggerCount()).toBe(
         expected.desktopNotificationTriggerCount
       )
     }
@@ -411,7 +385,7 @@ describe('BackgroundListener', () => {
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
   })
 
-  it('should toggle browsing control whenever restart', async () => {
+  it('should toggle browsing control when start break and shouldPauseBlockingDuringBreaks', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
 
     const { browsingControlService, clientPort, listener } = await startListener({
@@ -432,16 +406,28 @@ describe('BackgroundListener', () => {
     await flushPromises()
 
     expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+  })
 
-    clientPort.send({ name: WorkRequestName.RESTART_FOCUS, payload: { nth: 1 } })
+  it('should trigger timer start when click startNext on desktop notification', async () => {
+    const { scheduler, clientPort, desktopNotificationService, listener } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 3 }),
+        focusSessionsPerCycle: 3
+      }),
+      notificationSetting: newTestNotificationSetting({
+        desktopNotification: true
+      })
+    })
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(3000)
     await flushPromises()
 
-    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
-
-    clientPort.send({ name: WorkRequestName.RESTART_LONG_BREAK })
+    desktopNotificationService.simulateClickStartNext()
     await flushPromises()
 
-    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+    expect(listener.getTimerState().isRunning).toBe(true)
+    expect(listener.getTimerState().stage).toBe(PomodoroStage.SHORT_BREAK)
   })
 })
 

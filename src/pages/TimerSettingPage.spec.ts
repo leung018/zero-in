@@ -123,12 +123,12 @@ describe('TimerSettingPage', () => {
   it('should reload page after clicked save', async () => {
     const { wrapper, reloadService } = await mountPage()
 
-    expect(reloadService.getTriggerCount()).toBe(0)
+    expect(reloadService.getSimulatedTriggerCount()).toBe(0)
 
     await wrapper.find(dataTestSelector('save-button')).trigger('click')
     await flushPromises()
 
-    expect(reloadService.getTriggerCount()).toBe(1)
+    expect(reloadService.getSimulatedTriggerCount()).toBe(1)
   })
 })
 

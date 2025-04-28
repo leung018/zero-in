@@ -40,11 +40,11 @@ describe('TimerIntegrationSetting', () => {
   it('should trigger reload when clicking save', async () => {
     const { wrapper, reloadService } = await mountTimerIntegrationSetting()
 
-    expect(reloadService.getTriggerCount()).toBe(0)
+    expect(reloadService.getSimulatedTriggerCount()).toBe(0)
 
     await saveBlockingTimerIntegration(wrapper)
 
-    expect(reloadService.getTriggerCount()).toBe(1)
+    expect(reloadService.getSimulatedTriggerCount()).toBe(1)
   })
 
   it('should toggle browsing control after clicking save', async () => {

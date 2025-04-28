@@ -1,38 +1,38 @@
-import { type WorkRequest, WorkRequestName } from './request'
-import { type CommunicationManager, type Port } from '../infra/communication'
-import { BrowsingControlTogglingService } from '../domain/browsing_control_toggling'
-import { WorkResponseName, type WorkResponse } from './response'
-import { PomodoroTimer } from '../domain/pomodoro/timer'
-import { type ActionService } from '../infra/action'
-import { type BadgeColor, type BadgeDisplayService } from '../infra/badge'
-import { PomodoroStage } from '../domain/pomodoro/stage'
+import { ChromeBadgeDisplayService } from '../chrome/badge'
+import { ChromeBrowsingControlService } from '../chrome/browsing_control'
+import { ChromeCloseTabsService } from '../chrome/close_tabs'
+import { ChromeCommunicationManager } from '../chrome/communication'
+import { ChromeNewTabService } from '../chrome/new_tab'
+import { SoundService } from '../chrome/sound'
 import config from '../config'
-import { TimerStateStorageService } from '../domain/pomodoro/state/storage'
+import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
+import type { BrowsingControlService } from '../domain/browsing_control'
+import { BrowsingControlTogglingService } from '../domain/browsing_control_toggling'
+import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
+import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
-import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
 import { newFocusSessionRecord } from '../domain/pomodoro/record'
 import { FocusSessionRecordHousekeeper } from '../domain/pomodoro/record/house_keep'
-import { SubscriptionManager } from '../utils/subscription'
-import { CurrentDateService } from '../infra/current_date'
-import type { BrowsingControlService } from '../domain/browsing_control'
-import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
-import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
-import { ChromeCommunicationManager } from '../chrome/communication'
-import { MultipleActionService } from '../infra/multiple_actions'
-import { ChromeNewTabService } from '../chrome/new_tab'
-import { ChromeDesktopNotificationService } from '../chrome/notification'
-import { ChromeBadgeDisplayService } from '../chrome/badge'
-import { ChromeCloseTabsService } from '../chrome/close_tabs'
-import { ChromeBrowsingControlService } from '../chrome/browsing_control'
-import { SoundService } from '../chrome/sound'
-import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
+import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
+import { PomodoroStage } from '../domain/pomodoro/stage'
 import type { TimerState } from '../domain/pomodoro/state'
-import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
+import { TimerStateStorageService } from '../domain/pomodoro/state/storage'
+import { PomodoroTimer } from '../domain/pomodoro/timer'
+import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
+import { type ActionService } from '../infra/action'
+import { type BadgeColor, type BadgeDisplayService } from '../infra/badge'
+import { type CommunicationManager, type Port } from '../infra/communication'
+import { CurrentDateService } from '../infra/current_date'
+import { DesktopNotificationService } from '../infra/desktop_notification'
+import { MultipleActionService } from '../infra/multiple_actions'
+import { SubscriptionManager } from '../utils/subscription'
+import { WorkRequestName, type WorkRequest } from './request'
+import { WorkResponseName, type WorkResponse } from './response'
 
 type ListenerParams = {
   communicationManager: CommunicationManager
   reminderTabService: ActionService
-  desktopNotificationService: ActionService
+  desktopNotificationService: DesktopNotificationService
   soundService: ActionService
   notificationSettingStorageService: NotificationSettingStorageService
   badgeDisplayService: BadgeDisplayService
@@ -55,7 +55,7 @@ export class BackgroundListener {
     return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
       reminderTabService: new ChromeNewTabService(config.getReminderPageUrl()),
-      desktopNotificationService: new ChromeDesktopNotificationService(),
+      desktopNotificationService: DesktopNotificationService.create(),
       soundService: new SoundService(),
       notificationSettingStorageService: NotificationSettingStorageService.create(),
       badgeDisplayService: new ChromeBadgeDisplayService(),
@@ -95,7 +95,7 @@ export class BackgroundListener {
   private notificationService: ActionService
   private notificationSettingStorageService: NotificationSettingStorageService
   private soundService: ActionService
-  private desktopNotificationService: ActionService
+  private desktopNotificationService: DesktopNotificationService
   private reminderTabService: ActionService
 
   private constructor(params: ListenerParams) {
@@ -125,6 +125,10 @@ export class BackgroundListener {
     this.notificationSettingStorageService = params.notificationSettingStorageService
     this.soundService = params.soundService
     this.desktopNotificationService = params.desktopNotificationService
+    this.desktopNotificationService.setOnClickStartNext(() => {
+      params.timer.start()
+    })
+
     this.reminderTabService = params.reminderTabService
 
     this.badgeDisplayService = params.badgeDisplayService
@@ -171,6 +175,11 @@ export class BackgroundListener {
           color: getBadgeColor(newState.stage)
         })
       }
+    })
+
+    this.timer.setOnTimerStart(() => {
+      this.closeTabsService.trigger()
+      this.toggleBrowsingRules()
     })
   }
 
@@ -238,7 +247,6 @@ export class BackgroundListener {
             }
             case WorkRequestName.START_TIMER: {
               this.timer.start()
-              this.actionsAfterTimerStart()
               break
             }
             case WorkRequestName.PAUSE_TIMER: {
@@ -275,17 +283,14 @@ export class BackgroundListener {
             }
             case WorkRequestName.RESTART_FOCUS: {
               this.timer.restartFocus(message.payload?.nth)
-              this.actionsAfterTimerStart()
               break
             }
             case WorkRequestName.RESTART_SHORT_BREAK: {
               this.timer.restartShortBreak(message.payload?.nth)
-              this.actionsAfterTimerStart()
               break
             }
             case WorkRequestName.RESTART_LONG_BREAK: {
               this.timer.restartLongBreak()
-              this.actionsAfterTimerStart()
               break
             }
             case WorkRequestName.RESET_TIMER_CONFIG: {
@@ -304,11 +309,6 @@ export class BackgroundListener {
         backgroundPort.onMessage(listener)
       }
     )
-  }
-
-  private actionsAfterTimerStart() {
-    this.closeTabsService.trigger()
-    this.toggleBrowsingRules()
   }
 }
 

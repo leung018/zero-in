@@ -9,7 +9,7 @@ export class FakeActionService implements ActionService {
     this.triggerCount++
   }
 
-  getTriggerCount() {
+  getSimulatedTriggerCount() {
     return this.triggerCount
   }
 }

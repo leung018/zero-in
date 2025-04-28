@@ -94,19 +94,19 @@ describe('NotificationPage', () => {
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
 
-    expect(reminderTabService.getTriggerCount()).toBe(0)
-    expect(desktopNotificationService.getTriggerCount()).toBe(1)
-    expect(soundService.getTriggerCount()).toBe(0)
+    expect(reminderTabService.getSimulatedTriggerCount()).toBe(0)
+    expect(desktopNotificationService.getSimulatedTriggerCount()).toBe(1)
+    expect(soundService.getSimulatedTriggerCount()).toBe(0)
   })
 
   it('should trigger reload after save', async () => {
     const { wrapper, reloadService } = await mountPage()
 
-    expect(reloadService.getTriggerCount()).toBe(0)
+    expect(reloadService.getSimulatedTriggerCount()).toBe(0)
 
     await saveNotificationSetting(wrapper)
 
-    expect(reloadService.getTriggerCount()).toBe(1)
+    expect(reloadService.getSimulatedTriggerCount()).toBe(1)
   })
 })
 
