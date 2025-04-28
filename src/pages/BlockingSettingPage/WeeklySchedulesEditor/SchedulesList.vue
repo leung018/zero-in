@@ -32,6 +32,7 @@ const formatTime = (time: Time) => {
         }}
         <br />
         {{ formatTime(schedule.startTime) }} - {{ formatTime(schedule.endTime) }}
+        <span class="badge bg-success ms-2">Target Focus Sessions: 0</span>
       </div>
       <BButton
         class="bg-transparent text-danger border-0"
