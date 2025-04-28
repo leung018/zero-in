@@ -30,15 +30,6 @@ export class DesktopNotificationService implements ActionService {
 
   private desktopNotifier: DesktopNotifier
 
-  private buttonClickedListener: (notificationId: string, buttonIndex: number) => void = (
-    notificationId,
-    buttonIndex
-  ) => {
-    if (notificationId === NOTIFICATION_ID && buttonIndex === 0) {
-      this.onClickStartNext()
-    }
-  }
-
   static create(): DesktopNotificationService {
     return new DesktopNotificationService({
       desktopNotifier: new ChromeDesktopNotifier()
@@ -56,6 +47,10 @@ export class DesktopNotificationService implements ActionService {
     this.desktopNotifier.addButtonClickedListener(this.buttonClickedListener)
   }
 
+  getSimulatedTriggerCount(): number {
+    return this.desktopNotifier.getSimulatedTriggerCount()
+  }
+
   trigger(): void {
     this.desktopNotifier.triggerNotification(NOTIFICATION_ID, [
       {
@@ -68,16 +63,17 @@ export class DesktopNotificationService implements ActionService {
     this.onClickStartNext = onClickStartNext
   }
 
-  getSimulatedTriggerCount(): number {
-    return this.desktopNotifier.getSimulatedTriggerCount()
-  }
-
   simulateClickStartNext(): void {
-    this.simulateButtonClicked(0)
+    this.buttonClickedListener(NOTIFICATION_ID, 0)
   }
 
-  private simulateButtonClicked(buttonIndex: number): void {
-    this.buttonClickedListener(NOTIFICATION_ID, buttonIndex)
+  private buttonClickedListener: (notificationId: string, buttonIndex: number) => void = (
+    notificationId,
+    buttonIndex
+  ) => {
+    if (notificationId === NOTIFICATION_ID && buttonIndex === 0) {
+      this.onClickStartNext()
+    }
   }
 }
 
