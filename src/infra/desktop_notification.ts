@@ -26,6 +26,8 @@ export class FakeDesktopNotifier implements DesktopNotifier {
 }
 
 export class DesktopNotificationService implements ActionService {
+  // Require a bit manual testing for verifying the integration with ChromeDesktopNotifier
+
   private onClickStartNext: () => void = () => {}
 
   private desktopNotifier: DesktopNotifier
