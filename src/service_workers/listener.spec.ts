@@ -12,11 +12,9 @@ import type { FocusSessionRecord } from '../domain/pomodoro/record'
 import { PomodoroStage } from '../domain/pomodoro/stage'
 import type { TimerState } from '../domain/pomodoro/state'
 import { type Badge, type BadgeColor } from '../infra/badge'
-import type { Port } from '../infra/communication'
 import { setUpListener } from '../test_utils/listener'
-import { WorkRequestName, type WorkRequest } from './request'
-import type { WorkResponse } from './response'
 import type { ClientPort } from './listener'
+import { WorkRequestName } from './request'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
