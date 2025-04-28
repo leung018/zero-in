@@ -14,6 +14,7 @@ import { FakeBrowsingControlService } from '../domain/browsing_control'
 import { CurrentDateService } from '../infra/current_date'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
+import { DesktopNotificationService } from '../infra/desktop_notification'
 
 export async function setUpListener({
   focusSessionRecordHouseKeepDays = 30,
@@ -26,7 +27,7 @@ export async function setUpListener({
     browsingControlService: new FakeBrowsingControlService(),
     weeklyScheduleStorageService: WeeklyScheduleStorageService.createFake(),
     browsingRulesStorageService: BrowsingRulesStorageService.createFake(),
-    desktopNotificationService: new FakeActionService(),
+    desktopNotificationService: DesktopNotificationService.createFake(),
     reminderTabService: new FakeActionService(),
     soundService: new FakeActionService(),
     badgeDisplayService: new FakeBadgeDisplayService(),

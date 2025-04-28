@@ -28,11 +28,12 @@ import { SoundService } from '../chrome/sound'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 import type { TimerState } from '../domain/pomodoro/state'
 import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
+import { DesktopNotificationService } from '../infra/desktop_notification'
 
 type ListenerParams = {
   communicationManager: CommunicationManager
   reminderTabService: ActionService
-  desktopNotificationService: ActionService
+  desktopNotificationService: DesktopNotificationService
   soundService: ActionService
   notificationSettingStorageService: NotificationSettingStorageService
   badgeDisplayService: BadgeDisplayService
@@ -55,7 +56,7 @@ export class BackgroundListener {
     return new BackgroundListener({
       communicationManager: new ChromeCommunicationManager(),
       reminderTabService: new ChromeNewTabService(config.getReminderPageUrl()),
-      desktopNotificationService: new ChromeDesktopNotificationService(),
+      desktopNotificationService: DesktopNotificationService.create(),
       soundService: new SoundService(),
       notificationSettingStorageService: NotificationSettingStorageService.create(),
       badgeDisplayService: new ChromeBadgeDisplayService(),
