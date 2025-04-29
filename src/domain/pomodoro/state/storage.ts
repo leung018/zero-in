@@ -23,6 +23,7 @@ export class TimerStateStorageService {
       currentDataVersion: 1,
       migrators: [
         {
+          oldDataVersion: undefined,
           migratorFunc: (oldData: TimerStateSchemas[0]): TimerStateSchemas[1] => {
             return {
               dataVersion: 1,
@@ -31,8 +32,7 @@ export class TimerStateStorageService {
               stage: oldData.stage,
               focusSessionsCompleted: oldData.numOfPomodoriCompleted
             }
-          },
-          oldDataVersion: undefined
+          }
         }
       ]
     })
@@ -40,8 +40,8 @@ export class TimerStateStorageService {
 
   async get(): Promise<TimerState | null> {
     const result = await this.storageWrapper.get()
-    if (!result) {
-      return result
+    if (result == null) {
+      return null
     }
     return deserializeTimerState(result)
   }

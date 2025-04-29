@@ -22,7 +22,7 @@ interface Schema {
 
 type MigratorFunc = (oldData: any) => Schema
 
-type Migrator = { migratorFunc: MigratorFunc; oldDataVersion: number | undefined }
+type Migrator = { oldDataVersion: number | undefined; migratorFunc: MigratorFunc }
 
 type Migrators = ReadonlyArray<Migrator>
 
