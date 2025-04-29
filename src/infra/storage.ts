@@ -16,7 +16,7 @@ export class FakeStorage implements Storage {
   }
 }
 
-export interface Schema {
+interface Schema {
   dataVersion: number
 }
 
