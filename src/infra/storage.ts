@@ -1,3 +1,5 @@
+import { ChromeStorageProvider } from '../chrome/storage'
+
 export interface Storage {
   set(obj: any): Promise<void>
   get(key: string): Promise<any>
@@ -13,5 +15,92 @@ export class FakeStorage implements Storage {
 
   async get(key: string): Promise<any> {
     return { [key]: this.storage[key] }
+  }
+}
+
+interface Schema {
+  dataVersion: number
+}
+
+type MigratorFunc = (oldData: any) => Schema
+
+type Migrator = { migratorFunc: MigratorFunc; oldDataVersion: number | undefined }
+
+type Migrators = ReadonlyArray<Migrator>
+
+export class StorageWrapper<S> {
+  private storage: Storage
+  private key: string
+  private migrators: Migrators
+  private currentDataVersion: number
+
+  static createFake<S extends Schema>({
+    storage = new FakeStorage(),
+    migrators = [] as Migrators,
+    key = 'STORAGE_KEY',
+    currentDataVersion = 0
+  }): StorageWrapper<S> {
+    return new StorageWrapper({ storage, key, migrators, currentDataVersion })
+  }
+
+  static create<S extends Schema>({
+    migrators,
+    key,
+    currentDataVersion
+  }: {
+    migrators: Migrators
+    key: string
+    currentDataVersion: number
+  }): StorageWrapper<S> {
+    return new StorageWrapper({
+      storage: ChromeStorageProvider.getLocalStorage(),
+      key,
+      migrators,
+      currentDataVersion
+    })
+  }
+
+  private constructor({
+    storage,
+    key,
+    migrators,
+    currentDataVersion
+  }: {
+    storage: Storage
+    key: string
+    migrators: Migrators
+    currentDataVersion: number
+  }) {
+    this.storage = storage
+    this.key = key
+    this.migrators = migrators
+    this.currentDataVersion = currentDataVersion
+  }
+
+  async get(): Promise<S> {
+    const result = await this.storage.get(this.key)
+    const data = result[this.key]
+    if (data?.dataVersion != this.currentDataVersion) {
+      return this.migrateData(data)
+    }
+    return data
+  }
+
+  private migrateData(oldData: any): S {
+    let migratedData = oldData
+    for (const migrator of this.migrators) {
+      if (this.isVersionMatch(migratedData, migrator)) {
+        migratedData = migrator.migratorFunc(migratedData)
+      }
+    }
+    return migratedData
+  }
+
+  private isVersionMatch(oldData: any, migrator: Migrator) {
+    return oldData?.dataVersion === migrator.oldDataVersion
+  }
+
+  async set(update: S): Promise<void> {
+    return this.storage.set({ [this.key]: update })
   }
 }
