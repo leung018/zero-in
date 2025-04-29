@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { FakeStorage } from './storage'
+import { FakeStorage, StorageWrapper } from './storage'
 
 describe('FakeStorage', () => {
   it('should set and get values correctly', async () => {
@@ -60,3 +60,104 @@ class Dummy {
     return 'dummy'
   }
 }
+
+describe('StorageWrapper', () => {
+  it('should get null if no data is saved', async () => {
+    const storageWrapper = StorageWrapper.createFake({
+      storage: new FakeStorage()
+    })
+
+    expect(await storageWrapper.get()).toBeNull()
+  })
+
+  it('should set and get the data properly', async () => {
+    type NewSchema = {
+      dataVersion: 1
+      fullname: string
+    }
+
+    const storageWrapper = StorageWrapper.createFake<NewSchema>({
+      currentDataVersion: 1
+    })
+
+    const data: NewSchema = {
+      dataVersion: 1,
+      fullname: 'John Doe'
+    }
+
+    await storageWrapper.set(data)
+    const result = await storageWrapper.get()
+    expect(result).toEqual(data)
+  })
+
+  it('should get old version and migrate to new version', async () => {
+    const fakeStorage = new FakeStorage()
+    type OldestSchema = {
+      name: string
+    }
+
+    type V1Schema = {
+      dataVersion: 1
+      myName: string
+    }
+
+    type V2Schema = {
+      dataVersion: 2
+      fullname: string
+    }
+
+    const storageWrapper = StorageWrapper.createFake<V2Schema>({
+      storage: fakeStorage,
+      migrators: [
+        {
+          migratorFunc: (oldData: OldestSchema): V1Schema => {
+            return {
+              dataVersion: 1,
+              myName: oldData.name
+            }
+          },
+          oldDataVersion: undefined
+        },
+        {
+          migratorFunc: (v1Data: V1Schema): V2Schema => {
+            return {
+              dataVersion: 2,
+              fullname: v1Data.myName
+            }
+          },
+          oldDataVersion: 1
+        }
+      ],
+      key: 'key1',
+      currentDataVersion: 2
+    })
+
+    // Migrating from OldestSchema
+    const oldData: OldestSchema = {
+      name: 'John Doe'
+    }
+
+    fakeStorage.set({
+      key1: oldData
+    })
+    let result = await storageWrapper.get()
+    expect(result).toEqual({
+      dataVersion: 2,
+      fullname: 'John Doe'
+    })
+
+    // Migrating from V1Schema
+    const v1Data: V1Schema = {
+      dataVersion: 1,
+      myName: 'Ben Johnson'
+    }
+    fakeStorage.set({
+      key1: v1Data
+    })
+    result = await storageWrapper.get()
+    expect(result).toEqual({
+      dataVersion: 2,
+      fullname: 'Ben Johnson'
+    })
+  })
+})

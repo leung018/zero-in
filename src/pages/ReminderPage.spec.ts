@@ -4,7 +4,7 @@ import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage
 import { TimerConfig } from '../domain/pomodoro/config'
 import { Duration } from '../domain/pomodoro/duration'
 import { newFocusSessionRecord } from '../domain/pomodoro/record'
-import { PomodoroStage } from '../domain/pomodoro/stage'
+import { TimerStage } from '../domain/pomodoro/stage'
 import { Time } from '../domain/time'
 import { FakeActionService } from '../infra/action'
 import { CurrentDateService } from '../infra/current_date'
@@ -64,7 +64,7 @@ describe('ReminderPage', () => {
     const state = timer.getState()
     expect(state.remainingSeconds).toBe(1)
     expect(state.isRunning).toBe(true)
-    expect(state.stage).toBe(PomodoroStage.SHORT_BREAK)
+    expect(state.stage).toBe(TimerStage.SHORT_BREAK)
   })
 
   it('should display daily completed pomodori', async () => {

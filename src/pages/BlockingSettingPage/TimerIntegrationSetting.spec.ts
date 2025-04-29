@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import config from '../../config'
 import type { BlockingTimerIntegration } from '../../domain/blocking_timer_integration'
 import { BrowsingRules } from '../../domain/browsing_rules'
-import { PomodoroStage } from '../../domain/pomodoro/stage'
+import { TimerStage } from '../../domain/pomodoro/stage'
 import { newTestTimerState } from '../../domain/pomodoro/state'
 import { FakeActionService } from '../../infra/action'
 import { assertSelectorCheckboxValue } from '../../test_utils/assert'
@@ -55,7 +55,7 @@ describe('TimerIntegrationSetting', () => {
         shouldPauseBlockingDuringBreaks: false
       },
       timerState: newTestTimerState({
-        stage: PomodoroStage.SHORT_BREAK,
+        stage: TimerStage.SHORT_BREAK,
         isRunning: true
       }),
       browsingRules,

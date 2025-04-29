@@ -4,10 +4,10 @@ import type { WeeklySchedule } from './schedules'
 import { WeeklyScheduleStorageService } from './schedules/storage'
 import { CurrentDateService } from '../infra/current_date'
 import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
-import { PomodoroStage } from './pomodoro/stage'
+import { TimerStage } from './pomodoro/stage'
 interface TimerInfoGetter {
   getTimerInfo(): {
-    timerStage: PomodoroStage
+    timerStage: TimerStage
     isRunning: boolean
     remainingSeconds: number
     longBreakSeconds: number
@@ -30,7 +30,7 @@ export class BrowsingControlTogglingService {
     blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake(),
     timerInfoGetter = {
       getTimerInfo: () => ({
-        timerStage: PomodoroStage.FOCUS,
+        timerStage: TimerStage.FOCUS,
         isRunning: false,
         remainingSeconds: 0,
         longBreakSeconds: 0,
@@ -56,7 +56,7 @@ export class BrowsingControlTogglingService {
     blockingTimerIntegrationStorageService,
     timerInfoGetter = {
       getTimerInfo: () => ({
-        timerStage: PomodoroStage.FOCUS,
+        timerStage: TimerStage.FOCUS,
         isRunning: false,
         remainingSeconds: 0,
         longBreakSeconds: 0,
@@ -100,7 +100,7 @@ export class BrowsingControlTogglingService {
 
   private isInBreak(): boolean {
     const timerInfo = this.timerInfoGetter.getTimerInfo()
-    if (timerInfo.timerStage === PomodoroStage.FOCUS) {
+    if (timerInfo.timerStage === TimerStage.FOCUS) {
       return false
     }
     if (timerInfo.isRunning) {
@@ -109,13 +109,13 @@ export class BrowsingControlTogglingService {
 
     // If user hasn't pressed the start of the timer even the stage is break, still is not in break yet.
     if (
-      timerInfo.timerStage === PomodoroStage.SHORT_BREAK &&
+      timerInfo.timerStage === TimerStage.SHORT_BREAK &&
       timerInfo.shortBreakSeconds <= timerInfo.remainingSeconds
     ) {
       return false
     }
     if (
-      timerInfo.timerStage === PomodoroStage.LONG_BREAK &&
+      timerInfo.timerStage === TimerStage.LONG_BREAK &&
       timerInfo.longBreakSeconds <= timerInfo.remainingSeconds
     ) {
       return false
