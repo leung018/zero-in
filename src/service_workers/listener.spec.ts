@@ -9,7 +9,7 @@ import {
 import { TimerConfig } from '../domain/pomodoro/config'
 import { Duration } from '../domain/pomodoro/duration'
 import type { FocusSessionRecord } from '../domain/pomodoro/record'
-import { PomodoroStage } from '../domain/pomodoro/stage'
+import { TimerStage } from '../domain/pomodoro/stage'
 import type { TimerState } from '../domain/pomodoro/state'
 import { type Badge, type BadgeColor } from '../infra/badge'
 import { setUpListener } from '../test_utils/listener'
@@ -320,7 +320,7 @@ describe('BackgroundListener', () => {
     const targetState: TimerState = {
       remainingSeconds: 1000,
       isRunning: true,
-      stage: PomodoroStage.FOCUS,
+      stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
     }
     await timerStateStorageService.save(targetState)
@@ -427,7 +427,7 @@ describe('BackgroundListener', () => {
     await flushPromises()
 
     expect(listener.getTimerState().isRunning).toBe(true)
-    expect(listener.getTimerState().stage).toBe(PomodoroStage.SHORT_BREAK)
+    expect(listener.getTimerState().stage).toBe(TimerStage.SHORT_BREAK)
   })
 })
 

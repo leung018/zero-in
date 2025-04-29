@@ -14,7 +14,7 @@ import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
 import { newFocusSessionRecord } from '../domain/pomodoro/record'
 import { FocusSessionRecordHousekeeper } from '../domain/pomodoro/record/house_keep'
 import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
-import { PomodoroStage } from '../domain/pomodoro/stage'
+import { TimerStage } from '../domain/pomodoro/stage'
 import type { TimerState } from '../domain/pomodoro/state'
 import { TimerStateStorageService } from '../domain/pomodoro/state/storage'
 import { PomodoroTimer } from '../domain/pomodoro/timer'
@@ -160,7 +160,7 @@ export class BackgroundListener {
       this.badgeDisplayService.clearBadge()
       this.toggleBrowsingRules()
 
-      if (completedStage === PomodoroStage.FOCUS) {
+      if (completedStage === TimerStage.FOCUS) {
         this.updateFocusSessionRecords()
       }
     })
@@ -316,9 +316,9 @@ function roundUpToRemainingMinutes(remainingSeconds: number): number {
   return Math.ceil(remainingSeconds / 60)
 }
 
-function getBadgeColor(stage: PomodoroStage): BadgeColor {
+function getBadgeColor(stage: TimerStage): BadgeColor {
   const colorConfig = config.getBadgeColorConfig()
-  if (stage === PomodoroStage.FOCUS) {
+  if (stage === TimerStage.FOCUS) {
     return colorConfig.focusBadgeColor
   } else {
     return colorConfig.breakBadgeColor

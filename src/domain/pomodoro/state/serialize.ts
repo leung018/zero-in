@@ -1,5 +1,5 @@
 import type { TimerState } from '.'
-import type { PomodoroStage } from '../stage'
+import type { TimerStage } from '../stage'
 
 type SerializedTimerState = TimerStateSchemas[1]
 
@@ -7,14 +7,14 @@ export type TimerStateSchemas = [
   {
     remainingSeconds: number
     isRunning: boolean
-    stage: PomodoroStage
+    stage: TimerStage
     numOfPomodoriCompleted: number
   },
   {
     dataVersion: 1
     remainingSeconds: number
     isRunning: boolean
-    stage: PomodoroStage
+    stage: TimerStage
     focusSessionsCompleted: number
   }
 ]

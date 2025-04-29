@@ -3,7 +3,7 @@ import type { ClientPort } from '@/service_workers/listener'
 import { computed, onBeforeMount, ref } from 'vue'
 import type { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
 import { Duration } from '../domain/pomodoro/duration'
-import { PomodoroStage } from '../domain/pomodoro/stage'
+import { TimerStage } from '../domain/pomodoro/stage'
 import { WorkRequestName } from '../service_workers/request'
 import { WorkResponseName } from '../service_workers/response'
 import { formatNumber, getNumberWithOrdinal } from '@/utils/format'
@@ -15,7 +15,7 @@ const { port, timerConfigStorageService } = defineProps<{
 
 const durationLeft = ref<Duration>(new Duration({ seconds: 0 }))
 const isRunning = ref(false)
-const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
+const pomodoroStage = ref<TimerStage>(TimerStage.FOCUS)
 const focusSessionsCompleted = ref(0)
 const focusSessionsPerCycle = ref(0)
 
@@ -28,9 +28,9 @@ const displayTime = computed(() => {
 
 const currentStage = computed(() => {
   switch (pomodoroStage.value) {
-    case PomodoroStage.SHORT_BREAK:
+    case TimerStage.SHORT_BREAK:
       return getShortBreakLabel(focusSessionsCompleted.value)
-    case PomodoroStage.LONG_BREAK:
+    case TimerStage.LONG_BREAK:
       return getLongBreakLabel()
     default:
       return getFocusLabel(focusSessionsCompleted.value + 1)

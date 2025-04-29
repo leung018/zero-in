@@ -6,7 +6,7 @@ import {
 } from '../../infra/scheduler'
 import type { TimerConfig } from './config'
 import { Duration } from './duration'
-import { PomodoroStage } from './stage'
+import { TimerStage } from './stage'
 import type { TimerState } from './state'
 
 export class PomodoroTimer {
@@ -30,7 +30,7 @@ export class PomodoroTimer {
     })
   }
 
-  private stage: PomodoroStage = PomodoroStage.FOCUS
+  private stage: TimerStage = TimerStage.FOCUS
 
   private config: TimerConfig
 
@@ -42,7 +42,7 @@ export class PomodoroTimer {
 
   private scheduler: PeriodicTaskScheduler
 
-  private onStageComplete: (stage: PomodoroStage) => void = () => {}
+  private onStageComplete: (stage: TimerStage) => void = () => {}
 
   private onTimerUpdate: (state: TimerState) => void = () => {}
 
@@ -93,7 +93,7 @@ export class PomodoroTimer {
     this.setState({
       remainingSeconds: this.config.focusDuration.remainingSeconds(),
       isRunning: false,
-      stage: PomodoroStage.FOCUS,
+      stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
     })
   }
@@ -144,7 +144,7 @@ export class PomodoroTimer {
     this.notifyTimerUpdate()
   }
 
-  setOnStageComplete(callback: (completedStage: PomodoroStage) => void) {
+  setOnStageComplete(callback: (completedStage: TimerStage) => void) {
     this.onStageComplete = callback
   }
 
@@ -152,18 +152,18 @@ export class PomodoroTimer {
     if (nth != null) {
       this.resetNumOfPomodoriCompleted(nth)
     }
-    this.restart({ stage: PomodoroStage.SHORT_BREAK })
+    this.restart({ stage: TimerStage.SHORT_BREAK })
   }
 
   restartLongBreak() {
-    this.restart({ stage: PomodoroStage.LONG_BREAK })
+    this.restart({ stage: TimerStage.LONG_BREAK })
   }
 
   restartFocus(nth?: number) {
     if (nth != null) {
       this.resetNumOfPomodoriCompleted(nth - 1)
     }
-    this.restart({ stage: PomodoroStage.FOCUS })
+    this.restart({ stage: TimerStage.FOCUS })
   }
 
   private resetNumOfPomodoriCompleted(n: number) {
@@ -173,16 +173,16 @@ export class PomodoroTimer {
     this.focusSessionsCompleted = n
   }
 
-  private restart({ stage }: { stage: PomodoroStage }) {
+  private restart({ stage }: { stage: TimerStage }) {
     this.stopRunning()
     switch (stage) {
-      case PomodoroStage.FOCUS:
+      case TimerStage.FOCUS:
         this.setToBeginOfFocus()
         break
-      case PomodoroStage.SHORT_BREAK:
+      case TimerStage.SHORT_BREAK:
         this.setToBeginOfShortBreak()
         break
-      case PomodoroStage.LONG_BREAK:
+      case TimerStage.LONG_BREAK:
         this.setToBeginOfLongBreak()
         break
     }
@@ -195,7 +195,7 @@ export class PomodoroTimer {
 
   private completeCurrentStage() {
     this.onStageComplete(this.stage)
-    if (this.stage === PomodoroStage.FOCUS) {
+    if (this.stage === TimerStage.FOCUS) {
       this.handleFocusComplete()
     } else {
       this.handleBreakComplete()
@@ -213,24 +213,24 @@ export class PomodoroTimer {
   }
 
   private handleBreakComplete() {
-    if (this.stage === PomodoroStage.LONG_BREAK) {
+    if (this.stage === TimerStage.LONG_BREAK) {
       this.focusSessionsCompleted = 0
     }
     this.setToBeginOfFocus()
   }
 
   private setToBeginOfLongBreak() {
-    this.stage = PomodoroStage.LONG_BREAK
+    this.stage = TimerStage.LONG_BREAK
     this.remaining = this.config.longBreakDuration
   }
 
   private setToBeginOfShortBreak() {
-    this.stage = PomodoroStage.SHORT_BREAK
+    this.stage = TimerStage.SHORT_BREAK
     this.remaining = this.config.shortBreakDuration
   }
 
   private setToBeginOfFocus() {
-    this.stage = PomodoroStage.FOCUS
+    this.stage = TimerStage.FOCUS
     this.remaining = this.config.focusDuration
   }
 

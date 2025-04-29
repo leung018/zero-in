@@ -7,7 +7,7 @@ import { Time } from './time'
 import { WeeklyScheduleStorageService } from './schedules/storage'
 import { BrowsingControlTogglingService } from './browsing_control_toggling'
 import { CurrentDateService } from '../infra/current_date'
-import { PomodoroStage } from './pomodoro/stage'
+import { TimerStage } from './pomodoro/stage'
 import type { BlockingTimerIntegration } from './blocking_timer_integration'
 import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 
@@ -54,37 +54,37 @@ describe('BrowsingControlTogglingService', () => {
 
   it.each([
     newTimerInfo({
-      timerStage: PomodoroStage.SHORT_BREAK,
+      timerStage: TimerStage.SHORT_BREAK,
       isRunning: true,
       remainingSeconds: 99,
       shortBreakSeconds: 99
     }),
     newTimerInfo({
-      timerStage: PomodoroStage.LONG_BREAK,
+      timerStage: TimerStage.LONG_BREAK,
       isRunning: true,
       remainingSeconds: 99,
       longBreakSeconds: 99
     }),
     newTimerInfo({
-      timerStage: PomodoroStage.SHORT_BREAK,
+      timerStage: TimerStage.SHORT_BREAK,
       isRunning: false,
       remainingSeconds: 98,
       shortBreakSeconds: 99
     }),
     newTimerInfo({
-      timerStage: PomodoroStage.LONG_BREAK,
+      timerStage: TimerStage.LONG_BREAK,
       isRunning: false,
       remainingSeconds: 98,
       longBreakSeconds: 99
     }),
     newTimerInfo({
-      timerStage: PomodoroStage.SHORT_BREAK,
+      timerStage: TimerStage.SHORT_BREAK,
       isRunning: true,
       remainingSeconds: 0,
       shortBreakSeconds: 99
     }),
     newTimerInfo({
-      timerStage: PomodoroStage.LONG_BREAK,
+      timerStage: TimerStage.LONG_BREAK,
       isRunning: true,
       remainingSeconds: 0,
       longBreakSeconds: 99
@@ -107,27 +107,27 @@ describe('BrowsingControlTogglingService', () => {
     {
       shouldPauseBlockingDuringBreaks: true,
       timerInfo: newTimerInfo({
-        timerStage: PomodoroStage.FOCUS
+        timerStage: TimerStage.FOCUS
       })
     },
     {
       shouldPauseBlockingDuringBreaks: false,
       timerInfo: newTimerInfo({
-        timerStage: PomodoroStage.SHORT_BREAK,
+        timerStage: TimerStage.SHORT_BREAK,
         isRunning: true
       })
     },
     {
       shouldPauseBlockingDuringBreaks: false,
       timerInfo: newTimerInfo({
-        timerStage: PomodoroStage.LONG_BREAK,
+        timerStage: TimerStage.LONG_BREAK,
         isRunning: true
       })
     },
     {
       shouldPauseBlockingDuringBreaks: true,
       timerInfo: newTimerInfo({
-        timerStage: PomodoroStage.SHORT_BREAK,
+        timerStage: TimerStage.SHORT_BREAK,
         isRunning: false,
         remainingSeconds: 99,
         shortBreakSeconds: 99
@@ -136,7 +136,7 @@ describe('BrowsingControlTogglingService', () => {
     {
       shouldPauseBlockingDuringBreaks: true,
       timerInfo: newTimerInfo({
-        timerStage: PomodoroStage.LONG_BREAK,
+        timerStage: TimerStage.LONG_BREAK,
         isRunning: false,
         remainingSeconds: 99,
         longBreakSeconds: 99
@@ -158,7 +158,7 @@ describe('BrowsingControlTogglingService', () => {
 })
 
 function newTimerInfo({
-  timerStage = PomodoroStage.FOCUS,
+  timerStage = TimerStage.FOCUS,
   isRunning = false,
   remainingSeconds = 99,
   longBreakSeconds = 999,

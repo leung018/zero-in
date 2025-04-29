@@ -4,7 +4,7 @@ import type { ClientPort } from '@/service_workers/listener'
 import { computed, onBeforeMount, ref } from 'vue'
 import type { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import type { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
-import { PomodoroStage } from '../domain/pomodoro/stage'
+import { TimerStage } from '../domain/pomodoro/stage'
 import { Time } from '../domain/time'
 import { WorkRequestName } from '../service_workers/request'
 import { WorkResponseName } from '../service_workers/response'
@@ -18,15 +18,15 @@ const { port, focusSessionRecordStorageService, dailyResetTimeStorageService, cu
     currentDateService: CurrentDateService
   }>()
 
-const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
+const pomodoroStage = ref<TimerStage>(TimerStage.FOCUS)
 const dailyCompletedPomodori = ref(0)
 const dailyResetTime = ref(new Time(0, 0))
 
 const hintMsg = computed(() => {
   switch (pomodoroStage.value) {
-    case PomodoroStage.SHORT_BREAK:
+    case TimerStage.SHORT_BREAK:
       return 'Take a short break'
-    case PomodoroStage.LONG_BREAK:
+    case TimerStage.LONG_BREAK:
       return 'Take a break'
     default:
       return 'Start focusing'

@@ -1,9 +1,9 @@
-import { PomodoroStage } from '../stage'
+import { TimerStage } from '../stage'
 
 export type TimerState = {
   remainingSeconds: number
   isRunning: boolean
-  stage: PomodoroStage
+  stage: TimerStage
   focusSessionsCompleted: number
 }
 
@@ -11,7 +11,7 @@ export function newTestTimerState(override: Partial<TimerState> = {}): TimerStat
   return {
     remainingSeconds: 100,
     isRunning: false,
-    stage: PomodoroStage.FOCUS,
+    stage: TimerStage.FOCUS,
     focusSessionsCompleted: 0,
     ...override
   }

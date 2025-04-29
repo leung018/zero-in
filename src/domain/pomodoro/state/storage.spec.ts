@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { TimerStateStorageService, STORAGE_KEY } from './storage'
-import { PomodoroStage } from '../stage'
+import { TimerStage } from '../stage'
 import type { TimerState } from '.'
 import { FakeStorage } from '../../../infra/storage'
 import type { TimerStateSchemas } from './serialize'
@@ -16,7 +16,7 @@ describe('TimerStateStorageService', () => {
     const timerState: TimerState = {
       remainingSeconds: 100,
       isRunning: true,
-      stage: PomodoroStage.FOCUS,
+      stage: TimerStage.FOCUS,
       focusSessionsCompleted: 9
     }
 
@@ -42,7 +42,7 @@ describe('TimerStateStorageService with migration', () => {
     const expected: TimerState = {
       remainingSeconds: 100,
       isRunning: true,
-      stage: PomodoroStage.FOCUS,
+      stage: TimerStage.FOCUS,
       focusSessionsCompleted: 9
     }
     const result = await timerStateStorageService.get()
