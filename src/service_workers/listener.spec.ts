@@ -321,7 +321,7 @@ describe('BackgroundListener', () => {
       remainingSeconds: 1000,
       isRunning: true,
       stage: PomodoroStage.FOCUS,
-      numOfPomodoriCompleted: 1
+      focusSessionsCompleted: 1
     }
     await timerStateStorageService.save(targetState)
 

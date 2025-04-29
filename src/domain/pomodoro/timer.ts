@@ -38,7 +38,7 @@ export class PomodoroTimer {
 
   private remaining: Duration
 
-  private numOfPomodoriCompleted: number = 0
+  private focusSessionsCompleted: number = 0
 
   private scheduler: PeriodicTaskScheduler
 
@@ -80,7 +80,7 @@ export class PomodoroTimer {
       remainingSeconds: this.remaining.remainingSeconds(),
       isRunning: this.isRunning,
       stage: this.stage,
-      numOfPomodoriCompleted: this.numOfPomodoriCompleted
+      focusSessionsCompleted: this.focusSessionsCompleted
     }
   }
 
@@ -94,7 +94,7 @@ export class PomodoroTimer {
       remainingSeconds: this.config.focusDuration.remainingSeconds(),
       isRunning: false,
       stage: PomodoroStage.FOCUS,
-      numOfPomodoriCompleted: 0
+      focusSessionsCompleted: 0
     })
   }
 
@@ -170,7 +170,7 @@ export class PomodoroTimer {
     const upperLimit = this.config.focusSessionsPerCycle - 1
     n = Math.min(upperLimit, n)
     n = Math.max(0, n)
-    this.numOfPomodoriCompleted = n
+    this.focusSessionsCompleted = n
   }
 
   private restart({ stage }: { stage: PomodoroStage }) {
@@ -203,9 +203,9 @@ export class PomodoroTimer {
   }
 
   private handleFocusComplete() {
-    this.numOfPomodoriCompleted++
+    this.focusSessionsCompleted++
 
-    if (this.numOfPomodoriCompleted >= this.config.focusSessionsPerCycle) {
+    if (this.focusSessionsCompleted >= this.config.focusSessionsPerCycle) {
       this.setToBeginOfLongBreak()
     } else {
       this.setToBeginOfShortBreak()
@@ -214,7 +214,7 @@ export class PomodoroTimer {
 
   private handleBreakComplete() {
     if (this.stage === PomodoroStage.LONG_BREAK) {
-      this.numOfPomodoriCompleted = 0
+      this.focusSessionsCompleted = 0
     }
     this.setToBeginOfFocus()
   }
@@ -237,7 +237,7 @@ export class PomodoroTimer {
   setState(state: TimerState) {
     this.remaining = new Duration({ seconds: state.remainingSeconds })
     this.stage = state.stage
-    this.numOfPomodoriCompleted = state.numOfPomodoriCompleted
+    this.focusSessionsCompleted = state.focusSessionsCompleted
 
     if (state.isRunning) {
       this.start()

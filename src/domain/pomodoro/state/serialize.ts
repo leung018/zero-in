@@ -25,7 +25,7 @@ export function serializeTimerState(timerState: TimerState): SerializedTimerStat
     remainingSeconds: timerState.remainingSeconds,
     isRunning: timerState.isRunning,
     stage: timerState.stage,
-    focusSessionsCompleted: timerState.numOfPomodoriCompleted
+    focusSessionsCompleted: timerState.focusSessionsCompleted
   }
 }
 
@@ -34,6 +34,6 @@ export function deserializeTimerState(data: SerializedTimerState): TimerState {
     remainingSeconds: data.remainingSeconds,
     isRunning: data.isRunning,
     stage: data.stage,
-    numOfPomodoriCompleted: data.focusSessionsCompleted
+    focusSessionsCompleted: data.focusSessionsCompleted
   }
 }

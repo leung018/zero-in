@@ -4,7 +4,7 @@ export type TimerState = {
   remainingSeconds: number
   isRunning: boolean
   stage: PomodoroStage
-  numOfPomodoriCompleted: number
+  focusSessionsCompleted: number
 }
 
 export function newTestTimerState(override: Partial<TimerState> = {}): TimerState {
@@ -12,7 +12,7 @@ export function newTestTimerState(override: Partial<TimerState> = {}): TimerStat
     remainingSeconds: 100,
     isRunning: false,
     stage: PomodoroStage.FOCUS,
-    numOfPomodoriCompleted: 0,
+    focusSessionsCompleted: 0,
     ...override
   }
 }

@@ -17,7 +17,7 @@ describe('TimerStateStorageService', () => {
       remainingSeconds: 100,
       isRunning: true,
       stage: PomodoroStage.FOCUS,
-      numOfPomodoriCompleted: 9
+      focusSessionsCompleted: 9
     }
 
     await timerStateStorageService.save(timerState)
@@ -43,7 +43,7 @@ describe('TimerStateStorageService with migration', () => {
       remainingSeconds: 100,
       isRunning: true,
       stage: PomodoroStage.FOCUS,
-      numOfPomodoriCompleted: 9
+      focusSessionsCompleted: 9
     }
     const result = await timerStateStorageService.get()
     expect(result).toStrictEqual(expected)

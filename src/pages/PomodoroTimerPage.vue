@@ -16,7 +16,7 @@ const { port, timerConfigStorageService } = defineProps<{
 const durationLeft = ref<Duration>(new Duration({ seconds: 0 }))
 const isRunning = ref(false)
 const pomodoroStage = ref<PomodoroStage>(PomodoroStage.FOCUS)
-const numOfPomodoriCompleted = ref(0)
+const focusSessionsCompleted = ref(0)
 const focusSessionsPerCycle = ref(0)
 
 const displayTime = computed(() => {
@@ -29,11 +29,11 @@ const displayTime = computed(() => {
 const currentStage = computed(() => {
   switch (pomodoroStage.value) {
     case PomodoroStage.SHORT_BREAK:
-      return getShortBreakLabel(numOfPomodoriCompleted.value)
+      return getShortBreakLabel(focusSessionsCompleted.value)
     case PomodoroStage.LONG_BREAK:
       return getLongBreakLabel()
     default:
-      return getFocusLabel(numOfPomodoriCompleted.value + 1)
+      return getFocusLabel(focusSessionsCompleted.value + 1)
   }
 })
 
@@ -68,7 +68,7 @@ onBeforeMount(async () => {
     pomodoroStage.value = message.payload.stage
     durationLeft.value = new Duration({ seconds: message.payload.remainingSeconds })
     isRunning.value = message.payload.isRunning
-    numOfPomodoriCompleted.value = message.payload.numOfPomodoriCompleted
+    focusSessionsCompleted.value = message.payload.focusSessionsCompleted
   })
   port.send({
     name: WorkRequestName.LISTEN_TO_TIMER

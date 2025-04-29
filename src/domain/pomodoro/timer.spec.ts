@@ -4,7 +4,7 @@ import { Duration } from './duration'
 import { PomodoroStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
 import { TimerConfig } from './config'
-import type { TimerState } from './state'
+import { newTestTimerState, type TimerState } from './state'
 
 describe('PomodoroTimer', () => {
   it('should initial state is set correctly', () => {
@@ -19,7 +19,7 @@ describe('PomodoroTimer', () => {
       remainingSeconds: new Duration({ minutes: 10 }).remainingSeconds(),
       isRunning: false,
       stage: PomodoroStage.FOCUS,
-      numOfPomodoriCompleted: 0
+      focusSessionsCompleted: 0
     }
     expect(timer.getState()).toEqual(expected)
   })
@@ -83,7 +83,7 @@ describe('PomodoroTimer', () => {
       remainingSeconds: new Duration({ minutes: 5 }).remainingSeconds(),
       isRunning: false,
       stage: PomodoroStage.FOCUS,
-      numOfPomodoriCompleted: 0
+      focusSessionsCompleted: 0
     }
     expect(timer.getState()).toEqual(expected)
   })
@@ -101,7 +101,7 @@ describe('PomodoroTimer', () => {
       remainingSeconds: new Duration({ minutes: 9, seconds: 59 }).remainingSeconds(),
       isRunning: true,
       stage: PomodoroStage.FOCUS,
-      numOfPomodoriCompleted: 0
+      focusSessionsCompleted: 0
     }
     expect(timer.getState()).toEqual(expected)
   })
@@ -138,7 +138,7 @@ describe('PomodoroTimer', () => {
       remainingSeconds: new Duration({ minutes: 9, seconds: 59 }).remainingSeconds(),
       isRunning: false,
       stage: PomodoroStage.FOCUS,
-      numOfPomodoriCompleted: 0
+      focusSessionsCompleted: 0
     }
     expect(timer.getState()).toEqual(expected)
   })
@@ -181,25 +181,25 @@ describe('PomodoroTimer', () => {
         remainingSeconds: 3,
         isRunning: false,
         stage: PomodoroStage.FOCUS,
-        numOfPomodoriCompleted: 0
+        focusSessionsCompleted: 0
       },
       {
         remainingSeconds: 3,
         isRunning: true,
         stage: PomodoroStage.FOCUS,
-        numOfPomodoriCompleted: 0
+        focusSessionsCompleted: 0
       },
       {
         remainingSeconds: 2,
         isRunning: true,
         stage: PomodoroStage.FOCUS,
-        numOfPomodoriCompleted: 0
+        focusSessionsCompleted: 0
       },
       {
         remainingSeconds: 1,
         isRunning: true,
         stage: PomodoroStage.FOCUS,
-        numOfPomodoriCompleted: 0
+        focusSessionsCompleted: 0
       }
     ]
     expect(updates).toEqual(expectedUpdates)
@@ -211,7 +211,7 @@ describe('PomodoroTimer', () => {
       remainingSeconds: 5,
       isRunning: false,
       stage: PomodoroStage.SHORT_BREAK,
-      numOfPomodoriCompleted: 1
+      focusSessionsCompleted: 1
     }
     expect(updates[4]).toEqual(expectedLastUpdate)
   })
@@ -326,7 +326,7 @@ describe('PomodoroTimer', () => {
       remainingSeconds: 1,
       isRunning: false,
       stage: PomodoroStage.SHORT_BREAK,
-      numOfPomodoriCompleted: 1
+      focusSessionsCompleted: 1
     }
     expect(timer.getState()).toEqual(expected)
   })
@@ -347,7 +347,7 @@ describe('PomodoroTimer', () => {
       remainingSeconds: 3,
       isRunning: false,
       stage: PomodoroStage.FOCUS,
-      numOfPomodoriCompleted: 1
+      focusSessionsCompleted: 1
     }
     expect(timer.getState()).toEqual(expected)
   })
@@ -379,7 +379,7 @@ describe('PomodoroTimer', () => {
       remainingSeconds: 2,
       isRunning: false,
       stage: PomodoroStage.LONG_BREAK,
-      numOfPomodoriCompleted: 2
+      focusSessionsCompleted: 2
     }
     expect(timer.getState()).toEqual(expected)
   })
@@ -415,7 +415,7 @@ describe('PomodoroTimer', () => {
       remainingSeconds: 3,
       isRunning: false,
       stage: PomodoroStage.FOCUS,
-      numOfPomodoriCompleted: 0
+      focusSessionsCompleted: 0
     }
     expect(timer.getState()).toEqual(expected)
 
@@ -436,7 +436,7 @@ describe('PomodoroTimer', () => {
       remainingSeconds: 2,
       isRunning: false,
       stage: PomodoroStage.LONG_BREAK,
-      numOfPomodoriCompleted: 2
+      focusSessionsCompleted: 2
     }
     expect(timer.getState()).toEqual(expected)
   })
@@ -461,7 +461,7 @@ describe('PomodoroTimer', () => {
       remainingSeconds: 1,
       isRunning: true,
       stage: PomodoroStage.SHORT_BREAK,
-      numOfPomodoriCompleted: 0
+      focusSessionsCompleted: 0
     }
     expect(timer.getState()).toEqual(expected)
   })
@@ -491,15 +491,15 @@ describe('PomodoroTimer', () => {
       remainingSeconds: 2,
       isRunning: true,
       stage: PomodoroStage.LONG_BREAK,
-      numOfPomodoriCompleted: 1
+      focusSessionsCompleted: 1
     }
     expect(timer.getState()).toEqual(expected)
 
     scheduler.advanceTime(1500)
 
-    // Should reset numOfPomodoriCompleted after long break even number of focus completed in previous cycle is less than 4
+    // Should reset focusSessionsCompleted after long break even number of focus completed in previous cycle is less than 4
     expect(timer.getState().stage).toBe(PomodoroStage.FOCUS)
-    expect(timer.getState().numOfPomodoriCompleted).toBe(0)
+    expect(timer.getState().focusSessionsCompleted).toBe(0)
   })
 
   it('should able to jump to focus', () => {
@@ -518,7 +518,7 @@ describe('PomodoroTimer', () => {
       remainingSeconds: 10,
       isRunning: true,
       stage: PomodoroStage.FOCUS,
-      numOfPomodoriCompleted: 0
+      focusSessionsCompleted: 0
     }
     expect(timer.getState()).toEqual(expected)
   })
@@ -531,18 +531,18 @@ describe('PomodoroTimer', () => {
     )
 
     timer.restartFocus(4) // 4th Focus
-    expect(timer.getState().numOfPomodoriCompleted).toBe(3)
+    expect(timer.getState().focusSessionsCompleted).toBe(3)
 
     timer.restartFocus(1)
-    expect(timer.getState().numOfPomodoriCompleted).toBe(0)
+    expect(timer.getState().focusSessionsCompleted).toBe(0)
 
     // Larger than 4 or Less than 0 will treat as the closest valid number
 
     timer.restartFocus(5)
-    expect(timer.getState().numOfPomodoriCompleted).toBe(3)
+    expect(timer.getState().focusSessionsCompleted).toBe(3)
 
     timer.restartFocus(0)
-    expect(timer.getState().numOfPomodoriCompleted).toBe(0)
+    expect(timer.getState().focusSessionsCompleted).toBe(0)
   })
 
   it('should able to jump to specific short break', () => {
@@ -553,16 +553,16 @@ describe('PomodoroTimer', () => {
     )
 
     timer.restartShortBreak(3) // 3th Short Break
-    expect(timer.getState().numOfPomodoriCompleted).toBe(3)
+    expect(timer.getState().focusSessionsCompleted).toBe(3)
 
     timer.restartShortBreak(1)
-    expect(timer.getState().numOfPomodoriCompleted).toBe(1)
+    expect(timer.getState().focusSessionsCompleted).toBe(1)
 
     timer.restartShortBreak(4) // 4th break is Long Break. So last shortBreak is 3rd which means 3 focus completed
-    expect(timer.getState().numOfPomodoriCompleted).toBe(3)
+    expect(timer.getState().focusSessionsCompleted).toBe(3)
 
     timer.restartShortBreak(0)
-    expect(timer.getState().numOfPomodoriCompleted).toBe(0)
+    expect(timer.getState().focusSessionsCompleted).toBe(0)
   })
 
   it('should able to set state', async () => {
@@ -578,7 +578,7 @@ describe('PomodoroTimer', () => {
       remainingSeconds: 2,
       isRunning: true,
       stage: PomodoroStage.FOCUS,
-      numOfPomodoriCompleted: 1
+      focusSessionsCompleted: 1
     }
 
     timer.setState(targetState)
@@ -589,7 +589,7 @@ describe('PomodoroTimer', () => {
       remainingSeconds: 1,
       isRunning: false,
       stage: PomodoroStage.SHORT_BREAK,
-      numOfPomodoriCompleted: 2
+      focusSessionsCompleted: 2
     }
     timer.setState(targetState2)
 
@@ -599,7 +599,7 @@ describe('PomodoroTimer', () => {
   it('should start the timer if newState is running', async () => {
     const { timer, scheduler } = createTimer()
 
-    const targetState = newState({
+    const targetState = newTestTimerState({
       remainingSeconds: 3,
       isRunning: true
     })
@@ -626,7 +626,7 @@ describe('PomodoroTimer', () => {
     timer.start()
     scheduler.advanceTime(1000)
 
-    const targetState = newState({
+    const targetState = newTestTimerState({
       remainingSeconds: 200,
       isRunning: false
     })
@@ -668,27 +668,13 @@ describe('PomodoroTimer', () => {
       remainingSeconds: 100,
       isRunning: true,
       stage: PomodoroStage.FOCUS,
-      numOfPomodoriCompleted: 0
+      focusSessionsCompleted: 0
     })
     expect(triggerCount).toBe(5)
   })
 })
 
 const newConfig = TimerConfig.newTestInstance
-
-const newState = ({
-  remainingSeconds = 300,
-  isRunning = false,
-  stage = PomodoroStage.FOCUS,
-  numOfPomodoriCompleted = 0
-} = {}): TimerState => {
-  return {
-    remainingSeconds,
-    isRunning,
-    stage,
-    numOfPomodoriCompleted
-  }
-}
 
 function createTimer(timerConfig = newConfig()) {
   const scheduler = new FakePeriodicTaskScheduler()
