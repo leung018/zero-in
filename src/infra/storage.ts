@@ -1,5 +1,3 @@
-import { ChromeStorageProvider } from '../chrome/storage'
-
 export interface Storage {
   set(obj: any): Promise<void>
   get(key: string): Promise<any>
@@ -18,7 +16,7 @@ export class FakeStorage implements Storage {
   }
 }
 
-interface Schema {
+export interface Schema {
   dataVersion: number
 }
 
@@ -43,24 +41,7 @@ export class StorageWrapper<S> {
     return new StorageWrapper({ storage, key, migrators, currentDataVersion })
   }
 
-  static create<S extends Schema>({
-    migrators,
-    key,
-    currentDataVersion
-  }: {
-    migrators: Migrators
-    key: string
-    currentDataVersion: number
-  }): StorageWrapper<S> {
-    return new StorageWrapper({
-      storage: ChromeStorageProvider.getLocalStorage(),
-      key,
-      migrators,
-      currentDataVersion
-    })
-  }
-
-  private constructor({
+  constructor({
     storage,
     key,
     migrators,
@@ -77,8 +58,12 @@ export class StorageWrapper<S> {
     this.currentDataVersion = currentDataVersion
   }
 
-  async get(): Promise<S> {
+  async get(): Promise<S | null> {
     const result = await this.storage.get(this.key)
+    if (!result[this.key]) {
+      return null
+    }
+
     const data = result[this.key]
     if (data?.dataVersion != this.currentDataVersion) {
       return this.migrateData(data)

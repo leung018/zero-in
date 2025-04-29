@@ -62,6 +62,14 @@ class Dummy {
 }
 
 describe('StorageWrapper', () => {
+  it('should get null if no data is saved', async () => {
+    const storageWrapper = StorageWrapper.createFake({
+      storage: new FakeStorage()
+    })
+
+    expect(await storageWrapper.get()).toBeNull()
+  })
+
   it('should set and get the data properly', async () => {
     type NewSchema = {
       dataVersion: 1

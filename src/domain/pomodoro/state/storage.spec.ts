@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { TimerStateStorageService } from './storage'
+import { TimerStateStorageService, STORAGE_KEY } from './storage'
 import { PomodoroStage } from '../stage'
 import type { TimerState } from '.'
+import { FakeStorage } from '../../../infra/storage'
+import type { TimerStateSchemas } from './serialize'
 
 describe('TimerStateStorageService', () => {
   it('should get null if no TimerState is saved ', async () => {
@@ -20,5 +22,30 @@ describe('TimerStateStorageService', () => {
 
     await timerStateStorageService.save(timerState)
     expect(await timerStateStorageService.get()).toStrictEqual(timerState)
+  })
+})
+
+describe('TimerStateStorageService with migration', () => {
+  it('should migrate properly', async () => {
+    const fakeStorage = new FakeStorage()
+    const data: TimerStateSchemas[0] = {
+      remainingSeconds: 100,
+      isRunning: true,
+      stage: 0,
+      numOfPomodoriCompleted: 9
+    }
+    fakeStorage.set({
+      [STORAGE_KEY]: data
+    })
+
+    const timerStateStorageService = TimerStateStorageService.createFake({ storage: fakeStorage })
+    const expected: TimerState = {
+      remainingSeconds: 100,
+      isRunning: true,
+      stage: PomodoroStage.FOCUS,
+      numOfPomodoriCompleted: 9
+    }
+    const result = await timerStateStorageService.get()
+    expect(result).toStrictEqual(expected)
   })
 })
