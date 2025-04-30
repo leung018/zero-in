@@ -2,6 +2,7 @@ import type { BlockingTimerIntegration } from '.'
 import { ChromeStorageProvider } from '../../chrome/storage'
 import config from '../../config'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
+import type { SerializedBlockingTimerIntegration } from './serialize'
 
 const STORAGE_KEY = 'blockingTimerIntegration'
 
@@ -14,7 +15,7 @@ export class BlockingTimerIntegrationStorageService {
     return new BlockingTimerIntegrationStorageService(new FakeStorage())
   }
 
-  private storageWrapper: StorageWrapper<BlockingTimerIntegration>
+  private storageWrapper: StorageWrapper<SerializedBlockingTimerIntegration>
 
   private constructor(storage: Storage) {
     this.storageWrapper = new StorageWrapper({

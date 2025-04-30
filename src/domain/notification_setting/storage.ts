@@ -2,6 +2,7 @@ import type { NotificationSetting } from '.'
 import { ChromeStorageProvider } from '../../chrome/storage'
 import config from '../../config'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
+import type { SerializedNotificationSetting } from './serialize'
 
 const STORAGE_KEY = 'notificationSetting'
 
@@ -14,7 +15,7 @@ export class NotificationSettingStorageService {
     return new NotificationSettingStorageService(new FakeStorage())
   }
 
-  private storageWrapper: StorageWrapper<NotificationSetting>
+  private storageWrapper: StorageWrapper<SerializedNotificationSetting>
 
   private constructor(storage: Storage) {
     this.storageWrapper = new StorageWrapper({
