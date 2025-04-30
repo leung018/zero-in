@@ -19,7 +19,7 @@ const { port, focusSessionRecordStorageService, dailyResetTimeStorageService, cu
   }>()
 
 const timerStage = ref<TimerStage>(TimerStage.FOCUS)
-const dailyCompletedPomodori = ref(0)
+const dailyCompletedFocusSessions = ref(0)
 const dailyResetTime = ref(new Time(0, 0))
 
 const hintMsg = computed(() => {
@@ -44,21 +44,21 @@ onBeforeMount(async () => {
     name: WorkRequestName.LISTEN_TO_TIMER
   })
   dailyResetTime.value = await dailyResetTimeStorageService.get()
-  dailyCompletedPomodori.value = await getTotalNumOfPomodoriAfter(dailyResetTime.value)
+  dailyCompletedFocusSessions.value = await getTotalFocusSessionsAfter(dailyResetTime.value)
 
   // @ts-ignore: Exposing port for e2e test to simulate situation that the port is disconnected
   window._port = port
 })
 
-async function getTotalNumOfPomodoriAfter(dailyResetTime: Time): Promise<number> {
+async function getTotalFocusSessionsAfter(dailyResetTime: Time): Promise<number> {
   const startDate = getMostRecentDate(dailyResetTime, currentDateService.getDate())
 
-  const totalNumOfPomodori = (
+  const totalFocusSessions = (
     await focusSessionRecordStorageService
       .getAll()
       .then((records) => records.filter((record) => record.completedAt >= startDate))
   ).length
-  return totalNumOfPomodori
+  return totalFocusSessions
 }
 
 const onClickStart = () => {
@@ -82,7 +82,7 @@ const onClickStart = () => {
       <span
         class="daily-completed-focus-sessions ms-2"
         data-test="daily-completed-focus-sessions"
-        >{{ dailyCompletedPomodori }}</span
+        >{{ dailyCompletedFocusSessions }}</span
       >
     </p>
   </div>
