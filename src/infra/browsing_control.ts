@@ -1,4 +1,4 @@
-import type { BrowsingRules } from './browsing_rules'
+import type { BrowsingRules } from '../domain/browsing_rules'
 
 export interface BrowsingControlService {
   setAndActivateNewRules(browsingRules: BrowsingRules): Promise<void>
