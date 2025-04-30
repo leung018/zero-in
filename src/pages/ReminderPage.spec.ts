@@ -67,7 +67,7 @@ describe('ReminderPage', () => {
     expect(state.stage).toBe(TimerStage.SHORT_BREAK)
   })
 
-  it('should display daily completed pomodori', async () => {
+  it('should display daily completed focus sessions', async () => {
     const { wrapper } = await mountPage({
       focusSessionRecords: [
         newFocusSessionRecord(new Date(2025, 2, 1, 15, 2)),
