@@ -1,7 +1,11 @@
-import { FakeStorage, type Storage } from '../../../infra/storage'
+import { FakeStorage, StorageWrapper, type Storage } from '../../../infra/storage'
 import type { FocusSessionRecord } from '.'
 import { ChromeStorageProvider } from '../../../chrome/storage'
-import { deserializeFocusSessionRecord, serializeFocusSessionRecord } from './serialize'
+import {
+  deserializeFocusSessionRecord,
+  serializeFocusSessionRecord,
+  type SerializedFocusSessionRecord
+} from './serialize'
 
 const STORAGE_KEY = 'focusSessionRecords'
 
@@ -14,22 +18,24 @@ export class FocusSessionRecordStorageService {
     return new FocusSessionRecordStorageService(new FakeStorage())
   }
 
-  private storage: Storage
+  private storageWrapper: StorageWrapper<SerializedFocusSessionRecord[]>
 
   private constructor(storage: Storage) {
-    this.storage = storage
-  }
-
-  async saveAll(records: FocusSessionRecord[]) {
-    return this.storage.set({
-      [STORAGE_KEY]: records.map(serializeFocusSessionRecord)
+    this.storageWrapper = new StorageWrapper({
+      storage,
+      key: STORAGE_KEY,
+      migrators: []
     })
   }
 
+  async saveAll(records: FocusSessionRecord[]) {
+    return this.storageWrapper.set(records.map(serializeFocusSessionRecord))
+  }
+
   async getAll(): Promise<FocusSessionRecord[]> {
-    const result = await this.storage.get(STORAGE_KEY)
-    if (result[STORAGE_KEY]) {
-      return result[STORAGE_KEY].map(deserializeFocusSessionRecord)
+    const result = await this.storageWrapper.get()
+    if (result) {
+      return result.map(deserializeFocusSessionRecord)
     }
     return []
   }

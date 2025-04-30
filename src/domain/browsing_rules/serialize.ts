@@ -1,6 +1,6 @@
 import { BrowsingRules } from '.'
 
-type SerializedBrowsingRules = {
+export type SerializedBrowsingRules = {
   blockedDomains: ReadonlyArray<string>
 }
 
