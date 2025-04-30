@@ -1,5 +1,5 @@
 import config from '../config'
-import { PomodoroTimer } from '../domain/pomodoro/timer'
+import { FocusTimer } from '../domain/pomodoro/timer'
 import { FakeActionService } from '../infra/action'
 import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeCommunicationManager } from '../infra/communication'
@@ -40,7 +40,7 @@ export async function setUpListener({
 
   const scheduler = new FakePeriodicTaskScheduler()
   await params.timerConfigStorageService.save(timerConfig)
-  const timer = PomodoroTimer.createFake({
+  const timer = FocusTimer.createFake({
     scheduler
   })
 

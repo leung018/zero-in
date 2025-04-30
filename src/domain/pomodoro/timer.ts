@@ -9,9 +9,9 @@ import { Duration } from './duration'
 import { TimerStage } from './stage'
 import type { TimerState } from './state'
 
-export class PomodoroTimer {
+export class FocusTimer {
   static create(timerConfig: TimerConfig = config.getDefaultTimerConfig()) {
-    return new PomodoroTimer({
+    return new FocusTimer({
       scheduler: new PeriodicTaskSchedulerImpl(),
       timerConfig
     })
@@ -24,7 +24,7 @@ export class PomodoroTimer {
     scheduler?: PeriodicTaskScheduler
     timerConfig?: TimerConfig
   } = {}) {
-    return new PomodoroTimer({
+    return new FocusTimer({
       timerConfig,
       scheduler
     })
@@ -150,7 +150,7 @@ export class PomodoroTimer {
 
   restartShortBreak(nth?: number) {
     if (nth != null) {
-      this.resetNumOfPomodoriCompleted(nth)
+      this.resetFocusSessionsCompleted(nth)
     }
     this.restart({ stage: TimerStage.SHORT_BREAK })
   }
@@ -161,12 +161,12 @@ export class PomodoroTimer {
 
   restartFocus(nth?: number) {
     if (nth != null) {
-      this.resetNumOfPomodoriCompleted(nth - 1)
+      this.resetFocusSessionsCompleted(nth - 1)
     }
     this.restart({ stage: TimerStage.FOCUS })
   }
 
-  private resetNumOfPomodoriCompleted(n: number) {
+  private resetFocusSessionsCompleted(n: number) {
     const upperLimit = this.config.focusSessionsPerCycle - 1
     n = Math.min(upperLimit, n)
     n = Math.max(0, n)

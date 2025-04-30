@@ -17,7 +17,7 @@ import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/stor
 import { TimerStage } from '../domain/pomodoro/stage'
 import type { TimerState } from '../domain/pomodoro/state'
 import { TimerStateStorageService } from '../domain/pomodoro/state/storage'
-import { PomodoroTimer } from '../domain/pomodoro/timer'
+import { FocusTimer } from '../domain/pomodoro/timer'
 import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { type ActionService } from '../infra/action'
 import { type BadgeColor, type BadgeDisplayService } from '../infra/badge'
@@ -46,7 +46,7 @@ type ListenerParams = {
   blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
   currentDateService: CurrentDateService
   focusSessionRecordHouseKeepDays: number
-  timer: PomodoroTimer
+  timer: FocusTimer
 }
 
 export type ClientPort = Port<WorkRequest, WorkResponse>
@@ -69,7 +69,7 @@ export class BackgroundListener {
       currentDateService: CurrentDateService.create(),
       blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.create(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
-      timer: PomodoroTimer.create()
+      timer: FocusTimer.create()
     })
   }
 
@@ -79,7 +79,7 @@ export class BackgroundListener {
 
   private browsingControlTogglingService: BrowsingControlTogglingService
   private communicationManager: CommunicationManager
-  private timer: PomodoroTimer
+  private timer: FocusTimer
   private badgeDisplayService: BadgeDisplayService
   private timerStateStorageService: TimerStateStorageService
   private timerConfigStorageService: TimerConfigStorageService
