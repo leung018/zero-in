@@ -137,11 +137,11 @@ test('should able to disable blocking according to schedule', async ({ page, ext
   await goToAndVerifyIsAllowed(page, 'https://google.com')
 })
 
-test('should pomodoro timer count successfully', async ({ page, extensionId }) => {
+test('should focus timer count successfully', async ({ page, extensionId }) => {
   await goToTestingConfigPage(page, extensionId)
   await changeFocusDuration(page, 60 * 25)
 
-  await goToPomodoroTimer(page, extensionId)
+  await goToFocusTimer(page, extensionId)
 
   await expect(page.getByTestId('timer-display')).toContainText('25:00')
 
@@ -160,7 +160,7 @@ test('should clicking the options button in timer can go to options page', async
   page,
   extensionId
 }) => {
-  await goToPomodoroTimer(page, extensionId)
+  await goToFocusTimer(page, extensionId)
 
   await page.getByTestId('options-button').click()
 
@@ -207,7 +207,7 @@ test('should able to save daily reset time', async ({ page, extensionId }) => {
   await expect(page.getByTestId('time-input')).toHaveValue('10:30')
 })
 
-test('should able to change pomodoro timer config', async ({ page, extensionId }) => {
+test('should able to change timer config', async ({ page, extensionId }) => {
   await goToTestingConfigPage(page, extensionId)
 
   await page.getByTestId('focus-duration').fill('10')
@@ -224,14 +224,14 @@ test('should able to change pomodoro timer config', async ({ page, extensionId }
   await expect(page.getByTestId('num-of-pomodori-per-cycle')).toHaveValue('3')
 })
 
-test('should able to persist the pomodoro record and show it on statistics', async ({
+test('should able to persist the focus sessions record and show it on statistics', async ({
   page,
   extensionId
 }) => {
   await goToTestingConfigPage(page, extensionId)
   await changeFocusDuration(page, 1)
 
-  await goToPomodoroTimer(page, extensionId)
+  await goToFocusTimer(page, extensionId)
   await page.getByTestId('start-button').click()
 
   await sleep(1000)
@@ -241,7 +241,7 @@ test('should able to persist the pomodoro record and show it on statistics', asy
   try {
     await expect(results.nth(0)).toHaveText('1')
   } catch (e) {
-    // To prevent corner case that after completed the pomodoro, it passed the daily reset time and counted the pomodoro as record of yesterday
+    // To prevent corner case that after completed the focus session, it passed the daily reset time and counted it as record of yesterday
     // eslint-disable-next-line playwright/no-conditional-expect
     await expect(results.nth(1)).toHaveText('1')
   }
@@ -254,7 +254,7 @@ test('should able to open new tab of reminder page when timer is finished', asyn
   await goToTestingConfigPage(page, extensionId)
   await changeFocusDuration(page, 1)
 
-  await goToPomodoroTimer(page, extensionId)
+  await goToFocusTimer(page, extensionId)
   await page.getByTestId('start-button').click()
 
   await sleep(1000)
@@ -391,7 +391,7 @@ async function goToBlockingSettingPage(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/options.html`)
 }
 
-async function goToPomodoroTimer(page: Page, extensionId: string) {
+async function goToFocusTimer(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/popup.html`)
 }
 
