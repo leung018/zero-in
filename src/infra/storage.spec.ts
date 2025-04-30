@@ -106,7 +106,7 @@ describe('StorageWrapper', () => {
   })
 
   it('should set and get the data properly', async () => {
-    const storageWrapper = StorageWrapper.createFake<V2Schema>({
+    const storageWrapper = StorageWrapper.createFake({
       currentDataVersion: 2
     })
 
@@ -123,7 +123,7 @@ describe('StorageWrapper', () => {
   it('should get old version and migrate to new version', async () => {
     const fakeStorage = new FakeStorage()
 
-    const storageWrapper = StorageWrapper.createFake<V2Schema>({
+    const storageWrapper = StorageWrapper.createFake({
       storage: fakeStorage,
       migrators,
       key: 'key1',
@@ -164,7 +164,7 @@ describe('StorageWrapper', () => {
       name: 'John Doe'
     }
 
-    const storageWrapper = StorageWrapper.createFake<OldestSchema>({
+    const storageWrapper = StorageWrapper.createFake({
       migrators: [],
       currentDataVersion: 999
     })
