@@ -268,11 +268,11 @@ export class BackgroundListener {
               })
               break
             }
-            case WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE: {
+            case WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE: {
               const subscriptionId = this.focusSessionRecordsUpdateSubscriptionManager.subscribe(
                 () => {
                   backgroundPort.send({
-                    name: WorkResponseName.POMODORO_RECORDS_UPDATED
+                    name: WorkResponseName.FOCUS_SESSION_RECORDS_UPDATED
                   })
                 }
               )

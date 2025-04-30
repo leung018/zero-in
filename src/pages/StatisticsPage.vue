@@ -46,14 +46,14 @@ onBeforeMount(async () => {
   await setStats(dailyResetTime.value)
 
   port.onMessage((message) => {
-    if (message.name !== WorkResponseName.POMODORO_RECORDS_UPDATED) {
+    if (message.name !== WorkResponseName.FOCUS_SESSION_RECORDS_UPDATED) {
       return
     }
     setStats(dailyResetTime.value)
   })
 
   port.send({
-    name: WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE
+    name: WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE
   })
 })
 

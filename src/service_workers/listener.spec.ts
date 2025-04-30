@@ -85,7 +85,7 @@ describe('BackgroundListener', () => {
 
     const initialSubscriptionCount = listener.getFocusSessionRecordsUpdateSubscriptionCount()
 
-    clientPort.send({ name: WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE })
+    clientPort.send({ name: WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE })
 
     expect(listener.getFocusSessionRecordsUpdateSubscriptionCount()).toBe(
       initialSubscriptionCount + 1
