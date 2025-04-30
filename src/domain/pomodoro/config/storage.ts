@@ -1,8 +1,12 @@
 import type { TimerConfig } from '.'
 import { ChromeStorageProvider } from '../../../chrome/storage'
 import config from '../../../config'
-import { FakeStorage, type Storage } from '../../../infra/storage'
-import { deserializeTimerConfig, serializeTimerConfig } from './serialize'
+import { FakeStorage, StorageWrapper, type Storage } from '../../../infra/storage'
+import {
+  deserializeTimerConfig,
+  serializeTimerConfig,
+  type SerializedTimerConfig
+} from './serialize'
 
 const STORAGE_KEY = 'timerConfig'
 
@@ -15,24 +19,26 @@ export class TimerConfigStorageService {
     return new TimerConfigStorageService(new FakeStorage())
   }
 
-  private storage: Storage
+  private storageWrapper: StorageWrapper<SerializedTimerConfig>
 
   private constructor(storage: Storage) {
-    this.storage = storage
+    this.storageWrapper = new StorageWrapper({
+      storage,
+      key: STORAGE_KEY,
+      migrators: []
+    })
   }
 
   async get(): Promise<TimerConfig> {
-    const result = await this.storage.get(STORAGE_KEY)
-    if (result[STORAGE_KEY]) {
-      return deserializeTimerConfig(result[STORAGE_KEY])
+    const result = await this.storageWrapper.get()
+    if (result) {
+      return deserializeTimerConfig(result)
     }
 
     return config.getDefaultTimerConfig()
   }
 
   async save(timerConfig: TimerConfig) {
-    return this.storage.set({
-      [STORAGE_KEY]: serializeTimerConfig(timerConfig)
-    })
+    return this.storageWrapper.set(serializeTimerConfig(timerConfig))
   }
 }
