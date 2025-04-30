@@ -60,15 +60,16 @@ export class StorageWrapper<S> {
 
   async get(): Promise<S | null> {
     const result = await this.storage.get(this.key)
-    if (!result[this.key]) {
+    const data = result[this.key]
+    if (!data) {
       return null
     }
 
-    const data = result[this.key]
-    if (data?.dataVersion != this.currentDataVersion) {
-      return this.migrateData(data)
+    if (data?.dataVersion === this.currentDataVersion) {
+      return data
     }
-    return data
+
+    return this.migrateData(data)
   }
 
   private migrateData(oldData: any): S {
@@ -76,6 +77,9 @@ export class StorageWrapper<S> {
     for (const migrator of this.migrators) {
       if (this.isVersionMatch(migratedData, migrator)) {
         migratedData = migrator.migratorFunc(migratedData)
+      }
+      if (migratedData?.dataVersion === this.currentDataVersion) {
+        break
       }
     }
     return migratedData

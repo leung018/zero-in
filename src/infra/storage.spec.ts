@@ -207,4 +207,30 @@ describe('StorageWrapper', () => {
       expect(result).toEqual(oldData)
     }
   )
+
+  it('should migrate up to the current data version only', async () => {
+    const fakeStorage = new FakeStorage()
+
+    const storageWrapper = StorageWrapper.createFake({
+      storage: fakeStorage,
+      migrators,
+      key: 'key1',
+      currentDataVersion: 1
+    })
+
+    const oldData: OldestSchema = {
+      name: 'John Doe'
+    }
+
+    fakeStorage.set({
+      key1: oldData
+    })
+
+    const expected: V1Schema = {
+      dataVersion: 1,
+      myName: 'John Doe'
+    }
+
+    expect(await storageWrapper.get()).toEqual(expected)
+  })
 })
