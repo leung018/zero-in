@@ -79,9 +79,11 @@ const onClickStart = () => {
         >Number of focus sessions completed since last
         <span data-test="reset-time">{{ dailyResetTime.toHhMmString() }}</span></span
       >
-      <span class="daily-completed-pomodori ms-2" data-test="daily-completed-pomodori">{{
-        dailyCompletedPomodori
-      }}</span>
+      <span
+        class="daily-completed-focus-sessions ms-2"
+        data-test="daily-completed-focus-sessions"
+        >{{ dailyCompletedPomodori }}</span
+      >
     </p>
   </div>
 </template>
@@ -99,7 +101,7 @@ const onClickStart = () => {
   font-size: 2rem;
 }
 
-.daily-completed-pomodori {
+.daily-completed-focus-sessions {
   font-weight: bold;
   color: #28a745;
 }

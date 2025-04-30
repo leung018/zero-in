@@ -79,7 +79,7 @@ describe('ReminderPage', () => {
     })
 
     expect(wrapper.find(dataTestSelector('reset-time')).text()).toBe('15:03')
-    expect(wrapper.find(dataTestSelector('daily-completed-pomodori')).text()).toBe('2')
+    expect(wrapper.find(dataTestSelector('daily-completed-focus-sessions')).text()).toBe('2')
   })
 })
 
