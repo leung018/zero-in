@@ -36,7 +36,7 @@ export class StorageWrapper<S> {
     storage = new FakeStorage(),
     migrators = [] as Migrators,
     key = 'STORAGE_KEY',
-    currentDataVersion = 0
+    currentDataVersion = undefined as number | undefined
   }): StorageWrapper<S> {
     return new StorageWrapper({ storage, key, migrators, currentDataVersion })
   }
