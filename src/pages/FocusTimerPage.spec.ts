@@ -1,5 +1,5 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
-import PomodoroTimerPage from './PomodoroTimerPage.vue'
+import FocusTimerPage from './FocusTimerPage.vue'
 import { expect, describe, it } from 'vitest'
 import { Duration } from '../domain/timer/duration'
 import { FakeCommunicationManager } from '../infra/communication'
@@ -8,7 +8,7 @@ import { TimerConfig } from '../domain/timer/config'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { dataTestSelector } from '../test_utils/selector'
 
-describe('PomodoroTimerPage', () => {
+describe('FocusTimerPage', () => {
   it('should display initial stage and remaining time properly', async () => {
     const { wrapper } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
@@ -352,7 +352,7 @@ async function mountPage({
   port = new FakeCommunicationManager().clientConnect(),
   timerConfigStorageService = TimerConfigStorageService.createFake()
 } = {}) {
-  const wrapper = mount(PomodoroTimerPage, {
+  const wrapper = mount(FocusTimerPage, {
     props: {
       port,
       timerConfigStorageService
@@ -398,8 +398,8 @@ function assertTimerDisplay(wrapper: VueWrapper, time: string) {
 }
 
 function assertCurrentStage(wrapper: VueWrapper, stage: string) {
-  const pomodoroStage = wrapper.find(dataTestSelector('current-stage'))
-  expect(pomodoroStage.text()).toBe(stage)
+  const timerStage = wrapper.find(dataTestSelector('current-stage'))
+  expect(timerStage.text()).toBe(stage)
 }
 
 function assertControlVisibility(

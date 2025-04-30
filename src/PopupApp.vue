@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ChromeCommunicationManager } from './infra/chrome/communication'
 import { TimerConfigStorageService } from './domain/timer/config/storage'
-import PomodoroTimerPage from './pages/PomodoroTimerPage.vue'
+import FocusTimerPage from './pages/FocusTimerPage.vue'
 
 const openOptionsPage = () => {
   chrome.runtime.openOptionsPage()
@@ -18,7 +18,7 @@ const openOptionsPage = () => {
     >
       <IIcBaselineSettings />
     </BButton>
-    <PomodoroTimerPage
+    <FocusTimerPage
       :port="new ChromeCommunicationManager().clientConnect()"
       :timerConfigStorageService="TimerConfigStorageService.create()"
     />
