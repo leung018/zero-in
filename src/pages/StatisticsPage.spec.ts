@@ -75,13 +75,13 @@ describe('StatisticsPage', () => {
     })
 
     const rows = wrapper.find('tbody').findAll('tr')
-    expect(rows[0].find(dataTestSelector('completed-pomodori-field')).text()).toBe('1') // 2025-04-10 10:30 - now
-    expect(rows[1].find(dataTestSelector('completed-pomodori-field')).text()).toBe('0') // 2025-04-09 10:30 - 2025-04-10 10:29
-    expect(rows[2].find(dataTestSelector('completed-pomodori-field')).text()).toBe('0') // 2025-04-08 10:30 - 2025-04-09 10:29
-    expect(rows[3].find(dataTestSelector('completed-pomodori-field')).text()).toBe('0') // 2025-04-07 10:30 - 2025-04-08 10:29
-    expect(rows[4].find(dataTestSelector('completed-pomodori-field')).text()).toBe('2') // 2025-04-06 10:30 - 2025-04-07 10:29
-    expect(rows[5].find(dataTestSelector('completed-pomodori-field')).text()).toBe('0') // 2025-04-05 10:30 - 2025-04-06 10:29
-    expect(rows[6].find(dataTestSelector('completed-pomodori-field')).text()).toBe('2') // 2025-04-04 10:30 - 2025-04-05 10:29
+    expect(rows[0].find(dataTestSelector('completed-focus-sessions')).text()).toBe('1') // 2025-04-10 10:30 - now
+    expect(rows[1].find(dataTestSelector('completed-focus-sessions')).text()).toBe('0') // 2025-04-09 10:30 - 2025-04-10 10:29
+    expect(rows[2].find(dataTestSelector('completed-focus-sessions')).text()).toBe('0') // 2025-04-08 10:30 - 2025-04-09 10:29
+    expect(rows[3].find(dataTestSelector('completed-focus-sessions')).text()).toBe('0') // 2025-04-07 10:30 - 2025-04-08 10:29
+    expect(rows[4].find(dataTestSelector('completed-focus-sessions')).text()).toBe('2') // 2025-04-06 10:30 - 2025-04-07 10:29
+    expect(rows[5].find(dataTestSelector('completed-focus-sessions')).text()).toBe('0') // 2025-04-05 10:30 - 2025-04-06 10:29
+    expect(rows[6].find(dataTestSelector('completed-focus-sessions')).text()).toBe('2') // 2025-04-04 10:30 - 2025-04-05 10:29
 
     // When current time has reached the daily reset time that day.
     const { wrapper: newWrapper } = await mountStatisticsPage({
@@ -91,13 +91,13 @@ describe('StatisticsPage', () => {
     })
 
     const newRows = newWrapper.find('tbody').findAll('tr')
-    expect(newRows[0].find(dataTestSelector('completed-pomodori-field')).text()).toBe('0') // 2025-04-11 10:30 - now
-    expect(newRows[1].find(dataTestSelector('completed-pomodori-field')).text()).toBe('1') // 2025-04-10 10:30 - 2025-04-11 10:29
-    expect(newRows[2].find(dataTestSelector('completed-pomodori-field')).text()).toBe('0') // 2025-04-09 10:30 - 2025-04-10 10:29
-    expect(newRows[3].find(dataTestSelector('completed-pomodori-field')).text()).toBe('0') // 2025-04-08 10:30 - 2025-04-09 10:29
-    expect(newRows[4].find(dataTestSelector('completed-pomodori-field')).text()).toBe('0') // 2025-04-07 10:30 - 2025-04-08 10:29
-    expect(newRows[5].find(dataTestSelector('completed-pomodori-field')).text()).toBe('2') // 2025-04-06 10:30 - 2025-04-07 10:29
-    expect(newRows[6].find(dataTestSelector('completed-pomodori-field')).text()).toBe('0') // 2025-04-05 10:30 - 2025-04-06 10:29
+    expect(newRows[0].find(dataTestSelector('completed-focus-sessions')).text()).toBe('0') // 2025-04-11 10:30 - now
+    expect(newRows[1].find(dataTestSelector('completed-focus-sessions')).text()).toBe('1') // 2025-04-10 10:30 - 2025-04-11 10:29
+    expect(newRows[2].find(dataTestSelector('completed-focus-sessions')).text()).toBe('0') // 2025-04-09 10:30 - 2025-04-10 10:29
+    expect(newRows[3].find(dataTestSelector('completed-focus-sessions')).text()).toBe('0') // 2025-04-08 10:30 - 2025-04-09 10:29
+    expect(newRows[4].find(dataTestSelector('completed-focus-sessions')).text()).toBe('0') // 2025-04-07 10:30 - 2025-04-08 10:29
+    expect(newRows[5].find(dataTestSelector('completed-focus-sessions')).text()).toBe('2') // 2025-04-06 10:30 - 2025-04-07 10:29
+    expect(newRows[6].find(dataTestSelector('completed-focus-sessions')).text()).toBe('0') // 2025-04-05 10:30 - 2025-04-06 10:29
   })
 
   it('should reload statistics after completed a focus session', async () => {
@@ -111,13 +111,13 @@ describe('StatisticsPage', () => {
     timer.start()
 
     let rows = wrapper.find('tbody').findAll('tr')
-    expect(rows[0].find(dataTestSelector('completed-pomodori-field')).text()).toBe('0')
+    expect(rows[0].find(dataTestSelector('completed-focus-sessions')).text()).toBe('0')
 
     scheduler.advanceTime(1001)
     await flushPromises()
 
     rows = wrapper.find('tbody').findAll('tr')
-    expect(rows[0].find(dataTestSelector('completed-pomodori-field')).text()).toBe('1')
+    expect(rows[0].find(dataTestSelector('completed-focus-sessions')).text()).toBe('1')
   })
 })
 

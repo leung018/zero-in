@@ -236,7 +236,7 @@ test('should able to persist the focus sessions record and show it on statistics
 
   await sleep(1000)
   await goToStatisticsPage(page, extensionId)
-  const results = page.getByTestId('completed-pomodori-field')
+  const results = page.getByTestId('completed-focus-sessions')
 
   try {
     await expect(results.nth(0)).toHaveText('1')

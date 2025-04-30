@@ -103,7 +103,7 @@ const onClickSave = async () => {
         <tbody>
           <tr v-for="stat in stats" :key="stat.day">
             <td data-test="day-field">{{ stat.day }}</td>
-            <td data-test="completed-pomodori-field">{{ stat.completedPomodori }}</td>
+            <td data-test="completed-focus-sessions">{{ stat.completedPomodori }}</td>
           </tr>
         </tbody>
       </table>
