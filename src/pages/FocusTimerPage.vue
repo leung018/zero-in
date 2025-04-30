@@ -15,7 +15,7 @@ const { port, timerConfigStorageService } = defineProps<{
 
 const durationLeft = ref<Duration>(new Duration({ seconds: 0 }))
 const isRunning = ref(false)
-const pomodoroStage = ref<TimerStage>(TimerStage.FOCUS)
+const timerStage = ref<TimerStage>(TimerStage.FOCUS)
 const focusSessionsCompleted = ref(0)
 const focusSessionsPerCycle = ref(0)
 
@@ -27,7 +27,7 @@ const displayTime = computed(() => {
 })
 
 const currentStage = computed(() => {
-  switch (pomodoroStage.value) {
+  switch (timerStage.value) {
     case TimerStage.SHORT_BREAK:
       return getShortBreakLabel(focusSessionsCompleted.value)
     case TimerStage.LONG_BREAK:
@@ -65,7 +65,7 @@ onBeforeMount(async () => {
       return
     }
 
-    pomodoroStage.value = message.payload.stage
+    timerStage.value = message.payload.stage
     durationLeft.value = new Duration({ seconds: message.payload.remainingSeconds })
     isRunning.value = message.payload.isRunning
     focusSessionsCompleted.value = message.payload.focusSessionsCompleted
