@@ -22,7 +22,7 @@ interface Schema {
 
 type MigratorFunc = (oldData: any) => Schema
 
-type Migrator = { oldDataVersion: number | undefined; migratorFunc: MigratorFunc }
+type Migrator = { oldDataVersion?: number; migratorFunc: MigratorFunc }
 
 type Migrators = ReadonlyArray<Migrator>
 
@@ -30,9 +30,9 @@ export class StorageWrapper<S> {
   private storage: Storage
   private key: string
   private migrators: Migrators
-  private currentDataVersion: number
+  private currentDataVersion?: number
 
-  static createFake<S extends Schema>({
+  static createFake<S>({
     storage = new FakeStorage(),
     migrators = [] as Migrators,
     key = 'STORAGE_KEY',
@@ -50,7 +50,7 @@ export class StorageWrapper<S> {
     storage: Storage
     key: string
     migrators: Migrators
-    currentDataVersion: number
+    currentDataVersion?: number
   }) {
     this.storage = storage
     this.key = key
