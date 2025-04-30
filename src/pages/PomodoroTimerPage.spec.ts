@@ -1,11 +1,11 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import PomodoroTimerPage from './PomodoroTimerPage.vue'
 import { expect, describe, it } from 'vitest'
-import { Duration } from '../domain/pomodoro/duration'
+import { Duration } from '../domain/timer/duration'
 import { FakeCommunicationManager } from '../infra/communication'
 import { setUpListener } from '../test_utils/listener'
-import { TimerConfig } from '../domain/pomodoro/config'
-import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
+import { TimerConfig } from '../domain/timer/config'
+import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { dataTestSelector } from '../test_utils/selector'
 
 describe('PomodoroTimerPage', () => {

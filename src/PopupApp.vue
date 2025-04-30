@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ChromeCommunicationManager } from './infra/chrome/communication'
-import { TimerConfigStorageService } from './domain/pomodoro/config/storage'
+import { TimerConfigStorageService } from './domain/timer/config/storage'
 import PomodoroTimerPage from './pages/PomodoroTimerPage.vue'
 
 const openOptionsPage = () => {

@@ -1,6 +1,6 @@
 import type { NotificationSetting } from './domain/notification_setting'
-import { TimerConfig } from './domain/pomodoro/config'
-import { Duration } from './domain/pomodoro/duration'
+import { TimerConfig } from './domain/timer/config'
+import { Duration } from './domain/timer/duration'
 import type { BadgeColor } from './infra/badge'
 
 const getBlockedTemplateUrl = () => {

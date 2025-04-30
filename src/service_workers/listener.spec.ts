@@ -6,11 +6,11 @@ import {
   newTestNotificationSetting,
   type NotificationSetting
 } from '../domain/notification_setting'
-import { TimerConfig } from '../domain/pomodoro/config'
-import { Duration } from '../domain/pomodoro/duration'
-import type { FocusSessionRecord } from '../domain/pomodoro/record'
-import { TimerStage } from '../domain/pomodoro/stage'
-import type { TimerState } from '../domain/pomodoro/state'
+import { TimerConfig } from '../domain/timer/config'
+import { Duration } from '../domain/timer/duration'
+import type { FocusSessionRecord } from '../domain/timer/record'
+import { TimerStage } from '../domain/timer/stage'
+import type { TimerState } from '../domain/timer/state'
 import { type Badge, type BadgeColor } from '../infra/badge'
 import { setUpListener } from '../test_utils/listener'
 import type { ClientPort } from './listener'

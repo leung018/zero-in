@@ -2,9 +2,9 @@
 import type { ActionService } from '@/infra/action'
 import type { ClientPort } from '@/service_workers/listener'
 import { onBeforeMount, ref } from 'vue'
-import { TimerConfig } from '../domain/pomodoro/config'
-import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
-import { Duration } from '../domain/pomodoro/duration'
+import { TimerConfig } from '../domain/timer/config'
+import { TimerConfigStorageService } from '../domain/timer/config/storage'
+import { Duration } from '../domain/timer/duration'
 import { WorkRequestName } from '../service_workers/request'
 import ContentTemplate from './components/ContentTemplate.vue'
 
