@@ -12,7 +12,7 @@ import { getMostRecentDate } from '@/utils/date'
 import ContentTemplate from './components/ContentTemplate.vue'
 import TimeInput from './components/TimeInput.vue'
 
-type Stat = { day: string; completedPomodori: number }
+type Stat = { day: string; completedFocusSessions: number }
 
 const {
   dailyResetTimeStorageService,
@@ -33,10 +33,10 @@ const stats = ref<Stat[]>(initialStats())
 
 function initialStats(): Stat[] {
   const stats = []
-  stats.push({ day: 'Today', completedPomodori: 0 })
-  stats.push({ day: 'Yesterday', completedPomodori: 0 })
+  stats.push({ day: 'Today', completedFocusSessions: 0 })
+  stats.push({ day: 'Yesterday', completedFocusSessions: 0 })
   for (let i = 2; i < 7; i++) {
-    stats.push({ day: `${i} days ago`, completedPomodori: 0 })
+    stats.push({ day: `${i} days ago`, completedFocusSessions: 0 })
   }
   return stats
 }
@@ -62,7 +62,7 @@ async function setStats(dailyResetTime: Time) {
   let inclusiveEndDate = currentDateService.getDate()
   const inclusiveStartDate = getMostRecentDate(dailyResetTime, inclusiveEndDate)
   for (let i = 0; i < stats.value.length; i++) {
-    stats.value[i].completedPomodori = records.filter(
+    stats.value[i].completedFocusSessions = records.filter(
       (record) => record.completedAt >= inclusiveStartDate && record.completedAt <= inclusiveEndDate
     ).length
 
@@ -103,7 +103,7 @@ const onClickSave = async () => {
         <tbody>
           <tr v-for="stat in stats" :key="stat.day">
             <td data-test="day-field">{{ stat.day }}</td>
-            <td data-test="completed-focus-sessions">{{ stat.completedPomodori }}</td>
+            <td data-test="completed-focus-sessions">{{ stat.completedFocusSessions }}</td>
           </tr>
         </tbody>
       </table>
