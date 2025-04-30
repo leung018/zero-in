@@ -12,7 +12,7 @@ import { getMostRecentDate } from '@/utils/date'
 import ContentTemplate from './components/ContentTemplate.vue'
 import TimeInput from './components/TimeInput.vue'
 
-type PomodoroStat = { day: string; completedPomodori: number }
+type Stat = { day: string; completedPomodori: number }
 
 const {
   dailyResetTimeStorageService,
@@ -29,9 +29,9 @@ const {
 }>()
 
 const dailyResetTime = ref<Time>(new Time(0, 0))
-const pomodoroStats = ref<PomodoroStat[]>(initialPomodoroStats())
+const stats = ref<Stat[]>(initialStats())
 
-function initialPomodoroStats(): PomodoroStat[] {
+function initialStats(): Stat[] {
   const stats = []
   stats.push({ day: 'Today', completedPomodori: 0 })
   stats.push({ day: 'Yesterday', completedPomodori: 0 })
@@ -43,13 +43,13 @@ function initialPomodoroStats(): PomodoroStat[] {
 
 onBeforeMount(async () => {
   dailyResetTime.value = await dailyResetTimeStorageService.get()
-  await setPomodoroStats(dailyResetTime.value)
+  await setStats(dailyResetTime.value)
 
   port.onMessage((message) => {
     if (message.name !== WorkResponseName.POMODORO_RECORDS_UPDATED) {
       return
     }
-    setPomodoroStats(dailyResetTime.value)
+    setStats(dailyResetTime.value)
   })
 
   port.send({
@@ -57,12 +57,12 @@ onBeforeMount(async () => {
   })
 })
 
-async function setPomodoroStats(dailyResetTime: Time) {
+async function setStats(dailyResetTime: Time) {
   const records = await focusSessionRecordStorageService.getAll()
   let inclusiveEndDate = currentDateService.getDate()
   const inclusiveStartDate = getMostRecentDate(dailyResetTime, inclusiveEndDate)
-  for (let i = 0; i < pomodoroStats.value.length; i++) {
-    pomodoroStats.value[i].completedPomodori = records.filter(
+  for (let i = 0; i < stats.value.length; i++) {
+    stats.value[i].completedPomodori = records.filter(
       (record) => record.completedAt >= inclusiveStartDate && record.completedAt <= inclusiveEndDate
     ).length
 
@@ -101,7 +101,7 @@ const onClickSave = async () => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="stat in pomodoroStats" :key="stat.day">
+          <tr v-for="stat in stats" :key="stat.day">
             <td data-test="day-field">{{ stat.day }}</td>
             <td data-test="completed-pomodori-field">{{ stat.completedPomodori }}</td>
           </tr>
