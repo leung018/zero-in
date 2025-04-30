@@ -1,7 +1,11 @@
-import { ChromeStorageProvider } from '../../chrome/storage'
-import { FakeStorage, type Storage } from '../../infra/storage'
+import { ChromeStorageProvider } from '../../infra/chrome/storage'
+import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import { BrowsingRules } from '.'
-import { deserializeBrowsingRules, serializeBrowsingRules } from './serialize'
+import {
+  deserializeBrowsingRules,
+  serializeBrowsingRules,
+  type SerializedBrowsingRules
+} from './serialize'
 
 const STORAGE_KEY = 'browsingRules'
 
@@ -14,20 +18,24 @@ export class BrowsingRulesStorageService {
     return new BrowsingRulesStorageService(ChromeStorageProvider.getLocalStorage())
   }
 
-  private storage: Storage
+  private storageWrapper: StorageWrapper<SerializedBrowsingRules>
 
   private constructor(storage: Storage) {
-    this.storage = storage
+    this.storageWrapper = new StorageWrapper({
+      storage,
+      key: STORAGE_KEY,
+      migrators: []
+    })
   }
 
   async save(browsingRules: BrowsingRules): Promise<void> {
-    return this.storage.set({ [STORAGE_KEY]: serializeBrowsingRules(browsingRules) })
+    return this.storageWrapper.set(serializeBrowsingRules(browsingRules))
   }
 
   async get(): Promise<BrowsingRules> {
-    const result = await this.storage.get(STORAGE_KEY)
-    if (result[STORAGE_KEY]) {
-      return deserializeBrowsingRules(result[STORAGE_KEY])
+    const result = await this.storageWrapper.get()
+    if (result) {
+      return deserializeBrowsingRules(result)
     }
     return new BrowsingRules()
   }

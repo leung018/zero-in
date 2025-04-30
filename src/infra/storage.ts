@@ -22,7 +22,7 @@ interface Schema {
 
 type MigratorFunc = (oldData: any) => Schema
 
-type Migrator = { oldDataVersion: number | undefined; migratorFunc: MigratorFunc }
+type Migrator = { oldDataVersion?: number; migratorFunc: MigratorFunc }
 
 type Migrators = ReadonlyArray<Migrator>
 
@@ -30,13 +30,13 @@ export class StorageWrapper<S> {
   private storage: Storage
   private key: string
   private migrators: Migrators
-  private currentDataVersion: number
+  private currentDataVersion?: number
 
-  static createFake<S extends Schema>({
+  static createFake<S>({
     storage = new FakeStorage(),
     migrators = [] as Migrators,
     key = 'STORAGE_KEY',
-    currentDataVersion = 0
+    currentDataVersion = undefined as number | undefined
   }): StorageWrapper<S> {
     return new StorageWrapper({ storage, key, migrators, currentDataVersion })
   }
@@ -50,7 +50,7 @@ export class StorageWrapper<S> {
     storage: Storage
     key: string
     migrators: Migrators
-    currentDataVersion: number
+    currentDataVersion?: number
   }) {
     this.storage = storage
     this.key = key
@@ -60,15 +60,16 @@ export class StorageWrapper<S> {
 
   async get(): Promise<S | null> {
     const result = await this.storage.get(this.key)
-    if (!result[this.key]) {
+    const data = result[this.key]
+    if (!data) {
       return null
     }
 
-    const data = result[this.key]
-    if (data?.dataVersion != this.currentDataVersion) {
-      return this.migrateData(data)
+    if (data?.dataVersion === this.currentDataVersion) {
+      return data
     }
-    return data
+
+    return this.migrateData(data)
   }
 
   private migrateData(oldData: any): S {
@@ -76,6 +77,9 @@ export class StorageWrapper<S> {
     for (const migrator of this.migrators) {
       if (this.isVersionMatch(migratedData, migrator)) {
         migratedData = migrator.migratorFunc(migratedData)
+      }
+      if (migratedData?.dataVersion === this.currentDataVersion) {
+        break
       }
     }
     return migratedData

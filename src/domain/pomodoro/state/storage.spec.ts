@@ -38,7 +38,7 @@ describe('TimerStateStorageService with migration', () => {
       [STORAGE_KEY]: data
     })
 
-    const timerStateStorageService = TimerStateStorageService.createFake({ storage: fakeStorage })
+    const timerStateStorageService = TimerStateStorageService.createFake(fakeStorage)
     const expected: TimerState = {
       remainingSeconds: 100,
       isRunning: true,

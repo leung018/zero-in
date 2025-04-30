@@ -1,6 +1,6 @@
 import type { FocusSessionRecord } from '.'
 
-type SerializedFocusSessionRecord = {
+export type SerializedFocusSessionRecord = {
   completedAt: string
 }
 

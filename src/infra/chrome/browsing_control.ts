@@ -1,6 +1,6 @@
-import config from '../config'
-import { BrowsingRules } from '../domain/browsing_rules'
-import type { BrowsingControlService } from '../domain/browsing_control'
+import config from '../../config'
+import { BrowsingRules } from '../../domain/browsing_rules'
+import type { BrowsingControlService } from '../browsing_control'
 
 export class ChromeBrowsingControlService implements BrowsingControlService {
   // Use a bit manual testing if you modify this class because e2e test is hard to cover all the bugs perfectly.

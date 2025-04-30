@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChromeCommunicationManager } from './chrome/communication'
+import { ChromeCommunicationManager } from './infra/chrome/communication'
 import { TimerConfigStorageService } from './domain/pomodoro/config/storage'
 import PomodoroTimerPage from './pages/PomodoroTimerPage.vue'
 

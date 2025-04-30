@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { BrowsingRules } from './browsing_rules'
 import { BrowsingRulesStorageService } from './browsing_rules/storage'
-import { FakeBrowsingControlService } from './browsing_control'
+import { FakeBrowsingControlService } from '../infra/browsing_control'
 import { Weekday, WeeklySchedule } from './schedules'
 import { Time } from './time'
 import { WeeklyScheduleStorageService } from './schedules/storage'

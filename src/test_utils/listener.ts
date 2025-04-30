@@ -10,7 +10,7 @@ import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/stor
 import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
 import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
-import { FakeBrowsingControlService } from '../domain/browsing_control'
+import { FakeBrowsingControlService } from '../infra/browsing_control'
 import { CurrentDateService } from '../infra/current_date'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'

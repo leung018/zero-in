@@ -1,7 +1,8 @@
 import type { BlockingTimerIntegration } from '.'
-import { ChromeStorageProvider } from '../../chrome/storage'
+import { ChromeStorageProvider } from '../../infra/chrome/storage'
 import config from '../../config'
-import { FakeStorage, type Storage } from '../../infra/storage'
+import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
+import type { SerializedBlockingTimerIntegration } from './serialize'
 
 const STORAGE_KEY = 'blockingTimerIntegration'
 
@@ -14,23 +15,25 @@ export class BlockingTimerIntegrationStorageService {
     return new BlockingTimerIntegrationStorageService(new FakeStorage())
   }
 
-  private storage: Storage
+  private storageWrapper: StorageWrapper<SerializedBlockingTimerIntegration>
 
   private constructor(storage: Storage) {
-    this.storage = storage
+    this.storageWrapper = new StorageWrapper({
+      storage,
+      key: STORAGE_KEY,
+      migrators: []
+    })
   }
 
   async get(): Promise<BlockingTimerIntegration> {
-    const result = await this.storage.get(STORAGE_KEY)
-    if (result[STORAGE_KEY]) {
-      return result[STORAGE_KEY]
+    const result = await this.storageWrapper.get()
+    if (result) {
+      return result
     }
     return config.getDefaultBlockingTimerIntegration()
   }
 
   async save(setting: BlockingTimerIntegration) {
-    return this.storage.set({
-      [STORAGE_KEY]: setting
-    })
+    return this.storageWrapper.set(setting)
   }
 }

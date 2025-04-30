@@ -1,4 +1,4 @@
-import { type CommunicationManager, type Port } from '../infra/communication'
+import { type CommunicationManager, type Port } from '../communication'
 
 export class ChromeCommunicationManager implements CommunicationManager {
   clientConnect() {

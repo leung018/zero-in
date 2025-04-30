@@ -62,6 +62,41 @@ class Dummy {
 }
 
 describe('StorageWrapper', () => {
+  type OldestSchema = {
+    name: string
+  }
+
+  type V1Schema = {
+    dataVersion: 1
+    myName: string
+  }
+
+  type V2Schema = {
+    dataVersion: 2
+    fullname: string
+  }
+
+  const migrators = [
+    {
+      migratorFunc: (oldData: OldestSchema): V1Schema => {
+        return {
+          dataVersion: 1,
+          myName: oldData.name
+        }
+      },
+      oldDataVersion: undefined
+    },
+    {
+      migratorFunc: (v1Data: V1Schema): V2Schema => {
+        return {
+          dataVersion: 2,
+          fullname: v1Data.myName
+        }
+      },
+      oldDataVersion: 1
+    }
+  ]
+
   it('should get null if no data is saved', async () => {
     const storageWrapper = StorageWrapper.createFake({
       storage: new FakeStorage()
@@ -71,17 +106,12 @@ describe('StorageWrapper', () => {
   })
 
   it('should set and get the data properly', async () => {
-    type NewSchema = {
-      dataVersion: 1
-      fullname: string
-    }
-
-    const storageWrapper = StorageWrapper.createFake<NewSchema>({
-      currentDataVersion: 1
+    const storageWrapper = StorageWrapper.createFake({
+      currentDataVersion: 2
     })
 
-    const data: NewSchema = {
-      dataVersion: 1,
+    const data: V2Schema = {
+      dataVersion: 2,
       fullname: 'John Doe'
     }
 
@@ -92,42 +122,10 @@ describe('StorageWrapper', () => {
 
   it('should get old version and migrate to new version', async () => {
     const fakeStorage = new FakeStorage()
-    type OldestSchema = {
-      name: string
-    }
 
-    type V1Schema = {
-      dataVersion: 1
-      myName: string
-    }
-
-    type V2Schema = {
-      dataVersion: 2
-      fullname: string
-    }
-
-    const storageWrapper = StorageWrapper.createFake<V2Schema>({
+    const storageWrapper = StorageWrapper.createFake({
       storage: fakeStorage,
-      migrators: [
-        {
-          migratorFunc: (oldData: OldestSchema): V1Schema => {
-            return {
-              dataVersion: 1,
-              myName: oldData.name
-            }
-          },
-          oldDataVersion: undefined
-        },
-        {
-          migratorFunc: (v1Data: V1Schema): V2Schema => {
-            return {
-              dataVersion: 2,
-              fullname: v1Data.myName
-            }
-          },
-          oldDataVersion: 1
-        }
-      ],
+      migrators,
       key: 'key1',
       currentDataVersion: 2
     })
@@ -159,5 +157,80 @@ describe('StorageWrapper', () => {
       dataVersion: 2,
       fullname: 'Ben Johnson'
     })
+  })
+
+  it('should return original data if no migrators are provided', async () => {
+    const data: OldestSchema = {
+      name: 'John Doe'
+    }
+
+    const storageWrapper = StorageWrapper.createFake({
+      migrators: [],
+      currentDataVersion: 999
+    })
+
+    await storageWrapper.set(data)
+    expect(await storageWrapper.get()).toEqual(data)
+  })
+
+  it.each([
+    {
+      oldData: {
+        name: 'John Doe'
+      },
+      currentDataVersion: undefined
+    },
+    {
+      oldData: {
+        dataVersion: 1,
+        myName: 'John Doe'
+      },
+      currentDataVersion: 1
+    }
+  ])(
+    'should not migrate if dataVersion is same as currentDataVersion',
+    async ({ oldData, currentDataVersion }) => {
+      const fakeStorage = new FakeStorage()
+
+      const storageWrapper = StorageWrapper.createFake({
+        storage: fakeStorage,
+        migrators,
+        key: 'key1',
+        currentDataVersion
+      })
+
+      fakeStorage.set({
+        key1: oldData
+      })
+
+      const result = await storageWrapper.get()
+      expect(result).toEqual(oldData)
+    }
+  )
+
+  it('should migrate up to the current data version only', async () => {
+    const fakeStorage = new FakeStorage()
+
+    const storageWrapper = StorageWrapper.createFake({
+      storage: fakeStorage,
+      migrators,
+      key: 'key1',
+      currentDataVersion: 1
+    })
+
+    const oldData: OldestSchema = {
+      name: 'John Doe'
+    }
+
+    fakeStorage.set({
+      key1: oldData
+    })
+
+    const expected: V1Schema = {
+      dataVersion: 1,
+      myName: 'John Doe'
+    }
+
+    expect(await storageWrapper.get()).toEqual(expected)
   })
 })

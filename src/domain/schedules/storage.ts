@@ -1,7 +1,11 @@
-import { ChromeStorageProvider } from '../../chrome/storage'
-import { FakeStorage, type Storage } from '../../infra/storage'
+import { ChromeStorageProvider } from '../../infra/chrome/storage'
+import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import { WeeklySchedule } from '.'
-import { deserializeWeeklySchedule, serializeWeeklySchedule } from './serialize'
+import {
+  deserializeWeeklySchedule,
+  serializeWeeklySchedule,
+  type SerializedWeeklySchedule
+} from './serialize'
 
 const STORAGE_KEY = 'weeklySchedules'
 
@@ -14,25 +18,26 @@ export class WeeklyScheduleStorageService {
     return new WeeklyScheduleStorageService(ChromeStorageProvider.getLocalStorage())
   }
 
-  private storage: Storage
+  private storageWrapper: StorageWrapper<SerializedWeeklySchedule[]>
 
   private constructor(storage: Storage) {
-    this.storage = storage
-  }
-
-  async saveAll(weeklySchedules: WeeklySchedule[]): Promise<void> {
-    return this.storage.set({
-      [STORAGE_KEY]: weeklySchedules.map(serializeWeeklySchedule)
+    this.storageWrapper = new StorageWrapper({
+      storage,
+      key: STORAGE_KEY,
+      migrators: []
     })
   }
 
-  async getAll(): Promise<WeeklySchedule[]> {
-    const result = await this.storage.get(STORAGE_KEY)
+  async saveAll(weeklySchedules: WeeklySchedule[]): Promise<void> {
+    return this.storageWrapper.set(weeklySchedules.map(serializeWeeklySchedule))
+  }
 
-    if (result[STORAGE_KEY]) {
-      return result[STORAGE_KEY].map(deserializeWeeklySchedule)
+  async getAll(): Promise<WeeklySchedule[]> {
+    const result = await this.storageWrapper.get()
+    if (result == null) {
+      return []
     }
 
-    return []
+    return result.map(deserializeWeeklySchedule)
   }
 }

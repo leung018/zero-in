@@ -1,7 +1,7 @@
 import { TimerConfig } from '.'
 import { Duration } from '../duration'
 
-type SerializedTimerConfig = {
+export type SerializedTimerConfig = {
   focusDurationSeconds: number
   shortBreakDurationSeconds: number
   longBreakDurationSeconds: number

@@ -1,7 +1,8 @@
 import type { NotificationSetting } from '.'
-import { ChromeStorageProvider } from '../../chrome/storage'
+import { ChromeStorageProvider } from '../../infra/chrome/storage'
 import config from '../../config'
-import { FakeStorage, type Storage } from '../../infra/storage'
+import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
+import type { SerializedNotificationSetting } from './serialize'
 
 const STORAGE_KEY = 'notificationSetting'
 
@@ -14,14 +15,25 @@ export class NotificationSettingStorageService {
     return new NotificationSettingStorageService(new FakeStorage())
   }
 
-  private constructor(private storage: Storage) {}
+  private storageWrapper: StorageWrapper<SerializedNotificationSetting>
+
+  private constructor(storage: Storage) {
+    this.storageWrapper = new StorageWrapper({
+      storage,
+      key: STORAGE_KEY,
+      migrators: []
+    })
+  }
 
   async get(): Promise<NotificationSetting> {
-    const result = await this.storage.get(STORAGE_KEY)
-    return result[STORAGE_KEY] || config.getDefaultNotificationSetting()
+    const result = await this.storageWrapper.get()
+    if (result) {
+      return result
+    }
+    return config.getDefaultNotificationSetting()
   }
 
   async save(notificationSetting: NotificationSetting): Promise<void> {
-    return this.storage.set({ [STORAGE_KEY]: notificationSetting })
+    return this.storageWrapper.set(notificationSetting)
   }
 }

@@ -1,4 +1,4 @@
-import { FakeBrowsingControlService, type BrowsingControlService } from './browsing_control'
+import { FakeBrowsingControlService, type BrowsingControlService } from '../infra/browsing_control'
 import { BrowsingRulesStorageService } from './browsing_rules/storage'
 import type { WeeklySchedule } from './schedules'
 import { WeeklyScheduleStorageService } from './schedules/storage'
