@@ -18,12 +18,12 @@ const { port, focusSessionRecordStorageService, dailyResetTimeStorageService, cu
     currentDateService: CurrentDateService
   }>()
 
-const pomodoroStage = ref<TimerStage>(TimerStage.FOCUS)
+const timerStage = ref<TimerStage>(TimerStage.FOCUS)
 const dailyCompletedPomodori = ref(0)
 const dailyResetTime = ref(new Time(0, 0))
 
 const hintMsg = computed(() => {
-  switch (pomodoroStage.value) {
+  switch (timerStage.value) {
     case TimerStage.SHORT_BREAK:
       return 'Take a short break'
     case TimerStage.LONG_BREAK:
@@ -38,7 +38,7 @@ onBeforeMount(async () => {
     if (message.name !== WorkResponseName.TIMER_STATE || !message.payload) {
       return
     }
-    pomodoroStage.value = message.payload.stage
+    timerStage.value = message.payload.stage
   })
   port.send({
     name: WorkRequestName.LISTEN_TO_TIMER
