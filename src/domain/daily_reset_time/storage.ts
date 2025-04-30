@@ -1,4 +1,4 @@
-import { ChromeStorageProvider } from '../../chrome/storage'
+import { ChromeStorageProvider } from '../../infra/chrome/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import { Time } from '../time'
 import { deserializeTime, serializeTime, type SerializedTime } from '../time/serialize'

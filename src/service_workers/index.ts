@@ -1,5 +1,5 @@
 import { BackgroundListener } from './listener'
-import { ChromeNewTabService } from '../chrome/new_tab'
+import { ChromeNewTabService } from '../infra/chrome/new_tab'
 
 // Noted that e2e tests are hard to cover all of the below related to chrome api properly. Better use a bit manual testing if needed.
 

@@ -1,4 +1,4 @@
-import type { DesktopNotifier } from '../infra/desktop_notification'
+import type { DesktopNotifier } from '../desktop_notification'
 
 // Require manual testing
 export class ChromeDesktopNotifier implements DesktopNotifier {

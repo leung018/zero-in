@@ -1,4 +1,4 @@
-import type { ActionService } from '../infra/action'
+import type { ActionService } from '../action'
 
 export class SoundService implements ActionService {
   // Require manual testing

@@ -7,7 +7,7 @@ import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
 import WeeklySchedulesEditor from './WeeklySchedulesEditor/index.vue'
 import TimerIntegrationSetting from './TimerIntegrationSetting.vue'
 import { BlockingTimerIntegrationStorageService } from '@/domain/blocking_timer_integration/storage'
-import { ReloadService } from '@/chrome/reload'
+import { ReloadService } from '@/infra/chrome/reload'
 const { port } = defineProps<{
   port: Port
 }>()

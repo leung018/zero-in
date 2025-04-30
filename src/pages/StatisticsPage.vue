@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ReloadService } from '@/chrome/reload'
+import type { ReloadService } from '@/infra/chrome/reload'
 import type { ClientPort } from '@/service_workers/listener'
 import { onBeforeMount, ref } from 'vue'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'

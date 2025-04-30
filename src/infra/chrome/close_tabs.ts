@@ -1,4 +1,4 @@
-import type { ActionService } from '../infra/action'
+import type { ActionService } from '../action'
 
 export class ChromeCloseTabsService implements ActionService {
   private readonly targetUrl: string
