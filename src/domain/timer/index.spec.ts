@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { FocusTimer } from './timer'
+import { FocusTimer } from '.'
 import { Duration } from './duration'
 import { TimerStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'

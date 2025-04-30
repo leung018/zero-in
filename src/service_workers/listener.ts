@@ -17,7 +17,7 @@ import { FocusSessionRecordStorageService } from '../domain/timer/record/storage
 import { TimerStage } from '../domain/timer/stage'
 import type { TimerState } from '../domain/timer/state'
 import { TimerStateStorageService } from '../domain/timer/state/storage'
-import { FocusTimer } from '../domain/timer/timer'
+import { FocusTimer } from '../domain/timer'
 import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { type ActionService } from '../infra/action'
 import { type BadgeColor, type BadgeDisplayService } from '../infra/badge'

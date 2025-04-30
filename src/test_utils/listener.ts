@@ -1,5 +1,5 @@
 import config from '../config'
-import { FocusTimer } from '../domain/timer/timer'
+import { FocusTimer } from '../domain/timer'
 import { FakeActionService } from '../infra/action'
 import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeCommunicationManager } from '../infra/communication'
