@@ -32,7 +32,7 @@ describe('BackgroundListener', () => {
     expect(listener.getTimerStateSubscriptionCount()).toBe(initialSubscriptionCount)
   })
 
-  it('should save the pomodoro record after focus is completed', async () => {
+  it('should save the focus session records after focus is completed', async () => {
     const { scheduler, clientPort, focusSessionRecordStorageService } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
@@ -57,7 +57,7 @@ describe('BackgroundListener', () => {
     expect((await focusSessionRecordStorageService.getAll()).length).toBe(1)
   })
 
-  it('should house keep the pomodoro records', async () => {
+  it('should house keep the focus session records', async () => {
     const { scheduler, focusSessionRecordStorageService, clientPort } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 })
