@@ -3,7 +3,7 @@ import type { ReloadService } from '@/infra/chrome/reload'
 import type { ClientPort } from '@/service_workers/listener'
 import { onBeforeMount, ref } from 'vue'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
-import type { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
+import type { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
 import { Time } from '../domain/time'
 import { CurrentDateService } from '../infra/current_date'
 import { WorkRequestName } from '../service_workers/request'
@@ -12,7 +12,7 @@ import { getMostRecentDate } from '@/utils/date'
 import ContentTemplate from './components/ContentTemplate.vue'
 import TimeInput from './components/TimeInput.vue'
 
-type PomodoroStat = { day: string; completedPomodori: number }
+type Stat = { day: string; completedFocusSessions: number }
 
 const {
   dailyResetTimeStorageService,
@@ -29,40 +29,40 @@ const {
 }>()
 
 const dailyResetTime = ref<Time>(new Time(0, 0))
-const pomodoroStats = ref<PomodoroStat[]>(initialPomodoroStats())
+const stats = ref<Stat[]>(initialStats())
 
-function initialPomodoroStats(): PomodoroStat[] {
+function initialStats(): Stat[] {
   const stats = []
-  stats.push({ day: 'Today', completedPomodori: 0 })
-  stats.push({ day: 'Yesterday', completedPomodori: 0 })
+  stats.push({ day: 'Today', completedFocusSessions: 0 })
+  stats.push({ day: 'Yesterday', completedFocusSessions: 0 })
   for (let i = 2; i < 7; i++) {
-    stats.push({ day: `${i} days ago`, completedPomodori: 0 })
+    stats.push({ day: `${i} days ago`, completedFocusSessions: 0 })
   }
   return stats
 }
 
 onBeforeMount(async () => {
   dailyResetTime.value = await dailyResetTimeStorageService.get()
-  await setPomodoroStats(dailyResetTime.value)
+  await setStats(dailyResetTime.value)
 
   port.onMessage((message) => {
-    if (message.name !== WorkResponseName.POMODORO_RECORDS_UPDATED) {
+    if (message.name !== WorkResponseName.FOCUS_SESSION_RECORDS_UPDATED) {
       return
     }
-    setPomodoroStats(dailyResetTime.value)
+    setStats(dailyResetTime.value)
   })
 
   port.send({
-    name: WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE
+    name: WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE
   })
 })
 
-async function setPomodoroStats(dailyResetTime: Time) {
+async function setStats(dailyResetTime: Time) {
   const records = await focusSessionRecordStorageService.getAll()
   let inclusiveEndDate = currentDateService.getDate()
   const inclusiveStartDate = getMostRecentDate(dailyResetTime, inclusiveEndDate)
-  for (let i = 0; i < pomodoroStats.value.length; i++) {
-    pomodoroStats.value[i].completedPomodori = records.filter(
+  for (let i = 0; i < stats.value.length; i++) {
+    stats.value[i].completedFocusSessions = records.filter(
       (record) => record.completedAt >= inclusiveStartDate && record.completedAt <= inclusiveEndDate
     ).length
 
@@ -101,9 +101,9 @@ const onClickSave = async () => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="stat in pomodoroStats" :key="stat.day">
+          <tr v-for="stat in stats" :key="stat.day">
             <td data-test="day-field">{{ stat.day }}</td>
-            <td data-test="completed-pomodori-field">{{ stat.completedPomodori }}</td>
+            <td data-test="completed-focus-sessions">{{ stat.completedFocusSessions }}</td>
           </tr>
         </tbody>
       </table>

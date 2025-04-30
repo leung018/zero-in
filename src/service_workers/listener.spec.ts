@@ -6,11 +6,11 @@ import {
   newTestNotificationSetting,
   type NotificationSetting
 } from '../domain/notification_setting'
-import { TimerConfig } from '../domain/pomodoro/config'
-import { Duration } from '../domain/pomodoro/duration'
-import type { FocusSessionRecord } from '../domain/pomodoro/record'
-import { TimerStage } from '../domain/pomodoro/stage'
-import type { TimerState } from '../domain/pomodoro/state'
+import { TimerConfig } from '../domain/timer/config'
+import { Duration } from '../domain/timer/duration'
+import type { FocusSessionRecord } from '../domain/timer/record'
+import { TimerStage } from '../domain/timer/stage'
+import type { TimerState } from '../domain/timer/state'
 import { type Badge, type BadgeColor } from '../infra/badge'
 import { setUpListener } from '../test_utils/listener'
 import type { ClientPort } from './listener'
@@ -32,7 +32,7 @@ describe('BackgroundListener', () => {
     expect(listener.getTimerStateSubscriptionCount()).toBe(initialSubscriptionCount)
   })
 
-  it('should save the pomodoro record after focus is completed', async () => {
+  it('should save the focus session records after focus is completed', async () => {
     const { scheduler, clientPort, focusSessionRecordStorageService } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
@@ -57,7 +57,7 @@ describe('BackgroundListener', () => {
     expect((await focusSessionRecordStorageService.getAll()).length).toBe(1)
   })
 
-  it('should house keep the pomodoro records', async () => {
+  it('should house keep the focus session records', async () => {
     const { scheduler, focusSessionRecordStorageService, clientPort } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 })
@@ -85,7 +85,7 @@ describe('BackgroundListener', () => {
 
     const initialSubscriptionCount = listener.getFocusSessionRecordsUpdateSubscriptionCount()
 
-    clientPort.send({ name: WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE })
+    clientPort.send({ name: WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE })
 
     expect(listener.getFocusSessionRecordsUpdateSubscriptionCount()).toBe(
       initialSubscriptionCount + 1

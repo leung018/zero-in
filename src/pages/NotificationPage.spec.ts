@@ -4,8 +4,8 @@ import {
   newTestNotificationSetting,
   type NotificationSetting
 } from '../domain/notification_setting'
-import { TimerConfig } from '../domain/pomodoro/config'
-import { Duration } from '../domain/pomodoro/duration'
+import { TimerConfig } from '../domain/timer/config'
+import { Duration } from '../domain/timer/duration'
 import { FakeActionService } from '../infra/action'
 import { WorkRequestName } from '../service_workers/request'
 import { assertSelectorCheckboxValue } from '../test_utils/assert'

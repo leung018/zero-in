@@ -7,7 +7,7 @@ import { Time } from './time'
 import { WeeklyScheduleStorageService } from './schedules/storage'
 import { BrowsingControlTogglingService } from './browsing_control_toggling'
 import { CurrentDateService } from '../infra/current_date'
-import { TimerStage } from './pomodoro/stage'
+import { TimerStage } from './timer/stage'
 import type { BlockingTimerIntegration } from './blocking_timer_integration'
 import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 

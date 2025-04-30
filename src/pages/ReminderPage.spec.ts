@@ -1,10 +1,10 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
-import { TimerConfig } from '../domain/pomodoro/config'
-import { Duration } from '../domain/pomodoro/duration'
-import { newFocusSessionRecord } from '../domain/pomodoro/record'
-import { TimerStage } from '../domain/pomodoro/stage'
+import { TimerConfig } from '../domain/timer/config'
+import { Duration } from '../domain/timer/duration'
+import { newFocusSessionRecord } from '../domain/timer/record'
+import { TimerStage } from '../domain/timer/stage'
 import { Time } from '../domain/time'
 import { FakeActionService } from '../infra/action'
 import { CurrentDateService } from '../infra/current_date'
@@ -67,7 +67,7 @@ describe('ReminderPage', () => {
     expect(state.stage).toBe(TimerStage.SHORT_BREAK)
   })
 
-  it('should display daily completed pomodori', async () => {
+  it('should display daily completed focus sessions', async () => {
     const { wrapper } = await mountPage({
       focusSessionRecords: [
         newFocusSessionRecord(new Date(2025, 2, 1, 15, 2)),
@@ -79,7 +79,7 @@ describe('ReminderPage', () => {
     })
 
     expect(wrapper.find(dataTestSelector('reset-time')).text()).toBe('15:03')
-    expect(wrapper.find(dataTestSelector('daily-completed-pomodori')).text()).toBe('2')
+    expect(wrapper.find(dataTestSelector('daily-completed-focus-sessions')).text()).toBe('2')
   })
 })
 

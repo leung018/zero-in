@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { PomodoroTimer } from './timer'
+import { FocusTimer } from '.'
 import { Duration } from './duration'
 import { TimerStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
 import { TimerConfig } from './config'
 import { newTestTimerState, type TimerState } from './state'
 
-describe('PomodoroTimer', () => {
+describe('FocusTimer', () => {
   it('should initial state is set correctly', () => {
     const { timer, scheduler } = createTimer(
       newConfig({
@@ -352,7 +352,7 @@ describe('PomodoroTimer', () => {
     expect(timer.getState()).toEqual(expected)
   })
 
-  it('should start long break after number of pomodori per cycle is passed', () => {
+  it('should start long break after finish all focus sessions in that cycle', () => {
     const { timer, scheduler } = createTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 3 }),
@@ -678,7 +678,7 @@ const newConfig = TimerConfig.newTestInstance
 
 function createTimer(timerConfig = newConfig()) {
   const scheduler = new FakePeriodicTaskScheduler()
-  const timer = PomodoroTimer.createFake({
+  const timer = FocusTimer.createFake({
     scheduler,
     timerConfig
   })

@@ -4,7 +4,7 @@ import type { WeeklySchedule } from './schedules'
 import { WeeklyScheduleStorageService } from './schedules/storage'
 import { CurrentDateService } from '../infra/current_date'
 import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
-import { TimerStage } from './pomodoro/stage'
+import { TimerStage } from './timer/stage'
 interface TimerInfoGetter {
   getTimerInfo(): {
     timerStage: TimerStage

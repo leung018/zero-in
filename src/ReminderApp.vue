@@ -2,7 +2,7 @@
 import { ChromeCommunicationManager } from './infra/chrome/communication'
 import { DailyResetTimeStorageService } from './domain/daily_reset_time/storage'
 import ReminderPage from './pages/ReminderPage.vue'
-import { FocusSessionRecordStorageService } from './domain/pomodoro/record/storage'
+import { FocusSessionRecordStorageService } from './domain/timer/record/storage'
 import { SoundService } from './infra/chrome/sound'
 import { CurrentDateService } from './infra/current_date'
 </script>

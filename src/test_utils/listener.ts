@@ -1,13 +1,13 @@
 import config from '../config'
-import { PomodoroTimer } from '../domain/pomodoro/timer'
+import { FocusTimer } from '../domain/timer'
 import { FakeActionService } from '../infra/action'
 import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeCommunicationManager } from '../infra/communication'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { BackgroundListener } from '../service_workers/listener'
-import { TimerStateStorageService } from '../domain/pomodoro/state/storage'
-import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
-import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
+import { TimerStateStorageService } from '../domain/timer/state/storage'
+import { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
+import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { FakeBrowsingControlService } from '../infra/browsing_control'
@@ -40,7 +40,7 @@ export async function setUpListener({
 
   const scheduler = new FakePeriodicTaskScheduler()
   await params.timerConfigStorageService.save(timerConfig)
-  const timer = PomodoroTimer.createFake({
+  const timer = FocusTimer.createFake({
     scheduler
   })
 

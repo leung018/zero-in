@@ -1,8 +1,8 @@
-import type { TimerState } from '@/domain/pomodoro/state'
+import type { TimerState } from '@/domain/timer/state'
 
 export enum WorkResponseName {
   TIMER_STATE,
-  POMODORO_RECORDS_UPDATED
+  FOCUS_SESSION_RECORDS_UPDATED
 }
 
 export type WorkResponse =
@@ -11,5 +11,5 @@ export type WorkResponse =
       payload: TimerState
     }
   | {
-      name: WorkResponseName.POMODORO_RECORDS_UPDATED
+      name: WorkResponseName.FOCUS_SESSION_RECORDS_UPDATED
     }

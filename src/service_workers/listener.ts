@@ -10,14 +10,14 @@ import type { BrowsingControlService } from '../infra/browsing_control'
 import { BrowsingControlTogglingService } from '../domain/browsing_control_toggling'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
-import { TimerConfigStorageService } from '../domain/pomodoro/config/storage'
-import { newFocusSessionRecord } from '../domain/pomodoro/record'
-import { FocusSessionRecordHousekeeper } from '../domain/pomodoro/record/house_keep'
-import { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
-import { TimerStage } from '../domain/pomodoro/stage'
-import type { TimerState } from '../domain/pomodoro/state'
-import { TimerStateStorageService } from '../domain/pomodoro/state/storage'
-import { PomodoroTimer } from '../domain/pomodoro/timer'
+import { TimerConfigStorageService } from '../domain/timer/config/storage'
+import { newFocusSessionRecord } from '../domain/timer/record'
+import { FocusSessionRecordHousekeeper } from '../domain/timer/record/house_keep'
+import { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
+import { TimerStage } from '../domain/timer/stage'
+import type { TimerState } from '../domain/timer/state'
+import { TimerStateStorageService } from '../domain/timer/state/storage'
+import { FocusTimer } from '../domain/timer'
 import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
 import { type ActionService } from '../infra/action'
 import { type BadgeColor, type BadgeDisplayService } from '../infra/badge'
@@ -46,7 +46,7 @@ type ListenerParams = {
   blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
   currentDateService: CurrentDateService
   focusSessionRecordHouseKeepDays: number
-  timer: PomodoroTimer
+  timer: FocusTimer
 }
 
 export type ClientPort = Port<WorkRequest, WorkResponse>
@@ -69,7 +69,7 @@ export class BackgroundListener {
       currentDateService: CurrentDateService.create(),
       blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.create(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
-      timer: PomodoroTimer.create()
+      timer: FocusTimer.create()
     })
   }
 
@@ -79,7 +79,7 @@ export class BackgroundListener {
 
   private browsingControlTogglingService: BrowsingControlTogglingService
   private communicationManager: CommunicationManager
-  private timer: PomodoroTimer
+  private timer: FocusTimer
   private badgeDisplayService: BadgeDisplayService
   private timerStateStorageService: TimerStateStorageService
   private timerConfigStorageService: TimerConfigStorageService
@@ -268,11 +268,11 @@ export class BackgroundListener {
               })
               break
             }
-            case WorkRequestName.LISTEN_TO_POMODORO_RECORDS_UPDATE: {
+            case WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE: {
               const subscriptionId = this.focusSessionRecordsUpdateSubscriptionManager.subscribe(
                 () => {
                   backgroundPort.send({
-                    name: WorkResponseName.POMODORO_RECORDS_UPDATED
+                    name: WorkResponseName.FOCUS_SESSION_RECORDS_UPDATED
                   })
                 }
               )

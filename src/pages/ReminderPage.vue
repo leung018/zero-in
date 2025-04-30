@@ -3,8 +3,8 @@ import type { CurrentDateService } from '@/infra/current_date'
 import type { ClientPort } from '@/service_workers/listener'
 import { computed, onBeforeMount, ref } from 'vue'
 import type { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
-import type { FocusSessionRecordStorageService } from '../domain/pomodoro/record/storage'
-import { TimerStage } from '../domain/pomodoro/stage'
+import type { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
+import { TimerStage } from '../domain/timer/stage'
 import { Time } from '../domain/time'
 import { WorkRequestName } from '../service_workers/request'
 import { WorkResponseName } from '../service_workers/response'
@@ -18,12 +18,12 @@ const { port, focusSessionRecordStorageService, dailyResetTimeStorageService, cu
     currentDateService: CurrentDateService
   }>()
 
-const pomodoroStage = ref<TimerStage>(TimerStage.FOCUS)
-const dailyCompletedPomodori = ref(0)
+const timerStage = ref<TimerStage>(TimerStage.FOCUS)
+const dailyCompletedFocusSessions = ref(0)
 const dailyResetTime = ref(new Time(0, 0))
 
 const hintMsg = computed(() => {
-  switch (pomodoroStage.value) {
+  switch (timerStage.value) {
     case TimerStage.SHORT_BREAK:
       return 'Take a short break'
     case TimerStage.LONG_BREAK:
@@ -38,27 +38,27 @@ onBeforeMount(async () => {
     if (message.name !== WorkResponseName.TIMER_STATE || !message.payload) {
       return
     }
-    pomodoroStage.value = message.payload.stage
+    timerStage.value = message.payload.stage
   })
   port.send({
     name: WorkRequestName.LISTEN_TO_TIMER
   })
   dailyResetTime.value = await dailyResetTimeStorageService.get()
-  dailyCompletedPomodori.value = await getTotalNumOfPomodoriAfter(dailyResetTime.value)
+  dailyCompletedFocusSessions.value = await getTotalFocusSessionsAfter(dailyResetTime.value)
 
   // @ts-ignore: Exposing port for e2e test to simulate situation that the port is disconnected
   window._port = port
 })
 
-async function getTotalNumOfPomodoriAfter(dailyResetTime: Time): Promise<number> {
+async function getTotalFocusSessionsAfter(dailyResetTime: Time): Promise<number> {
   const startDate = getMostRecentDate(dailyResetTime, currentDateService.getDate())
 
-  const totalNumOfPomodori = (
+  const totalFocusSessions = (
     await focusSessionRecordStorageService
       .getAll()
       .then((records) => records.filter((record) => record.completedAt >= startDate))
   ).length
-  return totalNumOfPomodori
+  return totalFocusSessions
 }
 
 const onClickStart = () => {
@@ -79,9 +79,11 @@ const onClickStart = () => {
         >Number of focus sessions completed since last
         <span data-test="reset-time">{{ dailyResetTime.toHhMmString() }}</span></span
       >
-      <span class="daily-completed-pomodori ms-2" data-test="daily-completed-pomodori">{{
-        dailyCompletedPomodori
-      }}</span>
+      <span
+        class="daily-completed-focus-sessions ms-2"
+        data-test="daily-completed-focus-sessions"
+        >{{ dailyCompletedFocusSessions }}</span
+      >
     </p>
   </div>
 </template>
@@ -99,7 +101,7 @@ const onClickStart = () => {
   font-size: 2rem;
 }
 
-.daily-completed-pomodori {
+.daily-completed-focus-sessions {
   font-weight: bold;
   color: #28a745;
 }
