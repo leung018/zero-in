@@ -213,7 +213,7 @@ test('should able to change timer config', async ({ page, extensionId }) => {
   await page.getByTestId('focus-duration').fill('10')
   await page.getByTestId('short-break-duration').fill('2')
   await page.getByTestId('long-break-duration').fill('4')
-  await page.getByTestId('num-of-pomodori-per-cycle').fill('3')
+  await page.getByTestId('focus-sessions-per-cycle').fill('3')
 
   await page.getByTestId('save-button').click()
   await page.reload()
@@ -221,7 +221,7 @@ test('should able to change timer config', async ({ page, extensionId }) => {
   await expect(page.getByTestId('focus-duration')).toHaveValue('10')
   await expect(page.getByTestId('short-break-duration')).toHaveValue('2')
   await expect(page.getByTestId('long-break-duration')).toHaveValue('4')
-  await expect(page.getByTestId('num-of-pomodori-per-cycle')).toHaveValue('3')
+  await expect(page.getByTestId('focus-sessions-per-cycle')).toHaveValue('3')
 })
 
 test('should able to persist the focus sessions record and show it on statistics', async ({

@@ -21,7 +21,7 @@ describe('TestingConfigPage', () => {
     assertSelectorInputValue(wrapper, dataTestSelector('focus-duration'), '24')
     assertSelectorInputValue(wrapper, dataTestSelector('short-break-duration'), '4')
     assertSelectorInputValue(wrapper, dataTestSelector('long-break-duration'), '14')
-    assertSelectorInputValue(wrapper, dataTestSelector('num-of-pomodori-per-cycle'), '3')
+    assertSelectorInputValue(wrapper, dataTestSelector('focus-sessions-per-cycle'), '3')
   })
 
   it('should update timer config', async () => {
@@ -43,7 +43,7 @@ describe('TestingConfigPage', () => {
     await wrapper.find(dataTestSelector('short-break-duration')).setValue(newShortBreakDuration)
     await wrapper.find(dataTestSelector('long-break-duration')).setValue(newLongBreakDuration)
     await wrapper
-      .find(dataTestSelector('num-of-pomodori-per-cycle'))
+      .find(dataTestSelector('focus-sessions-per-cycle'))
       .setValue(newNumOfPomodoriPerCycle)
 
     await wrapper.find(dataTestSelector('save-button')).trigger('click')

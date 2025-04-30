@@ -74,7 +74,7 @@ const onClickSave = async () => {
         <b-form-input
           type="number"
           min="0"
-          data-test="num-of-pomodori-per-cycle"
+          data-test="focus-sessions-per-cycle"
           v-model.number="focusSessionsPerCycle"
         ></b-form-input>
       </b-form-group>
