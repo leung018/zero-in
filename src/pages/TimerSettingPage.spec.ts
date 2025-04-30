@@ -62,14 +62,14 @@ describe('TimerSettingPage', () => {
     const newFocusDuration = 30
     const newShortBreakDuration = 5
     const newLongBreakDuration = 15
-    const newNumOfPomodoriPerCycle = 4
+    const newFocusSessionsPerCycle = 4
 
     await wrapper.find(dataTestSelector('focus-duration')).setValue(newFocusDuration)
     await wrapper.find(dataTestSelector('short-break-duration')).setValue(newShortBreakDuration)
     await wrapper.find(dataTestSelector('long-break-duration')).setValue(newLongBreakDuration)
     await wrapper
       .find(dataTestSelector('focus-sessions-per-cycle'))
-      .setValue(newNumOfPomodoriPerCycle)
+      .setValue(newFocusSessionsPerCycle)
 
     await wrapper.find(dataTestSelector('save-button')).trigger('click')
     await flushPromises()
@@ -78,7 +78,7 @@ describe('TimerSettingPage', () => {
       focusDuration: new Duration({ minutes: newFocusDuration }),
       shortBreakDuration: new Duration({ minutes: newShortBreakDuration }),
       longBreakDuration: new Duration({ minutes: newLongBreakDuration }),
-      focusSessionsPerCycle: newNumOfPomodoriPerCycle
+      focusSessionsPerCycle: newFocusSessionsPerCycle
     })
     expect(await timerConfigStorageService.get()).toEqual(newConfig)
 
