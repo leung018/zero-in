@@ -100,7 +100,7 @@ describe('StatisticsPage', () => {
     expect(newRows[6].find(dataTestSelector('completed-pomodori-field')).text()).toBe('0') // 2025-04-05 10:30 - 2025-04-06 10:29
   })
 
-  it('should reload statistics after completed a pomodoro', async () => {
+  it('should reload statistics after completed a focus session', async () => {
     const { wrapper, scheduler, timer } = await mountStatisticsPage({
       dailyResetTime: new Time(9, 30),
       timerConfig: TimerConfig.newTestInstance({
