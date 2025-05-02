@@ -78,6 +78,7 @@ export class FocusTimer {
   getState(): Readonly<TimerState> {
     return {
       remainingSeconds: this.remaining.remainingSeconds(),
+      remaining: this.remaining,
       isRunning: this.isRunning,
       stage: this.stage,
       focusSessionsCompleted: this.focusSessionsCompleted

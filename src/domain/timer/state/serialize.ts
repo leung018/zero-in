@@ -1,4 +1,5 @@
 import type { TimerState } from '.'
+import { Duration } from '../duration'
 import type { TimerStage } from '../stage'
 
 type SerializedTimerState = TimerStateSchemas[1]
@@ -32,6 +33,7 @@ export function serializeTimerState(timerState: TimerState): SerializedTimerStat
 export function deserializeTimerState(data: SerializedTimerState): TimerState {
   return {
     remainingSeconds: data.remainingSeconds,
+    remaining: new Duration({ seconds: data.remainingSeconds }),
     isRunning: data.isRunning,
     stage: data.stage,
     focusSessionsCompleted: data.focusSessionsCompleted

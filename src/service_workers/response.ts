@@ -1,4 +1,4 @@
-import type { TimerState } from '@/domain/timer/state'
+import type { TimerStage } from '../domain/timer/stage'
 
 export enum WorkResponseName {
   TIMER_STATE,
@@ -8,7 +8,12 @@ export enum WorkResponseName {
 export type WorkResponse =
   | {
       name: WorkResponseName.TIMER_STATE
-      payload: TimerState
+      payload: {
+        remainingSeconds: number
+        isRunning: boolean
+        stage: TimerStage
+        focusSessionsCompleted: number
+      }
     }
   | {
       name: WorkResponseName.FOCUS_SESSION_RECORDS_UPDATED

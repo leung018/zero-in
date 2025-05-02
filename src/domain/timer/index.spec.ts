@@ -17,6 +17,7 @@ describe('FocusTimer', () => {
 
     const expected: TimerState = {
       remainingSeconds: new Duration({ minutes: 10 }).remainingSeconds(),
+      remaining: new Duration({ minutes: 10 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
@@ -80,6 +81,7 @@ describe('FocusTimer', () => {
     )
 
     const expected: TimerState = {
+      remaining: new Duration({ minutes: 5 }),
       remainingSeconds: new Duration({ minutes: 5 }).remainingSeconds(),
       isRunning: false,
       stage: TimerStage.FOCUS,
@@ -98,6 +100,7 @@ describe('FocusTimer', () => {
     scheduler.advanceTime(1001)
 
     const expected: TimerState = {
+      remaining: new Duration({ minutes: 9, seconds: 59 }),
       remainingSeconds: new Duration({ minutes: 9, seconds: 59 }).remainingSeconds(),
       isRunning: true,
       stage: TimerStage.FOCUS,
@@ -136,6 +139,7 @@ describe('FocusTimer', () => {
 
     const expected: TimerState = {
       remainingSeconds: new Duration({ minutes: 9, seconds: 59 }).remainingSeconds(),
+      remaining: new Duration({ minutes: 9, seconds: 59 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
@@ -179,24 +183,28 @@ describe('FocusTimer', () => {
     const expectedUpdates: TimerState[] = [
       {
         remainingSeconds: 3,
+        remaining: new Duration({ seconds: 3 }),
         isRunning: false,
         stage: TimerStage.FOCUS,
         focusSessionsCompleted: 0
       },
       {
         remainingSeconds: 3,
+        remaining: new Duration({ seconds: 3 }),
         isRunning: true,
         stage: TimerStage.FOCUS,
         focusSessionsCompleted: 0
       },
       {
         remainingSeconds: 2,
+        remaining: new Duration({ seconds: 2 }),
         isRunning: true,
         stage: TimerStage.FOCUS,
         focusSessionsCompleted: 0
       },
       {
         remainingSeconds: 1,
+        remaining: new Duration({ seconds: 1 }),
         isRunning: true,
         stage: TimerStage.FOCUS,
         focusSessionsCompleted: 0
@@ -209,6 +217,7 @@ describe('FocusTimer', () => {
     expect(updates.length).toBe(5)
     const expectedLastUpdate: TimerState = {
       remainingSeconds: 5,
+      remaining: new Duration({ seconds: 5 }),
       isRunning: false,
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 1
@@ -324,6 +333,7 @@ describe('FocusTimer', () => {
 
     const expected: TimerState = {
       remainingSeconds: 1,
+      remaining: new Duration({ seconds: 1 }),
       isRunning: false,
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 1
@@ -345,6 +355,7 @@ describe('FocusTimer', () => {
 
     const expected: TimerState = {
       remainingSeconds: 3,
+      remaining: new Duration({ seconds: 3 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
@@ -377,6 +388,7 @@ describe('FocusTimer', () => {
     // Long Break
     const expected: TimerState = {
       remainingSeconds: 2,
+      remaining: new Duration({ seconds: 2 }),
       isRunning: false,
       stage: TimerStage.LONG_BREAK,
       focusSessionsCompleted: 2
@@ -413,6 +425,7 @@ describe('FocusTimer', () => {
     // After Long Break, it should reset to Focus
     let expected: TimerState = {
       remainingSeconds: 3,
+      remaining: new Duration({ seconds: 3 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
@@ -434,6 +447,7 @@ describe('FocusTimer', () => {
     // Long Break again
     expected = {
       remainingSeconds: 2,
+      remaining: new Duration({ seconds: 2 }),
       isRunning: false,
       stage: TimerStage.LONG_BREAK,
       focusSessionsCompleted: 2
@@ -459,6 +473,7 @@ describe('FocusTimer', () => {
 
     const expected: TimerState = {
       remainingSeconds: 1,
+      remaining: new Duration({ seconds: 1 }),
       isRunning: true,
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 0
@@ -489,6 +504,7 @@ describe('FocusTimer', () => {
 
     const expected: TimerState = {
       remainingSeconds: 2,
+      remaining: new Duration({ seconds: 1, milliseconds: 500 }),
       isRunning: true,
       stage: TimerStage.LONG_BREAK,
       focusSessionsCompleted: 1
@@ -516,6 +532,7 @@ describe('FocusTimer', () => {
 
     const expected: TimerState = {
       remainingSeconds: 10,
+      remaining: new Duration({ seconds: 10 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
@@ -576,6 +593,7 @@ describe('FocusTimer', () => {
 
     const targetState: TimerState = {
       remainingSeconds: 2,
+      remaining: new Duration({ seconds: 2 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
@@ -587,6 +605,7 @@ describe('FocusTimer', () => {
 
     const targetState2: TimerState = {
       remainingSeconds: 1,
+      remaining: new Duration({ seconds: 1 }),
       isRunning: false,
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 2

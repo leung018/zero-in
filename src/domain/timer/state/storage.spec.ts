@@ -4,6 +4,7 @@ import { TimerStage } from '../stage'
 import type { TimerState } from '.'
 import { FakeStorage } from '../../../infra/storage'
 import type { TimerStateSchemas } from './serialize'
+import { Duration } from '../duration'
 
 describe('TimerStateStorageService', () => {
   it('should get null if no TimerState is saved ', async () => {
@@ -15,6 +16,7 @@ describe('TimerStateStorageService', () => {
     const timerStateStorageService = TimerStateStorageService.createFake()
     const timerState: TimerState = {
       remainingSeconds: 100,
+      remaining: new Duration({ seconds: 100 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 9
@@ -41,6 +43,7 @@ describe('TimerStateStorageService with migration', () => {
     const timerStateStorageService = TimerStateStorageService.createFake(fakeStorage)
     const expected: TimerState = {
       remainingSeconds: 100,
+      remaining: new Duration({ seconds: 100 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 9

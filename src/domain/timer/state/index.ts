@@ -1,7 +1,9 @@
+import type { Duration } from '../duration'
 import { TimerStage } from '../stage'
 
 export type TimerState = {
   remainingSeconds: number
+  remaining?: Duration
   isRunning: boolean
   stage: TimerStage
   focusSessionsCompleted: number

@@ -319,6 +319,7 @@ describe('BackgroundListener', () => {
 
     const targetState: TimerState = {
       remainingSeconds: 1000,
+      remaining: new Duration({ seconds: 1000 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
