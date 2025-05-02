@@ -54,22 +54,14 @@ export class BrowsingControlTogglingService {
     browsingRulesStorageService,
     weeklyScheduleStorageService,
     blockingTimerIntegrationStorageService,
-    timerInfoGetter = {
-      getTimerInfo: () => ({
-        timerStage: TimerStage.FOCUS,
-        isRunning: false,
-        remainingSeconds: 0,
-        longBreakSeconds: 0,
-        shortBreakSeconds: 0
-      })
-    },
+    timerInfoGetter,
     currentDateService
   }: {
     browsingControlService: BrowsingControlService
     browsingRulesStorageService: BrowsingRulesStorageService
     weeklyScheduleStorageService: WeeklyScheduleStorageService
     blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
-    timerInfoGetter?: TimerInfoGetter
+    timerInfoGetter: TimerInfoGetter
     currentDateService: CurrentDateService
   }) {
     this.browsingControlService = browsingControlService
