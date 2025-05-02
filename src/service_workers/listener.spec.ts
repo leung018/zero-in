@@ -289,7 +289,7 @@ describe('BackgroundListener', () => {
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
 
-    expect(listener.getTimerState().remainingSeconds).toBe(2)
+    expect(listener.getTimerState().remaining).toEqual(new Duration({ seconds: 2 }))
   })
 
   it('should back up update of timer to storage', async () => {
@@ -318,7 +318,6 @@ describe('BackgroundListener', () => {
     })
 
     const targetState: TimerState = {
-      remainingSeconds: 1000,
       remaining: new Duration({ seconds: 1000 }),
       isRunning: true,
       stage: TimerStage.FOCUS,

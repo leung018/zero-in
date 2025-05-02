@@ -112,7 +112,7 @@ export class BackgroundListener {
           return {
             timerStage: timerState.stage,
             isRunning: timerState.isRunning,
-            remainingSeconds: timerState.remainingSeconds,
+            remainingSeconds: timerState.remaining.remainingSeconds(),
             longBreakSeconds: timerConfig.longBreakDuration.remainingSeconds(),
             shortBreakSeconds: timerConfig.shortBreakDuration.remainingSeconds()
           }
@@ -171,7 +171,7 @@ export class BackgroundListener {
 
       if (newState.isRunning) {
         this.badgeDisplayService.displayBadge({
-          text: roundUpToRemainingMinutes(newState.remainingSeconds).toString(),
+          text: roundUpToRemainingMinutes(newState.remaining.remainingSeconds()).toString(),
           color: getBadgeColor(newState.stage)
         })
       }
@@ -258,7 +258,12 @@ export class BackgroundListener {
               const subscriptionId = this.timerStateSubscriptionManager.subscribe((newState) => {
                 backgroundPort.send({
                   name: WorkResponseName.TIMER_STATE,
-                  payload: newState
+                  payload: {
+                    remainingSeconds: newState.remaining.remainingSeconds(),
+                    isRunning: newState.isRunning,
+                    stage: newState.stage,
+                    focusSessionsCompleted: newState.focusSessionsCompleted
+                  }
                 })
               })
               this.timerStateSubscriptionManager.broadcast(this.timer.getState())

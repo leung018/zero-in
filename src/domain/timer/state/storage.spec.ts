@@ -15,7 +15,6 @@ describe('TimerStateStorageService', () => {
   it('should save and get TimerState', async () => {
     const timerStateStorageService = TimerStateStorageService.createFake()
     const timerState: TimerState = {
-      remainingSeconds: 100,
       remaining: new Duration({ seconds: 100 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
@@ -42,7 +41,6 @@ describe('TimerStateStorageService with migration', () => {
 
     const timerStateStorageService = TimerStateStorageService.createFake(fakeStorage)
     const expected: TimerState = {
-      remainingSeconds: 100,
       remaining: new Duration({ seconds: 100 }),
       isRunning: true,
       stage: TimerStage.FOCUS,

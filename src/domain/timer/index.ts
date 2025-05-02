@@ -77,7 +77,6 @@ export class FocusTimer {
 
   getState(): Readonly<TimerState> {
     return {
-      remainingSeconds: this.remaining.remainingSeconds(),
       remaining: this.remaining,
       isRunning: this.isRunning,
       stage: this.stage,
@@ -92,7 +91,7 @@ export class FocusTimer {
   setConfig(config: TimerConfig) {
     this.config = this.newInternalConfig(config)
     this.setState({
-      remainingSeconds: this.config.focusDuration.remainingSeconds(),
+      remaining: this.config.focusDuration,
       isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
@@ -236,7 +235,7 @@ export class FocusTimer {
   }
 
   setState(state: TimerState) {
-    this.remaining = new Duration({ seconds: state.remainingSeconds })
+    this.remaining = new Duration({ milliseconds: state.remaining.totalMilliseconds })
     this.stage = state.stage
     this.focusSessionsCompleted = state.focusSessionsCompleted
 

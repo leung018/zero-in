@@ -23,7 +23,7 @@ export type TimerStateSchemas = [
 export function serializeTimerState(timerState: TimerState): SerializedTimerState {
   return {
     dataVersion: 1,
-    remainingSeconds: timerState.remainingSeconds,
+    remainingSeconds: timerState.remaining.remainingSeconds(),
     isRunning: timerState.isRunning,
     stage: timerState.stage,
     focusSessionsCompleted: timerState.focusSessionsCompleted
@@ -32,7 +32,6 @@ export function serializeTimerState(timerState: TimerState): SerializedTimerStat
 
 export function deserializeTimerState(data: SerializedTimerState): TimerState {
   return {
-    remainingSeconds: data.remainingSeconds,
     remaining: new Duration({ seconds: data.remainingSeconds }),
     isRunning: data.isRunning,
     stage: data.stage,

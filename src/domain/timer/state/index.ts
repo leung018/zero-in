@@ -1,9 +1,8 @@
-import type { Duration } from '../duration'
+import { Duration } from '../duration'
 import { TimerStage } from '../stage'
 
 export type TimerState = {
-  remainingSeconds: number
-  remaining?: Duration
+  remaining: Duration
   isRunning: boolean
   stage: TimerStage
   focusSessionsCompleted: number
@@ -11,7 +10,7 @@ export type TimerState = {
 
 export function newTestTimerState(override: Partial<TimerState> = {}): TimerState {
   return {
-    remainingSeconds: 100,
+    remaining: new Duration({ seconds: 10 }),
     isRunning: false,
     stage: TimerStage.FOCUS,
     focusSessionsCompleted: 0,
