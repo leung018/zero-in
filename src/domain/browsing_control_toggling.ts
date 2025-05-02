@@ -5,13 +5,14 @@ import { WeeklyScheduleStorageService } from './schedules/storage'
 import { CurrentDateService } from '../infra/current_date'
 import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 import { TimerStage } from './timer/stage'
+import { Duration } from './timer/duration'
 interface TimerInfoGetter {
   getTimerInfo(): {
     timerStage: TimerStage
     isRunning: boolean
-    remainingSeconds: number
-    longBreakSeconds: number
-    shortBreakSeconds: number
+    remaining: Duration
+    longBreak: Duration
+    shortBreak: Duration
   }
 }
 
@@ -32,9 +33,9 @@ export class BrowsingControlTogglingService {
       getTimerInfo: () => ({
         timerStage: TimerStage.FOCUS,
         isRunning: false,
-        remainingSeconds: 0,
-        longBreakSeconds: 0,
-        shortBreakSeconds: 0
+        remaining: new Duration({ seconds: 0 }),
+        longBreak: new Duration({ seconds: 0 }),
+        shortBreak: new Duration({ seconds: 0 })
       })
     },
     currentDateService = CurrentDateService.createFake()
@@ -102,13 +103,13 @@ export class BrowsingControlTogglingService {
     // If user hasn't pressed the start of the timer even the stage is break, still is not in break yet.
     if (
       timerInfo.timerStage === TimerStage.SHORT_BREAK &&
-      timerInfo.shortBreakSeconds <= timerInfo.remainingSeconds
+      timerInfo.shortBreak.totalMilliseconds <= timerInfo.remaining.totalMilliseconds
     ) {
       return false
     }
     if (
       timerInfo.timerStage === TimerStage.LONG_BREAK &&
-      timerInfo.longBreakSeconds <= timerInfo.remainingSeconds
+      timerInfo.longBreak.totalMilliseconds <= timerInfo.remaining.totalMilliseconds
     ) {
       return false
     }

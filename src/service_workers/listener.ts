@@ -112,9 +112,9 @@ export class BackgroundListener {
           return {
             timerStage: timerState.stage,
             isRunning: timerState.isRunning,
-            remainingSeconds: timerState.remaining.remainingSeconds(),
-            longBreakSeconds: timerConfig.longBreakDuration.remainingSeconds(),
-            shortBreakSeconds: timerConfig.shortBreakDuration.remainingSeconds()
+            remaining: timerState.remaining,
+            longBreak: timerConfig.longBreakDuration,
+            shortBreak: timerConfig.shortBreakDuration
           }
         }
       },
