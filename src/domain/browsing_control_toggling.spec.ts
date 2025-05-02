@@ -10,6 +10,7 @@ import { CurrentDateService } from '../infra/current_date'
 import { TimerStage } from './timer/stage'
 import type { BlockingTimerIntegration } from './blocking_timer_integration'
 import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
+import { Duration } from './timer/duration'
 
 describe('BrowsingControlTogglingService', () => {
   const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
@@ -167,9 +168,9 @@ function newTimerInfo({
   return {
     timerStage,
     isRunning,
-    remainingSeconds,
-    longBreakSeconds,
-    shortBreakSeconds
+    remaining: new Duration({ seconds: remainingSeconds }),
+    longBreak: new Duration({ seconds: longBreakSeconds }),
+    shortBreak: new Duration({ seconds: shortBreakSeconds })
   }
 }
 

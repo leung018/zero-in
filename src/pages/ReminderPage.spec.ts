@@ -62,7 +62,7 @@ describe('ReminderPage', () => {
     await flushPromises()
 
     const state = timer.getState()
-    expect(state.remainingSeconds).toBe(1)
+    expect(state.remaining.remainingSeconds()).toBe(1)
     expect(state.isRunning).toBe(true)
     expect(state.stage).toBe(TimerStage.SHORT_BREAK)
   })

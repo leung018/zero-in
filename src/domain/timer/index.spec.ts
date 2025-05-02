@@ -16,7 +16,7 @@ describe('FocusTimer', () => {
     scheduler.advanceTime(1000) // if the timer is not started, the time should not change
 
     const expected: TimerState = {
-      remainingSeconds: new Duration({ minutes: 10 }).remainingSeconds(),
+      remaining: new Duration({ minutes: 10 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
@@ -80,7 +80,7 @@ describe('FocusTimer', () => {
     )
 
     const expected: TimerState = {
-      remainingSeconds: new Duration({ minutes: 5 }).remainingSeconds(),
+      remaining: new Duration({ minutes: 5 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
@@ -98,7 +98,7 @@ describe('FocusTimer', () => {
     scheduler.advanceTime(1001)
 
     const expected: TimerState = {
-      remainingSeconds: new Duration({ minutes: 9, seconds: 59 }).remainingSeconds(),
+      remaining: new Duration({ minutes: 9, seconds: 59 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
@@ -118,9 +118,7 @@ describe('FocusTimer', () => {
     timer.start()
     scheduler.advanceTime(1050)
 
-    expect(timer.getState().remainingSeconds).toBe(
-      new Duration({ minutes: 9, seconds: 58 }).remainingSeconds()
-    )
+    expect(timer.getState().remaining).toEqual(new Duration({ minutes: 9, seconds: 58 }))
   })
 
   it('should able to pause', () => {
@@ -135,7 +133,7 @@ describe('FocusTimer', () => {
     scheduler.advanceTime(1000)
 
     const expected: TimerState = {
-      remainingSeconds: new Duration({ minutes: 9, seconds: 59 }).remainingSeconds(),
+      remaining: new Duration({ minutes: 9, seconds: 59 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
@@ -155,9 +153,7 @@ describe('FocusTimer', () => {
     timer.start()
     scheduler.advanceTime(1800)
 
-    expect(timer.getState().remainingSeconds).toBe(
-      new Duration({ minutes: 9, seconds: 57 }).remainingSeconds()
-    )
+    expect(timer.getState().remaining).toEqual(new Duration({ minutes: 9, seconds: 57 }))
   })
 
   it('should able to subscribe updates', () => {
@@ -178,25 +174,25 @@ describe('FocusTimer', () => {
 
     const expectedUpdates: TimerState[] = [
       {
-        remainingSeconds: 3,
+        remaining: new Duration({ seconds: 3 }),
         isRunning: false,
         stage: TimerStage.FOCUS,
         focusSessionsCompleted: 0
       },
       {
-        remainingSeconds: 3,
+        remaining: new Duration({ seconds: 3 }),
         isRunning: true,
         stage: TimerStage.FOCUS,
         focusSessionsCompleted: 0
       },
       {
-        remainingSeconds: 2,
+        remaining: new Duration({ seconds: 2 }),
         isRunning: true,
         stage: TimerStage.FOCUS,
         focusSessionsCompleted: 0
       },
       {
-        remainingSeconds: 1,
+        remaining: new Duration({ seconds: 1 }),
         isRunning: true,
         stage: TimerStage.FOCUS,
         focusSessionsCompleted: 0
@@ -208,7 +204,7 @@ describe('FocusTimer', () => {
 
     expect(updates.length).toBe(5)
     const expectedLastUpdate: TimerState = {
-      remainingSeconds: 5,
+      remaining: new Duration({ seconds: 5 }),
       isRunning: false,
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 1
@@ -235,9 +231,7 @@ describe('FocusTimer', () => {
     timer.pause()
 
     expect(updates[lastUpdatesLength].isRunning).toBe(false)
-    expect(updates[lastUpdatesLength].remainingSeconds).toBe(
-      new Duration({ minutes: 9, seconds: 58 }).remainingSeconds()
-    )
+    expect(updates[lastUpdatesLength].remaining).toEqual(new Duration({ minutes: 9, seconds: 58 }))
   })
 
   it('should after pause and restart again, subscription can receive updates properly', () => {
@@ -261,11 +255,11 @@ describe('FocusTimer', () => {
     timer.start()
     scheduler.advanceTime(600)
 
-    expect(updates[lastUpdatesLength].remainingSeconds).toBe(
-      new Duration({ minutes: 9, seconds: 59 }).remainingSeconds() // Whenever timer is started, it will publish the current state
+    expect(updates[lastUpdatesLength].remaining).toEqual(
+      new Duration({ minutes: 9, seconds: 58, milliseconds: 600 }) // Whenever timer is started, it will publish the current state
     )
-    expect(updates[lastUpdatesLength + 1].remainingSeconds).toBe(
-      new Duration({ minutes: 9, seconds: 58 }).remainingSeconds() // After 600ms since restart, the remaining time should be 9:58 and it should be published
+    expect(updates[lastUpdatesLength + 1].remaining).toEqual(
+      new Duration({ minutes: 9, seconds: 58 }) // After 600ms since restart, the remaining time should be 9:58 and it should be published
     )
   })
 
@@ -277,7 +271,7 @@ describe('FocusTimer', () => {
     )
     const updates: TimerState[] = []
     timer.start()
-    scheduler.advanceTime(1005)
+    scheduler.advanceTime(1100)
 
     timer.setOnTimerUpdate((update) => {
       updates.push(update)
@@ -285,8 +279,8 @@ describe('FocusTimer', () => {
 
     // although the update will be published every 1000ms, should receive immediate response when subscribe
     expect(updates.length).toBe(1)
-    expect(updates[0].remainingSeconds).toBe(
-      new Duration({ minutes: 9, seconds: 59 }).remainingSeconds()
+    expect(updates[0].remaining).toEqual(
+      new Duration({ minutes: 9, seconds: 58, milliseconds: 900 })
     )
   })
   it('should able to trigger callback when stage transit', async () => {
@@ -323,7 +317,7 @@ describe('FocusTimer', () => {
     scheduler.advanceTime(3000)
 
     const expected: TimerState = {
-      remainingSeconds: 1,
+      remaining: new Duration({ seconds: 1 }),
       isRunning: false,
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 1
@@ -344,7 +338,7 @@ describe('FocusTimer', () => {
     scheduler.advanceTime(1000)
 
     const expected: TimerState = {
-      remainingSeconds: 3,
+      remaining: new Duration({ seconds: 3 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
@@ -376,7 +370,7 @@ describe('FocusTimer', () => {
 
     // Long Break
     const expected: TimerState = {
-      remainingSeconds: 2,
+      remaining: new Duration({ seconds: 2 }),
       isRunning: false,
       stage: TimerStage.LONG_BREAK,
       focusSessionsCompleted: 2
@@ -412,7 +406,7 @@ describe('FocusTimer', () => {
 
     // After Long Break, it should reset to Focus
     let expected: TimerState = {
-      remainingSeconds: 3,
+      remaining: new Duration({ seconds: 3 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
@@ -433,7 +427,7 @@ describe('FocusTimer', () => {
 
     // Long Break again
     expected = {
-      remainingSeconds: 2,
+      remaining: new Duration({ seconds: 2 }),
       isRunning: false,
       stage: TimerStage.LONG_BREAK,
       focusSessionsCompleted: 2
@@ -458,7 +452,7 @@ describe('FocusTimer', () => {
     scheduler.advanceTime(1000)
 
     const expected: TimerState = {
-      remainingSeconds: 1,
+      remaining: new Duration({ seconds: 1 }),
       isRunning: true,
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 0
@@ -488,7 +482,7 @@ describe('FocusTimer', () => {
     scheduler.advanceTime(500)
 
     const expected: TimerState = {
-      remainingSeconds: 2,
+      remaining: new Duration({ seconds: 1, milliseconds: 500 }),
       isRunning: true,
       stage: TimerStage.LONG_BREAK,
       focusSessionsCompleted: 1
@@ -515,7 +509,7 @@ describe('FocusTimer', () => {
     timer.restartFocus()
 
     const expected: TimerState = {
-      remainingSeconds: 10,
+      remaining: new Duration({ seconds: 10 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
@@ -575,7 +569,7 @@ describe('FocusTimer', () => {
     )
 
     const targetState: TimerState = {
-      remainingSeconds: 2,
+      remaining: new Duration({ seconds: 2 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
@@ -586,7 +580,7 @@ describe('FocusTimer', () => {
     expect(timer.getState()).toEqual(targetState)
 
     const targetState2: TimerState = {
-      remainingSeconds: 1,
+      remaining: new Duration({ seconds: 1 }),
       isRunning: false,
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 2
@@ -600,7 +594,7 @@ describe('FocusTimer', () => {
     const { timer, scheduler } = createTimer()
 
     const targetState = newTestTimerState({
-      remainingSeconds: 3,
+      remaining: new Duration({ seconds: 3 }),
       isRunning: true
     })
 
@@ -612,7 +606,7 @@ describe('FocusTimer', () => {
     timer.setState(targetState)
     scheduler.advanceTime(1000)
 
-    expect(updates[updates.length - 1].remainingSeconds).toBe(2)
+    expect(updates[updates.length - 1].remaining).toEqual(new Duration({ seconds: 2 }))
   })
 
   it('should pause the timer if newState is not running', async () => {
@@ -627,7 +621,7 @@ describe('FocusTimer', () => {
     scheduler.advanceTime(1000)
 
     const targetState = newTestTimerState({
-      remainingSeconds: 200,
+      remaining: new Duration({ seconds: 200 }),
       isRunning: false
     })
 
@@ -637,7 +631,7 @@ describe('FocusTimer', () => {
     scheduler.advanceTime(3000)
 
     expect(updates.length).toBe(originalUpdatesLength)
-    expect(timer.getState().remainingSeconds).toBe(200)
+    expect(timer.getState().remaining).toEqual(new Duration({ seconds: 200 }))
   })
 
   it('should after set onTimerStart callback, every time timer start running, it should be called', () => {
@@ -665,7 +659,7 @@ describe('FocusTimer', () => {
     timer.pause()
     expect(triggerCount).toBe(4)
     timer.setState({
-      remainingSeconds: 100,
+      remaining: new Duration({ seconds: 10 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
