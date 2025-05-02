@@ -10,6 +10,16 @@ import { TimerStage } from './stage'
 import type { TimerState } from './state'
 
 export class FocusTimer {
+  /**
+   * Smallest unit of time that the timer can measure.
+   */
+  static readonly TIMER_UNIT: Duration = new Duration({ milliseconds: 100 })
+
+  /**
+   * Interval at which the timer will notify other about the current state.
+   */
+  static readonly NOTIFY_INTERVAL: Duration = new Duration({ seconds: 1 })
+
   static create(timerConfig: TimerConfig = config.getDefaultTimerConfig()) {
     return new FocusTimer({
       scheduler: new PeriodicTaskSchedulerImpl(),
@@ -103,14 +113,12 @@ export class FocusTimer {
       return
     }
 
-    const timerUnit = new Duration({ milliseconds: 100 })
-
     this.scheduler.scheduleTask(() => {
-      this.advanceTime(timerUnit)
-      if (this.remaining.totalMilliseconds % 1000 === 0) {
+      this.advanceTime(FocusTimer.TIMER_UNIT)
+      if (this.remaining.totalMilliseconds % FocusTimer.NOTIFY_INTERVAL.totalMilliseconds === 0) {
         this.notifyTimerUpdate()
       }
-    }, timerUnit.totalMilliseconds)
+    }, FocusTimer.TIMER_UNIT.totalMilliseconds)
     this.isRunning = true
 
     this.onTimerStart()
