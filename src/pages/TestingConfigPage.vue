@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ClientPort } from '@/service_workers/listener'
-import { defineProps, onBeforeMount, ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { TimerConfig } from '../domain/timer/config'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { Duration } from '../domain/timer/duration'
