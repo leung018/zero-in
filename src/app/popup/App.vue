@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ChromeCommunicationManager } from './infra/chrome/communication'
-import { TimerConfigStorageService } from './domain/timer/config/storage'
-import FocusTimerPage from './pages/FocusTimerPage.vue'
+import { ChromeCommunicationManager } from '@/infra/chrome/communication'
+import { TimerConfigStorageService } from '@/domain/timer/config/storage'
+import FocusTimerPage from '@/pages/FocusTimerPage.vue'
 
 const openOptionsPage = () => {
   chrome.runtime.openOptionsPage()
