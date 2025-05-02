@@ -14,13 +14,13 @@ export class TimerStateStorageService {
     return new TimerStateStorageService(storage)
   }
 
-  private storageWrapper: StorageWrapper<TimerStateSchemas[1]>
+  private storageWrapper: StorageWrapper<TimerStateSchemas[2]>
 
   private constructor(storage: Storage) {
     this.storageWrapper = new StorageWrapper({
       storage,
       key: STORAGE_KEY,
-      currentDataVersion: 1,
+      currentDataVersion: 2,
       migrators: [
         {
           oldDataVersion: undefined,
@@ -31,6 +31,16 @@ export class TimerStateStorageService {
               isRunning: oldData.isRunning,
               stage: oldData.stage,
               focusSessionsCompleted: oldData.numOfPomodoriCompleted
+            }
+          }
+        },
+        {
+          oldDataVersion: 1,
+          migratorFunc: (oldData: TimerStateSchemas[1]): TimerStateSchemas[2] => {
+            return {
+              ...oldData,
+              dataVersion: 2,
+              remainingMilliseconds: oldData.remainingSeconds * 1000
             }
           }
         }
