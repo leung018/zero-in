@@ -24,9 +24,7 @@ describe('TimerStateStorageService', () => {
     await timerStateStorageService.save(timerState)
     expect(await timerStateStorageService.get()).toStrictEqual(timerState)
   })
-})
 
-describe('TimerStateStorageService with migration', () => {
   it('should migrate properly', async () => {
     const fakeStorage = new FakeStorage()
     const data: TimerStateSchemas[0] = {
