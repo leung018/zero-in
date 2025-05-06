@@ -2,9 +2,9 @@ import { ChromeStorageProvider } from '../../infra/chrome/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import { WeeklySchedule } from '.'
 import {
-  deserializeWeeklySchedule,
-  serializeWeeklySchedule,
-  type SerializedWeeklySchedule
+  deserializeWeeklySchedules,
+  serializeWeeklySchedules,
+  type SerializedWeeklySchedules
 } from './serialize'
 
 const STORAGE_KEY = 'weeklySchedules'
@@ -18,7 +18,7 @@ export class WeeklyScheduleStorageService {
     return new WeeklyScheduleStorageService(ChromeStorageProvider.getLocalStorage())
   }
 
-  private storageWrapper: StorageWrapper<SerializedWeeklySchedule[]>
+  private storageWrapper: StorageWrapper<SerializedWeeklySchedules>
 
   private constructor(storage: Storage) {
     this.storageWrapper = new StorageWrapper({
@@ -29,7 +29,7 @@ export class WeeklyScheduleStorageService {
   }
 
   async saveAll(weeklySchedules: WeeklySchedule[]): Promise<void> {
-    return this.storageWrapper.set(weeklySchedules.map(serializeWeeklySchedule))
+    return this.storageWrapper.set(serializeWeeklySchedules(weeklySchedules))
   }
 
   async getAll(): Promise<WeeklySchedule[]> {
@@ -38,6 +38,6 @@ export class WeeklyScheduleStorageService {
       return []
     }
 
-    return result.map(deserializeWeeklySchedule)
+    return deserializeWeeklySchedules(result)
   }
 }

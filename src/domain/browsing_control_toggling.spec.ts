@@ -67,20 +67,18 @@ describe('BrowsingControlTogglingService', () => {
       })
     ).toEqual(browsingRules)
 
-    // TODO: Uncomment below
-
-    // expect(
-    //   await getBrowsingRulesAfterToggling({
-    //     browsingRules,
-    //     schedules,
-    //     currentDate: new Date('2025-02-03T16:59:59'),
-    //     shouldPauseBlockingDuringBreaks: false,
-    //     focusSessionRecords: [
-    //       newFocusSessionRecord(new Date('2025-02-03T09:00:00')),
-    //       newFocusSessionRecord(new Date('2025-02-03T16:59:59'))
-    //     ]
-    //   })
-    // ).toBeNull()
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules,
+        currentDate: new Date('2025-02-03T16:59:59'),
+        shouldPauseBlockingDuringBreaks: false,
+        focusSessionRecords: [
+          newFocusSessionRecord(new Date('2025-02-03T09:00:00')),
+          newFocusSessionRecord(new Date('2025-02-03T16:59:59'))
+        ]
+      })
+    ).toBeNull()
   })
 
   it('should always activate when weekly schedules are empty', async () => {

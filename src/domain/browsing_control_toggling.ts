@@ -82,21 +82,52 @@ export class BrowsingControlTogglingService {
   }
 
   async run(): Promise<void> {
+    if (await this.shouldActivateBrowsingRules()) {
+      const browsingRules = await this.browsingRulesStorageService.get()
+      this.browsingControlService.setAndActivateNewRules(browsingRules)
+    } else {
+      this.browsingControlService.deactivateExistingRules()
+    }
+  }
+
+  private async shouldActivateBrowsingRules(): Promise<boolean> {
     const blockingTimerIntegration = await this.blockingTimerIntegrationStorageService.get()
 
     if (blockingTimerIntegration.shouldPauseBlockingDuringBreaks && this.isInBreak()) {
-      return this.browsingControlService.deactivateExistingRules()
+      return false
     }
 
     const schedules = await this.weeklyScheduleStorageService.getAll()
 
-    if (isDateWithinSchedules(this.currentDateService.getDate(), schedules)) {
-      return this.browsingRulesStorageService.get().then((browsingRules) => {
-        return this.browsingControlService.setAndActivateNewRules(browsingRules)
-      })
+    if (schedules.length === 0) {
+      return true
     }
 
-    return this.browsingControlService.deactivateExistingRules()
+    return this.isAnyScheduleActive(schedules)
+  }
+
+  private async isAnyScheduleActive(
+    inputSchedules: ReadonlyArray<WeeklySchedule>
+  ): Promise<boolean> {
+    const schedules = inputSchedules.filter((schedule) =>
+      schedule.isContain(this.currentDateService.getDate())
+    )
+
+    const focusSessionRecords = await this.focusSessionRecordStorageService.getAll()
+
+    for (const schedule of schedules) {
+      if (!schedule.targetFocusSessions) {
+        return true
+      }
+      const completedSessions = focusSessionRecords.filter((record) =>
+        schedule.isContain(record.completedAt)
+      )
+      if (completedSessions.length < schedule.targetFocusSessions) {
+        return true
+      }
+    }
+
+    return false
   }
 
   private isInBreak(): boolean {
@@ -123,11 +154,4 @@ export class BrowsingControlTogglingService {
     }
     return true
   }
-}
-
-function isDateWithinSchedules(date: Date, schedules: ReadonlyArray<WeeklySchedule>) {
-  if (schedules.length === 0) {
-    return true
-  }
-  return schedules.some((schedule) => schedule.isContain(date))
 }
