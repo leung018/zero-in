@@ -7,6 +7,7 @@ import { BlockingTimerIntegrationStorageService } from './blocking_timer_integra
 import { TimerStage } from './timer/stage'
 import { Duration } from './timer/duration'
 import { FocusSessionRecordStorageService } from './timer/record/storage'
+import { isSameDay } from '../utils/date'
 
 interface TimerInfoGetter {
   getTimerInfo(): {
@@ -156,12 +157,4 @@ export class BrowsingControlTogglingService {
     }
     return true
   }
-}
-
-function isSameDay(date1: Date, date2: Date): boolean {
-  return (
-    date1.getFullYear() === date2.getFullYear() &&
-    date1.getMonth() === date2.getMonth() &&
-    date1.getDate() === date2.getDate()
-  )
 }
