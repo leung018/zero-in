@@ -58,11 +58,14 @@ describe('BrowsingControlTogglingService', () => {
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules,
-        currentDate: new Date('2025-02-03T16:59:59'), // 2025-02-03 is Monday
+        currentDate: new Date('2025-02-04T16:59:59'), // 2025-02-04 is Tuesday
         shouldPauseBlockingDuringBreaks: false,
         focusSessionRecords: [
-          newFocusSessionRecord(new Date('2025-02-03T08:59:59')),
-          newFocusSessionRecord(new Date('2025-02-03T09:00:00'))
+          newFocusSessionRecord(new Date('2025-02-03T11:00:00')),
+          newFocusSessionRecord(new Date('2025-02-03T11:26:00')),
+
+          newFocusSessionRecord(new Date('2025-02-04T08:59:59')),
+          newFocusSessionRecord(new Date('2025-02-04T09:00:00'))
         ]
       })
     ).toEqual(browsingRules)

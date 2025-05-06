@@ -119,8 +119,10 @@ export class BrowsingControlTogglingService {
       if (!schedule.targetFocusSessions) {
         return true
       }
-      const completedSessions = focusSessionRecords.filter((record) =>
-        schedule.isContain(record.completedAt)
+      const completedSessions = focusSessionRecords.filter(
+        (record) =>
+          isSameDay(record.completedAt, this.currentDateService.getDate()) &&
+          schedule.isContain(record.completedAt)
       )
       if (completedSessions.length < schedule.targetFocusSessions) {
         return true
@@ -154,4 +156,12 @@ export class BrowsingControlTogglingService {
     }
     return true
   }
+}
+
+function isSameDay(date1: Date, date2: Date): boolean {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  )
 }
