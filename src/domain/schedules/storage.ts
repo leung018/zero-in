@@ -2,34 +2,49 @@ import { ChromeStorageProvider } from '../../infra/chrome/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import { WeeklySchedule } from '.'
 import {
-  deserializeWeeklySchedule,
-  serializeWeeklySchedule,
-  type SerializedWeeklySchedule
+  deserializeWeeklySchedules,
+  serializeWeeklySchedules,
+  type WeeklyScheduleSchemas
 } from './serialize'
 
-const STORAGE_KEY = 'weeklySchedules'
-
 export class WeeklyScheduleStorageService {
-  static createFake(): WeeklyScheduleStorageService {
-    return new WeeklyScheduleStorageService(new FakeStorage())
+  static readonly STORAGE_KEY = 'weeklySchedules'
+
+  static createFake(storage = new FakeStorage()): WeeklyScheduleStorageService {
+    return new WeeklyScheduleStorageService(storage)
   }
 
   static create(): WeeklyScheduleStorageService {
     return new WeeklyScheduleStorageService(ChromeStorageProvider.getLocalStorage())
   }
 
-  private storageWrapper: StorageWrapper<SerializedWeeklySchedule[]>
+  private storageWrapper: StorageWrapper<WeeklyScheduleSchemas[1]>
 
   private constructor(storage: Storage) {
     this.storageWrapper = new StorageWrapper({
       storage,
-      key: STORAGE_KEY,
-      migrators: []
+      key: WeeklyScheduleStorageService.STORAGE_KEY,
+      currentDataVersion: 1,
+      migrators: [
+        {
+          oldDataVersion: undefined,
+          migratorFunc: (oldData: WeeklyScheduleSchemas[0]): WeeklyScheduleSchemas[1] => {
+            return {
+              dataVersion: 1,
+              schedules: oldData.map((schedule) => ({
+                weekdays: schedule.weekdays,
+                startTime: schedule.startTime,
+                endTime: schedule.endTime
+              }))
+            }
+          }
+        }
+      ]
     })
   }
 
   async saveAll(weeklySchedules: WeeklySchedule[]): Promise<void> {
-    return this.storageWrapper.set(weeklySchedules.map(serializeWeeklySchedule))
+    return this.storageWrapper.set(serializeWeeklySchedules(weeklySchedules))
   }
 
   async getAll(): Promise<WeeklySchedule[]> {
@@ -38,6 +53,6 @@ export class WeeklyScheduleStorageService {
       return []
     }
 
-    return result.map(deserializeWeeklySchedule)
+    return deserializeWeeklySchedules(result)
   }
 }

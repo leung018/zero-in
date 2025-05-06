@@ -3,9 +3,9 @@ import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import { Time } from '../time'
 import { deserializeTime, serializeTime, type SerializedTime } from '../time/serialize'
 
-const STORAGE_KEY = 'dailyCutoffTime'
-
 export class DailyResetTimeStorageService {
+  static readonly STORAGE_KEY = 'dailyCutoffTime'
+
   static create() {
     return new DailyResetTimeStorageService(ChromeStorageProvider.getLocalStorage())
   }
@@ -19,7 +19,7 @@ export class DailyResetTimeStorageService {
   private constructor(storage: Storage) {
     this.storageWrapper = new StorageWrapper({
       storage,
-      key: STORAGE_KEY,
+      key: DailyResetTimeStorageService.STORAGE_KEY,
       migrators: []
     })
   }

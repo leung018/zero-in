@@ -40,11 +40,13 @@ describe('WeeklySchedules', () => {
     const weeklySchedule = new WeeklySchedule({
       weekdaySet: new Set([Weekday.MON]),
       startTime: new Time(11, 0),
-      endTime: new Time(18, 0)
+      endTime: new Time(18, 0),
+      targetFocusSessions: 2
     })
     expect(weeklySchedule.weekdaySet).toEqual(new Set([Weekday.MON]))
     expect(weeklySchedule.startTime).toEqual(new Time(11, 0))
     expect(weeklySchedule.endTime).toEqual(new Time(18, 0))
+    expect(weeklySchedule.targetFocusSessions).toEqual(2)
   })
 
   it('should isContain check the date within the schedule according to weekdays', () => {
@@ -75,5 +77,21 @@ describe('WeeklySchedules', () => {
     expect(weeklySchedule.isContain(new Date('2025-02-03T10:59:59'))).toBe(false)
     expect(weeklySchedule.isContain(new Date('2025-02-03T18:00:00'))).toBe(false)
     expect(weeklySchedule.isContain(new Date('2025-02-03T18:00:01'))).toBe(false)
+  })
+
+  it('should targetFocusSessions ignore non positive input', () => {
+    const newWeeklySchedule = (targetFocusSessions?: number) => {
+      return new WeeklySchedule({
+        weekdaySet: new Set([Weekday.MON]),
+        startTime: new Time(11, 0),
+        endTime: new Time(18, 0),
+        targetFocusSessions
+      })
+    }
+    expect(newWeeklySchedule(0).targetFocusSessions).toBeUndefined()
+    expect(newWeeklySchedule(-1).targetFocusSessions).toBeUndefined()
+    expect(newWeeklySchedule().targetFocusSessions).toBeUndefined()
+
+    expect(newWeeklySchedule(1).targetFocusSessions).toBe(1)
   })
 })

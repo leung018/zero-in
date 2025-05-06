@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { TimerStateStorageService, STORAGE_KEY } from './storage'
+import { TimerStateStorageService } from './storage'
 import { TimerStage } from '../stage'
 import type { TimerState } from '.'
 import { FakeStorage } from '../../../infra/storage'
@@ -24,9 +24,7 @@ describe('TimerStateStorageService', () => {
     await timerStateStorageService.save(timerState)
     expect(await timerStateStorageService.get()).toStrictEqual(timerState)
   })
-})
 
-describe('TimerStateStorageService with migration', () => {
   it('should migrate properly', async () => {
     const fakeStorage = new FakeStorage()
     const data: TimerStateSchemas[0] = {
@@ -36,7 +34,7 @@ describe('TimerStateStorageService with migration', () => {
       numOfPomodoriCompleted: 9
     }
     fakeStorage.set({
-      [STORAGE_KEY]: data
+      [TimerStateStorageService.STORAGE_KEY]: data
     })
 
     const timerStateStorageService = TimerStateStorageService.createFake(fakeStorage)

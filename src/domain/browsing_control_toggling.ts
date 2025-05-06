@@ -6,6 +6,9 @@ import { CurrentDateService } from '../infra/current_date'
 import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 import { TimerStage } from './timer/stage'
 import { Duration } from './timer/duration'
+import { FocusSessionRecordStorageService } from './timer/record/storage'
+import { isSameDay } from '../utils/date'
+
 interface TimerInfoGetter {
   getTimerInfo(): {
     timerStage: TimerStage
@@ -20,6 +23,7 @@ export class BrowsingControlTogglingService {
   private browsingControlService: BrowsingControlService
   private browsingRulesStorageService: BrowsingRulesStorageService
   private weeklyScheduleStorageService: WeeklyScheduleStorageService
+  private focusSessionRecordStorageService: FocusSessionRecordStorageService
   private blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
   private timerInfoGetter: TimerInfoGetter
   private currentDateService: CurrentDateService
@@ -29,6 +33,7 @@ export class BrowsingControlTogglingService {
     browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
     weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
     blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake(),
+    focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake(),
     timerInfoGetter = {
       getTimerInfo: () => ({
         timerStage: TimerStage.FOCUS,
@@ -45,6 +50,7 @@ export class BrowsingControlTogglingService {
       browsingRulesStorageService,
       weeklyScheduleStorageService,
       blockingTimerIntegrationStorageService,
+      focusSessionRecordStorageService,
       timerInfoGetter,
       currentDateService
     })
@@ -53,6 +59,7 @@ export class BrowsingControlTogglingService {
   constructor({
     browsingControlService,
     browsingRulesStorageService,
+    focusSessionRecordStorageService,
     weeklyScheduleStorageService,
     blockingTimerIntegrationStorageService,
     timerInfoGetter,
@@ -60,6 +67,7 @@ export class BrowsingControlTogglingService {
   }: {
     browsingControlService: BrowsingControlService
     browsingRulesStorageService: BrowsingRulesStorageService
+    focusSessionRecordStorageService: FocusSessionRecordStorageService
     weeklyScheduleStorageService: WeeklyScheduleStorageService
     blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
     timerInfoGetter: TimerInfoGetter
@@ -69,26 +77,60 @@ export class BrowsingControlTogglingService {
     this.browsingRulesStorageService = browsingRulesStorageService
     this.weeklyScheduleStorageService = weeklyScheduleStorageService
     this.blockingTimerIntegrationStorageService = blockingTimerIntegrationStorageService
+    this.focusSessionRecordStorageService = focusSessionRecordStorageService
     this.timerInfoGetter = timerInfoGetter
     this.currentDateService = currentDateService
   }
 
   async run(): Promise<void> {
+    if (await this.shouldActivateBrowsingRules()) {
+      const browsingRules = await this.browsingRulesStorageService.get()
+      this.browsingControlService.setAndActivateNewRules(browsingRules)
+    } else {
+      this.browsingControlService.deactivateExistingRules()
+    }
+  }
+
+  private async shouldActivateBrowsingRules(): Promise<boolean> {
     const blockingTimerIntegration = await this.blockingTimerIntegrationStorageService.get()
 
     if (blockingTimerIntegration.shouldPauseBlockingDuringBreaks && this.isInBreak()) {
-      return this.browsingControlService.deactivateExistingRules()
+      return false
     }
 
     const schedules = await this.weeklyScheduleStorageService.getAll()
 
-    if (isDateWithinSchedules(this.currentDateService.getDate(), schedules)) {
-      return this.browsingRulesStorageService.get().then((browsingRules) => {
-        return this.browsingControlService.setAndActivateNewRules(browsingRules)
-      })
+    if (schedules.length === 0) {
+      return true
     }
 
-    return this.browsingControlService.deactivateExistingRules()
+    return this.isAnyScheduleActive(schedules)
+  }
+
+  private async isAnyScheduleActive(
+    inputSchedules: ReadonlyArray<WeeklySchedule>
+  ): Promise<boolean> {
+    const schedules = inputSchedules.filter((schedule) =>
+      schedule.isContain(this.currentDateService.getDate())
+    )
+
+    const focusSessionRecords = await this.focusSessionRecordStorageService.getAll()
+
+    for (const schedule of schedules) {
+      if (!schedule.targetFocusSessions) {
+        return true
+      }
+      const completedSessions = focusSessionRecords.filter(
+        (record) =>
+          isSameDay(record.completedAt, this.currentDateService.getDate()) &&
+          schedule.isContain(record.completedAt)
+      )
+      if (completedSessions.length < schedule.targetFocusSessions) {
+        return true
+      }
+    }
+
+    return false
   }
 
   private isInBreak(): boolean {
@@ -115,11 +157,4 @@ export class BrowsingControlTogglingService {
     }
     return true
   }
-}
-
-function isDateWithinSchedules(date: Date, schedules: ReadonlyArray<WeeklySchedule>) {
-  if (schedules.length === 0) {
-    return true
-  }
-  return schedules.some((schedule) => schedule.isContain(date))
 }

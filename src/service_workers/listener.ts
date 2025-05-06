@@ -105,6 +105,7 @@ export class BackgroundListener {
       browsingRulesStorageService: params.browsingRulesStorageService,
       weeklyScheduleStorageService: params.weeklyScheduleStorageService,
       blockingTimerIntegrationStorageService: params.blockingTimerIntegrationStorageService,
+      focusSessionRecordStorageService: params.focusSessionRecordStorageService,
       timerInfoGetter: {
         getTimerInfo: () => {
           const timerState = params.timer.getState()

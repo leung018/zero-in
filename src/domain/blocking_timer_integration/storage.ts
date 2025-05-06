@@ -4,9 +4,9 @@ import config from '../../config'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import type { SerializedBlockingTimerIntegration } from './serialize'
 
-const STORAGE_KEY = 'blockingTimerIntegration'
-
 export class BlockingTimerIntegrationStorageService {
+  static readonly STORAGE_KEY = 'blockingTimerIntegration'
+
   static create(): BlockingTimerIntegrationStorageService {
     return new BlockingTimerIntegrationStorageService(ChromeStorageProvider.getLocalStorage())
   }
@@ -20,7 +20,7 @@ export class BlockingTimerIntegrationStorageService {
   private constructor(storage: Storage) {
     this.storageWrapper = new StorageWrapper({
       storage,
-      key: STORAGE_KEY,
+      key: BlockingTimerIntegrationStorageService.STORAGE_KEY,
       migrators: []
     })
   }
