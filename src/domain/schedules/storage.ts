@@ -7,9 +7,9 @@ import {
   type WeeklyScheduleSchemas
 } from './serialize'
 
-export const STORAGE_KEY = 'weeklySchedules'
-
 export class WeeklyScheduleStorageService {
+  static STORAGE_KEY = 'weeklySchedules'
+
   static createFake(storage = new FakeStorage()): WeeklyScheduleStorageService {
     return new WeeklyScheduleStorageService(storage)
   }
@@ -23,7 +23,7 @@ export class WeeklyScheduleStorageService {
   private constructor(storage: Storage) {
     this.storageWrapper = new StorageWrapper({
       storage,
-      key: STORAGE_KEY,
+      key: WeeklyScheduleStorageService.STORAGE_KEY,
       currentDataVersion: 1,
       migrators: [
         {

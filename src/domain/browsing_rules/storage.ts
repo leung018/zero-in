@@ -7,9 +7,9 @@ import {
   type SerializedBrowsingRules
 } from './serialize'
 
-const STORAGE_KEY = 'browsingRules'
-
 export class BrowsingRulesStorageService {
+  static STORAGE_KEY = 'browsingRules'
+
   static createFake(): BrowsingRulesStorageService {
     return new BrowsingRulesStorageService(new FakeStorage())
   }
@@ -23,7 +23,7 @@ export class BrowsingRulesStorageService {
   private constructor(storage: Storage) {
     this.storageWrapper = new StorageWrapper({
       storage,
-      key: STORAGE_KEY,
+      key: BrowsingRulesStorageService.STORAGE_KEY,
       migrators: []
     })
   }

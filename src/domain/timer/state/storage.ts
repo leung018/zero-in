@@ -3,9 +3,9 @@ import { FakeStorage, StorageWrapper, type Storage } from '../../../infra/storag
 import type { TimerState } from '.'
 import { deserializeTimerState, serializeTimerState, type TimerStateSchemas } from './serialize'
 
-export const STORAGE_KEY = 'timerState'
-
 export class TimerStateStorageService {
+  static STORAGE_KEY = 'timerState'
+
   static create() {
     return new TimerStateStorageService(ChromeStorageProvider.getLocalStorage())
   }
@@ -19,7 +19,7 @@ export class TimerStateStorageService {
   private constructor(storage: Storage) {
     this.storageWrapper = new StorageWrapper({
       storage,
-      key: STORAGE_KEY,
+      key: TimerStateStorageService.STORAGE_KEY,
       currentDataVersion: 2,
       migrators: [
         {

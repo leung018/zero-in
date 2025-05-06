@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { WeeklyScheduleStorageService, STORAGE_KEY } from './storage'
+import { WeeklyScheduleStorageService } from './storage'
 import { Weekday, WeeklySchedule } from '.'
 import { Time } from '../time'
 import type { WeeklyScheduleSchemas } from './serialize'
@@ -41,7 +41,7 @@ describe('WeeklyScheduleStorageService', () => {
       }
     ]
     fakeStorage.set({
-      [STORAGE_KEY]: data
+      [WeeklyScheduleStorageService.STORAGE_KEY]: data
     })
 
     const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(fakeStorage)

@@ -7,9 +7,9 @@ import {
   type SerializedFocusSessionRecord
 } from './serialize'
 
-const STORAGE_KEY = 'focusSessionRecords'
-
 export class FocusSessionRecordStorageService {
+  static STORAGE_KEY = 'focusSessionRecords'
+
   static create() {
     return new FocusSessionRecordStorageService(ChromeStorageProvider.getLocalStorage())
   }
@@ -23,7 +23,7 @@ export class FocusSessionRecordStorageService {
   private constructor(storage: Storage) {
     this.storageWrapper = new StorageWrapper({
       storage,
-      key: STORAGE_KEY,
+      key: FocusSessionRecordStorageService.STORAGE_KEY,
       migrators: []
     })
   }

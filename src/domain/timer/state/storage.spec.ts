@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { TimerStateStorageService, STORAGE_KEY } from './storage'
+import { TimerStateStorageService } from './storage'
 import { TimerStage } from '../stage'
 import type { TimerState } from '.'
 import { FakeStorage } from '../../../infra/storage'
@@ -34,7 +34,7 @@ describe('TimerStateStorageService', () => {
       numOfPomodoriCompleted: 9
     }
     fakeStorage.set({
-      [STORAGE_KEY]: data
+      [TimerStateStorageService.STORAGE_KEY]: data
     })
 
     const timerStateStorageService = TimerStateStorageService.createFake(fakeStorage)

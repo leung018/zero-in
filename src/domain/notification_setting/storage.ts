@@ -4,9 +4,9 @@ import config from '../../config'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import type { SerializedNotificationSetting } from './serialize'
 
-const STORAGE_KEY = 'notificationSetting'
-
 export class NotificationSettingStorageService {
+  static STORAGE_KEY = 'notificationSetting'
+
   static create() {
     return new NotificationSettingStorageService(ChromeStorageProvider.getLocalStorage())
   }
@@ -20,7 +20,7 @@ export class NotificationSettingStorageService {
   private constructor(storage: Storage) {
     this.storageWrapper = new StorageWrapper({
       storage,
-      key: STORAGE_KEY,
+      key: NotificationSettingStorageService.STORAGE_KEY,
       migrators: []
     })
   }

@@ -8,9 +8,9 @@ import {
   type SerializedTimerConfig
 } from './serialize'
 
-const STORAGE_KEY = 'timerConfig'
-
 export class TimerConfigStorageService {
+  static STORAGE_KEY = 'timerConfig'
+
   static create() {
     return new TimerConfigStorageService(ChromeStorageProvider.getLocalStorage())
   }
@@ -24,7 +24,7 @@ export class TimerConfigStorageService {
   private constructor(storage: Storage) {
     this.storageWrapper = new StorageWrapper({
       storage,
-      key: STORAGE_KEY,
+      key: TimerConfigStorageService.STORAGE_KEY,
       migrators: []
     })
   }
