@@ -1,7 +1,7 @@
 import { WeeklySchedule, type Weekday } from '.'
 import { deserializeTime, serializeTime, type SerializedTime } from '../time/serialize'
 
-export type SerializedWeeklySchedules = WeeklyScheduleSchemas[1]
+type SerializedWeeklySchedules = WeeklyScheduleSchemas[1]
 
 export type WeeklyScheduleSchemas = [
   {
