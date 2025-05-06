@@ -4,27 +4,42 @@ import { WeeklySchedule } from '.'
 import {
   deserializeWeeklySchedules,
   serializeWeeklySchedules,
-  type SerializedWeeklySchedules
+  type WeeklyScheduleSchemas
 } from './serialize'
 
-const STORAGE_KEY = 'weeklySchedules'
+export const STORAGE_KEY = 'weeklySchedules'
 
 export class WeeklyScheduleStorageService {
-  static createFake(): WeeklyScheduleStorageService {
-    return new WeeklyScheduleStorageService(new FakeStorage())
+  static createFake(storage = new FakeStorage()): WeeklyScheduleStorageService {
+    return new WeeklyScheduleStorageService(storage)
   }
 
   static create(): WeeklyScheduleStorageService {
     return new WeeklyScheduleStorageService(ChromeStorageProvider.getLocalStorage())
   }
 
-  private storageWrapper: StorageWrapper<SerializedWeeklySchedules>
+  private storageWrapper: StorageWrapper<WeeklyScheduleSchemas[1]>
 
   private constructor(storage: Storage) {
     this.storageWrapper = new StorageWrapper({
       storage,
       key: STORAGE_KEY,
-      migrators: []
+      currentDataVersion: 1,
+      migrators: [
+        {
+          oldDataVersion: undefined,
+          migratorFunc: (oldData: WeeklyScheduleSchemas[0]): WeeklyScheduleSchemas[1] => {
+            return {
+              dataVersion: 1,
+              schedules: oldData.map((schedule) => ({
+                weekdays: schedule.weekdays,
+                startTime: schedule.startTime,
+                endTime: schedule.endTime
+              }))
+            }
+          }
+        }
+      ]
     })
   }
 

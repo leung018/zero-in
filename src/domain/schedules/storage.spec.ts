@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { WeeklyScheduleStorageService } from './storage'
+import { WeeklyScheduleStorageService, STORAGE_KEY } from './storage'
 import { Weekday, WeeklySchedule } from '.'
 import { Time } from '../time'
+import type { WeeklyScheduleSchemas } from './serialize'
+import { FakeStorage } from '../../infra/storage'
 
 describe('WeeklyScheduleStorageService', () => {
   it('should return empty array if no WeeklySchedules are saved', async () => {
@@ -27,5 +29,31 @@ describe('WeeklyScheduleStorageService', () => {
 
     await weeklyScheduleStorageService.saveAll(weeklySchedules)
     expect(await weeklyScheduleStorageService.getAll()).toStrictEqual(weeklySchedules)
+  })
+
+  it('should migrate properly', async () => {
+    const fakeStorage = new FakeStorage()
+    const data: WeeklyScheduleSchemas[0] = [
+      {
+        weekdays: [0, 1],
+        startTime: { hour: 10, minute: 59 },
+        endTime: { hour: 12, minute: 12 }
+      }
+    ]
+    fakeStorage.set({
+      [STORAGE_KEY]: data
+    })
+
+    const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(fakeStorage)
+    const expected: WeeklySchedule[] = [
+      new WeeklySchedule({
+        weekdaySet: new Set([Weekday.SUN, Weekday.MON]),
+        startTime: new Time(10, 59),
+        endTime: new Time(12, 12),
+        targetFocusSessions: undefined
+      })
+    ]
+    const result = await weeklyScheduleStorageService.getAll()
+    expect(result).toStrictEqual(expected)
   })
 })
