@@ -15,7 +15,7 @@ import { Duration } from './timer/duration'
 describe('BrowsingControlTogglingService', () => {
   const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
 
-  it('should toggle according to browsing rules if current time is within schedule', async () => {
+  it('should toggle according to if current time is within schedule', async () => {
     const schedules = [
       new WeeklySchedule({
         weekdaySet: new Set([Weekday.MON, Weekday.TUE]),
@@ -28,7 +28,7 @@ describe('BrowsingControlTogglingService', () => {
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules,
-        currentDate: new Date('2025-02-03T11:00:00'),
+        currentDate: new Date('2025-02-03T11:00:00'), // 2025-02-03 is Monday
         shouldPauseBlockingDuringBreaks: false
       })
     ).toEqual(browsingRules)
