@@ -4,7 +4,7 @@ import { Time } from '../time'
 import { deserializeTime, serializeTime, type SerializedTime } from '../time/serialize'
 
 export class DailyResetTimeStorageService {
-  static STORAGE_KEY = 'dailyCutoffTime'
+  static readonly STORAGE_KEY = 'dailyCutoffTime'
 
   static create() {
     return new DailyResetTimeStorageService(ChromeStorageProvider.getLocalStorage())

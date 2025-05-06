@@ -8,7 +8,7 @@ import {
 } from './serialize'
 
 export class BrowsingRulesStorageService {
-  static STORAGE_KEY = 'browsingRules'
+  static readonly STORAGE_KEY = 'browsingRules'
 
   static createFake(): BrowsingRulesStorageService {
     return new BrowsingRulesStorageService(new FakeStorage())

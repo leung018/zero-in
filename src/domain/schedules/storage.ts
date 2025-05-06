@@ -8,7 +8,7 @@ import {
 } from './serialize'
 
 export class WeeklyScheduleStorageService {
-  static STORAGE_KEY = 'weeklySchedules'
+  static readonly STORAGE_KEY = 'weeklySchedules'
 
   static createFake(storage = new FakeStorage()): WeeklyScheduleStorageService {
     return new WeeklyScheduleStorageService(storage)

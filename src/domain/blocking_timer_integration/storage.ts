@@ -5,7 +5,7 @@ import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import type { SerializedBlockingTimerIntegration } from './serialize'
 
 export class BlockingTimerIntegrationStorageService {
-  static STORAGE_KEY = 'blockingTimerIntegration'
+  static readonly STORAGE_KEY = 'blockingTimerIntegration'
 
   static create(): BlockingTimerIntegrationStorageService {
     return new BlockingTimerIntegrationStorageService(ChromeStorageProvider.getLocalStorage())

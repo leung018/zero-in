@@ -8,7 +8,7 @@ import {
 } from './serialize'
 
 export class FocusSessionRecordStorageService {
-  static STORAGE_KEY = 'focusSessionRecords'
+  static readonly STORAGE_KEY = 'focusSessionRecords'
 
   static create() {
     return new FocusSessionRecordStorageService(ChromeStorageProvider.getLocalStorage())

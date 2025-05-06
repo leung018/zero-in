@@ -9,7 +9,7 @@ import {
 } from './serialize'
 
 export class TimerConfigStorageService {
-  static STORAGE_KEY = 'timerConfig'
+  static readonly STORAGE_KEY = 'timerConfig'
 
   static create() {
     return new TimerConfigStorageService(ChromeStorageProvider.getLocalStorage())

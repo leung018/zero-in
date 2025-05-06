@@ -4,7 +4,7 @@ import type { TimerState } from '.'
 import { deserializeTimerState, serializeTimerState, type TimerStateSchemas } from './serialize'
 
 export class TimerStateStorageService {
-  static STORAGE_KEY = 'timerState'
+  static readonly STORAGE_KEY = 'timerState'
 
   static create() {
     return new TimerStateStorageService(ChromeStorageProvider.getLocalStorage())

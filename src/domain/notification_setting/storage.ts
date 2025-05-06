@@ -5,7 +5,7 @@ import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import type { SerializedNotificationSetting } from './serialize'
 
 export class NotificationSettingStorageService {
-  static STORAGE_KEY = 'notificationSetting'
+  static readonly STORAGE_KEY = 'notificationSetting'
 
   static create() {
     return new NotificationSettingStorageService(ChromeStorageProvider.getLocalStorage())
