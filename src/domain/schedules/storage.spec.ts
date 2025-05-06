@@ -20,7 +20,8 @@ describe('WeeklyScheduleStorageService', () => {
       new WeeklySchedule({
         weekdaySet: new Set([Weekday.WED, Weekday.THU]),
         startTime: new Time(13, 0),
-        endTime: new Time(15, 0)
+        endTime: new Time(15, 0),
+        targetFocusSessions: 2
       })
     ]
 
