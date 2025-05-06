@@ -6,6 +6,8 @@ import { CurrentDateService } from '../infra/current_date'
 import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 import { TimerStage } from './timer/stage'
 import { Duration } from './timer/duration'
+import { FocusSessionRecordStorageService } from './timer/record/storage'
+
 interface TimerInfoGetter {
   getTimerInfo(): {
     timerStage: TimerStage
@@ -20,6 +22,7 @@ export class BrowsingControlTogglingService {
   private browsingControlService: BrowsingControlService
   private browsingRulesStorageService: BrowsingRulesStorageService
   private weeklyScheduleStorageService: WeeklyScheduleStorageService
+  private focusSessionRecordStorageService: FocusSessionRecordStorageService
   private blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
   private timerInfoGetter: TimerInfoGetter
   private currentDateService: CurrentDateService
@@ -29,6 +32,7 @@ export class BrowsingControlTogglingService {
     browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
     weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(),
     blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake(),
+    focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake(),
     timerInfoGetter = {
       getTimerInfo: () => ({
         timerStage: TimerStage.FOCUS,
@@ -45,6 +49,7 @@ export class BrowsingControlTogglingService {
       browsingRulesStorageService,
       weeklyScheduleStorageService,
       blockingTimerIntegrationStorageService,
+      focusSessionRecordStorageService,
       timerInfoGetter,
       currentDateService
     })
@@ -53,6 +58,7 @@ export class BrowsingControlTogglingService {
   constructor({
     browsingControlService,
     browsingRulesStorageService,
+    focusSessionRecordStorageService,
     weeklyScheduleStorageService,
     blockingTimerIntegrationStorageService,
     timerInfoGetter,
@@ -60,6 +66,7 @@ export class BrowsingControlTogglingService {
   }: {
     browsingControlService: BrowsingControlService
     browsingRulesStorageService: BrowsingRulesStorageService
+    focusSessionRecordStorageService: FocusSessionRecordStorageService
     weeklyScheduleStorageService: WeeklyScheduleStorageService
     blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
     timerInfoGetter: TimerInfoGetter
@@ -69,6 +76,7 @@ export class BrowsingControlTogglingService {
     this.browsingRulesStorageService = browsingRulesStorageService
     this.weeklyScheduleStorageService = weeklyScheduleStorageService
     this.blockingTimerIntegrationStorageService = blockingTimerIntegrationStorageService
+    this.focusSessionRecordStorageService = focusSessionRecordStorageService
     this.timerInfoGetter = timerInfoGetter
     this.currentDateService = currentDateService
   }

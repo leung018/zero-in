@@ -11,6 +11,8 @@ import { TimerStage } from './timer/stage'
 import type { BlockingTimerIntegration } from './blocking_timer_integration'
 import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 import { Duration } from './timer/duration'
+import { newFocusSessionRecord } from './timer/record'
+import { FocusSessionRecordStorageService } from './timer/record/storage'
 
 describe('BrowsingControlTogglingService', () => {
   const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
@@ -40,6 +42,45 @@ describe('BrowsingControlTogglingService', () => {
         shouldPauseBlockingDuringBreaks: false
       })
     ).toBeNull()
+  })
+
+  it('should toggle according to target focus sessions complete if current time is within schedule and target focus sessions is set', async () => {
+    const schedules = [
+      new WeeklySchedule({
+        weekdaySet: new Set([Weekday.MON, Weekday.TUE]),
+        startTime: new Time(9, 0),
+        endTime: new Time(17, 0),
+        targetFocusSessions: 2
+      })
+    ]
+
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules,
+        currentDate: new Date('2025-02-03T16:59:59'), // 2025-02-03 is Monday
+        shouldPauseBlockingDuringBreaks: false,
+        focusSessionRecords: [
+          newFocusSessionRecord(new Date('2025-02-03T08:59:59')),
+          newFocusSessionRecord(new Date('2025-02-03T09:00:00'))
+        ]
+      })
+    ).toEqual(browsingRules)
+
+    // TODO: Uncomment below
+
+    // expect(
+    //   await getBrowsingRulesAfterToggling({
+    //     browsingRules,
+    //     schedules,
+    //     currentDate: new Date('2025-02-03T16:59:59'),
+    //     shouldPauseBlockingDuringBreaks: false,
+    //     focusSessionRecords: [
+    //       newFocusSessionRecord(new Date('2025-02-03T09:00:00')),
+    //       newFocusSessionRecord(new Date('2025-02-03T16:59:59'))
+    //     ]
+    //   })
+    // ).toBeNull()
   })
 
   it('should always activate when weekly schedules are empty', async () => {
@@ -185,7 +226,8 @@ async function getBrowsingRulesAfterToggling({
   ],
   currentDate = new Date(),
   shouldPauseBlockingDuringBreaks = false,
-  timerInfo = newTimerInfo()
+  timerInfo = newTimerInfo(),
+  focusSessionRecords = [newFocusSessionRecord()]
 } = {}) {
   const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
   await browsingRulesStorageService.save(browsingRules)
@@ -203,12 +245,16 @@ async function getBrowsingRulesAfterToggling({
   const blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake()
   await blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
 
+  const focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
+  await focusSessionRecordStorageService.saveAll(focusSessionRecords)
+
   const browsingControlTogglingService = BrowsingControlTogglingService.createFake({
     browsingRulesStorageService,
     browsingControlService,
     weeklyScheduleStorageService,
     currentDateService,
     blockingTimerIntegrationStorageService,
+    focusSessionRecordStorageService,
     timerInfoGetter: { getTimerInfo: () => timerInfo }
   })
 
