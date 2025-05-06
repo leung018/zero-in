@@ -78,4 +78,20 @@ describe('WeeklySchedules', () => {
     expect(weeklySchedule.isContain(new Date('2025-02-03T18:00:00'))).toBe(false)
     expect(weeklySchedule.isContain(new Date('2025-02-03T18:00:01'))).toBe(false)
   })
+
+  it('should targetFocusSessions ignore non positive input', () => {
+    const newWeeklySchedule = (targetFocusSessions?: number) => {
+      return new WeeklySchedule({
+        weekdaySet: new Set([Weekday.MON]),
+        startTime: new Time(11, 0),
+        endTime: new Time(18, 0),
+        targetFocusSessions
+      })
+    }
+    expect(newWeeklySchedule(0).targetFocusSessions).toBeUndefined()
+    expect(newWeeklySchedule(-1).targetFocusSessions).toBeUndefined()
+    expect(newWeeklySchedule().targetFocusSessions).toBeUndefined()
+
+    expect(newWeeklySchedule(1).targetFocusSessions).toBe(1)
+  })
 })

@@ -41,7 +41,10 @@ export class WeeklySchedule {
     this.weekdaySet = weekdaySet
     this.startTime = startTime
     this.endTime = endTime
-    this.targetFocusSessions = targetFocusSessions
+
+    if (targetFocusSessions && targetFocusSessions > 0) {
+      this.targetFocusSessions = targetFocusSessions
+    }
   }
 
   /**
