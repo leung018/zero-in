@@ -40,11 +40,13 @@ describe('WeeklySchedules', () => {
     const weeklySchedule = new WeeklySchedule({
       weekdaySet: new Set([Weekday.MON]),
       startTime: new Time(11, 0),
-      endTime: new Time(18, 0)
+      endTime: new Time(18, 0),
+      targetFocusSessions: 2
     })
     expect(weeklySchedule.weekdaySet).toEqual(new Set([Weekday.MON]))
     expect(weeklySchedule.startTime).toEqual(new Time(11, 0))
     expect(weeklySchedule.endTime).toEqual(new Time(18, 0))
+    expect(weeklySchedule.targetFocusSessions).toEqual(2)
   })
 
   it('should isContain check the date within the schedule according to weekdays', () => {
