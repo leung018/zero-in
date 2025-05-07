@@ -7,11 +7,11 @@ import TimeInput from '../../components/TimeInput.vue'
 import WeekdaysSelector from './WeekdaysSelector.vue'
 import SchedulesList from './SchedulesList.vue'
 import { WorkRequestName } from '../../../service_workers/request'
-import type { Port } from '../../../infra/communication'
+import type { ClientPort } from '@/service_workers/listener'
 
 const { weeklyScheduleStorageService, port } = defineProps<{
   weeklyScheduleStorageService: WeeklyScheduleStorageService
-  port: Port
+  port: ClientPort
 }>()
 
 const newStartTime = ref<Time>(new Time(0, 0))
