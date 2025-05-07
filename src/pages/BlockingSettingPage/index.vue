@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Port } from '@/infra/communication'
 import { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { WeeklyScheduleStorageService } from '@/domain/schedules/storage'
 import ContentTemplate from '../components/ContentTemplate.vue'
@@ -8,8 +7,10 @@ import WeeklySchedulesEditor from './WeeklySchedulesEditor/index.vue'
 import TimerIntegrationSetting from './TimerIntegrationSetting.vue'
 import { BlockingTimerIntegrationStorageService } from '@/domain/blocking_timer_integration/storage'
 import { ReloadService } from '@/infra/chrome/reload'
+import type { ClientPort } from '@/service_workers/listener'
+
 const { port } = defineProps<{
-  port: Port
+  port: ClientPort
 }>()
 </script>
 

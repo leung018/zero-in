@@ -35,7 +35,8 @@ describe('WeeklySchedulesEditor', () => {
         new WeeklySchedule({
           weekdaySet: new Set([Weekday.MON, Weekday.TUE]),
           startTime: new Time(7, 0),
-          endTime: new Time(9, 1)
+          endTime: new Time(9, 1),
+          targetFocusSessions: 1
         }),
         new WeeklySchedule({
           weekdaySet: new Set([Weekday.WED]),
@@ -48,7 +49,8 @@ describe('WeeklySchedulesEditor', () => {
     assertSchedulesDisplayed(wrapper, [
       {
         displayedWeekdays: 'Mon, Tue',
-        displayedTime: '07:00 - 09:01'
+        displayedTime: '07:00 - 09:01',
+        displayedTargetFocusSessions: 1
       },
       {
         displayedWeekdays: 'Wed',
@@ -91,7 +93,8 @@ describe('WeeklySchedulesEditor', () => {
     const extraWeeklySchedule = new WeeklySchedule({
       weekdaySet: new Set([Weekday.SAT]),
       startTime: new Time(8, 0),
-      endTime: new Time(10, 0)
+      endTime: new Time(10, 0),
+      targetFocusSessions: 2
     })
     await addWeeklySchedule(wrapper, extraWeeklySchedule)
 
@@ -102,7 +105,8 @@ describe('WeeklySchedulesEditor', () => {
       },
       {
         displayedWeekdays: 'Sat',
-        displayedTime: '08:00 - 10:00'
+        displayedTime: '08:00 - 10:00',
+        displayedTargetFocusSessions: 2
       }
     ])
 
@@ -120,7 +124,8 @@ describe('WeeklySchedulesEditor', () => {
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set([Weekday.MON]),
       startTime: new Time(10, 0),
-      endTime: new Time(12, 0)
+      endTime: new Time(12, 0),
+      targetFocusSessions: 5
     })
 
     assertAllInputsAreNotSet(wrapper)
@@ -305,6 +310,7 @@ async function addWeeklySchedule(
     weekdaySet: ReadonlySet<Weekday>
     startTime: Time
     endTime: Time
+    targetFocusSessions?: number
   } = {
     weekdaySet: new Set([Weekday.MON]),
     startTime: new Time(10, 0),
@@ -326,6 +332,11 @@ async function addWeeklySchedule(
   const endTimeInput = wrapper.find(dataTestSelector('end-time-input'))
   endTimeInput.setValue(endTime.toHhMmString())
 
+  if (weeklyScheduleInput.targetFocusSessions) {
+    const targetFocusSessionsInput = wrapper.find(dataTestSelector('target-focus-sessions-input'))
+    targetFocusSessionsInput.setValue(weeklyScheduleInput.targetFocusSessions)
+  }
+
   const addButton = wrapper.find(dataTestSelector('add-schedule-button'))
   await addButton.trigger('click')
   await flushPromises()
@@ -334,6 +345,7 @@ async function addWeeklySchedule(
 function assertAllInputsAreNotSet(wrapper: VueWrapper) {
   assertSelectorInputValue(wrapper, dataTestSelector('start-time-input'), '00:00')
   assertSelectorInputValue(wrapper, dataTestSelector('end-time-input'), '00:00')
+  assertSelectorInputValue(wrapper, dataTestSelector('target-focus-sessions-input'), '')
 
   const weekdayCheckboxes = wrapper.findAll("[data-test^='check-weekday-']")
   for (const weekdayCheckbox of weekdayCheckboxes) {
@@ -346,6 +358,7 @@ function assertSchedulesDisplayed(
   expected: {
     displayedWeekdays: string
     displayedTime: string
+    displayedTargetFocusSessions?: number
   }[]
 ) {
   const weeklySchedules = wrapper.findAll(dataTestSelector('weekly-schedule'))
@@ -355,5 +368,18 @@ function assertSchedulesDisplayed(
     const { displayedWeekdays, displayedTime } = expected[i]
     expect(weeklySchedules[i].text()).toContain(displayedWeekdays)
     expect(weeklySchedules[i].text()).toContain(displayedTime)
+
+    // Check displayed target focus sessions
+    const displayedTargetFocusSessions = expected[i].displayedTargetFocusSessions
+    if (displayedTargetFocusSessions) {
+      const badge = weeklySchedules[i].find(dataTestSelector('target-focus-sessions'))
+      expect(badge.exists()).toBe(true)
+      const badgeValue = badge.text().match(/\d+/)?.[0]
+      expect(badgeValue).toBe(displayedTargetFocusSessions.toString())
+    } else {
+      expect(weeklySchedules[i].find(dataTestSelector('target-focus-sessions')).exists()).toBe(
+        false
+      )
+    }
   }
 }

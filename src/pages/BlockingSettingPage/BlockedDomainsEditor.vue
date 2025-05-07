@@ -3,10 +3,10 @@ import { onBeforeMount, ref } from 'vue'
 import type { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { BrowsingRules } from '@/domain/browsing_rules'
 import { WorkRequestName } from '@/service_workers/request'
-import type { Port } from '@/infra/communication'
+import type { ClientPort } from '@/service_workers/listener'
 
 const { browsingRulesStorageService, port } = defineProps<{
-  port: Port
+  port: ClientPort
   browsingRulesStorageService: BrowsingRulesStorageService
 }>()
 
