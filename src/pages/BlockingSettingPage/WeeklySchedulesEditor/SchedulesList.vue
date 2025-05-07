@@ -37,8 +37,8 @@ const formatTime = (time: Time) => {
           data-test="target-focus-sessions"
           v-if="schedule.targetFocusSessions"
         >
-          >Target Focus Sessions: {{ schedule.targetFocusSessions }}</span
-        >
+          Target Focus Sessions: {{ schedule.targetFocusSessions }}
+        </span>
       </div>
       <BButton
         class="bg-transparent text-danger border-0"
