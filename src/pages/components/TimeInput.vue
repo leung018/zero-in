@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref } from 'vue'
 import { Time } from '../../domain/time'
 
 const { dataTest } = defineProps<{
@@ -10,19 +10,36 @@ const time = defineModel<Time>({
   required: true
 })
 
-const timeStr = computed({
-  get: () => {
-    return time.value.toHhMmString()
-  },
-  set: (value: string) => {
-    const [hour, minute] = value.split(':').map(Number)
-    time.value = new Time(hour, minute)
+const timeStr = ref(time.value.toHhMmString())
+
+const onInputChange = () => {
+  let [hour, minute] = timeStr.value.split(':').map(Number)
+
+  let hasReset = false
+  if (isNaN(hour)) {
+    hour = 0
+    hasReset = true
   }
-})
+  if (isNaN(minute)) {
+    minute = 0
+    hasReset = true
+  }
+  time.value = new Time(hour, minute)
+
+  if (hasReset) {
+    timeStr.value = time.value.toHhMmString()
+  }
+}
 </script>
 
 <template>
   <div>
-    <BFormInput type="time" style="width: 8rem" v-model="timeStr" :data-test="dataTest" />
+    <BFormInput
+      type="time"
+      style="width: 8rem"
+      v-model="timeStr"
+      :data-test="dataTest"
+      @change="onInputChange"
+    />
   </div>
 </template>
