@@ -35,7 +35,8 @@ describe('WeeklySchedulesEditor', () => {
         new WeeklySchedule({
           weekdaySet: new Set([Weekday.MON, Weekday.TUE]),
           startTime: new Time(7, 0),
-          endTime: new Time(9, 1)
+          endTime: new Time(9, 1),
+          targetFocusSessions: 1
         }),
         new WeeklySchedule({
           weekdaySet: new Set([Weekday.WED]),
@@ -48,7 +49,8 @@ describe('WeeklySchedulesEditor', () => {
     assertSchedulesDisplayed(wrapper, [
       {
         displayedWeekdays: 'Mon, Tue',
-        displayedTime: '07:00 - 09:01'
+        displayedTime: '07:00 - 09:01',
+        displayedTargetFocusSessions: 1
       },
       {
         displayedWeekdays: 'Wed',
