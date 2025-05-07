@@ -76,15 +76,15 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
       <WeekdaysSelector class="d-flex flex-wrap" v-model="newWeekdaySet" />
     </b-form-group>
 
-    <b-form-group label="Start Time:" class="mt-2">
+    <b-form-group label="Start Time:" class="mt-1">
       <TimeInput class="d-flex" v-model="newStartTime" data-test="start-time-input" />
     </b-form-group>
 
-    <b-form-group label="End Time:" class="mt-1">
+    <b-form-group label="End Time:">
       <TimeInput class="d-flex" v-model="newEndTime" data-test="end-time-input" />
     </b-form-group>
 
-    <b-form-group label="Target Focus Sessions (optional):" class="mt-2">
+    <b-form-group label="Target Focus Sessions (optional):" class="mt-1">
       <b-form-input type="number" min="1" data-test="target-sessions-input" />
       <small>
         After completing your target focus sessions, the remaining schedule for that day will be
