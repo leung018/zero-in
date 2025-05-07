@@ -91,7 +91,8 @@ describe('WeeklySchedulesEditor', () => {
     const extraWeeklySchedule = new WeeklySchedule({
       weekdaySet: new Set([Weekday.SAT]),
       startTime: new Time(8, 0),
-      endTime: new Time(10, 0)
+      endTime: new Time(10, 0),
+      targetFocusSessions: 2
     })
     await addWeeklySchedule(wrapper, extraWeeklySchedule)
 
@@ -102,7 +103,8 @@ describe('WeeklySchedulesEditor', () => {
       },
       {
         displayedWeekdays: 'Sat',
-        displayedTime: '08:00 - 10:00'
+        displayedTime: '08:00 - 10:00',
+        displayedTargetFocusSessions: 2
       }
     ])
 
@@ -305,6 +307,7 @@ async function addWeeklySchedule(
     weekdaySet: ReadonlySet<Weekday>
     startTime: Time
     endTime: Time
+    targetFocusSessions?: number
   } = {
     weekdaySet: new Set([Weekday.MON]),
     startTime: new Time(10, 0),
@@ -326,6 +329,11 @@ async function addWeeklySchedule(
   const endTimeInput = wrapper.find(dataTestSelector('end-time-input'))
   endTimeInput.setValue(endTime.toHhMmString())
 
+  if (weeklyScheduleInput.targetFocusSessions) {
+    const targetFocusSessionsInput = wrapper.find(dataTestSelector('target-focus-sessions-input'))
+    targetFocusSessionsInput.setValue(weeklyScheduleInput.targetFocusSessions)
+  }
+
   const addButton = wrapper.find(dataTestSelector('add-schedule-button'))
   await addButton.trigger('click')
   await flushPromises()
@@ -346,6 +354,7 @@ function assertSchedulesDisplayed(
   expected: {
     displayedWeekdays: string
     displayedTime: string
+    displayedTargetFocusSessions?: number
   }[]
 ) {
   const weeklySchedules = wrapper.findAll(dataTestSelector('weekly-schedule'))
@@ -355,5 +364,18 @@ function assertSchedulesDisplayed(
     const { displayedWeekdays, displayedTime } = expected[i]
     expect(weeklySchedules[i].text()).toContain(displayedWeekdays)
     expect(weeklySchedules[i].text()).toContain(displayedTime)
+
+    // Check displayed target focus sessions
+    const displayedTargetFocusSessions = expected[i].displayedTargetFocusSessions
+    if (displayedTargetFocusSessions) {
+      const badge = weeklySchedules[i].find(dataTestSelector('target-focus-sessions'))
+      expect(badge.exists()).toBe(true)
+      const badgeValue = badge.text().match(/\d+/)?.[0]
+      expect(badgeValue).toBe(displayedTargetFocusSessions.toString())
+    } else {
+      expect(weeklySchedules[i].find(dataTestSelector('target-focus-sessions')).exists()).toBe(
+        false
+      )
+    }
   }
 }

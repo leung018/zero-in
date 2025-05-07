@@ -19,6 +19,8 @@ const newEndTime = ref<Time>(new Time(0, 0))
 
 const newWeekdaySet = ref<Set<Weekday>>(new Set())
 
+const newTargetFocusSessions = ref<number | undefined>(undefined)
+
 const weeklySchedules = ref<WeeklySchedule[]>([])
 
 const errorMessage = ref<string | null>(null)
@@ -42,7 +44,8 @@ const onClickAdd = async () => {
   const newWeeklySchedule = new WeeklySchedule({
     weekdaySet: newWeekdaySet.value,
     startTime: newStartTime.value,
-    endTime: newEndTime.value
+    endTime: newEndTime.value,
+    targetFocusSessions: newTargetFocusSessions.value
   })
   await updateWeeklySchedules([...weeklySchedules.value, newWeeklySchedule])
 
@@ -85,7 +88,12 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
     </b-form-group>
 
     <b-form-group label="Target Focus Sessions (optional):" class="mt-1">
-      <b-form-input type="number" min="1" data-test="target-sessions-input" />
+      <b-form-input
+        type="number"
+        min="1"
+        data-test="target-focus-sessions-input"
+        v-model.number="newTargetFocusSessions"
+      />
       <small>
         After completing your target focus sessions, the remaining schedule for that day will be
         inactive.
