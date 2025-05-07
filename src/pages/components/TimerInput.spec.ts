@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { Time } from '../../domain/time'
 import { mount, VueWrapper } from '@vue/test-utils'
 import TimerInput from './TimeInput.vue'
+import { assertInputValue } from '../../test_utils/assert'
 
 describe('TimerInput', () => {
   it('should display time according to modelValue', () => {
@@ -20,6 +21,15 @@ describe('TimerInput', () => {
 
     await input.setValue('00:09')
     expect(getLastEmittedModelValue(rootWrapper)).toEqual(new Time(0, 9))
+  })
+
+  it('should remove input will reset to 00:00', async () => {
+    const { inputWrapper: input, rootWrapper } = mountTimerInput({ modelValue: new Time(12, 59) })
+
+    await input.setValue('')
+
+    expect(getLastEmittedModelValue(rootWrapper)).toEqual(new Time(0, 0))
+    assertInputValue(input, '00:00')
   })
 })
 
