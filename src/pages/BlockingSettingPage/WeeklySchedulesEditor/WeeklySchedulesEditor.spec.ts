@@ -124,7 +124,8 @@ describe('WeeklySchedulesEditor', () => {
     await addWeeklySchedule(wrapper, {
       weekdaySet: new Set([Weekday.MON]),
       startTime: new Time(10, 0),
-      endTime: new Time(12, 0)
+      endTime: new Time(12, 0),
+      targetFocusSessions: 5
     })
 
     assertAllInputsAreNotSet(wrapper)
@@ -344,6 +345,7 @@ async function addWeeklySchedule(
 function assertAllInputsAreNotSet(wrapper: VueWrapper) {
   assertSelectorInputValue(wrapper, dataTestSelector('start-time-input'), '00:00')
   assertSelectorInputValue(wrapper, dataTestSelector('end-time-input'), '00:00')
+  assertSelectorInputValue(wrapper, dataTestSelector('target-focus-sessions-input'), '')
 
   const weekdayCheckboxes = wrapper.findAll("[data-test^='check-weekday-']")
   for (const weekdayCheckbox of weekdayCheckboxes) {

@@ -53,6 +53,7 @@ const onClickAdd = async () => {
   newStartTime.value = new Time(0, 0)
   newEndTime.value = new Time(0, 0)
   newWeekdaySet.value = new Set()
+  newTargetFocusSessions.value = undefined
 }
 
 const handleRemove = async (indexToRemove: number) => {
