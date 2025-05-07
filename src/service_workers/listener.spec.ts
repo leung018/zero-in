@@ -347,7 +347,7 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
 
-  it('should toggle browsing control when start break or finish break', async () => {
+  it('should toggle browsing control when start timer or complete stage', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
 
     const { browsingControlService, clientPort, scheduler, listener } = await startListener({
