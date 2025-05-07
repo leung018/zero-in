@@ -71,39 +71,38 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
       will remain active at all times.
     </small>
   </p>
-  <form>
-    <div class="mb-4">
-      <div class="form-group">
-        <label>Select Weekdays:</label>
-        <WeekdaysSelector class="d-flex flex-wrap" v-model="newWeekdaySet" />
-      </div>
+  <b-form @submit.prevent>
+    <b-form-group label="Select Weekdays:">
+      <WeekdaysSelector class="d-flex flex-wrap" v-model="newWeekdaySet" />
+    </b-form-group>
 
-      <div class="form-group mt-2">
-        <label>Start Time:</label>
-        <TimeInput class="d-flex" v-model="newStartTime" data-test="start-time-input" />
-      </div>
+    <b-form-group label="Start Time:" class="mt-2">
+      <TimeInput class="d-flex" v-model="newStartTime" data-test="start-time-input" />
+    </b-form-group>
 
-      <div class="form-group mt-1">
-        <label>End Time:</label>
-        <TimeInput class="d-flex" v-model="newEndTime" data-test="end-time-input" />
-      </div>
+    <b-form-group label="End Time:" class="mt-1">
+      <TimeInput class="d-flex" v-model="newEndTime" data-test="end-time-input" />
+    </b-form-group>
 
-      <div class="form-group mt-2">
-        <label>Target Focus Sessions (optional):</label>
-        <input type="number" class="form-control" min="1" data-test="target-sessions-input" />
-        <p class="mt-1">
-          <small>
-            After completing your target focus sessions, the remaining schedule for that day will be
-            inactive.
-          </small>
-        </p>
-      </div>
-    </div>
-    <BButton variant="primary" data-test="add-schedule-button" @click="onClickAdd">Add</BButton>
+    <b-form-group label="Target Focus Sessions (optional):" class="mt-2">
+      <b-form-input type="number" min="1" data-test="target-sessions-input" />
+      <small>
+        After completing your target focus sessions, the remaining schedule for that day will be
+        inactive.
+      </small>
+    </b-form-group>
+    <b-button
+      variant="primary"
+      class="mt-3"
+      data-test="add-schedule-button"
+      @click="onClickAdd"
+      type="submit"
+      >Add</b-button
+    >
     <div v-if="errorMessage" class="text-danger mt-2" data-test="error-message">
       {{ errorMessage }}
     </div>
-  </form>
+  </b-form>
   <div class="mt-4" data-test="saved-schedules-section" v-if="showSaved">
     <h3>Saved</h3>
     <SchedulesList :weeklySchedules="weeklySchedules" @remove="handleRemove" />
