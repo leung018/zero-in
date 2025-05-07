@@ -88,7 +88,7 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
       <TimeInput class="d-flex" v-model="newEndTime" data-test="end-time-input" />
     </b-form-group>
 
-    <b-form-group label="Target Focus Sessions (optional):" class="mt-1">
+    <b-form-group label="Target Number of Focus Sessions (optional):" class="mt-1">
       <b-form-input
         type="number"
         min="1"
