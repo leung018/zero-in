@@ -93,8 +93,8 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
         <input type="number" class="form-control" min="1" data-test="target-sessions-input" />
         <p class="mt-1">
           <small>
-            If you set a target number of focus sessions and complete them, blocking will be
-            disabled for the remainder of the schedule.
+            After completing your target focus sessions, the remaining schedule for that day will be
+            inactive.
           </small>
         </p>
       </div>
