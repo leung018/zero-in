@@ -95,6 +95,33 @@ describe('BrowsingControlTogglingService', () => {
     ).toEqual(browsingRules)
   })
 
+  it('should overlapped schedules will make the blocking active when one of them is active', async () => {
+    const schedules = [
+      new WeeklySchedule({
+        weekdaySet: new Set([Weekday.MON]),
+        startTime: new Time(9, 0),
+        endTime: new Time(17, 0),
+        targetFocusSessions: 1
+      }),
+      new WeeklySchedule({
+        weekdaySet: new Set([Weekday.MON]),
+        startTime: new Time(10, 0),
+        endTime: new Time(13, 0)
+      })
+    ]
+
+    // 2025-02-03 is Monday
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules,
+        focusSessionRecords: [newFocusSessionRecord(new Date('2025-02-03T10:00:00'))],
+        currentDate: new Date('2025-02-03T11:00:00'),
+        shouldPauseBlockingDuringBreaks: false
+      })
+    ).toEqual(browsingRules)
+  })
+
   it.each([
     newTimerInfo({
       timerStage: TimerStage.SHORT_BREAK,
