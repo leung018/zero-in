@@ -99,7 +99,7 @@ describe('NotificationPage', () => {
     expect(soundService.getSimulatedTriggerCount()).toBe(0)
   })
 
-  it('should trigger reload after save', async () => {
+  it('should trigger notifierService after save', async () => {
     const { wrapper, updateSuccessNotifierService } = await mountPage()
 
     expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(0)

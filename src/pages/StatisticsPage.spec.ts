@@ -29,7 +29,7 @@ describe('StatisticsPage', () => {
     expect(await dailyResetTimeStorageService.get()).toEqual(new Time(9, 5))
   })
 
-  it('should reload page after clicked save', async () => {
+  it('should trigger notifierService after clicked save', async () => {
     const { wrapper, updateSuccessNotifierService } = await mountStatisticsPage()
 
     expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(0)

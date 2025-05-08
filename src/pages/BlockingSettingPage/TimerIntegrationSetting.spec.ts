@@ -37,7 +37,7 @@ describe('TimerIntegrationSetting', () => {
     ).toBe(true)
   })
 
-  it('should trigger reload when clicking save', async () => {
+  it('should trigger notifierService when clicking save', async () => {
     const { wrapper, updateSuccessNotifierService } = await mountTimerIntegrationSetting()
 
     expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(0)

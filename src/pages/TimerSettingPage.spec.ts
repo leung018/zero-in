@@ -120,7 +120,7 @@ describe('TimerSettingPage', () => {
     expect(newConfig.focusSessionsPerCycle).toBe(1)
   })
 
-  it('should reload page after clicked save', async () => {
+  it('should trigger notifierService after clicked save', async () => {
     const { wrapper, updateSuccessNotifierService } = await mountPage()
 
     expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(0)
