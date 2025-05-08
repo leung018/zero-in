@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ReloadService } from '@/infra/chrome/reload'
+import type { UpdateSuccessNotifierService } from '@/infra/chrome/update_success_notifier'
 import type { ClientPort } from '@/service_workers/listener'
 import { onBeforeMount, ref } from 'vue'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
@@ -22,7 +22,7 @@ const {
   port
 } = defineProps<{
   dailyResetTimeStorageService: DailyResetTimeStorageService
-  reloadService: ReloadService
+  reloadService: UpdateSuccessNotifierService
   currentDateService: CurrentDateService
   focusSessionRecordStorageService: FocusSessionRecordStorageService
   port: ClientPort

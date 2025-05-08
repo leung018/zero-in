@@ -1,4 +1,4 @@
-export class ReloadService {
+export class UpdateSuccessNotifierService {
   // Require manual testing
 
   trigger() {
