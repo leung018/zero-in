@@ -17,22 +17,22 @@ watch(time, (newTime) => {
 })
 
 const onInputChange = () => {
-  let [hour, minute] = timeStr.value.split(':').map(Number)
+  const newTime = getTimeFromInput()
+  if (newTime) {
+    time.value = newTime
+    return
+  }
 
-  let hasReset = false
-  if (isNaN(hour)) {
-    hour = 0
-    hasReset = true
-  }
-  if (isNaN(minute)) {
-    minute = 0
-    hasReset = true
-  }
-  time.value = new Time(hour, minute)
+  time.value = new Time(0, 0)
+  timeStr.value = time.value.toHhMmString()
+}
 
-  if (hasReset) {
-    timeStr.value = time.value.toHhMmString()
+const getTimeFromInput = (): Time | null => {
+  const [hour, minute] = timeStr.value.split(':').map(Number)
+  if (isNaN(hour) || isNaN(minute)) {
+    return null
   }
+  return new Time(hour, minute)
 }
 </script>
 
