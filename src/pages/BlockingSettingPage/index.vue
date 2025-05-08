@@ -6,7 +6,7 @@ import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
 import WeeklySchedulesEditor from './WeeklySchedulesEditor/index.vue'
 import TimerIntegrationSetting from './TimerIntegrationSetting.vue'
 import { BlockingTimerIntegrationStorageService } from '@/domain/blocking_timer_integration/storage'
-import { ReloadService } from '@/infra/chrome/reload'
+import { UpdateSuccessNotifierService } from '@/infra/chrome/update_success_notifier'
 import type { ClientPort } from '@/service_workers/listener'
 
 const { port } = defineProps<{
@@ -29,7 +29,7 @@ const { port } = defineProps<{
         :blocking-timer-integration-storage-service="
           BlockingTimerIntegrationStorageService.create()
         "
-        :reload-service="new ReloadService()"
+        :update-success-notifier-service="new UpdateSuccessNotifierService()"
         :port="port"
       />
     </BCard>

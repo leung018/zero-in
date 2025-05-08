@@ -6,14 +6,14 @@ import NotificationPage from '@/pages/NotificationPage.vue'
 import { onMounted, ref } from 'vue'
 import { ChromeCommunicationManager } from '@/infra/chrome/communication'
 import { DailyResetTimeStorageService } from '@/domain/daily_reset_time/storage'
-import { ReloadService } from '@/infra/chrome/reload'
+import { UpdateSuccessNotifierService } from '@/infra/chrome/update_success_notifier'
 import { FocusSessionRecordStorageService } from '@/domain/timer/record/storage'
 import { TimerConfigStorageService } from '@/domain/timer/config/storage'
 import { CurrentDateService } from '@/infra/current_date'
 import { NotificationSettingStorageService } from '@/domain/notification_setting/storage'
 
 const port = new ChromeCommunicationManager().clientConnect()
-const reloadService = new ReloadService()
+const updateSuccessNotifierService = new UpdateSuccessNotifierService()
 
 enum PATH {
   ROOT = '/',
@@ -64,7 +64,7 @@ function getPathFromWindowLocation(): PATH {
     <StatisticsPage
       v-else-if="currentPath === PATH.STATISTICS"
       :daily-reset-time-storage-service="DailyResetTimeStorageService.create()"
-      :reload-service="reloadService"
+      :update-success-notifier-service="updateSuccessNotifierService"
       :current-date-service="CurrentDateService.create()"
       :focus-session-record-storage-service="FocusSessionRecordStorageService.create()"
       :port="port"
@@ -74,13 +74,13 @@ function getPathFromWindowLocation(): PATH {
       v-else-if="currentPath === PATH.TIMER_SETTING"
       :timer-config-storage-service="TimerConfigStorageService.create()"
       :port="port"
-      :reload-service="reloadService"
+      :update-success-notifier-service="updateSuccessNotifierService"
     />
 
     <NotificationPage
       v-else-if="currentPath === PATH.NOTIFICATION"
       :notification-setting-storage-service="NotificationSettingStorageService.create()"
-      :reload-service="reloadService"
+      :update-success-notifier-service="updateSuccessNotifierService"
       :port="port"
     />
   </main>

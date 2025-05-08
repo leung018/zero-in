@@ -120,15 +120,15 @@ describe('TimerSettingPage', () => {
     expect(newConfig.focusSessionsPerCycle).toBe(1)
   })
 
-  it('should reload page after clicked save', async () => {
-    const { wrapper, reloadService } = await mountPage()
+  it('should trigger notifierService after clicked save', async () => {
+    const { wrapper, updateSuccessNotifierService } = await mountPage()
 
-    expect(reloadService.getSimulatedTriggerCount()).toBe(0)
+    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(0)
 
     await wrapper.find(dataTestSelector('save-button')).trigger('click')
     await flushPromises()
 
-    expect(reloadService.getSimulatedTriggerCount()).toBe(1)
+    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(1)
   })
 })
 
@@ -138,14 +138,20 @@ async function mountPage(initialTimerConfig: TimerConfig = TimerConfig.newTestIn
   })
   await listener.start()
 
-  const reloadService = new FakeActionService()
+  const updateSuccessNotifierService = new FakeActionService()
   const wrapper = mount(TimerSettingPage, {
     props: {
       port: communicationManager.clientConnect(),
       timerConfigStorageService,
-      reloadService
+      updateSuccessNotifierService
     }
   })
   await flushPromises()
-  return { timerConfigStorageService, timer, wrapper, communicationManager, reloadService }
+  return {
+    timerConfigStorageService,
+    timer,
+    wrapper,
+    communicationManager,
+    updateSuccessNotifierService
+  }
 }

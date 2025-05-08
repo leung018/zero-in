@@ -99,14 +99,14 @@ describe('NotificationPage', () => {
     expect(soundService.getSimulatedTriggerCount()).toBe(0)
   })
 
-  it('should trigger reload after save', async () => {
-    const { wrapper, reloadService } = await mountPage()
+  it('should trigger notifierService after save', async () => {
+    const { wrapper, updateSuccessNotifierService } = await mountPage()
 
-    expect(reloadService.getSimulatedTriggerCount()).toBe(0)
+    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(0)
 
     await saveNotificationSetting(wrapper)
 
-    expect(reloadService.getSimulatedTriggerCount()).toBe(1)
+    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(1)
   })
 })
 
@@ -114,7 +114,7 @@ async function mountPage({
   notificationSetting = newTestNotificationSetting(),
   timerConfig = TimerConfig.newTestInstance()
 } = {}) {
-  const reloadService = new FakeActionService()
+  const updateSuccessNotifierService = new FakeActionService()
 
   const {
     scheduler,
@@ -137,7 +137,7 @@ async function mountPage({
   const wrapper = mount(NotificationPage, {
     props: {
       notificationSettingStorageService,
-      reloadService,
+      updateSuccessNotifierService,
       port: clientPort
     }
   })
@@ -145,7 +145,7 @@ async function mountPage({
   return {
     wrapper,
     notificationSettingStorageService,
-    reloadService,
+    updateSuccessNotifierService,
     clientPort,
     scheduler,
     desktopNotificationService,

@@ -6,9 +6,9 @@ import { onBeforeMount, ref } from 'vue'
 import { WorkRequestName } from '../service_workers/request'
 import ContentTemplate from './components/ContentTemplate.vue'
 
-const { notificationSettingStorageService, reloadService, port } = defineProps<{
+const { notificationSettingStorageService, updateSuccessNotifierService, port } = defineProps<{
   notificationSettingStorageService: NotificationSettingStorageService
-  reloadService: ActionService
+  updateSuccessNotifierService: ActionService
   port: ClientPort
 }>()
 const reminderTab = ref(false)
@@ -32,7 +32,7 @@ const onClickSave = async () => {
   await notificationSettingStorageService.save(setting)
   port.send({ name: WorkRequestName.RESET_NOTIFICATION })
 
-  reloadService.trigger()
+  updateSuccessNotifierService.trigger()
 }
 </script>
 

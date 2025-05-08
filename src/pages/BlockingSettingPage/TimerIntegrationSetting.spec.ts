@@ -37,14 +37,14 @@ describe('TimerIntegrationSetting', () => {
     ).toBe(true)
   })
 
-  it('should trigger reload when clicking save', async () => {
-    const { wrapper, reloadService } = await mountTimerIntegrationSetting()
+  it('should trigger notifierService when clicking save', async () => {
+    const { wrapper, updateSuccessNotifierService } = await mountTimerIntegrationSetting()
 
-    expect(reloadService.getSimulatedTriggerCount()).toBe(0)
+    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(0)
 
     await saveBlockingTimerIntegration(wrapper)
 
-    expect(reloadService.getSimulatedTriggerCount()).toBe(1)
+    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(1)
   })
 
   it('should toggle browsing control after clicking save', async () => {
@@ -81,7 +81,7 @@ async function mountTimerIntegrationSetting({
   weeklySchedules = [],
   timerState = newTestTimerState()
 } = {}) {
-  const reloadService = new FakeActionService()
+  const updateSuccessNotifierService = new FakeActionService()
 
   const {
     browsingControlService,
@@ -103,7 +103,7 @@ async function mountTimerIntegrationSetting({
   const wrapper = mount(TimerIntegrationSetting, {
     props: {
       blockingTimerIntegrationStorageService,
-      reloadService,
+      updateSuccessNotifierService,
       port: communicationManager.clientConnect()
     }
   })
@@ -113,7 +113,7 @@ async function mountTimerIntegrationSetting({
     listener,
     wrapper,
     blockingTimerIntegrationStorageService,
-    reloadService
+    updateSuccessNotifierService
   }
 }
 

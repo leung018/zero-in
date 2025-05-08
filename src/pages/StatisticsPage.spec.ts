@@ -29,14 +29,14 @@ describe('StatisticsPage', () => {
     expect(await dailyResetTimeStorageService.get()).toEqual(new Time(9, 5))
   })
 
-  it('should reload page after clicked save', async () => {
-    const { wrapper, reloadService } = await mountStatisticsPage()
+  it('should trigger notifierService after clicked save', async () => {
+    const { wrapper, updateSuccessNotifierService } = await mountStatisticsPage()
 
-    expect(reloadService.getSimulatedTriggerCount()).toBe(0)
+    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(0)
 
     await saveTime(wrapper, '15:05')
 
-    expect(reloadService.getSimulatedTriggerCount()).toBe(1)
+    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(1)
   })
 
   it('should render stats table with rows represent last 7 days', async () => {
@@ -141,18 +141,18 @@ async function mountStatisticsPage({
 
   await listener.start()
 
-  const reloadService = new FakeActionService()
+  const updateSuccessNotifierService = new FakeActionService()
   const wrapper = mount(StatisticsPage, {
     props: {
       dailyResetTimeStorageService,
-      reloadService,
+      updateSuccessNotifierService,
       currentDateService,
       focusSessionRecordStorageService,
       port: communicationManager.clientConnect()
     }
   })
   await flushPromises()
-  return { wrapper, scheduler, timer, dailyResetTimeStorageService, reloadService }
+  return { wrapper, scheduler, timer, dailyResetTimeStorageService, updateSuccessNotifierService }
 }
 
 async function saveTime(wrapper: VueWrapper, newTime: string) {

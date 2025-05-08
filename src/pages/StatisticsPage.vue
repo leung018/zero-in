@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ReloadService } from '@/infra/chrome/reload'
+import type { UpdateSuccessNotifierService } from '@/infra/chrome/update_success_notifier'
 import type { ClientPort } from '@/service_workers/listener'
 import { onBeforeMount, ref } from 'vue'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
@@ -16,13 +16,13 @@ type Stat = { day: string; completedFocusSessions: number }
 
 const {
   dailyResetTimeStorageService,
-  reloadService,
+  updateSuccessNotifierService,
   currentDateService,
   focusSessionRecordStorageService,
   port
 } = defineProps<{
   dailyResetTimeStorageService: DailyResetTimeStorageService
-  reloadService: ReloadService
+  updateSuccessNotifierService: UpdateSuccessNotifierService
   currentDateService: CurrentDateService
   focusSessionRecordStorageService: FocusSessionRecordStorageService
   port: ClientPort
@@ -74,7 +74,7 @@ async function setStats(dailyResetTime: Time) {
 const onClickSave = async () => {
   const newTime = dailyResetTime.value
   return dailyResetTimeStorageService.save(newTime).then(() => {
-    reloadService.trigger()
+    updateSuccessNotifierService.trigger()
   })
 }
 </script>
