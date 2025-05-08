@@ -8,6 +8,10 @@ export class ChromeNewTabService implements ActionService {
   }
 
   trigger() {
-    chrome.tabs.create({ url: this.targetUrl })
+    chrome.tabs.create({ url: this.targetUrl }).then((tab) => {
+      if (tab.windowId) {
+        chrome.windows.update(tab.windowId, { focused: true })
+      }
+    })
   }
 }
