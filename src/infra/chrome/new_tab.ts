@@ -1,6 +1,8 @@
 import type { ActionService } from '../action'
 
 export class ChromeNewTabService implements ActionService {
+  // Some of the behaviors may manual testing
+
   private readonly targetUrl: string
 
   constructor(targetUrl: string) {
@@ -8,6 +10,10 @@ export class ChromeNewTabService implements ActionService {
   }
 
   trigger() {
-    chrome.tabs.create({ url: this.targetUrl })
+    chrome.tabs.create({ url: this.targetUrl }).then((tab) => {
+      if (tab.windowId) {
+        chrome.windows.update(tab.windowId, { focused: true })
+      }
+    })
   }
 }
