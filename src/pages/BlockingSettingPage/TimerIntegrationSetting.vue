@@ -5,9 +5,9 @@ import { WorkRequestName } from '@/service_workers/request'
 import { onBeforeMount, ref } from 'vue'
 import type { BlockingTimerIntegrationStorageService } from '../../domain/blocking_timer_integration/storage'
 
-const { blockingTimerIntegrationStorageService, reloadService, port } = defineProps<{
+const { blockingTimerIntegrationStorageService, updateSuccessNotifierService, port } = defineProps<{
   blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
-  reloadService: ActionService
+  updateSuccessNotifierService: ActionService
   port: ClientPort
 }>()
 
@@ -25,7 +25,7 @@ async function onClickSave() {
   port.send({
     name: WorkRequestName.TOGGLE_BROWSING_RULES
   })
-  reloadService.trigger()
+  updateSuccessNotifierService.trigger()
 }
 </script>
 

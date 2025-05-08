@@ -29,7 +29,7 @@ const { port } = defineProps<{
         :blocking-timer-integration-storage-service="
           BlockingTimerIntegrationStorageService.create()
         "
-        :reload-service="new UpdateSuccessNotifierService()"
+        :update-success-notifier-service="new UpdateSuccessNotifierService()"
         :port="port"
       />
     </BCard>

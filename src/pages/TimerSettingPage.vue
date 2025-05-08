@@ -8,10 +8,10 @@ import { Duration } from '../domain/timer/duration'
 import { WorkRequestName } from '../service_workers/request'
 import ContentTemplate from './components/ContentTemplate.vue'
 
-const { timerConfigStorageService, port, reloadService } = defineProps<{
+const { timerConfigStorageService, port, updateSuccessNotifierService } = defineProps<{
   port: ClientPort
   timerConfigStorageService: TimerConfigStorageService
-  reloadService: ActionService
+  updateSuccessNotifierService: ActionService
 }>()
 
 const focusDurationMinutes = ref(25)
@@ -52,7 +52,7 @@ const onClickSave = async () => {
     name: WorkRequestName.RESET_TIMER_CONFIG
   })
 
-  reloadService.trigger()
+  updateSuccessNotifierService.trigger()
 }
 </script>
 
