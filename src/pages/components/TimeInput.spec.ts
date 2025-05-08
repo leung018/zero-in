@@ -31,6 +31,16 @@ describe('TimerInput', () => {
     expect(getLastEmittedModelValue(rootWrapper)).toEqual(new Time(0, 0))
     assertInputValue(input, '00:00')
   })
+
+  it('should update input display when modelValue changes', async () => {
+    const { rootWrapper, inputWrapper } = mountTimerInput({ modelValue: new Time(9, 30) })
+
+    await rootWrapper.setProps({
+      modelValue: new Time(14, 45)
+    })
+
+    assertInputValue(inputWrapper, '14:45')
+  })
 })
 
 function mountTimerInput({ modelValue = new Time(0, 0) } = {}) {

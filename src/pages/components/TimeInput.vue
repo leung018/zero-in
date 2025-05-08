@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { Time } from '../../domain/time'
 
 const { dataTest } = defineProps<{
@@ -11,6 +11,10 @@ const time = defineModel<Time>({
 })
 
 const timeStr = ref(time.value.toHhMmString())
+
+watch(time, (newTime) => {
+  timeStr.value = newTime.toHhMmString()
+})
 
 const onInputChange = () => {
   let [hour, minute] = timeStr.value.split(':').map(Number)
