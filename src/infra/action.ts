@@ -3,17 +3,13 @@ export interface ActionService {
 }
 
 export class FakeActionService implements ActionService {
-  private triggerCount: number = 0
+  private _hasTriggered: boolean = false
 
   trigger() {
-    this.triggerCount++
-  }
-
-  getSimulatedTriggerCount() {
-    return this.triggerCount
+    this._hasTriggered = true
   }
 
   hasTriggered() {
-    return this.triggerCount > 0
+    return this._hasTriggered
   }
 }
