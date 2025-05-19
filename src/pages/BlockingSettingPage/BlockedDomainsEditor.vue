@@ -46,7 +46,7 @@ async function updateBrowsingRules(newBrowsingRules: BrowsingRules) {
         type="text"
         class="form-control"
         data-test="blocked-domain-input"
-        placeholder="Enter your domain"
+        placeholder="Enter the website"
         required
       />
       <p class="mt-1">
