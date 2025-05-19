@@ -33,17 +33,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
     new ChromeNewTabService(chrome.runtime.getURL('options.html') + '#/statistics').trigger()
   } else if (info.menuItemId === 'add-blocked-domain') {
     if (info.pageUrl) {
-      const domain = getDomain(info.pageUrl)
-      const browsingRulesStorageService = BrowsingRulesStorageService.create()
-      browsingRulesStorageService
-        .get()
-        .then((browsingRules) => {
-          const newBrowsingRules = browsingRules.withNewBlockedDomain(domain)
-          return browsingRulesStorageService.save(newBrowsingRules)
-        })
-        .then(() => {
-          listener.toggleBrowsingRules()
-        })
+      listener.addNewBlockedDomain(getDomain(info.pageUrl))
     }
   }
 })
