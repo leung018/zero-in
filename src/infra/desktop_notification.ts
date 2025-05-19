@@ -45,6 +45,10 @@ export class DesktopNotificationService implements ActionService {
     this.desktopNotifier.addButtonClickedListener(this.buttonClickedListener)
   }
 
+  /**
+   * It just indicates that the notification is triggered and haven't being cleared programmatically.
+   * When it is active, doesn't meant that the notification must be shown. User may manually close it.
+   */
   isNotificationActive(): boolean {
     return this._isNotificationActive
   }
