@@ -429,6 +429,19 @@ describe('BackgroundListener', () => {
     expect(listener.getTimerState().isRunning).toBe(true)
     expect(listener.getTimerState().stage).toBe(TimerStage.SHORT_BREAK)
   })
+
+  it('should addNewBlockedDomain update the browsing rules', async () => {
+    const { listener, browsingControlService } = await startListener({
+      browsingRules: new BrowsingRules()
+    })
+    const newDomain = 'example.com'
+
+    listener.addNewBlockedDomain(newDomain)
+    await flushPromises()
+
+    const browsingRules = browsingControlService.getActivatedBrowsingRules()
+    expect(browsingRules).toEqual(new BrowsingRules({ blockedDomains: [newDomain] }))
+  })
 })
 
 async function startListener({
