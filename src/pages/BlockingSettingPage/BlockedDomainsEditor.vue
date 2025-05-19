@@ -10,35 +10,31 @@ const { browsingRulesStorageService, port } = defineProps<{
   browsingRulesStorageService: BrowsingRulesStorageService
 }>()
 
-const blockedDomains = ref<ReadonlyArray<string>>([])
+const browsingRules = ref<BrowsingRules>(new BrowsingRules())
 const newDomain = ref<string>('')
 
 onBeforeMount(async () => {
-  blockedDomains.value = (await browsingRulesStorageService.get()).blockedDomains
+  browsingRules.value = await browsingRulesStorageService.get()
 })
 
 async function onClickAdd() {
   const newDomainValue = newDomain.value.trim()
   if (!newDomainValue) return
 
-  const browsingRules = new BrowsingRules({
-    blockedDomains: [...blockedDomains.value, newDomainValue]
-  })
-  await updateBrowsingRules(browsingRules)
+  const newBrowsingRules = browsingRules.value.withNewBlockedDomain(newDomainValue)
+  await updateBrowsingRules(newBrowsingRules)
   newDomain.value = ''
 }
 
 async function onClickRemove(domain: string) {
-  const browsingRules = new BrowsingRules({
-    blockedDomains: blockedDomains.value.filter((d) => d !== domain)
-  })
-  await updateBrowsingRules(browsingRules)
+  const newBrowsingRules = browsingRules.value.withRemovedBlockedDomain(domain)
+  await updateBrowsingRules(newBrowsingRules)
 }
 
-async function updateBrowsingRules(browsingRules: BrowsingRules) {
-  await browsingRulesStorageService.save(browsingRules)
+async function updateBrowsingRules(newBrowsingRules: BrowsingRules) {
+  await browsingRulesStorageService.save(newBrowsingRules)
   await port.send({ name: WorkRequestName.TOGGLE_BROWSING_RULES })
-  blockedDomains.value = browsingRules.blockedDomains
+  browsingRules.value = newBrowsingRules
 }
 </script>
 
@@ -63,9 +59,9 @@ async function updateBrowsingRules(browsingRules: BrowsingRules) {
       >Add</BButton
     >
   </form>
-  <ul class="list-group mt-4" v-if="blockedDomains.length > 0">
+  <ul class="list-group mt-4" v-if="browsingRules.blockedDomains.length > 0">
     <li
-      v-for="domain in blockedDomains"
+      v-for="domain in browsingRules.blockedDomains"
       :key="domain"
       class="list-group-item d-flex justify-content-between align-items-center"
     >
