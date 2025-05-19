@@ -20,7 +20,7 @@ import { ChromeBrowsingControlService } from '../infra/chrome/browsing_control'
 import { ChromeCloseTabsService } from '../infra/chrome/close_tabs'
 import { ChromeCommunicationManager } from '../infra/chrome/communication'
 import { ChromeNewTabService } from '../infra/chrome/new_tab'
-import { SoundService } from '../infra/chrome/sound'
+import { ChromeSoundService } from '../infra/chrome/sound'
 import { type CommunicationManager, type Port } from '../infra/communication'
 import { CurrentDateService } from '../infra/current_date'
 import { DesktopNotificationService } from '../infra/desktop_notification'
@@ -56,7 +56,7 @@ export class BackgroundListener {
       communicationManager: new ChromeCommunicationManager(),
       reminderTabService: new ChromeNewTabService(config.getReminderPageUrl()),
       desktopNotificationService: DesktopNotificationService.create(),
-      soundService: new SoundService(),
+      soundService: new ChromeSoundService(),
       notificationSettingStorageService: NotificationSettingStorageService.create(),
       badgeDisplayService: new ChromeBadgeDisplayService(),
       timerStateStorageService: TimerStateStorageService.create(),
