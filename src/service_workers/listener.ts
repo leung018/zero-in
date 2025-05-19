@@ -236,7 +236,7 @@ export class BackgroundListener {
     return this.timer.getState()
   }
 
-  addNewBlockedDomain(domain: string) {
+  addBlockedDomain(domain: string) {
     return this.browsingRulesStorageService
       .get()
       .then((browsingRules) => {

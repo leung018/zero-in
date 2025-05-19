@@ -33,7 +33,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
     new ChromeNewTabService(chrome.runtime.getURL('options.html') + '#/statistics').trigger()
   } else if (info.menuItemId === 'add-blocked-domain') {
     if (info.pageUrl) {
-      listener.addNewBlockedDomain(getDomain(info.pageUrl))
+      listener.addBlockedDomain(getDomain(info.pageUrl))
     }
   }
 })
