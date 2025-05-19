@@ -1,12 +1,12 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
-import FocusTimerPage from './FocusTimerPage.vue'
-import { expect, describe, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
+import { TimerConfig } from '../domain/timer/config'
+import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { Duration } from '../domain/timer/duration'
 import { FakeCommunicationManager } from '../infra/communication'
 import { setUpListener } from '../test_utils/listener'
-import { TimerConfig } from '../domain/timer/config'
-import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { dataTestSelector } from '../test_utils/selector'
+import FocusTimerPage from './FocusTimerPage.vue'
 
 describe('FocusTimerPage', () => {
   it('should display initial stage and remaining time properly', async () => {

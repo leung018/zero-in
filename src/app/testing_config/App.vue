@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { TimerConfigStorageService } from '@/domain/timer/config/storage'
 import { ChromeCommunicationManager } from '@/infra/chrome/communication'
 import TestingConfigPage from '@/pages/TestingConfigPage.vue'
-import { TimerConfigStorageService } from '@/domain/timer/config/storage'
 </script>
 
 <template>

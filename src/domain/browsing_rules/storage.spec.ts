@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { BrowsingRulesStorageService } from './storage'
 import { BrowsingRules } from '.'
+import { BrowsingRulesStorageService } from './storage'
 
 describe('BrowsingRulesStorageService', () => {
   it('should return BrowsingRules with empty blockedDomains if no BrowsingRules are saved', async () => {

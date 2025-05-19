@@ -1,16 +1,16 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
+import { Time } from '../domain/time'
 import { TimerConfig } from '../domain/timer/config'
 import { Duration } from '../domain/timer/duration'
 import { newFocusSessionRecord } from '../domain/timer/record'
 import { TimerStage } from '../domain/timer/stage'
-import { Time } from '../domain/time'
 import { FakeActionService } from '../infra/action'
 import { CurrentDateService } from '../infra/current_date'
 import { setUpListener } from '../test_utils/listener'
-import ReminderPage from './ReminderPage.vue'
 import { dataTestSelector } from '../test_utils/selector'
+import ReminderPage from './ReminderPage.vue'
 
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {

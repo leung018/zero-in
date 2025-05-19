@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { BlockingTimerIntegrationStorageService } from './storage'
 import type { BlockingTimerIntegration } from '.'
 import config from '../../config'
+import { BlockingTimerIntegrationStorageService } from './storage'
 
 describe('BlockingTimerIntegrationStorageService', () => {
   it('should get default setting when no setting is saved', async () => {

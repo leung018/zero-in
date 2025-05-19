@@ -1,11 +1,11 @@
 import { afterEach } from 'node:test'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { assertToThrowError } from '../test_utils/check_error'
 import {
   FakePeriodicTaskScheduler,
   PeriodicTaskSchedulerImpl,
   TaskSchedulingError
 } from './scheduler'
-import { assertToThrowError } from '../test_utils/check_error'
 
 describe('PeriodicTaskSchedulerImpl', () => {
   beforeEach(() => {

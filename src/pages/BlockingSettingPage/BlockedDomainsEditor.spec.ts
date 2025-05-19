@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
-import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { BrowsingRules } from '@/domain/browsing_rules'
 import { setUpListener } from '@/test_utils/listener'
-import { dataTestSelector } from '../../test_utils/selector'
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { assertSelectorInputValue } from '../../test_utils/assert'
+import { dataTestSelector } from '../../test_utils/selector'
+import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
 
 describe('BlockedDomainsEditor', () => {
   it('should render blocked domains', async () => {

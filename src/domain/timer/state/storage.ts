@@ -1,6 +1,6 @@
+import type { TimerState } from '.'
 import { ChromeStorageProvider } from '../../../infra/chrome/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../../infra/storage'
-import type { TimerState } from '.'
 import { deserializeTimerState, serializeTimerState, type TimerStateSchemas } from './serialize'
 
 export class TimerStateStorageService {

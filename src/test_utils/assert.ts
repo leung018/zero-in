@@ -1,5 +1,5 @@
-import { expect } from 'vitest'
 import { DOMWrapper, VueWrapper } from '@vue/test-utils'
+import { expect } from 'vitest'
 
 export function assertSelectorInputValue(wrapper: VueWrapper, selector: string, value: string) {
   assertInputValue(wrapper.find(selector), value)

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { FocusTimer } from '.'
-import { Duration } from './duration'
-import { TimerStage } from './stage'
 import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
 import { TimerConfig } from './config'
+import { Duration } from './duration'
+import { TimerStage } from './stage'
 import { newTestTimerState, type TimerState } from './state'
 
 describe('FocusTimer', () => {

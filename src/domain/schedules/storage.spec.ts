@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { WeeklyScheduleStorageService } from './storage'
 import { Weekday, WeeklySchedule } from '.'
+import { FakeStorage } from '../../infra/storage'
 import { Time } from '../time'
 import type { WeeklyScheduleSchemas } from './serialize'
-import { FakeStorage } from '../../infra/storage'
+import { WeeklyScheduleStorageService } from './storage'
 
 describe('WeeklyScheduleStorageService', () => {
   it('should return empty array if no WeeklySchedules are saved', async () => {

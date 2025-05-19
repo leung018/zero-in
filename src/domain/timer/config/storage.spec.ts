@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { TimerConfigStorageService } from './storage'
-import config from '../../../config'
 import { TimerConfig } from '.'
+import config from '../../../config'
 import { Duration } from '../duration'
+import { TimerConfigStorageService } from './storage'
 
 describe('TimerConfigStorageService', () => {
   it('should initial value from TimerConfigStorageService same as config.getDefaultTimerConfig()', async () => {

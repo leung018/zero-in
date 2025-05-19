@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue'
-import type { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { BrowsingRules } from '@/domain/browsing_rules'
-import { WorkRequestName } from '@/service_workers/request'
+import type { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import type { ClientPort } from '@/service_workers/listener'
+import { WorkRequestName } from '@/service_workers/request'
+import { onBeforeMount, ref } from 'vue'
 
 const { browsingRulesStorageService, port } = defineProps<{
   port: ClientPort

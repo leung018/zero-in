@@ -1,6 +1,6 @@
 import type { NotificationSetting } from '.'
-import { ChromeStorageProvider } from '../../infra/chrome/storage'
 import config from '../../config'
+import { ChromeStorageProvider } from '../../infra/chrome/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import type { SerializedNotificationSetting } from './serialize'
 

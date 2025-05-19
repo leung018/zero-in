@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { DailyResetTimeStorageService } from './storage'
 import { Time } from '../time'
+import { DailyResetTimeStorageService } from './storage'
 
 describe('DailyResetTimeStorageService', () => {
   it('should return 00:00am if no DailyResetTime is saved', async () => {

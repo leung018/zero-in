@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { FocusSessionRecordStorageService } from './storage'
-import { FocusSessionRecordHousekeeper } from './house_keep'
 import type { FocusSessionRecord } from '.'
+import { FocusSessionRecordHousekeeper } from './house_keep'
+import { FocusSessionRecordStorageService } from './storage'
 
 describe('FocusSessionRecordHousekeeper', () => {
   it('should delete records older than specific periods', async () => {

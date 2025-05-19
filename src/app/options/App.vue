@@ -1,16 +1,16 @@
 <script setup lang="ts">
+import { DailyResetTimeStorageService } from '@/domain/daily_reset_time/storage'
+import { NotificationSettingStorageService } from '@/domain/notification_setting/storage'
+import { TimerConfigStorageService } from '@/domain/timer/config/storage'
+import { FocusSessionRecordStorageService } from '@/domain/timer/record/storage'
+import { ChromeCommunicationManager } from '@/infra/chrome/communication'
+import { UpdateSuccessNotifierService } from '@/infra/chrome/update_success_notifier'
+import { CurrentDateService } from '@/infra/current_date'
 import BlockingSettingPage from '@/pages/BlockingSettingPage/index.vue'
+import NotificationPage from '@/pages/NotificationPage.vue'
 import StatisticsPage from '@/pages/StatisticsPage.vue'
 import TimerSettingPage from '@/pages/TimerSettingPage.vue'
-import NotificationPage from '@/pages/NotificationPage.vue'
 import { onMounted, ref } from 'vue'
-import { ChromeCommunicationManager } from '@/infra/chrome/communication'
-import { DailyResetTimeStorageService } from '@/domain/daily_reset_time/storage'
-import { UpdateSuccessNotifierService } from '@/infra/chrome/update_success_notifier'
-import { FocusSessionRecordStorageService } from '@/domain/timer/record/storage'
-import { TimerConfigStorageService } from '@/domain/timer/config/storage'
-import { CurrentDateService } from '@/infra/current_date'
-import { NotificationSettingStorageService } from '@/domain/notification_setting/storage'
 
 const port = new ChromeCommunicationManager().clientConnect()
 const updateSuccessNotifierService = new UpdateSuccessNotifierService()

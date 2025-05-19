@@ -1,5 +1,5 @@
-import { BackgroundListener } from './listener'
 import { ChromeNewTabService } from '../infra/chrome/new_tab'
+import { BackgroundListener } from './listener'
 import { MenuItemId } from './menu_item_id'
 
 // Noted that e2e tests are hard to cover all of the below related to chrome api properly. Better use a bit manual testing if needed.
