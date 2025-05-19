@@ -1,5 +1,7 @@
 import { BackgroundListener } from './listener'
 import { ChromeNewTabService } from '../infra/chrome/new_tab'
+import { getDomain } from '../utils/url'
+import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 
 // Noted that e2e tests are hard to cover all of the below related to chrome api properly. Better use a bit manual testing if needed.
 
@@ -20,10 +22,28 @@ chrome.runtime.onInstalled.addListener(() => {
     title: 'Statistics',
     contexts: ['action']
   })
+  chrome.contextMenus.create({
+    id: 'add-blocked-domain',
+    title: 'Block current website'
+  })
 })
 
 chrome.contextMenus.onClicked.addListener((info) => {
   if (info.menuItemId === 'open-statistics-page') {
     new ChromeNewTabService(chrome.runtime.getURL('options.html') + '#/statistics').trigger()
+  } else if (info.menuItemId === 'add-blocked-domain') {
+    if (info.pageUrl) {
+      const domain = getDomain(info.pageUrl)
+      const browsingRulesStorageService = BrowsingRulesStorageService.create()
+      browsingRulesStorageService
+        .get()
+        .then((browsingRules) => {
+          const newBrowsingRules = browsingRules.withNewBlockedDomain(domain)
+          return browsingRulesStorageService.save(newBrowsingRules)
+        })
+        .then(() => {
+          listener.toggleBrowsingRules()
+        })
+    }
   }
 })
