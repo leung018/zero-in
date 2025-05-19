@@ -58,6 +58,11 @@ export class DesktopNotificationService implements ActionService {
     this._isNotificationActive = true
   }
 
+  clear(): void {
+    this.desktopNotifier.clearNotification(NOTIFICATION_ID)
+    this._isNotificationActive = false
+  }
+
   setOnClickStartNext(onClickStartNext: () => void): void {
     this.onClickStartNext = onClickStartNext
   }

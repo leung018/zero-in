@@ -430,6 +430,28 @@ describe('BackgroundListener', () => {
     expect(listener.getTimerState().stage).toBe(TimerStage.SHORT_BREAK)
   })
 
+  it('should timer start remove desktop notification', async () => {
+    const { scheduler, clientPort, desktopNotificationService } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 1 })
+      }),
+      notificationSetting: newTestNotificationSetting({
+        desktopNotification: true
+      })
+    })
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(1000)
+    await flushPromises()
+
+    expect(desktopNotificationService.isNotificationActive()).toBe(true)
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
+    expect(desktopNotificationService.isNotificationActive()).toBe(false)
+  })
+
   it('should addBlockedDomain update the browsing rules', async () => {
     const { listener, browsingControlService } = await startListener({
       browsingRules: new BrowsingRules()
