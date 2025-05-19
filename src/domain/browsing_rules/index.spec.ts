@@ -40,6 +40,13 @@ describe('BrowsingRules', () => {
     expect(browsingRules.blockedDomains).toEqual(['example.com', 'facebook.com'])
   })
 
+  it('should withNewBlockedDomain return a new BrowsingRules instance with blocked domain added', () => {
+    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
+    const newBrowsingRules = browsingRules.withNewBlockedDomain('facebook.com')
+    expect(newBrowsingRules.blockedDomains).toEqual(['example.com', 'facebook.com'])
+    expect(browsingRules.blockedDomains).toEqual(['example.com'])
+  })
+
   describe('isUrlBlocked', () => {
     it('should return false if url is not blocked', () => {
       expect(new BrowsingRules().isUrlBlocked('https://www.example.com')).toBe(false)
