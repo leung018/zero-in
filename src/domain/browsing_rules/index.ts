@@ -20,6 +20,16 @@ export class BrowsingRules {
     const urlDomain = getDomain(url)
     return this._blockedDomains.some((domain) => domain === urlDomain)
   }
+
+  withNewBlockedDomain(newDomain: string): BrowsingRules {
+    return new BrowsingRules({ blockedDomains: [...this._blockedDomains, newDomain] })
+  }
+
+  withoutBlockedDomain(domainToRemove: string): BrowsingRules {
+    return new BrowsingRules({
+      blockedDomains: this._blockedDomains.filter((domain) => domain !== domainToRemove)
+    })
+  }
 }
 
 function deduplicated(inputs: string[]): string[] {

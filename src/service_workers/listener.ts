@@ -78,6 +78,8 @@ export class BackgroundListener {
   }
 
   private browsingControlTogglingService: BrowsingControlTogglingService
+  private browsingRulesStorageService: BrowsingRulesStorageService
+
   private communicationManager: CommunicationManager
   private timer: FocusTimer
   private badgeDisplayService: BadgeDisplayService
@@ -121,6 +123,7 @@ export class BackgroundListener {
       },
       currentDateService: params.currentDateService
     })
+    this.browsingRulesStorageService = params.browsingRulesStorageService
 
     this.notificationService = new MultipleActionService([])
     this.notificationSettingStorageService = params.notificationSettingStorageService
@@ -231,6 +234,18 @@ export class BackgroundListener {
 
   getTimerState() {
     return this.timer.getState()
+  }
+
+  addBlockedDomain(domain: string) {
+    return this.browsingRulesStorageService
+      .get()
+      .then((browsingRules) => {
+        const newBrowsingRules = browsingRules.withNewBlockedDomain(domain)
+        return this.browsingRulesStorageService.save(newBrowsingRules)
+      })
+      .then(() => {
+        this.toggleBrowsingRules()
+      })
   }
 
   toggleBrowsingRules() {

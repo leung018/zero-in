@@ -1,5 +1,6 @@
 import { BackgroundListener } from './listener'
 import { ChromeNewTabService } from '../infra/chrome/new_tab'
+import { MenuItemId } from './menu_item_id'
 
 // Noted that e2e tests are hard to cover all of the below related to chrome api properly. Better use a bit manual testing if needed.
 
@@ -16,14 +17,25 @@ chrome.runtime.onStartup.addListener(function () {}) // This is a hack to keep t
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
-    id: 'open-statistics-page',
+    id: MenuItemId.OPEN_STATISTICS,
     title: 'Statistics',
     contexts: ['action']
+  })
+  chrome.contextMenus.create({
+    id: MenuItemId.ADD_BLOCKED_DOMAIN,
+    title: 'Block current website'
   })
 })
 
 chrome.contextMenus.onClicked.addListener((info) => {
-  if (info.menuItemId === 'open-statistics-page') {
-    new ChromeNewTabService(chrome.runtime.getURL('options.html') + '#/statistics').trigger()
+  switch (info.menuItemId) {
+    case MenuItemId.OPEN_STATISTICS:
+      new ChromeNewTabService(chrome.runtime.getURL('options.html') + '#/statistics').trigger()
+      break
+    case MenuItemId.ADD_BLOCKED_DOMAIN:
+      if (info.pageUrl) {
+        listener.addBlockedDomain(info.pageUrl)
+      }
+      break
   }
 })
