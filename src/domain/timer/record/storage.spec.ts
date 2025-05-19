@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { FocusSessionRecordStorageService } from './storage'
 import { newFocusSessionRecord } from '.'
+import { FocusSessionRecordStorageService } from './storage'
 describe('FocusSessionRecordStorageService', () => {
   it('should return empty array if no FocusSessionRecords are saved', async () => {
     const focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()

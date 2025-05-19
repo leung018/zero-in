@@ -1,6 +1,6 @@
 /* eslint-disable playwright/expect-expect */
 import { Page } from '@playwright/test'
-import { test, expect } from './fixtures.js'
+import { expect, test } from './fixtures.js'
 
 test.describe.configure({ mode: 'parallel' })
 

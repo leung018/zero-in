@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { getMostRecentDate, isSameDay } from './date'
 import { Time } from '../domain/time'
+import { getMostRecentDate, isSameDay } from './date'
 
 describe('getMostRecentDate', () => {
   it('should return today time if already passed', () => {

@@ -1,10 +1,10 @@
-import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import webExtension from 'vite-plugin-web-extension'
+import { BootstrapVueNextResolver } from 'bootstrap-vue-next'
+import IconsResolve from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
 import Components from 'unplugin-vue-components/vite'
-import IconsResolve from 'unplugin-icons/resolver'
-import { BootstrapVueNextResolver } from 'bootstrap-vue-next'
+import { defineConfig } from 'vite'
+import webExtension from 'vite-plugin-web-extension'
 
 // https://vitejs.dev/config/
 export default defineConfig({

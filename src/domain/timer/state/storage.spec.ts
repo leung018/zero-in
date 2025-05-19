@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { TimerStateStorageService } from './storage'
-import { TimerStage } from '../stage'
 import type { TimerState } from '.'
 import { FakeStorage } from '../../../infra/storage'
-import type { TimerStateSchemas } from './serialize'
 import { Duration } from '../duration'
+import { TimerStage } from '../stage'
+import type { TimerStateSchemas } from './serialize'
+import { TimerStateStorageService } from './storage'
 
 describe('TimerStateStorageService', () => {
   it('should get null if no TimerState is saved ', async () => {

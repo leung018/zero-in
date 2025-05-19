@@ -1,8 +1,8 @@
+import { VueWrapper, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { Time } from '../../domain/time'
-import { mount, VueWrapper } from '@vue/test-utils'
-import TimerInput from './TimeInput.vue'
 import { assertInputValue } from '../../test_utils/assert'
+import TimerInput from './TimeInput.vue'
 
 describe('TimerInput', () => {
   it('should display time according to modelValue', () => {

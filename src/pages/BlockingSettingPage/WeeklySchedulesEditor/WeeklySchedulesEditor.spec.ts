@@ -1,14 +1,14 @@
+import { VueWrapper, flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 
-import WeeklySchedulesEditor from './index.vue'
+import { BrowsingRules } from '@/domain/browsing_rules'
 import { Weekday, WeeklySchedule } from '@/domain/schedules'
 import { Time } from '@/domain/time'
-import { BrowsingRules } from '@/domain/browsing_rules'
 import { setUpListener } from '@/test_utils/listener'
 import { CurrentDateService } from '../../../infra/current_date'
+import { assertCheckboxValue, assertSelectorInputValue } from '../../../test_utils/assert'
 import { dataTestSelector } from '../../../test_utils/selector'
-import { assertSelectorInputValue, assertCheckboxValue } from '../../../test_utils/assert'
+import WeeklySchedulesEditor from './index.vue'
 
 describe('WeeklySchedulesEditor', () => {
   it('should render weekday checkboxes properly', async () => {

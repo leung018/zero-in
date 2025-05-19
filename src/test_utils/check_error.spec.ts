@@ -1,6 +1,6 @@
+import { AssertionError } from 'assert'
 import { describe, expect, it } from 'vitest'
 import { assertToThrowError } from './check_error'
-import { AssertionError } from 'assert'
 
 class AError extends Error {}
 class BError extends Error {}

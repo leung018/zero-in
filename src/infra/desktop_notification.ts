@@ -1,5 +1,5 @@
-import { ChromeDesktopNotifier } from './chrome/desktop_notification'
 import type { ActionService } from './action'
+import { ChromeDesktopNotifier } from './chrome/desktop_notification'
 
 export interface DesktopNotifier {
   triggerNotification: (notificationId: string, buttons: { title: string }[]) => void

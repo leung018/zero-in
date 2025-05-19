@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { BlockingTimerIntegrationStorageService } from '@/domain/blocking_timer_integration/storage'
 import { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { WeeklyScheduleStorageService } from '@/domain/schedules/storage'
-import ContentTemplate from '../components/ContentTemplate.vue'
-import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
-import WeeklySchedulesEditor from './WeeklySchedulesEditor/index.vue'
-import TimerIntegrationSetting from './TimerIntegrationSetting.vue'
-import { BlockingTimerIntegrationStorageService } from '@/domain/blocking_timer_integration/storage'
 import { UpdateSuccessNotifierService } from '@/infra/chrome/update_success_notifier'
 import type { ClientPort } from '@/service_workers/listener'
+import ContentTemplate from '../components/ContentTemplate.vue'
+import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
+import TimerIntegrationSetting from './TimerIntegrationSetting.vue'
+import WeeklySchedulesEditor from './WeeklySchedulesEditor/index.vue'
 
 const { port } = defineProps<{
   port: ClientPort

@@ -1,6 +1,6 @@
-import { FakeStorage, StorageWrapper, type Storage } from '../../../infra/storage'
 import type { FocusSessionRecord } from '.'
 import { ChromeStorageProvider } from '../../../infra/chrome/storage'
+import { FakeStorage, StorageWrapper, type Storage } from '../../../infra/storage'
 import {
   deserializeFocusSessionRecord,
   serializeFocusSessionRecord,

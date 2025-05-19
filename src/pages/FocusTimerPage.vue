@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { ClientPort } from '@/service_workers/listener'
+import { formatNumber, getNumberWithOrdinal } from '@/utils/format'
 import { computed, onBeforeMount, ref } from 'vue'
 import type { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { Duration } from '../domain/timer/duration'
 import { TimerStage } from '../domain/timer/stage'
 import { WorkRequestName } from '../service_workers/request'
 import { WorkResponseName } from '../service_workers/response'
-import { formatNumber, getNumberWithOrdinal } from '@/utils/format'
 
 const { port, timerConfigStorageService } = defineProps<{
   port: ClientPort

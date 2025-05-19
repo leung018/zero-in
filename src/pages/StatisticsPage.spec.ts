@@ -1,16 +1,16 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
+import { Time } from '../domain/time'
 import { TimerConfig } from '../domain/timer/config'
 import { Duration } from '../domain/timer/duration'
 import { newFocusSessionRecord, type FocusSessionRecord } from '../domain/timer/record'
-import { Time } from '../domain/time'
 import { FakeActionService } from '../infra/action'
 import { CurrentDateService } from '../infra/current_date'
-import { setUpListener } from '../test_utils/listener'
-import StatisticsPage from './StatisticsPage.vue'
-import { dataTestSelector } from '../test_utils/selector'
 import { assertSelectorInputValue } from '../test_utils/assert'
+import { setUpListener } from '../test_utils/listener'
+import { dataTestSelector } from '../test_utils/selector'
+import StatisticsPage from './StatisticsPage.vue'
 
 describe('StatisticsPage', () => {
   it('should render saved daily reset time', async () => {

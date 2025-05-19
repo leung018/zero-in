@@ -1,13 +1,13 @@
 import { FakeBrowsingControlService, type BrowsingControlService } from '../infra/browsing_control'
+import { CurrentDateService } from '../infra/current_date'
+import { isSameDay } from '../utils/date'
+import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 import { BrowsingRulesStorageService } from './browsing_rules/storage'
 import type { WeeklySchedule } from './schedules'
 import { WeeklyScheduleStorageService } from './schedules/storage'
-import { CurrentDateService } from '../infra/current_date'
-import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
-import { TimerStage } from './timer/stage'
 import { Duration } from './timer/duration'
 import { FocusSessionRecordStorageService } from './timer/record/storage'
-import { isSameDay } from '../utils/date'
+import { TimerStage } from './timer/stage'
 
 interface TimerInfoGetter {
   getTimerInfo(): {

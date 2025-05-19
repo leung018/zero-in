@@ -1,11 +1,11 @@
+import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { TimerConfig } from '../domain/timer/config'
-import { flushPromises, mount } from '@vue/test-utils'
-import TestingConfigPage from './TestingConfigPage.vue'
 import { Duration } from '../domain/timer/duration'
-import { setUpListener } from '../test_utils/listener'
 import { assertSelectorInputValue } from '../test_utils/assert'
+import { setUpListener } from '../test_utils/listener'
 import { dataTestSelector } from '../test_utils/selector'
+import TestingConfigPage from './TestingConfigPage.vue'
 
 describe('TestingConfigPage', () => {
   it('should render timer config', async () => {

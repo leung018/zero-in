@@ -5,8 +5,8 @@ import { Duration } from '../domain/timer/duration'
 import { FakeActionService } from '../infra/action'
 import { assertSelectorCheckboxValue, assertSelectorInputValue } from '../test_utils/assert'
 import { setUpListener } from '../test_utils/listener'
-import TimerSettingPage from './TimerSettingPage.vue'
 import { dataTestSelector } from '../test_utils/selector'
+import TimerSettingPage from './TimerSettingPage.vue'
 
 describe('TimerSettingPage', () => {
   it('should render timer config properly', async () => {

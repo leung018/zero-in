@@ -1,6 +1,6 @@
+import { BrowsingRules } from '.'
 import { ChromeStorageProvider } from '../../infra/chrome/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
-import { BrowsingRules } from '.'
 import {
   deserializeBrowsingRules,
   serializeBrowsingRules,

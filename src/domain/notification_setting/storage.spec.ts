@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { NotificationSettingStorageService } from './storage'
-import config from '../../config'
 import type { NotificationSetting } from '.'
+import config from '../../config'
+import { NotificationSettingStorageService } from './storage'
 
 describe('NotificationSettingStorageService', () => {
   it('should get the default notification setting', async () => {
