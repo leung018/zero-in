@@ -24,6 +24,12 @@ export class BrowsingRules {
   withNewBlockedDomain(newDomain: string): BrowsingRules {
     return new BrowsingRules({ blockedDomains: [...this._blockedDomains, newDomain] })
   }
+
+  withRemovedBlockedDomain(domainToRemove: string): BrowsingRules {
+    return new BrowsingRules({
+      blockedDomains: this._blockedDomains.filter((domain) => domain !== domainToRemove)
+    })
+  }
 }
 
 function deduplicated(inputs: string[]): string[] {
