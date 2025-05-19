@@ -95,7 +95,7 @@ describe('NotificationPage', () => {
     scheduler.advanceTime(1000)
 
     expect(reminderTabService.getSimulatedTriggerCount()).toBe(0)
-    expect(desktopNotificationService.getSimulatedTriggerCount()).toBe(1)
+    expect(desktopNotificationService.isNotificationActive()).toBe(true)
     expect(soundService.getSimulatedTriggerCount()).toBe(0)
   })
 

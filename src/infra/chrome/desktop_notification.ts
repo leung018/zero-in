@@ -14,6 +14,10 @@ export class ChromeDesktopNotifier implements DesktopNotifier {
     })
   }
 
+  clearNotification(notificationId: string): void {
+    chrome.notifications.clear(notificationId)
+  }
+
   addButtonClickedListener(listener: (notificationId: string, buttonIndex: number) => void): void {
     chrome.notifications.onButtonClicked.addListener(listener)
   }

@@ -4,25 +4,19 @@ import type { ActionService } from './action'
 export interface DesktopNotifier {
   triggerNotification: (notificationId: string, buttons: { title: string }[]) => void
 
+  clearNotification: (notificationId: string) => void
+
   addButtonClickedListener: (
     listener: (notificationId: string, buttonIndex: number) => void
   ) => void
-
-  getSimulatedTriggerCount: () => number
 }
 
-export class FakeDesktopNotifier implements DesktopNotifier {
-  private triggerCount = 0
+export class DummyDesktopNotifier implements DesktopNotifier {
+  triggerNotification(): void {}
 
-  triggerNotification(): void {
-    this.triggerCount++
-  }
+  clearNotification(): void {}
 
   addButtonClickedListener() {}
-
-  getSimulatedTriggerCount() {
-    return this.triggerCount
-  }
 }
 
 export class DesktopNotificationService implements ActionService {
@@ -32,6 +26,8 @@ export class DesktopNotificationService implements ActionService {
 
   private desktopNotifier: DesktopNotifier
 
+  private _isNotificationActive = false
+
   static create(): DesktopNotificationService {
     return new DesktopNotificationService({
       desktopNotifier: new ChromeDesktopNotifier()
@@ -40,7 +36,7 @@ export class DesktopNotificationService implements ActionService {
 
   static createFake(): DesktopNotificationService {
     return new DesktopNotificationService({
-      desktopNotifier: new FakeDesktopNotifier()
+      desktopNotifier: new DummyDesktopNotifier()
     })
   }
 
@@ -49,8 +45,8 @@ export class DesktopNotificationService implements ActionService {
     this.desktopNotifier.addButtonClickedListener(this.buttonClickedListener)
   }
 
-  getSimulatedTriggerCount(): number {
-    return this.desktopNotifier.getSimulatedTriggerCount()
+  isNotificationActive(): boolean {
+    return this._isNotificationActive
   }
 
   trigger(): void {
@@ -59,6 +55,7 @@ export class DesktopNotificationService implements ActionService {
         title: 'Start Next'
       }
     ])
+    this._isNotificationActive = true
   }
 
   setOnClickStartNext(onClickStartNext: () => void): void {

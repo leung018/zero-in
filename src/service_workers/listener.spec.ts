@@ -220,7 +220,7 @@ describe('BackgroundListener', () => {
       },
       expected: {
         reminderTabNotificationTriggerCount: 1,
-        desktopNotificationTriggerCount: 1,
+        isDesktopNotificationActive: true,
         soundNotificationTriggerCount: 1
       }
     },
@@ -232,7 +232,7 @@ describe('BackgroundListener', () => {
       },
       expected: {
         reminderTabNotificationTriggerCount: 0,
-        desktopNotificationTriggerCount: 0,
+        isDesktopNotificationActive: false,
         soundNotificationTriggerCount: 0
       }
     }
@@ -245,7 +245,7 @@ describe('BackgroundListener', () => {
       input: NotificationSetting
       expected: {
         reminderTabNotificationTriggerCount: number
-        desktopNotificationTriggerCount: number
+        isDesktopNotificationActive: boolean
         soundNotificationTriggerCount: number
       }
     }) => {
@@ -264,7 +264,7 @@ describe('BackgroundListener', () => {
 
       expect(reminderTabService.getSimulatedTriggerCount()).toBe(0)
       expect(soundService.getSimulatedTriggerCount()).toBe(0)
-      expect(desktopNotificationService.getSimulatedTriggerCount()).toBe(0)
+      expect(desktopNotificationService.isNotificationActive()).toBe(false)
 
       clientPort.send({ name: WorkRequestName.START_TIMER })
       scheduler.advanceTime(3000)
@@ -273,8 +273,8 @@ describe('BackgroundListener', () => {
         expected.reminderTabNotificationTriggerCount
       )
       expect(soundService.getSimulatedTriggerCount()).toBe(expected.soundNotificationTriggerCount)
-      expect(desktopNotificationService.getSimulatedTriggerCount()).toBe(
-        expected.desktopNotificationTriggerCount
+      expect(desktopNotificationService.isNotificationActive()).toBe(
+        expected.isDesktopNotificationActive
       )
     }
   )
