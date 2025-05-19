@@ -21,8 +21,4 @@ export class ChromeDesktopNotifier implements DesktopNotifier {
   addButtonClickedListener(listener: (notificationId: string, buttonIndex: number) => void): void {
     chrome.notifications.onButtonClicked.addListener(listener)
   }
-
-  getSimulatedTriggerCount(): number {
-    return 0
-  }
 }
