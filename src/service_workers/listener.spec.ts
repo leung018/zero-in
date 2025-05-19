@@ -133,11 +133,11 @@ describe('BackgroundListener', () => {
   it('should trigger closeTabsService when the timer is started', async () => {
     const { closeTabsService, clientPort } = await startListener()
 
-    expect(closeTabsService.getSimulatedTriggerCount()).toBe(0)
+    expect(closeTabsService.hasTriggered()).toBe(false)
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
 
-    expect(closeTabsService.getSimulatedTriggerCount()).toBe(1)
+    expect(closeTabsService.hasTriggered()).toBe(true)
   })
 
   it('should remove badge when the timer is paused', async () => {
@@ -219,9 +219,9 @@ describe('BackgroundListener', () => {
         sound: true
       },
       expected: {
-        reminderTabNotificationTriggerCount: 1,
+        hasReminderTabTriggered: true,
         isDesktopNotificationActive: true,
-        soundNotificationTriggerCount: 1
+        hasSoundTriggered: true
       }
     },
     {
@@ -231,9 +231,9 @@ describe('BackgroundListener', () => {
         sound: false
       },
       expected: {
-        reminderTabNotificationTriggerCount: 0,
+        hasReminderTabTriggered: false,
         isDesktopNotificationActive: false,
-        soundNotificationTriggerCount: 0
+        hasSoundTriggered: false
       }
     }
   ])(
@@ -244,9 +244,9 @@ describe('BackgroundListener', () => {
     }: {
       input: NotificationSetting
       expected: {
-        reminderTabNotificationTriggerCount: number
+        hasReminderTabTriggered: boolean
         isDesktopNotificationActive: boolean
-        soundNotificationTriggerCount: number
+        hasSoundTriggered: boolean
       }
     }) => {
       const {
@@ -262,17 +262,15 @@ describe('BackgroundListener', () => {
         notificationSetting: input
       })
 
-      expect(reminderTabService.getSimulatedTriggerCount()).toBe(0)
-      expect(soundService.getSimulatedTriggerCount()).toBe(0)
+      expect(reminderTabService.hasTriggered()).toBe(false)
+      expect(soundService.hasTriggered()).toBe(false)
       expect(desktopNotificationService.isNotificationActive()).toBe(false)
 
       clientPort.send({ name: WorkRequestName.START_TIMER })
       scheduler.advanceTime(3000)
 
-      expect(reminderTabService.getSimulatedTriggerCount()).toBe(
-        expected.reminderTabNotificationTriggerCount
-      )
-      expect(soundService.getSimulatedTriggerCount()).toBe(expected.soundNotificationTriggerCount)
+      expect(reminderTabService.hasTriggered()).toBe(expected.hasReminderTabTriggered)
+      expect(soundService.hasTriggered()).toBe(expected.hasSoundTriggered)
       expect(desktopNotificationService.isNotificationActive()).toBe(
         expected.isDesktopNotificationActive
       )

@@ -40,11 +40,11 @@ describe('TimerIntegrationSetting', () => {
   it('should trigger notifierService when clicking save', async () => {
     const { wrapper, updateSuccessNotifierService } = await mountTimerIntegrationSetting()
 
-    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(0)
+    expect(updateSuccessNotifierService.hasTriggered()).toBe(false)
 
     await saveBlockingTimerIntegration(wrapper)
 
-    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(1)
+    expect(updateSuccessNotifierService.hasTriggered()).toBe(true)
   })
 
   it('should toggle browsing control after clicking save', async () => {

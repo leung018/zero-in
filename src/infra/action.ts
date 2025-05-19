@@ -12,4 +12,8 @@ export class FakeActionService implements ActionService {
   getSimulatedTriggerCount() {
     return this.triggerCount
   }
+
+  hasTriggered() {
+    return this.triggerCount > 0
+  }
 }

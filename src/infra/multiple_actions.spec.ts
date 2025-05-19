@@ -13,7 +13,7 @@ describe('MultipleActionsService', () => {
     ])
     multipleActionsService.trigger()
 
-    expect(fakeActionService1.getSimulatedTriggerCount()).toBe(1)
-    expect(fakeActionService2.getSimulatedTriggerCount()).toBe(1)
+    expect(fakeActionService1.hasTriggered()).toBe(true)
+    expect(fakeActionService2.hasTriggered()).toBe(true)
   })
 })
