@@ -32,11 +32,11 @@ describe('StatisticsPage', () => {
   it('should trigger notifierService after clicked save', async () => {
     const { wrapper, updateSuccessNotifierService } = await mountStatisticsPage()
 
-    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(0)
+    expect(updateSuccessNotifierService.hasTriggered()).toBe(false)
 
     await saveTime(wrapper, '15:05')
 
-    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(1)
+    expect(updateSuccessNotifierService.hasTriggered()).toBe(true)
   })
 
   it('should render stats table with rows represent last 7 days', async () => {

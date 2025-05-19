@@ -133,11 +133,11 @@ describe('BackgroundListener', () => {
   it('should trigger closeTabsService when the timer is started', async () => {
     const { closeTabsService, clientPort } = await startListener()
 
-    expect(closeTabsService.getSimulatedTriggerCount()).toBe(0)
+    expect(closeTabsService.hasTriggered()).toBe(false)
 
     clientPort.send({ name: WorkRequestName.START_TIMER })
 
-    expect(closeTabsService.getSimulatedTriggerCount()).toBe(1)
+    expect(closeTabsService.hasTriggered()).toBe(true)
   })
 
   it('should remove badge when the timer is paused', async () => {
@@ -219,9 +219,9 @@ describe('BackgroundListener', () => {
         sound: true
       },
       expected: {
-        reminderTabNotificationTriggerCount: 1,
-        desktopNotificationTriggerCount: 1,
-        soundNotificationTriggerCount: 1
+        hasReminderTabTriggered: true,
+        isDesktopNotificationActive: true,
+        hasSoundTriggered: true
       }
     },
     {
@@ -231,9 +231,9 @@ describe('BackgroundListener', () => {
         sound: false
       },
       expected: {
-        reminderTabNotificationTriggerCount: 0,
-        desktopNotificationTriggerCount: 0,
-        soundNotificationTriggerCount: 0
+        hasReminderTabTriggered: false,
+        isDesktopNotificationActive: false,
+        hasSoundTriggered: false
       }
     }
   ])(
@@ -244,9 +244,9 @@ describe('BackgroundListener', () => {
     }: {
       input: NotificationSetting
       expected: {
-        reminderTabNotificationTriggerCount: number
-        desktopNotificationTriggerCount: number
-        soundNotificationTriggerCount: number
+        hasReminderTabTriggered: boolean
+        isDesktopNotificationActive: boolean
+        hasSoundTriggered: boolean
       }
     }) => {
       const {
@@ -262,19 +262,17 @@ describe('BackgroundListener', () => {
         notificationSetting: input
       })
 
-      expect(reminderTabService.getSimulatedTriggerCount()).toBe(0)
-      expect(soundService.getSimulatedTriggerCount()).toBe(0)
-      expect(desktopNotificationService.getSimulatedTriggerCount()).toBe(0)
+      expect(reminderTabService.hasTriggered()).toBe(false)
+      expect(soundService.hasTriggered()).toBe(false)
+      expect(desktopNotificationService.isNotificationActive()).toBe(false)
 
       clientPort.send({ name: WorkRequestName.START_TIMER })
       scheduler.advanceTime(3000)
 
-      expect(reminderTabService.getSimulatedTriggerCount()).toBe(
-        expected.reminderTabNotificationTriggerCount
-      )
-      expect(soundService.getSimulatedTriggerCount()).toBe(expected.soundNotificationTriggerCount)
-      expect(desktopNotificationService.getSimulatedTriggerCount()).toBe(
-        expected.desktopNotificationTriggerCount
+      expect(reminderTabService.hasTriggered()).toBe(expected.hasReminderTabTriggered)
+      expect(soundService.hasTriggered()).toBe(expected.hasSoundTriggered)
+      expect(desktopNotificationService.isNotificationActive()).toBe(
+        expected.isDesktopNotificationActive
       )
     }
   )
@@ -428,6 +426,28 @@ describe('BackgroundListener', () => {
 
     expect(listener.getTimerState().isRunning).toBe(true)
     expect(listener.getTimerState().stage).toBe(TimerStage.SHORT_BREAK)
+  })
+
+  it('should timer start remove desktop notification', async () => {
+    const { scheduler, clientPort, desktopNotificationService } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 1 })
+      }),
+      notificationSetting: newTestNotificationSetting({
+        desktopNotification: true
+      })
+    })
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(1000)
+    await flushPromises()
+
+    expect(desktopNotificationService.isNotificationActive()).toBe(true)
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
+    expect(desktopNotificationService.isNotificationActive()).toBe(false)
   })
 
   it('should addBlockedDomain update the browsing rules', async () => {

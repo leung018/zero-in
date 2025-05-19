@@ -123,12 +123,12 @@ describe('TimerSettingPage', () => {
   it('should trigger notifierService after clicked save', async () => {
     const { wrapper, updateSuccessNotifierService } = await mountPage()
 
-    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(0)
+    expect(updateSuccessNotifierService.hasTriggered()).toBe(false)
 
     await wrapper.find(dataTestSelector('save-button')).trigger('click')
     await flushPromises()
 
-    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(1)
+    expect(updateSuccessNotifierService.hasTriggered()).toBe(true)
   })
 })
 

@@ -184,6 +184,7 @@ export class BackgroundListener {
     this.timer.setOnTimerStart(() => {
       this.closeTabsService.trigger()
       this.toggleBrowsingRules()
+      this.desktopNotificationService.clear()
     })
   }
 

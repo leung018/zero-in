@@ -4,25 +4,19 @@ import type { ActionService } from './action'
 export interface DesktopNotifier {
   triggerNotification: (notificationId: string, buttons: { title: string }[]) => void
 
+  clearNotification: (notificationId: string) => void
+
   addButtonClickedListener: (
     listener: (notificationId: string, buttonIndex: number) => void
   ) => void
-
-  getSimulatedTriggerCount: () => number
 }
 
-export class FakeDesktopNotifier implements DesktopNotifier {
-  private triggerCount = 0
+export class DummyDesktopNotifier implements DesktopNotifier {
+  triggerNotification(): void {}
 
-  triggerNotification(): void {
-    this.triggerCount++
-  }
+  clearNotification(): void {}
 
   addButtonClickedListener() {}
-
-  getSimulatedTriggerCount() {
-    return this.triggerCount
-  }
 }
 
 export class DesktopNotificationService implements ActionService {
@@ -32,6 +26,8 @@ export class DesktopNotificationService implements ActionService {
 
   private desktopNotifier: DesktopNotifier
 
+  private _isNotificationActive = false
+
   static create(): DesktopNotificationService {
     return new DesktopNotificationService({
       desktopNotifier: new ChromeDesktopNotifier()
@@ -40,7 +36,7 @@ export class DesktopNotificationService implements ActionService {
 
   static createFake(): DesktopNotificationService {
     return new DesktopNotificationService({
-      desktopNotifier: new FakeDesktopNotifier()
+      desktopNotifier: new DummyDesktopNotifier()
     })
   }
 
@@ -49,8 +45,12 @@ export class DesktopNotificationService implements ActionService {
     this.desktopNotifier.addButtonClickedListener(this.buttonClickedListener)
   }
 
-  getSimulatedTriggerCount(): number {
-    return this.desktopNotifier.getSimulatedTriggerCount()
+  /**
+   * It just indicates that the notification is triggered and haven't being cleared programmatically.
+   * When it is active, doesn't meant that the notification must be shown. User may manually close it.
+   */
+  isNotificationActive(): boolean {
+    return this._isNotificationActive
   }
 
   trigger(): void {
@@ -59,6 +59,12 @@ export class DesktopNotificationService implements ActionService {
         title: 'Start Next'
       }
     ])
+    this._isNotificationActive = true
+  }
+
+  clear(): void {
+    this.desktopNotifier.clearNotification(NOTIFICATION_ID)
+    this._isNotificationActive = false
   }
 
   setOnClickStartNext(onClickStartNext: () => void): void {

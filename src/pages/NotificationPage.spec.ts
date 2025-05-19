@@ -94,19 +94,19 @@ describe('NotificationPage', () => {
     clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
 
-    expect(reminderTabService.getSimulatedTriggerCount()).toBe(0)
-    expect(desktopNotificationService.getSimulatedTriggerCount()).toBe(1)
-    expect(soundService.getSimulatedTriggerCount()).toBe(0)
+    expect(reminderTabService.hasTriggered()).toBe(false)
+    expect(desktopNotificationService.isNotificationActive()).toBe(true)
+    expect(soundService.hasTriggered()).toBe(false)
   })
 
-  it('should trigger notifierService after save', async () => {
+  it('should trigger updateSuccessNotifierService after save', async () => {
     const { wrapper, updateSuccessNotifierService } = await mountPage()
 
-    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(0)
+    expect(updateSuccessNotifierService.hasTriggered()).toBe(false)
 
     await saveNotificationSetting(wrapper)
 
-    expect(updateSuccessNotifierService.getSimulatedTriggerCount()).toBe(1)
+    expect(updateSuccessNotifierService.hasTriggered()).toBe(true)
   })
 })
 
