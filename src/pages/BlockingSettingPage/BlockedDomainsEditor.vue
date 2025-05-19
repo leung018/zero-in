@@ -27,7 +27,7 @@ async function onClickAdd() {
 }
 
 async function onClickRemove(domain: string) {
-  const newBrowsingRules = browsingRules.value.withRemovedBlockedDomain(domain)
+  const newBrowsingRules = browsingRules.value.withoutBlockedDomain(domain)
   await updateBrowsingRules(newBrowsingRules)
 }
 
