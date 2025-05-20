@@ -23,7 +23,7 @@ chrome.runtime.onInstalled.addListener(() => {
   })
   chrome.contextMenus.create({
     id: MenuItemId.ADD_BLOCKED_DOMAIN,
-    title: 'Block current website',
+    title: 'Add site to blocked domains',
     documentUrlPatterns: ['http://*/*', 'https://*/*']
   })
 })
