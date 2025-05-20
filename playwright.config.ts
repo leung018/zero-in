@@ -11,6 +11,7 @@ import process from 'node:process'
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  fullyParallel: true,
   testDir: './e2e',
   /* Maximum time one test can run for. */
   timeout: 30 * 1000,

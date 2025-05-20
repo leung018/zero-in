@@ -3,8 +3,6 @@ import { Page } from '@playwright/test'
 import { formatNumber } from '../src/utils/format.js'
 import { expect, test } from './fixtures.js'
 
-test.describe.configure({ mode: 'parallel' })
-
 test('should able to persist blocked domains and update ui', async ({ page, extensionId }) => {
   await goToBlockingSettingPage(page, extensionId)
 
