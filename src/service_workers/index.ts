@@ -1,4 +1,4 @@
-import { ChromeNewTabService } from '../infra/chrome/new_tab'
+import { ChromeNewTabService } from '../infra/browser/new_tab'
 import { BackgroundListener } from './listener'
 import { MenuItemId } from './menu_item_id'
 
@@ -23,7 +23,7 @@ chrome.runtime.onInstalled.addListener(() => {
   })
   chrome.contextMenus.create({
     id: MenuItemId.ADD_BLOCKED_DOMAIN,
-    title: 'Block current website',
+    title: 'Add site to blocked domains',
     documentUrlPatterns: ['http://*/*', 'https://*/*']
   })
 })

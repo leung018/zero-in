@@ -1,6 +1,6 @@
 import type { BlockingTimerIntegration } from '.'
 import config from '../../config'
-import { ChromeStorageProvider } from '../../infra/chrome/storage'
+import { ChromeStorageProvider } from '../../infra/browser/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import type { SerializedBlockingTimerIntegration } from './serialize'
 

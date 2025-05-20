@@ -1,6 +1,6 @@
 import type { ActionService } from '../action'
 
-export class SoundService implements ActionService {
+export class ChromeSoundService implements ActionService {
   // Require manual testing
 
   trigger(): void {
