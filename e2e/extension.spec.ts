@@ -1,5 +1,6 @@
 /* eslint-disable playwright/expect-expect */
 import { Page } from '@playwright/test'
+import { formatNumber } from '../src/utils/format.js'
 import { expect, test } from './fixtures.js'
 
 test.describe.configure({ mode: 'parallel' })
@@ -409,9 +410,4 @@ async function goToTestingConfigPage(page: Page, extensionId: string) {
 
 async function goToNotificationPage(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/options.html#/notification`)
-}
-
-// TODO: copy from src/util.ts and find way to share the code between e2e and src, so that we can avoid duplication
-function formatNumber(num: number, minDigits: number = 2): string {
-  return num.toLocaleString(undefined, { minimumIntegerDigits: minDigits })
 }
