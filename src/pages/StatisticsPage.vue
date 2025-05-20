@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UpdateSuccessNotifierService } from '@/infra/chrome/update_success_notifier'
+import type { UpdateSuccessNotifierService } from '@/infra/browser/update_success_notifier'
 import type { ClientPort } from '@/service_workers/listener'
 import { getMostRecentDate } from '@/utils/date'
 import { onBeforeMount, ref } from 'vue'

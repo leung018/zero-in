@@ -1,4 +1,4 @@
-import { ChromeNewTabService } from '../infra/chrome/new_tab'
+import { ChromeNewTabService } from '../infra/browser/new_tab'
 import { BackgroundListener } from './listener'
 import { MenuItemId } from './menu_item_id'
 
