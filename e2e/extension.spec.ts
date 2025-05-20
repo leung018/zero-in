@@ -3,9 +3,7 @@ import { Page } from '@playwright/test'
 import { formatNumber } from '../src/utils/format.js'
 import { expect, test } from './fixtures.js'
 
-test.describe.configure({ mode: 'parallel' })
-
-test('should able to persist blocked domains and update ui', async ({ page, extensionId }) => {
+test('should able to persist browsing rules and update ui', async ({ page, extensionId }) => {
   await goToBlockingSettingPage(page, extensionId)
 
   // Add two domains
@@ -98,7 +96,7 @@ test('should browsing control able to unblock domain', async ({ page, extensionI
   await goToAndVerifyIsAllowed(page, 'https://google.com')
 })
 
-test('should able to persist blocking schedules and update ui', async ({ page, extensionId }) => {
+test('should able to persist weekly schedules and update ui', async ({ page, extensionId }) => {
   await goToBlockingSettingPage(page, extensionId)
 
   // Add a schedule
