@@ -6,6 +6,13 @@ if (process.argv.length < 3) {
   process.exit(1)
 }
 
+const currentBranch = execSync('git branch --show-current', { encoding: 'utf-8' }).trim()
+if (currentBranch !== 'main') {
+  console.error(`Error: Releases can only be created from the 'main' branch.`)
+  console.error(`Current branch is '${currentBranch}'.`)
+  process.exit(1)
+}
+
 const tag = process.argv[2]
 const message = `my version ${tag}`
 
