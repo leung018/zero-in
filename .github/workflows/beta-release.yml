@@ -3,8 +3,8 @@ name: Beta Release
 on:
   push:
     tags:
-      - '*-beta.*'
-      - '*-beta'
+      - 'v*-beta.*'
+      - 'v*-beta'
 jobs:
   release:
     permissions:
