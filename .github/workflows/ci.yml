@@ -2,12 +2,16 @@ on:
   push:
     branches-ignore:
       - main # Because "Require branches to be up to date before merging" is enabled for main. The checking will be completed before pull request can be merged.
-
-  # TODO: Better to add on pull request for PR from forked repository but find way to skip the check if push is triggered the CI already in same commit.
+  pull_request:
+    branches:
+      - main
 name: Continuous Integration
 jobs:
   checks:
     runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'push' ||
+      github.event.pull_request.head.repo.full_name != github.repository
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
@@ -33,6 +37,9 @@ jobs:
         run: xvfb-run yarn test:e2e
   macos-e2e:
     runs-on: macos-latest
+    if: |
+      github.event_name == 'push' ||
+      github.event.pull_request.head.repo.full_name != github.repository
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
