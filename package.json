@@ -45,7 +45,7 @@
     "eslint-plugin-vue": "^9.23.0",
     "jsdom": "^26.1.0",
     "npm-run-all2": "^6.2.0",
-    "prettier": "^3.2.5",
+    "prettier": "^3.5.3",
     "prettier-plugin-organize-imports": "^4.1.0",
     "typescript": "~5.4.0",
     "unplugin-icons": "^22.0.0",
