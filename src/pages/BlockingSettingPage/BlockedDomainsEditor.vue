@@ -18,7 +18,7 @@ onBeforeMount(async () => {
 })
 
 async function onClickAdd() {
-  const newDomainValue = newDomain.value.trim()
+  const newDomainValue = newDomain.value
   if (!newDomainValue) return
 
   const newBrowsingRules = browsingRules.value.withNewBlockedDomain(newDomainValue)
@@ -42,7 +42,7 @@ async function updateBrowsingRules(newBrowsingRules: BrowsingRules) {
   <form @submit.prevent>
     <div class="mb-3">
       <input
-        v-model="newDomain"
+        v-model.trim="newDomain"
         type="text"
         class="form-control"
         data-test="blocked-domain-input"
