@@ -45,13 +45,14 @@ class ChromePortWrapper implements Port {
   }
 
   onDisconnect(callback: () => void): void {
-    // To verify the below line, can observe the debug logging when disconnect is fired in BackgroundListener (check the log in service_worker)
+    // For how to verify below line, see comments in backgroundPort.onDisconnect in service_workers/listener.ts
     this.chromePort.onDisconnect.addListener(callback)
   }
 
   disconnect(): void {
     // Have expose this wrapper to window in a page for e2e test of retry handling. Search for window._port in e2e test for more detail.
-    // So to verify below, can call _port.disconnect() in the page console of that page and check the log in service_worker.
+    // So can call _port.disconnect() on that page to trigger this function.
+    // See comments in backgroundPort.onDisconnect in service_workers/listener.ts for how to verify the disconnect behavior.
     this.chromePort.disconnect()
   }
 }

@@ -285,7 +285,10 @@ export class BackgroundListener {
               })
               this.timerStateSubscriptionManager.broadcast(this.timer.getState())
               backgroundPort.onDisconnect(() => {
-                console.debug('Connection closed, unsubscribing timer update.')
+                // To verify the disconnect and onDisconnect behavior of port in application, can uncomment below debug log.
+                // And then see if the below log is printed when disconnect is triggered (e.g. closing timer popup will trigger disconnect)
+
+                // console.debug('Connection closed, unsubscribing timer update.')
                 this.timerStateSubscriptionManager.unsubscribe(subscriptionId)
               })
               break
