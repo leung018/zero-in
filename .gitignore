@@ -47,3 +47,6 @@ playwright-report/
 
 # Dynamically create it and therefore ignore it
 manifest.json
+
+staging/task-concentrator/
+staging/*.zip
