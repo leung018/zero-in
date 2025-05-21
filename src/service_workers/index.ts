@@ -7,8 +7,9 @@ import { MenuItemId } from './menu_item_id'
 const listener = BackgroundListener.create()
 listener.start()
 
-chrome.alarms.onAlarm.addListener((alarm) => {
-  console.debug('Alarm fired:', alarm)
+chrome.alarms.onAlarm.addListener(() => {
+  // Uncomment below and add alarm as argument above to observe the alarm firing
+  // console.debug('Alarm fired:', alarm)
   listener.toggleBrowsingRules()
 })
 chrome.alarms.create({ periodInMinutes: 0.5, when: Date.now() })
