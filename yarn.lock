@@ -1693,12 +1693,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bootstrap@npm:^5.3.3":
-  version: 5.3.3
-  resolution: "bootstrap@npm:5.3.3"
+"bootstrap@npm:^5.3.6":
+  version: 5.3.6
+  resolution: "bootstrap@npm:5.3.6"
   peerDependencies:
     "@popperjs/core": ^2.11.8
-  checksum: 10c0/bb68ca7b763977b9cce40cb5b8c676ae19a716d2f5d15009fa7bdbcec9dea426968e3cb748fbed7592fbf10edd7c749aea841c2920996a7c1aa5e0a6e2d4c2ad
+  checksum: 10c0/1b3f8f4f265463b3cd6aece84135b521ff55f3225a5c16c6981fdd8fb2bfb53b35b0815bff63382e5c83f6d537c017ae8392afe34366d5d547e4fd507d086e1c
   languageName: node
   linkType: hard
 
@@ -5507,7 +5507,7 @@ __metadata:
     "@vue/eslint-config-typescript": "npm:^13.0.0"
     "@vue/test-utils": "npm:^2.4.6"
     "@vue/tsconfig": "npm:^0.5.1"
-    bootstrap: "npm:^5.3.3"
+    bootstrap: "npm:^5.3.6"
     bootstrap-vue-next: "npm:^0.24.23"
     chrome-types: "npm:^0.1.334"
     eslint: "npm:^8.57.0"
