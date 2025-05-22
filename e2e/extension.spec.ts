@@ -180,7 +180,7 @@ test('should close tab function properly after clicking start on reminder page',
 
   await page.evaluate(() => {
     //  Add this to make sure e2e test can catch the bug of start button not working when the port is disconnected
-    // @ts-ignore
+    // @ts-expect-error ReminderPage added _port to window
     window._port.disconnect()
   })
 
@@ -239,7 +239,7 @@ test('should able to persist the focus sessions record and show it on statistics
 
   try {
     await expect(results.nth(0)).toHaveText('1')
-  } catch (e) {
+  } catch {
     // To prevent corner case that after completed the focus session, it passed the daily reset time and counted it as record of yesterday
     // eslint-disable-next-line playwright/no-conditional-expect
     await expect(results.nth(1)).toHaveText('1')
