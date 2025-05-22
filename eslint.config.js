@@ -11,7 +11,7 @@ export default typescriptEslint.config(
     extends: [
       eslint.configs.recommended,
       ...typescriptEslint.configs.recommended,
-      ...eslintPluginVue.configs['flat/recommended']
+      ...eslintPluginVue.configs['flat/essential']
     ],
     files: ['**/*.{ts,vue}'],
     languageOptions: {
