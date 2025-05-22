@@ -920,13 +920,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rushstack/eslint-patch@npm:^1.11.0":
-  version: 1.11.0
-  resolution: "@rushstack/eslint-patch@npm:1.11.0"
-  checksum: 10c0/abea8d8cf2f4f50343f74abd6a8173c521ddd09b102021f5aa379ef373c40af5948b23db0e87eca1682e559e09d97d3f0c48ea71edad682c6bf72b840c8675b3
-  languageName: node
-  linkType: hard
-
 "@sindresorhus/is@npm:^5.2.0":
   version: 5.6.0
   resolution: "@sindresorhus/is@npm:5.6.0"
@@ -5567,7 +5560,6 @@ __metadata:
     "@iconify-json/ic": "npm:^1.2.2"
     "@playwright/test": "npm:^1.48.0"
     "@popperjs/core": "npm:^2.11.8"
-    "@rushstack/eslint-patch": "npm:^1.11.0"
     "@tsconfig/node20": "npm:^20.1.4"
     "@types/bootstrap": "npm:^5"
     "@types/jsdom": "npm:^21.1.7"
