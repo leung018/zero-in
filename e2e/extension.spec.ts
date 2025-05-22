@@ -180,7 +180,7 @@ test('should close tab function properly after clicking start on reminder page',
 
   await page.evaluate(() => {
     //  Add this to make sure e2e test can catch the bug of start button not working when the port is disconnected
-    // @ts-ignore
+    // @ts-expect-error ReminderPage added _port to window
     window._port.disconnect()
   })
 

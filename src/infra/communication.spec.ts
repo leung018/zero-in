@@ -50,7 +50,7 @@ describe('FakeCommunicationManager', () => {
     clientPort.disconnect()
 
     clientPort.send('Hi')
-    // @ts-ignore Below variable should be assigned in above callback. So disable the type check for this line
+    // @ts-expect-error Below variable should be assigned in above callback. So disable the type check for this line
     backgroundPort.send('Hello')
 
     expect(lastClientReceivedMsg).toBeNull()
