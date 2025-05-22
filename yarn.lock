@@ -2766,18 +2766,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-playwright@npm:^1.6.2":
-  version: 1.6.2
-  resolution: "eslint-plugin-playwright@npm:1.6.2"
+"eslint-plugin-playwright@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "eslint-plugin-playwright@npm:2.2.0"
   dependencies:
     globals: "npm:^13.23.0"
   peerDependencies:
     eslint: ">=8.40.0"
-    eslint-plugin-jest: ">=25"
-  peerDependenciesMeta:
-    eslint-plugin-jest:
-      optional: true
-  checksum: 10c0/0785b7031507699eac6a45fdcd90705d9759d5943a4033354b735ae856c9d71345ecacb6a7ff0c4cd0e24f523e9d59dee7081dc96c7b5c492fcbed77496a0a19
+  checksum: 10c0/508b817ff71ae9c9dbd07a40b11b5f81804b3a143e45d9397aa98a72dcde99527e473808117dbd5bbf6ef82666a76635e830f654a4628c1576628ed1ed512ee2
   languageName: node
   linkType: hard
 
@@ -5723,7 +5719,7 @@ __metadata:
     chrome-types: "npm:^0.1.334"
     eslint: "npm:^9.27.0"
     eslint-config-prettier: "npm:^10.1.5"
-    eslint-plugin-playwright: "npm:^1.6.2"
+    eslint-plugin-playwright: "npm:^2.2.0"
     eslint-plugin-vue: "npm:^10.1.0"
     globals: "npm:^16.1.0"
     jsdom: "npm:^26.1.0"
