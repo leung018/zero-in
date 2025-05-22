@@ -920,10 +920,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rushstack/eslint-patch@npm:^1.8.0":
-  version: 1.10.4
-  resolution: "@rushstack/eslint-patch@npm:1.10.4"
-  checksum: 10c0/de312bd7a3cb0f313c9720029eb719d8762fe54946cce2d33ac142b1cbb5817c4a5a92518dfa476c26311602d37f5a8f7caa90a0c73e3d6a56f9a05d2799c172
+"@rushstack/eslint-patch@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "@rushstack/eslint-patch@npm:1.11.0"
+  checksum: 10c0/abea8d8cf2f4f50343f74abd6a8173c521ddd09b102021f5aa379ef373c40af5948b23db0e87eca1682e559e09d97d3f0c48ea71edad682c6bf72b840c8675b3
   languageName: node
   linkType: hard
 
@@ -5567,7 +5567,7 @@ __metadata:
     "@iconify-json/ic": "npm:^1.2.2"
     "@playwright/test": "npm:^1.48.0"
     "@popperjs/core": "npm:^2.11.8"
-    "@rushstack/eslint-patch": "npm:^1.8.0"
+    "@rushstack/eslint-patch": "npm:^1.11.0"
     "@tsconfig/node20": "npm:^20.1.4"
     "@types/bootstrap": "npm:^5"
     "@types/jsdom": "npm:^21.1.7"
