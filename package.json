@@ -43,7 +43,7 @@
     "chrome-types": "^0.1.334",
     "eslint": "^9.27.0",
     "eslint-plugin-playwright": "^1.6.2",
-    "eslint-plugin-vue": "^9.23.0",
+    "eslint-plugin-vue": "^10.1.0",
     "jsdom": "^26.1.0",
     "npm-run-all2": "^6.2.0",
     "prettier": "^3.5.3",
