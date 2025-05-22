@@ -12,6 +12,9 @@ const compat = new FlatCompat({
 
 module.exports = defineConfig([
   {
+    ignores: ['dist/**', 'staging/**', 'eslint.config.cjs']
+  },
+  {
     extends: compat.extends(
       'plugin:vue/vue3-essential',
       'eslint:recommended',
