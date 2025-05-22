@@ -13,7 +13,7 @@
     "build-only": "rm -rf dist && yarn build-manifest && vite build",
     "build-and-e2e": "yarn build-only && yarn test:e2e",
     "type-check": "vue-tsc --build --force",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-pattern '.gitignore'",
     "format": "prettier --write .",
     "format-check": "prettier --check ."
   },
@@ -25,9 +25,10 @@
     "vue": "^3.5.13"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.27.0",
     "@iconify-json/ic": "^1.2.2",
     "@playwright/test": "^1.48.0",
-    "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
     "@types/bootstrap": "^5",
     "@types/jsdom": "^21.1.7",
@@ -40,7 +41,7 @@
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.5.1",
     "chrome-types": "^0.1.334",
-    "eslint": "^8.57.0",
+    "eslint": "^9.27.0",
     "eslint-plugin-playwright": "^1.6.2",
     "eslint-plugin-vue": "^9.23.0",
     "jsdom": "^26.1.0",
