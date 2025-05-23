@@ -55,7 +55,26 @@ onBeforeMount(async () => {
   port.send({
     name: WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE
   })
+
+  keepAlive(port)
 })
+
+function keepAlive(port: ClientPort) {
+  // Don't plan to automated test this part because it doesn't have obvious testable impact
+  // Add this for trying to keep the connection alive because before that I found that statistics page closed the connection rarely and could not receive
+  // the FOCUS_SESSION_RECORDS_UPDATED from the service worker.
+
+  // Hope this will help but I am not 100% sure.
+
+  setInterval(
+    () => {
+      port.send({
+        name: WorkRequestName.KEEP_ALIVE
+      })
+    },
+    1000 * 60 * 5
+  )
+}
 
 async function setStats(dailyResetTime: Time) {
   const records = await focusSessionRecordStorageService.getAll()
