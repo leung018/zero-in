@@ -1,8 +1,27 @@
+export interface CommunicationManager {
+  clientConnect(): Port
+  onNewClientConnect(callback: (backgroundPort: Port) => void): void
+}
+
 export interface Port<OutgoingMessage = any, IncomingMessage = any> {
   send(message: OutgoingMessage): void
   onMessage(callback: (message: IncomingMessage) => void): void
   onDisconnect(callback: () => void): void
   disconnect(): void
+}
+
+export class FakeCommunicationManager implements CommunicationManager {
+  private callback: (backgroundPort: Port) => void = () => {}
+
+  clientConnect() {
+    const [clientPort, backgroundPort] = FakePort.createPaired()
+    this.callback(backgroundPort)
+    return clientPort
+  }
+
+  onNewClientConnect(callback: (backgroundPort: Port) => void) {
+    this.callback = callback
+  }
 }
 
 class FakePort implements Port {
@@ -62,24 +81,5 @@ class MyEventEmitter {
 
   removeAllListeners(event: string) {
     this.listeners[event] = []
-  }
-}
-
-export interface CommunicationManager {
-  clientConnect(): Port
-  onNewClientConnect(callback: (backgroundPort: Port) => void): void
-}
-
-export class FakeCommunicationManager implements CommunicationManager {
-  private callback: (backgroundPort: Port) => void = () => {}
-
-  clientConnect() {
-    const [clientPort, backgroundPort] = FakePort.createPaired()
-    this.callback(backgroundPort)
-    return clientPort
-  }
-
-  onNewClientConnect(callback: (backgroundPort: Port) => void) {
-    this.callback = callback
   }
 }
