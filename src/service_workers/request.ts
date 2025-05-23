@@ -8,7 +8,8 @@ export enum WorkRequestName {
   RESTART_LONG_BREAK,
   LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE,
   RESET_TIMER_CONFIG,
-  RESET_NOTIFICATION
+  RESET_NOTIFICATION,
+  KEEP_ALIVE
 }
 
 export type RestartNthPayload = {
@@ -47,4 +48,7 @@ export type WorkRequest =
     }
   | {
       name: WorkRequestName.RESET_NOTIFICATION
+    }
+  | {
+      name: WorkRequestName.KEEP_ALIVE
     }
