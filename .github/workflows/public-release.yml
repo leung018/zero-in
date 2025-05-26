@@ -1,10 +1,9 @@
-name: Beta Release
+name: Public Release
 
 on:
   push:
     tags:
-      - 'v*-beta.*'
-      - 'v*-beta'
+      - 'v*'
 jobs:
   release:
     permissions:
@@ -13,7 +12,6 @@ jobs:
     env:
       NAME: Task Concentrator BETA
       TAG_NAME: ${{ github.ref_name }}
-      DESCRIPTION: THIS EXTENSION IS FOR BETA TESTING
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
@@ -39,5 +37,4 @@ jobs:
         with:
           tag_name: ${{ env.TAG_NAME  }}
           files: task-concentrator-${{ env.TAG_NAME  }}.zip
-          prerelease: true
           fail_on_unmatched_files: true
