@@ -8,6 +8,7 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     env:
+      NAME: Task Concentrator DEV
       TAG_NAME: dev-latest
     steps:
       - uses: actions/checkout@v4
