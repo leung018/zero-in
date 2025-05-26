@@ -5,7 +5,8 @@ const manifestConfig = {
   manifest_version: 3,
   minimum_chrome_version: '114',
   name: process.env.NAME || 'Task Concentrator',
-  description: process.env.DESCRIPTION || 'TODO: Write a description',
+  description:
+    'Helps you stay focused and productive with a customizable timer and website blocker —— perfect for work or study.',
   version: process.env.VERSION || '0.1',
   version_name: process.env.TAG_NAME || 'local',
   action: {
