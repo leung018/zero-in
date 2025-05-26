@@ -14,7 +14,7 @@ if (currentBranch !== 'main') {
 }
 
 const tag = process.argv[2]
-const message = `my version ${tag}`
+const message = `version ${tag}`
 
 try {
   console.log(`Creating tag: ${tag}`)
