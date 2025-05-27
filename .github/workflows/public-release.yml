@@ -10,7 +10,6 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     env:
-      NAME: Task Concentrator BETA
       TAG_NAME: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
