@@ -6,17 +6,18 @@
 # Change to the script directory
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
-URL="https://github.com/leung018/task-concentrator/releases/download/dev-latest/task-concentrator-dev-latest.zip"
-ZIP_FILE="task-concentrator-dev-latest.zip"
+ZIPPED_DIR="zero-in" 
+ZIP_FILE="zero-in-dev-latest.zip"
+URL="https://github.com/leung018/zero-in/releases/download/dev-latest/$ZIP_FILE" 
 
 echo "Downloading from $URL..."
 curl -L -o "$ZIP_FILE" "$URL"
 
 if unzip -t "$ZIP_FILE" > /dev/null 2>&1; then
     echo "Valid ZIP file. Updating..."
-    rm -r task-concentrator
+    rm -r $ZIPPED_DIR
     unzip -q "$ZIP_FILE"
-    echo "Update complete. Unpacked to task-concentrator directory."
+    echo "Update complete. Unpacked to $ZIPPED_DIR directory."
 else
     echo "Error: The downloaded file is not a valid ZIP archive." >&2
     exit 1
