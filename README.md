@@ -1,10 +1,10 @@
-# task-concentrator
+# zero-in
 
 ## Introduction
 
 A Chrome extension that helps users stay focused with website restriction features and a timer that supports time-based focus and break intervals.
 
-If you have interest in trying the beta version, please visit the [Chrome Web Store](https://chromewebstore.google.com/detail/task-concentrator-beta/apghmagjnjpfikmebjifaollihlpgcab) and install it on Chrome.
+If you have interest in trying the beta version, please visit the [Chrome Web Store](https://chromewebstore.google.com/detail/apghmagjnjpfikmebjifaollihlpgcab) and install it on Chrome.
 
 ## Development
 

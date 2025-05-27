@@ -7,7 +7,7 @@ export class ChromeDesktopNotifier implements DesktopNotifier {
       chrome.notifications.create(notificationId, {
         type: 'basic',
         iconUrl: chrome.runtime.getURL('icon.png'),
-        title: 'Task Concentrator',
+        title: 'Zero In',
         message: "Time's up!",
         buttons
       })
