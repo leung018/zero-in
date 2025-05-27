@@ -29,11 +29,11 @@ jobs:
         run: yarn build
       - name: Compress
         run: |
-          mv dist task-concentrator
-          zip -r task-concentrator-${{ env.TAG_NAME  }}.zip task-concentrator
+          mv dist zero-in
+          zip -r zero-in-${{ env.TAG_NAME  }}.zip zero-in
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG_NAME  }}
-          files: task-concentrator-${{ env.TAG_NAME  }}.zip
+          files: zero-in-${{ env.TAG_NAME  }}.zip
           fail_on_unmatched_files: true
