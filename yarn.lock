@@ -5617,50 +5617,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"task-concentrator@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "task-concentrator@workspace:."
-  dependencies:
-    "@eslint/eslintrc": "npm:^3.3.1"
-    "@eslint/js": "npm:^9.27.0"
-    "@iconify-json/ic": "npm:^1.2.2"
-    "@playwright/test": "npm:^1.48.0"
-    "@popperjs/core": "npm:^2.11.8"
-    "@tsconfig/node20": "npm:^20.1.4"
-    "@types/bootstrap": "npm:^5"
-    "@types/jsdom": "npm:^21.1.7"
-    "@types/node": "npm:^22.7.4"
-    "@types/uuid": "npm:^10"
-    "@vitejs/plugin-vue": "npm:^5.0.5"
-    "@vitest/coverage-v8": "npm:^3.1.4"
-    "@vue/eslint-config-typescript": "npm:^13.0.0"
-    "@vue/test-utils": "npm:^2.4.6"
-    "@vue/tsconfig": "npm:^0.5.1"
-    bootstrap: "npm:^5.3.6"
-    bootstrap-vue-next: "npm:^0.24.23"
-    chrome-types: "npm:^0.1.334"
-    eslint: "npm:^9.27.0"
-    eslint-config-prettier: "npm:^10.1.5"
-    eslint-plugin-playwright: "npm:^2.2.0"
-    eslint-plugin-vue: "npm:^10.1.0"
-    globals: "npm:^16.1.0"
-    jsdom: "npm:^26.1.0"
-    npm-run-all2: "npm:^6.2.0"
-    prettier: "npm:^3.5.3"
-    prettier-plugin-organize-imports: "npm:^4.1.0"
-    typescript: "npm:~5.4.0"
-    typescript-eslint: "npm:^8.32.1"
-    unplugin-icons: "npm:^22.0.0"
-    unplugin-vue-components: "npm:^28.0.0"
-    uuid: "npm:^10.0.0"
-    vite: "npm:^6.3.4"
-    vite-plugin-web-extension: "npm:^4.4.3"
-    vitest: "npm:^3.1.4"
-    vue: "npm:^3.5.13"
-    vue-tsc: "npm:^2.0.21"
-  languageName: unknown
-  linkType: soft
-
 "test-exclude@npm:^7.0.1":
   version: 7.0.1
   resolution: "test-exclude@npm:7.0.1"
@@ -6683,6 +6639,50 @@ __metadata:
   checksum: 10c0/dceb44c28578b31641e13695d200d34ec4ab3966a5729814d5445b194933c096b7ced71494ce53a0e8820685d1d010df8b2422e5bf2cdea7e469d97ffbea306f
   languageName: node
   linkType: hard
+
+"zero-in@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "zero-in@workspace:."
+  dependencies:
+    "@eslint/eslintrc": "npm:^3.3.1"
+    "@eslint/js": "npm:^9.27.0"
+    "@iconify-json/ic": "npm:^1.2.2"
+    "@playwright/test": "npm:^1.48.0"
+    "@popperjs/core": "npm:^2.11.8"
+    "@tsconfig/node20": "npm:^20.1.4"
+    "@types/bootstrap": "npm:^5"
+    "@types/jsdom": "npm:^21.1.7"
+    "@types/node": "npm:^22.7.4"
+    "@types/uuid": "npm:^10"
+    "@vitejs/plugin-vue": "npm:^5.0.5"
+    "@vitest/coverage-v8": "npm:^3.1.4"
+    "@vue/eslint-config-typescript": "npm:^13.0.0"
+    "@vue/test-utils": "npm:^2.4.6"
+    "@vue/tsconfig": "npm:^0.5.1"
+    bootstrap: "npm:^5.3.6"
+    bootstrap-vue-next: "npm:^0.24.23"
+    chrome-types: "npm:^0.1.334"
+    eslint: "npm:^9.27.0"
+    eslint-config-prettier: "npm:^10.1.5"
+    eslint-plugin-playwright: "npm:^2.2.0"
+    eslint-plugin-vue: "npm:^10.1.0"
+    globals: "npm:^16.1.0"
+    jsdom: "npm:^26.1.0"
+    npm-run-all2: "npm:^6.2.0"
+    prettier: "npm:^3.5.3"
+    prettier-plugin-organize-imports: "npm:^4.1.0"
+    typescript: "npm:~5.4.0"
+    typescript-eslint: "npm:^8.32.1"
+    unplugin-icons: "npm:^22.0.0"
+    unplugin-vue-components: "npm:^28.0.0"
+    uuid: "npm:^10.0.0"
+    vite: "npm:^6.3.4"
+    vite-plugin-web-extension: "npm:^4.4.3"
+    vitest: "npm:^3.1.4"
+    vue: "npm:^3.5.13"
+    vue-tsc: "npm:^2.0.21"
+  languageName: unknown
+  linkType: soft
 
 "zip-dir@npm:2.0.0":
   version: 2.0.0
