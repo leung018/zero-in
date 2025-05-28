@@ -469,6 +469,7 @@ async function startListener({
   notificationSetting = newTestNotificationSetting(),
   focusSessionRecordHouseKeepDays = 30,
   shouldPauseBlockingDuringBreaks = true,
+  shouldPauseBlockingWhenTimerIsNotRunning = false,
   browsingRules = new BrowsingRules(),
   weeklySchedules = []
 } = {}) {
@@ -478,7 +479,8 @@ async function startListener({
   })
 
   await context.blockingTimerIntegrationStorageService.save({
-    shouldPauseBlockingDuringBreaks
+    shouldPauseBlockingDuringBreaks,
+    shouldPauseBlockingWhenTimerIsNotRunning
   })
   await context.weeklyScheduleStorageService.saveAll(weeklySchedules)
   await context.browsingRulesStorageService.save(browsingRules)

@@ -254,6 +254,7 @@ async function getBrowsingRulesAfterToggling({
   ],
   currentDate = new Date(),
   shouldPauseBlockingDuringBreaks = false,
+  shouldPauseBlockingWhenTimerIsNotRunning = false,
   timerInfo = newTimerInfo(),
   focusSessionRecords = [newFocusSessionRecord()]
 } = {}) {
@@ -268,7 +269,8 @@ async function getBrowsingRulesAfterToggling({
   const browsingControlService = new FakeBrowsingControlService()
 
   const blockingTimerIntegration: BlockingTimerIntegration = {
-    shouldPauseBlockingDuringBreaks
+    shouldPauseBlockingDuringBreaks,
+    shouldPauseBlockingWhenTimerIsNotRunning
   }
   const blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake()
   await blockingTimerIntegrationStorageService.save(blockingTimerIntegration)

@@ -1,7 +1,10 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import config from '../../config'
-import type { BlockingTimerIntegration } from '../../domain/blocking_timer_integration'
+import {
+  newTestBlockingTimerIntegration,
+  type BlockingTimerIntegration
+} from '../../domain/blocking_timer_integration'
 import { BrowsingRules } from '../../domain/browsing_rules'
 import { TimerStage } from '../../domain/timer/stage'
 import { newTestTimerState } from '../../domain/timer/state'
@@ -15,7 +18,8 @@ describe('TimerIntegrationSetting', () => {
   it('should render saved setting', async () => {
     const { wrapper } = await mountTimerIntegrationSetting({
       blockingTimerIntegration: {
-        shouldPauseBlockingDuringBreaks: false
+        shouldPauseBlockingDuringBreaks: false,
+        shouldPauseBlockingWhenTimerIsNotRunning: true
       }
     })
     assertSelectorCheckboxValue(wrapper, dataTestSelector('pause-blocking-during-breaks'), false)
@@ -24,12 +28,14 @@ describe('TimerIntegrationSetting', () => {
   it('should persist setting after clicking save', async () => {
     const { wrapper, blockingTimerIntegrationStorageService } = await mountTimerIntegrationSetting({
       blockingTimerIntegration: {
-        shouldPauseBlockingDuringBreaks: false
+        shouldPauseBlockingDuringBreaks: false,
+        shouldPauseBlockingWhenTimerIsNotRunning: true
       }
     })
 
     await saveBlockingTimerIntegration(wrapper, {
-      shouldPauseBlockingDuringBreaks: true
+      shouldPauseBlockingDuringBreaks: true,
+      shouldPauseBlockingWhenTimerIsNotRunning: false
     })
 
     expect(
@@ -51,9 +57,9 @@ describe('TimerIntegrationSetting', () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
 
     const { wrapper, browsingControlService, listener } = await mountTimerIntegrationSetting({
-      blockingTimerIntegration: {
+      blockingTimerIntegration: newTestBlockingTimerIntegration({
         shouldPauseBlockingDuringBreaks: false
-      },
+      }),
       timerState: newTestTimerState({
         stage: TimerStage.SHORT_BREAK,
         isRunning: true
@@ -67,9 +73,12 @@ describe('TimerIntegrationSetting', () => {
 
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
 
-    await saveBlockingTimerIntegration(wrapper, {
-      shouldPauseBlockingDuringBreaks: true
-    })
+    await saveBlockingTimerIntegration(
+      wrapper,
+      newTestBlockingTimerIntegration({
+        shouldPauseBlockingDuringBreaks: true
+      })
+    )
 
     expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
   })
@@ -120,7 +129,8 @@ async function mountTimerIntegrationSetting({
 async function saveBlockingTimerIntegration(
   wrapper: VueWrapper,
   blockingTimerIntegration: BlockingTimerIntegration = {
-    shouldPauseBlockingDuringBreaks: false
+    shouldPauseBlockingDuringBreaks: false,
+    shouldPauseBlockingWhenTimerIsNotRunning: false
   }
 ) {
   const checkbox = wrapper.find(dataTestSelector('pause-blocking-during-breaks'))
