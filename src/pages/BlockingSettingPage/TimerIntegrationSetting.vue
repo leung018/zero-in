@@ -21,7 +21,7 @@ onBeforeMount(async () => {
 async function onClickSave() {
   await blockingTimerIntegrationStorageService.save({
     shouldPauseBlockingDuringBreaks: shouldPauseBlockingDuringBreaks.value,
-    shouldPauseBlockingWhenTimerIsNotRunning: false
+    pauseBlockingWhenTimerIdle: false
   })
   port.send({
     name: WorkRequestName.TOGGLE_BROWSING_RULES

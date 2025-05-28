@@ -94,7 +94,7 @@ export class BrowsingControlTogglingService {
   private async shouldActivateBrowsingRules(): Promise<boolean> {
     const blockingTimerIntegration = await this.blockingTimerIntegrationStorageService.get()
 
-    if (blockingTimerIntegration.shouldPauseBlockingWhenTimerIsNotRunning && !this.isRunning()) {
+    if (blockingTimerIntegration.pauseBlockingWhenTimerIdle && !this.isRunning()) {
       return false
     }
 

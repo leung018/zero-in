@@ -19,7 +19,7 @@ describe('TimerIntegrationSetting', () => {
     const { wrapper } = await mountTimerIntegrationSetting({
       blockingTimerIntegration: {
         shouldPauseBlockingDuringBreaks: false,
-        shouldPauseBlockingWhenTimerIsNotRunning: true
+        pauseBlockingWhenTimerIdle: true
       }
     })
     assertSelectorCheckboxValue(wrapper, dataTestSelector('pause-blocking-during-breaks'), false)
@@ -29,13 +29,13 @@ describe('TimerIntegrationSetting', () => {
     const { wrapper, blockingTimerIntegrationStorageService } = await mountTimerIntegrationSetting({
       blockingTimerIntegration: {
         shouldPauseBlockingDuringBreaks: false,
-        shouldPauseBlockingWhenTimerIsNotRunning: true
+        pauseBlockingWhenTimerIdle: true
       }
     })
 
     await saveBlockingTimerIntegration(wrapper, {
       shouldPauseBlockingDuringBreaks: true,
-      shouldPauseBlockingWhenTimerIsNotRunning: false
+      pauseBlockingWhenTimerIdle: false
     })
 
     expect(
@@ -130,7 +130,7 @@ async function saveBlockingTimerIntegration(
   wrapper: VueWrapper,
   blockingTimerIntegration: BlockingTimerIntegration = {
     shouldPauseBlockingDuringBreaks: false,
-    shouldPauseBlockingWhenTimerIsNotRunning: false
+    pauseBlockingWhenTimerIdle: false
   }
 ) {
   const checkbox = wrapper.find(dataTestSelector('pause-blocking-during-breaks'))

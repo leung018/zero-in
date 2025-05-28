@@ -35,7 +35,7 @@ export class BlockingTimerIntegrationStorageService {
             return {
               dataVersion: 1,
               shouldPauseBlockingDuringBreaks: oldData.shouldPauseBlockingDuringBreaks,
-              shouldPauseBlockingWhenTimerIsNotRunning: false
+              pauseBlockingWhenTimerIdle: false
             }
           }
         }

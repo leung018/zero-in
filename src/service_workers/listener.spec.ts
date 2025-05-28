@@ -356,7 +356,7 @@ describe('BackgroundListener', () => {
       }),
       blockingTimerIntegration: newTestBlockingTimerIntegration({
         shouldPauseBlockingDuringBreaks: true,
-        shouldPauseBlockingWhenTimerIsNotRunning: false
+        pauseBlockingWhenTimerIdle: false
       }),
       browsingRules,
       weeklySchedules: []

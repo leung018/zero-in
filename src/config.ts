@@ -33,7 +33,7 @@ const getDefaultNotificationSetting = () => {
 const getDefaultBlockingTimerIntegration = (): BlockingTimerIntegration => {
   return {
     shouldPauseBlockingDuringBreaks: true,
-    shouldPauseBlockingWhenTimerIsNotRunning: false
+    pauseBlockingWhenTimerIdle: false
   }
 }
 
