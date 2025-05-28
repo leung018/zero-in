@@ -23,6 +23,7 @@ describe('TimerIntegrationSetting', () => {
       }
     })
     assertSelectorCheckboxValue(wrapper, dataTestSelector('pause-blocking-during-breaks'), false)
+    assertSelectorCheckboxValue(wrapper, dataTestSelector('pause-blocking-when-timer-idle'), true)
   })
 
   it('should persist setting after clicking save', async () => {
@@ -33,14 +34,13 @@ describe('TimerIntegrationSetting', () => {
       }
     })
 
-    await saveBlockingTimerIntegration(wrapper, {
+    const expectedIntegration: BlockingTimerIntegration = {
       pauseBlockingDuringBreaks: true,
       pauseBlockingWhenTimerIdle: false
-    })
+    }
+    await saveBlockingTimerIntegration(wrapper, expectedIntegration)
 
-    expect((await blockingTimerIntegrationStorageService.get()).pauseBlockingDuringBreaks).toBe(
-      true
-    )
+    expect(await blockingTimerIntegrationStorageService.get()).toEqual(expectedIntegration)
   })
 
   it('should trigger notifierService when clicking save', async () => {
@@ -133,9 +133,16 @@ async function saveBlockingTimerIntegration(
     pauseBlockingWhenTimerIdle: false
   }
 ) {
-  const checkbox = wrapper.find(dataTestSelector('pause-blocking-during-breaks'))
-  await checkbox.setValue(blockingTimerIntegration.pauseBlockingDuringBreaks)
+  await wrapper
+    .find(dataTestSelector('pause-blocking-during-breaks'))
+    .setValue(blockingTimerIntegration.pauseBlockingDuringBreaks)
+
+  await wrapper
+    .find(dataTestSelector('pause-blocking-when-timer-idle'))
+    .setValue(blockingTimerIntegration.pauseBlockingWhenTimerIdle)
+
   const saveButton = wrapper.find(dataTestSelector('save-timer-integration-button'))
   await saveButton.trigger('click')
+
   await flushPromises()
 }
