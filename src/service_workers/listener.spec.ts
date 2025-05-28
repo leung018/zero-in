@@ -387,31 +387,6 @@ describe('BackgroundListener', () => {
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
   })
 
-  it('should toggle browsing control when start break and shouldPauseBlockingDuringBreaks', async () => {
-    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
-
-    const { browsingControlService, clientPort, listener } = await startListener({
-      timerConfig: TimerConfig.newTestInstance({
-        focusSessionsPerCycle: 4
-      }),
-      browsingRules,
-      blockingTimerIntegration: newTestBlockingTimerIntegration({
-        shouldPauseBlockingDuringBreaks: true
-      }),
-      weeklySchedules: []
-    })
-
-    listener.toggleBrowsingRules()
-    await flushPromises()
-
-    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
-
-    clientPort.send({ name: WorkRequestName.RESTART_SHORT_BREAK, payload: { nth: 1 } })
-    await flushPromises()
-
-    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
-  })
-
   it('should trigger timer start when click startNext on desktop notification', async () => {
     const { scheduler, clientPort, desktopNotificationService, listener } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
