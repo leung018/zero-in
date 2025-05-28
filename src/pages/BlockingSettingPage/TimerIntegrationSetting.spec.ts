@@ -16,14 +16,23 @@ import TimerIntegrationSetting from './TimerIntegrationSetting.vue'
 
 describe('TimerIntegrationSetting', () => {
   it('should render saved setting', async () => {
-    const { wrapper } = await mountTimerIntegrationSetting({
+    const { wrapper: wrapper1 } = await mountTimerIntegrationSetting({
       blockingTimerIntegration: {
         pauseBlockingDuringBreaks: false,
         pauseBlockingWhenTimerIdle: true
       }
     })
-    assertSelectorCheckboxValue(wrapper, dataTestSelector('pause-blocking-during-breaks'), false)
-    assertSelectorCheckboxValue(wrapper, dataTestSelector('pause-blocking-when-timer-idle'), true)
+    assertSelectorCheckboxValue(wrapper1, dataTestSelector('pause-blocking-during-breaks'), false)
+    assertSelectorCheckboxValue(wrapper1, dataTestSelector('pause-blocking-when-timer-idle'), true)
+
+    const { wrapper: wrapper2 } = await mountTimerIntegrationSetting({
+      blockingTimerIntegration: {
+        pauseBlockingDuringBreaks: true,
+        pauseBlockingWhenTimerIdle: false
+      }
+    })
+    assertSelectorCheckboxValue(wrapper2, dataTestSelector('pause-blocking-during-breaks'), true)
+    assertSelectorCheckboxValue(wrapper2, dataTestSelector('pause-blocking-when-timer-idle'), false)
   })
 
   it('should persist setting after clicking save', async () => {
