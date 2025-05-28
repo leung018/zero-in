@@ -233,6 +233,34 @@ describe('BrowsingControlTogglingService', () => {
       ).toEqual(browsingRules)
     }
   )
+
+  it('should not activate browsing rules when timer is not running and shouldPauseBlockingWhenTimerIsNotRunning is enabled', async () => {
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules: [],
+        shouldPauseBlockingWhenTimerIsNotRunning: true,
+        timerInfo: newTimerInfo({
+          timerStage: TimerStage.FOCUS,
+          isRunning: false
+        })
+      })
+    ).toBeNull()
+  })
+
+  it('should activate browsing rules when timer is running focus session even shouldPauseBlockingWhenTimerIsNotRunning is enabled', async () => {
+    expect(
+      await getBrowsingRulesAfterToggling({
+        browsingRules,
+        schedules: [],
+        shouldPauseBlockingWhenTimerIsNotRunning: true,
+        timerInfo: newTimerInfo({
+          timerStage: TimerStage.FOCUS,
+          isRunning: true
+        })
+      })
+    ).toEqual(browsingRules)
+  })
 })
 
 function newTimerInfo({
