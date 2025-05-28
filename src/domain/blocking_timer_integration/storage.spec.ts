@@ -8,7 +8,7 @@ import { BlockingTimerIntegrationStorageService } from './storage'
 describe('BlockingTimerIntegrationStorageService', () => {
   it('should get default setting when no setting is saved', async () => {
     const service = BlockingTimerIntegrationStorageService.createFake()
-    expect(await service.get()).toEqual(config.getDefaultBlockingTimerIntegration())
+    expect(await service.get()).toStrictEqual(config.getDefaultBlockingTimerIntegration())
   })
 
   it('should save and get setting', async () => {
@@ -18,7 +18,7 @@ describe('BlockingTimerIntegrationStorageService', () => {
       shouldPauseBlockingWhenTimerIsNotRunning: true
     }
     await service.save(setting)
-    expect(await service.get()).toEqual(setting)
+    expect(await service.get()).toStrictEqual(setting)
   })
 
   it('should migrate properly', async () => {

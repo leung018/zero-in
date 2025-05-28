@@ -6,7 +6,7 @@ import { NotificationSettingStorageService } from './storage'
 describe('NotificationSettingStorageService', () => {
   it('should get the default notification setting', async () => {
     const service = NotificationSettingStorageService.createFake()
-    expect(await service.get()).toEqual(config.getDefaultNotificationSetting())
+    expect(await service.get()).toStrictEqual(config.getDefaultNotificationSetting())
   })
 
   it('should set and get the notification setting', async () => {
