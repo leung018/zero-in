@@ -1,6 +1,7 @@
 import { flushPromises } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import config from '../config'
+import { newTestBlockingTimerIntegration } from '../domain/blocking_timer_integration'
 import { BrowsingRules } from '../domain/browsing_rules'
 import {
   newTestNotificationSetting,
@@ -353,7 +354,10 @@ describe('BackgroundListener', () => {
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 })
       }),
-      shouldPauseBlockingDuringBreaks: true,
+      blockingTimerIntegration: newTestBlockingTimerIntegration({
+        shouldPauseBlockingDuringBreaks: true,
+        shouldPauseBlockingWhenTimerIsNotRunning: false
+      }),
       browsingRules,
       weeklySchedules: []
     })
@@ -391,7 +395,9 @@ describe('BackgroundListener', () => {
         focusSessionsPerCycle: 4
       }),
       browsingRules,
-      shouldPauseBlockingDuringBreaks: true,
+      blockingTimerIntegration: newTestBlockingTimerIntegration({
+        shouldPauseBlockingDuringBreaks: true
+      }),
       weeklySchedules: []
     })
 
@@ -468,8 +474,7 @@ async function startListener({
   timerConfig = TimerConfig.newTestInstance(),
   notificationSetting = newTestNotificationSetting(),
   focusSessionRecordHouseKeepDays = 30,
-  shouldPauseBlockingDuringBreaks = true,
-  shouldPauseBlockingWhenTimerIsNotRunning = false,
+  blockingTimerIntegration = newTestBlockingTimerIntegration(),
   browsingRules = new BrowsingRules(),
   weeklySchedules = []
 } = {}) {
@@ -478,10 +483,7 @@ async function startListener({
     focusSessionRecordHouseKeepDays
   })
 
-  await context.blockingTimerIntegrationStorageService.save({
-    shouldPauseBlockingDuringBreaks,
-    shouldPauseBlockingWhenTimerIsNotRunning
-  })
+  await context.blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
   await context.weeklyScheduleStorageService.saveAll(weeklySchedules)
   await context.browsingRulesStorageService.save(browsingRules)
   await context.notificationSettingStorageService.save(notificationSetting)
