@@ -98,7 +98,7 @@ export class BrowsingControlTogglingService {
       return false
     }
 
-    if (blockingTimerIntegration.shouldPauseBlockingDuringBreaks && this.isInBreak()) {
+    if (blockingTimerIntegration.pauseBlockingDuringBreaks && this.isInBreak()) {
       return false
     }
 

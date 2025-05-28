@@ -355,7 +355,7 @@ describe('BackgroundListener', () => {
         shortBreakDuration: new Duration({ seconds: 1 })
       }),
       blockingTimerIntegration: newTestBlockingTimerIntegration({
-        shouldPauseBlockingDuringBreaks: true,
+        pauseBlockingDuringBreaks: true,
         pauseBlockingWhenTimerIdle: false
       }),
       browsingRules,

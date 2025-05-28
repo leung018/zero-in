@@ -8,7 +8,7 @@ export type BlockingTimerIntegrationSchemas = [
   },
   {
     dataVersion: 1
-    shouldPauseBlockingDuringBreaks: boolean
+    pauseBlockingDuringBreaks: boolean
     pauseBlockingWhenTimerIdle: boolean
   }
 ]
@@ -18,7 +18,7 @@ export function serializeBlockingTimerIntegration(
 ): SerializedBlockingTimerIntegration {
   return {
     dataVersion: 1,
-    shouldPauseBlockingDuringBreaks: integration.shouldPauseBlockingDuringBreaks,
+    pauseBlockingDuringBreaks: integration.pauseBlockingDuringBreaks,
     pauseBlockingWhenTimerIdle: integration.pauseBlockingWhenTimerIdle
   }
 }
@@ -27,7 +27,7 @@ export function deserializeBlockingTimerIntegration(
   data: SerializedBlockingTimerIntegration
 ): BlockingTimerIntegration {
   return {
-    shouldPauseBlockingDuringBreaks: data.shouldPauseBlockingDuringBreaks,
+    pauseBlockingDuringBreaks: data.pauseBlockingDuringBreaks,
     pauseBlockingWhenTimerIdle: data.pauseBlockingWhenTimerIdle
   }
 }

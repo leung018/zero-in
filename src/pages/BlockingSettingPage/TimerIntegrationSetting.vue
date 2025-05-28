@@ -11,16 +11,16 @@ const { blockingTimerIntegrationStorageService, updateSuccessNotifierService, po
   port: ClientPort
 }>()
 
-const shouldPauseBlockingDuringBreaks = ref(true)
+const pauseBlockingDuringBreaks = ref(true)
 
 onBeforeMount(async () => {
   const blockingTimerIntegration = await blockingTimerIntegrationStorageService.get()
-  shouldPauseBlockingDuringBreaks.value = blockingTimerIntegration.shouldPauseBlockingDuringBreaks
+  pauseBlockingDuringBreaks.value = blockingTimerIntegration.pauseBlockingDuringBreaks
 })
 
 async function onClickSave() {
   await blockingTimerIntegrationStorageService.save({
-    shouldPauseBlockingDuringBreaks: shouldPauseBlockingDuringBreaks.value,
+    pauseBlockingDuringBreaks: pauseBlockingDuringBreaks.value,
     pauseBlockingWhenTimerIdle: false
   })
   port.send({
@@ -31,7 +31,7 @@ async function onClickSave() {
 </script>
 
 <template>
-  <BFormCheckbox v-model="shouldPauseBlockingDuringBreaks" data-test="pause-blocking-during-breaks">
+  <BFormCheckbox v-model="pauseBlockingDuringBreaks" data-test="pause-blocking-during-breaks">
     Pause blocking during breaks
   </BFormCheckbox>
   <BButton

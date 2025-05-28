@@ -34,7 +34,7 @@ export class BlockingTimerIntegrationStorageService {
           ): BlockingTimerIntegrationSchemas[1] => {
             return {
               dataVersion: 1,
-              shouldPauseBlockingDuringBreaks: oldData.shouldPauseBlockingDuringBreaks,
+              pauseBlockingDuringBreaks: oldData.shouldPauseBlockingDuringBreaks,
               pauseBlockingWhenTimerIdle: false
             }
           }

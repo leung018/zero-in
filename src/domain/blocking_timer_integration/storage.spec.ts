@@ -14,7 +14,7 @@ describe('BlockingTimerIntegrationStorageService', () => {
   it('should save and get integration setting', async () => {
     const service = BlockingTimerIntegrationStorageService.createFake()
     const integration: BlockingTimerIntegration = {
-      shouldPauseBlockingDuringBreaks: false,
+      pauseBlockingDuringBreaks: false,
       pauseBlockingWhenTimerIdle: true
     }
     await service.save(integration)
@@ -31,7 +31,7 @@ describe('BlockingTimerIntegrationStorageService', () => {
     })
     const service = BlockingTimerIntegrationStorageService.createFake(fakeStorage)
     const expected: BlockingTimerIntegration = {
-      shouldPauseBlockingDuringBreaks: true,
+      pauseBlockingDuringBreaks: true,
       pauseBlockingWhenTimerIdle: false
     }
     const result = await service.get()
