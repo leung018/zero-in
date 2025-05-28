@@ -31,7 +31,8 @@ describe('BrowsingControlTogglingService', () => {
         browsingRules,
         schedules,
         currentDate: new Date('2025-02-03T11:00:00'), // 2025-02-03 is Monday
-        shouldPauseBlockingDuringBreaks: false
+        shouldPauseBlockingDuringBreaks: false,
+        shouldPauseBlockingWhenTimerIsNotRunning: false
       })
     ).toEqual(browsingRules)
     expect(
@@ -39,7 +40,8 @@ describe('BrowsingControlTogglingService', () => {
         browsingRules,
         schedules,
         currentDate: new Date('2025-02-03T17:01:00'),
-        shouldPauseBlockingDuringBreaks: false
+        shouldPauseBlockingDuringBreaks: false,
+        shouldPauseBlockingWhenTimerIsNotRunning: false
       })
     ).toBeNull()
   })
@@ -60,6 +62,7 @@ describe('BrowsingControlTogglingService', () => {
         schedules,
         currentDate: new Date('2025-02-04T16:59:59'), // 2025-02-04 is Tuesday
         shouldPauseBlockingDuringBreaks: false,
+        shouldPauseBlockingWhenTimerIsNotRunning: false,
         focusSessionRecords: [
           newFocusSessionRecord(new Date('2025-02-03T11:00:00')),
           newFocusSessionRecord(new Date('2025-02-03T11:26:00')),
@@ -76,6 +79,7 @@ describe('BrowsingControlTogglingService', () => {
         schedules,
         currentDate: new Date('2025-02-03T16:59:59'),
         shouldPauseBlockingDuringBreaks: false,
+        shouldPauseBlockingWhenTimerIsNotRunning: false,
         focusSessionRecords: [
           newFocusSessionRecord(new Date('2025-02-03T09:00:00')),
           newFocusSessionRecord(new Date('2025-02-03T16:59:59'))
@@ -90,7 +94,8 @@ describe('BrowsingControlTogglingService', () => {
         browsingRules,
         schedules: [],
         currentDate: new Date(),
-        shouldPauseBlockingDuringBreaks: false
+        shouldPauseBlockingDuringBreaks: false,
+        shouldPauseBlockingWhenTimerIsNotRunning: false
       })
     ).toEqual(browsingRules)
   })
@@ -117,7 +122,8 @@ describe('BrowsingControlTogglingService', () => {
         schedules,
         focusSessionRecords: [newFocusSessionRecord(new Date('2025-02-03T10:00:00'))],
         currentDate: new Date('2025-02-03T11:00:00'),
-        shouldPauseBlockingDuringBreaks: false
+        shouldPauseBlockingDuringBreaks: false,
+        shouldPauseBlockingWhenTimerIsNotRunning: false
       })
     ).toEqual(browsingRules)
   })
@@ -167,6 +173,7 @@ describe('BrowsingControlTogglingService', () => {
           browsingRules,
           schedules: [],
           shouldPauseBlockingDuringBreaks: true,
+          shouldPauseBlockingWhenTimerIsNotRunning: false,
           timerInfo
         })
       ).toBeNull()
@@ -220,6 +227,7 @@ describe('BrowsingControlTogglingService', () => {
           browsingRules,
           schedules: [],
           shouldPauseBlockingDuringBreaks,
+          shouldPauseBlockingWhenTimerIsNotRunning: false,
           timerInfo
         })
       ).toEqual(browsingRules)
