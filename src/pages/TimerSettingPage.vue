@@ -88,8 +88,9 @@ const onClickSave = async () => {
           <i-ic-baseline-timer class="me-1" /> 52-17
         </b-button>
       </div>
-      <p class="small mt-2">
-        <a style="cursor: pointer" v-b-toggle.preset-info><u>About these presets</u></a>
+      <p class="small mt-2 mb-2">Changes only take effect after saving.</p>
+      <p class="small">
+        <span style="cursor: pointer" v-b-toggle.preset-info><u>About these presets</u></span>
       </p>
       <b-collapse id="preset-info" class="mt-2">
         <div class="p-2 bg-light rounded">
