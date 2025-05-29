@@ -70,10 +70,10 @@ const onClickSave = async () => {
       </b-button>
       <b-collapse id="timer-tips">
         <p class="small mb-0 bg-light rounded p-2">
-          Research suggests that working in short focused periods with breaks improves productivity
-          and concentration. Studies show optimal focus periods range from <b>10-52 minutes</b>,
-          varying by individual. <br /><br />You can experiment to find your ideal time block length
-          where your attention is strongest.
+          Research shows that working in short, focused intervals with regular breaks can help
+          improve focus. Optimal focus periods typically range from <b>10 to 52 minutes</b>,
+          depending on the individual. <br /><br />
+          You can experiment to find the time block length that works best for you.
         </p>
       </b-collapse>
     </div>
