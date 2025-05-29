@@ -59,13 +59,7 @@ const onClickSave = async () => {
 <template>
   <ContentTemplate title="Timer Setting">
     <div class="mb-3">
-      <b-button
-        v-b-toggle.timer-tips
-        variant="outline-info"
-        size="sm"
-        class="mb-2"
-        data-test="timer-tips-toggle"
-      >
+      <b-button v-b-toggle.timer-tips variant="outline-info" size="sm" class="mb-2">
         <i-ic-baseline-lightbulb class="me-1" /> How it works
       </b-button>
       <b-collapse id="timer-tips">
