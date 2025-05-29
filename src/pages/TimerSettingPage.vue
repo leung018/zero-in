@@ -26,13 +26,16 @@ function durationToMinutes(d: Duration): number {
 
 onBeforeMount(async () => {
   const timerConfig = await timerConfigStorageService.get()
-  focusDurationMinutes.value = durationToMinutes(timerConfig.focusDuration)
-  shortBreakDurationMinutes.value = durationToMinutes(timerConfig.shortBreakDuration)
-  longBreakDurationMinutes.value = durationToMinutes(timerConfig.longBreakDuration)
-  focusSessionsPerCycle.value = timerConfig.focusSessionsPerCycle
-
-  cycleMode.value = timerConfig.focusSessionsPerCycle > 1
+  loadConfig(timerConfig)
 })
+
+function loadConfig(config: TimerConfig) {
+  focusDurationMinutes.value = durationToMinutes(config.focusDuration)
+  shortBreakDurationMinutes.value = durationToMinutes(config.shortBreakDuration)
+  longBreakDurationMinutes.value = durationToMinutes(config.longBreakDuration)
+  focusSessionsPerCycle.value = config.focusSessionsPerCycle
+  cycleMode.value = config.focusSessionsPerCycle > 1
+}
 
 const onClickSave = async () => {
   const originalConfig = await timerConfigStorageService.get()
