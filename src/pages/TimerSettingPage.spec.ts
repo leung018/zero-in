@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import config from '../config'
 import { TimerConfig } from '../domain/timer/config'
 import { Duration } from '../domain/timer/duration'
 import { FakeActionService } from '../infra/action'
@@ -129,6 +130,24 @@ describe('TimerSettingPage', () => {
     await flushPromises()
 
     expect(updateSuccessNotifierService.hasTriggered()).toBe(true)
+  })
+
+  it('should able to load preset default', async () => {
+    const { wrapper, timerConfigStorageService } = await mountPage(
+      new TimerConfig({
+        focusDuration: new Duration({ minutes: 24 }),
+        shortBreakDuration: new Duration({ minutes: 4 }),
+        longBreakDuration: new Duration({ minutes: 13 }),
+        focusSessionsPerCycle: 3
+      })
+    )
+
+    await wrapper.find(dataTestSelector('preset-default')).trigger('click')
+
+    await wrapper.find(dataTestSelector('save-button')).trigger('click')
+    await flushPromises()
+
+    expect(await timerConfigStorageService.get()).toEqual(config.getDefaultTimerConfig())
   })
 })
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import config from '@/config'
 import type { ActionService } from '@/infra/action'
 import type { ClientPort } from '@/service_workers/listener'
 import { onBeforeMount, ref } from 'vue'
@@ -57,6 +58,10 @@ const onClickSave = async () => {
 
   updateSuccessNotifierService.trigger()
 }
+
+const presetDefault = () => {
+  loadConfig(config.getDefaultTimerConfig())
+}
 </script>
 
 <template>
@@ -78,7 +83,12 @@ const onClickSave = async () => {
     <div class="mb-3">
       <h6>Preset configurations</h6>
       <div class="d-flex gap-2">
-        <b-button size="sm" variant="outline-secondary" data-test="preset-default">
+        <b-button
+          size="sm"
+          variant="outline-secondary"
+          data-test="preset-default"
+          @click="presetDefault"
+        >
           <i-ic-baseline-timer class="me-1" /> Default
         </b-button>
         <b-button size="sm" variant="outline-secondary" data-test="preset-52-17">
