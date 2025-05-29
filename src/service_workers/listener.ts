@@ -269,6 +269,7 @@ export class BackgroundListener {
             case WorkRequestName.PAUSE_TIMER: {
               this.timer.pause()
               this.badgeDisplayService.clearBadge()
+              this.toggleBrowsingRules()
               break
             }
             case WorkRequestName.LISTEN_TO_TIMER: {

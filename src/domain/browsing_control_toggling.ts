@@ -94,7 +94,11 @@ export class BrowsingControlTogglingService {
   private async shouldActivateBrowsingRules(): Promise<boolean> {
     const blockingTimerIntegration = await this.blockingTimerIntegrationStorageService.get()
 
-    if (blockingTimerIntegration.shouldPauseBlockingDuringBreaks && this.isInBreak()) {
+    if (blockingTimerIntegration.pauseBlockingWhenTimerNotRunning && !this.isRunning()) {
+      return false
+    }
+
+    if (blockingTimerIntegration.pauseBlockingDuringBreaks && this.isInBreak()) {
       return false
     }
 
@@ -156,5 +160,10 @@ export class BrowsingControlTogglingService {
       return false
     }
     return true
+  }
+
+  private isRunning(): boolean {
+    const timerInfo = this.timerInfoGetter.getTimerInfo()
+    return timerInfo.isRunning
   }
 }
