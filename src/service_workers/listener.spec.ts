@@ -387,6 +387,33 @@ describe('BackgroundListener', () => {
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
   })
 
+  it('should toggle browsing control when timer is paused in focus session', async () => {
+    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
+
+    const { browsingControlService, clientPort, listener } = await startListener({
+      blockingTimerIntegration: newTestBlockingTimerIntegration({
+        pauseBlockingWhenTimerIdle: true
+      }),
+      browsingRules,
+      weeklySchedules: []
+    })
+
+    listener.toggleBrowsingRules()
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+
+    clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+  })
+
   it('should trigger timer start when click startNext on desktop notification', async () => {
     const { scheduler, clientPort, desktopNotificationService, listener } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
