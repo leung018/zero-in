@@ -9,7 +9,7 @@ describe('TimerConfigStorageService', () => {
     const timerConfigStorageService = TimerConfigStorageService.createFake()
     const timerConfig = await timerConfigStorageService.get()
 
-    expect(timerConfig).toEqual(config.getDefaultTimerConfig())
+    expect(timerConfig).toStrictEqual(config.getDefaultTimerConfig())
   })
 
   it('should save and get TimerConfig', async () => {

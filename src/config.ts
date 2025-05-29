@@ -1,3 +1,4 @@
+import type { BlockingTimerIntegration } from './domain/blocking_timer_integration'
 import type { NotificationSetting } from './domain/notification_setting'
 import { TimerConfig } from './domain/timer/config'
 import { Duration } from './domain/timer/duration'
@@ -29,9 +30,10 @@ const getDefaultNotificationSetting = () => {
   return notificationSetting
 }
 
-const getDefaultBlockingTimerIntegration = () => {
+const getDefaultBlockingTimerIntegration = (): BlockingTimerIntegration => {
   return {
-    shouldPauseBlockingDuringBreaks: true
+    pauseBlockingDuringBreaks: true,
+    pauseBlockingWhenTimerNotRunning: false
   }
 }
 

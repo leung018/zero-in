@@ -1,6 +1,7 @@
 import { flushPromises } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import config from '../config'
+import { newTestBlockingTimerIntegration } from '../domain/blocking_timer_integration'
 import { BrowsingRules } from '../domain/browsing_rules'
 import {
   newTestNotificationSetting,
@@ -353,7 +354,10 @@ describe('BackgroundListener', () => {
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 })
       }),
-      shouldPauseBlockingDuringBreaks: true,
+      blockingTimerIntegration: newTestBlockingTimerIntegration({
+        pauseBlockingDuringBreaks: true,
+        pauseBlockingWhenTimerNotRunning: false
+      }),
       browsingRules,
       weeklySchedules: []
     })
@@ -383,24 +387,28 @@ describe('BackgroundListener', () => {
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
   })
 
-  it('should toggle browsing control when start break and shouldPauseBlockingDuringBreaks', async () => {
+  it('should toggle browsing control when timer is paused in focus session', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
 
     const { browsingControlService, clientPort, listener } = await startListener({
-      timerConfig: TimerConfig.newTestInstance({
-        focusSessionsPerCycle: 4
+      blockingTimerIntegration: newTestBlockingTimerIntegration({
+        pauseBlockingWhenTimerNotRunning: true
       }),
       browsingRules,
-      shouldPauseBlockingDuringBreaks: true,
       weeklySchedules: []
     })
 
     listener.toggleBrowsingRules()
     await flushPromises()
 
+    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
 
-    clientPort.send({ name: WorkRequestName.RESTART_SHORT_BREAK, payload: { nth: 1 } })
+    clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
     await flushPromises()
 
     expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
@@ -468,7 +476,7 @@ async function startListener({
   timerConfig = TimerConfig.newTestInstance(),
   notificationSetting = newTestNotificationSetting(),
   focusSessionRecordHouseKeepDays = 30,
-  shouldPauseBlockingDuringBreaks = true,
+  blockingTimerIntegration = newTestBlockingTimerIntegration(),
   browsingRules = new BrowsingRules(),
   weeklySchedules = []
 } = {}) {
@@ -477,9 +485,7 @@ async function startListener({
     focusSessionRecordHouseKeepDays
   })
 
-  await context.blockingTimerIntegrationStorageService.save({
-    shouldPauseBlockingDuringBreaks
-  })
+  await context.blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
   await context.weeklyScheduleStorageService.saveAll(weeklySchedules)
   await context.browsingRulesStorageService.save(browsingRules)
   await context.notificationSettingStorageService.save(notificationSetting)
