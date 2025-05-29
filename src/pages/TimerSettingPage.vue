@@ -58,6 +58,53 @@ const onClickSave = async () => {
 
 <template>
   <ContentTemplate title="Timer Setting">
+    <div class="mb-3">
+      <b-button
+        v-b-toggle.timer-tips
+        variant="outline-info"
+        size="sm"
+        class="mb-2"
+        data-test="timer-tips-toggle"
+      >
+        <i-ic-baseline-lightbulb class="me-1" /> How it works
+      </b-button>
+      <b-collapse id="timer-tips" class="p-3 bg-light rounded">
+        <p class="small mb-0">
+          Research suggests that working in short focused periods with breaks improves productivity
+          and concentration. Studies show optimal focus periods range from <b>10-52 minutes</b>,
+          varying by individual. <br /><br />You can experiment to find your ideal time block length
+          where your attention is strongest.
+        </p>
+      </b-collapse>
+    </div>
+
+    <div class="mb-3">
+      <h6>Preset configurations</h6>
+      <div class="d-flex gap-2">
+        <b-button size="sm" variant="outline-secondary" data-test="preset-default">
+          <i-ic-baseline-timer class="me-1" /> Default
+        </b-button>
+        <b-button size="sm" variant="outline-secondary" data-test="preset-52-17">
+          <i-ic-baseline-timer class="me-1" /> 52-17
+        </b-button>
+      </div>
+      <p class="small mt-2">
+        <a style="cursor: pointer" v-b-toggle.preset-info><u>About these presets</u></a>
+      </p>
+      <b-collapse id="preset-info" class="mt-2 p-3 bg-light rounded">
+        <p class="small mb-1">
+          <b>Default:</b> It uses 26-minute focus sessions followed by 5-minute breaks. After four
+          sessions, a longer 19-minute break is taken. The focus-to-break ratio matches the 52/17
+          method, but each focus session is cut in half.
+        </p>
+        <p class="small mb-1">
+          <b>52/17:</b> Based on productivity research by DeskTime, a 52-minute work session
+          followed by a 17-minute break was identified as one of the most effective rhythms for
+          maintaining productivity.
+        </p>
+      </b-collapse>
+    </div>
+
     <b-form @submit.prevent>
       <b-form-group label="Focus Session Duration (minutes)" class="mb-3">
         <b-form-input
