@@ -32,7 +32,7 @@ describe('BrowsingControlTogglingService', () => {
         schedules,
         currentDate: new Date('2025-02-03T11:00:00'), // 2025-02-03 is Monday
         pauseBlockingDuringBreaks: false,
-        pauseBlockingWhenTimerIdle: false
+        pauseBlockingWhenTimerNotRunning: false
       })
     ).toEqual(browsingRules)
     expect(
@@ -41,7 +41,7 @@ describe('BrowsingControlTogglingService', () => {
         schedules,
         currentDate: new Date('2025-02-03T17:01:00'),
         pauseBlockingDuringBreaks: false,
-        pauseBlockingWhenTimerIdle: false
+        pauseBlockingWhenTimerNotRunning: false
       })
     ).toBeNull()
   })
@@ -62,7 +62,7 @@ describe('BrowsingControlTogglingService', () => {
         schedules,
         currentDate: new Date('2025-02-04T16:59:59'), // 2025-02-04 is Tuesday
         pauseBlockingDuringBreaks: false,
-        pauseBlockingWhenTimerIdle: false,
+        pauseBlockingWhenTimerNotRunning: false,
         focusSessionRecords: [
           newFocusSessionRecord(new Date('2025-02-03T11:00:00')),
           newFocusSessionRecord(new Date('2025-02-03T11:26:00')),
@@ -79,7 +79,7 @@ describe('BrowsingControlTogglingService', () => {
         schedules,
         currentDate: new Date('2025-02-03T16:59:59'),
         pauseBlockingDuringBreaks: false,
-        pauseBlockingWhenTimerIdle: false,
+        pauseBlockingWhenTimerNotRunning: false,
         focusSessionRecords: [
           newFocusSessionRecord(new Date('2025-02-03T09:00:00')),
           newFocusSessionRecord(new Date('2025-02-03T16:59:59'))
@@ -95,7 +95,7 @@ describe('BrowsingControlTogglingService', () => {
         schedules: [],
         currentDate: new Date(),
         pauseBlockingDuringBreaks: false,
-        pauseBlockingWhenTimerIdle: false
+        pauseBlockingWhenTimerNotRunning: false
       })
     ).toEqual(browsingRules)
   })
@@ -123,7 +123,7 @@ describe('BrowsingControlTogglingService', () => {
         focusSessionRecords: [newFocusSessionRecord(new Date('2025-02-03T10:00:00'))],
         currentDate: new Date('2025-02-03T11:00:00'),
         pauseBlockingDuringBreaks: false,
-        pauseBlockingWhenTimerIdle: false
+        pauseBlockingWhenTimerNotRunning: false
       })
     ).toEqual(browsingRules)
   })
@@ -173,7 +173,7 @@ describe('BrowsingControlTogglingService', () => {
           browsingRules,
           schedules: [],
           pauseBlockingDuringBreaks: true,
-          pauseBlockingWhenTimerIdle: false,
+          pauseBlockingWhenTimerNotRunning: false,
           timerInfo
         })
       ).toBeNull()
@@ -227,19 +227,19 @@ describe('BrowsingControlTogglingService', () => {
           browsingRules,
           schedules: [],
           pauseBlockingDuringBreaks,
-          pauseBlockingWhenTimerIdle: false,
+          pauseBlockingWhenTimerNotRunning: false,
           timerInfo
         })
       ).toEqual(browsingRules)
     }
   )
 
-  it('should not activate browsing rules when timer is not running and pauseBlockingWhenTimerIdle is enabled', async () => {
+  it('should not activate browsing rules when timer is not running and pauseBlockingWhenTimerNotRunning is enabled', async () => {
     expect(
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules: [],
-        pauseBlockingWhenTimerIdle: true,
+        pauseBlockingWhenTimerNotRunning: true,
         timerInfo: newTimerInfo({
           timerStage: TimerStage.FOCUS,
           isRunning: false
@@ -248,12 +248,12 @@ describe('BrowsingControlTogglingService', () => {
     ).toBeNull()
   })
 
-  it('should activate browsing rules when timer is running focus session even pauseBlockingWhenTimerIdle is enabled', async () => {
+  it('should activate browsing rules when timer is running focus session even pauseBlockingWhenTimerNotRunning is enabled', async () => {
     expect(
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules: [],
-        pauseBlockingWhenTimerIdle: true,
+        pauseBlockingWhenTimerNotRunning: true,
         timerInfo: newTimerInfo({
           timerStage: TimerStage.FOCUS,
           isRunning: true
@@ -290,7 +290,7 @@ async function getBrowsingRulesAfterToggling({
   ],
   currentDate = new Date(),
   pauseBlockingDuringBreaks = false,
-  pauseBlockingWhenTimerIdle = false,
+  pauseBlockingWhenTimerNotRunning = false,
   timerInfo = newTimerInfo(),
   focusSessionRecords = [newFocusSessionRecord()]
 } = {}) {
@@ -306,7 +306,7 @@ async function getBrowsingRulesAfterToggling({
 
   const blockingTimerIntegration: BlockingTimerIntegration = {
     pauseBlockingDuringBreaks,
-    pauseBlockingWhenTimerIdle
+    pauseBlockingWhenTimerNotRunning
   }
   const blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake()
   await blockingTimerIntegrationStorageService.save(blockingTimerIntegration)

@@ -356,7 +356,7 @@ describe('BackgroundListener', () => {
       }),
       blockingTimerIntegration: newTestBlockingTimerIntegration({
         pauseBlockingDuringBreaks: true,
-        pauseBlockingWhenTimerIdle: false
+        pauseBlockingWhenTimerNotRunning: false
       }),
       browsingRules,
       weeklySchedules: []
@@ -392,7 +392,7 @@ describe('BackgroundListener', () => {
 
     const { browsingControlService, clientPort, listener } = await startListener({
       blockingTimerIntegration: newTestBlockingTimerIntegration({
-        pauseBlockingWhenTimerIdle: true
+        pauseBlockingWhenTimerNotRunning: true
       }),
       browsingRules,
       weeklySchedules: []

@@ -12,18 +12,18 @@ const { blockingTimerIntegrationStorageService, updateSuccessNotifierService, po
 }>()
 
 const pauseBlockingDuringBreaks = ref(false)
-const pauseBlockingWhenTimerIdle = ref(false)
+const pauseBlockingWhenTimerNotRunning = ref(false)
 
 onBeforeMount(async () => {
   const blockingTimerIntegration = await blockingTimerIntegrationStorageService.get()
   pauseBlockingDuringBreaks.value = blockingTimerIntegration.pauseBlockingDuringBreaks
-  pauseBlockingWhenTimerIdle.value = blockingTimerIntegration.pauseBlockingWhenTimerIdle
+  pauseBlockingWhenTimerNotRunning.value = blockingTimerIntegration.pauseBlockingWhenTimerNotRunning
 })
 
 async function onClickSave() {
   await blockingTimerIntegrationStorageService.save({
     pauseBlockingDuringBreaks: pauseBlockingDuringBreaks.value,
-    pauseBlockingWhenTimerIdle: pauseBlockingWhenTimerIdle.value
+    pauseBlockingWhenTimerNotRunning: pauseBlockingWhenTimerNotRunning.value
   })
   port.send({
     name: WorkRequestName.TOGGLE_BROWSING_RULES
@@ -37,11 +37,11 @@ async function onClickSave() {
     Pause blocking during breaks
   </BFormCheckbox>
   <BFormCheckbox
-    v-model="pauseBlockingWhenTimerIdle"
-    data-test="pause-blocking-when-timer-idle"
+    v-model="pauseBlockingWhenTimerNotRunning"
+    data-test="pause-blocking-when-timer-not-running"
     class="mt-2"
   >
-    Pause blocking when timer is idle
+    Pause blocking when timer is not running
   </BFormCheckbox>
   <BButton
     variant="primary"

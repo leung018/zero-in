@@ -19,33 +19,41 @@ describe('TimerIntegrationSetting', () => {
     const { wrapper: wrapper1 } = await mountTimerIntegrationSetting({
       blockingTimerIntegration: {
         pauseBlockingDuringBreaks: false,
-        pauseBlockingWhenTimerIdle: true
+        pauseBlockingWhenTimerNotRunning: true
       }
     })
     assertSelectorCheckboxValue(wrapper1, dataTestSelector('pause-blocking-during-breaks'), false)
-    assertSelectorCheckboxValue(wrapper1, dataTestSelector('pause-blocking-when-timer-idle'), true)
+    assertSelectorCheckboxValue(
+      wrapper1,
+      dataTestSelector('pause-blocking-when-timer-not-running'),
+      true
+    )
 
     const { wrapper: wrapper2 } = await mountTimerIntegrationSetting({
       blockingTimerIntegration: {
         pauseBlockingDuringBreaks: true,
-        pauseBlockingWhenTimerIdle: false
+        pauseBlockingWhenTimerNotRunning: false
       }
     })
     assertSelectorCheckboxValue(wrapper2, dataTestSelector('pause-blocking-during-breaks'), true)
-    assertSelectorCheckboxValue(wrapper2, dataTestSelector('pause-blocking-when-timer-idle'), false)
+    assertSelectorCheckboxValue(
+      wrapper2,
+      dataTestSelector('pause-blocking-when-timer-not-running'),
+      false
+    )
   })
 
   it('should persist setting after clicking save', async () => {
     const { wrapper, blockingTimerIntegrationStorageService } = await mountTimerIntegrationSetting({
       blockingTimerIntegration: {
         pauseBlockingDuringBreaks: false,
-        pauseBlockingWhenTimerIdle: true
+        pauseBlockingWhenTimerNotRunning: true
       }
     })
 
     const expectedIntegration: BlockingTimerIntegration = {
       pauseBlockingDuringBreaks: true,
-      pauseBlockingWhenTimerIdle: false
+      pauseBlockingWhenTimerNotRunning: false
     }
     await saveBlockingTimerIntegration(wrapper, expectedIntegration)
 
@@ -139,7 +147,7 @@ async function saveBlockingTimerIntegration(
   wrapper: VueWrapper,
   blockingTimerIntegration: BlockingTimerIntegration = {
     pauseBlockingDuringBreaks: false,
-    pauseBlockingWhenTimerIdle: false
+    pauseBlockingWhenTimerNotRunning: false
   }
 ) {
   await wrapper
@@ -147,8 +155,8 @@ async function saveBlockingTimerIntegration(
     .setValue(blockingTimerIntegration.pauseBlockingDuringBreaks)
 
   await wrapper
-    .find(dataTestSelector('pause-blocking-when-timer-idle'))
-    .setValue(blockingTimerIntegration.pauseBlockingWhenTimerIdle)
+    .find(dataTestSelector('pause-blocking-when-timer-not-running'))
+    .setValue(blockingTimerIntegration.pauseBlockingWhenTimerNotRunning)
 
   const saveButton = wrapper.find(dataTestSelector('save-timer-integration-button'))
   await saveButton.trigger('click')

@@ -288,14 +288,14 @@ test('should able to persist and retrieve setting of blocking timer integration'
   await goToBlockingSettingPage(page, extensionId)
 
   await page.getByTestId('pause-blocking-during-breaks').uncheck()
-  await page.getByTestId('pause-blocking-when-timer-idle').check()
+  await page.getByTestId('pause-blocking-when-timer-not-running').check()
 
   await page.getByTestId('save-timer-integration-button').click()
 
   await page.reload()
 
   await expect(page.getByTestId('pause-blocking-during-breaks')).not.toBeChecked()
-  await expect(page.getByTestId('pause-blocking-when-timer-idle')).toBeChecked()
+  await expect(page.getByTestId('pause-blocking-when-timer-not-running')).toBeChecked()
 })
 
 async function addBlockedDomain(page: Page, domain: string) {
