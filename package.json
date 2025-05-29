@@ -20,7 +20,7 @@
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.6",
-    "bootstrap-vue-next": "^0.24.23",
+    "bootstrap-vue-next": "^0.29.3",
     "uuid": "^10.0.0",
     "vue": "^3.5.13"
   },
