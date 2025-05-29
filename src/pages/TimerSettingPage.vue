@@ -15,10 +15,10 @@ const { timerConfigStorageService, port, updateSuccessNotifierService } = define
   updateSuccessNotifierService: ActionService
 }>()
 
-const focusDurationMinutes = ref(25)
-const shortBreakDurationMinutes = ref(5)
-const longBreakDurationMinutes = ref(15)
-const focusSessionsPerCycle = ref(4)
+const focusDurationMinutes = ref(0)
+const shortBreakDurationMinutes = ref(0)
+const longBreakDurationMinutes = ref(0)
+const focusSessionsPerCycle = ref(0)
 const cycleMode = ref(false)
 
 function durationToMinutes(d: Duration): number {
