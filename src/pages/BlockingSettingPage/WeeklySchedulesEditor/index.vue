@@ -71,8 +71,8 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
 <template>
   <p>
     <small>
-      Set the schedules for blocking access to the configured domains to be active. If not set, it
-      will remain active at all times.
+      Set the schedules for blocking access to the configured domains. If not set, blocking remains
+      active at all times (unless paused by Timer Integration).
     </small>
   </p>
   <b-form @submit.prevent>
