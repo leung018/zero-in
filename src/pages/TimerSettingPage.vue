@@ -68,8 +68,8 @@ const onClickSave = async () => {
       >
         <i-ic-baseline-lightbulb class="me-1" /> How it works
       </b-button>
-      <b-collapse id="timer-tips" class="p-3 bg-light rounded">
-        <p class="small mb-0">
+      <b-collapse id="timer-tips">
+        <p class="small mb-0 bg-light rounded p-2">
           Research suggests that working in short focused periods with breaks improves productivity
           and concentration. Studies show optimal focus periods range from <b>10-52 minutes</b>,
           varying by individual. <br /><br />You can experiment to find your ideal time block length
@@ -91,17 +91,19 @@ const onClickSave = async () => {
       <p class="small mt-2">
         <a style="cursor: pointer" v-b-toggle.preset-info><u>About these presets</u></a>
       </p>
-      <b-collapse id="preset-info" class="mt-2 p-3 bg-light rounded">
-        <p class="small mb-1">
-          <b>Default:</b> It uses 26-minute focus sessions followed by 5-minute breaks. After four
-          sessions, a longer 19-minute break is taken. The focus-to-break ratio matches the 52/17
-          method, but each focus session is cut in half.
-        </p>
-        <p class="small mb-1">
-          <b>52/17:</b> Based on productivity research by DeskTime, a 52-minute work session
-          followed by a 17-minute break was identified as one of the most effective rhythms for
-          maintaining productivity.
-        </p>
+      <b-collapse id="preset-info" class="mt-2">
+        <div class="p-2 bg-light rounded">
+          <p class="small mb-1">
+            <b>Default:</b> It uses 26-minute focus sessions followed by 5-minute breaks. After four
+            sessions, a longer 19-minute break is taken. The focus-to-break ratio matches the 52/17
+            method, but each focus session is cut in half.
+          </p>
+          <p class="small mb-1">
+            <b>52/17:</b> Based on productivity research by DeskTime, a 52-minute work session
+            followed by a 17-minute break was identified as one of the most effective rhythms for
+            maintaining productivity.
+          </p>
+        </div>
       </b-collapse>
     </div>
 
