@@ -7,6 +7,7 @@ import { ChromeCommunicationManager } from '@/infra/browser/communication'
 import { UpdateSuccessNotifierService } from '@/infra/browser/update_success_notifier'
 import { CurrentDateService } from '@/infra/current_date'
 import BlockingSettingPage from '@/pages/BlockingSettingPage/index.vue'
+import FeedbackPage from '@/pages/FeedbackPage.vue'
 import NotificationPage from '@/pages/NotificationPage.vue'
 import StatisticsPage from '@/pages/StatisticsPage.vue'
 import TimerSettingPage from '@/pages/TimerSettingPage.vue'
@@ -19,14 +20,16 @@ enum PATH {
   ROOT = '/',
   STATISTICS = '/statistics',
   TIMER_SETTING = '/timer-setting',
-  NOTIFICATION = '/notification'
+  NOTIFICATION = '/notification',
+  FEEDBACK = '/feedback'
 }
 
 const pathTitles = {
   [PATH.ROOT]: 'Blocking',
   [PATH.STATISTICS]: 'Statistics',
   [PATH.TIMER_SETTING]: 'Timer Setting',
-  [PATH.NOTIFICATION]: 'Notification'
+  [PATH.NOTIFICATION]: 'Notification',
+  [PATH.FEEDBACK]: 'Feedback'
 }
 
 const currentPath = ref<PATH>(PATH.ROOT)
@@ -43,19 +46,31 @@ function getPathFromWindowLocation(): PATH {
   const path = window.location.hash.slice(1)
   return Object.values(PATH).includes(path as PATH) ? (path as PATH) : PATH.ROOT
 }
+
+const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICATION]
 </script>
 
 <template>
   <main>
-    <BNav tabs class="mt-2 ms-2" align="center">
-      <BNavItem
-        v-for="path in Object.values(PATH)"
-        :key="path"
-        :href="`#${path}`"
-        :active="path === currentPath"
-      >
-        {{ pathTitles[path] }}
-      </BNavItem>
+    <BNav tabs class="mt-2 d-flex w-100">
+      <div class="invisible ms-2" style="width: 100px">
+        <BNavItem>Spacer</BNavItem>
+      </div>
+      <div class="flex-grow-1 d-flex justify-content-center">
+        <BNavItem
+          v-for="path in mainTabs"
+          :key="path"
+          :href="`#${path}`"
+          :active="path === currentPath"
+        >
+          {{ pathTitles[path] }}
+        </BNavItem>
+      </div>
+      <div class="me-2" style="width: 100px">
+        <BNavItem :active="currentPath === PATH.FEEDBACK" :href="`#${PATH.FEEDBACK}`"
+          >Feedback</BNavItem
+        >
+      </div>
     </BNav>
     <!-- I don't use an approach of mapping component by path here because the current explicit v-if/v-else-if structure 
      preserves TypeScript prop validation for each component -->
@@ -83,5 +98,7 @@ function getPathFromWindowLocation(): PATH {
       :update-success-notifier-service="updateSuccessNotifierService"
       :port="port"
     />
+
+    <FeedbackPage v-else-if="currentPath === PATH.FEEDBACK" />
   </main>
 </template>
