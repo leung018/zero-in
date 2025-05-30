@@ -163,11 +163,23 @@ describe('TimerSettingPage', () => {
 
     const expectedConfig = new TimerConfig({
       focusDuration: config.get5217TimerConfig().focusDuration,
-      shortBreakDuration: new Duration({ minutes: 4 }),
+      shortBreakDuration: new Duration({ minutes: 4 }), // Keep original short break duration
       longBreakDuration: config.get5217TimerConfig().longBreakDuration,
       focusSessionsPerCycle: 1
     })
     expect(await timerConfigStorageService.get()).toEqual(expectedConfig)
+  })
+
+  it("should loading preset 52/17 won't alter original short break duration in ui", async () => {
+    const { wrapper } = await mountPage(
+      TimerConfig.newTestInstance({
+        shortBreakDuration: new Duration({ minutes: 4 })
+      })
+    )
+
+    await wrapper.find(dataTestSelector('preset-52-17')).trigger('click')
+
+    assertSelectorInputValue(wrapper, dataTestSelector('short-break-duration'), '4')
   })
 })
 
