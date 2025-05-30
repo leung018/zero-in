@@ -136,7 +136,7 @@ describe('TimerSettingPage', () => {
         focusDuration: new Duration({ minutes: 24 }),
         shortBreakDuration: new Duration({ minutes: 4 }),
         longBreakDuration: new Duration({ minutes: 13 }),
-        focusSessionsPerCycle: 3
+        focusSessionsPerCycle: 1
       })
     )
 
