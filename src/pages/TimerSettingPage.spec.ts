@@ -162,9 +162,9 @@ describe('TimerSettingPage', () => {
     await saveSetting(wrapper)
 
     const expectedConfig = new TimerConfig({
-      focusDuration: config.get5217TimerConfig().focusDuration,
+      focusDuration: new Duration({ minutes: 52 }),
       shortBreakDuration: new Duration({ minutes: 4 }), // Keep original short break duration
-      longBreakDuration: config.get5217TimerConfig().longBreakDuration,
+      longBreakDuration: new Duration({ minutes: 17 }),
       focusSessionsPerCycle: 1
     })
     expect(await timerConfigStorageService.get()).toEqual(expectedConfig)
