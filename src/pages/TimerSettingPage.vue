@@ -62,6 +62,10 @@ const onClickSave = async () => {
 const presetDefault = () => {
   loadConfig(config.getDefaultTimerConfig())
 }
+
+const preset5217 = () => {
+  loadConfig(config.get5217TimerConfig())
+}
 </script>
 
 <template>
@@ -91,7 +95,12 @@ const presetDefault = () => {
         >
           <i-ic-baseline-timer class="me-1" /> Default
         </b-button>
-        <b-button size="sm" variant="outline-secondary" data-test="preset-52-17">
+        <b-button
+          size="sm"
+          variant="outline-secondary"
+          data-test="preset-52-17"
+          @click="preset5217"
+        >
           <i-ic-baseline-timer class="me-1" /> 52-17
         </b-button>
       </div>

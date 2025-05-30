@@ -146,6 +146,29 @@ describe('TimerSettingPage', () => {
 
     expect(await timerConfigStorageService.get()).toEqual(config.getDefaultTimerConfig())
   })
+
+  it('should able to load preset 52/17', async () => {
+    const { wrapper, timerConfigStorageService } = await mountPage(
+      new TimerConfig({
+        focusDuration: new Duration({ minutes: 24 }),
+        shortBreakDuration: new Duration({ minutes: 4 }),
+        longBreakDuration: new Duration({ minutes: 13 }),
+        focusSessionsPerCycle: 3
+      })
+    )
+
+    await wrapper.find(dataTestSelector('preset-52-17')).trigger('click')
+
+    await saveSetting(wrapper)
+
+    const expectedConfig = new TimerConfig({
+      focusDuration: config.get5217TimerConfig().focusDuration,
+      shortBreakDuration: new Duration({ minutes: 4 }),
+      longBreakDuration: config.get5217TimerConfig().longBreakDuration,
+      focusSessionsPerCycle: 1
+    })
+    expect(await timerConfigStorageService.get()).toEqual(expectedConfig)
+  })
 })
 
 async function mountPage(initialTimerConfig: TimerConfig = TimerConfig.newTestInstance()) {

@@ -21,6 +21,15 @@ const getDefaultTimerConfig = () => {
   })
 }
 
+const get5217TimerConfig = () => {
+  return new TimerConfig({
+    focusDuration: new Duration({ minutes: 52 }),
+    longBreakDuration: new Duration({ minutes: 17 }),
+    shortBreakDuration: new Duration({ minutes: 17 }),
+    focusSessionsPerCycle: 1
+  })
+}
+
 const getDefaultNotificationSetting = () => {
   const notificationSetting: NotificationSetting = {
     reminderTab: true,
@@ -57,6 +66,7 @@ const getBadgeColorConfig = (): {
 
 export default {
   getDefaultTimerConfig,
+  get5217TimerConfig,
   getFocusSessionRecordHouseKeepDays,
   getBlockedTemplateUrl,
   getBadgeColorConfig,
