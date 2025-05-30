@@ -170,16 +170,18 @@ describe('TimerSettingPage', () => {
     expect(await timerConfigStorageService.get()).toEqual(expectedConfig)
   })
 
-  it("should loading preset 52/17 won't alter original short break duration in ui", async () => {
+  it('should loading preset 52/17 keep the short break and update perform cycle properly in ui', async () => {
     const { wrapper } = await mountPage(
       TimerConfig.newTestInstance({
-        shortBreakDuration: new Duration({ minutes: 4 })
+        shortBreakDuration: new Duration({ minutes: 4 }),
+        focusSessionsPerCycle: 3
       })
     )
 
     await wrapper.find(dataTestSelector('preset-52-17')).trigger('click')
 
     assertSelectorInputValue(wrapper, dataTestSelector('short-break-duration'), '4')
+    assertSelectorCheckboxValue(wrapper, dataTestSelector('perform-cycle'), false)
   })
 })
 

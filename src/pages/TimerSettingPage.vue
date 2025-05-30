@@ -64,13 +64,10 @@ const presetDefault = () => {
 }
 
 const preset5217 = () => {
-  const config = new TimerConfig({
-    focusDuration: new Duration({ minutes: 52 }),
-    shortBreakDuration: new Duration({ minutes: shortBreakDurationMinutes.value }),
-    longBreakDuration: new Duration({ minutes: 17 }),
-    focusSessionsPerCycle: 1
-  })
-  loadConfig(config)
+  focusDurationMinutes.value = 52
+  longBreakDurationMinutes.value = 17
+  focusSessionsPerCycle.value = 1
+  cycleMode.value = false
 }
 </script>
 
