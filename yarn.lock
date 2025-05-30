@@ -1837,12 +1837,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bootstrap-vue-next@npm:^0.24.23":
-  version: 0.24.23
-  resolution: "bootstrap-vue-next@npm:0.24.23"
+"bootstrap-vue-next@npm:^0.29.3":
+  version: 0.29.3
+  resolution: "bootstrap-vue-next@npm:0.29.3"
   peerDependencies:
-    vue: ^3.5.3
-  checksum: 10c0/2641890d3cee2e06baf51321434bbb221533fd3d330b19470bbb2850d960782a52d6951013354277ceccff00b90f3045517d3a163cfde0eb2282dfdb0779b937
+    "@floating-ui/vue": "*"
+    "@vueuse/core": "*"
+    vue: ^3.5.13
+    vue-router: "*"
+  peerDependenciesMeta:
+    "@floating-ui/vue":
+      optional: true
+    "@vueuse/core":
+      optional: true
+    vue-router:
+      optional: true
+  checksum: 10c0/8229dd544582eb790dc2406d48946447990c943c76acf0834fdd9ae6a9f619e5578b0245dd974ee1cb57fbe605ba1605a92d3b0c522c3cb4f757f8e68f7b2104
   languageName: node
   linkType: hard
 
@@ -6725,7 +6735,7 @@ __metadata:
     "@vue/test-utils": "npm:^2.4.6"
     "@vue/tsconfig": "npm:^0.5.1"
     bootstrap: "npm:^5.3.6"
-    bootstrap-vue-next: "npm:^0.24.23"
+    bootstrap-vue-next: "npm:^0.29.3"
     chrome-types: "npm:^0.1.334"
     eslint: "npm:^9.27.0"
     eslint-config-prettier: "npm:^10.1.5"

@@ -1,5 +1,6 @@
-import { flushPromises, mount } from '@vue/test-utils'
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import config from '../config'
 import { TimerConfig } from '../domain/timer/config'
 import { Duration } from '../domain/timer/duration'
 import { FakeActionService } from '../infra/action'
@@ -71,8 +72,7 @@ describe('TimerSettingPage', () => {
       .find(dataTestSelector('focus-sessions-per-cycle'))
       .setValue(newFocusSessionsPerCycle)
 
-    await wrapper.find(dataTestSelector('save-button')).trigger('click')
-    await flushPromises()
+    await saveSetting(wrapper)
 
     const newConfig = new TimerConfig({
       focusDuration: new Duration({ minutes: newFocusDuration }),
@@ -98,8 +98,8 @@ describe('TimerSettingPage', () => {
     await wrapper.find(dataTestSelector('short-break-duration')).setValue(newShortBreakDuration)
 
     await wrapper.find(dataTestSelector('perform-cycle')).setValue(false)
-    await wrapper.find(dataTestSelector('save-button')).trigger('click')
-    await flushPromises()
+
+    await saveSetting(wrapper)
 
     const newConfig = await timerConfigStorageService.get()
     expect(newConfig.shortBreakDuration).toEqual(new Duration({ minutes: 4 }))
@@ -113,8 +113,8 @@ describe('TimerSettingPage', () => {
     )
 
     await wrapper.find(dataTestSelector('perform-cycle')).setValue(false)
-    await wrapper.find(dataTestSelector('save-button')).trigger('click')
-    await flushPromises()
+
+    await saveSetting(wrapper)
 
     const newConfig = await timerConfigStorageService.get()
     expect(newConfig.focusSessionsPerCycle).toBe(1)
@@ -125,10 +125,63 @@ describe('TimerSettingPage', () => {
 
     expect(updateSuccessNotifierService.hasTriggered()).toBe(false)
 
-    await wrapper.find(dataTestSelector('save-button')).trigger('click')
-    await flushPromises()
+    await saveSetting(wrapper)
 
     expect(updateSuccessNotifierService.hasTriggered()).toBe(true)
+  })
+
+  it('should able to load preset default', async () => {
+    const { wrapper, timerConfigStorageService } = await mountPage(
+      new TimerConfig({
+        focusDuration: new Duration({ minutes: 24 }),
+        shortBreakDuration: new Duration({ minutes: 4 }),
+        longBreakDuration: new Duration({ minutes: 13 }),
+        focusSessionsPerCycle: 1
+      })
+    )
+
+    await wrapper.find(dataTestSelector('preset-default')).trigger('click')
+
+    await saveSetting(wrapper)
+
+    expect(await timerConfigStorageService.get()).toEqual(config.getDefaultTimerConfig())
+  })
+
+  it('should able to load preset 52/17', async () => {
+    const { wrapper, timerConfigStorageService } = await mountPage(
+      new TimerConfig({
+        focusDuration: new Duration({ minutes: 24 }),
+        shortBreakDuration: new Duration({ minutes: 4 }),
+        longBreakDuration: new Duration({ minutes: 13 }),
+        focusSessionsPerCycle: 3
+      })
+    )
+
+    await wrapper.find(dataTestSelector('preset-52-17')).trigger('click')
+
+    await saveSetting(wrapper)
+
+    const expectedConfig = new TimerConfig({
+      focusDuration: new Duration({ minutes: 52 }),
+      shortBreakDuration: new Duration({ minutes: 4 }), // Keep original short break duration
+      longBreakDuration: new Duration({ minutes: 17 }),
+      focusSessionsPerCycle: 1
+    })
+    expect(await timerConfigStorageService.get()).toEqual(expectedConfig)
+  })
+
+  it('should loading preset 52/17 keep the short break and update perform cycle properly in ui', async () => {
+    const { wrapper } = await mountPage(
+      TimerConfig.newTestInstance({
+        shortBreakDuration: new Duration({ minutes: 4 }),
+        focusSessionsPerCycle: 3
+      })
+    )
+
+    await wrapper.find(dataTestSelector('preset-52-17')).trigger('click')
+
+    assertSelectorInputValue(wrapper, dataTestSelector('short-break-duration'), '4')
+    assertSelectorCheckboxValue(wrapper, dataTestSelector('perform-cycle'), false)
   })
 })
 
@@ -154,4 +207,9 @@ async function mountPage(initialTimerConfig: TimerConfig = TimerConfig.newTestIn
     communicationManager,
     updateSuccessNotifierService
   }
+}
+
+async function saveSetting(wrapper: VueWrapper<any>) {
+  await wrapper.find(dataTestSelector('save-button')).trigger('click')
+  await flushPromises()
 }
