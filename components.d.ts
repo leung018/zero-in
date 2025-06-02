@@ -27,6 +27,7 @@ declare module 'vue' {
     IMdiFacebook: typeof import('~icons/mdi/facebook')['default']
     IMdiGithub: typeof import('~icons/mdi/github')['default']
     IMdiInstagram: typeof import('~icons/mdi/instagram')['default']
+    IPrimeTwitter: typeof import('~icons/prime/twitter')['default']
   }
   export interface GlobalDirectives {
     vBToggle: typeof import('bootstrap-vue-next/directives/BToggle')['vBToggle']

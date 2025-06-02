@@ -22,6 +22,9 @@ import ContentTemplate from '@/pages/components/ContentTemplate.vue'
         >
           <IMdiFacebook class="me-1" /> <span class="small">Facebook</span>
         </a>
+        <a href="https://x.com/zero_in_app" target="_blank" class="text-decoration-none">
+          <IPrimeTwitter class="me-1" /> <span class="small">X</span>
+        </a>
         <a
           href="https://github.com/leung018/zero-in/issues"
           target="_blank"
