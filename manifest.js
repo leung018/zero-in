@@ -6,7 +6,7 @@ const manifestConfig = {
   minimum_chrome_version: '114',
   name: 'Zero In - Your Focus Partner (BETA)' + (process.env.NAME_SUFFIX || ''),
   description:
-    'Helps you stay focused and productive with a customizable timer and website blocker —— perfect for work or study.',
+    'Helps you stay focused and productive with a customizable timer and website blocker —— great for work or study.',
   version: process.env.VERSION || '0.1',
   version_name: process.env.TAG_NAME || 'local',
   action: {
