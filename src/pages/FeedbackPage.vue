@@ -12,18 +12,9 @@ import ContentTemplate from '@/pages/components/ContentTemplate.vue'
       </p>
 
       <div class="d-flex gap-3 mt-1">
-        <a
-          href="https://github.com/leung018/zero-in/issues"
-          target="_blank"
-          class="text-decoration-none"
-        >
-          <div class="small">GitHub</div>
-        </a>
-
         <a href="https://instagram.com/zero.in.app" target="_blank" class="text-decoration-none">
           <div class="small">Instagram</div>
         </a>
-
         <a
           href="https://www.facebook.com/profile.php?id=61576798744679"
           target="_blank"
@@ -31,7 +22,13 @@ import ContentTemplate from '@/pages/components/ContentTemplate.vue'
         >
           <div class="small">Facebook</div>
         </a>
-
+        <a
+          href="https://github.com/leung018/zero-in/issues"
+          target="_blank"
+          class="text-decoration-none"
+        >
+          <div class="small">GitHub</div>
+        </a>
         <a href="mailto:leung-cheng@outlook.com" class="text-decoration-none">
           <div class="small">Email</div>
         </a>
