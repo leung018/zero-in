@@ -13,24 +13,24 @@ import ContentTemplate from '@/pages/components/ContentTemplate.vue'
 
       <div class="d-flex gap-3 mt-1">
         <a href="https://instagram.com/zero.in.app" target="_blank" class="text-decoration-none">
-          <div class="small">Instagram</div>
+          <IMdiInstagram class="me-1" /> <span class="small">Instagram</span>
         </a>
         <a
           href="https://www.facebook.com/profile.php?id=61576798744679"
           target="_blank"
           class="text-decoration-none"
         >
-          <div class="small">Facebook</div>
+          <IMdiFacebook class="me-1" /> <span class="small">Facebook</span>
         </a>
         <a
           href="https://github.com/leung018/zero-in/issues"
           target="_blank"
           class="text-decoration-none"
         >
-          <div class="small">GitHub</div>
+          <IMdiGithub class="me-1" /> <span class="small">GitHub</span>
         </a>
         <a href="mailto:leung-cheng@outlook.com" class="text-decoration-none">
-          <div class="small">Email</div>
+          <IMdiEmail class="me-1" /> <span class="small">Email</span>
         </a>
       </div>
     </BCard>

@@ -23,6 +23,10 @@ declare module 'vue' {
     IIcBaselineLightbulb: typeof import('~icons/ic/baseline-lightbulb')['default']
     IIcBaselineSettings: typeof import('~icons/ic/baseline-settings')['default']
     IIcBaselineTimer: typeof import('~icons/ic/baseline-timer')['default']
+    IMdiEmail: typeof import('~icons/mdi/email')['default']
+    IMdiFacebook: typeof import('~icons/mdi/facebook')['default']
+    IMdiGithub: typeof import('~icons/mdi/github')['default']
+    IMdiInstagram: typeof import('~icons/mdi/instagram')['default']
   }
   export interface GlobalDirectives {
     vBToggle: typeof import('bootstrap-vue-next/directives/BToggle')['vBToggle']
