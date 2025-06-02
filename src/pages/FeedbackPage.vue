@@ -41,8 +41,8 @@ import ContentTemplate from '@/pages/components/ContentTemplate.vue'
     <BCard class="mb-4 shadow-sm">
       <h3 class="mb-3 mt-1">Support</h3>
       <p>
-        If you find this extension helpful in your productivity journey, consider supporting me with a
-        coffee!
+        If you find this extension helpful in your productivity journey, consider supporting me with
+        a coffee!
       </p>
       <a href="https://ko-fi.com/R6R21FK21S" target="_blank" class="d-inline-block">
         <img
