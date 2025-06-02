@@ -13,27 +13,27 @@ import ContentTemplate from '@/pages/components/ContentTemplate.vue'
 
       <div class="d-flex gap-3 mt-1">
         <a href="https://instagram.com/zero.in.app" target="_blank" class="text-decoration-none">
-          <IMdiInstagram class="me-1" /> <span class="small">Instagram</span>
+          <IMdiInstagram class="me-2 social-icon" />
         </a>
         <a
           href="https://www.facebook.com/profile.php?id=61576798744679"
           target="_blank"
           class="text-decoration-none"
         >
-          <IMdiFacebook class="me-1" /> <span class="small">Facebook</span>
+          <IMdiFacebook class="me-2 social-icon" />
         </a>
         <a href="https://x.com/zero_in_app" target="_blank" class="text-decoration-none">
-          <IPrimeTwitter class="me-1" /> <span class="small">X</span>
+          <IPrimeTwitter class="me-2 social-icon" />
         </a>
         <a
           href="https://github.com/leung018/zero-in/issues"
           target="_blank"
           class="text-decoration-none"
         >
-          <IMdiGithub class="me-1" /> <span class="small">GitHub</span>
+          <IMdiGithub class="me-2 social-icon" />
         </a>
         <a href="mailto:leung-cheng@outlook.com" class="text-decoration-none">
-          <IMdiEmail class="me-1" /> <span class="small">Email</span>
+          <IMdiEmail class="me-2 social-icon" />
         </a>
       </div>
     </BCard>
@@ -56,3 +56,9 @@ import ContentTemplate from '@/pages/components/ContentTemplate.vue'
     </BCard>
   </ContentTemplate>
 </template>
+
+<style scoped>
+.social-icon {
+  font-size: 1.3rem;
+}
+</style>
