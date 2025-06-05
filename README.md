@@ -55,3 +55,39 @@ yarn test:e2e
 ```sh
 yarn lint
 ```
+
+### How to Copy Data from One Extension to Another
+
+If you want to copy data from one extension to another, you can use the following steps:
+
+1. In the Target Extension Console
+
+```javascript
+chrome.runtime.onMessageExternal.addListener(function (request, sender, sendResponse) {
+  if (request.action === 'import_storage' && request.data) {
+    chrome.storage.local.set(request.data, function () {
+      sendResponse({ success: true })
+    })
+    return true
+  }
+})
+```
+
+2. In the Source Extension Console
+
+```javascript
+chrome.storage.local.get(null, function (data) {
+  chrome.runtime.sendMessage(
+    TARGET_EXTENSION_ID,
+    {
+      action: 'import_storage',
+      data: data
+    },
+    function (response) {
+      console.log('Data transfer response:', response)
+    }
+  )
+})
+```
+
+For the `TARGET_EXTENSION_ID`, you can find it in the URL of page in that extension, which looks like `chrome-extension://<extension-id>/`. OR you can find it in the `chrome://extensions/`.
