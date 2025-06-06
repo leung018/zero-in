@@ -1503,6 +1503,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vitejs/plugin-vue@npm:^5.2.0":
+  version: 5.2.4
+  resolution: "@vitejs/plugin-vue@npm:5.2.4"
+  peerDependencies:
+    vite: ^5.0.0 || ^6.0.0
+    vue: ^3.2.25
+  checksum: 10c0/9559224f178daf35e3a665410d09089b0ce7c0402981f8757481c24c22f29df377f96cc6161d92f74d16c37c6e32ac19fea99086f75338ad6ceb9b5ee8375509
+  languageName: node
+  linkType: hard
+
 "@vitest/coverage-v8@npm:^3.1.4":
   version: 3.1.4
   resolution: "@vitest/coverage-v8@npm:3.1.4"
@@ -1865,6 +1875,17 @@ __metadata:
     "@types/filesystem": "npm:*"
     "@types/har-format": "npm:*"
   checksum: 10c0/8361aaa4945eb0ff9cb037b95b58b70a4800f8fd9c55a0a4526633192e96bec41ed9ef35b3f8f2007ecf5fced59db60df9b4b0bcaf22bdf910d4c7af6d97697a
+  languageName: node
+  linkType: hard
+
+"@wxt-dev/module-vue@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@wxt-dev/module-vue@npm:1.0.2"
+  dependencies:
+    "@vitejs/plugin-vue": "npm:^5.2.0"
+  peerDependencies:
+    wxt: ">=0.19.16"
+  checksum: 10c0/8ed1948d01ceafb085cf203dc930cd66e56b0d7993d9cbb6694f5dce7ad0944ac8528ca8ce029d373ac955cc9e627a39006243154399d6c6cb30d3d4e39d3aec
   languageName: node
   linkType: hard
 
@@ -8994,6 +9015,7 @@ __metadata:
     "@vue/eslint-config-typescript": "npm:^13.0.0"
     "@vue/test-utils": "npm:^2.4.6"
     "@vue/tsconfig": "npm:^0.5.1"
+    "@wxt-dev/module-vue": "npm:^1.0.2"
     bootstrap: "npm:^5.3.6"
     bootstrap-vue-next: "npm:^0.29.3"
     chrome-types: "npm:^0.1.334"
