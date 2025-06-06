@@ -30,7 +30,7 @@ jobs:
       - name: Unit Tests
         run: yarn test:unit
       - name: Build
-        run: yarn build-only
+        run: yarn build
       - name: Install Playwright Browser
         run: yarn playwright install --with-deps chromium
       - name: End-to-End Tests
@@ -50,7 +50,7 @@ jobs:
           cache-dependency-path: ./yarn.lock
       - run: yarn install --immutable
       - name: Build
-        run: yarn build-only
+        run: yarn build
       - name: Install Playwright Browser
         run: yarn playwright install --with-deps chromium
       - name: End-to-End Tests (macOS)

@@ -4,18 +4,18 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "yarn build-manifest && vite",
-    "build-manifest": "node manifest.js",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "dev": "wxt",
+    "build": "wxt build",
+    "zip": "wxt zip",
     "test:unit": "vitest",
     "test:unit:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "build-only": "rm -rf dist && yarn build-manifest && vite build",
-    "build-and-e2e": "yarn build-only && yarn test:e2e",
-    "type-check": "vue-tsc --build --force",
+    "build-and-e2e": "yarn build && yarn test:e2e",
+    "type-check": "vue-tsc --noEmit",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-pattern '.gitignore'",
     "format": "prettier --write .",
-    "format-check": "prettier --check ."
+    "format-check": "prettier --check .",
+    "postinstall": "wxt prepare"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
@@ -41,6 +41,7 @@
     "@vue/eslint-config-typescript": "^13.0.0",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.5.1",
+    "@wxt-dev/module-vue": "^1.0.2",
     "chrome-types": "^0.1.334",
     "eslint": "^9.27.0",
     "eslint-config-prettier": "^10.1.5",
@@ -58,7 +59,8 @@
     "vite": "^6.3.4",
     "vite-plugin-web-extension": "^4.4.3",
     "vitest": "^3.1.4",
-    "vue-tsc": "^2.0.21"
+    "vue-tsc": "^2.0.21",
+    "wxt": "^0.20.7"
   },
   "packageManager": "yarn@3.6.3+sha512.d432ab8b22b89cb8b46649ebaf196159b0c1870904224771d75fdf8b55490aaa5de4d9f028deb0425f1513bff7843e97b9d117103795a23b12d2e7c1cedcf50f"
 }
