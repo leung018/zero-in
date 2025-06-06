@@ -25,15 +25,11 @@ jobs:
           # Remove 'v' prefix and anything after a hyphen
           VERSION=$(echo "${{ env.TAG_NAME }}" | sed -E 's/^v//; s/-.*//')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - name: Build
-        run: yarn build
-      - name: Compress
-        run: |
-          mv dist zero-in
-          zip -r zero-in-${{ env.TAG_NAME  }}.zip zero-in
+      - name: Zip
+        run: yarn zip
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG_NAME  }}
-          files: zero-in-${{ env.TAG_NAME  }}.zip
+          files: dist/zero-in-${{ env.TAG_NAME  }}-chrome.zip
           fail_on_unmatched_files: true
