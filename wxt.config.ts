@@ -9,8 +9,8 @@ export default defineConfig({
   modules: ['@wxt-dev/module-vue'],
   srcDir: 'src',
   outDir: 'dist',
+  manifestVersion: 3,
   manifest: {
-    manifest_version: 3,
     minimum_chrome_version: '114',
     name: 'Zero In - Boost Your Focus (BETA)' + (process.env.NAME_SUFFIX || ''),
     description:
