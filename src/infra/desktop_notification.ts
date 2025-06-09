@@ -11,7 +11,7 @@ export interface DesktopNotifier {
   ) => void
 }
 
-export class DummyDesktopNotifier implements DesktopNotifier {
+class DummyDesktopNotifier implements DesktopNotifier {
   triggerNotification(): void {}
 
   clearNotification(): void {}
