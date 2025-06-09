@@ -104,8 +104,9 @@ const onClickSave = async () => {
       <TimeInput v-model="dailyResetTime" data-test="time-input" />
       <p class="mt-1">
         <small>
-          The daily reset time for tracking completed focus sessions is used to adjust statistics
-          based on your preference.
+          The daily reset time defines when a new day starts for tracking focus sessions. For
+          example, with a 4:00 AM reset, sessions completed between 4:00 AM today and 3:59 AM
+          tomorrow count as today's.
         </small>
       </p>
     </BFormGroup>
