@@ -95,7 +95,7 @@ export class BackgroundListener {
   private focusSessionRecordHouseKeepDays: number
   private focusSessionRecordsUpdateSubscriptionManager = new SubscriptionManager()
 
-  private notificationService: ActionService
+  private notificationServicesContainer: ActionService
   private notificationSettingStorageService: NotificationSettingStorageService
   private soundService: ActionService
   private desktopNotificationService: DesktopNotificationService
@@ -126,7 +126,7 @@ export class BackgroundListener {
     })
     this.browsingRulesStorageService = params.browsingRulesStorageService
 
-    this.notificationService = new MultipleActionService([])
+    this.notificationServicesContainer = new MultipleActionService([])
     this.notificationSettingStorageService = params.notificationSettingStorageService
     this.soundService = params.soundService
     this.desktopNotificationService = params.desktopNotificationService
@@ -161,16 +161,7 @@ export class BackgroundListener {
     }
 
     this.timer.setOnStageCompleted((lastStage) => {
-      const stageDisplayLabelHelper = new StageDisplayLabelHelper({
-        focusSessionsPerCycle: this.timer.getConfig().focusSessionsPerCycle
-      })
-      this.desktopNotificationService.setNextButtonTitle(
-        `Start ${stageDisplayLabelHelper.getStageLabel({
-          stage: this.timer.getState().stage,
-          focusSessionsCompleted: this.timer.getState().focusSessionsCompleted
-        })}`
-      )
-      this.notificationService.trigger()
+      this.triggerNotification()
       this.badgeDisplayService.clearBadge()
       this.toggleBrowsingRules()
 
@@ -212,7 +203,20 @@ export class BackgroundListener {
       services.push(this.soundService)
     }
 
-    this.notificationService = new MultipleActionService(services)
+    this.notificationServicesContainer = new MultipleActionService(services)
+  }
+
+  private triggerNotification() {
+    const stageDisplayLabelHelper = new StageDisplayLabelHelper({
+      focusSessionsPerCycle: this.timer.getConfig().focusSessionsPerCycle
+    })
+    const stageLabel = stageDisplayLabelHelper.getStageLabel({
+      stage: this.timer.getState().stage,
+      focusSessionsCompleted: this.timer.getState().focusSessionsCompleted
+    })
+    this.desktopNotificationService.setNextButtonTitle(`Start ${stageLabel}`)
+
+    this.notificationServicesContainer.trigger()
   }
 
   private async updateFocusSessionRecords() {
