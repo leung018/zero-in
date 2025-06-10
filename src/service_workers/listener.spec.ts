@@ -414,6 +414,24 @@ describe('BackgroundListener', () => {
     expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
   })
 
+  it('should desktop notification button title being shown properly', async () => {
+    const { desktopNotificationService, clientPort, scheduler } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 3 }),
+        focusSessionsPerCycle: 3
+      }),
+      notificationSetting: newTestNotificationSetting({
+        desktopNotification: true
+      })
+    })
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    scheduler.advanceTime(3000)
+    await flushPromises()
+
+    expect(desktopNotificationService.getLastShownButtonTitle()).toBe('Start 1st Break')
+  })
+
   it('should trigger timer start when click start on desktop notification', async () => {
     const { scheduler, clientPort, desktopNotificationService, listener } = await startListener({
       timerConfig: TimerConfig.newTestInstance({

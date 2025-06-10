@@ -10,6 +10,7 @@ import { newFocusSessionRecord } from '../domain/timer/record'
 import { FocusSessionRecordHousekeeper } from '../domain/timer/record/house_keep'
 import { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
 import { TimerStage } from '../domain/timer/stage'
+import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
 import type { TimerState } from '../domain/timer/state'
 import { TimerStateStorageService } from '../domain/timer/state/storage'
 import { type ActionService } from '../infra/action'
@@ -160,6 +161,15 @@ export class BackgroundListener {
     }
 
     this.timer.setOnStageCompleted((lastStage) => {
+      const stageDisplayLabelHelper = new StageDisplayLabelHelper({
+        focusSessionsPerCycle: this.timer.getConfig().focusSessionsPerCycle
+      })
+      this.desktopNotificationService.setNextButtonTitle(
+        `Start ${stageDisplayLabelHelper.getStageLabel({
+          stage: this.timer.getState().stage,
+          focusSessionsCompleted: this.timer.getState().focusSessionsCompleted
+        })}`
+      )
       this.notificationService.trigger()
       this.badgeDisplayService.clearBadge()
       this.toggleBrowsingRules()

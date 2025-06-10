@@ -28,6 +28,10 @@ export class DesktopNotificationService implements ActionService {
 
   private _isNotificationActive = false
 
+  private nextButtonTitle = 'Start Next'
+
+  private lastShownButtonTitle: string | null = null
+
   static create(): DesktopNotificationService {
     return new DesktopNotificationService({
       desktopNotifier: new ChromeDesktopNotifier()
@@ -53,13 +57,22 @@ export class DesktopNotificationService implements ActionService {
     return this._isNotificationActive
   }
 
+  getLastShownButtonTitle() {
+    return this.lastShownButtonTitle
+  }
+
+  setNextButtonTitle(title: string): void {
+    this.nextButtonTitle = title
+  }
+
   trigger(): void {
     this.desktopNotifier.triggerNotification(NOTIFICATION_ID, [
       {
-        title: 'Start Next'
+        title: this.nextButtonTitle
       }
     ])
     this._isNotificationActive = true
+    this.lastShownButtonTitle = this.nextButtonTitle
   }
 
   clear(): void {
