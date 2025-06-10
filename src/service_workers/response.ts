@@ -13,6 +13,7 @@ export type WorkResponse =
         isRunning: boolean
         stage: TimerStage
         focusSessionsCompleted: number
+        focusSessionsPerCycle: number
       }
     }
   | {
