@@ -22,7 +22,7 @@ class DummyDesktopNotifier implements DesktopNotifier {
 export class DesktopNotificationService implements ActionService {
   // Require a bit manual testing for verifying the integration with ChromeDesktopNotifier
 
-  private onClickStartNext: () => void = () => {}
+  private onClickStart: () => void = () => {}
 
   private desktopNotifier: DesktopNotifier
 
@@ -67,11 +67,11 @@ export class DesktopNotificationService implements ActionService {
     this._isNotificationActive = false
   }
 
-  setOnClickStartNext(onClickStartNext: () => void): void {
-    this.onClickStartNext = onClickStartNext
+  setOnClickStart(onClickStart: () => void): void {
+    this.onClickStart = onClickStart
   }
 
-  simulateClickStartNext(): void {
+  simulateClickStart(): void {
     this.buttonClickedListener(NOTIFICATION_ID, 0)
   }
 
@@ -80,7 +80,7 @@ export class DesktopNotificationService implements ActionService {
     buttonIndex
   ) => {
     if (notificationId === NOTIFICATION_ID && buttonIndex === 0) {
-      this.onClickStartNext()
+      this.onClickStart()
     }
   }
 }

@@ -129,7 +129,7 @@ export class BackgroundListener {
     this.notificationSettingStorageService = params.notificationSettingStorageService
     this.soundService = params.soundService
     this.desktopNotificationService = params.desktopNotificationService
-    this.desktopNotificationService.setOnClickStartNext(() => {
+    this.desktopNotificationService.setOnClickStart(() => {
       params.timer.start()
     })
 

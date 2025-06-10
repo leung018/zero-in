@@ -414,7 +414,7 @@ describe('BackgroundListener', () => {
     expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
   })
 
-  it('should trigger timer start when click startNext on desktop notification', async () => {
+  it('should trigger timer start when click start on desktop notification', async () => {
     const { scheduler, clientPort, desktopNotificationService, listener } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
@@ -429,7 +429,7 @@ describe('BackgroundListener', () => {
     scheduler.advanceTime(3000)
     await flushPromises()
 
-    desktopNotificationService.simulateClickStartNext()
+    desktopNotificationService.simulateClickStart()
     await flushPromises()
 
     expect(listener.getTimerState().isRunning).toBe(true)
