@@ -159,12 +159,12 @@ export class BackgroundListener {
       this.timer.setState(backupState)
     }
 
-    this.timer.setOnStageComplete((completedStage) => {
+    this.timer.setOnStageCompleted((lastStage) => {
       this.notificationService.trigger()
       this.badgeDisplayService.clearBadge()
       this.toggleBrowsingRules()
 
-      if (completedStage === TimerStage.FOCUS) {
+      if (lastStage === TimerStage.FOCUS) {
         this.updateFocusSessionRecords()
       }
     })
