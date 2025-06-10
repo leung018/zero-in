@@ -280,7 +280,8 @@ export class BackgroundListener {
                     remainingSeconds: newState.remaining.remainingSeconds(),
                     isRunning: newState.isRunning,
                     stage: newState.stage,
-                    focusSessionsCompleted: newState.focusSessionsCompleted
+                    focusSessionsCompleted: newState.focusSessionsCompleted,
+                    focusSessionsPerCycle: this.timer.getConfig().focusSessionsPerCycle
                   }
                 })
               })

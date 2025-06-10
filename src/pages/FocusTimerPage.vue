@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import type { ClientPort } from '@/service_workers/listener'
-import { formatNumber, getNumberWithOrdinal } from '@/utils/format'
+import { formatNumber } from '@/utils/format'
 import { computed, onBeforeMount, ref } from 'vue'
-import type { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { Duration } from '../domain/timer/duration'
 import { TimerStage } from '../domain/timer/stage'
+import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
 import { WorkRequestName } from '../service_workers/request'
 import { WorkResponseName } from '../service_workers/response'
 
-const { port, timerConfigStorageService } = defineProps<{
+const { port } = defineProps<{
   port: ClientPort
-  timerConfigStorageService: TimerConfigStorageService
 }>()
 
 const durationLeft = ref<Duration>(new Duration({ seconds: 0 }))
@@ -18,6 +17,12 @@ const isRunning = ref(false)
 const timerStage = ref<TimerStage>(TimerStage.FOCUS)
 const focusSessionsCompleted = ref(0)
 const focusSessionsPerCycle = ref(0)
+const stageDisplayLabelHelper = computed(
+  () =>
+    new StageDisplayLabelHelper({
+      focusSessionsPerCycle: focusSessionsPerCycle.value
+    })
+)
 
 const displayTime = computed(() => {
   const totalSeconds = durationLeft.value.remainingSeconds()
@@ -27,39 +32,13 @@ const displayTime = computed(() => {
 })
 
 const currentStage = computed(() => {
-  switch (timerStage.value) {
-    case TimerStage.SHORT_BREAK:
-      return getShortBreakLabel(focusSessionsCompleted.value)
-    case TimerStage.LONG_BREAK:
-      return getLongBreakLabel()
-    default:
-      return getFocusLabel(focusSessionsCompleted.value + 1)
-  }
+  return stageDisplayLabelHelper.value.getStageLabel({
+    stage: timerStage.value,
+    focusSessionsCompleted: focusSessionsCompleted.value
+  })
 })
 
-function getLongBreakLabel() {
-  if (focusSessionsPerCycle.value > 1) {
-    return 'Long Break'
-  }
-  return 'Break'
-}
-
-function getFocusLabel(nth: number) {
-  if (focusSessionsPerCycle.value > 1) {
-    return `${getNumberWithOrdinal(nth)} Focus`
-  }
-  return 'Focus'
-}
-
-function getShortBreakLabel(nth: number) {
-  return `${getNumberWithOrdinal(nth)} Break`
-}
-
 onBeforeMount(async () => {
-  timerConfigStorageService.get().then((timerConfig) => {
-    focusSessionsPerCycle.value = timerConfig.focusSessionsPerCycle
-  })
-
   port.onMessage((message) => {
     if (message.name !== WorkResponseName.TIMER_STATE || !message.payload) {
       return
@@ -69,6 +48,7 @@ onBeforeMount(async () => {
     durationLeft.value = new Duration({ seconds: message.payload.remainingSeconds })
     isRunning.value = message.payload.isRunning
     focusSessionsCompleted.value = message.payload.focusSessionsCompleted
+    focusSessionsPerCycle.value = message.payload.focusSessionsPerCycle
   })
   port.send({
     name: WorkRequestName.LISTEN_TO_TIMER
@@ -138,7 +118,7 @@ const onClickRestartLongBreak = () => {
               variant="primary"
               data-test="restart-focus"
               @click="onClickRestartFocus(nth)"
-              >{{ getFocusLabel(nth) }}</BButton
+              >{{ stageDisplayLabelHelper.getFocusLabel(nth) }}</BButton
             >
           </BCol>
           <BCol v-if="nth < focusSessionsPerCycle">
@@ -147,7 +127,7 @@ const onClickRestartLongBreak = () => {
               variant="secondary"
               data-test="restart-short-break"
               @click="onClickRestartShortBreak(nth)"
-              >{{ getShortBreakLabel(nth) }}</BButton
+              >{{ stageDisplayLabelHelper.getShortBreakLabel(nth) }}</BButton
             >
           </BCol>
           <BCol v-else>
@@ -156,7 +136,7 @@ const onClickRestartLongBreak = () => {
               variant="secondary"
               data-test="restart-long-break"
               @click="onClickRestartLongBreak"
-              >{{ getLongBreakLabel() }}</BButton
+              >{{ stageDisplayLabelHelper.getLongBreakLabel() }}</BButton
             >
           </BCol>
         </BRow>

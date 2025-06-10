@@ -7,6 +7,7 @@ import type { DailyResetTimeStorageService } from '../domain/daily_reset_time/st
 import { Time } from '../domain/time'
 import type { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
 import { TimerStage } from '../domain/timer/stage'
+import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
 import { WorkRequestName } from '../service_workers/request'
 import { WorkResponseName } from '../service_workers/response'
 
@@ -19,18 +20,20 @@ const { port, focusSessionRecordStorageService, dailyResetTimeStorageService, cu
   }>()
 
 const timerStage = ref<TimerStage>(TimerStage.FOCUS)
+const focusSessionsPerCycle = ref(0)
+const focusSessionsCompleted = ref(0)
 const dailyCompletedFocusSessions = ref(0)
 const dailyResetTime = ref(new Time(0, 0))
 
 const hintMsg = computed(() => {
-  switch (timerStage.value) {
-    case TimerStage.SHORT_BREAK:
-      return 'Take a short break'
-    case TimerStage.LONG_BREAK:
-      return 'Take a break'
-    default:
-      return 'Start focusing'
-  }
+  const stageDisplayLabelHelper = new StageDisplayLabelHelper({
+    focusSessionsPerCycle: focusSessionsPerCycle.value
+  })
+  const stageLabel = stageDisplayLabelHelper.getStageLabel({
+    stage: timerStage.value,
+    focusSessionsCompleted: focusSessionsCompleted.value
+  })
+  return `Start ${stageLabel}`
 })
 
 onBeforeMount(async () => {
@@ -39,6 +42,8 @@ onBeforeMount(async () => {
       return
     }
     timerStage.value = message.payload.stage
+    focusSessionsPerCycle.value = message.payload.focusSessionsPerCycle
+    focusSessionsCompleted.value = message.payload.focusSessionsCompleted
   })
   port.send({
     name: WorkRequestName.LISTEN_TO_TIMER
