@@ -2,16 +2,14 @@
 import type { ClientPort } from '@/service_workers/listener'
 import { formatNumber } from '@/utils/format'
 import { computed, onBeforeMount, ref } from 'vue'
-import type { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { Duration } from '../domain/timer/duration'
 import { TimerStage } from '../domain/timer/stage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
 import { WorkRequestName } from '../service_workers/request'
 import { WorkResponseName } from '../service_workers/response'
 
-const { port, timerConfigStorageService } = defineProps<{
+const { port } = defineProps<{
   port: ClientPort
-  timerConfigStorageService: TimerConfigStorageService
 }>()
 
 const durationLeft = ref<Duration>(new Duration({ seconds: 0 }))
@@ -41,10 +39,6 @@ const currentStage = computed(() => {
 })
 
 onBeforeMount(async () => {
-  timerConfigStorageService.get().then((timerConfig) => {
-    focusSessionsPerCycle.value = timerConfig.focusSessionsPerCycle
-  })
-
   port.onMessage((message) => {
     if (message.name !== WorkResponseName.TIMER_STATE || !message.payload) {
       return
@@ -54,6 +48,7 @@ onBeforeMount(async () => {
     durationLeft.value = new Duration({ seconds: message.payload.remainingSeconds })
     isRunning.value = message.payload.isRunning
     focusSessionsCompleted.value = message.payload.focusSessionsCompleted
+    focusSessionsPerCycle.value = message.payload.focusSessionsPerCycle
   })
   port.send({
     name: WorkRequestName.LISTEN_TO_TIMER

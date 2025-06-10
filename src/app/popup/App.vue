@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { TimerConfigStorageService } from '@/domain/timer/config/storage'
 import { ChromeCommunicationManager } from '@/infra/browser/communication'
 import FocusTimerPage from '@/pages/FocusTimerPage.vue'
 
@@ -18,9 +17,6 @@ const openOptionsPage = () => {
     >
       <IIcBaselineSettings />
     </BButton>
-    <FocusTimerPage
-      :port="new ChromeCommunicationManager().clientConnect()"
-      :timerConfigStorageService="TimerConfigStorageService.create()"
-    />
+    <FocusTimerPage :port="new ChromeCommunicationManager().clientConnect()" />
   </div>
 </template>

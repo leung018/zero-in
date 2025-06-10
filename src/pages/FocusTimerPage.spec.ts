@@ -1,7 +1,6 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { TimerConfig } from '../domain/timer/config'
-import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { Duration } from '../domain/timer/duration'
 import { FakeCommunicationManager } from '../infra/communication'
 import { setUpListener } from '../test_utils/listener'
@@ -336,26 +335,20 @@ describe('FocusTimerPage', () => {
 })
 
 async function startListenerAndMountPage(timerConfig = TimerConfig.newTestInstance()) {
-  const { scheduler, communicationManager, timerConfigStorageService, listener } =
-    await setUpListener({
-      timerConfig
-    })
+  const { scheduler, communicationManager, listener } = await setUpListener({
+    timerConfig
+  })
   await listener.start()
   const wrapper = await mountPage({
-    port: communicationManager.clientConnect(),
-    timerConfigStorageService
+    port: communicationManager.clientConnect()
   })
   return { wrapper, scheduler, communicationManager }
 }
 
-async function mountPage({
-  port = new FakeCommunicationManager().clientConnect(),
-  timerConfigStorageService = TimerConfigStorageService.createFake()
-} = {}) {
+async function mountPage({ port = new FakeCommunicationManager().clientConnect() } = {}) {
   const wrapper = mount(FocusTimerPage, {
     props: {
-      port,
-      timerConfigStorageService
+      port
     }
   })
   await flushPromises()
