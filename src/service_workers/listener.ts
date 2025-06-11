@@ -207,13 +207,8 @@ export class BackgroundListener {
   }
 
   private triggerNotification() {
-    const stageDisplayLabelHelper = new StageDisplayLabelHelper({
-      focusSessionsPerCycle: this.timer.getConfig().focusSessionsPerCycle
-    })
-    const stageLabel = stageDisplayLabelHelper.getStageLabel({
-      stage: this.timer.getState().stage,
-      focusSessionsCompleted: this.timer.getState().focusSessionsCompleted
-    })
+    const stageDisplayLabelHelper = new StageDisplayLabelHelper(this.timer.getConfig())
+    const stageLabel = stageDisplayLabelHelper.getStageLabel(this.timer.getState())
     this.desktopNotificationService.setNextButtonTitle(`Start ${stageLabel}`)
 
     this.notificationServicesContainer.trigger()
