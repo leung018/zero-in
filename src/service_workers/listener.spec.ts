@@ -346,6 +346,20 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
 
+  it('should toggle browsing control when listener is started', async () => {
+    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
+
+    const { browsingControlService } = await startListener({
+      blockingTimerIntegration: newTestBlockingTimerIntegration({
+        pauseBlockingWhenTimerNotRunning: false
+      }),
+      browsingRules,
+      weeklySchedules: []
+    })
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+  })
+
   it('should toggle browsing control when start timer or complete stage', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
 
