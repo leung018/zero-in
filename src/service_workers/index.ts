@@ -8,7 +8,9 @@ chrome.runtime.onStartup.addListener(function () {}) // This is a hack to keep t
 // Noted that e2e tests are hard to cover all of the below related to chrome api properly. Better use a bit manual testing if needed.
 
 const listener = BackgroundListener.create()
-listener.start()
+listener.start().then(() => {
+  console.log('BackgroundListener started successfully.')
+})
 
 // Periodically toggling browsing rules
 chrome.alarms.onAlarm.addListener(() => {
