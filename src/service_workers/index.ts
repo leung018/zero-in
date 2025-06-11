@@ -22,7 +22,7 @@ chrome.alarms.onAlarm.addListener(() => {
 const now = new Date()
 chrome.alarms.create('immediate', { when: now.getTime() })
 chrome.alarms.create('recurring', { periodInMinutes: 1, when: getStartOfNextMinute(now).getTime() })
-chrome.alarms.clear() // Remove old alarm
+chrome.alarms.clear() // Remove old alarm in previous version, if any
 
 chrome.runtime.onInstalled.addListener(() => {
   console.log('Extension installed or updated.')
