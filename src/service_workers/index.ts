@@ -24,8 +24,10 @@ chrome.alarms.create('immediate', { when: now.getTime() })
 chrome.alarms.create('recurring', { periodInMinutes: 1, when: getStartOfNextMinute(now).getTime() })
 chrome.alarms.clear() // Remove old alarm
 
-// Creating context menu items
 chrome.runtime.onInstalled.addListener(() => {
+  console.log('Extension installed or updated.')
+
+  // Creating context menu items
   chrome.contextMenus.create({
     id: MenuItemId.OPEN_STATISTICS,
     title: 'Statistics',
@@ -36,16 +38,16 @@ chrome.runtime.onInstalled.addListener(() => {
     title: 'Add site to blocked domains',
     documentUrlPatterns: ['http://*/*', 'https://*/*']
   })
-})
-chrome.contextMenus.onClicked.addListener((info) => {
-  switch (info.menuItemId) {
-    case MenuItemId.OPEN_STATISTICS:
-      new ChromeNewTabService(chrome.runtime.getURL('options.html') + '#/statistics').trigger()
-      break
-    case MenuItemId.ADD_BLOCKED_DOMAIN:
-      if (info.pageUrl) {
-        listener.addBlockedDomain(info.pageUrl)
-      }
-      break
-  }
+  chrome.contextMenus.onClicked.addListener((info) => {
+    switch (info.menuItemId) {
+      case MenuItemId.OPEN_STATISTICS:
+        new ChromeNewTabService(chrome.runtime.getURL('options.html') + '#/statistics').trigger()
+        break
+      case MenuItemId.ADD_BLOCKED_DOMAIN:
+        if (info.pageUrl) {
+          listener.addBlockedDomain(info.pageUrl)
+        }
+        break
+    }
+  })
 })
