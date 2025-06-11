@@ -148,7 +148,7 @@ export class BackgroundListener {
   }
 
   async start() {
-    await Promise.all([this.setUpTimer(), this.setUpNotification(), this.toggleBrowsingRules()])
+    await Promise.all([this.setUpTimer(), this.setUpNotification()])
     this.setUpListener()
   }
 
@@ -258,8 +258,8 @@ export class BackgroundListener {
       })
   }
 
-  async toggleBrowsingRules() {
-    return this.browsingControlTogglingService.run()
+  toggleBrowsingRules() {
+    this.browsingControlTogglingService.run()
   }
 
   private setUpListener() {
