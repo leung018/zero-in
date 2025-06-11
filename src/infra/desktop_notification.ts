@@ -22,11 +22,15 @@ class DummyDesktopNotifier implements DesktopNotifier {
 export class DesktopNotificationService implements ActionService {
   // Require a bit manual testing for verifying the integration with ChromeDesktopNotifier
 
-  private onClickStartNext: () => void = () => {}
+  private onClickStart: () => void = () => {}
 
   private desktopNotifier: DesktopNotifier
 
   private _isNotificationActive = false
+
+  private nextButtonTitle = 'Start Next'
+
+  private lastShownButtonTitle: string | null = null
 
   static create(): DesktopNotificationService {
     return new DesktopNotificationService({
@@ -53,13 +57,22 @@ export class DesktopNotificationService implements ActionService {
     return this._isNotificationActive
   }
 
+  getLastShownButtonTitle() {
+    return this.lastShownButtonTitle
+  }
+
+  setNextButtonTitle(title: string): void {
+    this.nextButtonTitle = title
+  }
+
   trigger(): void {
     this.desktopNotifier.triggerNotification(NOTIFICATION_ID, [
       {
-        title: 'Start Next'
+        title: this.nextButtonTitle
       }
     ])
     this._isNotificationActive = true
+    this.lastShownButtonTitle = this.nextButtonTitle
   }
 
   clear(): void {
@@ -67,11 +80,11 @@ export class DesktopNotificationService implements ActionService {
     this._isNotificationActive = false
   }
 
-  setOnClickStartNext(onClickStartNext: () => void): void {
-    this.onClickStartNext = onClickStartNext
+  setOnClickStart(onClickStart: () => void): void {
+    this.onClickStart = onClickStart
   }
 
-  simulateClickStartNext(): void {
+  simulateClickStart(): void {
     this.buttonClickedListener(NOTIFICATION_ID, 0)
   }
 
@@ -80,7 +93,7 @@ export class DesktopNotificationService implements ActionService {
     buttonIndex
   ) => {
     if (notificationId === NOTIFICATION_ID && buttonIndex === 0) {
-      this.onClickStartNext()
+      this.onClickStart()
     }
   }
 }

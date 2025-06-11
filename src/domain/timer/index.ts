@@ -52,7 +52,7 @@ export class FocusTimer {
 
   private scheduler: PeriodicTaskScheduler
 
-  private onStageComplete: (stage: TimerStage) => void = () => {}
+  private onStageCompleted: (lastStage: TimerStage) => void = () => {}
 
   private onTimerUpdate: (state: TimerState) => void = () => {}
 
@@ -152,8 +152,8 @@ export class FocusTimer {
     this.notifyTimerUpdate()
   }
 
-  setOnStageComplete(callback: (completedStage: TimerStage) => void) {
-    this.onStageComplete = callback
+  setOnStageCompleted(callback: (lastStage: TimerStage) => void) {
+    this.onStageCompleted = callback
   }
 
   restartShortBreak(nth?: number) {
@@ -202,12 +202,13 @@ export class FocusTimer {
   }
 
   private completeCurrentStage() {
-    this.onStageComplete(this.stage)
+    const lastStage = this.stage
     if (this.stage === TimerStage.FOCUS) {
       this.handleFocusComplete()
     } else {
       this.handleBreakComplete()
     }
+    this.onStageCompleted(lastStage)
   }
 
   private handleFocusComplete() {
