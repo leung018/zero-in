@@ -3,16 +3,17 @@ import { getStartOfNextMinute } from '../utils/date'
 import { BackgroundListener } from './listener'
 import { MenuItemId } from './menu_item_id'
 
-chrome.runtime.onStartup.addListener(function () {}) // This is a hack to keep the below run immediately after the browser is closed and reopened
-
-// Noted that e2e tests are hard to cover all of the below related to chrome api properly. Better use a bit manual testing if needed.
+chrome.runtime.onStartup.addListener(function () {}) // Register an empty onStartup listener to ensure the service worker activates immediately after browser restart
 
 const listener = BackgroundListener.create()
 listener.start().then(() => {
   console.log('BackgroundListener started successfully.')
 })
 
+// Noted that e2e tests are hard to cover all of the below related to chrome api properly. Better use a bit manual testing if needed.
+
 // Periodically toggling browsing rules
+// alarms related code should not put inside onInstalled.addListener because they should be triggered even when the browser is restarted
 chrome.alarms.onAlarm.addListener(() => {
   // Uncomment below and add alarm as argument above to observe the alarm firing
   // console.debug('Alarm fired:', alarm)
