@@ -1,4 +1,5 @@
 import { ChromeNewTabService } from '../infra/browser/new_tab'
+import { getStartOfNextMinute } from '../utils/date'
 import { BackgroundListener } from './listener'
 import { MenuItemId } from './menu_item_id'
 
@@ -12,7 +13,9 @@ chrome.alarms.onAlarm.addListener(() => {
   // console.debug('Alarm fired:', alarm)
   listener.toggleBrowsingRules()
 })
-chrome.alarms.create({ periodInMinutes: 0.5, when: Date.now() })
+const now = new Date()
+chrome.alarms.create('immediate', { when: now.getTime() })
+chrome.alarms.create('recurring', { periodInMinutes: 1, when: getStartOfNextMinute(now).getTime() })
 
 chrome.runtime.onStartup.addListener(function () {}) // This is a hack to keep the above run immediately after the browser is closed and reopened
 
