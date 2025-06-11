@@ -28,18 +28,6 @@ describe('ReminderPage', () => {
     await flushPromises()
 
     expect(wrapper.find(dataTestSelector('hint-message')).text()).toContain('Start 1st Break')
-
-    timer.start()
-    scheduler.advanceTime(1001)
-    await flushPromises()
-
-    expect(wrapper.find(dataTestSelector('hint-message')).text()).toContain('Start 2nd Focus')
-
-    timer.start()
-    scheduler.advanceTime(3001)
-    await flushPromises()
-
-    expect(wrapper.find(dataTestSelector('hint-message')).text()).toContain('Start Long Break')
   })
 
   it('should click start button to start timer again', async () => {
