@@ -19,6 +19,7 @@ chrome.alarms.onAlarm.addListener(() => {
 const now = new Date()
 chrome.alarms.create('immediate', { when: now.getTime() })
 chrome.alarms.create('recurring', { periodInMinutes: 1, when: getStartOfNextMinute(now).getTime() })
+chrome.alarms.clear() // Remove old alarm
 
 // Creating context menu items
 chrome.runtime.onInstalled.addListener(() => {
