@@ -7,7 +7,7 @@ chrome.runtime.onStartup.addListener(function () {}) // Register an empty onStar
 
 const listener = BackgroundListener.create()
 listener.start().then(() => {
-  console.log('BackgroundListener started successfully.')
+  console.info('BackgroundListener started successfully.')
 })
 
 // Noted that e2e tests are hard to cover all of the below related to chrome api properly. Better use a bit manual testing if needed.
@@ -25,7 +25,7 @@ chrome.alarms.create('recurring', { periodInMinutes: 1, when: getStartOfNextMinu
 chrome.alarms.clear() // Remove old alarm in previous version, if any
 
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('Extension installed or updated.')
+  console.info('Extension installed or updated.')
 
   // Creating context menu items
   chrome.contextMenus.create({
