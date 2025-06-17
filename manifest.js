@@ -3,7 +3,6 @@ import process from 'process'
 
 const manifestConfig = {
   manifest_version: 3,
-  minimum_chrome_version: '114',
   name: 'Zero In - Boost Your Focus (BETA)' + (process.env.NAME_SUFFIX || ''),
   description:
     'Helps you stay focused and productive with a customizable timer and website blocker —— great for work or study.',
