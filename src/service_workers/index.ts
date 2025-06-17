@@ -22,15 +22,22 @@ chrome.alarms.create('recurring', { periodInMinutes: 1, when: getStartOfNextMinu
 chrome.alarms.clear() // Remove old alarm in previous version, if any
 
 // Creating context menu items
-chrome.contextMenus.create({
-  id: MenuItemId.OPEN_STATISTICS,
-  title: 'Statistics',
-  contexts: ['action']
-})
-chrome.contextMenus.create({
-  id: MenuItemId.ADD_BLOCKED_DOMAIN,
-  title: 'Add site to blocked domains',
-  documentUrlPatterns: ['http://*/*', 'https://*/*']
+chrome.runtime.onInstalled.addListener(() => {
+  // Context menu items are only created during extension installation or updates because:
+  // 1. They persist through browser restarts (no need to recreate them)
+  // 2. Creating items with duplicate IDs would populate chrome.runtime.lastError with an error message,
+  //    which we avoid by only creating them during installation/updates
+
+  chrome.contextMenus.create({
+    id: MenuItemId.OPEN_STATISTICS,
+    title: 'Statistics',
+    contexts: ['action']
+  })
+  chrome.contextMenus.create({
+    id: MenuItemId.ADD_BLOCKED_DOMAIN,
+    title: 'Add site to blocked domains',
+    documentUrlPatterns: ['http://*/*', 'https://*/*']
+  })
 })
 chrome.contextMenus.onClicked.addListener((info) => {
   switch (info.menuItemId) {
