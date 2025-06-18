@@ -3,21 +3,34 @@ import { BackgroundListener } from '@/service_workers/listener'
 import { MenuItemId } from '@/service_workers/menu_item_id'
 
 export default defineBackground(() => {
-  // Noted that e2e tests are hard to cover all of the below related to chrome api properly. Better use a bit manual testing if needed.
+  chrome.runtime.onStartup.addListener(function () {}) // Register an empty onStartup listener to ensure the service worker activates immediately after browser restart
 
   const listener = BackgroundListener.create()
   listener.start()
 
+  // Noted that e2e tests are hard to cover all of the below related to chrome api properly. Better use a bit manual testing if needed.
+
+  // Periodically toggling browsing rules
   chrome.alarms.onAlarm.addListener(() => {
     // Uncomment below and add alarm as argument above to observe the alarm firing
     // console.debug('Alarm fired:', alarm)
     listener.toggleBrowsingRules()
   })
-  chrome.alarms.create({ periodInMinutes: 0.5, when: Date.now() })
+  const now = new Date()
+  chrome.alarms.create('immediate', { when: now.getTime() })
+  chrome.alarms.create('recurring', {
+    periodInMinutes: 1,
+    when: getStartOfNextMinute(now).getTime()
+  })
+  chrome.alarms.clear() // Remove old alarm in previous version, if any
 
-  chrome.runtime.onStartup.addListener(function () {}) // This is a hack to keep the above run immediately after the browser is closed and reopened
-
+  // Creating context menu items
   chrome.runtime.onInstalled.addListener(() => {
+    // Context menu items are only created during extension installation or updates because:
+    // 1. They persist through browser restarts (no need to recreate them)
+    // 2. Creating items with duplicate IDs would populate chrome.runtime.lastError with an error message,
+    //    which we avoid by only creating them during installation/updates
+
     chrome.contextMenus.create({
       id: MenuItemId.OPEN_STATISTICS,
       title: 'Statistics',
@@ -29,7 +42,6 @@ export default defineBackground(() => {
       documentUrlPatterns: ['http://*/*', 'https://*/*']
     })
   })
-
   chrome.contextMenus.onClicked.addListener((info) => {
     switch (info.menuItemId) {
       case MenuItemId.OPEN_STATISTICS:
@@ -42,4 +54,8 @@ export default defineBackground(() => {
         break
     }
   })
+
+  chrome.runtime.setUninstallURL(
+    'https://docs.google.com/forms/d/e/1FAIpQLScfcCncqKHC9M9fUDnOFR4SWcpjwmWrO1y1qjp7-7cRTmFF8A/viewform?usp=header'
+  )
 })

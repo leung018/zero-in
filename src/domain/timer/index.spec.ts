@@ -287,23 +287,28 @@ describe('FocusTimer', () => {
     const { timer, scheduler } = createTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 3 }),
-        shortBreakDuration: new Duration({ seconds: 1 })
+        shortBreakDuration: new Duration({ seconds: 1 }),
+        focusSessionsPerCycle: 3
       })
     )
     let lastStage: TimerStage | null = null
-    timer.setOnStageComplete((stage) => {
+    let currentStage: TimerStage | null = null
+    timer.setOnStageCompleted((stage) => {
       lastStage = stage
+      currentStage = timer.getState().stage
     })
 
     timer.start()
     scheduler.advanceTime(3000)
 
     expect(lastStage).toBe(TimerStage.FOCUS)
+    expect(currentStage).toBe(TimerStage.SHORT_BREAK)
 
     timer.start()
     scheduler.advanceTime(1000)
 
     expect(lastStage).toBe(TimerStage.SHORT_BREAK)
+    expect(currentStage).toBe(TimerStage.FOCUS)
   })
 
   it('should switch to break after focus duration is passed', () => {

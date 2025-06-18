@@ -10,6 +10,7 @@ import { newFocusSessionRecord } from '../domain/timer/record'
 import { FocusSessionRecordHousekeeper } from '../domain/timer/record/house_keep'
 import { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
 import { TimerStage } from '../domain/timer/stage'
+import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
 import type { TimerState } from '../domain/timer/state'
 import { TimerStateStorageService } from '../domain/timer/state/storage'
 import { type ActionService } from '../infra/action'
@@ -94,7 +95,7 @@ export class BackgroundListener {
   private focusSessionRecordHouseKeepDays: number
   private focusSessionRecordsUpdateSubscriptionManager = new SubscriptionManager()
 
-  private notificationService: ActionService
+  private notificationServicesContainer: ActionService
   private notificationSettingStorageService: NotificationSettingStorageService
   private soundService: ActionService
   private desktopNotificationService: DesktopNotificationService
@@ -125,11 +126,11 @@ export class BackgroundListener {
     })
     this.browsingRulesStorageService = params.browsingRulesStorageService
 
-    this.notificationService = new MultipleActionService([])
+    this.notificationServicesContainer = new MultipleActionService([])
     this.notificationSettingStorageService = params.notificationSettingStorageService
     this.soundService = params.soundService
     this.desktopNotificationService = params.desktopNotificationService
-    this.desktopNotificationService.setOnClickStartNext(() => {
+    this.desktopNotificationService.setOnClickStart(() => {
       params.timer.start()
     })
 
@@ -159,12 +160,12 @@ export class BackgroundListener {
       this.timer.setState(backupState)
     }
 
-    this.timer.setOnStageComplete((completedStage) => {
-      this.notificationService.trigger()
+    this.timer.setOnStageCompleted((lastStage) => {
+      this.triggerNotification()
       this.badgeDisplayService.clearBadge()
       this.toggleBrowsingRules()
 
-      if (completedStage === TimerStage.FOCUS) {
+      if (lastStage === TimerStage.FOCUS) {
         this.updateFocusSessionRecords()
       }
     })
@@ -202,7 +203,15 @@ export class BackgroundListener {
       services.push(this.soundService)
     }
 
-    this.notificationService = new MultipleActionService(services)
+    this.notificationServicesContainer = new MultipleActionService(services)
+  }
+
+  private triggerNotification() {
+    const stageDisplayLabelHelper = new StageDisplayLabelHelper(this.timer.getConfig())
+    const stageLabel = stageDisplayLabelHelper.getStageLabel(this.timer.getState())
+    this.desktopNotificationService.setNextButtonTitle(`Start ${stageLabel}`)
+
+    this.notificationServicesContainer.trigger()
   }
 
   private async updateFocusSessionRecords() {
@@ -280,7 +289,8 @@ export class BackgroundListener {
                     remainingSeconds: newState.remaining.remainingSeconds(),
                     isRunning: newState.isRunning,
                     stage: newState.stage,
-                    focusSessionsCompleted: newState.focusSessionsCompleted
+                    focusSessionsCompleted: newState.focusSessionsCompleted,
+                    focusSessionsPerCycle: this.timer.getConfig().focusSessionsPerCycle
                   }
                 })
               })

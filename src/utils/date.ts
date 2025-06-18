@@ -18,3 +18,10 @@ export function isSameDay(date1: Date, date2: Date): boolean {
     date1.getDate() === date2.getDate()
   )
 }
+
+export function getStartOfNextMinute(fromDate: Date = new Date()): Date {
+  const nextMinute = new Date(fromDate)
+  nextMinute.setSeconds(0, 0)
+  nextMinute.setMinutes(nextMinute.getMinutes() + 1)
+  return nextMinute
+}

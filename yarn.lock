@@ -8158,9 +8158,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-web-extension@npm:^4.4.3":
-  version: 4.4.3
-  resolution: "vite-plugin-web-extension@npm:4.4.3"
+"vite-plugin-web-extension@npm:^4.4.4":
+  version: 4.4.4
+  resolution: "vite-plugin-web-extension@npm:4.4.4"
   dependencies:
     ajv: "npm:^8.11.0"
     async-lock: "npm:^1.3.2"
@@ -8175,7 +8175,7 @@ __metadata:
     web-ext-run: "npm:^0.2.1"
     webextension-polyfill: "npm:^0.10.0"
     yaml: "npm:^2.3.4"
-  checksum: 10c0/969b75e4d25c37c8e321870c6f0209cacf3adcb0c9d86861ab3cbe8f1c90634f9a35d52159c6a3c55d340aab00b242aa184850c04470ccabd14a5cee02473a0d
+  checksum: 10c0/30036c2fd6ba5023428d6c1bacbe1a6c8b31be3b8424e209bf13be8283dec1e44b797e76eb6e6758d2390ff01d7184da0120bf0d7728cffd9475c9292e818f51
   languageName: node
   linkType: hard
 
@@ -9034,7 +9034,7 @@ __metadata:
     unplugin-vue-components: "npm:^28.7.0"
     uuid: "npm:^10.0.0"
     vite: "npm:^6.3.4"
-    vite-plugin-web-extension: "npm:^4.4.3"
+    vite-plugin-web-extension: "npm:^4.4.4"
     vitest: "npm:^3.1.4"
     vue: "npm:^3.5.13"
     vue-tsc: "npm:^2.0.21"

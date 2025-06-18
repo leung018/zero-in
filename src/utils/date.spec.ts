@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Time } from '../domain/time'
-import { getMostRecentDate, isSameDay } from './date'
+import { getMostRecentDate, getStartOfNextMinute, isSameDay } from './date'
 
 describe('getMostRecentDate', () => {
   it('should return today time if already passed', () => {
@@ -42,5 +42,19 @@ describe('isSameDay', () => {
     expect(isSameDay(new Date('2021-01-01T00:00:00'), new Date('2021-01-01T23:59:59'))).toBe(true)
 
     expect(isSameDay(new Date('2021-01-01T23:59:59'), new Date('2021-01-02T00:00:00'))).toBe(false)
+  })
+})
+
+describe('getStartOfNextMinute', () => {
+  it('should return the start of the next minute', () => {
+    expect(getStartOfNextMinute(new Date('2021-01-01T12:34:56'))).toEqual(
+      new Date('2021-01-01T12:35:00')
+    )
+    expect(getStartOfNextMinute(new Date('2021-01-01T12:34:00'))).toEqual(
+      new Date('2021-01-01T12:35:00')
+    )
+    expect(getStartOfNextMinute(new Date('2021-01-01T23:59:59'))).toEqual(
+      new Date('2021-01-02T00:00:00')
+    )
   })
 })
