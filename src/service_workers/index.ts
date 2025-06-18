@@ -51,3 +51,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
       break
   }
 })
+
+chrome.runtime.setUninstallURL(
+  'https://docs.google.com/forms/d/e/1FAIpQLScfcCncqKHC9M9fUDnOFR4SWcpjwmWrO1y1qjp7-7cRTmFF8A/viewform?usp=header'
+)
