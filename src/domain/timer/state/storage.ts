@@ -1,5 +1,5 @@
 import type { TimerState } from '.'
-import { ChromeStorageProvider } from '../../../infra/browser/storage'
+import { BrowserStorageProvider } from '../../../infra/browser/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../../infra/storage'
 import { deserializeTimerState, serializeTimerState, type TimerStateSchemas } from './serialize'
 
@@ -7,7 +7,7 @@ export class TimerStateStorageService {
   static readonly STORAGE_KEY = 'timerState'
 
   static create() {
-    return new TimerStateStorageService(ChromeStorageProvider.getLocalStorage())
+    return new TimerStateStorageService(BrowserStorageProvider.getLocalStorage())
   }
 
   static createFake(storage = new FakeStorage()) {

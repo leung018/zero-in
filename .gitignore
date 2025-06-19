@@ -26,6 +26,7 @@ dist
 dist-ssr
 coverage
 *.local
+.wxt
 
 /cypress/videos/
 /cypress/screenshots/
@@ -44,9 +45,6 @@ coverage
 
 test-results/
 playwright-report/
-
-# Dynamically create it and therefore ignore it
-manifest.json
 
 staging/*
 !staging/update.sh

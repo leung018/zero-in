@@ -1,6 +1,6 @@
 import type { ActionService } from '../action'
 
-export class ChromeCloseTabsService implements ActionService {
+export class BrowserCloseTabsService implements ActionService {
   private readonly targetUrl: string
 
   constructor(targetUrl: string) {
@@ -8,10 +8,10 @@ export class ChromeCloseTabsService implements ActionService {
   }
 
   trigger(): void {
-    chrome.tabs.query({}, (tabs) => {
+    browser.tabs.query({}, (tabs) => {
       tabs.forEach((tab) => {
         if (tab && tab.url && tab.id && tab.url.includes(this.targetUrl)) {
-          chrome.tabs.remove(tab.id)
+          browser.tabs.remove(tab.id)
         }
       })
     })

@@ -1,6 +1,6 @@
 import type { NotificationSetting } from '.'
 import config from '../../config'
-import { ChromeStorageProvider } from '../../infra/browser/storage'
+import { BrowserStorageProvider } from '../../infra/browser/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import type { SerializedNotificationSetting } from './serialize'
 
@@ -8,7 +8,7 @@ export class NotificationSettingStorageService {
   static readonly STORAGE_KEY = 'notificationSetting'
 
   static create() {
-    return new NotificationSettingStorageService(ChromeStorageProvider.getLocalStorage())
+    return new NotificationSettingStorageService(BrowserStorageProvider.getLocalStorage())
   }
 
   static createFake() {

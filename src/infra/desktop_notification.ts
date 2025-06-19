@@ -1,5 +1,5 @@
 import type { ActionService } from './action'
-import { ChromeDesktopNotifier } from './browser/desktop_notification'
+import { BrowserDesktopNotifier } from './browser/desktop_notification'
 
 export interface DesktopNotifier {
   triggerNotification: (notificationId: string, buttons: { title: string }[]) => void
@@ -20,7 +20,7 @@ class DummyDesktopNotifier implements DesktopNotifier {
 }
 
 export class DesktopNotificationService implements ActionService {
-  // Require a bit manual testing for verifying the integration with ChromeDesktopNotifier
+  // Require a bit manual testing for verifying the integration with BrowserDesktopNotifier
 
   private onClickStart: () => void = () => {}
 
@@ -34,7 +34,7 @@ export class DesktopNotificationService implements ActionService {
 
   static create(): DesktopNotificationService {
     return new DesktopNotificationService({
-      desktopNotifier: new ChromeDesktopNotifier()
+      desktopNotifier: new BrowserDesktopNotifier()
     })
   }
 

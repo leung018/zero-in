@@ -1,10 +1,10 @@
 import type { ActionService } from '../action'
 
-export class ChromeSoundService implements ActionService {
+export class BrowserSoundService implements ActionService {
   // Require manual testing
 
   trigger(): void {
-    chrome.offscreen
+    browser.offscreen
       .createDocument({
         url: 'offscreen.html',
         reasons: ['AUDIO_PLAYBACK'],
@@ -12,7 +12,7 @@ export class ChromeSoundService implements ActionService {
       })
       .then(() => {
         setTimeout(() => {
-          chrome.offscreen.closeDocument()
+          browser.offscreen.closeDocument()
         }, 3000) // Remember let it longer than the sound duration
       })
   }

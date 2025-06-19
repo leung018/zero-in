@@ -19,12 +19,8 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: ./yarn.lock
       - run: yarn install --immutable
-      - name: Build
-        run: yarn build
-      - name: Compress
-        run: |
-          mv dist zero-in
-          zip -r zero-in-${{ env.TAG_NAME }}.zip zero-in
+      - name: Zip
+        run: yarn zip
       - name: Delete previous tag # This step is to remove the source code asset of the previous release. Otherwise, they will be included in the new release.
         run: gh release delete ${{env.TAG_NAME}} --cleanup-tag
         env:
@@ -34,6 +30,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG_NAME }}
-          files: zero-in-${{ env.TAG_NAME }}.zip
+          files: dist/zero-in-${{ env.TAG_NAME }}-chrome.zip
           prerelease: true
           fail_on_unmatched_files: true

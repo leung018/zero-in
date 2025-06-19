@@ -1,5 +1,5 @@
 import { WeeklySchedule } from '.'
-import { ChromeStorageProvider } from '../../infra/browser/storage'
+import { BrowserStorageProvider } from '../../infra/browser/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import {
   deserializeWeeklySchedules,
@@ -15,7 +15,7 @@ export class WeeklyScheduleStorageService {
   }
 
   static create(): WeeklyScheduleStorageService {
-    return new WeeklyScheduleStorageService(ChromeStorageProvider.getLocalStorage())
+    return new WeeklyScheduleStorageService(BrowserStorageProvider.getLocalStorage())
   }
 
   private storageWrapper: StorageWrapper<WeeklyScheduleSchemas[1]>

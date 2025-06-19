@@ -1,4 +1,4 @@
-import { ChromeStorageProvider } from '../../infra/browser/storage'
+import { BrowserStorageProvider } from '../../infra/browser/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import { Time } from '../time'
 import { deserializeTime, serializeTime, type SerializedTime } from '../time/serialize'
@@ -7,7 +7,7 @@ export class DailyResetTimeStorageService {
   static readonly STORAGE_KEY = 'dailyCutoffTime'
 
   static create() {
-    return new DailyResetTimeStorageService(ChromeStorageProvider.getLocalStorage())
+    return new DailyResetTimeStorageService(BrowserStorageProvider.getLocalStorage())
   }
 
   static createFake() {

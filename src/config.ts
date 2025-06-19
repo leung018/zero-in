@@ -5,11 +5,11 @@ import { Duration } from './domain/timer/duration'
 import type { BadgeColor } from './infra/badge'
 
 const getBlockedTemplateUrl = () => {
-  return chrome.runtime.getURL('blocked.html')
+  return browser.runtime.getURL('/blocked.html')
 }
 
 const getReminderPageUrl = () => {
-  return chrome.runtime.getURL('reminder.html')
+  return browser.runtime.getURL('/reminder.html')
 }
 
 const getDefaultTimerConfig = () => {

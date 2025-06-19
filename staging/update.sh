@@ -7,7 +7,7 @@
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 ZIPPED_DIR="zero-in" 
-ZIP_FILE="zero-in-dev-latest.zip"
+ZIP_FILE="zero-in-dev-latest-chrome.zip"
 URL="https://github.com/leung018/zero-in/releases/download/dev-latest/$ZIP_FILE" 
 
 echo "Downloading from $URL..."

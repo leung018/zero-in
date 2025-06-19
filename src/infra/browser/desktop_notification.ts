@@ -1,12 +1,13 @@
 import type { DesktopNotifier } from '../desktop_notification'
+import iconUrl from '/icon.png'
 
 // Require manual testing
-export class ChromeDesktopNotifier implements DesktopNotifier {
+export class BrowserDesktopNotifier implements DesktopNotifier {
   triggerNotification(notificationId: string, buttons: { title: string }[]): void {
-    chrome.notifications.clear(notificationId).then(() => {
-      chrome.notifications.create(notificationId, {
+    browser.notifications.clear(notificationId).then(() => {
+      browser.notifications.create(notificationId, {
         type: 'basic',
-        iconUrl: chrome.runtime.getURL('icon.png'),
+        iconUrl,
         title: 'Zero In',
         message: "Time's up!",
         buttons
@@ -15,10 +16,10 @@ export class ChromeDesktopNotifier implements DesktopNotifier {
   }
 
   clearNotification(notificationId: string): void {
-    chrome.notifications.clear(notificationId)
+    browser.notifications.clear(notificationId)
   }
 
   addButtonClickedListener(listener: (notificationId: string, buttonIndex: number) => void): void {
-    chrome.notifications.onButtonClicked.addListener(listener)
+    browser.notifications.onButtonClicked.addListener(listener)
   }
 }

@@ -1,6 +1,6 @@
 import type { BlockingTimerIntegration } from '.'
 import config from '../../config'
-import { ChromeStorageProvider } from '../../infra/browser/storage'
+import { BrowserStorageProvider } from '../../infra/browser/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import {
   deserializeBlockingTimerIntegration,
@@ -12,7 +12,7 @@ export class BlockingTimerIntegrationStorageService {
   static readonly STORAGE_KEY = 'blockingTimerIntegration'
 
   static create(): BlockingTimerIntegrationStorageService {
-    return new BlockingTimerIntegrationStorageService(ChromeStorageProvider.getLocalStorage())
+    return new BlockingTimerIntegrationStorageService(BrowserStorageProvider.getLocalStorage())
   }
 
   static createFake(storage = new FakeStorage()) {
