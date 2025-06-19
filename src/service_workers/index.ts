@@ -8,7 +8,7 @@ export default function main() {
   const listener = BackgroundListener.create()
   listener.start()
 
-  // Noted that e2e tests are hard to cover all of the below related to chrome api properly. Better use a bit manual testing if needed.
+  // Noted that e2e tests are hard to cover all of the below related to browser api properly. Better use a bit manual testing if needed.
 
   // Periodically toggling browsing rules
   browser.alarms.onAlarm.addListener(() => {
