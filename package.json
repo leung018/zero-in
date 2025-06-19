@@ -42,7 +42,6 @@
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.5.1",
     "@wxt-dev/module-vue": "^1.0.2",
-    "chrome-types": "^0.1.334",
     "eslint": "^9.27.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-playwright": "^2.2.0",

@@ -2,7 +2,7 @@
   "extends": "./.wxt/tsconfig.json",
   "compilerOptions": {
     "composite": true,
-    "types": ["chrome-types", "unplugin-icons/types/vue"],
+    "types": ["unplugin-icons/types/vue"],
     "strict": true
   }
 }
