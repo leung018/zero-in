@@ -1,5 +1,5 @@
 import { BrowsingRules } from '.'
-import { ChromeStorageProvider } from '../../infra/browser/storage'
+import { BrowserStorageProvider } from '../../infra/browser/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
 import {
   deserializeBrowsingRules,
@@ -15,7 +15,7 @@ export class BrowsingRulesStorageService {
   }
 
   static create(): BrowsingRulesStorageService {
-    return new BrowsingRulesStorageService(ChromeStorageProvider.getLocalStorage())
+    return new BrowsingRulesStorageService(BrowserStorageProvider.getLocalStorage())
   }
 
   private storageWrapper: StorageWrapper<SerializedBrowsingRules>

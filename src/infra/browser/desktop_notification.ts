@@ -2,7 +2,7 @@ import type { DesktopNotifier } from '../desktop_notification'
 import iconUrl from '/icon.png'
 
 // Require manual testing
-export class ChromeDesktopNotifier implements DesktopNotifier {
+export class BrowserDesktopNotifier implements DesktopNotifier {
   triggerNotification(notificationId: string, buttons: { title: string }[]): void {
     browser.notifications.clear(notificationId).then(() => {
       browser.notifications.create(notificationId, {

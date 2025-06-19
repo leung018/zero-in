@@ -1,6 +1,6 @@
 import type { ActionService } from '../action'
 
-export class ChromeCloseTabsService implements ActionService {
+export class BrowserCloseTabsService implements ActionService {
   private readonly targetUrl: string
 
   constructor(targetUrl: string) {

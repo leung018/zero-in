@@ -1,6 +1,6 @@
 import { type CommunicationManager, type Port } from '../communication'
 
-export class ChromeCommunicationManager implements CommunicationManager {
+export class BrowserCommunicationManager implements CommunicationManager {
   clientConnect() {
     const chromePort = browser.runtime.connect()
     return new ChromePortWrapper(chromePort)

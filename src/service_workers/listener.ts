@@ -15,12 +15,12 @@ import type { TimerState } from '../domain/timer/state'
 import { TimerStateStorageService } from '../domain/timer/state/storage'
 import { type ActionService } from '../infra/action'
 import { type BadgeColor, type BadgeDisplayService } from '../infra/badge'
-import { ChromeBadgeDisplayService } from '../infra/browser/badge'
-import { ChromeBrowsingControlService } from '../infra/browser/browsing_control'
-import { ChromeCloseTabsService } from '../infra/browser/close_tabs'
-import { ChromeCommunicationManager } from '../infra/browser/communication'
-import { ChromeNewTabService } from '../infra/browser/new_tab'
-import { ChromeSoundService } from '../infra/browser/sound'
+import { BrowserBadgeDisplayService } from '../infra/browser/badge'
+import { BrowserBrowsingControlService } from '../infra/browser/browsing_control'
+import { BrowserCloseTabsService } from '../infra/browser/close_tabs'
+import { BrowserCommunicationManager } from '../infra/browser/communication'
+import { BrowserNewTabService } from '../infra/browser/new_tab'
+import { BrowserSoundService } from '../infra/browser/sound'
 import type { BrowsingControlService } from '../infra/browsing_control'
 import { type CommunicationManager, type Port } from '../infra/communication'
 import { CurrentDateService } from '../infra/current_date'
@@ -54,17 +54,17 @@ export type ClientPort = Port<WorkRequest, WorkResponse>
 export class BackgroundListener {
   static create() {
     return new BackgroundListener({
-      communicationManager: new ChromeCommunicationManager(),
-      reminderTabService: new ChromeNewTabService(config.getReminderPageUrl()),
+      communicationManager: new BrowserCommunicationManager(),
+      reminderTabService: new BrowserNewTabService(config.getReminderPageUrl()),
       desktopNotificationService: DesktopNotificationService.create(),
-      soundService: new ChromeSoundService(),
+      soundService: new BrowserSoundService(),
       notificationSettingStorageService: NotificationSettingStorageService.create(),
-      badgeDisplayService: new ChromeBadgeDisplayService(),
+      badgeDisplayService: new BrowserBadgeDisplayService(),
       timerStateStorageService: TimerStateStorageService.create(),
       timerConfigStorageService: TimerConfigStorageService.create(),
       focusSessionRecordStorageService: FocusSessionRecordStorageService.create(),
-      closeTabsService: new ChromeCloseTabsService(config.getReminderPageUrl()),
-      browsingControlService: new ChromeBrowsingControlService(),
+      closeTabsService: new BrowserCloseTabsService(config.getReminderPageUrl()),
+      browsingControlService: new BrowserBrowsingControlService(),
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
       weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
       currentDateService: CurrentDateService.create(),

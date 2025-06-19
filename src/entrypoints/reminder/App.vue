@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { DailyResetTimeStorageService } from '@/domain/daily_reset_time/storage'
 import { FocusSessionRecordStorageService } from '@/domain/timer/record/storage'
-import { ChromeCommunicationManager } from '@/infra/browser/communication'
-import { ChromeSoundService } from '@/infra/browser/sound'
+import { BrowserCommunicationManager } from '@/infra/browser/communication'
+import { BrowserSoundService } from '@/infra/browser/sound'
 import { CurrentDateService } from '@/infra/current_date'
 import ReminderPage from '@/pages/ReminderPage.vue'
 </script>
@@ -11,8 +11,8 @@ import ReminderPage from '@/pages/ReminderPage.vue'
   <ReminderPage
     :focusSessionRecordStorageService="FocusSessionRecordStorageService.create()"
     :dailyResetTimeStorageService="DailyResetTimeStorageService.create()"
-    :port="new ChromeCommunicationManager().clientConnect()"
-    :soundService="new ChromeSoundService()"
+    :port="new BrowserCommunicationManager().clientConnect()"
+    :soundService="new BrowserSoundService()"
     :currentDateService="CurrentDateService.create()"
   />
 </template>

@@ -1,6 +1,6 @@
 import { type Storage } from '../storage'
 
-export class ChromeStorageProvider {
+export class BrowserStorageProvider {
   static getLocalStorage(): Storage {
     return browser.storage.local
   }

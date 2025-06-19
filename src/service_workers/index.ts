@@ -1,4 +1,4 @@
-import { ChromeNewTabService } from '../infra/browser/new_tab'
+import { BrowserNewTabService } from '../infra/browser/new_tab'
 import { BackgroundListener } from './listener'
 import { MenuItemId } from './menu_item_id'
 
@@ -45,7 +45,7 @@ export default function main() {
   browser.contextMenus.onClicked.addListener((info) => {
     switch (info.menuItemId) {
       case MenuItemId.OPEN_STATISTICS:
-        new ChromeNewTabService(browser.runtime.getURL('/options.html') + '#/statistics').trigger()
+        new BrowserNewTabService(browser.runtime.getURL('/options.html') + '#/statistics').trigger()
         break
       case MenuItemId.ADD_BLOCKED_DOMAIN:
         if (info.pageUrl) {

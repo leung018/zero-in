@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChromeCommunicationManager } from '@/infra/browser/communication'
+import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import FocusTimerPage from '@/pages/FocusTimerPage.vue'
 
 const openOptionsPage = () => {
@@ -17,6 +17,6 @@ const openOptionsPage = () => {
     >
       <IIcBaselineSettings />
     </BButton>
-    <FocusTimerPage :port="new ChromeCommunicationManager().clientConnect()" />
+    <FocusTimerPage :port="new BrowserCommunicationManager().clientConnect()" />
   </div>
 </template>

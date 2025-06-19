@@ -1,6 +1,6 @@
 import type { TimerConfig } from '.'
 import config from '../../../config'
-import { ChromeStorageProvider } from '../../../infra/browser/storage'
+import { BrowserStorageProvider } from '../../../infra/browser/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../../infra/storage'
 import {
   deserializeTimerConfig,
@@ -12,7 +12,7 @@ export class TimerConfigStorageService {
   static readonly STORAGE_KEY = 'timerConfig'
 
   static create() {
-    return new TimerConfigStorageService(ChromeStorageProvider.getLocalStorage())
+    return new TimerConfigStorageService(BrowserStorageProvider.getLocalStorage())
   }
 
   static createFake() {

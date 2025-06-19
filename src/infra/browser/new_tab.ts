@@ -1,6 +1,6 @@
 import type { ActionService } from '../action'
 
-export class ChromeNewTabService implements ActionService {
+export class BrowserNewTabService implements ActionService {
   // Some of the behaviors may need manual testing
 
   private readonly targetUrl: string

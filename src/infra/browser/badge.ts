@@ -1,6 +1,6 @@
 import type { Badge, BadgeDisplayService } from '../badge'
 
-export class ChromeBadgeDisplayService implements BadgeDisplayService {
+export class BrowserBadgeDisplayService implements BadgeDisplayService {
   // Hard to e2e test this class. Use a bit manual testing.
 
   displayBadge(badge: Badge) {

@@ -1,5 +1,5 @@
 import type { FocusSessionRecord } from '.'
-import { ChromeStorageProvider } from '../../../infra/browser/storage'
+import { BrowserStorageProvider } from '../../../infra/browser/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../../infra/storage'
 import {
   deserializeFocusSessionRecord,
@@ -11,7 +11,7 @@ export class FocusSessionRecordStorageService {
   static readonly STORAGE_KEY = 'focusSessionRecords'
 
   static create() {
-    return new FocusSessionRecordStorageService(ChromeStorageProvider.getLocalStorage())
+    return new FocusSessionRecordStorageService(BrowserStorageProvider.getLocalStorage())
   }
 
   static createFake() {
