@@ -2,12 +2,12 @@ import { type CommunicationManager, type Port } from '../communication'
 
 export class ChromeCommunicationManager implements CommunicationManager {
   clientConnect() {
-    const chromePort = chrome.runtime.connect()
+    const chromePort = browser.runtime.connect()
     return new ChromePortWrapper(chromePort)
   }
 
   onNewClientConnect(callback: (backgroundPort: Port) => void) {
-    chrome.runtime.onConnect.addListener((chromePort) => {
+    browser.runtime.onConnect.addListener((chromePort) => {
       const port = new ChromePortWrapper(chromePort)
       return callback(port)
     })
@@ -17,9 +17,9 @@ export class ChromeCommunicationManager implements CommunicationManager {
 class ChromePortWrapper implements Port {
   private static MAX_RETRIES = 3
 
-  private chromePort: chrome.runtime.Port
+  private chromePort: Browser.runtime.Port
 
-  constructor(chromePort: chrome.runtime.Port) {
+  constructor(chromePort: Browser.runtime.Port) {
     this.chromePort = chromePort
   }
 
@@ -35,7 +35,7 @@ class ChromePortWrapper implements Port {
       this.chromePort.postMessage(message)
     } catch (error) {
       console.info('Error when sending message. Will retry. Error:', error)
-      this.chromePort = chrome.runtime.connect()
+      this.chromePort = browser.runtime.connect()
       return this.send(message, retryCount + 1)
     }
   }

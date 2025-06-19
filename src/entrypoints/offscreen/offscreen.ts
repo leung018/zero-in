@@ -1,1 +1,3 @@
-new Audio(chrome.runtime.getURL('notification.mp3')).play()
+import notificationSoundUrl from '/notification.mp3'
+
+new Audio(notificationSoundUrl).play()

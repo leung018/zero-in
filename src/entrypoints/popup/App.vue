@@ -3,7 +3,7 @@ import { ChromeCommunicationManager } from '@/infra/browser/communication'
 import FocusTimerPage from '@/pages/FocusTimerPage.vue'
 
 const openOptionsPage = () => {
-  chrome.runtime.openOptionsPage()
+  browser.runtime.openOptionsPage()
 }
 </script>
 

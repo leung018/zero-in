@@ -3,7 +3,7 @@ import { BackgroundListener } from '@/service_workers/listener'
 import { MenuItemId } from '@/service_workers/menu_item_id'
 
 export default defineBackground(() => {
-  chrome.runtime.onStartup.addListener(function () {}) // Register an empty onStartup listener to ensure the service worker activates immediately after browser restart
+  browser.runtime.onStartup.addListener(function () {}) // Register an empty onStartup listener to ensure the service worker activates immediately after browser restart
 
   const listener = BackgroundListener.create()
   listener.start()
@@ -11,41 +11,41 @@ export default defineBackground(() => {
   // Noted that e2e tests are hard to cover all of the below related to chrome api properly. Better use a bit manual testing if needed.
 
   // Periodically toggling browsing rules
-  chrome.alarms.onAlarm.addListener(() => {
+  browser.alarms.onAlarm.addListener(() => {
     // Uncomment below and add alarm as argument above to observe the alarm firing
     // console.debug('Alarm fired:', alarm)
     listener.toggleBrowsingRules()
   })
   const now = new Date()
-  chrome.alarms.create('immediate', { when: now.getTime() })
-  chrome.alarms.create('recurring', {
+  browser.alarms.create('immediate', { when: now.getTime() })
+  browser.alarms.create('recurring', {
     periodInMinutes: 1,
     when: getStartOfNextMinute(now).getTime()
   })
-  chrome.alarms.clear() // Remove old alarm in previous version, if any
+  browser.alarms.clear() // Remove old alarm in previous version, if any
 
   // Creating context menu items
-  chrome.runtime.onInstalled.addListener(() => {
+  browser.runtime.onInstalled.addListener(() => {
     // Context menu items are only created during extension installation or updates because:
     // 1. They persist through browser restarts (no need to recreate them)
-    // 2. Creating items with duplicate IDs would populate chrome.runtime.lastError with an error message,
+    // 2. Creating items with duplicate IDs would populate browser.runtime.lastError with an error message,
     //    which we avoid by only creating them during installation/updates
 
-    chrome.contextMenus.create({
+    browser.contextMenus.create({
       id: MenuItemId.OPEN_STATISTICS,
       title: 'Statistics',
       contexts: ['action']
     })
-    chrome.contextMenus.create({
+    browser.contextMenus.create({
       id: MenuItemId.ADD_BLOCKED_DOMAIN,
       title: 'Add site to blocked domains',
       documentUrlPatterns: ['http://*/*', 'https://*/*']
     })
   })
-  chrome.contextMenus.onClicked.addListener((info) => {
+  browser.contextMenus.onClicked.addListener((info) => {
     switch (info.menuItemId) {
       case MenuItemId.OPEN_STATISTICS:
-        new ChromeNewTabService(chrome.runtime.getURL('options.html') + '#/statistics').trigger()
+        new ChromeNewTabService(browser.runtime.getURL('/options.html') + '#/statistics').trigger()
         break
       case MenuItemId.ADD_BLOCKED_DOMAIN:
         if (info.pageUrl) {
@@ -55,7 +55,7 @@ export default defineBackground(() => {
     }
   })
 
-  chrome.runtime.setUninstallURL(
+  browser.runtime.setUninstallURL(
     'https://docs.google.com/forms/d/e/1FAIpQLScfcCncqKHC9M9fUDnOFR4SWcpjwmWrO1y1qjp7-7cRTmFF8A/viewform?usp=header'
   )
 })

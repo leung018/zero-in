@@ -9,10 +9,10 @@ export class ChromeBrowsingControlService implements BrowsingControlService {
   // But note that only use this class in service worker. If this class is reused within different thread, it will cause unexpected behavior.
   private static browsingRules: BrowsingRules = new BrowsingRules()
 
-  private static onTabUpdatedListener = (tabId: number, _: unknown, tab: chrome.tabs.Tab) => {
+  private static onTabUpdatedListener = (tabId: number, _: unknown, tab: Browser.tabs.Tab) => {
     if (tab.url) {
       if (ChromeBrowsingControlService.browsingRules.isUrlBlocked(tab.url)) {
-        chrome.tabs.update(tabId, {
+        browser.tabs.update(tabId, {
           url: config.getBlockedTemplateUrl()
         })
       }
@@ -27,12 +27,12 @@ export class ChromeBrowsingControlService implements BrowsingControlService {
 
   async deactivateExistingRules(): Promise<void> {
     ChromeBrowsingControlService.browsingRules = new BrowsingRules({})
-    return chrome.tabs.onUpdated.removeListener(ChromeBrowsingControlService.onTabUpdatedListener)
+    return browser.tabs.onUpdated.removeListener(ChromeBrowsingControlService.onTabUpdatedListener)
   }
 
   private async redirectFutureRequests() {
-    if (!chrome.tabs.onUpdated.hasListener(ChromeBrowsingControlService.onTabUpdatedListener)) {
-      return chrome.tabs.onUpdated.addListener(ChromeBrowsingControlService.onTabUpdatedListener)
+    if (!browser.tabs.onUpdated.hasListener(ChromeBrowsingControlService.onTabUpdatedListener)) {
+      return browser.tabs.onUpdated.addListener(ChromeBrowsingControlService.onTabUpdatedListener)
     }
   }
 
@@ -43,7 +43,7 @@ export class ChromeBrowsingControlService implements BrowsingControlService {
       if (tab && tab.url && tab.id) {
         if (ChromeBrowsingControlService.browsingRules.isUrlBlocked(tab.url)) {
           promises.push(
-            chrome.tabs.update(tab.id, {
+            browser.tabs.update(tab.id, {
               url: config.getBlockedTemplateUrl()
             })
           )
@@ -55,6 +55,6 @@ export class ChromeBrowsingControlService implements BrowsingControlService {
   }
 
   private async queryAllTabs() {
-    return chrome.tabs.query({})
+    return browser.tabs.query({})
   }
 }
