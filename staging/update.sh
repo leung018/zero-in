@@ -6,7 +6,7 @@
 # Change to the script directory
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
-ZIPPED_DIR="zero-in" 
+TARGET_DIR="zero-in" 
 ZIP_FILE="zero-in-dev-latest-chrome.zip"
 URL="https://github.com/leung018/zero-in/releases/download/dev-latest/$ZIP_FILE" 
 
@@ -15,9 +15,9 @@ curl -L -o "$ZIP_FILE" "$URL"
 
 if unzip -t "$ZIP_FILE" > /dev/null 2>&1; then
     echo "Valid ZIP file. Updating..."
-    rm -r $ZIPPED_DIR
-    unzip -q "$ZIP_FILE"
-    echo "Update complete. Unpacked to $ZIPPED_DIR directory."
+    rm -r $TARGET_DIR
+    unzip -q "$ZIP_FILE" -d "$TARGET_DIR"
+    echo "Update complete. Unpacked to $TARGET_DIR directory."
 else
     echo "Error: The downloaded file is not a valid ZIP archive." >&2
     exit 1
