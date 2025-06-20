@@ -44,7 +44,7 @@
     "prettier-plugin-organize-imports": "^4.1.0",
     "typescript": "~5.4.0",
     "typescript-eslint": "^8.32.1",
-    "unplugin-icons": "^22.0.0",
+    "unplugin-icons": "^22.1.0",
     "unplugin-vue-components": "^28.7.0",
     "vitest": "^3.2.4",
     "vue-eslint-parser": "^10.1.3",
