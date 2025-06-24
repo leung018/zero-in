@@ -14,7 +14,5 @@ async function wakeUpServiceWorkerIfIdle() {
   // To manually test this, you can go to chrome://serviceworker-internals/ to stop the service worker.
   // Then open the timer popup and see if the above bug is fixed.
 
-  return browser.runtime.sendMessage({ type: 'PING' }).catch(() => {
-    console.info('Background service worker is idle. It will be woken up by above ping message.')
-  })
+  return browser.runtime.sendMessage({ type: 'PING' })
 }
