@@ -6,13 +6,17 @@ wakeUpServiceWorkerIfIdle().then(() => {
 })
 
 async function wakeUpServiceWorkerIfIdle() {
-  // This function is try to fix the bug that the timer popup is freezed at 00:00 when the service worker is idle.
-
-  // Hard to e2e test this function because playwright cannot open popup and the bug trying to fix is in popup only.
-  // Playwright only can open popup.html as a page, but not as a popup.
-
-  // To manually test this, you can go to chrome://serviceworker-internals/ to stop the service worker.
-  // Then open the timer popup and see if the above bug is fixed.
+  // This function addresses a bug where the timer popup freezes at 00:00 when the service worker becomes idle.
+  // The bug only occurs in actual extension popups and won't appear if popup.html is opened as a regular page.
+  // It sends a PING message to wake up the service worker before mounting the app.
+  //
+  // Testing notes:
+  // - Difficult to test with e2e because Playwright cannot open real extension popups.
+  //   (Playwright can only open popup.html as a regular page, not as an extension popup)
+  // - To manually test:
+  //   1. Navigate to chrome://serviceworker-internals/
+  //   2. Stop the service worker
+  //   3. Open the timer popup to verify the freeze bug is resolved
 
   return browser.runtime.sendMessage({ type: 'PING' })
 }
