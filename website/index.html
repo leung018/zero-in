@@ -4,9 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Zero In</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Font Awesome for social media icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/js/all.min.js"></script>
     <link
       rel="stylesheet"
@@ -17,9 +15,6 @@
         scroll-behavior: smooth;
       }
       body {
-        max-width: 720px !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
         font-family: 'Inter', sans-serif;
         background-color: #f8fafc; /* Tailwind's gray-50 equivalent */
         min-height: 100vh; /* Ensure body always fills the viewport height */
@@ -48,124 +43,169 @@
         background: #333;
         color: white;
       }
+
+      /* Custom gradient for hero section as Bulma doesn't have native gradient classes */
+      .hero-gradient {
+        background: linear-gradient(to right, #6366f1, #9333ea); /* from-indigo-500 to-purple-600 */
+      }
+
+      /* Custom shadows and rounded corners for a similar look to original */
+      .box-shadow-lg {
+        box-shadow:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      .rounded-b-xl-custom {
+        border-bottom-left-radius: 0.75rem; /* 12px */
+        border-bottom-right-radius: 0.75rem; /* 12px */
+      }
+
+      .rounded-xl-custom {
+        border-radius: 0.75rem; /* 12px */
+      }
+
+      /* Transform hover effect for cards and buttons */
+      .transform-hover-scale:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .mt-negative-40 {
+        margin-top: -40px; /* Equivalent to -mt-10 in Tailwind's default spacing */
+      }
+
+      /* Responsive iframe container */
+      .responsive-iframe {
+        width: 100%;
+        text-align: center;
+      }
+      .responsive-iframe iframe {
+        display: inline-block;
+        max-width: 1072px;
+        max-height: 603px;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border: 0;
+      }
     </style>
   </head>
-  <body class="text-gray-800">
-    <!-- Hero Section -->
+  <body class="has-text-grey-darker is-flex is-flex-direction-column">
     <section
-      class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-20 md:py-32 rounded-b-xl shadow-lg mx-4 mt-4 flex-shrink-0"
+      class="hero is-medium hero-gradient has-text-white py-6 rounded-b-xl-custom box-shadow-lg mx-4 mt-4 is-flex-shrink-0"
     >
-      <div class="container mx-auto text-center px-4">
-        <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
+      <div class="hero-body has-text-centered px-4">
+        <p class="title is-1 has-text-white has-text-weight-bold mb-4">
           Zero In - Boost Your Focus
-        </h1>
-        <p class="text-lg md:text-xl mb-10 max-w-2xl mx-auto opacity-90">
+        </p>
+        <p class="subtitle is-4 has-text-white mb-6 has-opacity-90 is-max-w-2xl mx-auto">
           Helps you stay focused and productive with a customizable timer and website blocker ——
           great for work or study.
         </p>
-        <a
-          href="#download"
-          class="inline-block bg-white text-indigo-700 font-semibold text-lg py-3 px-8 rounded-full shadow-lg hover:bg-gray-100 transform hover:scale-105 transition duration-300 ease-in-out"
-        >
-          Get Started
-        </a>
-        <a
-          href="#demo"
-          class="inline-block border-2 border-white text-white font-semibold text-lg py-3 px-8 rounded-full ml-4 shadow-lg hover:bg-white hover:text-indigo-700 transform hover:scale-105 transition duration-300 ease-in-out"
-        >
-          See Demo
-        </a>
+        <div class="buttons is-centered">
+          <a
+            href="#download"
+            class="button is-white is-large has-text-info has-text-weight-semibold is-rounded box-shadow-lg transform-hover-scale"
+          >
+            Get Started
+          </a>
+          <a
+            href="#demo"
+            class="button is-outlined is-large has-text-white has-text-weight-semibold is-rounded box-shadow-lg ml-4 transform-hover-scale"
+          >
+            See Demo
+          </a>
+        </div>
       </div>
     </section>
 
-    <!-- Chrome & Edge Store Links Section -->
     <section
       id="download"
-      class="bg-white py-16 md:py-20 mx-4 rounded-xl shadow-md -mt-10 relative z-10 flex-shrink-0"
+      class="section has-background-white py-6 mx-4 rounded-xl-custom box-shadow-lg mt-negative-40 is-relative is-z-1 is-flex-shrink-0"
     >
-      <div class="container mx-auto text-center px-4">
-        <h2 class="text-3xl md:text-4xl font-bold mb-6 text-gray-800">Get Zero In Today!</h2>
-        <p class="text-lg md:text-xl mb-10 text-gray-600">Available on your favorite browsers.</p>
-        <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
+      <div class="container has-text-centered px-4">
+        <h2 class="title is-2 has-text-grey-darker mb-4">Get Zero In Today!</h2>
+        <p class="subtitle is-5 has-text-grey-dark mb-6">Available on your favorite browsers.</p>
+        <div class="buttons is-centered is-flex-direction-column is-flex-direction-row-tablet">
           <a
             href="https://chrome.google.com/webstore/category/extensions"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center justify-center bg-teal-500 text-white font-semibold text-lg py-3 px-8 rounded-full shadow-lg hover:bg-teal-600 transform hover:scale-105 transition duration-300 ease-in-out"
+            class="button is-info is-large has-text-white has-text-weight-semibold is-rounded box-shadow-lg transform-hover-scale mb-4-mobile"
           >
-            <i class="fab fa-chrome text-xl mr-3"></i>
+            <span class="icon is-medium">
+              <i class="fab fa-chrome"></i>
+            </span>
             <span>Chrome Web Store</span>
           </a>
           <a
             href="https://microsoftedge.microsoft.com/addons/Microsoft-Edge-Extensions-Home"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center justify-center bg-teal-500 text-white font-semibold text-lg py-3 px-8 rounded-full shadow-lg hover:bg-teal-600 transform hover:scale-105 transition duration-300 ease-in-out"
+            class="button is-info is-large has-text-white has-text-weight-semibold is-rounded box-shadow-lg transform-hover-scale ml-4-tablet"
           >
-            <i class="fab fa-edge text-xl mr-3"></i>
+            <span class="icon is-medium">
+              <i class="fab fa-edge"></i>
+            </span>
             <span>Edge Add-on Store</span>
           </a>
         </div>
       </div>
     </section>
 
-    <!-- Features Section -->
     <section
       id="features"
-      class="bg-white py-16 md:py-24 mx-4 my-8 rounded-xl shadow-md flex-shrink-0"
+      class="section has-background-white py-6 mx-4 my-4 rounded-xl-custom box-shadow-lg is-flex-shrink-0"
     >
-      <div class="container mx-auto text-center px-4">
-        <h2 class="text-3xl md:text-4xl font-bold mb-12 text-gray-800">Key Features</h2>
-        <p class="text-lg md:text-xl mb-10 text-gray-600">
+      <div class="container has-text-centered px-4">
+        <h2 class="title is-2 has-text-grey-darker mb-6">Key Features</h2>
+        <p class="subtitle is-5 has-text-grey-dark mb-6">
           Streamline your workflow with a customizable timer, powerful website blocker.
         </p>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-          <!-- Feature 1: Customizable Timer -->
-          <div
-            class="bg-gray-50 p-8 rounded-xl shadow-lg flex flex-col items-center text-center transform hover:scale-105 transition duration-300"
-          >
-            <div class="text-indigo-500 mb-4 text-5xl">
-              <i class="fa fa-hourglass-half"></i>
+        <div class="columns is-centered is-multiline">
+          <div class="column is-half-tablet is-half-desktop">
+            <div
+              class="box has-background-light p-6 has-text-centered is-flex is-flex-direction-column is-align-items-center transform-hover-scale"
+            >
+              <span class="icon is-large has-text-info mb-4">
+                <i class="fa fa-hourglass-half fa-3x"></i>
+              </span>
+              <p class="title is-4 has-text-grey-darker mb-2">Customizable Timer</p>
+              <p class="subtitle is-6 has-text-grey-dark">
+                Set flexible focus and break intervals to match your work style.
+              </p>
             </div>
-            <h3 class="text-xl font-semibold mb-3 text-gray-800">Customizable Timer</h3>
-            <p class="text-gray-600">
-              Set flexible focus and break intervals to match your work style.
-            </p>
           </div>
-          <!-- Feature 2: Website Blocker -->
-          <div
-            class="bg-gray-50 p-8 rounded-xl shadow-lg flex flex-col items-center text-center transform hover:scale-105 transition duration-300"
-          >
-            <div class="text-indigo-500 mb-4 text-5xl">
-              <i class="fa fa-ban"></i>
+          <div class="column is-half-tablet is-half-desktop">
+            <div
+              class="box has-background-light p-6 has-text-centered is-flex is-flex-direction-column is-align-items-center transform-hover-scale"
+            >
+              <span class="icon is-large has-text-info mb-4">
+                <i class="fa fa-ban fa-3x"></i>
+              </span>
+              <p class="title is-4 has-text-grey-darker mb-2">Website Blocker</p>
+              <p class="subtitle is-6 has-text-grey-dark">
+                Block distracting websites during your focus sessions for uninterrupted work.
+              </p>
             </div>
-            <h3 class="text-xl font-semibold mb-3 text-gray-800">Website Blocker</h3>
-            <p class="text-gray-600">
-              Block distracting websites during your focus sessions for uninterrupted work.
-            </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- YouTube Quick Demo Video Section -->
-    <section id="demo" class="bg-white py-16 md:py-24 mx-4 my-8 rounded-xl shadow-md flex-shrink-0">
-      <div class="container mx-auto text-center px-4">
-        <h2 class="text-3xl md:text-4xl font-bold mb-12 text-gray-800">Quick Demo</h2>
-        <p class="text-lg md:text-xl mb-10 text-gray-600">
+    <section
+      id="demo"
+      class="section has-background-white py-6 mx-4 my-4 rounded-xl-custom box-shadow-lg is-flex-shrink-0"
+    >
+      <div class="container has-text-centered px-4">
+        <h2 class="title is-2 has-text-grey-darker mb-6">Quick Demo</h2>
+        <p class="subtitle is-5 has-text-grey-dark mb-6">
           See Zero In in action in this short video.
         </p>
-        <div
-          class="relative w-full max-w-3xl mx-auto rounded-xl shadow-xl overflow-hidden"
-          style="padding-bottom: 56.25%"
-        >
-          <!-- 16:9 aspect ratio for video -->
-          <!-- Replace YOUR_VIDEO_ID with the actual YouTube video ID -->
+        <div class="responsive-iframe is-16by9">
           <iframe
-            class="absolute top-0 left-0 w-full h-full"
-            src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0&rel=0&modestbranding=1"
+            src="https://www.youtube.com/embed/pJopGbN90Qc"
             title="Zero In Demo Video"
-            frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
           ></iframe>
@@ -173,51 +213,61 @@
       </div>
     </section>
 
-    <!-- Connect With Us Section -->
-    <section class="bg-white py-16 md:py-24 mx-4 mb-8 rounded-xl shadow-md flex-shrink-0">
-      <div class="container mx-auto text-center px-4">
-        <h2 class="text-3xl md:text-4xl font-bold mb-12 text-gray-800">Connect With Us</h2>
-        <div class="flex flex-wrap justify-center gap-4">
+    <section
+      class="section has-background-white py-6 mx-4 mb-4 rounded-xl-custom box-shadow-lg is-flex-shrink-0"
+    >
+      <div class="container has-text-centered px-4">
+        <h2 class="title is-2 has-text-grey-darker mb-6">Connect With Us</h2>
+        <div class="buttons is-centered is-flex-wrap">
           <a
             href="https://instagram.com/yourbrand"
             target="_blank"
             rel="noopener noreferrer"
-            class="social-link flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 text-gray-600 text-2xl hover:text-white transition duration-300 transform hover:scale-110 instagram"
+            class="social-link instagram button is-light is-rounded is-large mx-2 transform-hover-scale"
           >
-            <i class="fab fa-instagram"></i>
+            <span class="icon is-size-4">
+              <i class="fab fa-instagram"></i>
+            </span>
           </a>
-          <!-- Threads icon is not available in Font Awesome 4.7.0 and has been removed -->
           <a
             href="https://facebook.com/yourbrand"
             target="_blank"
             rel="noopener noreferrer"
-            class="social-link flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 text-gray-600 text-2xl hover:text-white transition duration-300 transform hover:scale-110 facebook"
+            class="social-link facebook button is-light is-rounded is-large mx-2 transform-hover-scale"
           >
-            <i class="fab fa-facebook"></i>
+            <span class="icon is-size-4">
+              <i class="fab fa-facebook"></i>
+            </span>
           </a>
           <a
             href="https://twitter.com/yourbrand"
             target="_blank"
             rel="noopener noreferrer"
-            class="social-link flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 text-gray-600 text-2xl hover:text-white transition duration-300 transform hover:scale-110 twitter"
+            class="social-link twitter button is-light is-rounded is-large mx-2 transform-hover-scale"
           >
-            <i class="fab fa-x-twitter"></i>
+            <span class="icon is-size-4">
+              <i class="fab fa-x-twitter"></i>
+            </span>
           </a>
           <a
             href="https://linkedin.com/company/yourbrand"
             target="_blank"
             rel="noopener noreferrer"
-            class="social-link flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 text-gray-600 text-2xl hover:text-white transition duration-300 transform hover:scale-110 linkedin"
+            class="social-link linkedin button is-light is-rounded is-large mx-2 transform-hover-scale"
           >
-            <i class="fab fa-linkedin"></i>
+            <span class="icon is-size-4">
+              <i class="fab fa-linkedin"></i>
+            </span>
           </a>
           <a
             href="https://github.com/yourbrand"
             target="_blank"
             rel="noopener noreferrer"
-            class="social-link github mx-2 flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 text-gray-600 text-2xl hover:text-white transition duration-300 transform hover:scale-110"
+            class="social-link github button is-light is-rounded is-large mx-2 transform-hover-scale"
           >
-            <i class="fab fa-github"></i>
+            <span class="icon is-size-4">
+              <i class="fab fa-github"></i>
+            </span>
           </a>
         </div>
       </div>
