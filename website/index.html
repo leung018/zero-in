@@ -16,17 +16,16 @@
       }
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #f8fafc; /* Tailwind's gray-50 equivalent */
-        min-height: 100vh; /* Ensure body always fills the viewport height */
-        display: flex; /* Use flexbox to manage content flow */
-        flex-direction: column; /* Stack content vertically */
-        margin: 0; /* Remove default body margin */
-        padding: 0; /* Remove default body padding */
-        -webkit-font-smoothing: antialiased; /* Better font rendering */
-        -moz-osx-font-smoothing: grayscale; /* Better font rendering */
+        background-color: #f8fafc;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        padding: 0;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
-      /* Specific social icon colors for brand recognition for hover states */
       .social-link.instagram:hover {
         background: #e1306c;
         color: white;
@@ -48,12 +47,10 @@
         color: white;
       }
 
-      /* Custom gradient for hero section as Bulma doesn't have native gradient classes */
       .hero-gradient {
-        background: linear-gradient(to right, #6366f1, #9333ea); /* from-indigo-500 to-purple-600 */
+        background: linear-gradient(to right, #6366f1, #9333ea);
       }
 
-      /* Custom shadows and rounded corners for a similar look to original */
       .box-shadow-lg {
         box-shadow:
           0 10px 15px -3px rgba(0, 0, 0, 0.1),
@@ -61,25 +58,23 @@
       }
 
       .rounded-b-xl-custom {
-        border-bottom-left-radius: 0.75rem; /* 12px */
-        border-bottom-right-radius: 0.75rem; /* 12px */
+        border-bottom-left-radius: 0.75rem;
+        border-bottom-right-radius: 0.75rem;
       }
 
       .rounded-xl-custom {
-        border-radius: 0.75rem; /* 12px */
+        border-radius: 0.75rem;
       }
 
-      /* Transform hover effect for cards and buttons */
       .transform-hover-scale:hover {
         transform: scale(1.05);
         transition: transform 0.3s ease-in-out;
       }
 
       .mt-negative-40 {
-        margin-top: -40px; /* Equivalent to -mt-10 in Tailwind's default spacing */
+        margin-top: -40px;
       }
 
-      /* Responsive iframe container */
       .responsive-iframe {
         width: 100%;
         text-align: center;
