@@ -1,4 +1,5 @@
 import { type CommunicationManager, type Port } from '../communication'
+import { wakeUpServiceWorkerIfIdle } from './wake_service_worker'
 
 export class BrowserCommunicationManager implements CommunicationManager {
   clientConnect() {
@@ -35,9 +36,17 @@ class BrowserPortWrapper implements Port {
       this.browserPort.postMessage(message)
     } catch (error) {
       console.info('Error when sending message. Will retry. Error:', error)
-      this.browserPort = browser.runtime.connect()
-      return this.send(message, retryCount + 1)
+      this.reconnect().then(() => {
+        console.info('Reconnected to service worker. Retrying to send message:', message)
+        return this.send(message, retryCount + 1)
+      })
     }
+  }
+
+  private reconnect() {
+    return wakeUpServiceWorkerIfIdle().then(() => {
+      this.browserPort = browser.runtime.connect()
+    })
   }
 
   onMessage(callback: (message: any) => void): void {
