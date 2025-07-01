@@ -26,8 +26,8 @@ class BrowserPortWrapper implements Port {
 
   async send(message: any, retryCount = 0): Promise<void> {
     if (retryCount > BrowserPortWrapper.MAX_RETRIES) {
-      // Hard to cover this case. Can adjust the MAX_RETRIES to 0 and see if the error is logged after disconnect.
-      // See below comment of how to trigger disconnect in console.
+      // Hard to cover this case in e2e test. Can adjust the MAX_RETRIES to 0 and see if the error is logged after retry.
+      // Can go to chrome://serviceworker-internals/ and stop the service worker to simulate the error below.
       console.error('Max retries reached. Unable to send message.')
       return
     }
@@ -59,8 +59,6 @@ class BrowserPortWrapper implements Port {
   }
 
   disconnect(): void {
-    // Have expose this wrapper to window in a page for e2e test of retry handling. Search for window._port in e2e test for more detail.
-    // So can call _port.disconnect() on that page to trigger this function.
     // See comments in backgroundPort.onDisconnect in service_workers/listener.ts for how to verify the disconnect behavior.
     this.browserPort.disconnect()
   }
