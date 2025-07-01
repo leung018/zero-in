@@ -24,7 +24,7 @@ class BrowserPortWrapper implements Port {
     this.browserPort = browserPort
   }
 
-  send(message: any, retryCount = 0): void {
+  async send(message: any, retryCount = 0): Promise<void> {
     if (retryCount > BrowserPortWrapper.MAX_RETRIES) {
       // Hard to cover this case. Can adjust the MAX_RETRIES to 0 and see if the error is logged after disconnect.
       // See below comment of how to trigger disconnect in console.
@@ -36,7 +36,7 @@ class BrowserPortWrapper implements Port {
       this.browserPort.postMessage(message)
     } catch (error) {
       console.info('Error when sending message. Will retry. Error:', error)
-      this.reconnect().then(() => {
+      return this.reconnect().then(() => {
         console.info('Reconnected to service worker. Retrying to send message:', message)
         return this.send(message, retryCount + 1)
       })
