@@ -50,9 +50,6 @@ onBeforeMount(async () => {
   })
   dailyResetTime.value = await dailyResetTimeStorageService.get()
   dailyCompletedFocusSessions.value = await getTotalFocusSessionsAfter(dailyResetTime.value)
-
-  // @ts-expect-error: Exposing port for e2e test to simulate situation that the port is disconnected
-  window._port = port
 })
 
 async function getTotalFocusSessionsAfter(dailyResetTime: Time): Promise<number> {

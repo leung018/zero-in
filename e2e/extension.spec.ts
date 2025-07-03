@@ -166,26 +166,19 @@ test('should clicking the options button in timer can go to options page', async
   await assertOpenedOptionsPage(page)
 })
 
-test('should close tab function properly after clicking start on reminder page', async ({
+test('should close tab properly after clicking start on reminder page and even after service worker is stopped', async ({
   page,
   extensionId
 }) => {
   await goToReminderPage(page, extensionId)
 
   const extraPage = await page.context().newPage()
-  await extraPage.route('https://google.com', async (route) => {
-    await route.fulfill({ body: 'This is fake google.com' })
-  })
-  await extraPage.goto('https://google.com')
 
-  await page.evaluate(() => {
-    //  Add this to make sure e2e test can catch the bug of start button not working when the port is disconnected
-    // @ts-expect-error ReminderPage added _port to window
-    window._port.disconnect()
-  })
+  await goToStopServiceWorker(extraPage) // Also make sure when service worker is idle, everything can function properly
 
   await page.getByTestId('start-button').click()
 
+  // Only close the reminder page only after clicking start button
   await assertWithRetry(async () => {
     expect(page.context().pages()).not.toContain(page)
     expect(page.context().pages()).toContain(extraPage)
@@ -409,4 +402,9 @@ async function goToTestingConfigPage(page: Page, extensionId: string) {
 
 async function goToNotificationPage(page: Page, extensionId: string) {
   await page.goto(`chrome-extension://${extensionId}/options.html#/notification`)
+}
+
+async function goToStopServiceWorker(page: Page) {
+  await page.goto(`chrome://serviceworker-internals/`)
+  await page.getByRole('button', { name: 'Stop' }).click()
 }

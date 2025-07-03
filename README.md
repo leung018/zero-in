@@ -2,9 +2,9 @@
 
 ## Introduction
 
-A Chrome extension that helps users stay focused with website restriction features and a timer that supports time-based focus and break intervals.
+A browser extension that helps users stay focused with website restriction features and a timer that supports time-based focus and break intervals.
 
-If you have interest in trying the beta version, please visit the [Chrome Web Store](https://chromewebstore.google.com/detail/apghmagjnjpfikmebjifaollihlpgcab) and install it on Chrome.
+Please visit the [Zero In website](https://zeroin.dev) for more details and installation.
 
 ## Development
 
