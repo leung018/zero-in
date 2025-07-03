@@ -16,12 +16,11 @@ jobs:
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
       - name: Update PR branch
-        run: gh pr update "$PR_URL"
+        run: gh pr update-branch "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Enable auto-merge for Dependabot PRs
-        if: steps.metadata.outputs.update-type == 'version-update:semver-patch'
         run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
