@@ -9,7 +9,7 @@ export enum WorkRequestName {
   LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE,
   RESET_TIMER_CONFIG,
   RESET_NOTIFICATION,
-  KEEP_ALIVE
+  PING
 }
 
 export type RestartNthPayload = {
@@ -50,5 +50,5 @@ export type WorkRequest =
       name: WorkRequestName.RESET_NOTIFICATION
     }
   | {
-      name: WorkRequestName.KEEP_ALIVE
+      name: WorkRequestName.PING
     }
