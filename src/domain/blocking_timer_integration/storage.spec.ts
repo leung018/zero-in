@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { BlockingTimerIntegration } from '.'
 import config from '../../config'
 import { FakeStorage } from '../../infra/storage'
-import type { BlockingTimerIntegrationSchemas } from './serialize'
+import type { BlockingTimerIntegrationSchemas } from './schema'
 import { BlockingTimerIntegrationStorageService } from './storage'
 
 describe('BlockingTimerIntegrationStorageService', () => {

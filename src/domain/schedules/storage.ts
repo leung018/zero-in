@@ -1,11 +1,8 @@
 import { WeeklySchedule } from '.'
 import { BrowserStorageProvider } from '../../infra/browser/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
-import {
-  deserializeWeeklySchedules,
-  serializeWeeklySchedules,
-  type WeeklyScheduleSchemas
-} from './serialize'
+import { WeeklyScheduleSchemas } from './schema'
+import { deserializeWeeklySchedules, serializeWeeklySchedules } from './serialize'
 
 export class WeeklyScheduleStorageService {
   static readonly STORAGE_KEY = 'weeklySchedules'
