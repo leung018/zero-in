@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "wxt",
     "build": "wxt build",
+    "build:local": "NAME_SUFFIX=' (LOCAL)' yarn build",
     "zip": "wxt zip",
     "test:unit": "vitest",
     "test:unit:coverage": "vitest run --coverage",
