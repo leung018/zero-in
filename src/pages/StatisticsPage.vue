@@ -56,24 +56,25 @@ onBeforeMount(async () => {
     name: WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE
   })
 
-  keepAlive(port)
+  startPeriodicPing(port, 1000 * 60 * 5)
 })
 
-function keepAlive(port: ClientPort) {
-  // Don't plan to automated test this part because it doesn't have obvious testable impact
-  // Add this for trying to keep the connection alive because before that I found that statistics page closed the connection rarely and could not receive
-  // the FOCUS_SESSION_RECORDS_UPDATED from the service worker.
-
-  // Hope this will help but I am not 100% sure.
-
-  setInterval(
-    () => {
-      port.send({
-        name: WorkRequestName.KEEP_ALIVE
-      })
-    },
-    1000 * 60 * 5
-  )
+/*
+ * Periodically sends a ping message to the service worker.
+ * This may reduce the chance of the connection being closed due to inactivity,
+ * but does not guarantee the connection will always stay open.
+ *
+ * If the connection is closed, cannot update the stats in real-time.
+ *
+ * Don't plan to automate test this part because it doesn't have obvious testable impact.
+ * Hope this will help but I am not 100% sure.
+ */
+function startPeriodicPing(port: ClientPort, intervalMs: number) {
+  setInterval(() => {
+    port.send({
+      name: WorkRequestName.PING
+    })
+  }, intervalMs)
 }
 
 async function setStats(dailyResetTime: Time) {
