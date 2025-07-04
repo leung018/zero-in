@@ -3,7 +3,7 @@ import type { TimerState } from '.'
 import { FakeStorage } from '../../../infra/storage'
 import { Duration } from '../duration'
 import { TimerStage } from '../stage'
-import type { TimerStateSchemas } from './serialize'
+import type { TimerStateSchemas } from './schema'
 import { TimerStateStorageService } from './storage'
 
 describe('TimerStateStorageService', () => {

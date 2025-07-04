@@ -2,11 +2,8 @@ import type { BlockingTimerIntegration } from '.'
 import config from '../../config'
 import { BrowserStorageProvider } from '../../infra/browser/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
-import {
-  deserializeBlockingTimerIntegration,
-  serializeBlockingTimerIntegration,
-  type BlockingTimerIntegrationSchemas
-} from './serialize'
+import { BlockingTimerIntegrationSchemas } from './schema'
+import { deserializeBlockingTimerIntegration, serializeBlockingTimerIntegration } from './serialize'
 
 export class BlockingTimerIntegrationStorageService {
   static readonly STORAGE_KEY = 'blockingTimerIntegration'

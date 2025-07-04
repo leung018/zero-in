@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { Weekday, WeeklySchedule } from '.'
 import { FakeStorage } from '../../infra/storage'
 import { Time } from '../time'
-import type { WeeklyScheduleSchemas } from './serialize'
+import type { WeeklyScheduleSchemas } from './schema'
 import { WeeklyScheduleStorageService } from './storage'
 
 describe('WeeklyScheduleStorageService', () => {

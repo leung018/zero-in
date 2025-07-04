@@ -1,17 +1,7 @@
 import type { BlockingTimerIntegration } from '.'
+import { BlockingTimerIntegrationSchemas } from './schema'
 
 type SerializedBlockingTimerIntegration = BlockingTimerIntegrationSchemas[1]
-
-export type BlockingTimerIntegrationSchemas = [
-  {
-    shouldPauseBlockingDuringBreaks: boolean
-  },
-  {
-    dataVersion: 1
-    pauseBlockingDuringBreaks: boolean
-    pauseBlockingWhenTimerNotRunning: boolean
-  }
-]
 
 export function serializeBlockingTimerIntegration(
   integration: BlockingTimerIntegration

@@ -1,24 +1,8 @@
-import { WeeklySchedule, type Weekday } from '.'
-import { deserializeTime, serializeTime, type SerializedTime } from '../time/serialize'
+import { WeeklySchedule } from '.'
+import { deserializeTime, serializeTime } from '../time/serialize'
+import { WeeklyScheduleSchemas } from './schema'
 
 type SerializedWeeklySchedules = WeeklyScheduleSchemas[1]
-
-export type WeeklyScheduleSchemas = [
-  {
-    weekdays: Weekday[]
-    startTime: SerializedTime
-    endTime: SerializedTime
-  }[],
-  {
-    dataVersion: 1
-    schedules: {
-      weekdays: Weekday[]
-      startTime: SerializedTime
-      endTime: SerializedTime
-      targetFocusSessions?: number
-    }[]
-  }
-]
 
 export function serializeWeeklySchedules(
   weeklySchedules: ReadonlyArray<WeeklySchedule>

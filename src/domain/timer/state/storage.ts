@@ -1,7 +1,8 @@
 import type { TimerState } from '.'
 import { BrowserStorageProvider } from '../../../infra/browser/storage'
 import { FakeStorage, StorageWrapper, type Storage } from '../../../infra/storage'
-import { deserializeTimerState, serializeTimerState, type TimerStateSchemas } from './serialize'
+import { type TimerStateSchemas } from './schema'
+import { deserializeTimerState, serializeTimerState } from './serialize'
 
 export class TimerStateStorageService {
   static readonly STORAGE_KEY = 'timerState'
