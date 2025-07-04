@@ -15,12 +15,14 @@ export class BrowserCommunicationManager implements CommunicationManager {
   }
 }
 
+type BrowserPort = globalThis.Browser.runtime.Port
+
 class BrowserPortWrapper implements Port {
   private static MAX_RETRIES = 3
 
-  private browserPort: Browser.runtime.Port
+  private browserPort: BrowserPort
 
-  constructor(browserPort: Browser.runtime.Port) {
+  constructor(browserPort: BrowserPort) {
     this.browserPort = browserPort
   }
 
