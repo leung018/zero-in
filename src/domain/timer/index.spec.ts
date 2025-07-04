@@ -493,10 +493,24 @@ describe('FocusTimer', () => {
       focusSessionsCompleted: 1
     }
     expect(timer.getState()).toEqual(expected)
+  })
 
-    scheduler.advanceTime(1500)
+  it('should reset focusSessionsCompleted after long break', () => {
+    const { timer, scheduler } = createTimer(
+      newConfig({
+        focusDuration: new Duration({ seconds: 3 }),
+        longBreakDuration: new Duration({ seconds: 2 }),
+        focusSessionsPerCycle: 4
+      })
+    )
 
-    // Should reset focusSessionsCompleted after long break even number of focus completed in previous cycle is less than 4
+    // Complete 1 focus session
+    timer.start()
+    scheduler.advanceTime(3000)
+
+    timer.restartLongBreak()
+    scheduler.advanceTime(2000)
+
     expect(timer.getState().stage).toBe(TimerStage.FOCUS)
     expect(timer.getState().focusSessionsCompleted).toBe(0)
   })
