@@ -30,7 +30,7 @@ const onClickSave = async () => {
   }
 
   await notificationSettingStorageService.save(setting)
-  port.send({ name: WorkRequestName.RESET_NOTIFICATION })
+  await port.send({ name: WorkRequestName.RESET_NOTIFICATION })
 
   updateSuccessNotifierService.trigger()
 }

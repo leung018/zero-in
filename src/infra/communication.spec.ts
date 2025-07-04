@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { FakeCommunicationManager, type Port } from './communication'
 
 describe('FakeCommunicationManager', () => {
-  it('should clientConnect port can send and receive message to the backgroundPort in listener', () => {
+  it('should clientConnect port can send and receive message to the backgroundPort in listener', async () => {
     const fakeCommunicationManager = new FakeCommunicationManager()
 
     let message1: any, message2: any
@@ -16,20 +16,20 @@ describe('FakeCommunicationManager', () => {
     clientPort1.onMessage((incomingMessage) => {
       message1 = incomingMessage
     })
-    clientPort1.send('Hello')
+    await clientPort1.send('Hello')
 
     const clientPort2 = fakeCommunicationManager.clientConnect()
     clientPort2.onMessage((incomingMessage) => {
       message2 = incomingMessage
     })
-    clientPort2.send('Hi')
+    await clientPort2.send('Hi')
 
     // each clientPort has unique connection to the backgroundPort, so they won't receive each other message
     expect(message1).toBe('Hello World')
     expect(message2).toBe('Hi World')
   })
 
-  it('should disconnect will disable the communication ', () => {
+  it('should disconnect will disable the communication ', async () => {
     const fakeCommunicationManager = new FakeCommunicationManager()
 
     let lastClientReceivedMsg: any = null
@@ -49,15 +49,15 @@ describe('FakeCommunicationManager', () => {
     })
     clientPort.disconnect()
 
-    clientPort.send('Hi')
+    await clientPort.send('Hi')
     // @ts-expect-error Below variable should be assigned in above callback. So disable the type check for this line
-    backgroundPort.send('Hello')
+    await backgroundPort.send('Hello')
 
     expect(lastClientReceivedMsg).toBeNull()
     expect(lastBackgroundReceivedMsg).toBeNull()
   })
 
-  it('should disconnect trigger onDisconnect callback of connected port', () => {
+  it('should disconnect trigger onDisconnect callback of connected port', async () => {
     const fakeCommunicationManager = new FakeCommunicationManager()
 
     let isOnDisconnectCalled = false

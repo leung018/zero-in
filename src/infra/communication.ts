@@ -4,7 +4,7 @@ export interface CommunicationManager {
 }
 
 export interface Port<OutgoingMessage = any, IncomingMessage = any> {
-  send(message: OutgoingMessage): void
+  send(message: OutgoingMessage): Promise<void>
   onMessage(callback: (message: IncomingMessage) => void): void
   onDisconnect(callback: () => void): void
   disconnect(): void
@@ -43,7 +43,7 @@ class FakePort implements Port {
     this.otherId = otherId
   }
 
-  send(message: any): void {
+  async send(message: any) {
     this.emitter.emit(this.otherId, message)
   }
 

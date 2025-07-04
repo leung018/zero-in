@@ -24,7 +24,7 @@ describe('BackgroundListener', () => {
 
     const initialSubscriptionCount = listener.getTimerStateSubscriptionCount()
 
-    clientPort.send({ name: WorkRequestName.LISTEN_TO_TIMER })
+    await clientPort.send({ name: WorkRequestName.LISTEN_TO_TIMER })
 
     expect(listener.getTimerStateSubscriptionCount()).toBe(initialSubscriptionCount + 1)
 
@@ -42,7 +42,7 @@ describe('BackgroundListener', () => {
     })
 
     // Focus
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(3000)
     await flushPromises()
 
@@ -51,7 +51,7 @@ describe('BackgroundListener', () => {
     expect(focusSessionRecords[0].completedAt).toBeInstanceOf(Date)
 
     // Break
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
     await flushPromises()
 
@@ -72,7 +72,7 @@ describe('BackgroundListener', () => {
     await focusSessionRecordStorageService.saveAll([oldRecord])
 
     // Focus
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(3000)
     await flushPromises()
 
@@ -86,7 +86,7 @@ describe('BackgroundListener', () => {
 
     const initialSubscriptionCount = listener.getFocusSessionRecordsUpdateSubscriptionCount()
 
-    clientPort.send({ name: WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE })
+    await clientPort.send({ name: WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE })
 
     expect(listener.getFocusSessionRecordsUpdateSubscriptionCount()).toBe(
       initialSubscriptionCount + 1
@@ -106,7 +106,7 @@ describe('BackgroundListener', () => {
 
     expect(badgeDisplayService.getDisplayedBadge()).toBe(null)
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
 
     const focusBadgeColor: BadgeColor = config.getBadgeColorConfig().focusBadgeColor
 
@@ -136,7 +136,7 @@ describe('BackgroundListener', () => {
 
     expect(closeTabsService.hasTriggered()).toBe(false)
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
 
     expect(closeTabsService.hasTriggered()).toBe(true)
   })
@@ -144,11 +144,11 @@ describe('BackgroundListener', () => {
   it('should remove badge when the timer is paused', async () => {
     const { badgeDisplayService, clientPort } = await startListener()
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
 
     expect(badgeDisplayService.getDisplayedBadge()).not.toBeNull()
 
-    clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
+    await clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
 
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
@@ -160,7 +160,7 @@ describe('BackgroundListener', () => {
       })
     })
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
 
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
@@ -176,11 +176,11 @@ describe('BackgroundListener', () => {
       })
     })
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(3000)
 
     // start short break
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
 
     const expected: Badge = {
       text: '2',
@@ -199,11 +199,11 @@ describe('BackgroundListener', () => {
       })
     })
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(3000)
 
     // start long break
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
 
     const expected: Badge = {
       text: '4',
@@ -267,7 +267,7 @@ describe('BackgroundListener', () => {
       expect(soundService.hasTriggered()).toBe(false)
       expect(desktopNotificationService.isNotificationActive()).toBe(false)
 
-      clientPort.send({ name: WorkRequestName.START_TIMER })
+      await clientPort.send({ name: WorkRequestName.START_TIMER })
       scheduler.advanceTime(3000)
 
       expect(reminderTabService.hasTriggered()).toBe(expected.hasReminderTabTriggered)
@@ -285,7 +285,7 @@ describe('BackgroundListener', () => {
       })
     })
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
 
     expect(listener.getTimerState().remaining).toEqual(new Duration({ seconds: 2 }))
@@ -298,12 +298,12 @@ describe('BackgroundListener', () => {
       })
     })
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
 
     expect(await timerStateStorageService.get()).toEqual(listener.getTimerState())
 
-    clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
+    await clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
 
     expect(await timerStateStorageService.get()).toEqual(listener.getTimerState())
   })
@@ -336,11 +336,11 @@ describe('BackgroundListener', () => {
       })
     })
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
 
     expect(badgeDisplayService.getDisplayedBadge()).not.toBeNull()
 
-    clientPort.send({ name: WorkRequestName.RESET_TIMER_CONFIG })
+    await clientPort.send({ name: WorkRequestName.RESET_TIMER_CONFIG })
     await flushPromises()
 
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
@@ -367,20 +367,20 @@ describe('BackgroundListener', () => {
 
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(3000)
     await flushPromises()
 
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
 
     // Start break
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     await flushPromises()
 
     expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
 
     // End break
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
     await flushPromises()
 
@@ -403,12 +403,12 @@ describe('BackgroundListener', () => {
 
     expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     await flushPromises()
 
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
 
-    clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
+    await clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
     await flushPromises()
 
     expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
@@ -425,7 +425,7 @@ describe('BackgroundListener', () => {
       })
     })
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(3000)
     await flushPromises()
 
@@ -443,7 +443,7 @@ describe('BackgroundListener', () => {
       })
     })
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(3000)
     await flushPromises()
 
@@ -464,13 +464,13 @@ describe('BackgroundListener', () => {
       })
     })
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
     await flushPromises()
 
     expect(desktopNotificationService.isNotificationActive()).toBe(true)
 
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     await flushPromises()
 
     expect(desktopNotificationService.isNotificationActive()).toBe(false)

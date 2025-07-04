@@ -63,7 +63,7 @@ const handleRemove = async (indexToRemove: number) => {
 
 const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
   await weeklyScheduleStorageService.saveAll(newWeeklySchedules)
-  await port.send({ name: WorkRequestName.TOGGLE_BROWSING_RULES })
+  port.send({ name: WorkRequestName.TOGGLE_BROWSING_RULES })
   weeklySchedules.value = newWeeklySchedules
 }
 </script>
