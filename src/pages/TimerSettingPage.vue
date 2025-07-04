@@ -52,7 +52,7 @@ const onClickSave = async () => {
 
   await timerConfigStorageService.save(config)
 
-  port.send({
+  await port.send({
     name: WorkRequestName.RESET_TIMER_CONFIG
   })
 

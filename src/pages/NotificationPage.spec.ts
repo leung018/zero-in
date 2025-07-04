@@ -91,7 +91,7 @@ describe('NotificationPage', () => {
     })
 
     // Start the timer and finish the focus session. Notification should be triggered when finish focus session
-    clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     scheduler.advanceTime(1000)
 
     expect(reminderTabService.hasTriggered()).toBe(false)

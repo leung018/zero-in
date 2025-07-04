@@ -33,7 +33,7 @@ const onClickSave = async () => {
     focusSessionsPerCycle: focusSessionsPerCycle.value
   })
   await timerConfigStorageService.save(timerConfig)
-  port.send({
+  await port.send({
     name: WorkRequestName.RESET_TIMER_CONFIG
   })
 }

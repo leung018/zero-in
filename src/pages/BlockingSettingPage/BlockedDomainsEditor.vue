@@ -33,7 +33,7 @@ async function onClickRemove(domain: string) {
 
 async function updateBrowsingRules(newBrowsingRules: BrowsingRules) {
   await browsingRulesStorageService.save(newBrowsingRules)
-  await port.send({ name: WorkRequestName.TOGGLE_BROWSING_RULES })
+  port.send({ name: WorkRequestName.TOGGLE_BROWSING_RULES })
   browsingRules.value = newBrowsingRules
 }
 </script>
