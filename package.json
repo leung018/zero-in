@@ -22,6 +22,7 @@
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.7",
     "bootstrap-vue-next": "^0.29.3",
+    "firebase": "^11.10.0",
     "vue": "^3.5.13"
   },
   "devDependencies": {
