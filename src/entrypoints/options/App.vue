@@ -48,13 +48,57 @@ function getPathFromWindowLocation(): PATH {
 }
 
 const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICATION]
+
+async function getAuth() {
+  const auth = await browser.runtime.sendMessage({
+    type: 'firebase-auth',
+    target: 'offscreen'
+  })
+  if (auth?.name !== 'FirebaseError') {
+    return auth
+  } else {
+    throw new Error(auth)
+  }
+}
+
+async function firebaseAuth() {
+  // await browser.offscreen.closeDocument()
+  await browser.offscreen.createDocument({
+    url: 'offscreen-signin.html',
+    reasons: [browser.offscreen.Reason.DOM_SCRAPING],
+    justification: 'authentication'
+  })
+
+  const auth = await getAuth()
+    .then((auth) => {
+      console.log('User Authenticated', auth)
+      return auth
+    })
+    .catch((err) => {
+      if (err.code === 'auth/operation-not-allowed') {
+        console.error(
+          'You must enable an OAuth provider in the Firebase' +
+            ' console in order to use signInWithPopup. This sample' +
+            ' uses Google by default.'
+        )
+      } else {
+        console.error(err)
+        return err
+      }
+    })
+    .finally(() => {
+      return browser.offscreen.closeDocument()
+    })
+
+  return auth
+}
 </script>
 
 <template>
   <main>
     <BNav tabs class="mt-2 d-flex w-100">
-      <div class="invisible ms-2" style="width: 100px">
-        <BNavItem>Spacer</BNavItem>
+      <div class="ms-2 d-flex align-items-center" style="width: 100px">
+        <BButton size="sm" class="ms-2" @click="firebaseAuth">Sign In</BButton>
       </div>
       <div class="flex-grow-1 d-flex justify-content-center">
         <BNavItem
