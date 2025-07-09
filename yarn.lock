@@ -4192,6 +4192,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "firebase_hosting@workspace:firebase_hosting"
   dependencies:
+    firebase: "npm:^11.10.0"
     vite: "npm:^7.0.3"
   languageName: unknown
   linkType: soft

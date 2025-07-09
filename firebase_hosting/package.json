@@ -3,5 +3,8 @@
   "packageManager": "yarn@4.4.1",
   "devDependencies": {
     "vite": "^7.0.3"
+  },
+  "dependencies": {
+    "firebase": "^11.10.0"
   }
 }
