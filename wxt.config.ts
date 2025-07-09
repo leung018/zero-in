@@ -32,11 +32,7 @@ export default defineConfig({
         resources: ['blocked.html'], // Making blocked template accessible can solve the problem of clicking the blocked domain from the google search results triggering ERR_BLOCKED_BY_CLIENT.
         matches: ['<all_urls>']
       }
-    ],
-    content_security_policy: {
-      extension_pages:
-        "script-src 'self' https://apis.google.com https://www.gstatic.com https://www.googleapis.com https://securetoken.googleapis.com; object-src 'self';"
-    }
+    ]
   },
   vite: () => ({
     plugins: [
