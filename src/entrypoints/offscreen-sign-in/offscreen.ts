@@ -1,7 +1,7 @@
-// This URL must point to the public site
-const _URL = 'https://zero-in-8211f.web.app'
+import config from '../../config'
+
 const iframe = document.createElement('iframe')
-iframe.src = _URL
+iframe.src = config.getSignInUrl()
 document.documentElement.appendChild(iframe)
 
 const handleChromeMessages: Parameters<typeof browser.runtime.onMessage.addListener>[0] = (
@@ -36,7 +36,7 @@ const handleChromeMessages: Parameters<typeof browser.runtime.onMessage.addListe
   // Initialize the authentication flow in the iframed document. You must set the
   // second argument (targetOrigin) of the message in order for it to be successfully
   // delivered.
-  iframe.contentWindow?.postMessage({ initAuth: true }, new URL(_URL).origin)
+  iframe.contentWindow?.postMessage({ initAuth: true }, new URL(config.getSignInUrl()).origin)
   return true
 }
 
