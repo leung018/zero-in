@@ -40,15 +40,15 @@ async function closeOffscreenDocument() {
 }
 
 async function getAuth() {
-  const auth = await browser.runtime.sendMessage({
-    type: 'firebase-auth',
-    target: 'offscreen'
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve, reject) => {
+    const auth = await browser.runtime.sendMessage({
+      type: 'firebase-auth',
+      target: 'offscreen'
+    })
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    auth?.name !== 'FirebaseError' ? resolve(auth) : reject(auth)
   })
-  if (auth?.name !== 'FirebaseError') {
-    return auth
-  } else {
-    throw new Error(auth)
-  }
 }
 
 export async function firebaseAuth() {
