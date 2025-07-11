@@ -1,33 +1,42 @@
-import { PublicPath } from 'wxt/browser'
-
 const OFFSCREEN_DOCUMENT_PATH = '/offscreen-sign-in.html'
 
 let creating: Promise<void> | null = null // A global promise to avoid concurrency issues
-async function setupOffscreenDocument(path: PublicPath) {
-  // Check all windows controlled by the service worker to see if one
-  // of them is the offscreen document with the given path
-  const offscreenUrl = browser.runtime.getURL(path)
+
+// Chrome only allows for a single offscreenDocument. This is a helper function
+// that returns a boolean indicating if a document is already active.
+async function hasDocument() {
+  const offscreenUrl = browser.runtime.getURL(OFFSCREEN_DOCUMENT_PATH)
   const existingContexts = await browser.runtime.getContexts({
     contextTypes: [browser.runtime.ContextType.OFFSCREEN_DOCUMENT],
     documentUrls: [offscreenUrl]
   })
+  return existingContexts.length > 0
+}
 
-  if (existingContexts.length > 0) {
+async function setupOffscreenDocument() {
+  if (await hasDocument()) {
+    console.log('Offscreen document already exists, skipping creation.')
     return
   }
 
-  // create offscreen document
   if (creating) {
     await creating
   } else {
     creating = browser.offscreen.createDocument({
-      url: path,
+      url: OFFSCREEN_DOCUMENT_PATH,
       reasons: [browser.offscreen.Reason.DOM_SCRAPING],
       justification: 'authentication'
     })
     await creating
     creating = null
   }
+}
+
+async function closeOffscreenDocument() {
+  if (!(await hasDocument())) {
+    return
+  }
+  await browser.offscreen.closeDocument()
 }
 
 async function getAuth() {
@@ -43,7 +52,7 @@ async function getAuth() {
 }
 
 export async function firebaseAuth() {
-  await setupOffscreenDocument(OFFSCREEN_DOCUMENT_PATH)
+  await setupOffscreenDocument()
 
   const auth = await getAuth()
     .then((auth) => {
@@ -62,9 +71,7 @@ export async function firebaseAuth() {
         return err
       }
     })
-    .finally(() => {
-      return browser.offscreen.closeDocument()
-    })
+    .finally(closeOffscreenDocument)
 
   return auth
 }
