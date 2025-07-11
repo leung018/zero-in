@@ -49,6 +49,7 @@ function getPathFromWindowLocation(): PATH {
   return Object.values(PATH).includes(path as PATH) ? (path as PATH) : PATH.ROOT
 }
 
+// TODO: May extract sign in to other component and unit testing it
 const signIn = () => {
   port.onMessage((message) => {
     if (message.name === WorkResponseName.AUTH_SUCCESS) {

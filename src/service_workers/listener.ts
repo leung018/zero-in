@@ -342,6 +342,7 @@ export class BackgroundListener {
               break
             }
             case WorkRequestName.AUTH_REQUEST: {
+              // TODO: May inject a fake firebaseAuth function for unit testing purpose
               firebaseAuth((auth) => {
                 backgroundPort.send({
                   name: WorkResponseName.AUTH_SUCCESS,
