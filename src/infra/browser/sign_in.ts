@@ -27,7 +27,7 @@ async function getAuth() {
   })
 }
 
-export async function firebaseAuth() {
+export async function firebaseAuth(onAuthSuccess: (auth: any) => void): Promise<any> {
   const offscreenContexts = await browser.runtime.getContexts({
     contextTypes: [browser.runtime.ContextType.OFFSCREEN_DOCUMENT]
   })
@@ -37,14 +37,11 @@ export async function firebaseAuth() {
   } else if (offscreenContexts[0].documentUrl !== browser.runtime.getURL(OFFSCREEN_DOCUMENT_PATH)) {
     await browser.offscreen.closeDocument()
     await setupOffscreenDocument()
-  } else {
-    return
   }
 
   const auth = await getAuth()
     .then((auth) => {
-      console.log('User Authenticated', auth)
-      return auth
+      onAuthSuccess(auth)
     })
     .catch((err) => {
       if (err.code === 'auth/operation-not-allowed') {

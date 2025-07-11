@@ -20,6 +20,7 @@ import { BrowserBrowsingControlService } from '../infra/browser/browsing_control
 import { BrowserCloseTabsService } from '../infra/browser/close_tabs'
 import { BrowserCommunicationManager } from '../infra/browser/communication'
 import { BrowserNewTabService } from '../infra/browser/new_tab'
+import { firebaseAuth } from '../infra/browser/sign_in'
 import { BrowserSoundService } from '../infra/browser/sound'
 import type { BrowsingControlService } from '../infra/browsing_control'
 import { type CommunicationManager, type Port } from '../infra/communication'
@@ -339,6 +340,14 @@ export class BackgroundListener {
             case WorkRequestName.RESET_NOTIFICATION: {
               this.setUpNotification()
               break
+            }
+            case WorkRequestName.AUTH_REQUEST: {
+              firebaseAuth((auth) => {
+                backgroundPort.send({
+                  name: WorkResponseName.AUTH_SUCCESS,
+                  payload: auth
+                })
+              })
             }
           }
         }
