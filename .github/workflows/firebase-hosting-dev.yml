@@ -33,5 +33,5 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           channelId: live
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ZERO_IN_8211F }}
-          projectId: ${{ vars.FIREBASE_PROJECT_ID }}
+          projectId: ${{ vars.VITE_FIREBASE_PROJECT_ID }}
           entryPoint: ./firebase_hosting
