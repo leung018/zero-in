@@ -8,6 +8,7 @@ jobs:
   build_and_preview:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
+    environment: dev
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
@@ -32,5 +33,5 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           channelId: live
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ZERO_IN_8211F }}
-          projectId: zero-in-8211f
+          projectId: ${{ vars.FIREBASE_PROJECT_ID }}
           entryPoint: ./firebase_hosting
