@@ -14,6 +14,7 @@ import TimerSettingPage from '@/pages/TimerSettingPage.vue'
 import { WorkRequestName } from '@/service_workers/request'
 import { WorkResponseName } from '@/service_workers/response'
 import { onMounted, ref } from 'vue'
+import { FeatureFlagsService } from '../../infra/feature_flags'
 
 const port = new BrowserCommunicationManager().clientConnect()
 const updateSuccessNotifierService = new UpdateSuccessNotifierService()
@@ -49,6 +50,12 @@ function getPathFromWindowLocation(): PATH {
   return Object.values(PATH).includes(path as PATH) ? (path as PATH) : PATH.ROOT
 }
 
+const featureFlagsService = FeatureFlagsService.init()
+const signInEnabled = ref<boolean>(false)
+featureFlagsService.isEnabled('sign-in').then((enabled) => {
+  signInEnabled.value = enabled
+})
+
 // TODO: May extract sign in to other component and unit testing it
 const signIn = () => {
   port.onMessage((message) => {
@@ -69,7 +76,7 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
   <main>
     <BNav tabs class="mt-2 d-flex w-100">
       <div class="ms-2 d-flex align-items-center" style="width: 100px">
-        <BButton size="sm" class="ms-2" @click="signIn">Sign In</BButton>
+        <BButton v-if="signInEnabled" size="sm" class="ms-2" @click="signIn">Sign In</BButton>
       </div>
       <div class="flex-grow-1 d-flex justify-content-center">
         <BNavItem
