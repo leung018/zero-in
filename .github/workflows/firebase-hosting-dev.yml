@@ -20,7 +20,7 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: ./yarn.lock
       - run: yarn install --immutable
-      - run: yarn build
+      - run: yarn build:ci
         working-directory: ./firebase_hosting
         env:
           VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY }}

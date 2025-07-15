@@ -9,6 +9,7 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-latest
+    environment: prod
     env:
       TAG_NAME: ${{ github.ref_name }}
     steps:
