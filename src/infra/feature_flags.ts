@@ -24,25 +24,29 @@ export class FeatureFlagsService {
     this.storage = storage
   }
 
-  async isEnabled(flag: string): Promise<boolean> {
-    const storedFlags = await this.getFlags()
-    return storedFlags[flag] === true
+  async isEnabled(target: string): Promise<boolean> {
+    const flags = await this.getFlags()
+    return flags[target] === true
   }
 
-  async enable(flag: string): Promise<void> {
-    const storedFlags = await this.getFlags()
-    storedFlags[flag] = true
-    return this.storage.set({ [FeatureFlagsService.STORAGE_KEY]: storedFlags })
+  async enable(target: string): Promise<void> {
+    const flags = await this.getFlags()
+    flags[target] = true
+    return this.setFlags(flags)
   }
 
-  async disable(flag: string): Promise<void> {
-    const storedFlags = await this.getFlags()
-    delete storedFlags[flag]
-    return this.storage.set({ [FeatureFlagsService.STORAGE_KEY]: storedFlags })
+  async disable(target: string): Promise<void> {
+    const flags = await this.getFlags()
+    delete flags[target]
+    return this.setFlags(flags)
   }
 
   private async getFlags(): Promise<Record<string, boolean>> {
     const data = await this.storage.get(FeatureFlagsService.STORAGE_KEY)
     return data[FeatureFlagsService.STORAGE_KEY] || {}
+  }
+
+  private async setFlags(flags: Record<string, boolean>): Promise<void> {
+    return this.storage.set({ [FeatureFlagsService.STORAGE_KEY]: flags })
   }
 }
