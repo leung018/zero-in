@@ -2,7 +2,8 @@ import type { TimerStage } from '../domain/timer/stage'
 
 export enum WorkResponseName {
   TIMER_STATE,
-  FOCUS_SESSION_RECORDS_UPDATED
+  FOCUS_SESSION_RECORDS_UPDATED,
+  AUTH_SUCCESS
 }
 
 export type WorkResponse =
@@ -18,4 +19,8 @@ export type WorkResponse =
     }
   | {
       name: WorkResponseName.FOCUS_SESSION_RECORDS_UPDATED
+    }
+  | {
+      name: WorkResponseName.AUTH_SUCCESS
+      payload: any // TODO: Replace with actual auth type if available
     }

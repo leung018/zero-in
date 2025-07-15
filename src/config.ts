@@ -55,6 +55,10 @@ const getBadgeColorConfig = (): {
   }
 }
 
+const getSignInUrl = () => {
+  return import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'https://zero-in-8211f.web.app'
+}
+
 export default {
   getDefaultTimerConfig,
   getFocusSessionRecordHouseKeepDays,
@@ -62,5 +66,6 @@ export default {
   getBadgeColorConfig,
   getReminderPageUrl,
   getDefaultNotificationSetting,
-  getDefaultBlockingTimerIntegration
+  getDefaultBlockingTimerIntegration,
+  getSignInUrl
 }

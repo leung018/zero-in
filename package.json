@@ -3,10 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "firebase_hosting"
+  ],
   "scripts": {
     "dev": "wxt",
-    "build": "wxt build",
-    "build:local": "NAME_SUFFIX=' (LOCAL)' yarn build",
+    "build": "NAME_SUFFIX=' (LOCAL)' wxt build",
+    "build:ci": "wxt build",
     "zip": "wxt zip",
     "test:unit": "vitest",
     "test:unit:coverage": "vitest run --coverage",
@@ -22,6 +25,7 @@
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.7",
     "bootstrap-vue-next": "^0.29.3",
+    "firebase": "^11.10.0",
     "vue": "^3.5.13"
   },
   "devDependencies": {

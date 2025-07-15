@@ -6,7 +6,7 @@ export class BrowserSoundService implements ActionService {
   trigger(): void {
     browser.offscreen
       .createDocument({
-        url: 'offscreen.html',
+        url: 'offscreen-sound.html',
         reasons: ['AUDIO_PLAYBACK'],
         justification: 'Playing notification sound'
       })

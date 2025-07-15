@@ -9,8 +9,10 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-latest
+    environment: prod
     env:
       TAG_NAME: ${{ github.ref_name }}
+      VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.VITE_FIREBASE_AUTH_DOMAIN }}
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js

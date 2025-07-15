@@ -1,15 +1,17 @@
 on:
   push:
     branches: [main]
-name: Development Release
+name: Staging Release
 jobs:
   release:
     permissions:
       contents: write
     runs-on: ubuntu-latest
+    environment: prod
     env:
-      NAME_SUFFIX: ' (DEV)'
-      TAG_NAME: dev-latest
+      NAME_SUFFIX: ' (STAGING)'
+      TAG_NAME: staging
+      VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.VITE_FIREBASE_AUTH_DOMAIN }}
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js

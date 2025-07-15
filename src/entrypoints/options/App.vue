@@ -11,6 +11,8 @@ import FeedbackPage from '@/pages/FeedbackPage.vue'
 import NotificationPage from '@/pages/NotificationPage.vue'
 import StatisticsPage from '@/pages/StatisticsPage.vue'
 import TimerSettingPage from '@/pages/TimerSettingPage.vue'
+import { WorkRequestName } from '@/service_workers/request'
+import { WorkResponseName } from '@/service_workers/response'
 import { onMounted, ref } from 'vue'
 
 const port = new BrowserCommunicationManager().clientConnect()
@@ -47,14 +49,27 @@ function getPathFromWindowLocation(): PATH {
   return Object.values(PATH).includes(path as PATH) ? (path as PATH) : PATH.ROOT
 }
 
+// TODO: May extract sign in to other component and unit testing it
+const signIn = () => {
+  port.onMessage((message) => {
+    if (message.name === WorkResponseName.AUTH_SUCCESS) {
+      console.log('User Authenticated', message.payload)
+    }
+  })
+
+  port.send({
+    name: WorkRequestName.AUTH_REQUEST
+  })
+}
+
 const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICATION]
 </script>
 
 <template>
   <main>
     <BNav tabs class="mt-2 d-flex w-100">
-      <div class="invisible ms-2" style="width: 100px">
-        <BNavItem>Spacer</BNavItem>
+      <div class="ms-2 d-flex align-items-center" style="width: 100px">
+        <BButton size="sm" class="ms-2" @click="signIn">Sign In</BButton>
       </div>
       <div class="flex-grow-1 d-flex justify-content-center">
         <BNavItem
