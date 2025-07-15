@@ -18,4 +18,17 @@ describe('FeatureFlagsService', () => {
     isEnabled = await service.isEnabled('non_enabled_flag')
     expect(isEnabled).toBe(false)
   })
+
+  it('should able to disable the enabled flag', async () => {
+    const service = FeatureFlagsService.createFake()
+    await service.enable('flag1')
+    await service.enable('flag2')
+
+    await service.disable('flag1')
+    let isEnabled = await service.isEnabled('flag1')
+    expect(isEnabled).toBe(false)
+
+    isEnabled = await service.isEnabled('flag2')
+    expect(isEnabled).toBe(true)
+  })
 })

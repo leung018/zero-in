@@ -35,6 +35,12 @@ export class FeatureFlagsService {
     return this.storage.set({ [FeatureFlagsService.STORAGE_KEY]: storedFlags })
   }
 
+  async disable(flag: string): Promise<void> {
+    const storedFlags = await this.getFlags()
+    delete storedFlags[flag]
+    return this.storage.set({ [FeatureFlagsService.STORAGE_KEY]: storedFlags })
+  }
+
   private async getFlags(): Promise<Record<string, boolean>> {
     const data = await this.storage.get(FeatureFlagsService.STORAGE_KEY)
     return data[FeatureFlagsService.STORAGE_KEY] || {}
