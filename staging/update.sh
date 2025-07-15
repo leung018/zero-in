@@ -6,9 +6,11 @@
 # Change to the script directory
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
-TARGET_DIR="zero-in" 
-ZIP_FILE="zero-in-dev-latest-chrome.zip"
-URL="https://github.com/leung018/zero-in/releases/download/dev-latest/$ZIP_FILE" 
+TAG_NAME="staging"
+TARGET_DIR="zero-in"
+ZIP_FILE="zero-in-${TAG_NAME}-chrome.zip"
+URL="https://github.com/leung018/zero-in/releases/download/${TAG_NAME}/${ZIP_FILE}"
+
 
 echo "Downloading from $URL..."
 curl -L -o "$ZIP_FILE" "$URL"
