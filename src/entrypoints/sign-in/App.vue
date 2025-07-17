@@ -3,7 +3,11 @@
     <h2 class="mb-4">Sign in to Zero In</h2>
 
     <div class="message-box">
-      <p>Sign in to unlock premium features with a free trial during our limited-time promotion.</p>
+      <p>
+        <strong>Sign in</strong> to unlock <strong>premium features</strong>! Enjoy a
+        <strong>free trial</strong> during this <strong>limited-time promotion</strong>, though it
+        may end at any time.
+      </p>
     </div>
 
     <button class="gsi-material-button mt-3">
@@ -196,8 +200,5 @@ body {
   font-size: 0.95em;
   color: #364f6b;
   text-align: left;
-}
-.message-box strong {
-  color: #1890ff;
 }
 </style>
