@@ -1,3 +1,24 @@
+<script setup lang="ts">
+import { BrowserCommunicationManager } from '@/infra/browser/communication'
+import { WorkRequestName } from '@/service_workers/request'
+import { WorkResponseName } from '@/service_workers/response'
+
+const port = new BrowserCommunicationManager().clientConnect()
+
+// TODO: May extract sign in to other component and unit testing it
+const signIn = () => {
+  port.onMessage((message) => {
+    if (message.name === WorkResponseName.AUTH_SUCCESS) {
+      console.log('User Authenticated', message.payload)
+    }
+  })
+
+  port.send({
+    name: WorkRequestName.AUTH_REQUEST
+  })
+}
+</script>
+
 <template>
   <div class="signin-container">
     <h2 class="mb-4">Sign in to Zero In</h2>
@@ -10,7 +31,7 @@
       </p>
     </div>
 
-    <button class="gsi-material-button mt-3">
+    <button class="gsi-material-button mt-3" @click="signIn">
       <div class="gsi-material-button-state"></div>
       <div class="gsi-material-button-content-wrapper">
         <div class="gsi-material-button-icon">
@@ -52,8 +73,6 @@
     </p>
   </div>
 </template>
-
-<script setup lang="ts"></script>
 
 <style scoped>
 .signin-container {
