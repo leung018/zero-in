@@ -20,6 +20,7 @@ declare module 'vue' {
     BNav: typeof import('bootstrap-vue-next/components/BNav')['BNav']
     BNavItem: typeof import('bootstrap-vue-next/components/BNav')['BNavItem']
     BRow: typeof import('bootstrap-vue-next/components/BContainer')['BRow']
+    IIcBaselineAccountCircle: typeof import('~icons/ic/baseline-account-circle')['default']
     IIcBaselineLightbulb: typeof import('~icons/ic/baseline-lightbulb')['default']
     IIcBaselineSettings: typeof import('~icons/ic/baseline-settings')['default']
     IIcBaselineTimer: typeof import('~icons/ic/baseline-timer')['default']

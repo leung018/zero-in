@@ -11,8 +11,6 @@ import FeedbackPage from '@/pages/FeedbackPage.vue'
 import NotificationPage from '@/pages/NotificationPage.vue'
 import StatisticsPage from '@/pages/StatisticsPage.vue'
 import TimerSettingPage from '@/pages/TimerSettingPage.vue'
-import { WorkRequestName } from '@/service_workers/request'
-import { WorkResponseName } from '@/service_workers/response'
 import { onMounted, ref } from 'vue'
 import { FeatureFlagsService } from '../../infra/feature_flags'
 
@@ -56,17 +54,8 @@ featureFlagsService.isEnabled('sign-in').then((enabled) => {
   signInEnabled.value = enabled
 })
 
-// TODO: May extract sign in to other component and unit testing it
-const signIn = () => {
-  port.onMessage((message) => {
-    if (message.name === WorkResponseName.AUTH_SUCCESS) {
-      console.log('User Authenticated', message.payload)
-    }
-  })
-
-  port.send({
-    name: WorkRequestName.AUTH_REQUEST
-  })
+const goToSignIn = () => {
+  window.location.href = browser.runtime.getURL('/sign-in.html')
 }
 
 const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICATION]
@@ -76,7 +65,7 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
   <main>
     <BNav tabs class="mt-2 d-flex w-100">
       <div class="ms-2 d-flex align-items-center" style="width: 100px">
-        <BButton v-if="signInEnabled" size="sm" class="ms-2" @click="signIn">Sign In</BButton>
+        <BButton v-if="signInEnabled" size="sm" class="ms-2" @click="goToSignIn">Sign In</BButton>
       </div>
       <div class="flex-grow-1 d-flex justify-content-center">
         <BNavItem
