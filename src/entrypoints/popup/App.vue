@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { getCurrentUser } from '@/firebase_clients'
 import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import { BrowserNewTabService } from '@/infra/browser/new_tab'
 import { FeatureFlagsService } from '@/infra/feature_flags'
 import FocusTimerPage from '@/pages/FocusTimerPage.vue'
+import { User } from 'firebase/auth'
 
 const openOptionsPage = () => {
   browser.runtime.openOptionsPage()
@@ -17,12 +19,18 @@ const signInEnabled = ref<boolean>(false)
 featureFlagsService.isEnabled('sign-in').then((enabled) => {
   signInEnabled.value = enabled
 })
+
+const user = ref<User | null>(null)
+
+onBeforeMount(async () => {
+  user.value = await getCurrentUser()
+})
 </script>
 
 <template>
   <div class="position-relative">
     <BButton
-      v-if="signInEnabled"
+      v-if="signInEnabled && user == null"
       variant="outline-secondary"
       class="position-absolute top-0 start-0 p-0 ms-2"
       @click="openSignInPage"
