@@ -13,9 +13,9 @@ export async function firebaseAuth(onAuthSuccess: (auth: any) => void): Promise<
     await setupOffscreenDocument()
   }
 
-  const auth = await getAuth()
-    .then((auth) => {
-      onAuthSuccess(auth)
+  await getAuth()
+    .then((result) => {
+      onAuthSuccess(result)
     })
     .catch((err) => {
       if (err.code === 'auth/operation-not-allowed') {
@@ -30,8 +30,6 @@ export async function firebaseAuth(onAuthSuccess: (auth: any) => void): Promise<
       }
     })
     .finally(browser.offscreen.closeDocument)
-
-  return auth
 }
 
 let creating: Promise<void> | null = null // A global promise to avoid concurrency issues
