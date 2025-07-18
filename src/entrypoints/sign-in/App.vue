@@ -1,7 +1,14 @@
 <script setup lang="ts">
+import { myGetAuth } from '@/firebase_clients'
 import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import { WorkRequestName } from '@/service_workers/request'
 import { WorkResponseName } from '@/service_workers/response'
+import {
+  browserLocalPersistence,
+  GoogleAuthProvider,
+  setPersistence,
+  signInWithCredential
+} from 'firebase/auth'
 
 const port = new BrowserCommunicationManager().clientConnect()
 
@@ -9,7 +16,15 @@ const port = new BrowserCommunicationManager().clientConnect()
 const signIn = () => {
   port.onMessage((message) => {
     if (message.name === WorkResponseName.AUTH_SUCCESS) {
-      console.log('User Authenticated', message.payload)
+      const credential = GoogleAuthProvider.credential(message.payload._tokenResponse.oauthIdToken)
+
+      setPersistence(myGetAuth(), browserLocalPersistence).then(() => {
+        signInWithCredential(myGetAuth(), credential).then(() => {
+          browser.runtime.openOptionsPage().then(() => {
+            window.close()
+          })
+        })
+      })
     }
   })
 
