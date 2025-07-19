@@ -56,17 +56,20 @@ const getBadgeColorConfig = (): {
 }
 
 const getSignInUrl = () => {
-  return 'https://' + (import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'zero-in-8211f.web.app')
+  return 'https://' + getFirebaseConfig().authDomain
 }
 
 const getFirebaseConfig = () => ({
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  apiKey:
+    import.meta.env.VITE_FIREBASE_API_KEY ||
+    'TODO: I think is safe to expose client web api key here',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'zero-in-8211f.web.app',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'zero-in-8211f',
+  storageBucket:
+    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'zero-in-8211f.firebasestorage.app',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '54527256719',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:54527256719:web:a04aee2a067e57f4d628fa',
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-ZX6X3XNJTP'
 })
 
 export default {
