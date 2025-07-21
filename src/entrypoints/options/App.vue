@@ -3,6 +3,7 @@ import { DailyResetTimeStorageService } from '@/domain/daily_reset_time/storage'
 import { NotificationSettingStorageService } from '@/domain/notification_setting/storage'
 import { TimerConfigStorageService } from '@/domain/timer/config/storage'
 import { FocusSessionRecordStorageService } from '@/domain/timer/record/storage'
+import { getCurrentUser, mySignOut } from '@/firebase_clients'
 import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import { UpdateSuccessNotifierService } from '@/infra/browser/update_success_notifier'
 import { CurrentDateService } from '@/infra/current_date'
@@ -11,6 +12,7 @@ import FeedbackPage from '@/pages/FeedbackPage.vue'
 import NotificationPage from '@/pages/NotificationPage.vue'
 import StatisticsPage from '@/pages/StatisticsPage.vue'
 import TimerSettingPage from '@/pages/TimerSettingPage.vue'
+import { User } from 'firebase/auth'
 import { onMounted, ref } from 'vue'
 import { FeatureFlagsService } from '../../infra/feature_flags'
 
@@ -58,6 +60,18 @@ const goToSignIn = () => {
   window.location.href = browser.runtime.getURL('/sign-in.html')
 }
 
+const signOut = () => {
+  return mySignOut().then(() => {
+    location.reload()
+  })
+}
+
+const user = ref<User | null>(null)
+
+onBeforeMount(async () => {
+  user.value = await getCurrentUser()
+})
+
 const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICATION]
 </script>
 
@@ -65,7 +79,12 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
   <main>
     <BNav tabs class="mt-2 d-flex w-100">
       <div class="ms-2 d-flex align-items-center" style="width: 100px">
-        <BButton v-if="signInEnabled" size="sm" class="ms-2" @click="goToSignIn">Sign In</BButton>
+        <div v-if="signInEnabled">
+          <BButton v-if="!user" size="sm" class="ms-2" @click="goToSignIn">Sign In</BButton>
+          <BButton v-else size="sm" class="ms-2" variant="warning" @click="signOut"
+            >Sign Out</BButton
+          >
+        </div>
       </div>
       <div class="flex-grow-1 d-flex justify-content-center">
         <BNavItem

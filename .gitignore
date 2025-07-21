@@ -48,3 +48,5 @@ playwright-report/
 
 staging/*
 !staging/update.sh
+
+.env
