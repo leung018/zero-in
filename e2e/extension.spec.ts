@@ -291,6 +291,32 @@ test('should able to persist and retrieve setting of blocking timer integration'
   await expect(page.getByTestId('pause-blocking-when-timer-not-running')).toBeChecked()
 })
 
+test('should sign in and sign out buttons render according to state of authentication', async ({
+  page,
+  extensionId
+}) => {
+  await goToBlockingSettingPage(page, extensionId)
+
+  await page.evaluate(async () => {
+    //@ts-expect-error Exposed method
+    await window.signInWithTestCredential()
+
+    //@ts-expect-error Exposed method
+    await window.featureFlagsService.enable('sign-in')
+
+    //@ts-expect-error location is available
+    location.reload()
+  })
+
+  await expect(page.getByTestId('sign-out-button')).toBeVisible()
+  await expect(page.getByTestId('sign-in-button')).toBeHidden()
+
+  await page.getByTestId('sign-out-button').click()
+
+  await expect(page.getByTestId('sign-in-button')).toBeVisible()
+  await expect(page.getByTestId('sign-out-button')).toBeHidden()
+})
+
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
   const addButton = page.getByTestId('add-domain-button')

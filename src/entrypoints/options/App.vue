@@ -80,8 +80,21 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
     <BNav tabs class="mt-2 d-flex w-100">
       <div class="ms-2 d-flex align-items-center" style="width: 100px">
         <div v-if="signInEnabled">
-          <BButton v-if="!user" size="sm" class="ms-2" @click="goToSignIn">Sign In</BButton>
-          <BButton v-else size="sm" class="ms-2" variant="warning" @click="signOut"
+          <BButton
+            v-if="!user"
+            size="sm"
+            class="ms-2"
+            @click="goToSignIn"
+            data-test="sign-in-button"
+            >Sign In</BButton
+          >
+          <BButton
+            v-else
+            size="sm"
+            class="ms-2"
+            variant="warning"
+            @click="signOut"
+            data-test="sign-out-button"
             >Sign Out</BButton
           >
         </div>

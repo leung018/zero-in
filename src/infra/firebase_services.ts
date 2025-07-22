@@ -2,6 +2,7 @@ import config from '@/config'
 import { initializeApp } from 'firebase/app'
 import {
   browserLocalPersistence,
+  connectAuthEmulator,
   getAuth,
   GoogleAuthProvider,
   onAuthStateChanged,
@@ -17,6 +18,19 @@ let currentUser: User | null = null
 let authStateResolved = false
 
 const auth = getAuth(app)
+
+if (import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
+  connectAuthEmulator(auth, 'http://localhost:9099')
+  // @ts-expect-error Expose method for quickly signIn to window
+  globalThis.signInWithTestCredential = () => {
+    return signInWithCredential(
+      auth,
+      GoogleAuthProvider.credential(
+        '{"sub": "abc123", "email": "foo@example.com", "email_verified": true}'
+      )
+    )
+  }
+}
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user
