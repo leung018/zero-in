@@ -26,7 +26,6 @@ export async function firebaseAuth(onAuthSuccess: (auth: any) => void): Promise<
         )
       } else {
         console.error(err)
-        return err
       }
     })
     .finally(browser.offscreen.closeDocument)

@@ -1,4 +1,5 @@
 import { BrowserNewTabService } from '../infra/browser/new_tab'
+import { firebaseAuth } from '../infra/browser/sign_in'
 import { BackgroundListener } from './listener'
 import { MenuItemId } from './menu_item_id'
 
@@ -10,10 +11,17 @@ export default function main() {
 
   // Noted that e2e tests are hard to cover all of the below related to browser api properly. Better use a bit manual testing if needed.
 
-  // Service Worker Health Check
   browser.runtime.onMessage.addListener((message) => {
     if (message.type === 'PING') {
       return Promise.resolve({ type: 'PONG' })
+    }
+    if (message.type === 'SIGN_IN') {
+      return firebaseAuth((auth) => {
+        browser.runtime.sendMessage({
+          type: 'SIGN_IN_SUCCESS',
+          payload: auth
+        })
+      })
     }
   })
 
