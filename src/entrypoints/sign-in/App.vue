@@ -1,23 +1,14 @@
 <script setup lang="ts">
-import { myGetAuth } from '@/firebase_clients'
-import {
-  browserLocalPersistence,
-  GoogleAuthProvider,
-  setPersistence,
-  signInWithCredential
-} from 'firebase/auth'
+import { FirebaseServices } from '../../infra/firebase_services'
 
 // Require manual testing
 
 const signIn = () => {
   browser.runtime.onMessage.addListener((message) => {
     if (message.type === 'SIGN_IN_SUCCESS') {
-      const credential = GoogleAuthProvider.credential(message.payload._tokenResponse.oauthIdToken)
-      setPersistence(myGetAuth(), browserLocalPersistence).then(() => {
-        signInWithCredential(myGetAuth(), credential).then(() => {
-          browser.runtime.openOptionsPage().then(() => {
-            window.close()
-          })
+      FirebaseServices.signInWithToken(message.payload._tokenResponse.oauthIdToken).then(() => {
+        browser.runtime.openOptionsPage().then(() => {
+          window.close()
         })
       })
     }
