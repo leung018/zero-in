@@ -4,14 +4,12 @@ const iframe = document.createElement('iframe')
 iframe.src = config.getSignInUrl()
 document.documentElement.appendChild(iframe)
 
-const handleChromeMessages: Parameters<typeof browser.runtime.onMessage.addListener>[0] = (
+const handleBrowserMessages: Parameters<typeof browser.runtime.onMessage.addListener>[0] = (
   message,
-  sender,
+  _,
   sendResponse
 ) => {
-  // Extensions may have an number of other reasons to send messages, so you
-  // should filter out any that are not meant for the offscreen document.
-  if (message.target !== 'offscreen') {
+  if (message.target !== 'offscreen' && message.type !== 'FIREBASE_AUTH') {
     return false
   }
 
@@ -40,4 +38,4 @@ const handleChromeMessages: Parameters<typeof browser.runtime.onMessage.addListe
   return true
 }
 
-browser.runtime.onMessage.addListener(handleChromeMessages)
+browser.runtime.onMessage.addListener(handleBrowserMessages)
