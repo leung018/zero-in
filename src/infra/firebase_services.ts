@@ -23,11 +23,8 @@ if (import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
   connectAuthEmulator(auth, 'http://localhost:9099')
   // @ts-expect-error Expose method for quickly signIn to window
   globalThis.signInWithTestCredential = () => {
-    return signInWithCredential(
-      auth,
-      GoogleAuthProvider.credential(
-        '{"sub": "abc123", "email": "foo@example.com", "email_verified": true}'
-      )
+    return FirebaseServices.signInWithToken(
+      '{"sub": "abc123", "email": "foo@example.com", "email_verified": true}'
     )
   }
 }
@@ -37,7 +34,6 @@ onAuthStateChanged(auth, (user) => {
   authStateResolved = true
 })
 
-// Require manual testing
 export class FirebaseServices {
   static signOut() {
     return signOut(auth)
@@ -56,8 +52,8 @@ export class FirebaseServices {
     })
   }
 
-  static async signInWithToken(oauthIdToken: string) {
-    const credential = GoogleAuthProvider.credential(oauthIdToken)
+  static async signInWithToken(token: string) {
+    const credential = GoogleAuthProvider.credential(token)
     await setPersistence(auth, browserLocalPersistence)
     await signInWithCredential(auth, credential)
   }
