@@ -11,6 +11,7 @@
     "build": "NAME_SUFFIX=' (LOCAL)' wxt build",
     "build:ci": "VITE_USE_FIREBASE_EMULATOR=true wxt build",
     "zip": "wxt zip",
+    "firebase-emulators": "firebase --config firebase_emulators/firebase.json emulators:start",
     "test:unit": "vitest",
     "test:unit:coverage": "vitest run --coverage",
     "test:e2e": "firebase --config firebase_emulators/firebase.json emulators:exec 'playwright test'",
