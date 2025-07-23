@@ -2,6 +2,19 @@
 import { Page } from '@playwright/test'
 import { formatNumber } from '../src/utils/format.js'
 import { expect, test } from './fixtures.js'
+import { assertWithRetry } from './utils/assertion.js'
+import {
+  goToBlockingSettingPage,
+  goToFocusTimer,
+  goToNotificationPage,
+  goToReminderPage,
+  goToStatisticsPage,
+  goToTestingConfigPage
+} from './utils/navigation.js'
+import { goToStopServiceWorker, sleep } from './utils/operation.js'
+
+// This file aim at testing some dependencies related to chrome/browser extension api and make sure integrate them properly
+// e.g. browser.local.storage
 
 test('should able to persist browsing rules and update ui', async ({ page, extensionId }) => {
   await goToBlockingSettingPage(page, extensionId)
@@ -155,17 +168,6 @@ test('should focus timer count successfully', async ({ page, extensionId }) => {
   await expect(page.getByTestId('timer-display')).toContainText('24:57')
 })
 
-test('should clicking the options button in timer can go to options page', async ({
-  page,
-  extensionId
-}) => {
-  await goToFocusTimer(page, extensionId)
-
-  await page.getByTestId('options-button').click()
-
-  await assertOpenedOptionsPage(page)
-})
-
 test('should close tab properly after clicking start on reminder page and even after service worker is stopped', async ({
   page,
   extensionId
@@ -291,41 +293,6 @@ test('should able to persist and retrieve setting of blocking timer integration'
   await expect(page.getByTestId('pause-blocking-when-timer-not-running')).toBeChecked()
 })
 
-test('should sign in and sign out buttons render according to state of authentication', async ({
-  page,
-  extensionId
-}) => {
-  await goToBlockingSettingPage(page, extensionId)
-
-  await enableSignInFeatureFlag(page)
-  await signIn(page)
-  await page.reload()
-
-  await expect(page.getByTestId('sign-out-button')).toBeVisible()
-  await expect(page.getByTestId('sign-in-button')).toBeHidden()
-
-  await page.getByTestId('sign-out-button').click()
-
-  await expect(page.getByTestId('sign-in-button')).toBeVisible()
-  await expect(page.getByTestId('sign-out-button')).toBeHidden()
-})
-
-test('should render sign in button in popup when user has not authenticated', async ({
-  page,
-  extensionId
-}) => {
-  await goToFocusTimer(page, extensionId)
-  await enableSignInFeatureFlag(page)
-  await page.reload()
-
-  await expect(page.getByTestId('sign-in-button')).toBeVisible()
-
-  await signIn(page)
-  await page.reload()
-
-  await expect(page.getByTestId('sign-in-button')).toBeHidden()
-})
-
 async function addBlockedDomain(page: Page, domain: string) {
   const input = page.getByTestId('blocked-domain-input')
   const addButton = page.getByTestId('add-domain-button')
@@ -363,48 +330,16 @@ async function addNonActiveSchedule(page: Page) {
   await page.getByTestId('add-schedule-button').click()
 }
 
-/**
- * Sign in but expecting the target page attached signInWithTestCredential in window
- */
-async function signIn(page: Page) {
-  await page.evaluate(async () => {
-    //@ts-expect-error Exposed method
-    await window.signInWithTestCredential()
-  })
-}
-
-/**
- * Enable sign in feature flag but expecting the target page attached featureFlagsService in window
- */
-async function enableSignInFeatureFlag(page: Page) {
-  await page.evaluate(async () => {
-    //@ts-expect-error Exposed method
-    await window.featureFlagsService.enable('sign-in')
-  })
-}
-
-const TEXT_IN_BLOCKED_TEMPLATE = 'Stay Focused'
-
-async function assertInBlockedTemplate(page: Page) {
-  await expect(page.locator('body')).toContainText(TEXT_IN_BLOCKED_TEMPLATE)
-}
-
 async function changeFocusDuration(page: Page, seconds: number) {
   const input = page.getByTestId('focus-duration')
   await input.fill(seconds.toString())
   await page.getByTestId('save-button').click()
 }
 
-async function assertWithRetry(assert: () => Promise<void>, retryCount = 3, intervalMs = 500) {
-  try {
-    await assert()
-  } catch (Exception) {
-    if (retryCount <= 0) {
-      throw Exception
-    }
-    await sleep(intervalMs)
-    return assertWithRetry(assert, retryCount - 1, intervalMs)
-  }
+const TEXT_IN_BLOCKED_TEMPLATE = 'Stay Focused'
+
+async function assertInBlockedTemplate(page: Page) {
+  await expect(page.locator('body')).toContainText(TEXT_IN_BLOCKED_TEMPLATE)
 }
 
 async function goToAndVerifyIsBlocked(page: Page, targetUrl: string) {
@@ -419,47 +354,4 @@ async function goToAndVerifyIsAllowed(page: Page, targetUrl: string) {
     await page.goto(targetUrl)
     expect(await page.locator('body').textContent()).not.toContain(TEXT_IN_BLOCKED_TEMPLATE)
   })
-}
-
-async function assertOpenedOptionsPage(page: Page) {
-  return assertWithRetry(async () => {
-    const pages = page.context().pages()
-    const optionsPage = pages.find((p) => p.url().includes('options.html'))
-    expect(optionsPage).toBeDefined()
-  })
-}
-
-function sleep(ms: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-}
-
-async function goToBlockingSettingPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/options.html`)
-}
-
-async function goToFocusTimer(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/popup.html`)
-}
-
-async function goToReminderPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/reminder.html`)
-}
-
-async function goToStatisticsPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/options.html#/statistics`)
-}
-
-async function goToTestingConfigPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/testing-config.html`)
-}
-
-async function goToNotificationPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/options.html#/notification`)
-}
-
-async function goToStopServiceWorker(page: Page) {
-  await page.goto(`chrome://serviceworker-internals/`)
-  await page.getByRole('button', { name: 'Stop' }).click()
 }
