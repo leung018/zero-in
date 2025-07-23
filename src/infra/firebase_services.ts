@@ -34,27 +34,27 @@ onAuthStateChanged(auth, (user) => {
   authStateResolved = true
 })
 
+async function getCurrentUser(): Promise<User | null> {
+  return new Promise((resolve) => {
+    if (authStateResolved) {
+      resolve(currentUser)
+    } else {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe()
+        resolve(user)
+      })
+    }
+  })
+}
+
 export class FirebaseServices {
   static signOut() {
     return signOut(auth)
   }
 
   static async isAuthenticated(): Promise<boolean> {
-    const currentUser = await this.getCurrentUser()
+    const currentUser = await getCurrentUser()
     return currentUser !== null
-  }
-
-  private static async getCurrentUser(): Promise<User | null> {
-    return new Promise((resolve) => {
-      if (authStateResolved) {
-        resolve(currentUser)
-      } else {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-          unsubscribe()
-          resolve(user)
-        })
-      }
-    })
   }
 
   static async signInWithToken(token: string) {
