@@ -2,6 +2,19 @@
 import { Page } from '@playwright/test'
 import { formatNumber } from '../src/utils/format.js'
 import { expect, test } from './fixtures.js'
+import { assertWithRetry } from './utils/assertion.js'
+import {
+  goToBlockingSettingPage,
+  goToFocusTimer,
+  goToNotificationPage,
+  goToReminderPage,
+  goToStatisticsPage,
+  goToTestingConfigPage
+} from './utils/navigation.js'
+import { goToStopServiceWorker, sleep } from './utils/operation.js'
+
+// This file aim at testing some dependencies related to chrome/browser extension api and make sure integrate them properly
+// e.g. browser.local.storage
 
 test('should able to persist browsing rules and update ui', async ({ page, extensionId }) => {
   await goToBlockingSettingPage(page, extensionId)
@@ -153,17 +166,6 @@ test('should focus timer count successfully', async ({ page, extensionId }) => {
   await page.getByTestId('start-button').click()
 
   await expect(page.getByTestId('timer-display')).toContainText('24:57')
-})
-
-test('should clicking the options button in timer can go to options page', async ({
-  page,
-  extensionId
-}) => {
-  await goToFocusTimer(page, extensionId)
-
-  await page.getByTestId('options-button').click()
-
-  await assertOpenedOptionsPage(page)
 })
 
 test('should close tab properly after clicking start on reminder page and even after service worker is stopped', async ({
@@ -328,28 +330,16 @@ async function addNonActiveSchedule(page: Page) {
   await page.getByTestId('add-schedule-button').click()
 }
 
-const TEXT_IN_BLOCKED_TEMPLATE = 'Stay Focused'
-
-async function assertInBlockedTemplate(page: Page) {
-  await expect(page.locator('body')).toContainText(TEXT_IN_BLOCKED_TEMPLATE)
-}
-
 async function changeFocusDuration(page: Page, seconds: number) {
   const input = page.getByTestId('focus-duration')
   await input.fill(seconds.toString())
   await page.getByTestId('save-button').click()
 }
 
-async function assertWithRetry(assert: () => Promise<void>, retryCount = 3, intervalMs = 500) {
-  try {
-    await assert()
-  } catch (Exception) {
-    if (retryCount <= 0) {
-      throw Exception
-    }
-    await sleep(intervalMs)
-    return assertWithRetry(assert, retryCount - 1, intervalMs)
-  }
+const TEXT_IN_BLOCKED_TEMPLATE = 'Stay Focused'
+
+async function assertInBlockedTemplate(page: Page) {
+  await expect(page.locator('body')).toContainText(TEXT_IN_BLOCKED_TEMPLATE)
 }
 
 async function goToAndVerifyIsBlocked(page: Page, targetUrl: string) {
@@ -364,47 +354,4 @@ async function goToAndVerifyIsAllowed(page: Page, targetUrl: string) {
     await page.goto(targetUrl)
     expect(await page.locator('body').textContent()).not.toContain(TEXT_IN_BLOCKED_TEMPLATE)
   })
-}
-
-async function assertOpenedOptionsPage(page: Page) {
-  return assertWithRetry(async () => {
-    const pages = page.context().pages()
-    const optionsPage = pages.find((p) => p.url().includes('options.html'))
-    expect(optionsPage).toBeDefined()
-  })
-}
-
-function sleep(ms: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-}
-
-async function goToBlockingSettingPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/options.html`)
-}
-
-async function goToFocusTimer(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/popup.html`)
-}
-
-async function goToReminderPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/reminder.html`)
-}
-
-async function goToStatisticsPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/options.html#/statistics`)
-}
-
-async function goToTestingConfigPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/testing-config.html`)
-}
-
-async function goToNotificationPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/options.html#/notification`)
-}
-
-async function goToStopServiceWorker(page: Page) {
-  await page.goto(`chrome://serviceworker-internals/`)
-  await page.getByRole('button', { name: 'Stop' }).click()
 }

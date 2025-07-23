@@ -26,7 +26,6 @@ export async function firebaseAuth(onAuthSuccess: (auth: any) => void): Promise<
         )
       } else {
         console.error(err)
-        return err
       }
     })
     .finally(browser.offscreen.closeDocument)
@@ -51,7 +50,7 @@ async function getAuth() {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
     const auth = await browser.runtime.sendMessage({
-      type: 'firebase-auth',
+      type: 'FIREBASE_AUTH',
       target: 'offscreen'
     })
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions

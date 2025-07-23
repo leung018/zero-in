@@ -1,35 +1,21 @@
 <script setup lang="ts">
-import { myGetAuth } from '@/firebase_clients'
-import { BrowserCommunicationManager } from '@/infra/browser/communication'
-import { WorkRequestName } from '@/service_workers/request'
-import { WorkResponseName } from '@/service_workers/response'
-import {
-  browserLocalPersistence,
-  GoogleAuthProvider,
-  setPersistence,
-  signInWithCredential
-} from 'firebase/auth'
+import { FirebaseServices } from '../../infra/firebase_services'
 
-const port = new BrowserCommunicationManager().clientConnect()
+// Require manual testing
 
-// TODO: May extract sign in to other component and unit testing it
 const signIn = () => {
-  port.onMessage((message) => {
-    if (message.name === WorkResponseName.AUTH_SUCCESS) {
-      const credential = GoogleAuthProvider.credential(message.payload._tokenResponse.oauthIdToken)
-
-      setPersistence(myGetAuth(), browserLocalPersistence).then(() => {
-        signInWithCredential(myGetAuth(), credential).then(() => {
-          browser.runtime.openOptionsPage().then(() => {
-            window.close()
-          })
+  browser.runtime.onMessage.addListener((message) => {
+    if (message.type === 'SIGN_IN_SUCCESS') {
+      FirebaseServices.signInWithToken(message.payload._tokenResponse.oauthIdToken).then(() => {
+        browser.runtime.openOptionsPage().then(() => {
+          window.close()
         })
       })
     }
   })
 
-  port.send({
-    name: WorkRequestName.AUTH_REQUEST
+  browser.runtime.sendMessage({
+    type: 'SIGN_IN'
   })
 }
 </script>
