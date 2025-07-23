@@ -8,6 +8,9 @@ test('should sign in and sign out buttons render according to state of authentic
 }) => {
   await goToBlockingSettingPage(page, extensionId)
 
+  // hidden by default without enable feature flag
+  await expect(page.getByTestId('sign-in-button')).toBeHidden()
+
   await enableSignInFeatureFlag(page)
   await signIn(page)
   await page.reload()
@@ -26,6 +29,10 @@ test('should render sign in button in popup when user has not authenticated', as
   extensionId
 }) => {
   await goToFocusTimer(page, extensionId)
+
+  // hidden by default without enable feature flag
+  await expect(page.getByTestId('sign-in-button')).toBeHidden()
+
   await enableSignInFeatureFlag(page)
   await page.reload()
 
