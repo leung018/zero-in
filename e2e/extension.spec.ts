@@ -297,15 +297,7 @@ test('should sign in and sign out buttons render according to state of authentic
 }) => {
   await goToBlockingSettingPage(page, extensionId)
 
-  await page.evaluate(async () => {
-    //@ts-expect-error Exposed method
-    await window.signInWithTestCredential()
-
-    //@ts-expect-error Exposed method
-    await window.featureFlagsService.enable('sign-in')
-
-    location.reload()
-  })
+  await signInAndReload(page)
 
   await expect(page.getByTestId('sign-out-button')).toBeVisible()
   await expect(page.getByTestId('sign-in-button')).toBeHidden()
@@ -351,6 +343,23 @@ async function addNonActiveSchedule(page: Page) {
   await page.getByTestId('end-time-input').fill(`${formatNumber(endHours)}:00`)
 
   await page.getByTestId('add-schedule-button').click()
+}
+
+/**
+ * Sign in and reload the page but expecting the target page attached signInWithTestCredential in window
+ */
+async function signInAndReload(page: Page) {
+  await page.evaluate(async () => {
+    //@ts-expect-error Exposed method
+    await window.signInWithTestCredential()
+
+    //@ts-expect-error Exposed method
+    await window.featureFlagsService.enable('sign-in')
+    // TODO: Above assume the page interested to use this function has featureFlagService attached in window
+    // May need think of better way to code it.
+
+    location.reload()
+  })
 }
 
 const TEXT_IN_BLOCKED_TEMPLATE = 'Stay Focused'
