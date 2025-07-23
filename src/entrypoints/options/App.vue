@@ -12,7 +12,6 @@ import FeedbackPage from '@/pages/FeedbackPage.vue'
 import NotificationPage from '@/pages/NotificationPage.vue'
 import StatisticsPage from '@/pages/StatisticsPage.vue'
 import TimerSettingPage from '@/pages/TimerSettingPage.vue'
-import { User } from 'firebase/auth'
 import { onMounted, ref } from 'vue'
 import { FeatureFlagsService } from '../../infra/feature_flags'
 
@@ -66,10 +65,10 @@ const signOut = () => {
   })
 }
 
-const user = ref<User | null>(null)
+const isAuthenticated = ref<boolean>(false)
 
 onBeforeMount(async () => {
-  user.value = await FirebaseServices.getCurrentUser()
+  isAuthenticated.value = await FirebaseServices.isAuthenticated()
 })
 
 const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICATION]
@@ -81,7 +80,7 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
       <div class="ms-2 d-flex align-items-center" style="width: 100px">
         <div v-if="signInEnabled">
           <BButton
-            v-if="!user"
+            v-if="!isAuthenticated"
             size="sm"
             class="ms-2"
             @click="goToSignIn"

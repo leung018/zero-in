@@ -39,7 +39,12 @@ export class FirebaseServices {
     return signOut(auth)
   }
 
-  static async getCurrentUser(): Promise<User | null> {
+  static async isAuthenticated(): Promise<boolean> {
+    const currentUser = await this.getCurrentUser()
+    return currentUser !== null
+  }
+
+  private static async getCurrentUser(): Promise<User | null> {
     return new Promise((resolve) => {
       if (authStateResolved) {
         resolve(currentUser)
