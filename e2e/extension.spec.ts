@@ -304,7 +304,6 @@ test('should sign in and sign out buttons render according to state of authentic
     //@ts-expect-error Exposed method
     await window.featureFlagsService.enable('sign-in')
 
-    //@ts-expect-error location is available
     location.reload()
   })
 
