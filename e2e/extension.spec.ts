@@ -297,7 +297,9 @@ test('should sign in and sign out buttons render according to state of authentic
 }) => {
   await goToBlockingSettingPage(page, extensionId)
 
-  await signInAndReload(page)
+  await enableSignInFeatureFlag(page)
+  await signIn(page)
+  await page.reload()
 
   await expect(page.getByTestId('sign-out-button')).toBeVisible()
   await expect(page.getByTestId('sign-in-button')).toBeHidden()
@@ -306,6 +308,22 @@ test('should sign in and sign out buttons render according to state of authentic
 
   await expect(page.getByTestId('sign-in-button')).toBeVisible()
   await expect(page.getByTestId('sign-out-button')).toBeHidden()
+})
+
+test('should render sign in button in popup when user has not authenticated', async ({
+  page,
+  extensionId
+}) => {
+  await goToFocusTimer(page, extensionId)
+  await enableSignInFeatureFlag(page)
+  await page.reload()
+
+  await expect(page.getByTestId('sign-in-button')).toBeVisible()
+
+  await signIn(page)
+  await page.reload()
+
+  await expect(page.getByTestId('sign-in-button')).toBeHidden()
 })
 
 async function addBlockedDomain(page: Page, domain: string) {
@@ -346,19 +364,22 @@ async function addNonActiveSchedule(page: Page) {
 }
 
 /**
- * Sign in and reload the page but expecting the target page attached signInWithTestCredential in window
+ * Sign in but expecting the target page attached signInWithTestCredential in window
  */
-async function signInAndReload(page: Page) {
+async function signIn(page: Page) {
   await page.evaluate(async () => {
     //@ts-expect-error Exposed method
     await window.signInWithTestCredential()
+  })
+}
 
+/**
+ * Enable sign in feature flag but expecting the target page attached featureFlagsService in window
+ */
+async function enableSignInFeatureFlag(page: Page) {
+  await page.evaluate(async () => {
     //@ts-expect-error Exposed method
     await window.featureFlagsService.enable('sign-in')
-    // TODO: Above assume the page interested to use this function has featureFlagService attached in window
-    // May need think of better way to code it.
-
-    location.reload()
   })
 }
 

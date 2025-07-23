@@ -31,6 +31,7 @@ onBeforeMount(async () => {
   <div class="position-relative">
     <BButton
       v-if="signInEnabled && user == null"
+      data-test="sign-in-button"
       variant="outline-secondary"
       class="position-absolute top-0 start-0 p-0 ms-2"
       @click="openSignInPage"
