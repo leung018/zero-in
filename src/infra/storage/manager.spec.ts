@@ -136,9 +136,7 @@ describe('StorageManager', () => {
         currentDataVersion
       })
 
-      fakeStorage.set({
-        key1: oldData
-      })
+      fakeStorage.set('key1', oldData)
 
       const result = await storageManager.get()
       expect(result).toEqual(oldData)

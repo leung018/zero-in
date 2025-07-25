@@ -43,7 +43,7 @@ export class FeatureFlagsService {
 
   private async getFlags(): Promise<Record<string, boolean>> {
     const data = await this.storage.get(FeatureFlagsService.STORAGE_KEY)
-    return data[FeatureFlagsService.STORAGE_KEY] || {}
+    return data || {}
   }
 
   private async setFlags(flags: Record<string, boolean>): Promise<void> {
