@@ -1,38 +1,13 @@
-import { describe, expect, it } from 'vitest'
-import type { BlockingTimerIntegration } from '.'
-import config from '../../config'
+import { beforeEach, describe } from 'vitest'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
-import type { BlockingTimerIntegrationSchemas } from './schema'
-import { BlockingTimerIntegrationStorageService } from './storage'
+import { runBlockingTimerIntegrationStorageServiceTests } from './storage_test'
 
 describe('BlockingTimerIntegrationStorageService', () => {
-  it('should get default integration setting when no integration setting is saved', async () => {
-    const service = BlockingTimerIntegrationStorageService.createFake()
-    expect(await service.get()).toStrictEqual(config.getDefaultBlockingTimerIntegration())
+  let storage = LocalStorageWrapper.createFake()
+
+  beforeEach(() => {
+    storage = LocalStorageWrapper.createFake()
   })
 
-  it('should save and get integration setting', async () => {
-    const service = BlockingTimerIntegrationStorageService.createFake()
-    const integration: BlockingTimerIntegration = {
-      pauseBlockingDuringBreaks: false,
-      pauseBlockingWhenTimerNotRunning: true
-    }
-    await service.save(integration)
-    expect(await service.get()).toStrictEqual(integration)
-  })
-
-  it('should migrate properly', async () => {
-    const fakeStorage = LocalStorageWrapper.createFake()
-    const data: BlockingTimerIntegrationSchemas[0] = {
-      shouldPauseBlockingDuringBreaks: true
-    }
-    fakeStorage.set(BlockingTimerIntegrationStorageService.STORAGE_KEY, data)
-    const service = BlockingTimerIntegrationStorageService.createFake(fakeStorage)
-    const expected: BlockingTimerIntegration = {
-      pauseBlockingDuringBreaks: true,
-      pauseBlockingWhenTimerNotRunning: false
-    }
-    const result = await service.get()
-    expect(result).toStrictEqual(expected)
-  })
+  runBlockingTimerIntegrationStorageServiceTests(storage)
 })
