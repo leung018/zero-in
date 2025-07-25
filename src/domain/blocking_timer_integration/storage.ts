@@ -1,7 +1,7 @@
-import { FakeLocalStorage, type LocalStorage } from '@/infra/storage/local_storage'
 import type { BlockingTimerIntegration } from '.'
 import config from '../../config'
-import { BrowserStorageProvider } from '../../infra/browser/storage'
+import { StorageInterface } from '../../infra/storage/interface'
+import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../infra/storage/manager'
 import { BlockingTimerIntegrationSchemas } from './schema'
 import { deserializeBlockingTimerIntegration, serializeBlockingTimerIntegration } from './serialize'
@@ -10,16 +10,16 @@ export class BlockingTimerIntegrationStorageService {
   static readonly STORAGE_KEY = 'blockingTimerIntegration'
 
   static create(): BlockingTimerIntegrationStorageService {
-    return new BlockingTimerIntegrationStorageService(BrowserStorageProvider.getLocalStorage())
+    return new BlockingTimerIntegrationStorageService(LocalStorageWrapper.create())
   }
 
-  static createFake(storage = new FakeLocalStorage()) {
+  static createFake(storage = LocalStorageWrapper.createFake()) {
     return new BlockingTimerIntegrationStorageService(storage)
   }
 
   private storageManager: StorageManager<BlockingTimerIntegrationSchemas[1]>
 
-  private constructor(storage: LocalStorage) {
+  private constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: BlockingTimerIntegrationStorageService.STORAGE_KEY,

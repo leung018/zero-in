@@ -1,7 +1,7 @@
-import { FakeLocalStorage } from '@/infra/storage/local_storage'
 import { describe, expect, it } from 'vitest'
 import type { BlockingTimerIntegration } from '.'
 import config from '../../config'
+import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
 import type { BlockingTimerIntegrationSchemas } from './schema'
 import { BlockingTimerIntegrationStorageService } from './storage'
 
@@ -22,13 +22,11 @@ describe('BlockingTimerIntegrationStorageService', () => {
   })
 
   it('should migrate properly', async () => {
-    const fakeStorage = new FakeLocalStorage()
+    const fakeStorage = LocalStorageWrapper.createFake()
     const data: BlockingTimerIntegrationSchemas[0] = {
       shouldPauseBlockingDuringBreaks: true
     }
-    fakeStorage.set({
-      [BlockingTimerIntegrationStorageService.STORAGE_KEY]: data
-    })
+    fakeStorage.set(BlockingTimerIntegrationStorageService.STORAGE_KEY, data)
     const service = BlockingTimerIntegrationStorageService.createFake(fakeStorage)
     const expected: BlockingTimerIntegration = {
       pauseBlockingDuringBreaks: true,

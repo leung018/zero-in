@@ -1,6 +1,6 @@
-import { FakeLocalStorage, type LocalStorage } from '@/infra/storage/local_storage'
 import type { TimerState } from '.'
-import { BrowserStorageProvider } from '../../../infra/browser/storage'
+import { StorageInterface } from '../../../infra/storage/interface'
+import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../../infra/storage/manager'
 import { type TimerStateSchemas } from './schema'
 import { deserializeTimerState, serializeTimerState } from './serialize'
@@ -9,16 +9,16 @@ export class TimerStateStorageService {
   static readonly STORAGE_KEY = 'timerState'
 
   static create() {
-    return new TimerStateStorageService(BrowserStorageProvider.getLocalStorage())
+    return new TimerStateStorageService(LocalStorageWrapper.create())
   }
 
-  static createFake(storage = new FakeLocalStorage()) {
+  static createFake(storage = LocalStorageWrapper.createFake()) {
     return new TimerStateStorageService(storage)
   }
 
   private storageManager: StorageManager<TimerStateSchemas[2]>
 
-  private constructor(storage: LocalStorage) {
+  private constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: TimerStateStorageService.STORAGE_KEY,

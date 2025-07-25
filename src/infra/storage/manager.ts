@@ -1,4 +1,5 @@
-import { FakeLocalStorage, LocalStorage } from './local_storage'
+import { StorageInterface } from './interface'
+import { LocalStorageWrapper } from './local_storage_wrapper'
 
 interface Schema {
   dataVersion: number
@@ -11,18 +12,23 @@ type Migrator = { oldDataVersion?: number; migratorFunc: MigratorFunc }
 type Migrators = ReadonlyArray<Migrator>
 
 export class StorageManager<S> {
-  private storage: LocalStorage
+  private storage: StorageInterface
   private key: string
   private migrators: Migrators
   private currentDataVersion?: number
 
   static createFake<S>({
-    storage = new FakeLocalStorage(),
+    storage = LocalStorageWrapper.createFake(),
     migrators = [] as Migrators,
     key = 'STORAGE_KEY',
     currentDataVersion = undefined as number | undefined
   }): StorageManager<S> {
-    return new StorageManager({ storage, key, migrators, currentDataVersion })
+    return new StorageManager({
+      storage,
+      key,
+      migrators,
+      currentDataVersion
+    })
   }
 
   constructor({
@@ -31,7 +37,7 @@ export class StorageManager<S> {
     migrators,
     currentDataVersion
   }: {
-    storage: LocalStorage
+    storage: StorageInterface
     key: string
     migrators: Migrators
     currentDataVersion?: number
@@ -43,8 +49,7 @@ export class StorageManager<S> {
   }
 
   async get(): Promise<S | null> {
-    const result = await this.storage.get(this.key)
-    const data = result[this.key]
+    const data = await this.storage.get(this.key)
     if (!data) {
       return null
     }
@@ -74,6 +79,6 @@ export class StorageManager<S> {
   }
 
   async set(update: S): Promise<void> {
-    return this.storage.set({ [this.key]: update })
+    return this.storage.set(this.key, update)
   }
 }

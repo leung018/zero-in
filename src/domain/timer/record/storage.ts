@@ -1,6 +1,6 @@
-import { FakeLocalStorage, type LocalStorage } from '@/infra/storage/local_storage'
 import type { FocusSessionRecord } from '.'
-import { BrowserStorageProvider } from '../../../infra/browser/storage'
+import { StorageInterface } from '../../../infra/storage/interface'
+import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../../infra/storage/manager'
 import {
   deserializeFocusSessionRecord,
@@ -12,16 +12,16 @@ export class FocusSessionRecordStorageService {
   static readonly STORAGE_KEY = 'focusSessionRecords'
 
   static create() {
-    return new FocusSessionRecordStorageService(BrowserStorageProvider.getLocalStorage())
+    return new FocusSessionRecordStorageService(LocalStorageWrapper.create())
   }
 
   static createFake() {
-    return new FocusSessionRecordStorageService(new FakeLocalStorage())
+    return new FocusSessionRecordStorageService(LocalStorageWrapper.createFake())
   }
 
   private storageManager: StorageManager<SerializedFocusSessionRecord[]>
 
-  private constructor(storage: LocalStorage) {
+  private constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: FocusSessionRecordStorageService.STORAGE_KEY,

@@ -1,6 +1,6 @@
-import { FakeLocalStorage } from '@/infra/storage/local_storage'
 import { describe, expect, it } from 'vitest'
 import { Weekday, WeeklySchedule } from '.'
+import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
 import { Time } from '../time'
 import type { WeeklyScheduleSchemas } from './schema'
 import { WeeklyScheduleStorageService } from './storage'
@@ -32,7 +32,7 @@ describe('WeeklyScheduleStorageService', () => {
   })
 
   it('should migrate properly', async () => {
-    const fakeStorage = new FakeLocalStorage()
+    const fakeStorage = LocalStorageWrapper.createFake()
     const data: WeeklyScheduleSchemas[0] = [
       {
         weekdays: [0, 1],
@@ -40,9 +40,7 @@ describe('WeeklyScheduleStorageService', () => {
         endTime: { hour: 12, minute: 12 }
       }
     ]
-    fakeStorage.set({
-      [WeeklyScheduleStorageService.STORAGE_KEY]: data
-    })
+    fakeStorage.set(WeeklyScheduleStorageService.STORAGE_KEY, data)
 
     const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake(fakeStorage)
     const expected: WeeklySchedule[] = [

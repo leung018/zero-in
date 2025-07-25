@@ -1,6 +1,6 @@
-import { FakeLocalStorage } from '@/infra/storage/local_storage'
 import { describe, expect, it } from 'vitest'
 import type { TimerState } from '.'
+import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
 import { Duration } from '../duration'
 import { TimerStage } from '../stage'
 import type { TimerStateSchemas } from './schema'
@@ -26,16 +26,14 @@ describe('TimerStateStorageService', () => {
   })
 
   it('should migrate properly', async () => {
-    const fakeStorage = new FakeLocalStorage()
+    const fakeStorage = LocalStorageWrapper.createFake()
     const data: TimerStateSchemas[0] = {
       remainingSeconds: 100,
       isRunning: true,
       stage: 0,
       numOfPomodoriCompleted: 9
     }
-    fakeStorage.set({
-      [TimerStateStorageService.STORAGE_KEY]: data
-    })
+    fakeStorage.set(TimerStateStorageService.STORAGE_KEY, data)
 
     const timerStateStorageService = TimerStateStorageService.createFake(fakeStorage)
     const expected: TimerState = {

@@ -1,7 +1,7 @@
-import { FakeLocalStorage, type LocalStorage } from '@/infra/storage/local_storage'
 import type { NotificationSetting } from '.'
 import config from '../../config'
-import { BrowserStorageProvider } from '../../infra/browser/storage'
+import { StorageInterface } from '../../infra/storage/interface'
+import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../infra/storage/manager'
 import type { SerializedNotificationSetting } from './serialize'
 
@@ -9,16 +9,16 @@ export class NotificationSettingStorageService {
   static readonly STORAGE_KEY = 'notificationSetting'
 
   static create() {
-    return new NotificationSettingStorageService(BrowserStorageProvider.getLocalStorage())
+    return new NotificationSettingStorageService(LocalStorageWrapper.create())
   }
 
   static createFake() {
-    return new NotificationSettingStorageService(new FakeLocalStorage())
+    return new NotificationSettingStorageService(LocalStorageWrapper.createFake())
   }
 
   private storageManager: StorageManager<SerializedNotificationSetting>
 
-  private constructor(storage: LocalStorage) {
+  private constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: NotificationSettingStorageService.STORAGE_KEY,

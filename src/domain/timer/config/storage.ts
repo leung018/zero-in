@@ -1,7 +1,7 @@
-import { FakeLocalStorage, type LocalStorage } from '@/infra/storage/local_storage'
 import type { TimerConfig } from '.'
 import config from '../../../config'
-import { BrowserStorageProvider } from '../../../infra/browser/storage'
+import { StorageInterface } from '../../../infra/storage/interface'
+import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../../infra/storage/manager'
 import {
   deserializeTimerConfig,
@@ -13,16 +13,16 @@ export class TimerConfigStorageService {
   static readonly STORAGE_KEY = 'timerConfig'
 
   static create() {
-    return new TimerConfigStorageService(BrowserStorageProvider.getLocalStorage())
+    return new TimerConfigStorageService(LocalStorageWrapper.create())
   }
 
   static createFake() {
-    return new TimerConfigStorageService(new FakeLocalStorage())
+    return new TimerConfigStorageService(LocalStorageWrapper.createFake())
   }
 
   private storageManager: StorageManager<SerializedTimerConfig>
 
-  private constructor(storage: LocalStorage) {
+  private constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: TimerConfigStorageService.STORAGE_KEY,

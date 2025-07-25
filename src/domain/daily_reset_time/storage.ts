@@ -1,5 +1,5 @@
-import { FakeLocalStorage, type LocalStorage } from '@/infra/storage/local_storage'
-import { BrowserStorageProvider } from '../../infra/browser/storage'
+import { StorageInterface } from '../../infra/storage/interface'
+import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../infra/storage/manager'
 import { Time } from '../time'
 import { deserializeTime, serializeTime, type SerializedTime } from '../time/serialize'
@@ -8,16 +8,16 @@ export class DailyResetTimeStorageService {
   static readonly STORAGE_KEY = 'dailyCutoffTime'
 
   static create() {
-    return new DailyResetTimeStorageService(BrowserStorageProvider.getLocalStorage())
+    return new DailyResetTimeStorageService(LocalStorageWrapper.create())
   }
 
   static createFake() {
-    return new DailyResetTimeStorageService(new FakeLocalStorage())
+    return new DailyResetTimeStorageService(LocalStorageWrapper.createFake())
   }
 
   private storageManager: StorageManager<SerializedTime>
 
-  private constructor(storage: LocalStorage) {
+  private constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: DailyResetTimeStorageService.STORAGE_KEY,

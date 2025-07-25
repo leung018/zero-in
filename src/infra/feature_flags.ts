@@ -1,12 +1,12 @@
-import { BrowserStorageProvider } from './browser/storage'
-import { FakeLocalStorage, LocalStorage } from './storage/local_storage'
+import { StorageInterface } from './storage/interface'
+import { LocalStorageWrapper } from './storage/local_storage_wrapper'
 
 export class FeatureFlagsService {
   static readonly STORAGE_KEY = 'featureFlags'
-  private storage: LocalStorage
+  private storage: StorageInterface
 
   static createFake(): FeatureFlagsService {
-    return new FeatureFlagsService(new FakeLocalStorage())
+    return new FeatureFlagsService(LocalStorageWrapper.createFake())
   }
 
   static init(): FeatureFlagsService {
@@ -17,10 +17,10 @@ export class FeatureFlagsService {
   }
 
   private static create(): FeatureFlagsService {
-    return new FeatureFlagsService(BrowserStorageProvider.getLocalStorage())
+    return new FeatureFlagsService(LocalStorageWrapper.create())
   }
 
-  private constructor(storage: LocalStorage) {
+  private constructor(storage: StorageInterface) {
     this.storage = storage
   }
 
@@ -47,6 +47,6 @@ export class FeatureFlagsService {
   }
 
   private async setFlags(flags: Record<string, boolean>): Promise<void> {
-    return this.storage.set({ [FeatureFlagsService.STORAGE_KEY]: flags })
+    return this.storage.set(FeatureFlagsService.STORAGE_KEY, flags)
   }
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { FakeLocalStorage } from './local_storage'
+import { LocalStorageWrapper } from './local_storage_wrapper'
 import { StorageManager } from './manager'
 
 describe('StorageManager', () => {
@@ -40,7 +40,7 @@ describe('StorageManager', () => {
 
   it('should get null if no data is saved', async () => {
     const storageManager = StorageManager.createFake({
-      storage: new FakeLocalStorage()
+      storage: LocalStorageWrapper.createFake()
     })
 
     expect(await storageManager.get()).toBeNull()
@@ -62,7 +62,7 @@ describe('StorageManager', () => {
   })
 
   it('should get old version and migrate to new version', async () => {
-    const fakeStorage = new FakeLocalStorage()
+    const fakeStorage = LocalStorageWrapper.createFake()
 
     const storageManager = StorageManager.createFake({
       storage: fakeStorage,
@@ -76,9 +76,7 @@ describe('StorageManager', () => {
       name: 'John Doe'
     }
 
-    fakeStorage.set({
-      key1: oldData
-    })
+    fakeStorage.set('key1', oldData)
     let result = await storageManager.get()
     expect(result).toEqual({
       dataVersion: 2,
@@ -90,9 +88,7 @@ describe('StorageManager', () => {
       dataVersion: 1,
       myName: 'Ben Johnson'
     }
-    fakeStorage.set({
-      key1: v1Data
-    })
+    fakeStorage.set('key1', v1Data)
     result = await storageManager.get()
     expect(result).toEqual({
       dataVersion: 2,
@@ -131,7 +127,7 @@ describe('StorageManager', () => {
   ])(
     'should not migrate if dataVersion is same as currentDataVersion',
     async ({ oldData, currentDataVersion }) => {
-      const fakeStorage = new FakeLocalStorage()
+      const fakeStorage = LocalStorageWrapper.createFake()
 
       const storageManager = StorageManager.createFake({
         storage: fakeStorage,
@@ -150,7 +146,7 @@ describe('StorageManager', () => {
   )
 
   it('should migrate up to the current data version only', async () => {
-    const fakeStorage = new FakeLocalStorage()
+    const fakeStorage = LocalStorageWrapper.createFake()
 
     const storageManager = StorageManager.createFake({
       storage: fakeStorage,
@@ -163,9 +159,7 @@ describe('StorageManager', () => {
       name: 'John Doe'
     }
 
-    fakeStorage.set({
-      key1: oldData
-    })
+    fakeStorage.set('key1', oldData)
 
     const expected: V1Schema = {
       dataVersion: 1,
