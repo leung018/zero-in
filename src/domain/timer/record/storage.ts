@@ -1,6 +1,6 @@
 import type { FocusSessionRecord } from '.'
 import { BrowserStorageProvider } from '../../../infra/browser/storage'
-import { FakeStorage, StorageWrapper, type Storage } from '../../../infra/storage'
+import { FakeStorage, StorageManager, type Storage } from '../../../infra/storage'
 import {
   deserializeFocusSessionRecord,
   serializeFocusSessionRecord,
@@ -18,10 +18,10 @@ export class FocusSessionRecordStorageService {
     return new FocusSessionRecordStorageService(new FakeStorage())
   }
 
-  private storageWrapper: StorageWrapper<SerializedFocusSessionRecord[]>
+  private storageManager: StorageManager<SerializedFocusSessionRecord[]>
 
   private constructor(storage: Storage) {
-    this.storageWrapper = new StorageWrapper({
+    this.storageManager = new StorageManager({
       storage,
       key: FocusSessionRecordStorageService.STORAGE_KEY,
       migrators: []
@@ -29,11 +29,11 @@ export class FocusSessionRecordStorageService {
   }
 
   async saveAll(records: FocusSessionRecord[]) {
-    return this.storageWrapper.set(records.map(serializeFocusSessionRecord))
+    return this.storageManager.set(records.map(serializeFocusSessionRecord))
   }
 
   async getAll(): Promise<FocusSessionRecord[]> {
-    const result = await this.storageWrapper.get()
+    const result = await this.storageManager.get()
     if (result) {
       return result.map(deserializeFocusSessionRecord)
     }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { FakeStorage, StorageWrapper } from './storage'
+import { FakeStorage, StorageManager } from './storage'
 
 describe('FakeStorage', () => {
   it('should set and get values correctly', async () => {
@@ -61,7 +61,7 @@ class Dummy {
   }
 }
 
-describe('StorageWrapper', () => {
+describe('StorageManager', () => {
   type OldestSchema = {
     name: string
   }
@@ -98,15 +98,15 @@ describe('StorageWrapper', () => {
   ]
 
   it('should get null if no data is saved', async () => {
-    const storageWrapper = StorageWrapper.createFake({
+    const storageManager = StorageManager.createFake({
       storage: new FakeStorage()
     })
 
-    expect(await storageWrapper.get()).toBeNull()
+    expect(await storageManager.get()).toBeNull()
   })
 
   it('should set and get the data properly', async () => {
-    const storageWrapper = StorageWrapper.createFake({
+    const storageManager = StorageManager.createFake({
       currentDataVersion: 2
     })
 
@@ -115,15 +115,15 @@ describe('StorageWrapper', () => {
       fullname: 'John Doe'
     }
 
-    await storageWrapper.set(data)
-    const result = await storageWrapper.get()
+    await storageManager.set(data)
+    const result = await storageManager.get()
     expect(result).toEqual(data)
   })
 
   it('should get old version and migrate to new version', async () => {
     const fakeStorage = new FakeStorage()
 
-    const storageWrapper = StorageWrapper.createFake({
+    const storageManager = StorageManager.createFake({
       storage: fakeStorage,
       migrators,
       key: 'key1',
@@ -138,7 +138,7 @@ describe('StorageWrapper', () => {
     fakeStorage.set({
       key1: oldData
     })
-    let result = await storageWrapper.get()
+    let result = await storageManager.get()
     expect(result).toEqual({
       dataVersion: 2,
       fullname: 'John Doe'
@@ -152,7 +152,7 @@ describe('StorageWrapper', () => {
     fakeStorage.set({
       key1: v1Data
     })
-    result = await storageWrapper.get()
+    result = await storageManager.get()
     expect(result).toEqual({
       dataVersion: 2,
       fullname: 'Ben Johnson'
@@ -164,13 +164,13 @@ describe('StorageWrapper', () => {
       name: 'John Doe'
     }
 
-    const storageWrapper = StorageWrapper.createFake({
+    const storageManager = StorageManager.createFake({
       migrators: [],
       currentDataVersion: 999
     })
 
-    await storageWrapper.set(data)
-    expect(await storageWrapper.get()).toEqual(data)
+    await storageManager.set(data)
+    expect(await storageManager.get()).toEqual(data)
   })
 
   it.each([
@@ -192,7 +192,7 @@ describe('StorageWrapper', () => {
     async ({ oldData, currentDataVersion }) => {
       const fakeStorage = new FakeStorage()
 
-      const storageWrapper = StorageWrapper.createFake({
+      const storageManager = StorageManager.createFake({
         storage: fakeStorage,
         migrators,
         key: 'key1',
@@ -203,7 +203,7 @@ describe('StorageWrapper', () => {
         key1: oldData
       })
 
-      const result = await storageWrapper.get()
+      const result = await storageManager.get()
       expect(result).toEqual(oldData)
     }
   )
@@ -211,7 +211,7 @@ describe('StorageWrapper', () => {
   it('should migrate up to the current data version only', async () => {
     const fakeStorage = new FakeStorage()
 
-    const storageWrapper = StorageWrapper.createFake({
+    const storageManager = StorageManager.createFake({
       storage: fakeStorage,
       migrators,
       key: 'key1',
@@ -231,6 +231,6 @@ describe('StorageWrapper', () => {
       myName: 'John Doe'
     }
 
-    expect(await storageWrapper.get()).toEqual(expected)
+    expect(await storageManager.get()).toEqual(expected)
   })
 })

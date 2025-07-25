@@ -1,5 +1,5 @@
 import { BrowserStorageProvider } from '../../infra/browser/storage'
-import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
+import { FakeStorage, StorageManager, type Storage } from '../../infra/storage'
 import { Time } from '../time'
 import { deserializeTime, serializeTime, type SerializedTime } from '../time/serialize'
 
@@ -14,10 +14,10 @@ export class DailyResetTimeStorageService {
     return new DailyResetTimeStorageService(new FakeStorage())
   }
 
-  private storageWrapper: StorageWrapper<SerializedTime>
+  private storageManager: StorageManager<SerializedTime>
 
   private constructor(storage: Storage) {
-    this.storageWrapper = new StorageWrapper({
+    this.storageManager = new StorageManager({
       storage,
       key: DailyResetTimeStorageService.STORAGE_KEY,
       migrators: []
@@ -25,11 +25,11 @@ export class DailyResetTimeStorageService {
   }
 
   async save(dailyResetTime: Time) {
-    return this.storageWrapper.set(serializeTime(dailyResetTime))
+    return this.storageManager.set(serializeTime(dailyResetTime))
   }
 
   async get(): Promise<Time> {
-    const result = await this.storageWrapper.get()
+    const result = await this.storageManager.get()
     if (result) {
       return deserializeTime(result)
     }

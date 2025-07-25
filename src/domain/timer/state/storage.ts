@@ -1,6 +1,6 @@
 import type { TimerState } from '.'
 import { BrowserStorageProvider } from '../../../infra/browser/storage'
-import { FakeStorage, StorageWrapper, type Storage } from '../../../infra/storage'
+import { FakeStorage, StorageManager, type Storage } from '../../../infra/storage'
 import { type TimerStateSchemas } from './schema'
 import { deserializeTimerState, serializeTimerState } from './serialize'
 
@@ -15,10 +15,10 @@ export class TimerStateStorageService {
     return new TimerStateStorageService(storage)
   }
 
-  private storageWrapper: StorageWrapper<TimerStateSchemas[2]>
+  private storageManager: StorageManager<TimerStateSchemas[2]>
 
   private constructor(storage: Storage) {
-    this.storageWrapper = new StorageWrapper({
+    this.storageManager = new StorageManager({
       storage,
       key: TimerStateStorageService.STORAGE_KEY,
       currentDataVersion: 2,
@@ -50,7 +50,7 @@ export class TimerStateStorageService {
   }
 
   async get(): Promise<TimerState | null> {
-    const result = await this.storageWrapper.get()
+    const result = await this.storageManager.get()
     if (result == null) {
       return null
     }
@@ -58,6 +58,6 @@ export class TimerStateStorageService {
   }
 
   async save(timerState: TimerState): Promise<void> {
-    return this.storageWrapper.set(serializeTimerState(timerState))
+    return this.storageManager.set(serializeTimerState(timerState))
   }
 }

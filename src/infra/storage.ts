@@ -26,7 +26,7 @@ type Migrator = { oldDataVersion?: number; migratorFunc: MigratorFunc }
 
 type Migrators = ReadonlyArray<Migrator>
 
-export class StorageWrapper<S> {
+export class StorageManager<S> {
   private storage: Storage
   private key: string
   private migrators: Migrators
@@ -37,8 +37,8 @@ export class StorageWrapper<S> {
     migrators = [] as Migrators,
     key = 'STORAGE_KEY',
     currentDataVersion = undefined as number | undefined
-  }): StorageWrapper<S> {
-    return new StorageWrapper({ storage, key, migrators, currentDataVersion })
+  }): StorageManager<S> {
+    return new StorageManager({ storage, key, migrators, currentDataVersion })
   }
 
   constructor({

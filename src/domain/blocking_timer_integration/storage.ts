@@ -1,7 +1,7 @@
 import type { BlockingTimerIntegration } from '.'
 import config from '../../config'
 import { BrowserStorageProvider } from '../../infra/browser/storage'
-import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
+import { FakeStorage, StorageManager, type Storage } from '../../infra/storage'
 import { BlockingTimerIntegrationSchemas } from './schema'
 import { deserializeBlockingTimerIntegration, serializeBlockingTimerIntegration } from './serialize'
 
@@ -16,10 +16,10 @@ export class BlockingTimerIntegrationStorageService {
     return new BlockingTimerIntegrationStorageService(storage)
   }
 
-  private storageWrapper: StorageWrapper<BlockingTimerIntegrationSchemas[1]>
+  private storageManager: StorageManager<BlockingTimerIntegrationSchemas[1]>
 
   private constructor(storage: Storage) {
-    this.storageWrapper = new StorageWrapper({
+    this.storageManager = new StorageManager({
       storage,
       key: BlockingTimerIntegrationStorageService.STORAGE_KEY,
       currentDataVersion: 1,
@@ -41,7 +41,7 @@ export class BlockingTimerIntegrationStorageService {
   }
 
   async get(): Promise<BlockingTimerIntegration> {
-    const result = await this.storageWrapper.get()
+    const result = await this.storageManager.get()
     if (result) {
       return deserializeBlockingTimerIntegration(result)
     }
@@ -49,6 +49,6 @@ export class BlockingTimerIntegrationStorageService {
   }
 
   async save(setting: BlockingTimerIntegration) {
-    return this.storageWrapper.set(serializeBlockingTimerIntegration(setting))
+    return this.storageManager.set(serializeBlockingTimerIntegration(setting))
   }
 }
