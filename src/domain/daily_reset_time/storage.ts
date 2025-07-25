@@ -1,5 +1,6 @@
+import { FakeLocalStorage, type LocalStorage } from '@/infra/storage/local_storage'
 import { BrowserStorageProvider } from '../../infra/browser/storage'
-import { FakeLocalStorage, StorageManager, type LocalStorage } from '../../infra/storage'
+import { StorageManager } from '../../infra/storage/manager'
 import { Time } from '../time'
 import { deserializeTime, serializeTime, type SerializedTime } from '../time/serialize'
 

@@ -1,7 +1,8 @@
+import { FakeLocalStorage, type LocalStorage } from '@/infra/storage/local_storage'
 import type { BlockingTimerIntegration } from '.'
 import config from '../../config'
 import { BrowserStorageProvider } from '../../infra/browser/storage'
-import { FakeLocalStorage, StorageManager, type LocalStorage } from '../../infra/storage'
+import { StorageManager } from '../../infra/storage/manager'
 import { BlockingTimerIntegrationSchemas } from './schema'
 import { deserializeBlockingTimerIntegration, serializeBlockingTimerIntegration } from './serialize'
 

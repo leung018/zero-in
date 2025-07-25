@@ -1,6 +1,6 @@
+import { FakeLocalStorage } from '@/infra/storage/local_storage'
 import { describe, expect, it } from 'vitest'
 import type { TimerState } from '.'
-import { FakeLocalStorage } from '../../../infra/storage'
 import { Duration } from '../duration'
 import { TimerStage } from '../stage'
 import type { TimerStateSchemas } from './schema'

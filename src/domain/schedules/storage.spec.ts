@@ -1,6 +1,6 @@
+import { FakeLocalStorage } from '@/infra/storage/local_storage'
 import { describe, expect, it } from 'vitest'
 import { Weekday, WeeklySchedule } from '.'
-import { FakeLocalStorage } from '../../infra/storage'
 import { Time } from '../time'
 import type { WeeklyScheduleSchemas } from './schema'
 import { WeeklyScheduleStorageService } from './storage'

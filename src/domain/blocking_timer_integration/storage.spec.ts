@@ -1,7 +1,7 @@
+import { FakeLocalStorage } from '@/infra/storage/local_storage'
 import { describe, expect, it } from 'vitest'
 import type { BlockingTimerIntegration } from '.'
 import config from '../../config'
-import { FakeLocalStorage } from '../../infra/storage'
 import type { BlockingTimerIntegrationSchemas } from './schema'
 import { BlockingTimerIntegrationStorageService } from './storage'
 

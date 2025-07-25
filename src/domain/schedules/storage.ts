@@ -1,6 +1,7 @@
+import { FakeLocalStorage, type LocalStorage } from '@/infra/storage/local_storage'
 import { WeeklySchedule } from '.'
 import { BrowserStorageProvider } from '../../infra/browser/storage'
-import { FakeLocalStorage, StorageManager, type LocalStorage } from '../../infra/storage'
+import { StorageManager } from '../../infra/storage/manager'
 import { WeeklyScheduleSchemas } from './schema'
 import { deserializeWeeklySchedules, serializeWeeklySchedules } from './serialize'
 

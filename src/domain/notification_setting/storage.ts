@@ -1,7 +1,8 @@
+import { FakeLocalStorage, type LocalStorage } from '@/infra/storage/local_storage'
 import type { NotificationSetting } from '.'
 import config from '../../config'
 import { BrowserStorageProvider } from '../../infra/browser/storage'
-import { FakeLocalStorage, StorageManager, type LocalStorage } from '../../infra/storage'
+import { StorageManager } from '../../infra/storage/manager'
 import type { SerializedNotificationSetting } from './serialize'
 
 export class NotificationSettingStorageService {

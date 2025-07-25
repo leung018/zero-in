@@ -1,6 +1,7 @@
+import { FakeLocalStorage, type LocalStorage } from '@/infra/storage/local_storage'
 import type { FocusSessionRecord } from '.'
 import { BrowserStorageProvider } from '../../../infra/browser/storage'
-import { FakeLocalStorage, StorageManager, type LocalStorage } from '../../../infra/storage'
+import { StorageManager } from '../../../infra/storage/manager'
 import {
   deserializeFocusSessionRecord,
   serializeFocusSessionRecord,

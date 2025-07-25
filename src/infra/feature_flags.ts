@@ -1,5 +1,5 @@
 import { BrowserStorageProvider } from './browser/storage'
-import { FakeLocalStorage, LocalStorage } from './storage'
+import { FakeLocalStorage, LocalStorage } from './storage/local_storage'
 
 export class FeatureFlagsService {
   static readonly STORAGE_KEY = 'featureFlags'
