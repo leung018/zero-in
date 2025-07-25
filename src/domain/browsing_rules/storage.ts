@@ -1,6 +1,6 @@
 import { BrowsingRules } from '.'
 import { BrowserStorageProvider } from '../../infra/browser/storage'
-import { FakeStorage, StorageManager, type Storage } from '../../infra/storage'
+import { FakeLocalStorage, StorageManager, type LocalStorage } from '../../infra/storage'
 import {
   deserializeBrowsingRules,
   serializeBrowsingRules,
@@ -11,7 +11,7 @@ export class BrowsingRulesStorageService {
   static readonly STORAGE_KEY = 'browsingRules'
 
   static createFake(): BrowsingRulesStorageService {
-    return new BrowsingRulesStorageService(new FakeStorage())
+    return new BrowsingRulesStorageService(new FakeLocalStorage())
   }
 
   static create(): BrowsingRulesStorageService {
@@ -20,7 +20,7 @@ export class BrowsingRulesStorageService {
 
   private storageManager: StorageManager<SerializedBrowsingRules>
 
-  private constructor(storage: Storage) {
+  private constructor(storage: LocalStorage) {
     this.storageManager = new StorageManager({
       storage,
       key: BrowsingRulesStorageService.STORAGE_KEY,

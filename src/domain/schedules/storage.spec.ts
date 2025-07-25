@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Weekday, WeeklySchedule } from '.'
-import { FakeStorage } from '../../infra/storage'
+import { FakeLocalStorage } from '../../infra/storage'
 import { Time } from '../time'
 import type { WeeklyScheduleSchemas } from './schema'
 import { WeeklyScheduleStorageService } from './storage'
@@ -32,7 +32,7 @@ describe('WeeklyScheduleStorageService', () => {
   })
 
   it('should migrate properly', async () => {
-    const fakeStorage = new FakeStorage()
+    const fakeStorage = new FakeLocalStorage()
     const data: WeeklyScheduleSchemas[0] = [
       {
         weekdays: [0, 1],

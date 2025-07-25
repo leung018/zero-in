@@ -1,12 +1,12 @@
 import { BrowserStorageProvider } from './browser/storage'
-import { FakeStorage, Storage } from './storage'
+import { FakeLocalStorage, LocalStorage } from './storage'
 
 export class FeatureFlagsService {
   static readonly STORAGE_KEY = 'featureFlags'
-  private storage: Storage
+  private storage: LocalStorage
 
   static createFake(): FeatureFlagsService {
-    return new FeatureFlagsService(new FakeStorage())
+    return new FeatureFlagsService(new FakeLocalStorage())
   }
 
   static init(): FeatureFlagsService {
@@ -20,7 +20,7 @@ export class FeatureFlagsService {
     return new FeatureFlagsService(BrowserStorageProvider.getLocalStorage())
   }
 
-  private constructor(storage: Storage) {
+  private constructor(storage: LocalStorage) {
     this.storage = storage
   }
 

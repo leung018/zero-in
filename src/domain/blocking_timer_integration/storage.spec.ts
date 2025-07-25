@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { BlockingTimerIntegration } from '.'
 import config from '../../config'
-import { FakeStorage } from '../../infra/storage'
+import { FakeLocalStorage } from '../../infra/storage'
 import type { BlockingTimerIntegrationSchemas } from './schema'
 import { BlockingTimerIntegrationStorageService } from './storage'
 
@@ -22,7 +22,7 @@ describe('BlockingTimerIntegrationStorageService', () => {
   })
 
   it('should migrate properly', async () => {
-    const fakeStorage = new FakeStorage()
+    const fakeStorage = new FakeLocalStorage()
     const data: BlockingTimerIntegrationSchemas[0] = {
       shouldPauseBlockingDuringBreaks: true
     }

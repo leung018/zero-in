@@ -1,7 +1,7 @@
 import type { BlockingTimerIntegration } from '.'
 import config from '../../config'
 import { BrowserStorageProvider } from '../../infra/browser/storage'
-import { FakeStorage, StorageManager, type Storage } from '../../infra/storage'
+import { FakeLocalStorage, StorageManager, type LocalStorage } from '../../infra/storage'
 import { BlockingTimerIntegrationSchemas } from './schema'
 import { deserializeBlockingTimerIntegration, serializeBlockingTimerIntegration } from './serialize'
 
@@ -12,13 +12,13 @@ export class BlockingTimerIntegrationStorageService {
     return new BlockingTimerIntegrationStorageService(BrowserStorageProvider.getLocalStorage())
   }
 
-  static createFake(storage = new FakeStorage()) {
+  static createFake(storage = new FakeLocalStorage()) {
     return new BlockingTimerIntegrationStorageService(storage)
   }
 
   private storageManager: StorageManager<BlockingTimerIntegrationSchemas[1]>
 
-  private constructor(storage: Storage) {
+  private constructor(storage: LocalStorage) {
     this.storageManager = new StorageManager({
       storage,
       key: BlockingTimerIntegrationStorageService.STORAGE_KEY,

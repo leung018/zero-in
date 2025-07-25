@@ -1,7 +1,7 @@
-import { type Storage } from '../storage'
+import { type LocalStorage } from '../storage'
 
 export class BrowserStorageProvider {
-  static getLocalStorage(): Storage {
+  static getLocalStorage(): LocalStorage {
     return browser.storage.local
   }
 }

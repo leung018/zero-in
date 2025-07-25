@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { TimerState } from '.'
-import { FakeStorage } from '../../../infra/storage'
+import { FakeLocalStorage } from '../../../infra/storage'
 import { Duration } from '../duration'
 import { TimerStage } from '../stage'
 import type { TimerStateSchemas } from './schema'
@@ -26,7 +26,7 @@ describe('TimerStateStorageService', () => {
   })
 
   it('should migrate properly', async () => {
-    const fakeStorage = new FakeStorage()
+    const fakeStorage = new FakeLocalStorage()
     const data: TimerStateSchemas[0] = {
       remainingSeconds: 100,
       isRunning: true,

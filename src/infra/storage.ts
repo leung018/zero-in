@@ -1,9 +1,9 @@
-export interface Storage {
+export interface LocalStorage {
   set(obj: any): Promise<void>
   get(key: string): Promise<any>
 }
 
-export class FakeStorage implements Storage {
+export class FakeLocalStorage implements LocalStorage {
   private storage: any = {}
 
   async set(update: any): Promise<void> {
@@ -27,13 +27,13 @@ type Migrator = { oldDataVersion?: number; migratorFunc: MigratorFunc }
 type Migrators = ReadonlyArray<Migrator>
 
 export class StorageManager<S> {
-  private storage: Storage
+  private storage: LocalStorage
   private key: string
   private migrators: Migrators
   private currentDataVersion?: number
 
   static createFake<S>({
-    storage = new FakeStorage(),
+    storage = new FakeLocalStorage(),
     migrators = [] as Migrators,
     key = 'STORAGE_KEY',
     currentDataVersion = undefined as number | undefined
@@ -47,7 +47,7 @@ export class StorageManager<S> {
     migrators,
     currentDataVersion
   }: {
-    storage: Storage
+    storage: LocalStorage
     key: string
     migrators: Migrators
     currentDataVersion?: number

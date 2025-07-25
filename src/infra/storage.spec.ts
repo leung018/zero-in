@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { FakeStorage, StorageManager } from './storage'
+import { FakeLocalStorage, StorageManager } from './storage'
 
 describe('FakeStorage', () => {
   it('should set and get values correctly', async () => {
-    const storage = new FakeStorage()
+    const storage = new FakeLocalStorage()
     await storage.set({ key1: 'value1' })
 
     const testObj = {
@@ -22,7 +22,7 @@ describe('FakeStorage', () => {
   })
 
   it('should not preserve instance type', async () => {
-    const storage = new FakeStorage()
+    const storage = new FakeLocalStorage()
     const dummy = new Dummy()
     await storage.set({ dummy })
 
@@ -31,7 +31,7 @@ describe('FakeStorage', () => {
   })
 
   it('should remove undefined properties', async () => {
-    const storage = new FakeStorage()
+    const storage = new FakeLocalStorage()
     await storage.set({
       key1: {
         b: undefined
@@ -43,7 +43,7 @@ describe('FakeStorage', () => {
   })
 
   it('should preserve null value', async () => {
-    const storage = new FakeStorage()
+    const storage = new FakeLocalStorage()
     await storage.set({
       key1: {
         b: null
@@ -99,7 +99,7 @@ describe('StorageManager', () => {
 
   it('should get null if no data is saved', async () => {
     const storageManager = StorageManager.createFake({
-      storage: new FakeStorage()
+      storage: new FakeLocalStorage()
     })
 
     expect(await storageManager.get()).toBeNull()
@@ -121,7 +121,7 @@ describe('StorageManager', () => {
   })
 
   it('should get old version and migrate to new version', async () => {
-    const fakeStorage = new FakeStorage()
+    const fakeStorage = new FakeLocalStorage()
 
     const storageManager = StorageManager.createFake({
       storage: fakeStorage,
@@ -190,7 +190,7 @@ describe('StorageManager', () => {
   ])(
     'should not migrate if dataVersion is same as currentDataVersion',
     async ({ oldData, currentDataVersion }) => {
-      const fakeStorage = new FakeStorage()
+      const fakeStorage = new FakeLocalStorage()
 
       const storageManager = StorageManager.createFake({
         storage: fakeStorage,
@@ -209,7 +209,7 @@ describe('StorageManager', () => {
   )
 
   it('should migrate up to the current data version only', async () => {
-    const fakeStorage = new FakeStorage()
+    const fakeStorage = new FakeLocalStorage()
 
     const storageManager = StorageManager.createFake({
       storage: fakeStorage,

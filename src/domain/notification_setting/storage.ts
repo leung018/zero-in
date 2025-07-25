@@ -1,7 +1,7 @@
 import type { NotificationSetting } from '.'
 import config from '../../config'
 import { BrowserStorageProvider } from '../../infra/browser/storage'
-import { FakeStorage, StorageManager, type Storage } from '../../infra/storage'
+import { FakeLocalStorage, StorageManager, type LocalStorage } from '../../infra/storage'
 import type { SerializedNotificationSetting } from './serialize'
 
 export class NotificationSettingStorageService {
@@ -12,12 +12,12 @@ export class NotificationSettingStorageService {
   }
 
   static createFake() {
-    return new NotificationSettingStorageService(new FakeStorage())
+    return new NotificationSettingStorageService(new FakeLocalStorage())
   }
 
   private storageManager: StorageManager<SerializedNotificationSetting>
 
-  private constructor(storage: Storage) {
+  private constructor(storage: LocalStorage) {
     this.storageManager = new StorageManager({
       storage,
       key: NotificationSettingStorageService.STORAGE_KEY,

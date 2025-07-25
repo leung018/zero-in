@@ -1,13 +1,13 @@
 import { WeeklySchedule } from '.'
 import { BrowserStorageProvider } from '../../infra/browser/storage'
-import { FakeStorage, StorageManager, type Storage } from '../../infra/storage'
+import { FakeLocalStorage, StorageManager, type LocalStorage } from '../../infra/storage'
 import { WeeklyScheduleSchemas } from './schema'
 import { deserializeWeeklySchedules, serializeWeeklySchedules } from './serialize'
 
 export class WeeklyScheduleStorageService {
   static readonly STORAGE_KEY = 'weeklySchedules'
 
-  static createFake(storage = new FakeStorage()): WeeklyScheduleStorageService {
+  static createFake(storage = new FakeLocalStorage()): WeeklyScheduleStorageService {
     return new WeeklyScheduleStorageService(storage)
   }
 
@@ -17,7 +17,7 @@ export class WeeklyScheduleStorageService {
 
   private storageManager: StorageManager<WeeklyScheduleSchemas[1]>
 
-  private constructor(storage: Storage) {
+  private constructor(storage: LocalStorage) {
     this.storageManager = new StorageManager({
       storage,
       key: WeeklyScheduleStorageService.STORAGE_KEY,
