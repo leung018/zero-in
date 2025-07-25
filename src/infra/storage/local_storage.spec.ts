@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { FakeLocalStorage } from './local_storage'
 
 describe('FakeLocalStorage', () => {
-  // Make sure it behave similarly as real browser local storage
+  // Make sure it behave similarly as real extension local storage api
 
   it('should set and get values correctly', async () => {
     const storage = new FakeLocalStorage()
