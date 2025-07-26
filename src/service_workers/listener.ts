@@ -225,6 +225,7 @@ export class BackgroundListener {
       })
       .then(() => {
         FocusSessionRecordHousekeeper.houseKeep({
+          now: this.currentDateService.getDate(),
           focusSessionRecordStorageService: this.focusSessionRecordStorageService,
           houseKeepDays: this.focusSessionRecordHouseKeepDays
         })
