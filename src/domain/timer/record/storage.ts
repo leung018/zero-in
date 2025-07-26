@@ -21,7 +21,7 @@ export class FocusSessionRecordStorageService {
 
   private storageManager: StorageManager<SerializedFocusSessionRecord[]>
 
-  private constructor(storage: StorageInterface) {
+  constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: FocusSessionRecordStorageService.STORAGE_KEY,

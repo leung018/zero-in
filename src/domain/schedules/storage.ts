@@ -18,7 +18,7 @@ export class WeeklyScheduleStorageService {
 
   private storageManager: StorageManager<WeeklyScheduleSchemas[1]>
 
-  private constructor(storage: StorageInterface) {
+  constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: WeeklyScheduleStorageService.STORAGE_KEY,
