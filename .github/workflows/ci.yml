@@ -29,6 +29,8 @@ jobs:
         run: yarn type-check
       - name: Unit Tests
         run: yarn test:unit
+      - name: Integration Tests
+        run: yarn test:integration
       - name: Build
         run: yarn build:ci
       - name: Install Playwright Browser
