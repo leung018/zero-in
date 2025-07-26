@@ -86,7 +86,7 @@ export class FirebaseServices {
 }
 
 class FirestoreStorage implements StorageInterface {
-  constructor(private userId: string) {}
+  constructor(public readonly userId: string) {}
 
   async set(key: string, value: any): Promise<void> {
     await setDoc(doc(db, 'users', this.userId, 'application', key), value)

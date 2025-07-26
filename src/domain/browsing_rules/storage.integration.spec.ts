@@ -1,16 +1,14 @@
 import { beforeEach, describe } from 'vitest'
-import { FirebaseServices } from '../../infra/firebase_services'
+import { newTestFirestoreStorage } from '../../test_utils/firestore'
 import { BrowsingRulesStorageService } from './storage'
 import { runBrowsingRulesStorageServiceTests } from './storage_test'
 
 describe('BrowsingRulesStorageService', async () => {
-  // @ts-expect-error Exposed method
-  await globalThis.signInWithTestCredential()
-  const firebaseStorage = await FirebaseServices.getFirestoreStorage()
+  const firestoreStorage = await newTestFirestoreStorage()
 
   beforeEach(async () => {
-    return firebaseStorage.delete(BrowsingRulesStorageService.STORAGE_KEY)
+    return firestoreStorage.delete(BrowsingRulesStorageService.STORAGE_KEY)
   })
 
-  runBrowsingRulesStorageServiceTests(firebaseStorage)
+  runBrowsingRulesStorageServiceTests(firestoreStorage)
 })
