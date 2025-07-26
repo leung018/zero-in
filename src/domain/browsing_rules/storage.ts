@@ -1,6 +1,7 @@
 import { BrowsingRules } from '.'
-import { BrowserStorageProvider } from '../../infra/browser/storage'
-import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
+import { StorageInterface } from '../../infra/storage/interface'
+import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
+import { StorageManager } from '../../infra/storage/manager'
 import {
   deserializeBrowsingRules,
   serializeBrowsingRules,
@@ -11,17 +12,17 @@ export class BrowsingRulesStorageService {
   static readonly STORAGE_KEY = 'browsingRules'
 
   static createFake(): BrowsingRulesStorageService {
-    return new BrowsingRulesStorageService(new FakeStorage())
+    return new BrowsingRulesStorageService(LocalStorageWrapper.createFake())
   }
 
   static create(): BrowsingRulesStorageService {
-    return new BrowsingRulesStorageService(BrowserStorageProvider.getLocalStorage())
+    return new BrowsingRulesStorageService(LocalStorageWrapper.create())
   }
 
-  private storageWrapper: StorageWrapper<SerializedBrowsingRules>
+  private storageManager: StorageManager<SerializedBrowsingRules>
 
-  private constructor(storage: Storage) {
-    this.storageWrapper = new StorageWrapper({
+  constructor(storage: StorageInterface) {
+    this.storageManager = new StorageManager({
       storage,
       key: BrowsingRulesStorageService.STORAGE_KEY,
       migrators: []
@@ -29,11 +30,11 @@ export class BrowsingRulesStorageService {
   }
 
   async save(browsingRules: BrowsingRules): Promise<void> {
-    return this.storageWrapper.set(serializeBrowsingRules(browsingRules))
+    return this.storageManager.set(serializeBrowsingRules(browsingRules))
   }
 
   async get(): Promise<BrowsingRules> {
-    const result = await this.storageWrapper.get()
+    const result = await this.storageManager.get()
     if (result) {
       return deserializeBrowsingRules(result)
     }

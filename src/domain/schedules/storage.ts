@@ -1,24 +1,25 @@
 import { WeeklySchedule } from '.'
-import { BrowserStorageProvider } from '../../infra/browser/storage'
-import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
+import { StorageInterface } from '../../infra/storage/interface'
+import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
+import { StorageManager } from '../../infra/storage/manager'
 import { WeeklyScheduleSchemas } from './schema'
 import { deserializeWeeklySchedules, serializeWeeklySchedules } from './serialize'
 
 export class WeeklyScheduleStorageService {
   static readonly STORAGE_KEY = 'weeklySchedules'
 
-  static createFake(storage = new FakeStorage()): WeeklyScheduleStorageService {
+  static createFake(storage = LocalStorageWrapper.createFake()): WeeklyScheduleStorageService {
     return new WeeklyScheduleStorageService(storage)
   }
 
   static create(): WeeklyScheduleStorageService {
-    return new WeeklyScheduleStorageService(BrowserStorageProvider.getLocalStorage())
+    return new WeeklyScheduleStorageService(LocalStorageWrapper.create())
   }
 
-  private storageWrapper: StorageWrapper<WeeklyScheduleSchemas[1]>
+  private storageManager: StorageManager<WeeklyScheduleSchemas[1]>
 
-  private constructor(storage: Storage) {
-    this.storageWrapper = new StorageWrapper({
+  private constructor(storage: StorageInterface) {
+    this.storageManager = new StorageManager({
       storage,
       key: WeeklyScheduleStorageService.STORAGE_KEY,
       currentDataVersion: 1,
@@ -41,11 +42,11 @@ export class WeeklyScheduleStorageService {
   }
 
   async saveAll(weeklySchedules: WeeklySchedule[]): Promise<void> {
-    return this.storageWrapper.set(serializeWeeklySchedules(weeklySchedules))
+    return this.storageManager.set(serializeWeeklySchedules(weeklySchedules))
   }
 
   async getAll(): Promise<WeeklySchedule[]> {
-    const result = await this.storageWrapper.get()
+    const result = await this.storageManager.get()
     if (result == null) {
       return []
     }

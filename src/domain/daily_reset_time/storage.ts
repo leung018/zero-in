@@ -1,5 +1,6 @@
-import { BrowserStorageProvider } from '../../infra/browser/storage'
-import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
+import { StorageInterface } from '../../infra/storage/interface'
+import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
+import { StorageManager } from '../../infra/storage/manager'
 import { Time } from '../time'
 import { deserializeTime, serializeTime, type SerializedTime } from '../time/serialize'
 
@@ -7,17 +8,17 @@ export class DailyResetTimeStorageService {
   static readonly STORAGE_KEY = 'dailyCutoffTime'
 
   static create() {
-    return new DailyResetTimeStorageService(BrowserStorageProvider.getLocalStorage())
+    return new DailyResetTimeStorageService(LocalStorageWrapper.create())
   }
 
   static createFake() {
-    return new DailyResetTimeStorageService(new FakeStorage())
+    return new DailyResetTimeStorageService(LocalStorageWrapper.createFake())
   }
 
-  private storageWrapper: StorageWrapper<SerializedTime>
+  private storageManager: StorageManager<SerializedTime>
 
-  private constructor(storage: Storage) {
-    this.storageWrapper = new StorageWrapper({
+  private constructor(storage: StorageInterface) {
+    this.storageManager = new StorageManager({
       storage,
       key: DailyResetTimeStorageService.STORAGE_KEY,
       migrators: []
@@ -25,11 +26,11 @@ export class DailyResetTimeStorageService {
   }
 
   async save(dailyResetTime: Time) {
-    return this.storageWrapper.set(serializeTime(dailyResetTime))
+    return this.storageManager.set(serializeTime(dailyResetTime))
   }
 
   async get(): Promise<Time> {
-    const result = await this.storageWrapper.get()
+    const result = await this.storageManager.get()
     if (result) {
       return deserializeTime(result)
     }

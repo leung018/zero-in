@@ -1,7 +1,8 @@
 import type { TimerConfig } from '.'
 import config from '../../../config'
-import { BrowserStorageProvider } from '../../../infra/browser/storage'
-import { FakeStorage, StorageWrapper, type Storage } from '../../../infra/storage'
+import { StorageInterface } from '../../../infra/storage/interface'
+import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
+import { StorageManager } from '../../../infra/storage/manager'
 import {
   deserializeTimerConfig,
   serializeTimerConfig,
@@ -12,17 +13,17 @@ export class TimerConfigStorageService {
   static readonly STORAGE_KEY = 'timerConfig'
 
   static create() {
-    return new TimerConfigStorageService(BrowserStorageProvider.getLocalStorage())
+    return new TimerConfigStorageService(LocalStorageWrapper.create())
   }
 
   static createFake() {
-    return new TimerConfigStorageService(new FakeStorage())
+    return new TimerConfigStorageService(LocalStorageWrapper.createFake())
   }
 
-  private storageWrapper: StorageWrapper<SerializedTimerConfig>
+  private storageManager: StorageManager<SerializedTimerConfig>
 
-  private constructor(storage: Storage) {
-    this.storageWrapper = new StorageWrapper({
+  private constructor(storage: StorageInterface) {
+    this.storageManager = new StorageManager({
       storage,
       key: TimerConfigStorageService.STORAGE_KEY,
       migrators: []
@@ -30,7 +31,7 @@ export class TimerConfigStorageService {
   }
 
   async get(): Promise<TimerConfig> {
-    const result = await this.storageWrapper.get()
+    const result = await this.storageManager.get()
     if (result) {
       return deserializeTimerConfig(result)
     }
@@ -39,6 +40,6 @@ export class TimerConfigStorageService {
   }
 
   async save(timerConfig: TimerConfig) {
-    return this.storageWrapper.set(serializeTimerConfig(timerConfig))
+    return this.storageManager.set(serializeTimerConfig(timerConfig))
   }
 }

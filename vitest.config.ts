@@ -19,8 +19,27 @@ export default defineConfig({
     })
   ],
   test: {
-    environment: 'jsdom',
-    exclude: [...configDefaults.exclude, 'e2e/**'],
+    projects: [
+      './',
+      {
+        extends: true,
+        test: {
+          include: ['src/**/*.{test,spec}.ts'],
+          exclude: [...configDefaults.exclude, 'e2e/**', 'src/**/*.integration.{test,spec}.ts'],
+          name: 'unit',
+          environment: 'jsdom'
+        }
+      },
+      {
+        extends: true,
+        test: {
+          name: 'integration',
+          include: ['src/**/*.integration.{test,spec}.ts'],
+          exclude: [...configDefaults.exclude, 'e2e/**'],
+          environment: 'jsdom'
+        }
+      }
+    ],
     coverage: {
       include: ['src/**']
     }

@@ -1,24 +1,25 @@
 import type { NotificationSetting } from '.'
 import config from '../../config'
-import { BrowserStorageProvider } from '../../infra/browser/storage'
-import { FakeStorage, StorageWrapper, type Storage } from '../../infra/storage'
+import { StorageInterface } from '../../infra/storage/interface'
+import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
+import { StorageManager } from '../../infra/storage/manager'
 import type { SerializedNotificationSetting } from './serialize'
 
 export class NotificationSettingStorageService {
   static readonly STORAGE_KEY = 'notificationSetting'
 
   static create() {
-    return new NotificationSettingStorageService(BrowserStorageProvider.getLocalStorage())
+    return new NotificationSettingStorageService(LocalStorageWrapper.create())
   }
 
   static createFake() {
-    return new NotificationSettingStorageService(new FakeStorage())
+    return new NotificationSettingStorageService(LocalStorageWrapper.createFake())
   }
 
-  private storageWrapper: StorageWrapper<SerializedNotificationSetting>
+  private storageManager: StorageManager<SerializedNotificationSetting>
 
-  private constructor(storage: Storage) {
-    this.storageWrapper = new StorageWrapper({
+  private constructor(storage: StorageInterface) {
+    this.storageManager = new StorageManager({
       storage,
       key: NotificationSettingStorageService.STORAGE_KEY,
       migrators: []
@@ -26,7 +27,7 @@ export class NotificationSettingStorageService {
   }
 
   async get(): Promise<NotificationSetting> {
-    const result = await this.storageWrapper.get()
+    const result = await this.storageManager.get()
     if (result) {
       return result
     }
@@ -34,6 +35,6 @@ export class NotificationSettingStorageService {
   }
 
   async save(notificationSetting: NotificationSetting): Promise<void> {
-    return this.storageWrapper.set(notificationSetting)
+    return this.storageManager.set(notificationSetting)
   }
 }

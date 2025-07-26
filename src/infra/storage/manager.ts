@@ -1,20 +1,5 @@
-export interface Storage {
-  set(obj: any): Promise<void>
-  get(key: string): Promise<any>
-}
-
-export class FakeStorage implements Storage {
-  private storage: any = {}
-
-  async set(update: any): Promise<void> {
-    const processedUpdate = JSON.parse(JSON.stringify(update))
-    this.storage = { ...this.storage, ...processedUpdate }
-  }
-
-  async get(key: string): Promise<any> {
-    return { [key]: this.storage[key] }
-  }
-}
+import { StorageInterface } from './interface'
+import { LocalStorageWrapper } from './local_storage_wrapper'
 
 interface Schema {
   dataVersion: number
@@ -26,19 +11,24 @@ type Migrator = { oldDataVersion?: number; migratorFunc: MigratorFunc }
 
 type Migrators = ReadonlyArray<Migrator>
 
-export class StorageWrapper<S> {
-  private storage: Storage
+export class StorageManager<S> {
+  private storage: StorageInterface
   private key: string
   private migrators: Migrators
   private currentDataVersion?: number
 
   static createFake<S>({
-    storage = new FakeStorage(),
+    storage = LocalStorageWrapper.createFake(),
     migrators = [] as Migrators,
     key = 'STORAGE_KEY',
     currentDataVersion = undefined as number | undefined
-  }): StorageWrapper<S> {
-    return new StorageWrapper({ storage, key, migrators, currentDataVersion })
+  }): StorageManager<S> {
+    return new StorageManager({
+      storage,
+      key,
+      migrators,
+      currentDataVersion
+    })
   }
 
   constructor({
@@ -47,7 +37,7 @@ export class StorageWrapper<S> {
     migrators,
     currentDataVersion
   }: {
-    storage: Storage
+    storage: StorageInterface
     key: string
     migrators: Migrators
     currentDataVersion?: number
@@ -59,8 +49,7 @@ export class StorageWrapper<S> {
   }
 
   async get(): Promise<S | null> {
-    const result = await this.storage.get(this.key)
-    const data = result[this.key]
+    const data = await this.storage.get(this.key)
     if (!data) {
       return null
     }
@@ -90,6 +79,6 @@ export class StorageWrapper<S> {
   }
 
   async set(update: S): Promise<void> {
-    return this.storage.set({ [this.key]: update })
+    return this.storage.set(this.key, update)
   }
 }
