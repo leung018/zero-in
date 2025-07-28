@@ -22,7 +22,7 @@ export class TimerConfigStorageService {
 
   private storageManager: StorageManager<SerializedTimerConfig>
 
-  private constructor(storage: StorageInterface) {
+  constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: TimerConfigStorageService.STORAGE_KEY,

@@ -13,8 +13,8 @@ export class BlockingTimerIntegrationStorageService {
     return new BlockingTimerIntegrationStorageService(LocalStorageWrapper.create())
   }
 
-  static createFake(storage = LocalStorageWrapper.createFake()) {
-    return new BlockingTimerIntegrationStorageService(storage)
+  static createFake() {
+    return new BlockingTimerIntegrationStorageService(LocalStorageWrapper.createFake())
   }
 
   private storageManager: StorageManager<BlockingTimerIntegrationSchemas[1]>
