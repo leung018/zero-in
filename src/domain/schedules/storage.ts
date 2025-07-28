@@ -16,13 +16,13 @@ export class WeeklyScheduleStorageService {
     return new WeeklyScheduleStorageService(LocalStorageWrapper.create())
   }
 
-  private storageManager: StorageManager<WeeklyScheduleSchemas[1]>
+  private storageManager: StorageManager<WeeklyScheduleSchemas[2]>
 
   constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: WeeklyScheduleStorageService.STORAGE_KEY,
-      currentDataVersion: 1,
+      currentDataVersion: 2,
       migrators: [
         {
           oldDataVersion: undefined,
@@ -33,6 +33,20 @@ export class WeeklyScheduleStorageService {
                 weekdays: schedule.weekdays,
                 startTime: schedule.startTime,
                 endTime: schedule.endTime
+              }))
+            }
+          }
+        },
+        {
+          oldDataVersion: 1,
+          migratorFunc: (oldData: WeeklyScheduleSchemas[1]): WeeklyScheduleSchemas[2] => {
+            return {
+              dataVersion: 2,
+              schedules: oldData.schedules.map((schedule) => ({
+                weekdays: schedule.weekdays,
+                startTime: schedule.startTime,
+                endTime: schedule.endTime,
+                targetFocusSessions: schedule.targetFocusSessions ?? null
               }))
             }
           }
