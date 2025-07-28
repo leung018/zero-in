@@ -10,18 +10,20 @@ export class AdaptiveStorageProvider implements StorageInterface {
   constructor(private unauthenticatedStorage: StorageInterface) {}
 
   async get(key: string): Promise<any> {
-    if (await FirebaseServices.isAuthenticated()) {
-      return (await FirebaseServices.getFirestoreStorage()).get(key)
-    } else {
-      return this.unauthenticatedStorage.get(key)
-    }
+    const storage = await this.getStorage()
+    return storage.get(key)
   }
 
   async set(key: string, data: any): Promise<void> {
+    const storage = await this.getStorage()
+    return storage.set(key, data)
+  }
+
+  private async getStorage() {
     if (await FirebaseServices.isAuthenticated()) {
-      await (await FirebaseServices.getFirestoreStorage()).set(key, data)
+      return FirebaseServices.getFirestoreStorage()
     } else {
-      await this.unauthenticatedStorage.set(key, data)
+      return this.unauthenticatedStorage
     }
   }
 }
