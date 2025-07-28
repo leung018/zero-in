@@ -18,7 +18,7 @@ export class NotificationSettingStorageService {
 
   private storageManager: StorageManager<SerializedNotificationSetting>
 
-  private constructor(storage: StorageInterface) {
+  constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: NotificationSettingStorageService.STORAGE_KEY,
