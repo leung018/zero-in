@@ -2,6 +2,7 @@ import { WeeklySchedule } from '.'
 import { StorageInterface } from '../../infra/storage/interface'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../infra/storage/manager'
+import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import { WeeklyScheduleSchemas } from './schema'
 import { deserializeWeeklySchedules, serializeWeeklySchedules } from './serialize'
 
@@ -13,7 +14,7 @@ export class WeeklyScheduleStorageService {
   }
 
   static create(): WeeklyScheduleStorageService {
-    return new WeeklyScheduleStorageService(LocalStorageWrapper.create())
+    return new WeeklyScheduleStorageService(AdaptiveStorageProvider.create())
   }
 
   private storageManager: StorageManager<WeeklyScheduleSchemas[2]>

@@ -3,6 +3,7 @@ import config from '../../config'
 import { StorageInterface } from '../../infra/storage/interface'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../infra/storage/manager'
+import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import { BlockingTimerIntegrationSchemas } from './schema'
 import { deserializeBlockingTimerIntegration, serializeBlockingTimerIntegration } from './serialize'
 
@@ -10,7 +11,7 @@ export class BlockingTimerIntegrationStorageService {
   static readonly STORAGE_KEY = 'blockingTimerIntegration'
 
   static create(): BlockingTimerIntegrationStorageService {
-    return new BlockingTimerIntegrationStorageService(LocalStorageWrapper.create())
+    return new BlockingTimerIntegrationStorageService(AdaptiveStorageProvider.create())
   }
 
   static createFake() {
