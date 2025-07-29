@@ -3,13 +3,14 @@ import config from '../../config'
 import { StorageInterface } from '../../infra/storage/interface'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../infra/storage/manager'
+import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import type { SerializedNotificationSetting } from './serialize'
 
 export class NotificationSettingStorageService {
   static readonly STORAGE_KEY = 'notificationSetting'
 
   static create() {
-    return new NotificationSettingStorageService(LocalStorageWrapper.create())
+    return new NotificationSettingStorageService(AdaptiveStorageProvider.create())
   }
 
   static createFake() {

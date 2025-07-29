@@ -1,6 +1,7 @@
 import { StorageInterface } from '../../infra/storage/interface'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../infra/storage/manager'
+import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import { Time } from '../time'
 import { deserializeTime, serializeTime, type SerializedTime } from '../time/serialize'
 
@@ -8,7 +9,7 @@ export class DailyResetTimeStorageService {
   static readonly STORAGE_KEY = 'dailyCutoffTime'
 
   static create() {
-    return new DailyResetTimeStorageService(LocalStorageWrapper.create())
+    return new DailyResetTimeStorageService(AdaptiveStorageProvider.create())
   }
 
   static createFake() {

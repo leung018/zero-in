@@ -3,6 +3,7 @@ import config from '../../../config'
 import { StorageInterface } from '../../../infra/storage/interface'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../../infra/storage/manager'
+import { AdaptiveStorageProvider } from '../../../infra/storage/provider'
 import {
   deserializeTimerConfig,
   serializeTimerConfig,
@@ -13,7 +14,7 @@ export class TimerConfigStorageService {
   static readonly STORAGE_KEY = 'timerConfig'
 
   static create() {
-    return new TimerConfigStorageService(LocalStorageWrapper.create())
+    return new TimerConfigStorageService(AdaptiveStorageProvider.create())
   }
 
   static createFake() {

@@ -2,6 +2,7 @@ import type { FocusSessionRecord } from '.'
 import { StorageInterface } from '../../../infra/storage/interface'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../../infra/storage/manager'
+import { AdaptiveStorageProvider } from '../../../infra/storage/provider'
 import { FocusSessionRecordsSchemas } from './schema'
 import { deserializeFocusSessionRecords, serializeFocusSessionRecords } from './serialize'
 
@@ -9,7 +10,7 @@ export class FocusSessionRecordStorageService {
   static readonly STORAGE_KEY = 'focusSessionRecords'
 
   static create() {
-    return new FocusSessionRecordStorageService(LocalStorageWrapper.create())
+    return new FocusSessionRecordStorageService(AdaptiveStorageProvider.create())
   }
 
   static createFake() {

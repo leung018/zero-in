@@ -10,7 +10,7 @@ export class LocalStorageWrapper implements StorageInterface {
     return new LocalStorageWrapper(new FakeLocalStorage())
   }
 
-  constructor(private localStorage: LocalStorage) {}
+  private constructor(private localStorage: LocalStorage) {}
 
   async get(key: string): Promise<any> {
     const result = await this.localStorage.get(key)
