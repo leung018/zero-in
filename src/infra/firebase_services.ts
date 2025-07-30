@@ -8,8 +8,7 @@ import {
   onAuthStateChanged,
   setPersistence,
   signInWithCredential,
-  signOut,
-  User
+  signOut
 } from 'firebase/auth'
 import {
   connectFirestoreEmulator,
@@ -22,9 +21,6 @@ import {
 import { StorageInterface } from './storage/interface'
 
 const app = initializeApp(config.getFirebaseConfig())
-
-let currentUser: User | null = null
-let authStateResolved = false
 
 const auth = getAuth(app)
 
@@ -43,45 +39,74 @@ if (import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
 }
 
 onAuthStateChanged(auth, (user) => {
-  currentUser = user
-  authStateResolved = true
+  if (user) {
+    LocalStorageUserIdCache.setSignInUser(user.uid)
+  } else {
+    LocalStorageUserIdCache.setSignOut()
+  }
 })
 
-async function getCurrentUser(): Promise<User | null> {
+async function getCurrentUserId(): Promise<string | null> {
   return new Promise((resolve) => {
-    if (authStateResolved) {
-      resolve(currentUser)
-    } else {
+    const { userId, isCacheSet } = LocalStorageUserIdCache.get()
+    if (!isCacheSet) {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
         unsubscribe()
-        resolve(user)
+        resolve(user?.uid ?? null)
       })
+    } else {
+      resolve(userId)
     }
   })
 }
 
+class LocalStorageUserIdCache {
+  private static KEY = 'authenticatedUserId'
+
+  static get(): {
+    userId: string | null
+    isCacheSet: boolean
+  } {
+    const userId = localStorage.getItem(this.KEY)
+    return {
+      userId: userId === '' ? null : userId,
+      isCacheSet: userId !== null
+    }
+  }
+
+  static setSignInUser(userId: string): void {
+    localStorage.setItem(this.KEY, userId)
+  }
+
+  static setSignOut(): void {
+    localStorage.setItem(this.KEY, '')
+  }
+}
+
 export class FirebaseServices {
   static signOut() {
-    return signOut(auth)
+    return signOut(auth).then(() => {
+      LocalStorageUserIdCache.setSignOut()
+    })
   }
 
   static async isAuthenticated(): Promise<boolean> {
-    const currentUser = await getCurrentUser()
-    return currentUser !== null
+    const userId = await getCurrentUserId()
+    return userId !== null
   }
 
   static async signInWithToken(token: string) {
-    const credential = GoogleAuthProvider.credential(token)
     await setPersistence(auth, browserLocalPersistence)
-    await signInWithCredential(auth, credential)
+    const credential = await signInWithCredential(auth, GoogleAuthProvider.credential(token))
+    LocalStorageUserIdCache.setSignInUser(credential.user.uid)
   }
 
   static async getFirestoreStorage(): Promise<FirestoreStorage> {
-    const currentUser = await getCurrentUser()
-    if (!currentUser) {
+    const userId = await getCurrentUserId()
+    if (!userId) {
       throw new Error('User not authenticated')
     }
-    return new FirestoreStorage(currentUser.uid)
+    return new FirestoreStorage(userId)
   }
 }
 
