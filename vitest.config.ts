@@ -36,7 +36,8 @@ export default defineConfig({
           name: 'integration',
           include: ['src/**/*.integration.{test,spec}.ts'],
           exclude: [...configDefaults.exclude, 'e2e/**'],
-          environment: 'jsdom'
+          environment: 'jsdom',
+          setupFiles: ['./integration_setup.ts']
         }
       }
     ],
