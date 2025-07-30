@@ -1,4 +1,4 @@
-import { LocalStorageUserIdCache } from '@/infra/local_storage_cache'
+import { LocalStorageUserIdCache } from '@/infra/firebase/local_storage_cache'
 import { vi } from 'vitest'
 import { LocalStorageWrapper } from './src/infra/storage/local_storage_wrapper'
 

@@ -18,8 +18,8 @@ import {
   getFirestore,
   setDoc
 } from 'firebase/firestore'
+import { StorageInterface } from '../storage/interface'
 import { LocalStorageUserIdCache } from './local_storage_cache'
-import { StorageInterface } from './storage/interface'
 
 const app = initializeApp(config.getFirebaseConfig())
 

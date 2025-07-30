@@ -1,4 +1,4 @@
-import { LocalStorageWrapper } from './storage/local_storage_wrapper'
+import { LocalStorageWrapper } from '../storage/local_storage_wrapper'
 
 export class LocalStorageUserIdCache {
   private static KEY = 'authenticatedUserId'
