@@ -26,8 +26,7 @@ export default defineConfig({
         test: {
           include: ['src/**/*.{test,spec}.ts'],
           exclude: [...configDefaults.exclude, 'e2e/**', 'src/**/*.integration.{test,spec}.ts'],
-          name: 'unit',
-          environment: 'jsdom'
+          name: 'unit'
         }
       },
       {
@@ -35,14 +34,15 @@ export default defineConfig({
         test: {
           name: 'integration',
           include: ['src/**/*.integration.{test,spec}.ts'],
-          exclude: [...configDefaults.exclude, 'e2e/**'],
-          environment: 'jsdom'
+          exclude: [...configDefaults.exclude, 'e2e/**']
         }
       }
     ],
     coverage: {
       include: ['src/**']
-    }
+    },
+    setupFiles: ['./test_setup.ts'],
+    environment: 'jsdom'
   },
   resolve: {
     alias: {

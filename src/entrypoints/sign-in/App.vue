@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FirebaseServices } from '../../infra/firebase_services'
+import { FirebaseServices } from '../../infra/firebase/services'
 
 // Require manual testing
 

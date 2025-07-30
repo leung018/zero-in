@@ -3,7 +3,7 @@ import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import { BrowserNewTabService } from '@/infra/browser/new_tab'
 import { FeatureFlagsService } from '@/infra/feature_flags'
 import FocusTimerPage from '@/pages/FocusTimerPage.vue'
-import { FirebaseServices } from '../../infra/firebase_services'
+import { FirebaseServices } from '../../infra/firebase/services'
 
 const openOptionsPage = () => {
   browser.runtime.openOptionsPage()

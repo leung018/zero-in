@@ -1,4 +1,4 @@
-import { FirebaseServices } from '../firebase_services'
+import { FirebaseServices } from '../firebase/services'
 import { StorageInterface } from './interface'
 import { LocalStorageWrapper } from './local_storage_wrapper'
 

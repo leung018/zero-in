@@ -1,4 +1,4 @@
-import { FirebaseServices } from '../infra/firebase_services'
+import { FirebaseServices } from '../infra/firebase/services'
 
 /**
  * Sign in with test credentials and return a new FirestoreStorage instance.
