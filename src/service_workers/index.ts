@@ -3,26 +3,26 @@ import { firebaseAuth } from '../infra/browser/sign_in'
 import { BackgroundListener } from './listener'
 import { MenuItemId } from './menu_item_id'
 
-export default async function main() {
+export default function main() {
   browser.runtime.onStartup.addListener(function () {}) // Register an empty onStartup listener to ensure the service worker activates immediately after browser restart
 
   const listener = BackgroundListener.create()
-  await listener.start()
 
   // Noted that e2e tests are hard to cover all of the below related to browser api properly. Better use a bit manual testing if needed.
-
-  browser.runtime.onMessage.addListener((message) => {
-    if (message.type === 'PING') {
-      return Promise.resolve({ type: 'PONG' })
-    }
-    if (message.type === 'SIGN_IN') {
-      return firebaseAuth((auth) => {
-        browser.runtime.sendMessage({
-          type: 'SIGN_IN_SUCCESS',
-          payload: auth
+  listener.start().then(() => {
+    browser.runtime.onMessage.addListener((message) => {
+      if (message.type === 'PING') {
+        return Promise.resolve({ type: 'PONG' })
+      }
+      if (message.type === 'SIGN_IN') {
+        return firebaseAuth((auth) => {
+          browser.runtime.sendMessage({
+            type: 'SIGN_IN_SUCCESS',
+            payload: auth
+          })
         })
-      })
-    }
+      }
+    })
   })
 
   // Periodically toggling browsing rules
