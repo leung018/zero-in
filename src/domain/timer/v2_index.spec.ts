@@ -18,4 +18,12 @@ describe('FocusTimerV2', () => {
     expect(timerState.focusSessionsCompleted()).toBe(0)
     expect(timerState.stage()).toBe(TimerStage.FOCUS)
   })
+
+  it('should able to start timer', () => {
+    const timer = FocusTimerV2.createFake()
+
+    timer.start()
+
+    expect(timer.getState().isRunning()).toBe(true)
+  })
 })

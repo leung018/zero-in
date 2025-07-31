@@ -17,6 +17,7 @@ export class FocusTimerV2 {
 
   private currentDateService: CurrentDateService
   private timerConfig: TimerConfig
+  private timerState: TimerStateV2
 
   private constructor({
     currentDateService,
@@ -27,14 +28,19 @@ export class FocusTimerV2 {
   }) {
     this.currentDateService = currentDateService
     this.timerConfig = timerConfig
-  }
-
-  getState() {
-    return new TimerStateV2({
+    this.timerState = new TimerStateV2({
       pausedAt: this.currentDateService.getDate(),
       endAt: getDateAfter(this.currentDateService.getDate(), this.timerConfig.focusDuration),
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
     })
+  }
+
+  start() {
+    this.timerState = this.timerState.withUpdate({ pausedAt: undefined })
+  }
+
+  getState() {
+    return this.timerState
   }
 }

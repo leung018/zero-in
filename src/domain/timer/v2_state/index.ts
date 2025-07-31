@@ -22,7 +22,7 @@ export class TimerStateV2 {
   }
 
   isRunning(): boolean {
-    return false
+    return this.payload.pausedAt === undefined
   }
 
   focusSessionsCompleted(): number {
@@ -31,5 +31,9 @@ export class TimerStateV2 {
 
   stage(): TimerStage {
     return this.payload.stage
+  }
+
+  withUpdate(update: Partial<TimerStatePayload>): TimerStateV2 {
+    return new TimerStateV2({ ...this.payload, ...update })
   }
 }
