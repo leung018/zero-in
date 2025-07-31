@@ -31,9 +31,8 @@ export class FocusTimerV2 {
 
   getState() {
     return new TimerStateV2({
-      startAt: this.currentDateService.getDate(),
+      pausedAt: this.currentDateService.getDate(),
       endAt: getDateAfter(this.currentDateService.getDate(), this.timerConfig.focusDuration),
-      isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
     })
