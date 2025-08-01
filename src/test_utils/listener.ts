@@ -19,7 +19,7 @@ import { BackgroundListener } from '../service_workers/listener'
 export async function setUpListener({
   focusSessionRecordHouseKeepDays = 30,
   timerConfig = config.getDefaultTimerConfig(),
-  currentDateService = CurrentDateService.createFake()
+  stubbedDate = new Date()
 } = {}) {
   const params = {
     notificationSettingStorageService: NotificationSettingStorageService.createFake(),
@@ -38,6 +38,7 @@ export async function setUpListener({
     focusSessionRecordStorageService: FocusSessionRecordStorageService.createFake()
   }
 
+  const currentDateService = CurrentDateService.createFake(stubbedDate)
   const scheduler = new FakePeriodicTaskScheduler()
   await params.timerConfigStorageService.save(timerConfig)
   const timer = FocusTimer.createFake({
@@ -55,6 +56,7 @@ export async function setUpListener({
     scheduler,
     timer,
     listener,
+    currentDateService,
     ...params
   }
 }

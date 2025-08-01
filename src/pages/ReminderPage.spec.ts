@@ -7,7 +7,6 @@ import { Duration } from '../domain/timer/duration'
 import { newFocusSessionRecord } from '../domain/timer/record'
 import { TimerStage } from '../domain/timer/stage'
 import { FakeActionService } from '../infra/action'
-import { CurrentDateService } from '../infra/current_date'
 import { setUpListener } from '../test_utils/listener'
 import { dataTestSelector } from '../test_utils/selector'
 import ReminderPage from './ReminderPage.vue'
@@ -77,12 +76,17 @@ async function mountPage({
   dailyCutOffTime = new Time(0, 0),
   currentDate = new Date()
 } = {}) {
-  const currentDateService = CurrentDateService.createFake(currentDate)
-  const { scheduler, timer, communicationManager, listener, focusSessionRecordStorageService } =
-    await setUpListener({
-      timerConfig,
-      currentDateService
-    })
+  const {
+    scheduler,
+    timer,
+    communicationManager,
+    listener,
+    focusSessionRecordStorageService,
+    currentDateService
+  } = await setUpListener({
+    timerConfig,
+    stubbedDate: currentDate
+  })
   const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
   await dailyResetTimeStorageService.save(dailyCutOffTime)
 

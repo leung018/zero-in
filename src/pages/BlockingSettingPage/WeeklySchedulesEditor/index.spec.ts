@@ -5,7 +5,6 @@ import { BrowsingRules } from '@/domain/browsing_rules'
 import { Weekday, WeeklySchedule } from '@/domain/schedules'
 import { Time } from '@/domain/time'
 import { setUpListener } from '@/test_utils/listener'
-import { CurrentDateService } from '../../../infra/current_date'
 import { assertCheckboxValue, assertSelectorInputValue } from '../../../test_utils/assert'
 import { dataTestSelector } from '../../../test_utils/selector'
 import WeeklySchedulesEditor from './index.vue'
@@ -285,7 +284,7 @@ async function mountWeeklySchedulesEditor({
     browsingRulesStorageService,
     browsingControlService
   } = await setUpListener({
-    currentDateService: CurrentDateService.createFake(currentDate)
+    stubbedDate: currentDate
   })
 
   await weeklyScheduleStorageService.saveAll(weeklySchedules)

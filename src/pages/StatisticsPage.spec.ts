@@ -6,7 +6,6 @@ import { TimerConfig } from '../domain/timer/config'
 import { Duration } from '../domain/timer/duration'
 import { newFocusSessionRecord, type FocusSessionRecord } from '../domain/timer/record'
 import { FakeActionService } from '../infra/action'
-import { CurrentDateService } from '../infra/current_date'
 import { assertSelectorInputValue } from '../test_utils/assert'
 import { setUpListener } from '../test_utils/listener'
 import { dataTestSelector } from '../test_utils/selector'
@@ -130,12 +129,17 @@ async function mountStatisticsPage({
   const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
   await dailyResetTimeStorageService.save(dailyResetTime)
 
-  const currentDateService = CurrentDateService.createFake(currentDate)
-  const { scheduler, timer, communicationManager, listener, focusSessionRecordStorageService } =
-    await setUpListener({
-      timerConfig,
-      currentDateService
-    })
+  const {
+    scheduler,
+    timer,
+    communicationManager,
+    listener,
+    focusSessionRecordStorageService,
+    currentDateService
+  } = await setUpListener({
+    timerConfig,
+    stubbedDate: currentDate
+  })
 
   await focusSessionRecordStorageService.saveAll(focusSessionRecords)
 
