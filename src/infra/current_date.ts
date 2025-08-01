@@ -7,7 +7,7 @@ export class CurrentDateService {
 
   static createFake({ stubbedDate = new Date(), fakeClock = new FakeClock() } = {}) {
     const getNewDate: () => Date = () => {
-      return new Date(stubbedDate.getTime() + fakeClock.getElapsedSystemTime())
+      return new Date(stubbedDate.getTime() + fakeClock.getElapsedTime())
     }
     return new CurrentDateService(getNewDate)
   }

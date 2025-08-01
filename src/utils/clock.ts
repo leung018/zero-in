@@ -1,10 +1,10 @@
 import { SubscriptionManager } from './subscription'
 
 export class FakeClock {
-  private elapsedSystemTime: number = 0
+  private elapsedTime: number = 0
   private subscriptionManager = new SubscriptionManager<number>()
 
-  subscribeTimeChange(listener: (elapsedSystemTime: number) => void) {
+  subscribeTimeChange(listener: (elapsedTime: number) => void) {
     return this.subscriptionManager.subscribe(listener)
   }
 
@@ -13,11 +13,11 @@ export class FakeClock {
   }
 
   advanceTime(ms: number) {
-    this.elapsedSystemTime += ms
-    this.subscriptionManager.broadcast(this.elapsedSystemTime)
+    this.elapsedTime += ms
+    this.subscriptionManager.broadcast(this.elapsedTime)
   }
 
-  getElapsedSystemTime(): number {
-    return this.elapsedSystemTime
+  getElapsedTime(): number {
+    return this.elapsedTime
   }
 }
