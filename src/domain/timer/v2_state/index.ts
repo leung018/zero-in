@@ -15,10 +15,11 @@ export class TimerStateV2 {
     this.payload = payload
   }
 
-  remaining(): Duration {
-    return new Duration({
-      milliseconds: this.payload.endAt.getTime() - this.payload.pausedAt!.getTime()
-    })
+  remaining(now: Date = new Date()): Duration {
+    if (this.payload.pausedAt === undefined) {
+      return dateDiff(now, this.payload.endAt)
+    }
+    return dateDiff(this.payload.pausedAt, this.payload.endAt)
   }
 
   isRunning(): boolean {
@@ -36,4 +37,10 @@ export class TimerStateV2 {
   withUpdate(update: Partial<TimerStatePayload>): TimerStateV2 {
     return new TimerStateV2({ ...this.payload, ...update })
   }
+}
+
+function dateDiff(start: Date, end: Date): Duration {
+  return new Duration({
+    milliseconds: end.getTime() - start.getTime()
+  })
 }

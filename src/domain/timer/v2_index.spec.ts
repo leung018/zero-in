@@ -20,10 +20,18 @@ describe('FocusTimerV2', () => {
   })
 
   it('should able to start timer', () => {
-    const timer = FocusTimerV2.createFake()
+    const timer = FocusTimerV2.createFake({
+      stubbedDate: new Date('2023-01-01T00:00:00Z'),
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ minutes: 10 })
+      })
+    })
 
     timer.start()
 
     expect(timer.getState().isRunning()).toBe(true)
+    expect(timer.getState().remaining(new Date('2023-01-01T00:09:15Z'))).toEqual(
+      new Duration({ seconds: 45 })
+    )
   })
 })
