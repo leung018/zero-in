@@ -37,8 +37,12 @@ export class FakePeriodicTaskScheduler implements PeriodicTaskScheduler {
   private task: (() => void) | null = null
   private intervalMs: number = 0
   private lastTaskTime: number = 0
-  private fakeTimeCounter: FakeTimeCounter = new FakeTimeCounter()
+  private fakeTimeCounter: FakeTimeCounter
   private subscriptionId: number | null = null
+
+  constructor(fakeTimeCounter = new FakeTimeCounter()) {
+    this.fakeTimeCounter = fakeTimeCounter
+  }
 
   scheduleTask(task: () => void, intervalMs: number): void {
     if (this.task) {
