@@ -13,7 +13,7 @@ import ReminderPage from './ReminderPage.vue'
 
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
-    const { scheduler, timer, wrapper } = await mountPage({
+    const { clock, timer, wrapper } = await mountPage({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
@@ -23,14 +23,14 @@ describe('ReminderPage', () => {
     })
 
     timer.start()
-    scheduler.advanceTime(3001)
+    clock.advanceTime(3001)
     await flushPromises()
 
     expect(wrapper.find(dataTestSelector('hint-message')).text()).toContain('Start 1st Break')
   })
 
   it('should click start button to start timer again', async () => {
-    const { scheduler, timer, wrapper } = await mountPage({
+    const { clock, timer, wrapper } = await mountPage({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 2 }),
@@ -39,13 +39,13 @@ describe('ReminderPage', () => {
     })
 
     timer.start()
-    scheduler.advanceTime(3001)
+    clock.advanceTime(3001)
     await flushPromises()
 
     expect(timer.getState().isRunning).toBe(false)
 
     wrapper.find(dataTestSelector('start-button')).trigger('click')
-    scheduler.advanceTime(1000)
+    clock.advanceTime(1000)
     await flushPromises()
 
     const state = timer.getState()
@@ -77,7 +77,7 @@ async function mountPage({
   currentDate = new Date()
 } = {}) {
   const {
-    scheduler,
+    clock,
     timer,
     communicationManager,
     listener,
@@ -106,5 +106,5 @@ async function mountPage({
     }
   })
   await flushPromises()
-  return { wrapper, scheduler, timer, closeCurrentTabService }
+  return { wrapper, clock, timer, closeCurrentTabService }
 }

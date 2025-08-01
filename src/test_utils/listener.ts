@@ -55,7 +55,7 @@ export async function setUpListener({
   })
 
   return {
-    scheduler: fakeClock,
+    clock: fakeClock,
     timer,
     listener,
     currentDateService,

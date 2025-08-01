@@ -22,21 +22,21 @@ describe('FocusTimerPage', () => {
   })
 
   it('should reduce the time after timer is started', async () => {
-    const { wrapper, scheduler } = await startListenerAndMountPage(
+    const { wrapper, clock } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ minutes: 25 })
       })
     )
     await startTimer(wrapper)
 
-    scheduler.advanceTime(2001)
+    clock.advanceTime(2001)
     await flushPromises()
 
     assertTimerDisplay(wrapper, '24:58')
   })
 
   it('should reopened timer page can update the component if the timer is started already', async () => {
-    const { wrapper, scheduler, communicationManager } = await startListenerAndMountPage(
+    const { wrapper, clock, communicationManager } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ minutes: 10 })
       })
@@ -46,7 +46,7 @@ describe('FocusTimerPage', () => {
 
     const newWrapper = await mountPage({ port: communicationManager.clientConnect() })
 
-    scheduler.advanceTime(1001)
+    clock.advanceTime(1001)
     await flushPromises()
 
     assertTimerDisplay(newWrapper, '09:59')
@@ -76,7 +76,7 @@ describe('FocusTimerPage', () => {
   })
 
   it('should able to pause the timer', async () => {
-    const { wrapper, scheduler, communicationManager } = await startListenerAndMountPage(
+    const { wrapper, clock, communicationManager } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ minutes: 10 })
       })
@@ -84,10 +84,10 @@ describe('FocusTimerPage', () => {
 
     await startTimer(wrapper)
 
-    scheduler.advanceTime(1000)
+    clock.advanceTime(1000)
     await pauseTimer(wrapper)
 
-    scheduler.advanceTime(2000)
+    clock.advanceTime(2000)
     await flushPromises()
 
     assertTimerDisplay(wrapper, '09:59')
@@ -115,7 +115,7 @@ describe('FocusTimerPage', () => {
   })
 
   it('should able to restart timer', async () => {
-    const { wrapper, scheduler } = await startListenerAndMountPage(
+    const { wrapper, clock } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ minutes: 10 })
       })
@@ -123,18 +123,18 @@ describe('FocusTimerPage', () => {
 
     await startTimer(wrapper)
 
-    scheduler.advanceTime(500)
+    clock.advanceTime(500)
     await pauseTimer(wrapper)
 
     await startTimer(wrapper)
-    scheduler.advanceTime(500)
+    clock.advanceTime(500)
     await flushPromises()
 
     assertTimerDisplay(wrapper, '09:59')
   })
 
   it('should display hint of break if focus duration has passed', async () => {
-    const { wrapper, scheduler } = await startListenerAndMountPage(
+    const { wrapper, clock } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 2 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
@@ -144,7 +144,7 @@ describe('FocusTimerPage', () => {
 
     await startTimer(wrapper)
 
-    scheduler.advanceTime(2000)
+    clock.advanceTime(2000)
     await flushPromises()
 
     assertCurrentStage(wrapper, '1st Break')
@@ -158,7 +158,7 @@ describe('FocusTimerPage', () => {
   })
 
   it('should display focus and break without Ordinal if focus sessions per cycle is 1', async () => {
-    const { wrapper, scheduler } = await startListenerAndMountPage(
+    const { wrapper, clock } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 2 }),
         focusSessionsPerCycle: 1
@@ -169,14 +169,14 @@ describe('FocusTimerPage', () => {
 
     await startTimer(wrapper)
 
-    scheduler.advanceTime(2000)
+    clock.advanceTime(2000)
     await flushPromises()
 
     assertCurrentStage(wrapper, 'Break')
   })
 
   it('should prevent bug of last second pause and restart may freezing the component', async () => {
-    const { wrapper, scheduler } = await startListenerAndMountPage(
+    const { wrapper, clock } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 2 })
@@ -185,20 +185,20 @@ describe('FocusTimerPage', () => {
 
     await startTimer(wrapper)
 
-    scheduler.advanceTime(2500)
+    clock.advanceTime(2500)
     await pauseTimer(wrapper)
 
     assertTimerDisplay(wrapper, '00:01')
 
     await startTimer(wrapper)
-    scheduler.advanceTime(600)
+    clock.advanceTime(600)
     await flushPromises()
 
     assertTimerDisplay(wrapper, '00:02')
   })
 
   it('should display hint of long break', async () => {
-    const { wrapper, scheduler } = await startListenerAndMountPage(
+    const { wrapper, clock } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
@@ -209,17 +209,17 @@ describe('FocusTimerPage', () => {
 
     // 1st Focus
     await startTimer(wrapper)
-    scheduler.advanceTime(3000)
+    clock.advanceTime(3000)
     await flushPromises()
 
     // Short Break
     await startTimer(wrapper)
-    scheduler.advanceTime(1000)
+    clock.advanceTime(1000)
     await flushPromises()
 
     // 2nd Focus
     await startTimer(wrapper)
-    scheduler.advanceTime(3000)
+    clock.advanceTime(3000)
     await flushPromises()
 
     assertCurrentStage(wrapper, 'Long Break')
@@ -335,14 +335,14 @@ describe('FocusTimerPage', () => {
 })
 
 async function startListenerAndMountPage(timerConfig = TimerConfig.newTestInstance()) {
-  const { scheduler, communicationManager, listener } = await setUpListener({
+  const { clock, communicationManager, listener } = await setUpListener({
     timerConfig
   })
   await listener.start()
   const wrapper = await mountPage({
     port: communicationManager.clientConnect()
   })
-  return { wrapper, scheduler, communicationManager }
+  return { wrapper, clock, communicationManager }
 }
 
 async function mountPage({ port = new FakeCommunicationManager().clientConnect() } = {}) {

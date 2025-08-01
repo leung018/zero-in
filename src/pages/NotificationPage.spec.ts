@@ -69,7 +69,7 @@ describe('NotificationPage', () => {
     const {
       wrapper,
       clientPort,
-      scheduler,
+      clock,
       desktopNotificationService,
       soundService,
       reminderTabService
@@ -92,7 +92,7 @@ describe('NotificationPage', () => {
 
     // Start the timer and finish the focus session. Notification should be triggered when finish focus session
     await clientPort.send({ name: WorkRequestName.START_TIMER })
-    scheduler.advanceTime(1000)
+    clock.advanceTime(1000)
 
     expect(reminderTabService.hasTriggered()).toBe(false)
     expect(desktopNotificationService.isNotificationActive()).toBe(true)
@@ -117,7 +117,7 @@ async function mountPage({
   const updateSuccessNotifierService = new FakeActionService()
 
   const {
-    scheduler,
+    clock,
     communicationManager,
     desktopNotificationService,
     soundService,
@@ -147,7 +147,7 @@ async function mountPage({
     notificationSettingStorageService,
     updateSuccessNotifierService,
     clientPort,
-    scheduler,
+    clock,
     desktopNotificationService,
     soundService,
     reminderTabService
