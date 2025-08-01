@@ -44,7 +44,7 @@
     "@vue/test-utils": "^2.4.6",
     "@wxt-dev/module-vue": "^1.0.2",
     "eslint": "^9.30.0",
-    "eslint-config-prettier": "^10.1.5",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-playwright": "^2.2.0",
     "eslint-plugin-vue": "^10.1.0",
     "firebase-tools": "^14.11.1",
