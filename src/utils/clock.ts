@@ -1,6 +1,6 @@
 import { SubscriptionManager } from './subscription'
 
-export class FakeTimeCounter {
+export class FakeClock {
   private elapsedSystemTime: number = 0
   private subscriptionManager = new SubscriptionManager<number>()
 

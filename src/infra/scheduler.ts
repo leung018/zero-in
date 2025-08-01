@@ -1,4 +1,4 @@
-import { FakeTimeCounter } from '../utils/fake_time_counter'
+import { FakeClock } from '../utils/clock'
 
 export interface PeriodicTaskScheduler {
   scheduleTask(task: () => void, ms: number): void
@@ -37,11 +37,11 @@ export class FakePeriodicTaskScheduler implements PeriodicTaskScheduler {
   private task: (() => void) | null = null
   private intervalMs: number = 0
   private lastTaskTime: number = 0
-  private fakeTimeCounter: FakeTimeCounter
+  private fakeClock: FakeClock
   private subscriptionId: number | null = null
 
-  constructor(fakeTimeCounter = new FakeTimeCounter()) {
-    this.fakeTimeCounter = fakeTimeCounter
+  constructor(fakeClock = new FakeClock()) {
+    this.fakeClock = fakeClock
   }
 
   scheduleTask(task: () => void, intervalMs: number): void {
@@ -51,9 +51,9 @@ export class FakePeriodicTaskScheduler implements PeriodicTaskScheduler {
 
     this.task = task
     this.intervalMs = intervalMs
-    this.lastTaskTime = this.fakeTimeCounter.getElapsedSystemTime()
+    this.lastTaskTime = this.fakeClock.getElapsedSystemTime()
 
-    this.subscriptionId = this.fakeTimeCounter.subscribeTimeChange((elapsedMs) => {
+    this.subscriptionId = this.fakeClock.subscribeTimeChange((elapsedMs) => {
       const intervals = Math.floor((elapsedMs - this.lastTaskTime) / this.intervalMs)
       for (let i = 0; i < intervals; i++) {
         if (this.task !== null) this.task()
@@ -65,14 +65,14 @@ export class FakePeriodicTaskScheduler implements PeriodicTaskScheduler {
   stopTask(): void {
     this.task = null
     this.intervalMs = 0
-    this.lastTaskTime = this.fakeTimeCounter.getElapsedSystemTime()
+    this.lastTaskTime = this.fakeClock.getElapsedSystemTime()
     if (this.subscriptionId !== null) {
-      this.fakeTimeCounter.unsubscribeTimeChange(this.subscriptionId)
+      this.fakeClock.unsubscribeTimeChange(this.subscriptionId)
       this.subscriptionId = null
     }
   }
 
   advanceTime(ms: number) {
-    this.fakeTimeCounter.advanceTime(ms)
+    this.fakeClock.advanceTime(ms)
   }
 }

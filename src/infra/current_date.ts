@@ -1,13 +1,13 @@
-import { FakeTimeCounter } from '../utils/fake_time_counter'
+import { FakeClock } from '../utils/clock'
 
 export class CurrentDateService {
   static create() {
     return new CurrentDateService(() => new Date())
   }
 
-  static createFake({ stubbedDate = new Date(), fakeTimeCounter = new FakeTimeCounter() } = {}) {
+  static createFake({ stubbedDate = new Date(), fakeClock = new FakeClock() } = {}) {
     const getNewDate: () => Date = () => {
-      return new Date(stubbedDate.getTime() + fakeTimeCounter.getElapsedSystemTime())
+      return new Date(stubbedDate.getTime() + fakeClock.getElapsedSystemTime())
     }
     return new CurrentDateService(getNewDate)
   }
