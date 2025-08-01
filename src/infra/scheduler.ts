@@ -1,3 +1,5 @@
+import { FakeTimeCounter } from '../utils/fake_time_counter'
+
 export interface PeriodicTaskScheduler {
   scheduleTask(task: () => void, ms: number): void
   stopTask(): void
@@ -33,9 +35,10 @@ export class TaskSchedulingError extends Error {
 
 export class FakePeriodicTaskScheduler implements PeriodicTaskScheduler {
   private task: (() => void) | null = null
-  private elapsedMs: number = 0
   private intervalMs: number = 0
   private lastTaskTime: number = 0
+  private fakeTimeCounter: FakeTimeCounter = new FakeTimeCounter()
+  private subscriptionId: number | null = null
 
   scheduleTask(task: () => void, intervalMs: number): void {
     if (this.task) {
@@ -44,23 +47,28 @@ export class FakePeriodicTaskScheduler implements PeriodicTaskScheduler {
 
     this.task = task
     this.intervalMs = intervalMs
-  }
+    this.lastTaskTime = this.fakeTimeCounter.getElapsedSystemTime()
 
-  stopTask(): void {
-    this.task = null
-    this.elapsedMs = 0
-    this.intervalMs = 0
-    this.lastTaskTime = 0
-  }
-
-  advanceTime(ms: number) {
-    if (this.task !== null) {
-      this.elapsedMs += ms
-      const intervals = Math.floor((this.elapsedMs - this.lastTaskTime) / this.intervalMs)
+    this.subscriptionId = this.fakeTimeCounter.subscribeTimeChange((elapsedMs) => {
+      const intervals = Math.floor((elapsedMs - this.lastTaskTime) / this.intervalMs)
       for (let i = 0; i < intervals; i++) {
         if (this.task !== null) this.task()
         this.lastTaskTime += this.intervalMs
       }
+    })
+  }
+
+  stopTask(): void {
+    this.task = null
+    this.intervalMs = 0
+    this.lastTaskTime = this.fakeTimeCounter.getElapsedSystemTime()
+    if (this.subscriptionId !== null) {
+      this.fakeTimeCounter.unsubscribeTimeChange(this.subscriptionId)
+      this.subscriptionId = null
     }
+  }
+
+  advanceTime(ms: number) {
+    this.fakeTimeCounter.advanceTime(ms)
   }
 }
