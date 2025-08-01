@@ -15,10 +15,10 @@ describe('CurrentDateService', () => {
 
   it('should fakeTimeCounter can affect the getDate correctly', async () => {
     const fakeTimeCounter = new FakeTimeCounter()
-    const currentDateService = CurrentDateService.createFake(
-      new Date('2023-01-01T00:00:00Z'),
+    const currentDateService = CurrentDateService.createFake({
+      stubbedDate: new Date('2023-01-01T00:00:00Z'),
       fakeTimeCounter
-    )
+    })
 
     fakeTimeCounter.advanceTime(1500)
 

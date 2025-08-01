@@ -10,7 +10,7 @@ export class FocusTimerV2 {
     timerConfig = TimerConfig.newTestInstance()
   } = {}) {
     return new FocusTimerV2({
-      currentDateService: CurrentDateService.createFake(stubbedDate),
+      currentDateService: CurrentDateService.createFake({ stubbedDate }),
       timerConfig
     })
   }

@@ -300,7 +300,7 @@ async function getBrowsingRulesAfterToggling({
   const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
   await weeklyScheduleStorageService.saveAll(schedules)
 
-  const currentDateService = CurrentDateService.createFake(currentDate)
+  const currentDateService = CurrentDateService.createFake({ stubbedDate: currentDate })
 
   const browsingControlService = new FakeBrowsingControlService()
 

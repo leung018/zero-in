@@ -5,10 +5,7 @@ export class CurrentDateService {
     return new CurrentDateService(() => new Date())
   }
 
-  static createFake(
-    stubbedDate: Date = new Date(),
-    fakeTimeCounter: FakeTimeCounter = new FakeTimeCounter()
-  ) {
+  static createFake({ stubbedDate = new Date(), fakeTimeCounter = new FakeTimeCounter() } = {}) {
     const getNewDate: () => Date = () => {
       return new Date(stubbedDate.getTime() + fakeTimeCounter.getElapsedSystemTime())
     }
