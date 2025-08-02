@@ -1,4 +1,5 @@
 import type { Time } from '../domain/time'
+import { Duration } from '../domain/timer/duration'
 
 export function getMostRecentDate(time: Time, currentDate = new Date()): Date {
   const newDate = new Date(currentDate)
@@ -24,4 +25,10 @@ export function getStartOfNextMinute(fromDate: Date = new Date()): Date {
   nextMinute.setSeconds(0, 0)
   nextMinute.setMinutes(nextMinute.getMinutes() + 1)
   return nextMinute
+}
+
+export function getDateAfter(fromDate: Date, duration: Duration) {
+  const newDate = new Date(fromDate)
+  newDate.setMilliseconds(newDate.getMilliseconds() + duration.totalMilliseconds)
+  return newDate
 }

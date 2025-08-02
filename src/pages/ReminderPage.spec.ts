@@ -7,14 +7,13 @@ import { Duration } from '../domain/timer/duration'
 import { newFocusSessionRecord } from '../domain/timer/record'
 import { TimerStage } from '../domain/timer/stage'
 import { FakeActionService } from '../infra/action'
-import { CurrentDateService } from '../infra/current_date'
 import { setUpListener } from '../test_utils/listener'
 import { dataTestSelector } from '../test_utils/selector'
 import ReminderPage from './ReminderPage.vue'
 
 describe('ReminderPage', () => {
   it('should display proper reminder', async () => {
-    const { scheduler, timer, wrapper } = await mountPage({
+    const { clock, timer, wrapper } = await mountPage({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
@@ -24,14 +23,14 @@ describe('ReminderPage', () => {
     })
 
     timer.start()
-    scheduler.advanceTime(3001)
+    clock.advanceTime(3001)
     await flushPromises()
 
     expect(wrapper.find(dataTestSelector('hint-message')).text()).toContain('Start 1st Break')
   })
 
   it('should click start button to start timer again', async () => {
-    const { scheduler, timer, wrapper } = await mountPage({
+    const { clock, timer, wrapper } = await mountPage({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 2 }),
@@ -40,13 +39,13 @@ describe('ReminderPage', () => {
     })
 
     timer.start()
-    scheduler.advanceTime(3001)
+    clock.advanceTime(3001)
     await flushPromises()
 
     expect(timer.getState().isRunning).toBe(false)
 
     wrapper.find(dataTestSelector('start-button')).trigger('click')
-    scheduler.advanceTime(1000)
+    clock.advanceTime(1000)
     await flushPromises()
 
     const state = timer.getState()
@@ -77,12 +76,17 @@ async function mountPage({
   dailyCutOffTime = new Time(0, 0),
   currentDate = new Date()
 } = {}) {
-  const currentDateService = CurrentDateService.createFake(currentDate)
-  const { scheduler, timer, communicationManager, listener, focusSessionRecordStorageService } =
-    await setUpListener({
-      timerConfig,
-      currentDateService
-    })
+  const {
+    clock,
+    timer,
+    communicationManager,
+    listener,
+    focusSessionRecordStorageService,
+    currentDateService
+  } = await setUpListener({
+    timerConfig,
+    stubbedDate: currentDate
+  })
   const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
   await dailyResetTimeStorageService.save(dailyCutOffTime)
 
@@ -102,5 +106,5 @@ async function mountPage({
     }
   })
   await flushPromises()
-  return { wrapper, scheduler, timer, closeCurrentTabService }
+  return { wrapper, clock, timer, closeCurrentTabService }
 }

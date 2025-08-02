@@ -6,7 +6,6 @@ import { TimerConfig } from '../domain/timer/config'
 import { Duration } from '../domain/timer/duration'
 import { newFocusSessionRecord, type FocusSessionRecord } from '../domain/timer/record'
 import { FakeActionService } from '../infra/action'
-import { CurrentDateService } from '../infra/current_date'
 import { assertSelectorInputValue } from '../test_utils/assert'
 import { setUpListener } from '../test_utils/listener'
 import { dataTestSelector } from '../test_utils/selector'
@@ -101,7 +100,7 @@ describe('StatisticsPage', () => {
   })
 
   it('should reload statistics after completed a focus session', async () => {
-    const { wrapper, scheduler, timer } = await mountStatisticsPage({
+    const { wrapper, clock, timer } = await mountStatisticsPage({
       dailyResetTime: new Time(9, 30),
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 1 })
@@ -113,7 +112,7 @@ describe('StatisticsPage', () => {
     let rows = wrapper.find('tbody').findAll('tr')
     expect(rows[0].find(dataTestSelector('completed-focus-sessions')).text()).toBe('0')
 
-    scheduler.advanceTime(1001)
+    clock.advanceTime(1001)
     await flushPromises()
 
     rows = wrapper.find('tbody').findAll('tr')
@@ -130,12 +129,17 @@ async function mountStatisticsPage({
   const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
   await dailyResetTimeStorageService.save(dailyResetTime)
 
-  const currentDateService = CurrentDateService.createFake(currentDate)
-  const { scheduler, timer, communicationManager, listener, focusSessionRecordStorageService } =
-    await setUpListener({
-      timerConfig,
-      currentDateService
-    })
+  const {
+    clock,
+    timer,
+    communicationManager,
+    listener,
+    focusSessionRecordStorageService,
+    currentDateService
+  } = await setUpListener({
+    timerConfig,
+    stubbedDate: currentDate
+  })
 
   await focusSessionRecordStorageService.saveAll(focusSessionRecords)
 
@@ -152,7 +156,7 @@ async function mountStatisticsPage({
     }
   })
   await flushPromises()
-  return { wrapper, scheduler, timer, dailyResetTimeStorageService, updateSuccessNotifierService }
+  return { wrapper, clock, timer, dailyResetTimeStorageService, updateSuccessNotifierService }
 }
 
 async function saveTime(wrapper: VueWrapper, newTime: string) {

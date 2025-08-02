@@ -15,11 +15,12 @@ import { CurrentDateService } from '../infra/current_date'
 import { DesktopNotificationService } from '../infra/desktop_notification'
 import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { BackgroundListener } from '../service_workers/listener'
+import { FakeClock } from '../utils/clock'
 
 export async function setUpListener({
   focusSessionRecordHouseKeepDays = 30,
   timerConfig = config.getDefaultTimerConfig(),
-  currentDateService = CurrentDateService.createFake()
+  stubbedDate = new Date()
 } = {}) {
   const params = {
     notificationSettingStorageService: NotificationSettingStorageService.createFake(),
@@ -38,7 +39,9 @@ export async function setUpListener({
     focusSessionRecordStorageService: FocusSessionRecordStorageService.createFake()
   }
 
-  const scheduler = new FakePeriodicTaskScheduler()
+  const fakeClock = new FakeClock()
+  const currentDateService = CurrentDateService.createFake({ stubbedDate, fakeClock })
+  const scheduler = new FakePeriodicTaskScheduler(fakeClock)
   await params.timerConfigStorageService.save(timerConfig)
   const timer = FocusTimer.createFake({
     scheduler
@@ -52,9 +55,10 @@ export async function setUpListener({
   })
 
   return {
-    scheduler,
+    clock: fakeClock,
     timer,
     listener,
+    currentDateService,
     ...params
   }
 }
