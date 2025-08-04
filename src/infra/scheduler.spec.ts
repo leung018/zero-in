@@ -27,6 +27,22 @@ describe('PeriodicTaskSchedulerImpl', () => {
     expect(mock).toHaveBeenCalledTimes(2)
   })
 
+  it('should first task execute after startAfterMs if it is specified', () => {
+    const mock = vi.fn(() => {})
+
+    const scheduler = new PeriodicTaskSchedulerImpl()
+    scheduler.scheduleTask(mock, 50, 500)
+
+    vi.advanceTimersByTime(499)
+    expect(mock).not.toHaveBeenCalled()
+
+    vi.advanceTimersByTime(1)
+    expect(mock).toHaveBeenCalledTimes(1)
+
+    vi.advanceTimersByTime(50)
+    expect(mock).toHaveBeenCalledTimes(2)
+  })
+
   it('should able to stop scheduled task', () => {
     const mock = vi.fn(() => {})
 

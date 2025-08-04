@@ -1,18 +1,29 @@
 import { FakeClock } from '../utils/clock'
 
 export interface PeriodicTaskScheduler {
-  scheduleTask(task: () => void, ms: number): void
+  scheduleTask(task: () => void, intervalMs: number, startAfterMs?: number): void
   stopTask(): void
 }
 
 export class PeriodicTaskSchedulerImpl implements PeriodicTaskScheduler {
   private intervalId: NodeJS.Timeout | null = null
 
-  scheduleTask(task: () => void, intervalMs: number) {
+  scheduleTask(task: () => void, intervalMs: number, startAfterMs?: number) {
     if (this.intervalId) {
       throw TaskSchedulingError.taskAlreadyScheduledError()
     }
 
+    if (startAfterMs) {
+      setTimeout(() => {
+        task()
+        this.startInterval(task, intervalMs)
+      }, startAfterMs)
+    } else {
+      this.startInterval(task, intervalMs)
+    }
+  }
+
+  private startInterval(task: () => void, intervalMs: number) {
     const intervalId = setInterval(task, intervalMs)
     this.intervalId = intervalId
   }
