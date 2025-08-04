@@ -96,21 +96,21 @@ describe('FakePeriodicTaskScheduler', () => {
   it('should execute the callback according the schedules', () => {
     const mock = vi.fn(() => {})
 
-    const scheduler = new FakePeriodicTaskScheduler()
+    const { scheduler, clock } = setupScheduler()
     scheduler.scheduleTask(mock, 1000)
 
     expect(mock).not.toHaveBeenCalled()
-    scheduler.advanceTime(1500)
+    clock.advanceTime(1500)
     expect(mock).toHaveBeenCalledTimes(1)
 
-    scheduler.advanceTime(500)
+    clock.advanceTime(500)
     expect(mock).toHaveBeenCalledTimes(2)
   })
 
   it('should first task execute after startAfterMs if it is specified', () => {
     const mock = vi.fn(() => {})
 
-    const { scheduler, clock } = newScheduler()
+    const { scheduler, clock } = setupScheduler()
     scheduler.scheduleTask(mock, 50, 500)
 
     clock.advanceTime(499)
@@ -126,17 +126,17 @@ describe('FakePeriodicTaskScheduler', () => {
   it('should able to stop scheduled task', () => {
     const mock = vi.fn(() => {})
 
-    const scheduler = new FakePeriodicTaskScheduler()
+    const { scheduler, clock } = setupScheduler()
 
     scheduler.scheduleTask(mock, 1000)
     scheduler.stopTask()
 
-    scheduler.advanceTime(10000)
+    clock.advanceTime(10000)
     expect(mock).not.toHaveBeenCalled()
   })
 
   it('should throw error when scheduleTask without previous scheduled task is stopped', () => {
-    const scheduler = new FakePeriodicTaskScheduler()
+    const { scheduler, clock } = setupScheduler()
 
     const mock = vi.fn(() => {})
 
@@ -146,31 +146,31 @@ describe('FakePeriodicTaskScheduler', () => {
       scheduler.scheduleTask(mock, 1000)
     }, TaskSchedulingError.taskAlreadyScheduledError())
 
-    scheduler.advanceTime(1500)
+    clock.advanceTime(1500)
     expect(mock).not.toHaveBeenCalled()
 
     scheduler.stopTask()
     scheduler.scheduleTask(mock, 1000)
 
-    scheduler.advanceTime(1500)
+    clock.advanceTime(1500)
     expect(mock).toHaveBeenCalledTimes(1)
   })
 
   it('should able to stop task in the scheduled task', () => {
     const mock = vi.fn(() => {})
 
-    const scheduler = new FakePeriodicTaskScheduler()
+    const { scheduler, clock } = setupScheduler()
     scheduler.scheduleTask(() => {
       mock()
       scheduler.stopTask()
     }, 1000)
 
-    scheduler.advanceTime(3000)
+    clock.advanceTime(3000)
 
     expect(mock).toHaveBeenCalledTimes(1)
   })
 
-  function newScheduler() {
+  function setupScheduler() {
     const clock = new FakeClock()
     const scheduler = new FakePeriodicTaskScheduler(clock)
     return { scheduler, clock }
