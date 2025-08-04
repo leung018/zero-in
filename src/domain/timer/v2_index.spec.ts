@@ -33,5 +33,7 @@ describe('FocusTimerV2', () => {
     expect(timer.getState().remaining(new Date('2023-01-01T00:09:15Z'))).toEqual(
       new Duration({ seconds: 45 })
     )
+    // Now exceed end time will be zero
+    expect(timer.getState().remaining(new Date('2023-01-01T00:11:00Z')).isZero()).toBe(true)
   })
 })

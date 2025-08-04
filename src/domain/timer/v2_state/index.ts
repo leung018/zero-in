@@ -40,6 +40,10 @@ export class TimerStateV2 {
 }
 
 function dateDiff(start: Date, end: Date): Duration {
+  if (start.getTime() > end.getTime()) {
+    return new Duration({ milliseconds: 0 })
+  }
+
   return new Duration({
     milliseconds: end.getTime() - start.getTime()
   })
