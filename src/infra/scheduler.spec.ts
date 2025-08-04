@@ -1,6 +1,7 @@
 import { afterEach } from 'node:test'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { assertToThrowError } from '../test_utils/check_error'
+import { FakeClock } from '../utils/clock'
 import {
   FakePeriodicTaskScheduler,
   PeriodicTaskSchedulerImpl,
@@ -106,6 +107,22 @@ describe('FakePeriodicTaskScheduler', () => {
     expect(mock).toHaveBeenCalledTimes(2)
   })
 
+  it('should first task execute after startAfterMs if it is specified', () => {
+    const mock = vi.fn(() => {})
+
+    const { scheduler, clock } = newScheduler()
+    scheduler.scheduleTask(mock, 50, 500)
+
+    clock.advanceTime(499)
+    expect(mock).not.toHaveBeenCalled()
+
+    clock.advanceTime(1)
+    expect(mock).toHaveBeenCalledTimes(1)
+
+    clock.advanceTime(50)
+    expect(mock).toHaveBeenCalledTimes(2)
+  })
+
   it('should able to stop scheduled task', () => {
     const mock = vi.fn(() => {})
 
@@ -152,4 +169,10 @@ describe('FakePeriodicTaskScheduler', () => {
 
     expect(mock).toHaveBeenCalledTimes(1)
   })
+
+  function newScheduler() {
+    const clock = new FakeClock()
+    const scheduler = new FakePeriodicTaskScheduler(clock)
+    return { scheduler, clock }
+  }
 })

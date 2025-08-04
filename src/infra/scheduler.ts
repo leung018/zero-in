@@ -55,7 +55,7 @@ export class FakePeriodicTaskScheduler implements PeriodicTaskScheduler {
     this.fakeClock = fakeClock
   }
 
-  scheduleTask(task: () => void, intervalMs: number): void {
+  scheduleTask(task: () => void, intervalMs: number, startAfterMs?: number): void {
     if (this.task) {
       throw TaskSchedulingError.taskAlreadyScheduledError()
     }
@@ -63,6 +63,10 @@ export class FakePeriodicTaskScheduler implements PeriodicTaskScheduler {
     this.task = task
     this.intervalMs = intervalMs
     this.lastTaskTime = this.fakeClock.getElapsedTime()
+
+    if (startAfterMs) {
+      this.lastTaskTime += startAfterMs - this.intervalMs
+    }
 
     this.subscriptionId = this.fakeClock.subscribeTimeChange((elapsedMs) => {
       const intervals = Math.floor((elapsedMs - this.lastTaskTime) / this.intervalMs)
