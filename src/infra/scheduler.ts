@@ -86,8 +86,4 @@ export class FakePeriodicTaskScheduler implements PeriodicTaskScheduler {
       this.subscriptionId = null
     }
   }
-
-  advanceTime(ms: number) {
-    this.fakeClock.advanceTime(ms)
-  }
 }
