@@ -13,7 +13,6 @@ import { FakeBrowsingControlService } from '../infra/browsing_control'
 import { FakeCommunicationManager } from '../infra/communication'
 import { CurrentDateService } from '../infra/current_date'
 import { DesktopNotificationService } from '../infra/desktop_notification'
-import { FakePeriodicTaskScheduler } from '../infra/scheduler'
 import { BackgroundListener } from '../service_workers/listener'
 import { FakeClock } from '../utils/clock'
 
@@ -41,10 +40,10 @@ export async function setUpListener({
 
   const fakeClock = new FakeClock()
   const currentDateService = CurrentDateService.createFake({ stubbedDate, fakeClock })
-  const scheduler = new FakePeriodicTaskScheduler(fakeClock)
   await params.timerConfigStorageService.save(timerConfig)
   const timer = FocusTimer.createFake({
-    scheduler
+    stubbedDate,
+    fakeClock
   })
 
   const listener = BackgroundListener.createFake({

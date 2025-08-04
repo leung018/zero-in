@@ -1,9 +1,11 @@
 import config from '../../config'
+import { CurrentDateService } from '../../infra/current_date'
 import {
   FakePeriodicTaskScheduler,
   PeriodicTaskSchedulerImpl,
   type PeriodicTaskScheduler
 } from '../../infra/scheduler'
+import { FakeClock } from '../../utils/clock'
 import type { TimerConfig } from './config'
 import { Duration } from './duration'
 import { TimerStage } from './stage'
@@ -22,21 +24,24 @@ export class FocusTimer {
 
   static create(timerConfig: TimerConfig = config.getDefaultTimerConfig()) {
     return new FocusTimer({
+      currentDateService: CurrentDateService.create(),
       scheduler: new PeriodicTaskSchedulerImpl(),
       timerConfig
     })
   }
 
   static createFake({
-    scheduler = new FakePeriodicTaskScheduler(),
+    stubbedDate = new Date(),
+    fakeClock = new FakeClock(),
     timerConfig = config.getDefaultTimerConfig()
-  }: {
-    scheduler?: PeriodicTaskScheduler
-    timerConfig?: TimerConfig
   } = {}) {
+    const scheduler = new FakePeriodicTaskScheduler(fakeClock)
+    const currentDateService = CurrentDateService.createFake({ stubbedDate, fakeClock })
+
     return new FocusTimer({
       timerConfig,
-      scheduler
+      scheduler,
+      currentDateService
     })
   }
 
@@ -52,6 +57,8 @@ export class FocusTimer {
 
   private scheduler: PeriodicTaskScheduler
 
+  private currentDateService: CurrentDateService
+
   private onStageCompleted: (lastStage: TimerStage) => void = () => {}
 
   private onTimerUpdate: (state: TimerState) => void = () => {}
@@ -59,15 +66,18 @@ export class FocusTimer {
   private onTimerStart: () => void = () => {}
 
   private constructor({
+    currentDateService,
     timerConfig,
     scheduler
   }: {
+    currentDateService: CurrentDateService
     timerConfig: TimerConfig
     scheduler: PeriodicTaskScheduler
   }) {
     this.config = this.newInternalConfig(timerConfig)
     this.remaining = timerConfig.focusDuration
     this.scheduler = scheduler
+    this.currentDateService = currentDateService
   }
 
   private newInternalConfig(config: TimerConfig): TimerConfig {

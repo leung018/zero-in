@@ -694,8 +694,8 @@ function setupTimer(timerConfig = newConfig()) {
   const clock = new FakeClock()
   const scheduler = new FakePeriodicTaskScheduler(clock)
   const timer = FocusTimer.createFake({
-    scheduler,
-    timerConfig
+    timerConfig,
+    fakeClock: clock
   })
   return {
     clock,
