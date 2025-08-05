@@ -99,7 +99,7 @@ describe('FocusTimer', () => {
     clock.advanceTime(1001)
 
     const expected: TimerState = {
-      remaining: new Duration({ minutes: 9, seconds: 59 }),
+      remaining: new Duration({ minutes: 9, seconds: 58, milliseconds: 999 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
