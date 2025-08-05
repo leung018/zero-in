@@ -73,7 +73,7 @@ export class FakePeriodicTaskScheduler implements PeriodicTaskScheduler {
         this.task()
         this.lastTaskTime = elapsedMs
       }
-    }, intervalMs)
+    })
   }
 
   stopTask(): void {

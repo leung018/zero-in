@@ -3,11 +3,14 @@ import { SubscriptionManager } from './subscription'
 export class FakeClock {
   private elapsedTime: number = 0
   private subscriptionManager = new SubscriptionManager<number>()
-  private smallestIntervalMs = Infinity
   private lastBroadcastTime: number = -1
+  private minTickMs: number
 
-  subscribeTimeChange(listener: (elapsedTime: number) => void, intervalMs = 1000) {
-    this.smallestIntervalMs = Math.min(this.smallestIntervalMs, intervalMs)
+  constructor(minTickMs = 100) {
+    this.minTickMs = minTickMs
+  }
+
+  subscribeTimeChange(listener: (elapsedTime: number) => void) {
     return this.subscriptionManager.subscribe(listener)
   }
 
@@ -22,8 +25,8 @@ export class FakeClock {
 
     const newElapsedTime = this.elapsedTime + ms
 
-    while (newElapsedTime - this.lastBroadcastTime >= this.smallestIntervalMs) {
-      this.changeTime(this.lastBroadcastTime + this.smallestIntervalMs)
+    while (newElapsedTime - this.lastBroadcastTime >= this.minTickMs) {
+      this.changeTime(this.lastBroadcastTime + this.minTickMs)
     }
 
     this.elapsedTime = newElapsedTime

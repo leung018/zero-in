@@ -123,7 +123,7 @@ describe('FakePeriodicTaskScheduler', () => {
     const mock = vi.fn(() => {})
 
     const { scheduler, clock } = setupScheduler()
-    scheduler.scheduleTask(mock, 50, 500)
+    scheduler.scheduleTask(mock, 100, 500)
 
     clock.advanceTime(499)
     expect(mock).not.toHaveBeenCalled()
@@ -131,7 +131,7 @@ describe('FakePeriodicTaskScheduler', () => {
     clock.advanceTime(1)
     expect(mock).toHaveBeenCalledTimes(1)
 
-    clock.advanceTime(50)
+    clock.advanceTime(100)
     expect(mock).toHaveBeenCalledTimes(2)
   })
 
