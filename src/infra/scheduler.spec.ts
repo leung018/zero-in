@@ -107,6 +107,18 @@ describe('FakePeriodicTaskScheduler', () => {
     expect(mock).toHaveBeenCalledTimes(2)
   })
 
+  it('should receive elapsedTime incrementally', () => {
+    const elapsedTimes: number[] = []
+
+    const { scheduler, clock } = setupScheduler()
+    scheduler.scheduleTask(() => {
+      elapsedTimes.push(clock.getElapsedTime())
+    }, 200)
+
+    clock.advanceTime(1000)
+    expect(elapsedTimes).toEqual([200, 400, 600, 800, 1000])
+  })
+
   it('should first task execute after startAfterMs if it is specified', () => {
     const mock = vi.fn(() => {})
 
