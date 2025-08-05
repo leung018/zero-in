@@ -295,7 +295,7 @@ export class FocusTimer {
   }
 }
 
-export class TimerStatePayload {
+class TimerStatePayload {
   pausedAt?: Date
   endAt: Date
   stage: TimerStage
