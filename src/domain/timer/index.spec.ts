@@ -142,19 +142,21 @@ describe('FocusTimer', () => {
     expect(timer.getState()).toEqual(expected)
   })
 
-  it('should pause and start remain accuracy to 100ms', () => {
+  it('should pause and start remain accuracy', () => {
     const { timer, clock } = setupTimer(
       newConfig({
         focusDuration: new Duration({ minutes: 10 })
       })
     )
     timer.start()
-    clock.advanceTime(1200)
+    clock.advanceTime(1259)
     timer.pause()
     timer.start()
-    clock.advanceTime(1800)
+    clock.advanceTime(1742)
 
-    expect(timer.getState().remaining).toEqual(new Duration({ minutes: 9, seconds: 57 }))
+    expect(timer.getState().remaining).toEqual(
+      new Duration({ minutes: 9, seconds: 56, milliseconds: 999 })
+    )
   })
 
   it('should able to subscribe updates', () => {
