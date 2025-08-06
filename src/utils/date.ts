@@ -32,3 +32,16 @@ export function getDateAfter(fromDate: Date, duration: Duration) {
   newDate.setMilliseconds(newDate.getMilliseconds() + duration.totalMilliseconds)
   return newDate
 }
+
+/**
+ * Calculates the duration between two dates. If the start date is after the end date, returns a duration of 0.
+ */
+export function dateDiff(start: Date, end: Date): Duration {
+  if (start.getTime() > end.getTime()) {
+    return new Duration({ milliseconds: 0 })
+  }
+
+  return new Duration({
+    milliseconds: end.getTime() - start.getTime()
+  })
+}

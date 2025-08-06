@@ -1,10 +1,11 @@
 import config from '../../config'
 import { PeriodicTaskScheduler } from '../../infra/scheduler'
-import { getDateAfter } from '../../utils/date'
+import { dateDiff, getDateAfter } from '../../utils/date'
 import type { TimerConfig } from './config'
 import { Duration } from './duration'
 import { TimerStage } from './stage'
 import type { TimerExternalState } from './state/external'
+import { TimerInternalState } from './state/internal'
 
 export class FocusTimer {
   static create(timerConfig: TimerConfig = config.getDefaultTimerConfig()) {
@@ -13,7 +14,7 @@ export class FocusTimer {
     })
   }
 
-  private timerStatePayload: TimerStatePayload
+  private internalState: TimerInternalState
 
   private config: TimerConfig
 
@@ -28,7 +29,7 @@ export class FocusTimer {
   private constructor({ timerConfig }: { timerConfig: TimerConfig }) {
     this.config = this.newInternalConfig(timerConfig)
     const now = new Date()
-    this.timerStatePayload = new TimerStatePayload({
+    this.internalState = new TimerInternalState({
       pausedAt: now,
       endAt: getDateAfter(now, timerConfig.focusDuration),
       focusSessionsCompleted: 0,
@@ -52,7 +53,7 @@ export class FocusTimer {
   }
 
   getState(): Readonly<TimerExternalState> {
-    return this.timerStatePayload.toTimerState()
+    return this.internalState.toExternalState()
   }
 
   getConfig(): Readonly<TimerConfig> {
@@ -70,19 +71,19 @@ export class FocusTimer {
   }
 
   private remaining() {
-    return this.timerStatePayload.remaining()
+    return this.internalState.remaining()
   }
 
   private stage() {
-    return this.timerStatePayload.stage
+    return this.internalState.stage
   }
 
   private focusSessionsCompleted() {
-    return this.timerStatePayload.focusSessionsCompleted
+    return this.internalState.focusSessionsCompleted
   }
 
   start() {
-    if (!this.timerStatePayload.pausedAt) {
+    if (!this.internalState.pausedAt) {
       return
     }
 
@@ -97,11 +98,11 @@ export class FocusTimer {
       { intervalMs: 1000, startAfterMs: this.getMsUntilNextSecond() }
     )
 
-    this.timerStatePayload = this.timerStatePayload.withUpdate({
+    this.internalState = this.internalState.withUpdate({
       pausedAt: undefined,
       endAt: getDateAfter(
         new Date(),
-        dateDiff(this.timerStatePayload.pausedAt, this.timerStatePayload.endAt)
+        dateDiff(this.internalState.pausedAt, this.internalState.endAt)
       )
     })
 
@@ -119,7 +120,7 @@ export class FocusTimer {
   }
 
   private stopRunning() {
-    this.timerStatePayload = this.timerStatePayload.withUpdate({
+    this.internalState = this.internalState.withUpdate({
       pausedAt: new Date()
     })
     this.scheduler.stopTask()
@@ -160,7 +161,7 @@ export class FocusTimer {
     const upperLimit = this.config.focusSessionsPerCycle - 1
     n = Math.min(upperLimit, n)
     n = Math.max(0, n)
-    this.timerStatePayload = this.timerStatePayload.withUpdate({
+    this.internalState = this.internalState.withUpdate({
       focusSessionsCompleted: n
     })
   }
@@ -196,7 +197,7 @@ export class FocusTimer {
   }
 
   private handleFocusComplete() {
-    this.timerStatePayload = this.timerStatePayload.withUpdate({
+    this.internalState = this.internalState.withUpdate({
       focusSessionsCompleted: this.focusSessionsCompleted() + 1
     })
 
@@ -209,7 +210,7 @@ export class FocusTimer {
 
   private handleBreakComplete() {
     if (this.stage() === TimerStage.LONG_BREAK) {
-      this.timerStatePayload = this.timerStatePayload.withUpdate({
+      this.internalState = this.internalState.withUpdate({
         focusSessionsCompleted: 0
       })
     }
@@ -217,31 +218,25 @@ export class FocusTimer {
   }
 
   private setToBeginOfLongBreak() {
-    this.timerStatePayload = this.timerStatePayload
-      .pausedWith(this.config.longBreakDuration)
-      .withUpdate({
-        stage: TimerStage.LONG_BREAK
-      })
+    this.internalState = this.internalState.pausedWith(this.config.longBreakDuration).withUpdate({
+      stage: TimerStage.LONG_BREAK
+    })
   }
 
   private setToBeginOfShortBreak() {
-    this.timerStatePayload = this.timerStatePayload
-      .pausedWith(this.config.shortBreakDuration)
-      .withUpdate({
-        stage: TimerStage.SHORT_BREAK
-      })
+    this.internalState = this.internalState.pausedWith(this.config.shortBreakDuration).withUpdate({
+      stage: TimerStage.SHORT_BREAK
+    })
   }
 
   private setToBeginOfFocus() {
-    this.timerStatePayload = this.timerStatePayload
-      .pausedWith(this.config.focusDuration)
-      .withUpdate({
-        stage: TimerStage.FOCUS
-      })
+    this.internalState = this.internalState.pausedWith(this.config.focusDuration).withUpdate({
+      stage: TimerStage.FOCUS
+    })
   }
 
   setState(state: TimerExternalState) {
-    this.timerStatePayload = this.timerStatePayload.pausedWith(state.remaining).withUpdate({
+    this.internalState = this.internalState.pausedWith(state.remaining).withUpdate({
       stage: state.stage,
       focusSessionsCompleted: state.focusSessionsCompleted
     })
@@ -252,71 +247,4 @@ export class FocusTimer {
       this.pause()
     }
   }
-}
-
-class TimerStatePayload {
-  readonly pausedAt?: Date
-  readonly endAt: Date
-  readonly stage: TimerStage
-  readonly focusSessionsCompleted: number
-
-  constructor({
-    pausedAt,
-    endAt,
-    stage,
-    focusSessionsCompleted
-  }: {
-    pausedAt?: Date
-    endAt: Date
-    stage: TimerStage
-    focusSessionsCompleted: number
-  }) {
-    this.pausedAt = pausedAt
-    this.endAt = endAt
-    this.stage = stage
-    this.focusSessionsCompleted = focusSessionsCompleted
-  }
-
-  toTimerState(now = new Date()): TimerExternalState {
-    return {
-      remaining: this.remaining(now),
-      stage: this.stage,
-      focusSessionsCompleted: this.focusSessionsCompleted,
-      isRunning: this.isRunning()
-    }
-  }
-
-  remaining(now: Date = new Date()): Duration {
-    if (this.pausedAt === undefined) {
-      return dateDiff(now, this.endAt)
-    }
-    return dateDiff(this.pausedAt, this.endAt)
-  }
-
-  isRunning(): boolean {
-    return this.pausedAt === undefined
-  }
-
-  pausedWith(remaining: Duration): TimerStatePayload {
-    const now = new Date()
-    return new TimerStatePayload({
-      ...this,
-      pausedAt: now,
-      endAt: getDateAfter(now, remaining)
-    })
-  }
-
-  withUpdate(update: Partial<TimerStatePayload>): TimerStatePayload {
-    return new TimerStatePayload({ ...this, ...update })
-  }
-}
-
-function dateDiff(start: Date, end: Date): Duration {
-  if (start.getTime() > end.getTime()) {
-    return new Duration({ milliseconds: 0 })
-  }
-
-  return new Duration({
-    milliseconds: end.getTime() - start.getTime()
-  })
 }
