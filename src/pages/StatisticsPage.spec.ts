@@ -1,5 +1,5 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { Time } from '../domain/time'
 import { TimerConfig } from '../domain/timer/config'
@@ -12,6 +12,14 @@ import { dataTestSelector } from '../test_utils/selector'
 import StatisticsPage from './StatisticsPage.vue'
 
 describe('StatisticsPage', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should render saved daily reset time', async () => {
     const { wrapper } = await mountStatisticsPage({
       dailyResetTime: new Time(10, 30)
@@ -67,10 +75,10 @@ describe('StatisticsPage', () => {
     ]
 
     // When current time hasn't reached the daily reset time that day.
+    vi.setSystemTime(new Date(2025, 3, 11, 9, 0))
     const { wrapper } = await mountStatisticsPage({
       dailyResetTime: new Time(10, 30),
-      focusSessionRecords,
-      currentDate: new Date(2025, 3, 11, 9, 0)
+      focusSessionRecords
     })
 
     const rows = wrapper.find('tbody').findAll('tr')
@@ -83,10 +91,10 @@ describe('StatisticsPage', () => {
     expect(rows[6].find(dataTestSelector('completed-focus-sessions')).text()).toBe('2') // 2025-04-04 10:30 - 2025-04-05 10:29
 
     // When current time has reached the daily reset time that day.
+    vi.setSystemTime(new Date(2025, 3, 11, 10, 30))
     const { wrapper: newWrapper } = await mountStatisticsPage({
       dailyResetTime: new Time(10, 30),
-      focusSessionRecords,
-      currentDate: new Date(2025, 3, 11, 10, 30)
+      focusSessionRecords
     })
 
     const newRows = newWrapper.find('tbody').findAll('tr')
@@ -100,19 +108,20 @@ describe('StatisticsPage', () => {
   })
 
   it('should reload statistics after completed a focus session', async () => {
-    const { wrapper, clock, timer } = await mountStatisticsPage({
+    vi.setSystemTime(new Date(2025, 3, 4, 10, 30))
+    const { wrapper, timer } = await mountStatisticsPage({
       dailyResetTime: new Time(9, 30),
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 1 })
       }),
-      currentDate: new Date(2025, 3, 4, 10, 30)
+      focusSessionRecords: []
     })
     timer.start()
 
     let rows = wrapper.find('tbody').findAll('tr')
     expect(rows[0].find(dataTestSelector('completed-focus-sessions')).text()).toBe('0')
 
-    clock.advanceTime(1001)
+    vi.advanceTimersByTime(1001)
     await flushPromises()
 
     rows = wrapper.find('tbody').findAll('tr')
@@ -123,23 +132,15 @@ describe('StatisticsPage', () => {
 async function mountStatisticsPage({
   timerConfig = TimerConfig.newTestInstance(),
   dailyResetTime = new Time(15, 30),
-  focusSessionRecords = [newFocusSessionRecord()],
-  currentDate = new Date()
+  focusSessionRecords = [newFocusSessionRecord()]
 } = {}) {
   const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
   await dailyResetTimeStorageService.save(dailyResetTime)
 
-  const {
-    clock,
-    timer,
-    communicationManager,
-    listener,
-    focusSessionRecordStorageService,
-    currentDateService
-  } = await setUpListener({
-    timerConfig,
-    stubbedDate: currentDate
-  })
+  const { timer, communicationManager, listener, focusSessionRecordStorageService } =
+    await setUpListener({
+      timerConfig
+    })
 
   await focusSessionRecordStorageService.saveAll(focusSessionRecords)
 
@@ -150,13 +151,12 @@ async function mountStatisticsPage({
     props: {
       dailyResetTimeStorageService,
       updateSuccessNotifierService,
-      currentDateService,
       focusSessionRecordStorageService,
       port: communicationManager.clientConnect()
     }
   })
   await flushPromises()
-  return { wrapper, clock, timer, dailyResetTimeStorageService, updateSuccessNotifierService }
+  return { wrapper, timer, dailyResetTimeStorageService, updateSuccessNotifierService }
 }
 
 async function saveTime(wrapper: VueWrapper, newTime: string) {

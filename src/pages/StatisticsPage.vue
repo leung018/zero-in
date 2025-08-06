@@ -6,7 +6,6 @@ import { onBeforeMount, ref } from 'vue'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { Time } from '../domain/time'
 import type { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
-import { CurrentDateService } from '../infra/current_date'
 import { WorkRequestName } from '../service_workers/request'
 import { WorkResponseName } from '../service_workers/response'
 import ContentTemplate from './components/ContentTemplate.vue'
@@ -17,13 +16,11 @@ type Stat = { day: string; completedFocusSessions: number }
 const {
   dailyResetTimeStorageService,
   updateSuccessNotifierService,
-  currentDateService,
   focusSessionRecordStorageService,
   port
 } = defineProps<{
   dailyResetTimeStorageService: DailyResetTimeStorageService
   updateSuccessNotifierService: UpdateSuccessNotifierService
-  currentDateService: CurrentDateService
   focusSessionRecordStorageService: FocusSessionRecordStorageService
   port: ClientPort
 }>()
@@ -79,7 +76,7 @@ function startPeriodicPing(port: ClientPort, intervalMs: number) {
 
 async function setStats(dailyResetTime: Time) {
   const records = await focusSessionRecordStorageService.getAll()
-  let inclusiveEndDate = currentDateService.getDate()
+  let inclusiveEndDate = new Date()
   const inclusiveStartDate = getMostRecentDate(dailyResetTime, inclusiveEndDate)
   for (let i = 0; i < stats.value.length; i++) {
     stats.value[i].completedFocusSessions = records.filter(

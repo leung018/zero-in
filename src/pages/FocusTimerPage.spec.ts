@@ -1,5 +1,5 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { TimerConfig } from '../domain/timer/config'
 import { Duration } from '../domain/timer/duration'
 import { FakeCommunicationManager } from '../infra/communication'
@@ -8,6 +8,14 @@ import { dataTestSelector } from '../test_utils/selector'
 import FocusTimerPage from './FocusTimerPage.vue'
 
 describe('FocusTimerPage', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should display initial stage and remaining time properly', async () => {
     const { wrapper } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
@@ -22,21 +30,21 @@ describe('FocusTimerPage', () => {
   })
 
   it('should reduce the time after timer is started', async () => {
-    const { wrapper, clock } = await startListenerAndMountPage(
+    const { wrapper } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ minutes: 25 })
       })
     )
     await startTimer(wrapper)
 
-    clock.advanceTime(2001)
+    vi.advanceTimersByTime(2001)
     await flushPromises()
 
     assertTimerDisplay(wrapper, '24:58')
   })
 
   it('should reopened timer page can update the component if the timer is started already', async () => {
-    const { wrapper, clock, communicationManager } = await startListenerAndMountPage(
+    const { wrapper, communicationManager } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ minutes: 10 })
       })
@@ -46,7 +54,7 @@ describe('FocusTimerPage', () => {
 
     const newWrapper = await mountPage({ port: communicationManager.clientConnect() })
 
-    clock.advanceTime(1001)
+    vi.advanceTimersByTime(1001)
     await flushPromises()
 
     assertTimerDisplay(newWrapper, '09:59')
@@ -76,7 +84,7 @@ describe('FocusTimerPage', () => {
   })
 
   it('should able to pause the timer', async () => {
-    const { wrapper, clock, communicationManager } = await startListenerAndMountPage(
+    const { wrapper, communicationManager } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ minutes: 10 })
       })
@@ -84,10 +92,10 @@ describe('FocusTimerPage', () => {
 
     await startTimer(wrapper)
 
-    clock.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
     await pauseTimer(wrapper)
 
-    clock.advanceTime(2000)
+    vi.advanceTimersByTime(2000)
     await flushPromises()
 
     assertTimerDisplay(wrapper, '09:59')
@@ -115,7 +123,7 @@ describe('FocusTimerPage', () => {
   })
 
   it('should able to restart timer', async () => {
-    const { wrapper, clock } = await startListenerAndMountPage(
+    const { wrapper } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ minutes: 10 })
       })
@@ -123,18 +131,18 @@ describe('FocusTimerPage', () => {
 
     await startTimer(wrapper)
 
-    clock.advanceTime(500)
+    vi.advanceTimersByTime(500)
     await pauseTimer(wrapper)
 
     await startTimer(wrapper)
-    clock.advanceTime(500)
+    vi.advanceTimersByTime(500)
     await flushPromises()
 
     assertTimerDisplay(wrapper, '09:59')
   })
 
   it('should display hint of break if focus duration has passed', async () => {
-    const { wrapper, clock } = await startListenerAndMountPage(
+    const { wrapper } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 2 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
@@ -144,7 +152,7 @@ describe('FocusTimerPage', () => {
 
     await startTimer(wrapper)
 
-    clock.advanceTime(2000)
+    vi.advanceTimersByTime(2000)
     await flushPromises()
 
     assertCurrentStage(wrapper, '1st Break')
@@ -158,7 +166,7 @@ describe('FocusTimerPage', () => {
   })
 
   it('should display focus and break without Ordinal if focus sessions per cycle is 1', async () => {
-    const { wrapper, clock } = await startListenerAndMountPage(
+    const { wrapper } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 2 }),
         focusSessionsPerCycle: 1
@@ -169,14 +177,14 @@ describe('FocusTimerPage', () => {
 
     await startTimer(wrapper)
 
-    clock.advanceTime(2000)
+    vi.advanceTimersByTime(2000)
     await flushPromises()
 
     assertCurrentStage(wrapper, 'Break')
   })
 
   it('should prevent bug of last second pause and restart may freezing the component', async () => {
-    const { wrapper, clock } = await startListenerAndMountPage(
+    const { wrapper } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 2 })
@@ -185,20 +193,20 @@ describe('FocusTimerPage', () => {
 
     await startTimer(wrapper)
 
-    clock.advanceTime(2500)
+    vi.advanceTimersByTime(2500)
     await pauseTimer(wrapper)
 
     assertTimerDisplay(wrapper, '00:01')
 
     await startTimer(wrapper)
-    clock.advanceTime(600)
+    vi.advanceTimersByTime(600)
     await flushPromises()
 
     assertTimerDisplay(wrapper, '00:02')
   })
 
   it('should display hint of long break', async () => {
-    const { wrapper, clock } = await startListenerAndMountPage(
+    const { wrapper } = await startListenerAndMountPage(
       TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
@@ -209,17 +217,17 @@ describe('FocusTimerPage', () => {
 
     // 1st Focus
     await startTimer(wrapper)
-    clock.advanceTime(3000)
+    vi.advanceTimersByTime(3000)
     await flushPromises()
 
     // Short Break
     await startTimer(wrapper)
-    clock.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
     await flushPromises()
 
     // 2nd Focus
     await startTimer(wrapper)
-    clock.advanceTime(3000)
+    vi.advanceTimersByTime(3000)
     await flushPromises()
 
     assertCurrentStage(wrapper, 'Long Break')
@@ -335,14 +343,14 @@ describe('FocusTimerPage', () => {
 })
 
 async function startListenerAndMountPage(timerConfig = TimerConfig.newTestInstance()) {
-  const { clock, communicationManager, listener } = await setUpListener({
+  const { communicationManager, listener } = await setUpListener({
     timerConfig
   })
   await listener.start()
   const wrapper = await mountPage({
     port: communicationManager.clientConnect()
   })
-  return { wrapper, clock, communicationManager }
+  return { wrapper, communicationManager }
 }
 
 async function mountPage({ port = new FakeCommunicationManager().clientConnect() } = {}) {

@@ -1,19 +1,26 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { FocusTimer } from '.'
-import { FakePeriodicTaskScheduler } from '../../infra/scheduler'
 import { TimerConfig } from './config'
 import { Duration } from './duration'
 import { TimerStage } from './stage'
 import { newTestTimerState, type TimerState } from './state'
 
 describe('FocusTimer', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should initial state is set correctly', () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ minutes: 10 })
       })
     )
-    scheduler.advanceTime(1000) // if the timer is not started, the time should not change
+    vi.advanceTimersByTime(1000) // if the timer is not started, the time should not change
 
     const expected: TimerState = {
       remaining: new Duration({ minutes: 10 }),
@@ -27,7 +34,7 @@ describe('FocusTimer', () => {
   it('should round up to seconds of duration in the config', () => {
     // Since some timer publishing logic is assume that the smallest unit is second, duration in config is enforced in second precision to keep that correct
 
-    const { timer } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 10, milliseconds: 1 }),
         shortBreakDuration: new Duration({ seconds: 3, milliseconds: 1 }),
@@ -64,14 +71,14 @@ describe('FocusTimer', () => {
   })
 
   it('should setConfig reset the state too', () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ minutes: 10 }),
         focusSessionsPerCycle: 4
       })
     )
     timer.restartFocus(3)
-    scheduler.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
 
     timer.setConfig(
       newConfig({
@@ -89,16 +96,16 @@ describe('FocusTimer', () => {
   })
 
   it('should able to start focus', () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ minutes: 10 })
       })
     )
     timer.start()
-    scheduler.advanceTime(1001)
+    vi.advanceTimersByTime(1001)
 
     const expected: TimerState = {
-      remaining: new Duration({ minutes: 9, seconds: 59 }),
+      remaining: new Duration({ minutes: 9, seconds: 58, milliseconds: 999 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
@@ -107,30 +114,30 @@ describe('FocusTimer', () => {
   })
 
   it("should extra call of start won't affect the timer", () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ minutes: 10 })
       })
     )
 
     timer.start()
-    scheduler.advanceTime(950)
+    vi.advanceTimersByTime(950)
     timer.start()
-    scheduler.advanceTime(1050)
+    vi.advanceTimersByTime(1050)
 
     expect(timer.getState().remaining).toEqual(new Duration({ minutes: 9, seconds: 58 }))
   })
 
   it('should able to pause', () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ minutes: 10 })
       })
     )
     timer.start()
-    scheduler.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
     timer.pause()
-    scheduler.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
 
     const expected: TimerState = {
       remaining: new Duration({ minutes: 9, seconds: 59 }),
@@ -141,23 +148,25 @@ describe('FocusTimer', () => {
     expect(timer.getState()).toEqual(expected)
   })
 
-  it('should pause and start remain accuracy to 100ms', () => {
-    const { timer, scheduler } = createTimer(
+  it('should pause and start remain accuracy', () => {
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ minutes: 10 })
       })
     )
     timer.start()
-    scheduler.advanceTime(1200)
+    vi.advanceTimersByTime(1259)
     timer.pause()
     timer.start()
-    scheduler.advanceTime(1800)
+    vi.advanceTimersByTime(1742)
 
-    expect(timer.getState().remaining).toEqual(new Duration({ minutes: 9, seconds: 57 }))
+    expect(timer.getState().remaining).toEqual(
+      new Duration({ minutes: 9, seconds: 56, milliseconds: 999 })
+    )
   })
 
   it('should able to subscribe updates', () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 5 }),
@@ -170,7 +179,7 @@ describe('FocusTimer', () => {
     })
 
     timer.start()
-    scheduler.advanceTime(2000)
+    vi.advanceTimersByTime(2000)
 
     const expectedUpdates: TimerState[] = [
       {
@@ -200,7 +209,7 @@ describe('FocusTimer', () => {
     ]
     expect(updates).toEqual(expectedUpdates)
 
-    scheduler.advanceTime(2000)
+    vi.advanceTimersByTime(2000)
 
     expect(updates.length).toBe(5)
     const expectedLastUpdate: TimerState = {
@@ -213,7 +222,7 @@ describe('FocusTimer', () => {
   })
 
   it('should receive immediate update whenever timer pause', () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ minutes: 10 })
       })
@@ -224,7 +233,7 @@ describe('FocusTimer', () => {
     })
 
     timer.start()
-    scheduler.advanceTime(2000)
+    vi.advanceTimersByTime(2000)
 
     const lastUpdatesLength = updates.length
 
@@ -234,8 +243,8 @@ describe('FocusTimer', () => {
     expect(updates[lastUpdatesLength].remaining).toEqual(new Duration({ minutes: 9, seconds: 58 }))
   })
 
-  it('should after pause and restart again, subscription can receive updates properly', () => {
-    const { timer, scheduler } = createTimer(
+  it('should after pause and start again, subscription can receive updates properly', () => {
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ minutes: 10 })
       })
@@ -246,32 +255,32 @@ describe('FocusTimer', () => {
     })
 
     timer.start()
-    scheduler.advanceTime(1400)
+    vi.advanceTimersByTime(1450)
 
     timer.pause()
 
     const lastUpdatesLength = updates.length
 
     timer.start()
-    scheduler.advanceTime(600)
+    vi.advanceTimersByTime(550)
 
     expect(updates[lastUpdatesLength].remaining).toEqual(
-      new Duration({ minutes: 9, seconds: 58, milliseconds: 600 }) // Whenever timer is started, it will publish the current state
+      new Duration({ minutes: 9, seconds: 58, milliseconds: 550 }) // Whenever timer is started, it will publish the current state
     )
     expect(updates[lastUpdatesLength + 1].remaining).toEqual(
-      new Duration({ minutes: 9, seconds: 58 }) // After 600ms since restart, the remaining time should be 9:58 and it should be published
+      new Duration({ minutes: 9, seconds: 58 }) // After 550ms since restart, the remaining time should be 9:58 and it should be published
     )
   })
 
   it('should receive immediate update whenever subscribe', () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ minutes: 10 })
       })
     )
     const updates: TimerState[] = []
     timer.start()
-    scheduler.advanceTime(1100)
+    vi.advanceTimersByTime(1100)
 
     timer.setOnTimerUpdate((update) => {
       updates.push(update)
@@ -284,7 +293,7 @@ describe('FocusTimer', () => {
     )
   })
   it('should able to trigger callback when stage transit', async () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
@@ -299,27 +308,27 @@ describe('FocusTimer', () => {
     })
 
     timer.start()
-    scheduler.advanceTime(3000)
+    vi.advanceTimersByTime(3000)
 
     expect(lastStage).toBe(TimerStage.FOCUS)
     expect(currentStage).toBe(TimerStage.SHORT_BREAK)
 
     timer.start()
-    scheduler.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
 
     expect(lastStage).toBe(TimerStage.SHORT_BREAK)
     expect(currentStage).toBe(TimerStage.FOCUS)
   })
 
   it('should switch to break after focus duration is passed', () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 })
       })
     )
     timer.start()
-    scheduler.advanceTime(3000)
+    vi.advanceTimersByTime(3000)
 
     const expected: TimerState = {
       remaining: new Duration({ seconds: 1 }),
@@ -331,16 +340,16 @@ describe('FocusTimer', () => {
   })
 
   it('should switch back to focus after break duration is passed', () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 })
       })
     )
     timer.start()
-    scheduler.advanceTime(3000)
+    vi.advanceTimersByTime(3000)
     timer.start()
-    scheduler.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
 
     const expected: TimerState = {
       remaining: new Duration({ seconds: 3 }),
@@ -352,7 +361,7 @@ describe('FocusTimer', () => {
   })
 
   it('should start long break after finish all focus sessions in that cycle', () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
@@ -363,15 +372,15 @@ describe('FocusTimer', () => {
 
     // 1st Focus
     timer.start()
-    scheduler.advanceTime(3000)
+    vi.advanceTimersByTime(3000)
 
     // Short Break
     timer.start()
-    scheduler.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
 
     // 2nd Focus
     timer.start()
-    scheduler.advanceTime(3000)
+    vi.advanceTimersByTime(3000)
 
     // Long Break
     const expected: TimerState = {
@@ -384,7 +393,7 @@ describe('FocusTimer', () => {
   })
 
   it('should reset the cycle after long break', () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
@@ -395,19 +404,19 @@ describe('FocusTimer', () => {
 
     // 1st Focus
     timer.start()
-    scheduler.advanceTime(3000)
+    vi.advanceTimersByTime(3000)
 
     // Short Break
     timer.start()
-    scheduler.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
 
     // 2nd Focus
     timer.start()
-    scheduler.advanceTime(3000)
+    vi.advanceTimersByTime(3000)
 
     // Long Break
     timer.start()
-    scheduler.advanceTime(2000)
+    vi.advanceTimersByTime(2000)
 
     // After Long Break, it should reset to Focus
     let expected: TimerState = {
@@ -420,15 +429,15 @@ describe('FocusTimer', () => {
 
     // 1st Focus
     timer.start()
-    scheduler.advanceTime(3000)
+    vi.advanceTimersByTime(3000)
 
     // Short Break
     timer.start()
-    scheduler.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
 
     // 2rd Focus
     timer.start()
-    scheduler.advanceTime(3000)
+    vi.advanceTimersByTime(3000)
 
     // Long Break again
     expected = {
@@ -441,7 +450,7 @@ describe('FocusTimer', () => {
   })
 
   it('should able to jump to short break', () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 10 }),
         shortBreakDuration: new Duration({ seconds: 2 }),
@@ -450,11 +459,11 @@ describe('FocusTimer', () => {
     )
 
     timer.start()
-    scheduler.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
     timer.pause()
 
     timer.restartShortBreak()
-    scheduler.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
 
     const expected: TimerState = {
       remaining: new Duration({ seconds: 1 }),
@@ -466,7 +475,7 @@ describe('FocusTimer', () => {
   })
 
   it('should able to jump to long break', () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
@@ -476,15 +485,15 @@ describe('FocusTimer', () => {
     )
 
     timer.start()
-    scheduler.advanceTime(3000)
+    vi.advanceTimersByTime(3000)
 
     // 1st Short Break
     timer.start()
-    scheduler.advanceTime(500)
+    vi.advanceTimersByTime(500)
     timer.pause()
 
     timer.restartLongBreak()
-    scheduler.advanceTime(500)
+    vi.advanceTimersByTime(500)
 
     const expected: TimerState = {
       remaining: new Duration({ seconds: 1, milliseconds: 500 }),
@@ -496,7 +505,7 @@ describe('FocusTimer', () => {
   })
 
   it('should reset focusSessionsCompleted after long break', () => {
-    const { timer, scheduler } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 3 }),
         longBreakDuration: new Duration({ seconds: 2 }),
@@ -506,17 +515,17 @@ describe('FocusTimer', () => {
 
     // Complete 1 focus session
     timer.start()
-    scheduler.advanceTime(3000)
+    vi.advanceTimersByTime(3000)
 
     timer.restartLongBreak()
-    scheduler.advanceTime(2000)
+    vi.advanceTimersByTime(2000)
 
     expect(timer.getState().stage).toBe(TimerStage.FOCUS)
     expect(timer.getState().focusSessionsCompleted).toBe(0)
   })
 
   it('should able to jump to focus', () => {
-    const { timer } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 10 }),
         longBreakDuration: new Duration({ seconds: 3 }),
@@ -537,7 +546,7 @@ describe('FocusTimer', () => {
   })
 
   it('should able to jump to specific focus', () => {
-    const { timer } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusSessionsPerCycle: 4
       })
@@ -559,7 +568,7 @@ describe('FocusTimer', () => {
   })
 
   it('should able to jump to specific short break', () => {
-    const { timer } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusSessionsPerCycle: 4
       })
@@ -579,7 +588,7 @@ describe('FocusTimer', () => {
   })
 
   it('should able to set state', async () => {
-    const { timer } = createTimer(
+    const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
@@ -610,7 +619,7 @@ describe('FocusTimer', () => {
   })
 
   it('should start the timer if newState is running', async () => {
-    const { timer, scheduler } = createTimer()
+    const timer = newTimer()
 
     const targetState = newTestTimerState({
       remaining: new Duration({ seconds: 3 }),
@@ -623,13 +632,13 @@ describe('FocusTimer', () => {
     })
 
     timer.setState(targetState)
-    scheduler.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
 
     expect(updates[updates.length - 1].remaining).toEqual(new Duration({ seconds: 2 }))
   })
 
   it('should pause the timer if newState is not running', async () => {
-    const { timer, scheduler } = createTimer()
+    const timer = newTimer()
 
     const updates: TimerState[] = []
     timer.setOnTimerUpdate((state) => {
@@ -637,7 +646,7 @@ describe('FocusTimer', () => {
     })
 
     timer.start()
-    scheduler.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
 
     const targetState = newTestTimerState({
       remaining: new Duration({ seconds: 200 }),
@@ -647,14 +656,14 @@ describe('FocusTimer', () => {
     timer.setState(targetState)
     const originalUpdatesLength = updates.length
 
-    scheduler.advanceTime(3000)
+    vi.advanceTimersByTime(3000)
 
     expect(updates.length).toBe(originalUpdatesLength)
     expect(timer.getState().remaining).toEqual(new Duration({ seconds: 200 }))
   })
 
   it('should after set onTimerStart callback, every time timer start running, it should be called', () => {
-    const { timer } = createTimer()
+    const timer = newTimer()
 
     let triggerCount = 0
     const onTimerStart = () => {
@@ -689,14 +698,6 @@ describe('FocusTimer', () => {
 
 const newConfig = TimerConfig.newTestInstance
 
-function createTimer(timerConfig = newConfig()) {
-  const scheduler = new FakePeriodicTaskScheduler()
-  const timer = FocusTimer.createFake({
-    scheduler,
-    timerConfig
-  })
-  return {
-    scheduler,
-    timer
-  }
+function newTimer(timerConfig = newConfig()) {
+  return FocusTimer.create(timerConfig)
 }

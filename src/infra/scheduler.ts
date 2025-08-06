@@ -1,18 +1,25 @@
-import { FakeClock } from '../utils/clock'
-
-export interface PeriodicTaskScheduler {
-  scheduleTask(task: () => void, ms: number): void
-  stopTask(): void
-}
-
-export class PeriodicTaskSchedulerImpl implements PeriodicTaskScheduler {
+export class PeriodicTaskScheduler {
   private intervalId: NodeJS.Timeout | null = null
 
-  scheduleTask(task: () => void, intervalMs: number) {
+  scheduleTask(
+    task: () => void,
+    { intervalMs, startAfterMs }: { intervalMs: number; startAfterMs?: number }
+  ) {
     if (this.intervalId) {
       throw TaskSchedulingError.taskAlreadyScheduledError()
     }
 
+    if (startAfterMs) {
+      setTimeout(() => {
+        task()
+        this.startInterval(task, intervalMs)
+      }, startAfterMs)
+    } else {
+      this.startInterval(task, intervalMs)
+    }
+  }
+
+  private startInterval(task: () => void, intervalMs: number) {
     const intervalId = setInterval(task, intervalMs)
     this.intervalId = intervalId
   }
@@ -30,49 +37,5 @@ export class TaskSchedulingError extends Error {
     return new TaskSchedulingError(
       'Task is already scheduled. Stop the task before scheduling a new one.'
     )
-  }
-}
-
-export class FakePeriodicTaskScheduler implements PeriodicTaskScheduler {
-  private task: (() => void) | null = null
-  private intervalMs: number = 0
-  private lastTaskTime: number = 0
-  private fakeClock: FakeClock
-  private subscriptionId: number | null = null
-
-  constructor(fakeClock = new FakeClock()) {
-    this.fakeClock = fakeClock
-  }
-
-  scheduleTask(task: () => void, intervalMs: number): void {
-    if (this.task) {
-      throw TaskSchedulingError.taskAlreadyScheduledError()
-    }
-
-    this.task = task
-    this.intervalMs = intervalMs
-    this.lastTaskTime = this.fakeClock.getElapsedTime()
-
-    this.subscriptionId = this.fakeClock.subscribeTimeChange((elapsedMs) => {
-      const intervals = Math.floor((elapsedMs - this.lastTaskTime) / this.intervalMs)
-      for (let i = 0; i < intervals; i++) {
-        if (this.task !== null) this.task()
-        this.lastTaskTime += this.intervalMs
-      }
-    })
-  }
-
-  stopTask(): void {
-    this.task = null
-    this.intervalMs = 0
-    this.lastTaskTime = this.fakeClock.getElapsedTime()
-    if (this.subscriptionId !== null) {
-      this.fakeClock.unsubscribeTimeChange(this.subscriptionId)
-      this.subscriptionId = null
-    }
-  }
-
-  advanceTime(ms: number) {
-    this.fakeClock.advanceTime(ms)
   }
 }

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { CurrentDateService } from '@/infra/current_date'
 import type { ClientPort } from '@/service_workers/listener'
 import { getMostRecentDate } from '@/utils/date'
 import { computed, onBeforeMount, ref } from 'vue'
@@ -11,13 +10,11 @@ import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
 import { WorkRequestName } from '../service_workers/request'
 import { WorkResponseName } from '../service_workers/response'
 
-const { port, focusSessionRecordStorageService, dailyResetTimeStorageService, currentDateService } =
-  defineProps<{
-    port: ClientPort
-    focusSessionRecordStorageService: FocusSessionRecordStorageService
-    dailyResetTimeStorageService: DailyResetTimeStorageService
-    currentDateService: CurrentDateService
-  }>()
+const { port, focusSessionRecordStorageService, dailyResetTimeStorageService } = defineProps<{
+  port: ClientPort
+  focusSessionRecordStorageService: FocusSessionRecordStorageService
+  dailyResetTimeStorageService: DailyResetTimeStorageService
+}>()
 
 const timerStage = ref<TimerStage>(TimerStage.FOCUS)
 const focusSessionsPerCycle = ref(0)
@@ -53,7 +50,7 @@ onBeforeMount(async () => {
 })
 
 async function getTotalFocusSessionsAfter(dailyResetTime: Time): Promise<number> {
-  const startDate = getMostRecentDate(dailyResetTime, currentDateService.getDate())
+  const startDate = getMostRecentDate(dailyResetTime)
 
   const totalFocusSessions = (
     await focusSessionRecordStorageService

@@ -23,7 +23,6 @@ import { BrowserNewTabService } from '../infra/browser/new_tab'
 import { BrowserSoundService } from '../infra/browser/sound'
 import type { BrowsingControlService } from '../infra/browsing_control'
 import { type CommunicationManager, type Port } from '../infra/communication'
-import { CurrentDateService } from '../infra/current_date'
 import { DesktopNotificationService } from '../infra/desktop_notification'
 import { MultipleActionService } from '../infra/multiple_actions'
 import { SubscriptionManager } from '../utils/subscription'
@@ -45,7 +44,6 @@ type ListenerParams = {
   browsingRulesStorageService: BrowsingRulesStorageService
   weeklyScheduleStorageService: WeeklyScheduleStorageService
   blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
-  currentDateService: CurrentDateService
   focusSessionRecordHouseKeepDays: number
   timer: FocusTimer
 }
@@ -67,7 +65,6 @@ export class BackgroundListener {
       browsingControlService: new BrowserBrowsingControlService(),
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
       weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
-      currentDateService: CurrentDateService.create(),
       blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.create(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
       timer: FocusTimer.create()
@@ -87,7 +84,6 @@ export class BackgroundListener {
   private timerStateStorageService: TimerStateStorageService
   private timerConfigStorageService: TimerConfigStorageService
   private closeTabsService: ActionService
-  private currentDateService: CurrentDateService
 
   private timerStateSubscriptionManager = new SubscriptionManager<TimerState>()
 
@@ -121,8 +117,7 @@ export class BackgroundListener {
             shortBreak: timerConfig.shortBreakDuration
           }
         }
-      },
-      currentDateService: params.currentDateService
+      }
     })
     this.browsingRulesStorageService = params.browsingRulesStorageService
 
@@ -142,7 +137,6 @@ export class BackgroundListener {
     this.closeTabsService = params.closeTabsService
     this.focusSessionRecordStorageService = params.focusSessionRecordStorageService
     this.focusSessionRecordHouseKeepDays = params.focusSessionRecordHouseKeepDays
-    this.currentDateService = params.currentDateService
 
     this.timer = params.timer
   }
@@ -218,14 +212,10 @@ export class BackgroundListener {
     return this.focusSessionRecordStorageService
       .getAll()
       .then((records) => {
-        this.focusSessionRecordStorageService.saveAll([
-          ...records,
-          newFocusSessionRecord(this.currentDateService.getDate())
-        ])
+        this.focusSessionRecordStorageService.saveAll([...records, newFocusSessionRecord()])
       })
       .then(() => {
         FocusSessionRecordHousekeeper.houseKeep({
-          now: this.currentDateService.getDate(),
           focusSessionRecordStorageService: this.focusSessionRecordStorageService,
           houseKeepDays: this.focusSessionRecordHouseKeepDays
         })

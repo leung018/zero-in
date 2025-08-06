@@ -5,7 +5,6 @@ import { TimerConfigStorageService } from '@/domain/timer/config/storage'
 import { FocusSessionRecordStorageService } from '@/domain/timer/record/storage'
 import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import { UpdateSuccessNotifierService } from '@/infra/browser/update_success_notifier'
-import { CurrentDateService } from '@/infra/current_date'
 import { FirebaseServices } from '@/infra/firebase/services'
 import BlockingSettingPage from '@/pages/BlockingSettingPage/index.vue'
 import FeedbackPage from '@/pages/FeedbackPage.vue'
@@ -122,7 +121,6 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
       v-else-if="currentPath === PATH.STATISTICS"
       :daily-reset-time-storage-service="DailyResetTimeStorageService.create()"
       :update-success-notifier-service="updateSuccessNotifierService"
-      :current-date-service="CurrentDateService.create()"
       :focus-session-record-storage-service="FocusSessionRecordStorageService.create()"
       :port="port"
     />
