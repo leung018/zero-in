@@ -1,6 +1,6 @@
 import config from '../../config'
 import { CurrentDateService } from '../../infra/current_date'
-import { PeriodicTaskSchedulerImpl, type PeriodicTaskScheduler } from '../../infra/scheduler'
+import { PeriodicTaskScheduler } from '../../infra/scheduler'
 import { getDateAfter } from '../../utils/date'
 import type { TimerConfig } from './config'
 import { Duration } from './duration'
@@ -20,8 +20,6 @@ export class FocusTimer {
 
   static create(timerConfig: TimerConfig = config.getDefaultTimerConfig()) {
     return new FocusTimer({
-      currentDateService: CurrentDateService.create(),
-      scheduler: new PeriodicTaskSchedulerImpl(),
       timerConfig
     })
   }
@@ -30,9 +28,9 @@ export class FocusTimer {
 
   private config: TimerConfig
 
-  private scheduler: PeriodicTaskScheduler
+  private scheduler = new PeriodicTaskScheduler()
 
-  private currentDateService: CurrentDateService
+  private currentDateService = CurrentDateService.create()
 
   private onStageCompleted: (lastStage: TimerStage) => void = () => {}
 
@@ -40,21 +38,11 @@ export class FocusTimer {
 
   private onTimerStart: () => void = () => {}
 
-  private constructor({
-    currentDateService,
-    timerConfig,
-    scheduler
-  }: {
-    currentDateService: CurrentDateService
-    timerConfig: TimerConfig
-    scheduler: PeriodicTaskScheduler
-  }) {
+  private constructor({ timerConfig }: { timerConfig: TimerConfig }) {
     this.config = this.newInternalConfig(timerConfig)
-    this.scheduler = scheduler
-    this.currentDateService = currentDateService
     this.timerStatePayload = new TimerStatePayload({
-      pausedAt: currentDateService.getDate(),
-      endAt: getDateAfter(currentDateService.getDate(), timerConfig.focusDuration),
+      pausedAt: this.currentDateService.getDate(),
+      endAt: getDateAfter(this.currentDateService.getDate(), timerConfig.focusDuration),
       focusSessionsCompleted: 0,
       stage: TimerStage.FOCUS
     })

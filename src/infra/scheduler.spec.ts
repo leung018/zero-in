@@ -1,7 +1,7 @@
 import { afterEach } from 'node:test'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { assertToThrowError } from '../test_utils/check_error'
-import { PeriodicTaskSchedulerImpl, TaskSchedulingError } from './scheduler'
+import { PeriodicTaskScheduler, TaskSchedulingError } from './scheduler'
 
 describe('PeriodicTaskSchedulerImpl', () => {
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe('PeriodicTaskSchedulerImpl', () => {
   it('should execute the callback according the schedules', () => {
     const mock = vi.fn(() => {})
 
-    const scheduler = new PeriodicTaskSchedulerImpl()
+    const scheduler = new PeriodicTaskScheduler()
     scheduler.scheduleTask(mock, 1000)
 
     expect(mock).not.toHaveBeenCalled()
@@ -26,7 +26,7 @@ describe('PeriodicTaskSchedulerImpl', () => {
   it('should first task execute after startAfterMs if it is specified', () => {
     const mock = vi.fn(() => {})
 
-    const scheduler = new PeriodicTaskSchedulerImpl()
+    const scheduler = new PeriodicTaskScheduler()
     scheduler.scheduleTask(mock, 50, 500)
 
     vi.advanceTimersByTime(499)
@@ -42,7 +42,7 @@ describe('PeriodicTaskSchedulerImpl', () => {
   it('should able to stop scheduled task', () => {
     const mock = vi.fn(() => {})
 
-    const scheduler = new PeriodicTaskSchedulerImpl()
+    const scheduler = new PeriodicTaskScheduler()
 
     scheduler.scheduleTask(mock, 1000)
     scheduler.stopTask()
@@ -52,7 +52,7 @@ describe('PeriodicTaskSchedulerImpl', () => {
   })
 
   it('should throw error when scheduleTask without previous scheduled task is stopped', () => {
-    const scheduler = new PeriodicTaskSchedulerImpl()
+    const scheduler = new PeriodicTaskScheduler()
 
     const mock = vi.fn(() => {})
 
@@ -75,7 +75,7 @@ describe('PeriodicTaskSchedulerImpl', () => {
   it('should able to stop task in the scheduled task', () => {
     const mock = vi.fn(() => {})
 
-    const scheduler = new PeriodicTaskSchedulerImpl()
+    const scheduler = new PeriodicTaskScheduler()
     scheduler.scheduleTask(() => {
       mock()
       scheduler.stopTask()
