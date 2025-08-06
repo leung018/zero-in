@@ -217,37 +217,31 @@ export class FocusTimer {
   }
 
   private setToBeginOfLongBreak() {
-    const now = new Date()
-    this.timerStatePayload = this.timerStatePayload.withUpdate({
-      stage: TimerStage.LONG_BREAK,
-      endAt: getDateAfter(now, this.config.longBreakDuration),
-      pausedAt: now
-    })
+    this.timerStatePayload = this.timerStatePayload
+      .pausedWith(this.config.longBreakDuration)
+      .withUpdate({
+        stage: TimerStage.LONG_BREAK
+      })
   }
 
   private setToBeginOfShortBreak() {
-    const now = new Date()
-    this.timerStatePayload = this.timerStatePayload.withUpdate({
-      stage: TimerStage.SHORT_BREAK,
-      endAt: getDateAfter(now, this.config.shortBreakDuration),
-      pausedAt: now
-    })
+    this.timerStatePayload = this.timerStatePayload
+      .pausedWith(this.config.shortBreakDuration)
+      .withUpdate({
+        stage: TimerStage.SHORT_BREAK
+      })
   }
 
   private setToBeginOfFocus() {
-    const now = new Date()
-    this.timerStatePayload = this.timerStatePayload.withUpdate({
-      stage: TimerStage.FOCUS,
-      endAt: getDateAfter(now, this.config.focusDuration),
-      pausedAt: now
-    })
+    this.timerStatePayload = this.timerStatePayload
+      .pausedWith(this.config.focusDuration)
+      .withUpdate({
+        stage: TimerStage.FOCUS
+      })
   }
 
   setState(state: TimerState) {
-    const now = new Date()
-    this.timerStatePayload = new TimerStatePayload({
-      pausedAt: now,
-      endAt: getDateAfter(now, state.remaining),
+    this.timerStatePayload = this.timerStatePayload.pausedWith(state.remaining).withUpdate({
       stage: state.stage,
       focusSessionsCompleted: state.focusSessionsCompleted
     })
@@ -261,10 +255,10 @@ export class FocusTimer {
 }
 
 class TimerStatePayload {
-  pausedAt?: Date
-  endAt: Date
-  stage: TimerStage
-  focusSessionsCompleted: number
+  readonly pausedAt?: Date
+  readonly endAt: Date
+  readonly stage: TimerStage
+  readonly focusSessionsCompleted: number
 
   constructor({
     pausedAt,
@@ -301,6 +295,15 @@ class TimerStatePayload {
 
   isRunning(): boolean {
     return this.pausedAt === undefined
+  }
+
+  pausedWith(remaining: Duration): TimerStatePayload {
+    const now = new Date()
+    return new TimerStatePayload({
+      ...this,
+      pausedAt: now,
+      endAt: getDateAfter(now, remaining)
+    })
   }
 
   withUpdate(update: Partial<TimerStatePayload>): TimerStatePayload {
