@@ -7,16 +7,6 @@ import { TimerStage } from './stage'
 import type { TimerState } from './state'
 
 export class FocusTimer {
-  /**
-   * Smallest unit of time that the timer can measure.
-   */
-  static readonly TIMER_UNIT: Duration = new Duration({ milliseconds: 100 })
-
-  /**
-   * Interval at which the timer will notify other about the current state.
-   */
-  static readonly NOTIFY_INTERVAL: Duration = new Duration({ seconds: 1 })
-
   static create(timerConfig: TimerConfig = config.getDefaultTimerConfig()) {
     return new FocusTimer({
       timerConfig
@@ -96,15 +86,17 @@ export class FocusTimer {
       return
     }
 
-    this.scheduler.scheduleTask(() => {
-      if (this.remaining().isZero()) {
-        this.stopRunning()
-        this.completeCurrentStage()
-      }
-      if (this.remaining().totalMilliseconds % FocusTimer.NOTIFY_INTERVAL.totalMilliseconds === 0) {
+    this.scheduler.scheduleTask(
+      () => {
+        if (this.remaining().isZero()) {
+          this.stopRunning()
+          this.completeCurrentStage()
+        }
         this.notifyTimerUpdate()
-      }
-    }, FocusTimer.TIMER_UNIT.totalMilliseconds)
+      },
+      1000,
+      this.getMsUntilNextSecond()
+    )
 
     this.timerStatePayload = this.timerStatePayload.withUpdate({
       pausedAt: undefined,
@@ -116,6 +108,10 @@ export class FocusTimer {
 
     this.onTimerStart()
     this.notifyTimerUpdate()
+  }
+
+  private getMsUntilNextSecond() {
+    return this.remaining().totalMilliseconds % 1000
   }
 
   pause() {
