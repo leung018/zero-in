@@ -1,11 +1,6 @@
 import config from '../../config'
 import { CurrentDateService } from '../../infra/current_date'
-import {
-  FakePeriodicTaskScheduler,
-  PeriodicTaskSchedulerImpl,
-  type PeriodicTaskScheduler
-} from '../../infra/scheduler'
-import { FakeClock } from '../../utils/clock'
+import { PeriodicTaskSchedulerImpl, type PeriodicTaskScheduler } from '../../infra/scheduler'
 import { getDateAfter } from '../../utils/date'
 import type { TimerConfig } from './config'
 import { Duration } from './duration'
@@ -28,21 +23,6 @@ export class FocusTimer {
       currentDateService: CurrentDateService.create(),
       scheduler: new PeriodicTaskSchedulerImpl(),
       timerConfig
-    })
-  }
-
-  static createFake({
-    stubbedDate = new Date(),
-    fakeClock = new FakeClock(),
-    timerConfig = config.getDefaultTimerConfig()
-  } = {}) {
-    const scheduler = new FakePeriodicTaskScheduler(fakeClock)
-    const currentDateService = CurrentDateService.createFake({ stubbedDate, fakeClock })
-
-    return new FocusTimer({
-      timerConfig,
-      scheduler,
-      currentDateService
     })
   }
 

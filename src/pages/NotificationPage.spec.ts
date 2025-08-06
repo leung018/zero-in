@@ -1,5 +1,5 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   newTestNotificationSetting,
   type NotificationSetting
@@ -14,6 +14,14 @@ import { dataTestSelector } from '../test_utils/selector'
 import NotificationPage from './NotificationPage.vue'
 
 describe('NotificationPage', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should render the saved notification setting', async () => {
     let { wrapper } = await mountPage({
       notificationSetting: {
@@ -69,7 +77,7 @@ describe('NotificationPage', () => {
     const {
       wrapper,
       clientPort,
-      clock,
+
       desktopNotificationService,
       soundService,
       reminderTabService
@@ -92,7 +100,7 @@ describe('NotificationPage', () => {
 
     // Start the timer and finish the focus session. Notification should be triggered when finish focus session
     await clientPort.send({ name: WorkRequestName.START_TIMER })
-    clock.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
 
     expect(reminderTabService.hasTriggered()).toBe(false)
     expect(desktopNotificationService.isNotificationActive()).toBe(true)
@@ -117,7 +125,6 @@ async function mountPage({
   const updateSuccessNotifierService = new FakeActionService()
 
   const {
-    clock,
     communicationManager,
     desktopNotificationService,
     soundService,
@@ -147,7 +154,7 @@ async function mountPage({
     notificationSettingStorageService,
     updateSuccessNotifierService,
     clientPort,
-    clock,
+
     desktopNotificationService,
     soundService,
     reminderTabService

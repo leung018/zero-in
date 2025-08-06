@@ -1,5 +1,5 @@
 import { VueWrapper, flushPromises, mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { BrowsingRules } from '@/domain/browsing_rules'
 import { Weekday, WeeklySchedule } from '@/domain/schedules'
@@ -10,6 +10,14 @@ import { dataTestSelector } from '../../../test_utils/selector'
 import WeeklySchedulesEditor from './index.vue'
 
 describe('WeeklySchedulesEditor', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should render weekday checkboxes properly', async () => {
     // Add this test because it is easy to make mistake when dealing with Weekday enum
 
@@ -234,6 +242,7 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should add or remove schedule affect the activated redirect', async () => {
+    vi.setSystemTime(new Date('2025-02-03T11:00:00')) // 2025-02-03 is Monday
     const { wrapper, browsingControlService } = await mountWeeklySchedulesEditor({
       browsingRules: new BrowsingRules({ blockedDomains: ['google.com'] }),
       weeklySchedules: [
@@ -242,8 +251,7 @@ describe('WeeklySchedulesEditor', () => {
           startTime: new Time(10, 30),
           endTime: new Time(12, 0)
         })
-      ],
-      currentDate: new Date('2025-02-03T11:00:00') // 2025-02-03 is Monday
+      ]
     })
 
     expect(await browsingControlService.getActivatedBrowsingRules()).toBeNull()
@@ -274,8 +282,7 @@ async function mountWeeklySchedulesEditor({
       startTime: new Time(10, 0),
       endTime: new Time(12, 0)
     })
-  ],
-  currentDate = new Date()
+  ]
 } = {}) {
   const {
     communicationManager,
@@ -283,9 +290,7 @@ async function mountWeeklySchedulesEditor({
     weeklyScheduleStorageService,
     browsingRulesStorageService,
     browsingControlService
-  } = await setUpListener({
-    stubbedDate: currentDate
-  })
+  } = await setUpListener()
 
   await weeklyScheduleStorageService.saveAll(weeklySchedules)
   await browsingRulesStorageService.save(browsingRules)

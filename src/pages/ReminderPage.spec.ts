@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { Time } from '../domain/time'
 import { TimerConfig } from '../domain/timer/config'
@@ -12,8 +12,16 @@ import { dataTestSelector } from '../test_utils/selector'
 import ReminderPage from './ReminderPage.vue'
 
 describe('ReminderPage', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should display proper reminder', async () => {
-    const { clock, timer, wrapper } = await mountPage({
+    const { timer, wrapper } = await mountPage({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 }),
@@ -23,14 +31,14 @@ describe('ReminderPage', () => {
     })
 
     timer.start()
-    clock.advanceTime(3001)
+    vi.advanceTimersByTime(3001)
     await flushPromises()
 
     expect(wrapper.find(dataTestSelector('hint-message')).text()).toContain('Start 1st Break')
   })
 
   it('should click start button to start timer again', async () => {
-    const { clock, timer, wrapper } = await mountPage({
+    const { timer, wrapper } = await mountPage({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 2 }),
@@ -39,13 +47,13 @@ describe('ReminderPage', () => {
     })
 
     timer.start()
-    clock.advanceTime(3001)
+    vi.advanceTimersByTime(3001)
     await flushPromises()
 
     expect(timer.getState().isRunning).toBe(false)
 
     wrapper.find(dataTestSelector('start-button')).trigger('click')
-    clock.advanceTime(1000)
+    vi.advanceTimersByTime(1000)
     await flushPromises()
 
     const state = timer.getState()
@@ -55,14 +63,14 @@ describe('ReminderPage', () => {
   })
 
   it('should display daily completed focus sessions', async () => {
+    vi.setSystemTime(new Date(2025, 2, 2, 14, 0))
     const { wrapper } = await mountPage({
       focusSessionRecords: [
         newFocusSessionRecord(new Date(2025, 2, 1, 15, 2)),
         newFocusSessionRecord(new Date(2025, 2, 1, 15, 3)),
         newFocusSessionRecord(new Date(2025, 2, 1, 15, 5))
       ],
-      dailyCutOffTime: new Time(15, 3),
-      currentDate: new Date(2025, 2, 2, 14, 0)
+      dailyCutOffTime: new Time(15, 3)
     })
 
     expect(wrapper.find(dataTestSelector('reset-time')).text()).toBe('15:03')
@@ -73,19 +81,16 @@ describe('ReminderPage', () => {
 async function mountPage({
   timerConfig = TimerConfig.newTestInstance(),
   focusSessionRecords = [newFocusSessionRecord()],
-  dailyCutOffTime = new Time(0, 0),
-  currentDate = new Date()
+  dailyCutOffTime = new Time(0, 0)
 } = {}) {
   const {
-    clock,
     timer,
     communicationManager,
     listener,
     focusSessionRecordStorageService,
     currentDateService
   } = await setUpListener({
-    timerConfig,
-    stubbedDate: currentDate
+    timerConfig
   })
   const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
   await dailyResetTimeStorageService.save(dailyCutOffTime)
@@ -106,5 +111,5 @@ async function mountPage({
     }
   })
   await flushPromises()
-  return { wrapper, clock, timer, closeCurrentTabService }
+  return { wrapper, timer, closeCurrentTabService }
 }

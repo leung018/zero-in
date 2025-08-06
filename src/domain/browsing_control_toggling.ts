@@ -43,7 +43,7 @@ export class BrowsingControlTogglingService {
         shortBreak: new Duration({ seconds: 0 })
       })
     },
-    currentDateService = CurrentDateService.createFake()
+    currentDateService = CurrentDateService.create()
   } = {}) {
     return new BrowsingControlTogglingService({
       browsingControlService,

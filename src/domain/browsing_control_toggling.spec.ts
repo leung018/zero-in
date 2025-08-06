@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { FakeBrowsingControlService } from '../infra/browsing_control'
 import { CurrentDateService } from '../infra/current_date'
 import type { BlockingTimerIntegration } from './blocking_timer_integration'
@@ -17,6 +17,14 @@ import { TimerStage } from './timer/stage'
 describe('BrowsingControlTogglingService', () => {
   const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
 
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('should toggle according to if current time is within schedule', async () => {
     const schedules = [
       new WeeklySchedule({
@@ -26,20 +34,21 @@ describe('BrowsingControlTogglingService', () => {
       })
     ]
 
+    vi.setSystemTime(new Date('2025-02-03T11:00:00')) // 2025-02-03 is Monday
     expect(
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules,
-        currentDate: new Date('2025-02-03T11:00:00'), // 2025-02-03 is Monday
         pauseBlockingDuringBreaks: false,
         pauseBlockingWhenTimerNotRunning: false
       })
     ).toEqual(browsingRules)
+
+    vi.setSystemTime(new Date('2025-02-03T17:01:00'))
     expect(
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules,
-        currentDate: new Date('2025-02-03T17:01:00'),
         pauseBlockingDuringBreaks: false,
         pauseBlockingWhenTimerNotRunning: false
       })
@@ -56,11 +65,11 @@ describe('BrowsingControlTogglingService', () => {
       })
     ]
 
+    vi.setSystemTime(new Date('2025-02-04T16:59:59')) // 2025-02-04 is Tuesday
     expect(
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules,
-        currentDate: new Date('2025-02-04T16:59:59'), // 2025-02-04 is Tuesday
         pauseBlockingDuringBreaks: false,
         pauseBlockingWhenTimerNotRunning: false,
         focusSessionRecords: [
@@ -73,11 +82,11 @@ describe('BrowsingControlTogglingService', () => {
       })
     ).toEqual(browsingRules)
 
+    vi.setSystemTime(new Date('2025-02-03T16:59:59'))
     expect(
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules,
-        currentDate: new Date('2025-02-03T16:59:59'),
         pauseBlockingDuringBreaks: false,
         pauseBlockingWhenTimerNotRunning: false,
         focusSessionRecords: [
@@ -93,7 +102,6 @@ describe('BrowsingControlTogglingService', () => {
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules: [],
-        currentDate: new Date(),
         pauseBlockingDuringBreaks: false,
         pauseBlockingWhenTimerNotRunning: false
       })
@@ -116,12 +124,12 @@ describe('BrowsingControlTogglingService', () => {
     ]
 
     // 2025-02-03 is Monday
+    vi.setSystemTime(new Date('2025-02-03T11:00:00'))
     expect(
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules,
         focusSessionRecords: [newFocusSessionRecord(new Date('2025-02-03T10:00:00'))],
-        currentDate: new Date('2025-02-03T11:00:00'),
         pauseBlockingDuringBreaks: false,
         pauseBlockingWhenTimerNotRunning: false
       })
@@ -288,7 +296,6 @@ async function getBrowsingRulesAfterToggling({
       endTime: new Time(23, 59)
     })
   ],
-  currentDate = new Date(),
   pauseBlockingDuringBreaks = false,
   pauseBlockingWhenTimerNotRunning = false,
   timerInfo = newTimerInfo(),
@@ -300,7 +307,7 @@ async function getBrowsingRulesAfterToggling({
   const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
   await weeklyScheduleStorageService.saveAll(schedules)
 
-  const currentDateService = CurrentDateService.createFake({ stubbedDate: currentDate })
+  const currentDateService = CurrentDateService.create()
 
   const browsingControlService = new FakeBrowsingControlService()
 
