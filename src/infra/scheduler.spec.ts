@@ -16,7 +16,7 @@ describe('PeriodicTaskSchedulerImpl', () => {
     const mock = vi.fn(() => {})
 
     const scheduler = new PeriodicTaskScheduler()
-    scheduler.scheduleTask(mock, 1000)
+    scheduler.scheduleTask(mock, { intervalMs: 1000 })
 
     expect(mock).not.toHaveBeenCalled()
     vi.advanceTimersByTime(2001)
@@ -27,7 +27,7 @@ describe('PeriodicTaskSchedulerImpl', () => {
     const mock = vi.fn(() => {})
 
     const scheduler = new PeriodicTaskScheduler()
-    scheduler.scheduleTask(mock, 50, 500)
+    scheduler.scheduleTask(mock, { intervalMs: 50, startAfterMs: 500 })
 
     vi.advanceTimersByTime(499)
     expect(mock).not.toHaveBeenCalled()
@@ -44,7 +44,7 @@ describe('PeriodicTaskSchedulerImpl', () => {
 
     const scheduler = new PeriodicTaskScheduler()
 
-    scheduler.scheduleTask(mock, 1000)
+    scheduler.scheduleTask(mock, { intervalMs: 1000 })
     scheduler.stopTask()
 
     vi.advanceTimersByTime(10000)
@@ -56,17 +56,17 @@ describe('PeriodicTaskSchedulerImpl', () => {
 
     const mock = vi.fn(() => {})
 
-    scheduler.scheduleTask(() => {}, 1000)
+    scheduler.scheduleTask(() => {}, { intervalMs: 1000 })
 
     assertToThrowError(() => {
-      scheduler.scheduleTask(mock, 1000)
+      scheduler.scheduleTask(mock, { intervalMs: 1000 })
     }, TaskSchedulingError.taskAlreadyScheduledError())
 
     vi.advanceTimersByTime(1500)
     expect(mock).not.toHaveBeenCalled()
 
     scheduler.stopTask()
-    scheduler.scheduleTask(mock, 1000)
+    scheduler.scheduleTask(mock, { intervalMs: 1000 })
 
     vi.advanceTimersByTime(1500)
     expect(mock).toHaveBeenCalledTimes(1)
@@ -76,10 +76,13 @@ describe('PeriodicTaskSchedulerImpl', () => {
     const mock = vi.fn(() => {})
 
     const scheduler = new PeriodicTaskScheduler()
-    scheduler.scheduleTask(() => {
-      mock()
-      scheduler.stopTask()
-    }, 1000)
+    scheduler.scheduleTask(
+      () => {
+        mock()
+        scheduler.stopTask()
+      },
+      { intervalMs: 1000 }
+    )
 
     vi.advanceTimersByTime(3000)
 

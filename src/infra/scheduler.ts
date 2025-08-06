@@ -1,7 +1,10 @@
 export class PeriodicTaskScheduler {
   private intervalId: NodeJS.Timeout | null = null
 
-  scheduleTask(task: () => void, intervalMs: number, startAfterMs?: number) {
+  scheduleTask(
+    task: () => void,
+    { intervalMs, startAfterMs }: { intervalMs: number; startAfterMs?: number }
+  ) {
     if (this.intervalId) {
       throw TaskSchedulingError.taskAlreadyScheduledError()
     }

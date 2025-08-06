@@ -94,8 +94,7 @@ export class FocusTimer {
         }
         this.notifyTimerUpdate()
       },
-      1000,
-      this.getMsUntilNextSecond()
+      { intervalMs: 1000, startAfterMs: this.getMsUntilNextSecond() }
     )
 
     this.timerStatePayload = this.timerStatePayload.withUpdate({
