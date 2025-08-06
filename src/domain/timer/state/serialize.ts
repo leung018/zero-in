@@ -1,10 +1,10 @@
-import type { TimerState } from '.'
 import { Duration } from '../duration'
+import type { TimerExternalState } from './external'
 import { TimerStateSchemas } from './schema'
 
 type SerializedTimerState = TimerStateSchemas[2]
 
-export function serializeTimerState(timerState: TimerState): SerializedTimerState {
+export function serializeTimerState(timerState: TimerExternalState): SerializedTimerState {
   return {
     dataVersion: 2,
     remainingMilliseconds: timerState.remaining.totalMilliseconds,
@@ -14,7 +14,7 @@ export function serializeTimerState(timerState: TimerState): SerializedTimerStat
   }
 }
 
-export function deserializeTimerState(data: SerializedTimerState): TimerState {
+export function deserializeTimerState(data: SerializedTimerState): TimerExternalState {
   return {
     remaining: new Duration({ milliseconds: data.remainingMilliseconds }),
     isRunning: data.isRunning,

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import type { TimerState } from '.'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
 import { Duration } from '../duration'
 import { TimerStage } from '../stage'
+import type { TimerExternalState } from './external'
 import type { TimerStateSchemas } from './schema'
 import { TimerStateStorageService } from './storage'
 
@@ -14,7 +14,7 @@ describe('TimerStateStorageService', () => {
 
   it('should save and get TimerState', async () => {
     const timerStateStorageService = TimerStateStorageService.createFake()
-    const timerState: TimerState = {
+    const timerState: TimerExternalState = {
       remaining: new Duration({ seconds: 100 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
@@ -36,7 +36,7 @@ describe('TimerStateStorageService', () => {
     fakeStorage.set(TimerStateStorageService.STORAGE_KEY, data)
 
     const timerStateStorageService = TimerStateStorageService.createFake(fakeStorage)
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ seconds: 100 }),
       isRunning: true,
       stage: TimerStage.FOCUS,

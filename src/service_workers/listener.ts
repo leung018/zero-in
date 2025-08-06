@@ -11,7 +11,7 @@ import { FocusSessionRecordHousekeeper } from '../domain/timer/record/house_keep
 import { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
 import { TimerStage } from '../domain/timer/stage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
-import type { TimerState } from '../domain/timer/state'
+import type { TimerExternalState } from '../domain/timer/state/external'
 import { TimerStateStorageService } from '../domain/timer/state/storage'
 import { type ActionService } from '../infra/action'
 import { type BadgeColor, type BadgeDisplayService } from '../infra/badge'
@@ -85,7 +85,7 @@ export class BackgroundListener {
   private timerConfigStorageService: TimerConfigStorageService
   private closeTabsService: ActionService
 
-  private timerStateSubscriptionManager = new SubscriptionManager<TimerState>()
+  private timerStateSubscriptionManager = new SubscriptionManager<TimerExternalState>()
 
   private focusSessionRecordStorageService: FocusSessionRecordStorageService
   private focusSessionRecordHouseKeepDays: number

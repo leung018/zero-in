@@ -7,7 +7,7 @@ import {
 } from '../../domain/blocking_timer_integration'
 import { BrowsingRules } from '../../domain/browsing_rules'
 import { TimerStage } from '../../domain/timer/stage'
-import { newTestTimerState } from '../../domain/timer/state'
+import { newTestTimerExternalState } from '../../domain/timer/state/external'
 import { FakeActionService } from '../../infra/action'
 import { assertSelectorCheckboxValue } from '../../test_utils/assert'
 import { setUpListener } from '../../test_utils/listener'
@@ -77,7 +77,7 @@ describe('TimerIntegrationSetting', () => {
       blockingTimerIntegration: newTestBlockingTimerIntegration({
         pauseBlockingDuringBreaks: false
       }),
-      timerState: newTestTimerState({
+      timerState: newTestTimerExternalState({
         stage: TimerStage.SHORT_BREAK,
         isRunning: true
       }),
@@ -105,7 +105,7 @@ async function mountTimerIntegrationSetting({
   blockingTimerIntegration = config.getDefaultBlockingTimerIntegration(),
   browsingRules = new BrowsingRules(),
   weeklySchedules = [],
-  timerState = newTestTimerState()
+  timerState = newTestTimerExternalState()
 } = {}) {
   const updateSuccessNotifierService = new FakeActionService()
 

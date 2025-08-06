@@ -11,7 +11,7 @@ import { TimerConfig } from '../domain/timer/config'
 import { Duration } from '../domain/timer/duration'
 import type { FocusSessionRecord } from '../domain/timer/record'
 import { TimerStage } from '../domain/timer/stage'
-import type { TimerState } from '../domain/timer/state'
+import type { TimerExternalState } from '../domain/timer/state/external'
 import { type Badge, type BadgeColor } from '../infra/badge'
 import { setUpListener } from '../test_utils/listener'
 import type { ClientPort } from './listener'
@@ -319,7 +319,7 @@ describe('BackgroundListener', () => {
       })
     })
 
-    const targetState: TimerState = {
+    const targetState: TimerExternalState = {
       remaining: new Duration({ seconds: 1000 }),
       isRunning: true,
       stage: TimerStage.FOCUS,

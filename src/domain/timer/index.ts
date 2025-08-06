@@ -4,7 +4,7 @@ import { getDateAfter } from '../../utils/date'
 import type { TimerConfig } from './config'
 import { Duration } from './duration'
 import { TimerStage } from './stage'
-import type { TimerState } from './state'
+import type { TimerExternalState } from './state/external'
 
 export class FocusTimer {
   static create(timerConfig: TimerConfig = config.getDefaultTimerConfig()) {
@@ -21,7 +21,7 @@ export class FocusTimer {
 
   private onStageCompleted: (lastStage: TimerStage) => void = () => {}
 
-  private onTimerUpdate: (state: TimerState) => void = () => {}
+  private onTimerUpdate: (state: TimerExternalState) => void = () => {}
 
   private onTimerStart: () => void = () => {}
 
@@ -51,7 +51,7 @@ export class FocusTimer {
     })
   }
 
-  getState(): Readonly<TimerState> {
+  getState(): Readonly<TimerExternalState> {
     return this.timerStatePayload.toTimerState()
   }
 
@@ -129,7 +129,7 @@ export class FocusTimer {
     this.onTimerStart = callback
   }
 
-  setOnTimerUpdate(callback: (state: TimerState) => void) {
+  setOnTimerUpdate(callback: (state: TimerExternalState) => void) {
     this.onTimerUpdate = callback
     this.notifyTimerUpdate()
   }
@@ -240,7 +240,7 @@ export class FocusTimer {
       })
   }
 
-  setState(state: TimerState) {
+  setState(state: TimerExternalState) {
     this.timerStatePayload = this.timerStatePayload.pausedWith(state.remaining).withUpdate({
       stage: state.stage,
       focusSessionsCompleted: state.focusSessionsCompleted
@@ -277,7 +277,7 @@ class TimerStatePayload {
     this.focusSessionsCompleted = focusSessionsCompleted
   }
 
-  toTimerState(now = new Date()): TimerState {
+  toTimerState(now = new Date()): TimerExternalState {
     return {
       remaining: this.remaining(now),
       stage: this.stage,

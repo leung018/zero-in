@@ -3,7 +3,7 @@ import { FocusTimer } from '.'
 import { TimerConfig } from './config'
 import { Duration } from './duration'
 import { TimerStage } from './stage'
-import { newTestTimerState, type TimerState } from './state'
+import { newTestTimerExternalState, type TimerExternalState } from './state/external'
 
 describe('FocusTimer', () => {
   beforeEach(() => {
@@ -22,7 +22,7 @@ describe('FocusTimer', () => {
     )
     vi.advanceTimersByTime(1000) // if the timer is not started, the time should not change
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ minutes: 10 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
@@ -86,7 +86,7 @@ describe('FocusTimer', () => {
       })
     )
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ minutes: 5 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
@@ -104,7 +104,7 @@ describe('FocusTimer', () => {
     timer.start()
     vi.advanceTimersByTime(1001)
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ minutes: 9, seconds: 58, milliseconds: 999 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
@@ -139,7 +139,7 @@ describe('FocusTimer', () => {
     timer.pause()
     vi.advanceTimersByTime(1000)
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ minutes: 9, seconds: 59 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
@@ -173,7 +173,7 @@ describe('FocusTimer', () => {
         focusSessionsPerCycle: 4
       })
     )
-    const updates: TimerState[] = []
+    const updates: TimerExternalState[] = []
     timer.setOnTimerUpdate((update) => {
       updates.push(update)
     })
@@ -181,7 +181,7 @@ describe('FocusTimer', () => {
     timer.start()
     vi.advanceTimersByTime(2000)
 
-    const expectedUpdates: TimerState[] = [
+    const expectedUpdates: TimerExternalState[] = [
       {
         remaining: new Duration({ seconds: 3 }),
         isRunning: false,
@@ -212,7 +212,7 @@ describe('FocusTimer', () => {
     vi.advanceTimersByTime(2000)
 
     expect(updates.length).toBe(5)
-    const expectedLastUpdate: TimerState = {
+    const expectedLastUpdate: TimerExternalState = {
       remaining: new Duration({ seconds: 5 }),
       isRunning: false,
       stage: TimerStage.SHORT_BREAK,
@@ -227,7 +227,7 @@ describe('FocusTimer', () => {
         focusDuration: new Duration({ minutes: 10 })
       })
     )
-    const updates: TimerState[] = []
+    const updates: TimerExternalState[] = []
     timer.setOnTimerUpdate((update) => {
       updates.push(update)
     })
@@ -249,7 +249,7 @@ describe('FocusTimer', () => {
         focusDuration: new Duration({ minutes: 10 })
       })
     )
-    const updates: TimerState[] = []
+    const updates: TimerExternalState[] = []
     timer.setOnTimerUpdate((update) => {
       updates.push(update)
     })
@@ -278,7 +278,7 @@ describe('FocusTimer', () => {
         focusDuration: new Duration({ minutes: 10 })
       })
     )
-    const updates: TimerState[] = []
+    const updates: TimerExternalState[] = []
     timer.start()
     vi.advanceTimersByTime(1100)
 
@@ -330,7 +330,7 @@ describe('FocusTimer', () => {
     timer.start()
     vi.advanceTimersByTime(3000)
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ seconds: 1 }),
       isRunning: false,
       stage: TimerStage.SHORT_BREAK,
@@ -351,7 +351,7 @@ describe('FocusTimer', () => {
     timer.start()
     vi.advanceTimersByTime(1000)
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ seconds: 3 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
@@ -383,7 +383,7 @@ describe('FocusTimer', () => {
     vi.advanceTimersByTime(3000)
 
     // Long Break
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ seconds: 2 }),
       isRunning: false,
       stage: TimerStage.LONG_BREAK,
@@ -419,7 +419,7 @@ describe('FocusTimer', () => {
     vi.advanceTimersByTime(2000)
 
     // After Long Break, it should reset to Focus
-    let expected: TimerState = {
+    let expected: TimerExternalState = {
       remaining: new Duration({ seconds: 3 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
@@ -465,7 +465,7 @@ describe('FocusTimer', () => {
     timer.restartShortBreak()
     vi.advanceTimersByTime(1000)
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ seconds: 1 }),
       isRunning: true,
       stage: TimerStage.SHORT_BREAK,
@@ -495,7 +495,7 @@ describe('FocusTimer', () => {
     timer.restartLongBreak()
     vi.advanceTimersByTime(500)
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ seconds: 1, milliseconds: 500 }),
       isRunning: true,
       stage: TimerStage.LONG_BREAK,
@@ -536,7 +536,7 @@ describe('FocusTimer', () => {
     timer.restartLongBreak()
     timer.restartFocus()
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ seconds: 10 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
@@ -596,7 +596,7 @@ describe('FocusTimer', () => {
       })
     )
 
-    const targetState: TimerState = {
+    const targetState: TimerExternalState = {
       remaining: new Duration({ seconds: 2 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
@@ -607,7 +607,7 @@ describe('FocusTimer', () => {
 
     expect(timer.getState()).toEqual(targetState)
 
-    const targetState2: TimerState = {
+    const targetState2: TimerExternalState = {
       remaining: new Duration({ seconds: 1 }),
       isRunning: false,
       stage: TimerStage.SHORT_BREAK,
@@ -621,12 +621,12 @@ describe('FocusTimer', () => {
   it('should start the timer if newState is running', async () => {
     const timer = newTimer()
 
-    const targetState = newTestTimerState({
+    const targetState = newTestTimerExternalState({
       remaining: new Duration({ seconds: 3 }),
       isRunning: true
     })
 
-    const updates: TimerState[] = []
+    const updates: TimerExternalState[] = []
     timer.setOnTimerUpdate((state) => {
       updates.push(state)
     })
@@ -640,7 +640,7 @@ describe('FocusTimer', () => {
   it('should pause the timer if newState is not running', async () => {
     const timer = newTimer()
 
-    const updates: TimerState[] = []
+    const updates: TimerExternalState[] = []
     timer.setOnTimerUpdate((state) => {
       updates.push(state)
     })
@@ -648,7 +648,7 @@ describe('FocusTimer', () => {
     timer.start()
     vi.advanceTimersByTime(1000)
 
-    const targetState = newTestTimerState({
+    const targetState = newTestTimerExternalState({
       remaining: new Duration({ seconds: 200 }),
       isRunning: false
     })

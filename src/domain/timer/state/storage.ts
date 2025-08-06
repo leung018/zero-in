@@ -1,7 +1,7 @@
-import type { TimerState } from '.'
 import { StorageInterface } from '../../../infra/storage/interface'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../../infra/storage/manager'
+import type { TimerExternalState } from './external'
 import { type TimerStateSchemas } from './schema'
 import { deserializeTimerState, serializeTimerState } from './serialize'
 
@@ -50,7 +50,7 @@ export class TimerStateStorageService {
     })
   }
 
-  async get(): Promise<TimerState | null> {
+  async get(): Promise<TimerExternalState | null> {
     const result = await this.storageManager.get()
     if (result == null) {
       return null
@@ -58,7 +58,7 @@ export class TimerStateStorageService {
     return deserializeTimerState(result)
   }
 
-  async save(timerState: TimerState): Promise<void> {
+  async save(timerState: TimerExternalState): Promise<void> {
     return this.storageManager.set(serializeTimerState(timerState))
   }
 }
