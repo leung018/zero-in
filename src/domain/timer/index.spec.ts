@@ -243,7 +243,7 @@ describe('FocusTimer', () => {
     expect(updates[lastUpdatesLength].remaining).toEqual(new Duration({ minutes: 9, seconds: 58 }))
   })
 
-  it('should after pause and restart again, subscription can receive updates properly', () => {
+  it('should after pause and start again, subscription can receive updates properly', () => {
     const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ minutes: 10 })
@@ -255,20 +255,20 @@ describe('FocusTimer', () => {
     })
 
     timer.start()
-    vi.advanceTimersByTime(1400)
+    vi.advanceTimersByTime(1450)
 
     timer.pause()
 
     const lastUpdatesLength = updates.length
 
     timer.start()
-    vi.advanceTimersByTime(600)
+    vi.advanceTimersByTime(550)
 
     expect(updates[lastUpdatesLength].remaining).toEqual(
-      new Duration({ minutes: 9, seconds: 58, milliseconds: 600 }) // Whenever timer is started, it will publish the current state
+      new Duration({ minutes: 9, seconds: 58, milliseconds: 550 }) // Whenever timer is started, it will publish the current state
     )
     expect(updates[lastUpdatesLength + 1].remaining).toEqual(
-      new Duration({ minutes: 9, seconds: 58 }) // After 600ms since restart, the remaining time should be 9:58 and it should be published
+      new Duration({ minutes: 9, seconds: 58 }) // After 550ms since restart, the remaining time should be 9:58 and it should be published
     )
   })
 
