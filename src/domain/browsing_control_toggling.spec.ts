@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { FakeBrowsingControlService } from '../infra/browsing_control'
-import { CurrentDateService } from '../infra/current_date'
 import type { BlockingTimerIntegration } from './blocking_timer_integration'
 import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 import { BrowsingControlTogglingService } from './browsing_control_toggling'
@@ -307,8 +306,6 @@ async function getBrowsingRulesAfterToggling({
   const weeklyScheduleStorageService = WeeklyScheduleStorageService.createFake()
   await weeklyScheduleStorageService.saveAll(schedules)
 
-  const currentDateService = CurrentDateService.create()
-
   const browsingControlService = new FakeBrowsingControlService()
 
   const blockingTimerIntegration: BlockingTimerIntegration = {
@@ -325,7 +322,6 @@ async function getBrowsingRulesAfterToggling({
     browsingRulesStorageService,
     browsingControlService,
     weeklyScheduleStorageService,
-    currentDateService,
     blockingTimerIntegrationStorageService,
     focusSessionRecordStorageService,
     timerInfoGetter: { getTimerInfo: () => timerInfo }

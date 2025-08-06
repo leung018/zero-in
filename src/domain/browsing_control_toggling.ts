@@ -1,5 +1,4 @@
 import { FakeBrowsingControlService, type BrowsingControlService } from '../infra/browsing_control'
-import { CurrentDateService } from '../infra/current_date'
 import { isSameDay } from '../utils/date'
 import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 import { BrowsingRulesStorageService } from './browsing_rules/storage'
@@ -26,7 +25,6 @@ export class BrowsingControlTogglingService {
   private focusSessionRecordStorageService: FocusSessionRecordStorageService
   private blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
   private timerInfoGetter: TimerInfoGetter
-  private currentDateService: CurrentDateService
 
   static createFake({
     browsingControlService = new FakeBrowsingControlService(),
@@ -42,8 +40,7 @@ export class BrowsingControlTogglingService {
         longBreak: new Duration({ seconds: 0 }),
         shortBreak: new Duration({ seconds: 0 })
       })
-    },
-    currentDateService = CurrentDateService.create()
+    }
   } = {}) {
     return new BrowsingControlTogglingService({
       browsingControlService,
@@ -51,8 +48,7 @@ export class BrowsingControlTogglingService {
       weeklyScheduleStorageService,
       blockingTimerIntegrationStorageService,
       focusSessionRecordStorageService,
-      timerInfoGetter,
-      currentDateService
+      timerInfoGetter
     })
   }
 
@@ -62,8 +58,7 @@ export class BrowsingControlTogglingService {
     focusSessionRecordStorageService,
     weeklyScheduleStorageService,
     blockingTimerIntegrationStorageService,
-    timerInfoGetter,
-    currentDateService
+    timerInfoGetter
   }: {
     browsingControlService: BrowsingControlService
     browsingRulesStorageService: BrowsingRulesStorageService
@@ -71,7 +66,6 @@ export class BrowsingControlTogglingService {
     weeklyScheduleStorageService: WeeklyScheduleStorageService
     blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
     timerInfoGetter: TimerInfoGetter
-    currentDateService: CurrentDateService
   }) {
     this.browsingControlService = browsingControlService
     this.browsingRulesStorageService = browsingRulesStorageService
@@ -79,7 +73,6 @@ export class BrowsingControlTogglingService {
     this.blockingTimerIntegrationStorageService = blockingTimerIntegrationStorageService
     this.focusSessionRecordStorageService = focusSessionRecordStorageService
     this.timerInfoGetter = timerInfoGetter
-    this.currentDateService = currentDateService
   }
 
   async run(): Promise<void> {
@@ -114,9 +107,8 @@ export class BrowsingControlTogglingService {
   private async isAnyScheduleActive(
     inputSchedules: ReadonlyArray<WeeklySchedule>
   ): Promise<boolean> {
-    const schedules = inputSchedules.filter((schedule) =>
-      schedule.isContain(this.currentDateService.getDate())
-    )
+    const now = new Date()
+    const schedules = inputSchedules.filter((schedule) => schedule.isContain(now))
 
     const focusSessionRecords = await this.focusSessionRecordStorageService.getAll()
 
@@ -125,9 +117,7 @@ export class BrowsingControlTogglingService {
         return true
       }
       const completedSessions = focusSessionRecords.filter(
-        (record) =>
-          isSameDay(record.completedAt, this.currentDateService.getDate()) &&
-          schedule.isContain(record.completedAt)
+        (record) => isSameDay(record.completedAt, now) && schedule.isContain(record.completedAt)
       )
       if (completedSessions.length < schedule.targetFocusSessions) {
         return true

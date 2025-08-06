@@ -83,15 +83,10 @@ async function mountPage({
   focusSessionRecords = [newFocusSessionRecord()],
   dailyCutOffTime = new Time(0, 0)
 } = {}) {
-  const {
-    timer,
-    communicationManager,
-    listener,
-    focusSessionRecordStorageService,
-    currentDateService
-  } = await setUpListener({
-    timerConfig
-  })
+  const { timer, communicationManager, listener, focusSessionRecordStorageService } =
+    await setUpListener({
+      timerConfig
+    })
   const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
   await dailyResetTimeStorageService.save(dailyCutOffTime)
 
@@ -106,8 +101,7 @@ async function mountPage({
       port: communicationManager.clientConnect(),
       closeCurrentTabService,
       focusSessionRecordStorageService,
-      dailyResetTimeStorageService,
-      currentDateService
+      dailyResetTimeStorageService
     }
   })
   await flushPromises()

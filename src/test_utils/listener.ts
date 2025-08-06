@@ -11,7 +11,6 @@ import { FakeActionService } from '../infra/action'
 import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeBrowsingControlService } from '../infra/browsing_control'
 import { FakeCommunicationManager } from '../infra/communication'
-import { CurrentDateService } from '../infra/current_date'
 import { DesktopNotificationService } from '../infra/desktop_notification'
 import { BackgroundListener } from '../service_workers/listener'
 
@@ -36,21 +35,18 @@ export async function setUpListener({
     focusSessionRecordStorageService: FocusSessionRecordStorageService.createFake()
   }
 
-  const currentDateService = CurrentDateService.create()
   await params.timerConfigStorageService.save(timerConfig)
   const timer = FocusTimer.create()
 
   const listener = BackgroundListener.createFake({
     timer,
     focusSessionRecordHouseKeepDays,
-    currentDateService,
     ...params
   })
 
   return {
     timer,
     listener,
-    currentDateService,
     ...params
   }
 }
