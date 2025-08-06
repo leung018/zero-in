@@ -236,12 +236,13 @@ export class FocusTimer {
   }
 
   setState(state: TimerExternalState) {
-    this.internalState = this.internalState.pausedWith(state.remaining).withUpdate({
-      stage: state.stage,
-      focusSessionsCompleted: state.focusSessionsCompleted
-    })
+    this.setInternalState(TimerInternalState.fromExternalState(state))
+  }
 
-    if (state.isRunning) {
+  setInternalState(state: TimerInternalState) {
+    this.internalState = state.pausedWith(state.remaining())
+
+    if (state.isRunning()) {
       this.start()
     } else {
       this.pause()

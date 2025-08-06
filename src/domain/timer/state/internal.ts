@@ -9,6 +9,16 @@ export class TimerInternalState {
   readonly stage: TimerStage
   readonly focusSessionsCompleted: number
 
+  static fromExternalState(state: TimerExternalState): TimerInternalState {
+    const now = new Date()
+    return new TimerInternalState({
+      pausedAt: state.isRunning ? undefined : now,
+      endAt: getDateAfter(now, state.remaining),
+      stage: state.stage,
+      focusSessionsCompleted: state.focusSessionsCompleted
+    })
+  }
+
   constructor({
     pausedAt,
     endAt,
