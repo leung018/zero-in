@@ -7,7 +7,6 @@ import {
 } from '../../domain/blocking_timer_integration'
 import { BrowsingRules } from '../../domain/browsing_rules'
 import { TimerStage } from '../../domain/timer/stage'
-import { newTestTimerExternalState } from '../../domain/timer/state/external'
 import { TimerInternalState } from '../../domain/timer/state/internal'
 import { FakeActionService } from '../../infra/action'
 import { assertSelectorCheckboxValue } from '../../test_utils/assert'
@@ -78,9 +77,9 @@ describe('TimerIntegrationSetting', () => {
       blockingTimerIntegration: newTestBlockingTimerIntegration({
         pauseBlockingDuringBreaks: false
       }),
-      timerState: newTestTimerExternalState({
+      timerState: TimerInternalState.newTestInstance({
         stage: TimerStage.SHORT_BREAK,
-        isRunning: true
+        pausedAt: undefined
       }),
       browsingRules,
       weeklySchedules: []
@@ -106,7 +105,7 @@ async function mountTimerIntegrationSetting({
   blockingTimerIntegration = config.getDefaultBlockingTimerIntegration(),
   browsingRules = new BrowsingRules(),
   weeklySchedules = [],
-  timerState = newTestTimerExternalState()
+  timerState = TimerInternalState.newTestInstance()
 } = {}) {
   const updateSuccessNotifierService = new FakeActionService()
 
@@ -123,7 +122,7 @@ async function mountTimerIntegrationSetting({
   await blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
   await browsingRulesStorageService.save(browsingRules)
   await weeklyScheduleStorageService.saveAll(weeklySchedules)
-  await timerStateStorageService.save(TimerInternalState.fromExternalState(timerState))
+  await timerStateStorageService.save(timerState)
 
   await listener.start()
 
