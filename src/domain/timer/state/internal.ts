@@ -119,7 +119,7 @@ export class TimerInternalState {
     })
   }
 
-  copyWith(update: Partial<TimerInternalState>): TimerInternalState {
+  copyWith(update: { focusSessionsCompleted?: number; stage?: TimerStage }): TimerInternalState {
     return new TimerInternalState({ ...this, ...update })
   }
 }
