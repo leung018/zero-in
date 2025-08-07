@@ -1,7 +1,9 @@
 import { StorageInterface } from '../../../infra/storage/interface'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../../infra/storage/manager'
-import type { TimerExternalState } from './external'
+import { getDateAfter } from '../../../utils/date'
+import { Duration } from '../duration'
+import { TimerInternalState } from './internal'
 import { type TimerStateSchemas } from './schema'
 import { deserializeTimerState, serializeTimerState } from './serialize'
 
@@ -16,13 +18,13 @@ export class TimerStateStorageService {
     return new TimerStateStorageService(storage)
   }
 
-  private storageManager: StorageManager<TimerStateSchemas[2]>
+  private storageManager: StorageManager<TimerStateSchemas[3]>
 
   private constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: TimerStateStorageService.STORAGE_KEY,
-      currentDataVersion: 2,
+      currentDataVersion: 3,
       migrators: [
         {
           oldDataVersion: undefined,
@@ -45,12 +47,28 @@ export class TimerStateStorageService {
               remainingMilliseconds: oldData.remainingSeconds * 1000
             }
           }
+        },
+        {
+          oldDataVersion: 2,
+          migratorFunc: (oldData: TimerStateSchemas[2]): TimerStateSchemas[3] => {
+            const now = new Date()
+            return {
+              dataVersion: 3,
+              pausedAt: oldData.isRunning ? null : now.getTime(),
+              endAt: getDateAfter(
+                now,
+                new Duration({ milliseconds: oldData.remainingMilliseconds })
+              ).getTime(),
+              stage: oldData.stage,
+              focusSessionsCompleted: oldData.focusSessionsCompleted
+            }
+          }
         }
       ]
     })
   }
 
-  async get(): Promise<TimerExternalState | null> {
+  async get(): Promise<TimerInternalState | null> {
     const result = await this.storageManager.get()
     if (result == null) {
       return null
@@ -58,7 +76,7 @@ export class TimerStateStorageService {
     return deserializeTimerState(result)
   }
 
-  async save(timerState: TimerExternalState): Promise<void> {
+  async save(timerState: TimerInternalState): Promise<void> {
     return this.storageManager.set(serializeTimerState(timerState))
   }
 }

@@ -20,5 +20,12 @@ export type TimerStateSchemas = [
     isRunning: boolean
     stage: TimerStage
     focusSessionsCompleted: number
+  },
+  {
+    dataVersion: 3
+    pausedAt: number | null
+    endAt: number
+    stage: TimerStage
+    focusSessionsCompleted: number
   }
 ]
