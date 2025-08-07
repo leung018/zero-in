@@ -282,7 +282,7 @@ describe('BackgroundListener', () => {
     }
   )
 
-  it('should getTimerState sync with timer', async () => {
+  it('should getTimerExternalState sync with timer', async () => {
     const { listener, clientPort } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 })
