@@ -13,7 +13,7 @@ export class TimerInternalState {
     const now = new Date()
     return new TimerInternalState({
       pausedAt: state.isRunning ? undefined : now,
-      endAt: getDateAfter(now, state.remaining),
+      endAt: getDateAfter({ from: now, duration: state.remaining }),
       stage: state.stage,
       focusSessionsCompleted: state.focusSessionsCompleted
     })
@@ -75,7 +75,7 @@ export class TimerInternalState {
     return new TimerInternalState({
       ...this,
       pausedAt: now,
-      endAt: getDateAfter(now, remaining)
+      endAt: getDateAfter({ from: now, duration: remaining })
     })
   }
 

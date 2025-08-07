@@ -27,8 +27,8 @@ export function getStartOfNextMinute(fromDate: Date = new Date()): Date {
   return nextMinute
 }
 
-export function getDateAfter(fromDate: Date, duration: Duration) {
-  const newDate = new Date(fromDate)
+export function getDateAfter({ from = new Date(), duration }: { from?: Date; duration: Duration }) {
+  const newDate = new Date(from)
   newDate.setMilliseconds(newDate.getMilliseconds() + duration.totalMilliseconds)
   return newDate
 }

@@ -26,7 +26,7 @@ describe('TimerStateStorageService', () => {
 
     const state = new TimerInternalState({
       pausedAt: new Date(),
-      endAt: getDateAfter(new Date(), new Duration({ seconds: 100 })),
+      endAt: getDateAfter({ duration: new Duration({ seconds: 100 }) }),
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 9
     })
@@ -35,7 +35,7 @@ describe('TimerStateStorageService', () => {
 
     const state2 = new TimerInternalState({
       pausedAt: undefined,
-      endAt: getDateAfter(new Date(), new Duration({ seconds: 100 })),
+      endAt: getDateAfter({ duration: new Duration({ seconds: 100 }) }),
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 0
     })
@@ -58,7 +58,7 @@ describe('TimerStateStorageService', () => {
     expect(result).toStrictEqual(
       new TimerInternalState({
         pausedAt: undefined,
-        endAt: getDateAfter(new Date(), new Duration({ seconds: 100 })),
+        endAt: getDateAfter({ duration: new Duration({ seconds: 100 }) }),
         stage: TimerStage.FOCUS,
         focusSessionsCompleted: 9
       })
@@ -80,7 +80,7 @@ describe('TimerStateStorageService', () => {
     expect(result).toStrictEqual(
       new TimerInternalState({
         pausedAt: new Date(),
-        endAt: getDateAfter(new Date(), new Duration({ seconds: 49 })),
+        endAt: getDateAfter({ duration: new Duration({ seconds: 49 }) }),
         stage: TimerStage.SHORT_BREAK,
         focusSessionsCompleted: 0
       })

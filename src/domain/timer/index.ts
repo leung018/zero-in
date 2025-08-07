@@ -29,7 +29,7 @@ export class FocusTimer {
     const now = new Date()
     this.internalState = new TimerInternalState({
       pausedAt: now,
-      endAt: getDateAfter(now, timerConfig.focusDuration),
+      endAt: getDateAfter({ from: now, duration: timerConfig.focusDuration }),
       focusSessionsCompleted: 0,
       stage: TimerStage.FOCUS
     })
@@ -102,10 +102,9 @@ export class FocusTimer {
 
     this.internalState = this.internalState.withUpdate({
       pausedAt: undefined,
-      endAt: getDateAfter(
-        new Date(),
-        dateDiff(this.internalState.pausedAt, this.internalState.endAt)
-      )
+      endAt: getDateAfter({
+        duration: dateDiff(this.internalState.pausedAt, this.internalState.endAt)
+      })
     })
 
     this.notifyTimerUpdate()

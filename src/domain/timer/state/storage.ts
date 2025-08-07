@@ -55,10 +55,10 @@ export class TimerStateStorageService {
             return {
               dataVersion: 3,
               pausedAt: oldData.isRunning ? null : now.getTime(),
-              endAt: getDateAfter(
-                now,
-                new Duration({ milliseconds: oldData.remainingMilliseconds })
-              ).getTime(),
+              endAt: getDateAfter({
+                from: now,
+                duration: new Duration({ milliseconds: oldData.remainingMilliseconds })
+              }).getTime(),
               stage: oldData.stage,
               focusSessionsCompleted: oldData.focusSessionsCompleted
             }

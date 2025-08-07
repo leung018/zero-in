@@ -337,7 +337,7 @@ describe('BackgroundListener', () => {
 
     const targetState = TimerInternalState.newTestInstance({
       pausedAt: undefined,
-      endAt: getDateAfter(new Date(), new Duration({ seconds: 1 })),
+      endAt: getDateAfter({ duration: new Duration({ seconds: 1 }) }),
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
     })

@@ -601,7 +601,7 @@ describe('FocusTimer', () => {
     // State that is running
     const internalState1: TimerInternalState = new TimerInternalState({
       pausedAt: undefined,
-      endAt: getDateAfter(new Date(), new Duration({ seconds: 2 })),
+      endAt: getDateAfter({ duration: new Duration({ seconds: 2 }) }),
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
     })
@@ -620,7 +620,7 @@ describe('FocusTimer', () => {
     // State that is paused
     const internalState2: TimerInternalState = new TimerInternalState({
       pausedAt: new Date(),
-      endAt: getDateAfter(new Date(), new Duration({ seconds: 1 })),
+      endAt: getDateAfter({ duration: new Duration({ seconds: 1 }) }),
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 2
     })
@@ -647,7 +647,7 @@ describe('FocusTimer', () => {
     timer.setInternalState(
       TimerInternalState.newTestInstance({
         pausedAt: undefined,
-        endAt: getDateAfter(new Date(), new Duration({ seconds: 3 }))
+        endAt: getDateAfter({ duration: new Duration({ seconds: 3 }) })
       })
     )
     vi.advanceTimersByTime(1000)
@@ -669,7 +669,7 @@ describe('FocusTimer', () => {
     timer.setInternalState(
       TimerInternalState.newTestInstance({
         pausedAt: new Date(),
-        endAt: getDateAfter(new Date(), new Duration({ seconds: 200 }))
+        endAt: getDateAfter({ duration: new Duration({ seconds: 200 }) })
       })
     )
     const originalUpdatesLength = updates.length
