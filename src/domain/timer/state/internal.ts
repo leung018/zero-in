@@ -9,6 +9,41 @@ export class TimerInternalState {
   readonly stage: TimerStage
   readonly focusSessionsCompleted: number
 
+  static newPausedState({
+    remaining,
+    stage,
+    focusSessionsCompleted
+  }: {
+    remaining: Duration
+    stage: TimerStage
+    focusSessionsCompleted: number
+  }) {
+    const now = new Date()
+    return new TimerInternalState({
+      pausedAt: now,
+      endAt: getDateAfter({ from: now, duration: remaining }),
+      stage,
+      focusSessionsCompleted
+    })
+  }
+
+  static newRunningState({
+    remaining,
+    stage,
+    focusSessionsCompleted
+  }: {
+    remaining: Duration
+    stage: TimerStage
+    focusSessionsCompleted: number
+  }) {
+    return new TimerInternalState({
+      pausedAt: undefined,
+      endAt: getDateAfter({ duration: remaining }),
+      stage,
+      focusSessionsCompleted
+    })
+  }
+
   static newTestInstance({
     pausedAt = undefined,
     endAt = new Date(),

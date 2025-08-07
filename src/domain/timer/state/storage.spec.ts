@@ -1,4 +1,3 @@
-import { getDateAfter } from '@/utils/date'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
 import { Duration } from '../duration'
@@ -24,18 +23,16 @@ describe('TimerStateStorageService', () => {
   it('should save and get TimerState', async () => {
     const timerStateStorageService = TimerStateStorageService.createFake()
 
-    const state = new TimerInternalState({
-      pausedAt: new Date(),
-      endAt: getDateAfter({ duration: new Duration({ seconds: 100 }) }),
+    const state = TimerInternalState.newPausedState({
+      remaining: new Duration({ seconds: 100 }),
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 9
     })
     await timerStateStorageService.save(state)
     expect(await timerStateStorageService.get()).toStrictEqual(state)
 
-    const state2 = new TimerInternalState({
-      pausedAt: undefined,
-      endAt: getDateAfter({ duration: new Duration({ seconds: 100 }) }),
+    const state2 = TimerInternalState.newRunningState({
+      remaining: new Duration({ seconds: 100 }),
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 0
     })
@@ -56,9 +53,8 @@ describe('TimerStateStorageService', () => {
     const timerStateStorageService = TimerStateStorageService.createFake(fakeStorage)
     const result = await timerStateStorageService.get()
     expect(result).toStrictEqual(
-      new TimerInternalState({
-        pausedAt: undefined,
-        endAt: getDateAfter({ duration: new Duration({ seconds: 100 }) }),
+      TimerInternalState.newRunningState({
+        remaining: new Duration({ seconds: 100 }),
         stage: TimerStage.FOCUS,
         focusSessionsCompleted: 9
       })
@@ -78,9 +74,8 @@ describe('TimerStateStorageService', () => {
     const timerStateStorageService = TimerStateStorageService.createFake(fakeStorage)
     const result = await timerStateStorageService.get()
     expect(result).toStrictEqual(
-      new TimerInternalState({
-        pausedAt: new Date(),
-        endAt: getDateAfter({ duration: new Duration({ seconds: 49 }) }),
+      TimerInternalState.newPausedState({
+        remaining: new Duration({ seconds: 49 }),
         stage: TimerStage.SHORT_BREAK,
         focusSessionsCompleted: 0
       })

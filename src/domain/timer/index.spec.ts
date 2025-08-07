@@ -599,9 +599,8 @@ describe('FocusTimer', () => {
     )
 
     // State that is running
-    const internalState1: TimerInternalState = new TimerInternalState({
-      pausedAt: undefined,
-      endAt: getDateAfter({ duration: new Duration({ seconds: 2 }) }),
+    const internalState1: TimerInternalState = TimerInternalState.newRunningState({
+      remaining: new Duration({ seconds: 2 }),
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
     })
@@ -618,9 +617,8 @@ describe('FocusTimer', () => {
     expect(timer.getInternalState()).toEqual(internalState1)
 
     // State that is paused
-    const internalState2: TimerInternalState = new TimerInternalState({
-      pausedAt: new Date(),
-      endAt: getDateAfter({ duration: new Duration({ seconds: 1 }) }),
+    const internalState2: TimerInternalState = TimerInternalState.newPausedState({
+      remaining: new Duration({ seconds: 1 }),
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 2
     })

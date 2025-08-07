@@ -26,12 +26,10 @@ export class FocusTimer {
 
   private constructor({ timerConfig }: { timerConfig: TimerConfig }) {
     this.config = this.newInternalConfig(timerConfig)
-    const now = new Date()
-    this.internalState = new TimerInternalState({
-      pausedAt: now,
-      endAt: getDateAfter({ from: now, duration: timerConfig.focusDuration }),
-      focusSessionsCompleted: 0,
-      stage: TimerStage.FOCUS
+    this.internalState = TimerInternalState.newPausedState({
+      remaining: this.config.focusDuration,
+      stage: TimerStage.FOCUS,
+      focusSessionsCompleted: 0
     })
   }
 
@@ -64,14 +62,9 @@ export class FocusTimer {
 
   setConfig(config: TimerConfig) {
     this.config = this.newInternalConfig(config)
-    const now = new Date()
     this.setInternalState(
-      new TimerInternalState({
-        pausedAt: now,
-        endAt: getDateAfter({
-          from: now,
-          duration: this.config.focusDuration
-        }),
+      TimerInternalState.newPausedState({
+        remaining: this.config.focusDuration,
         stage: TimerStage.FOCUS,
         focusSessionsCompleted: 0
       })
