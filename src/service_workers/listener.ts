@@ -11,7 +11,7 @@ import { FocusSessionRecordHousekeeper } from '../domain/timer/record/house_keep
 import { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
 import { TimerStage } from '../domain/timer/stage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
-import type { TimerState } from '../domain/timer/state'
+import type { TimerExternalState } from '../domain/timer/state/external'
 import { TimerStateStorageService } from '../domain/timer/state/storage'
 import { type ActionService } from '../infra/action'
 import { type BadgeColor, type BadgeDisplayService } from '../infra/badge'
@@ -85,7 +85,7 @@ export class BackgroundListener {
   private timerConfigStorageService: TimerConfigStorageService
   private closeTabsService: ActionService
 
-  private timerStateSubscriptionManager = new SubscriptionManager<TimerState>()
+  private timerStateSubscriptionManager = new SubscriptionManager<TimerExternalState>()
 
   private focusSessionRecordStorageService: FocusSessionRecordStorageService
   private focusSessionRecordHouseKeepDays: number
@@ -107,7 +107,7 @@ export class BackgroundListener {
       focusSessionRecordStorageService: params.focusSessionRecordStorageService,
       timerInfoGetter: {
         getTimerInfo: () => {
-          const timerState = params.timer.getState()
+          const timerState = params.timer.getExternalState()
           const timerConfig = params.timer.getConfig()
           return {
             timerStage: timerState.stage,
@@ -149,12 +149,14 @@ export class BackgroundListener {
   private async setUpTimer() {
     const timerConfig = await this.timerConfigStorageService.get()
     this.timer.setConfig(timerConfig)
-    const backupState = await this.timerStateStorageService.get()
-    if (backupState) {
-      this.timer.setState(backupState)
+    const backupInternalState = await this.timerStateStorageService.get()
+    if (backupInternalState) {
+      this.timer.setInternalState(backupInternalState)
     }
 
     this.timer.setOnStageCompleted((lastStage) => {
+      this.timerStateStorageService.save(this.timer.getInternalState())
+
       this.triggerNotification()
       this.badgeDisplayService.clearBadge()
       this.toggleBrowsingRules()
@@ -164,22 +166,15 @@ export class BackgroundListener {
       }
     })
 
-    this.timer.setOnTimerUpdate((newState) => {
-      this.timerStateStorageService.save(newState)
-      this.timerStateSubscriptionManager.broadcast(newState)
+    this.timer.setOnTimerUpdate((newExternalState) => {
+      this.timerStateSubscriptionManager.broadcast(newExternalState)
 
-      if (newState.isRunning) {
+      if (newExternalState.isRunning) {
         this.badgeDisplayService.displayBadge({
-          text: roundUpToRemainingMinutes(newState.remaining.remainingSeconds()).toString(),
-          color: getBadgeColor(newState.stage)
+          text: roundUpToRemainingMinutes(newExternalState.remaining.remainingSeconds()).toString(),
+          color: getBadgeColor(newExternalState.stage)
         })
       }
-    })
-
-    this.timer.setOnTimerStart(() => {
-      this.closeTabsService.trigger()
-      this.toggleBrowsingRules()
-      this.desktopNotificationService.clear()
     })
   }
 
@@ -202,7 +197,7 @@ export class BackgroundListener {
 
   private triggerNotification() {
     const stageDisplayLabelHelper = new StageDisplayLabelHelper(this.timer.getConfig())
-    const stageLabel = stageDisplayLabelHelper.getStageLabel(this.timer.getState())
+    const stageLabel = stageDisplayLabelHelper.getStageLabel(this.timer.getExternalState())
     this.desktopNotificationService.setNextButtonTitle(`Start ${stageLabel}`)
 
     this.notificationServicesContainer.trigger()
@@ -233,8 +228,8 @@ export class BackgroundListener {
     return this.timerStateSubscriptionManager.getSubscriptionCount()
   }
 
-  getTimerState() {
-    return this.timer.getState()
+  getTimerExternalState() {
+    return this.timer.getExternalState()
   }
 
   addBlockedDomain(domain: string) {
@@ -264,12 +259,17 @@ export class BackgroundListener {
             }
             case WorkRequestName.START_TIMER: {
               this.timer.start()
+              this.timerStateStorageService.save(this.timer.getInternalState())
+              this.closeTabsService.trigger()
+              this.toggleBrowsingRules()
+              this.desktopNotificationService.clear()
               break
             }
             case WorkRequestName.PAUSE_TIMER: {
               this.timer.pause()
               this.badgeDisplayService.clearBadge()
               this.toggleBrowsingRules()
+              this.timerStateStorageService.save(this.timer.getInternalState())
               break
             }
             case WorkRequestName.LISTEN_TO_TIMER: {
@@ -285,7 +285,7 @@ export class BackgroundListener {
                   }
                 })
               })
-              this.timerStateSubscriptionManager.broadcast(this.timer.getState())
+              this.timerStateSubscriptionManager.broadcast(this.timer.getExternalState())
               backgroundPort.onDisconnect(() => {
                 // To verify the disconnect and onDisconnect behavior of port in application, can uncomment below debug log.
                 // And then see if the below log is printed when disconnect is triggered (e.g. closing timer popup will trigger disconnect)

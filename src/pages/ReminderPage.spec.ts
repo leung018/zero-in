@@ -50,13 +50,13 @@ describe('ReminderPage', () => {
     vi.advanceTimersByTime(3001)
     await flushPromises()
 
-    expect(timer.getState().isRunning).toBe(false)
+    expect(timer.getExternalState().isRunning).toBe(false)
 
     wrapper.find(dataTestSelector('start-button')).trigger('click')
     vi.advanceTimersByTime(1000)
     await flushPromises()
 
-    const state = timer.getState()
+    const state = timer.getExternalState()
     expect(state.remaining.remainingSeconds()).toBe(1)
     expect(state.isRunning).toBe(true)
     expect(state.stage).toBe(TimerStage.SHORT_BREAK)

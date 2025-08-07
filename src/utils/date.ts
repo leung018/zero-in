@@ -27,8 +27,21 @@ export function getStartOfNextMinute(fromDate: Date = new Date()): Date {
   return nextMinute
 }
 
-export function getDateAfter(fromDate: Date, duration: Duration) {
-  const newDate = new Date(fromDate)
+export function getDateAfter({ from = new Date(), duration }: { from?: Date; duration: Duration }) {
+  const newDate = new Date(from)
   newDate.setMilliseconds(newDate.getMilliseconds() + duration.totalMilliseconds)
   return newDate
+}
+
+/**
+ * Calculates the duration between two dates. If the start date is after the end date, returns a duration of 0.
+ */
+export function dateDiff(start: Date, end: Date): Duration {
+  if (start.getTime() > end.getTime()) {
+    return new Duration({ milliseconds: 0 })
+  }
+
+  return new Duration({
+    milliseconds: end.getTime() - start.getTime()
+  })
 }

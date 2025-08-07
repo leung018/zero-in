@@ -11,7 +11,7 @@ import { TimerConfig } from '../domain/timer/config'
 import { Duration } from '../domain/timer/duration'
 import type { FocusSessionRecord } from '../domain/timer/record'
 import { TimerStage } from '../domain/timer/stage'
-import type { TimerState } from '../domain/timer/state'
+import { TimerInternalState } from '../domain/timer/state/internal'
 import { type Badge, type BadgeColor } from '../infra/badge'
 import { setUpListener } from '../test_utils/listener'
 import type { ClientPort } from './listener'
@@ -281,7 +281,7 @@ describe('BackgroundListener', () => {
     }
   )
 
-  it('should getTimerState sync with timer', async () => {
+  it('should getTimerExternalState sync with timer', async () => {
     const { listener, clientPort } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 })
@@ -291,7 +291,7 @@ describe('BackgroundListener', () => {
     await clientPort.send({ name: WorkRequestName.START_TIMER })
     vi.advanceTimersByTime(1000)
 
-    expect(listener.getTimerState().remaining).toEqual(new Duration({ seconds: 2 }))
+    expect(listener.getTimerExternalState().remaining).toEqual(new Duration({ seconds: 2 }))
   })
 
   it('should back up update of timer to storage', async () => {
@@ -304,11 +304,26 @@ describe('BackgroundListener', () => {
     await clientPort.send({ name: WorkRequestName.START_TIMER })
     vi.advanceTimersByTime(1000)
 
-    expect(await timerStateStorageService.get()).toEqual(listener.getTimerState())
+    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
+      listener.getTimerExternalState()
+    )
 
     await clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
 
-    expect(await timerStateStorageService.get()).toEqual(listener.getTimerState())
+    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
+      listener.getTimerExternalState()
+    )
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+
+    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
+      listener.getTimerExternalState()
+    )
+
+    vi.advanceTimersByTime(2000) // Complete Focus Session
+    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
+      listener.getTimerExternalState()
+    )
   })
 
   it('should restore timer state from storage', async () => {
@@ -319,17 +334,16 @@ describe('BackgroundListener', () => {
       })
     })
 
-    const targetState: TimerState = {
-      remaining: new Duration({ seconds: 1000 }),
-      isRunning: true,
+    const targetState = TimerInternalState.newRunningState({
+      remaining: new Duration({ seconds: 1 }),
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
-    }
+    })
     await timerStateStorageService.save(targetState)
 
     await listener.start()
 
-    expect(listener.getTimerState()).toEqual(targetState)
+    expect(listener.getTimerExternalState()).toEqual(targetState.toExternalState())
   })
 
   it('should reset timer config also clear the badge', async () => {
@@ -453,8 +467,8 @@ describe('BackgroundListener', () => {
     desktopNotificationService.simulateClickStart()
     await flushPromises()
 
-    expect(listener.getTimerState().isRunning).toBe(true)
-    expect(listener.getTimerState().stage).toBe(TimerStage.SHORT_BREAK)
+    expect(listener.getTimerExternalState().isRunning).toBe(true)
+    expect(listener.getTimerExternalState().stage).toBe(TimerStage.SHORT_BREAK)
   })
 
   it('should timer start remove desktop notification', async () => {

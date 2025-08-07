@@ -1,9 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { FocusTimer } from '.'
+import { getDateAfter } from '../../utils/date'
 import { TimerConfig } from './config'
 import { Duration } from './duration'
 import { TimerStage } from './stage'
-import { newTestTimerState, type TimerState } from './state'
+import { type TimerExternalState } from './state/external'
+import { TimerInternalState } from './state/internal'
 
 describe('FocusTimer', () => {
   beforeEach(() => {
@@ -22,13 +24,13 @@ describe('FocusTimer', () => {
     )
     vi.advanceTimersByTime(1000) // if the timer is not started, the time should not change
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ minutes: 10 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
     }
-    expect(timer.getState()).toEqual(expected)
+    expect(timer.getExternalState()).toEqual(expected)
   })
 
   it('should round up to seconds of duration in the config', () => {
@@ -86,13 +88,13 @@ describe('FocusTimer', () => {
       })
     )
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ minutes: 5 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
     }
-    expect(timer.getState()).toEqual(expected)
+    expect(timer.getExternalState()).toEqual(expected)
   })
 
   it('should able to start focus', () => {
@@ -104,13 +106,13 @@ describe('FocusTimer', () => {
     timer.start()
     vi.advanceTimersByTime(1001)
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ minutes: 9, seconds: 58, milliseconds: 999 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
     }
-    expect(timer.getState()).toEqual(expected)
+    expect(timer.getExternalState()).toEqual(expected)
   })
 
   it("should extra call of start won't affect the timer", () => {
@@ -125,7 +127,7 @@ describe('FocusTimer', () => {
     timer.start()
     vi.advanceTimersByTime(1050)
 
-    expect(timer.getState().remaining).toEqual(new Duration({ minutes: 9, seconds: 58 }))
+    expect(timer.getExternalState().remaining).toEqual(new Duration({ minutes: 9, seconds: 58 }))
   })
 
   it('should able to pause', () => {
@@ -139,13 +141,13 @@ describe('FocusTimer', () => {
     timer.pause()
     vi.advanceTimersByTime(1000)
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ minutes: 9, seconds: 59 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
     }
-    expect(timer.getState()).toEqual(expected)
+    expect(timer.getExternalState()).toEqual(expected)
   })
 
   it('should pause and start remain accuracy', () => {
@@ -160,7 +162,7 @@ describe('FocusTimer', () => {
     timer.start()
     vi.advanceTimersByTime(1742)
 
-    expect(timer.getState().remaining).toEqual(
+    expect(timer.getExternalState().remaining).toEqual(
       new Duration({ minutes: 9, seconds: 56, milliseconds: 999 })
     )
   })
@@ -173,7 +175,7 @@ describe('FocusTimer', () => {
         focusSessionsPerCycle: 4
       })
     )
-    const updates: TimerState[] = []
+    const updates: TimerExternalState[] = []
     timer.setOnTimerUpdate((update) => {
       updates.push(update)
     })
@@ -181,7 +183,7 @@ describe('FocusTimer', () => {
     timer.start()
     vi.advanceTimersByTime(2000)
 
-    const expectedUpdates: TimerState[] = [
+    const expectedUpdates: TimerExternalState[] = [
       {
         remaining: new Duration({ seconds: 3 }),
         isRunning: false,
@@ -212,7 +214,7 @@ describe('FocusTimer', () => {
     vi.advanceTimersByTime(2000)
 
     expect(updates.length).toBe(5)
-    const expectedLastUpdate: TimerState = {
+    const expectedLastUpdate: TimerExternalState = {
       remaining: new Duration({ seconds: 5 }),
       isRunning: false,
       stage: TimerStage.SHORT_BREAK,
@@ -227,7 +229,7 @@ describe('FocusTimer', () => {
         focusDuration: new Duration({ minutes: 10 })
       })
     )
-    const updates: TimerState[] = []
+    const updates: TimerExternalState[] = []
     timer.setOnTimerUpdate((update) => {
       updates.push(update)
     })
@@ -249,7 +251,7 @@ describe('FocusTimer', () => {
         focusDuration: new Duration({ minutes: 10 })
       })
     )
-    const updates: TimerState[] = []
+    const updates: TimerExternalState[] = []
     timer.setOnTimerUpdate((update) => {
       updates.push(update)
     })
@@ -278,7 +280,7 @@ describe('FocusTimer', () => {
         focusDuration: new Duration({ minutes: 10 })
       })
     )
-    const updates: TimerState[] = []
+    const updates: TimerExternalState[] = []
     timer.start()
     vi.advanceTimersByTime(1100)
 
@@ -304,7 +306,7 @@ describe('FocusTimer', () => {
     let currentStage: TimerStage | null = null
     timer.setOnStageCompleted((stage) => {
       lastStage = stage
-      currentStage = timer.getState().stage
+      currentStage = timer.getExternalState().stage
     })
 
     timer.start()
@@ -330,13 +332,13 @@ describe('FocusTimer', () => {
     timer.start()
     vi.advanceTimersByTime(3000)
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ seconds: 1 }),
       isRunning: false,
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 1
     }
-    expect(timer.getState()).toEqual(expected)
+    expect(timer.getExternalState()).toEqual(expected)
   })
 
   it('should switch back to focus after break duration is passed', () => {
@@ -351,13 +353,13 @@ describe('FocusTimer', () => {
     timer.start()
     vi.advanceTimersByTime(1000)
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ seconds: 3 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
     }
-    expect(timer.getState()).toEqual(expected)
+    expect(timer.getExternalState()).toEqual(expected)
   })
 
   it('should start long break after finish all focus sessions in that cycle', () => {
@@ -383,13 +385,13 @@ describe('FocusTimer', () => {
     vi.advanceTimersByTime(3000)
 
     // Long Break
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ seconds: 2 }),
       isRunning: false,
       stage: TimerStage.LONG_BREAK,
       focusSessionsCompleted: 2
     }
-    expect(timer.getState()).toEqual(expected)
+    expect(timer.getExternalState()).toEqual(expected)
   })
 
   it('should reset the cycle after long break', () => {
@@ -419,13 +421,13 @@ describe('FocusTimer', () => {
     vi.advanceTimersByTime(2000)
 
     // After Long Break, it should reset to Focus
-    let expected: TimerState = {
+    let expected: TimerExternalState = {
       remaining: new Duration({ seconds: 3 }),
       isRunning: false,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
     }
-    expect(timer.getState()).toEqual(expected)
+    expect(timer.getExternalState()).toEqual(expected)
 
     // 1st Focus
     timer.start()
@@ -446,7 +448,7 @@ describe('FocusTimer', () => {
       stage: TimerStage.LONG_BREAK,
       focusSessionsCompleted: 2
     }
-    expect(timer.getState()).toEqual(expected)
+    expect(timer.getExternalState()).toEqual(expected)
   })
 
   it('should able to jump to short break', () => {
@@ -465,13 +467,13 @@ describe('FocusTimer', () => {
     timer.restartShortBreak()
     vi.advanceTimersByTime(1000)
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ seconds: 1 }),
       isRunning: true,
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 0
     }
-    expect(timer.getState()).toEqual(expected)
+    expect(timer.getExternalState()).toEqual(expected)
   })
 
   it('should able to jump to long break', () => {
@@ -495,13 +497,13 @@ describe('FocusTimer', () => {
     timer.restartLongBreak()
     vi.advanceTimersByTime(500)
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ seconds: 1, milliseconds: 500 }),
       isRunning: true,
       stage: TimerStage.LONG_BREAK,
       focusSessionsCompleted: 1
     }
-    expect(timer.getState()).toEqual(expected)
+    expect(timer.getExternalState()).toEqual(expected)
   })
 
   it('should reset focusSessionsCompleted after long break', () => {
@@ -520,8 +522,8 @@ describe('FocusTimer', () => {
     timer.restartLongBreak()
     vi.advanceTimersByTime(2000)
 
-    expect(timer.getState().stage).toBe(TimerStage.FOCUS)
-    expect(timer.getState().focusSessionsCompleted).toBe(0)
+    expect(timer.getExternalState().stage).toBe(TimerStage.FOCUS)
+    expect(timer.getExternalState().focusSessionsCompleted).toBe(0)
   })
 
   it('should able to jump to focus', () => {
@@ -536,13 +538,13 @@ describe('FocusTimer', () => {
     timer.restartLongBreak()
     timer.restartFocus()
 
-    const expected: TimerState = {
+    const expected: TimerExternalState = {
       remaining: new Duration({ seconds: 10 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
     }
-    expect(timer.getState()).toEqual(expected)
+    expect(timer.getExternalState()).toEqual(expected)
   })
 
   it('should able to jump to specific focus', () => {
@@ -553,18 +555,18 @@ describe('FocusTimer', () => {
     )
 
     timer.restartFocus(4) // 4th Focus
-    expect(timer.getState().focusSessionsCompleted).toBe(3)
+    expect(timer.getExternalState().focusSessionsCompleted).toBe(3)
 
     timer.restartFocus(1)
-    expect(timer.getState().focusSessionsCompleted).toBe(0)
+    expect(timer.getExternalState().focusSessionsCompleted).toBe(0)
 
     // Larger than 4 or Less than 0 will treat as the closest valid number
 
     timer.restartFocus(5)
-    expect(timer.getState().focusSessionsCompleted).toBe(3)
+    expect(timer.getExternalState().focusSessionsCompleted).toBe(3)
 
     timer.restartFocus(0)
-    expect(timer.getState().focusSessionsCompleted).toBe(0)
+    expect(timer.getExternalState().focusSessionsCompleted).toBe(0)
   })
 
   it('should able to jump to specific short break', () => {
@@ -575,19 +577,19 @@ describe('FocusTimer', () => {
     )
 
     timer.restartShortBreak(3) // 3th Short Break
-    expect(timer.getState().focusSessionsCompleted).toBe(3)
+    expect(timer.getExternalState().focusSessionsCompleted).toBe(3)
 
     timer.restartShortBreak(1)
-    expect(timer.getState().focusSessionsCompleted).toBe(1)
+    expect(timer.getExternalState().focusSessionsCompleted).toBe(1)
 
     timer.restartShortBreak(4) // 4th break is Long Break. So last shortBreak is 3rd which means 3 focus completed
-    expect(timer.getState().focusSessionsCompleted).toBe(3)
+    expect(timer.getExternalState().focusSessionsCompleted).toBe(3)
 
     timer.restartShortBreak(0)
-    expect(timer.getState().focusSessionsCompleted).toBe(0)
+    expect(timer.getExternalState().focusSessionsCompleted).toBe(0)
   })
 
-  it('should able to set state', async () => {
+  it('should able to set internal state', async () => {
     const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 3 }),
@@ -596,51 +598,65 @@ describe('FocusTimer', () => {
       })
     )
 
-    const targetState: TimerState = {
+    // State that is running
+    const internalState1: TimerInternalState = TimerInternalState.newRunningState({
+      remaining: new Duration({ seconds: 2 }),
+      stage: TimerStage.FOCUS,
+      focusSessionsCompleted: 1
+    })
+    const expectedExternalState: TimerExternalState = {
       remaining: new Duration({ seconds: 2 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
     }
 
-    timer.setState(targetState)
+    timer.setInternalState(internalState1)
 
-    expect(timer.getState()).toEqual(targetState)
+    expect(timer.getExternalState()).toEqual(expectedExternalState)
+    expect(timer.getInternalState()).toEqual(internalState1)
 
-    const targetState2: TimerState = {
+    // State that is paused
+    const internalState2: TimerInternalState = TimerInternalState.newPausedState({
+      remaining: new Duration({ seconds: 1 }),
+      stage: TimerStage.SHORT_BREAK,
+      focusSessionsCompleted: 2
+    })
+    const expectedExternalState2: TimerExternalState = {
       remaining: new Duration({ seconds: 1 }),
       isRunning: false,
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 2
     }
-    timer.setState(targetState2)
+    timer.setInternalState(internalState2)
 
-    expect(timer.getState()).toEqual(targetState2)
+    expect(timer.getExternalState()).toEqual(expectedExternalState2)
+    expect(timer.getInternalState()).toEqual(internalState2)
   })
 
-  it('should start the timer if newState is running', async () => {
+  it('should start the timer if new state is running', async () => {
     const timer = newTimer()
 
-    const targetState = newTestTimerState({
-      remaining: new Duration({ seconds: 3 }),
-      isRunning: true
-    })
-
-    const updates: TimerState[] = []
+    const updates: TimerExternalState[] = []
     timer.setOnTimerUpdate((state) => {
       updates.push(state)
     })
 
-    timer.setState(targetState)
+    timer.setInternalState(
+      TimerInternalState.newTestInstance({
+        pausedAt: undefined,
+        endAt: getDateAfter({ duration: new Duration({ seconds: 3 }) })
+      })
+    )
     vi.advanceTimersByTime(1000)
 
     expect(updates[updates.length - 1].remaining).toEqual(new Duration({ seconds: 2 }))
   })
 
-  it('should pause the timer if newState is not running', async () => {
+  it('should pause the timer if new state is not running', async () => {
     const timer = newTimer()
 
-    const updates: TimerState[] = []
+    const updates: TimerExternalState[] = []
     timer.setOnTimerUpdate((state) => {
       updates.push(state)
     })
@@ -648,51 +664,18 @@ describe('FocusTimer', () => {
     timer.start()
     vi.advanceTimersByTime(1000)
 
-    const targetState = newTestTimerState({
-      remaining: new Duration({ seconds: 200 }),
-      isRunning: false
-    })
-
-    timer.setState(targetState)
+    timer.setInternalState(
+      TimerInternalState.newTestInstance({
+        pausedAt: new Date(),
+        endAt: getDateAfter({ duration: new Duration({ seconds: 200 }) })
+      })
+    )
     const originalUpdatesLength = updates.length
 
     vi.advanceTimersByTime(3000)
 
     expect(updates.length).toBe(originalUpdatesLength)
-    expect(timer.getState().remaining).toEqual(new Duration({ seconds: 200 }))
-  })
-
-  it('should after set onTimerStart callback, every time timer start running, it should be called', () => {
-    const timer = newTimer()
-
-    let triggerCount = 0
-    const onTimerStart = () => {
-      triggerCount++
-    }
-
-    timer.setOnTimerStart(onTimerStart)
-
-    timer.start()
-    expect(triggerCount).toBe(1)
-
-    timer.restartFocus()
-    expect(triggerCount).toBe(2)
-
-    timer.restartShortBreak()
-    expect(triggerCount).toBe(3)
-
-    timer.restartLongBreak()
-    expect(triggerCount).toBe(4)
-
-    timer.pause()
-    expect(triggerCount).toBe(4)
-    timer.setState({
-      remaining: new Duration({ seconds: 10 }),
-      isRunning: true,
-      stage: TimerStage.FOCUS,
-      focusSessionsCompleted: 0
-    })
-    expect(triggerCount).toBe(5)
+    expect(timer.getExternalState().remaining).toEqual(new Duration({ seconds: 200 }))
   })
 })
 
