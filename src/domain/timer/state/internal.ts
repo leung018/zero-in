@@ -103,19 +103,16 @@ export class TimerInternalState {
   }
 
   copyAsPausedWith(remaining: Duration): TimerInternalState {
-    const now = new Date()
-    return new TimerInternalState({
+    return TimerInternalState.newPausedState({
       ...this,
-      pausedAt: now,
-      endAt: getDateAfter({ from: now, duration: remaining })
+      remaining
     })
   }
 
   copyAsRunningWith(remaining: Duration): TimerInternalState {
-    return new TimerInternalState({
+    return TimerInternalState.newRunningState({
       ...this,
-      pausedAt: undefined,
-      endAt: getDateAfter({ duration: remaining })
+      remaining
     })
   }
 
