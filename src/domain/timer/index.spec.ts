@@ -679,38 +679,6 @@ describe('FocusTimer', () => {
     expect(updates.length).toBe(originalUpdatesLength)
     expect(timer.getExternalState().remaining).toEqual(new Duration({ seconds: 200 }))
   })
-
-  it('should after set onTimerStart callback, every time timer start running, it should be called', () => {
-    const timer = newTimer()
-
-    let triggerCount = 0
-    const onTimerStart = () => {
-      triggerCount++
-    }
-
-    timer.setOnTimerStart(onTimerStart)
-
-    timer.start()
-    expect(triggerCount).toBe(1)
-
-    timer.restartFocus()
-    expect(triggerCount).toBe(2)
-
-    timer.restartShortBreak()
-    expect(triggerCount).toBe(3)
-
-    timer.restartLongBreak()
-    expect(triggerCount).toBe(4)
-
-    timer.pause()
-    expect(triggerCount).toBe(4)
-    timer.setInternalState(
-      TimerInternalState.newTestInstance({
-        pausedAt: undefined
-      })
-    )
-    expect(triggerCount).toBe(5)
-  })
 })
 
 const newConfig = TimerConfig.newTestInstance
