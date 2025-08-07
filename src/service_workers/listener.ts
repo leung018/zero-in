@@ -176,13 +176,6 @@ export class BackgroundListener {
         })
       }
     })
-
-    this.timer.setOnTimerStart(() => {
-      this.timerStateStorageService.save(this.timer.getInternalState())
-      this.closeTabsService.trigger()
-      this.toggleBrowsingRules()
-      this.desktopNotificationService.clear()
-    })
   }
 
   private async setUpNotification() {
@@ -266,6 +259,10 @@ export class BackgroundListener {
             }
             case WorkRequestName.START_TIMER: {
               this.timer.start()
+              this.timerStateStorageService.save(this.timer.getInternalState())
+              this.closeTabsService.trigger()
+              this.toggleBrowsingRules()
+              this.desktopNotificationService.clear()
               break
             }
             case WorkRequestName.PAUSE_TIMER: {
