@@ -107,7 +107,7 @@ export class BackgroundListener {
       focusSessionRecordStorageService: params.focusSessionRecordStorageService,
       timerInfoGetter: {
         getTimerInfo: () => {
-          const timerState = params.timer.getState()
+          const timerState = params.timer.getExternalState()
           const timerConfig = params.timer.getConfig()
           return {
             timerStage: timerState.stage,
@@ -202,7 +202,7 @@ export class BackgroundListener {
 
   private triggerNotification() {
     const stageDisplayLabelHelper = new StageDisplayLabelHelper(this.timer.getConfig())
-    const stageLabel = stageDisplayLabelHelper.getStageLabel(this.timer.getState())
+    const stageLabel = stageDisplayLabelHelper.getStageLabel(this.timer.getExternalState())
     this.desktopNotificationService.setNextButtonTitle(`Start ${stageLabel}`)
 
     this.notificationServicesContainer.trigger()
@@ -234,7 +234,7 @@ export class BackgroundListener {
   }
 
   getTimerState() {
-    return this.timer.getState()
+    return this.timer.getExternalState()
   }
 
   addBlockedDomain(domain: string) {
@@ -285,7 +285,7 @@ export class BackgroundListener {
                   }
                 })
               })
-              this.timerStateSubscriptionManager.broadcast(this.timer.getState())
+              this.timerStateSubscriptionManager.broadcast(this.timer.getExternalState())
               backgroundPort.onDisconnect(() => {
                 // To verify the disconnect and onDisconnect behavior of port in application, can uncomment below debug log.
                 // And then see if the below log is printed when disconnect is triggered (e.g. closing timer popup will trigger disconnect)

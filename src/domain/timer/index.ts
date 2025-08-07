@@ -52,7 +52,7 @@ export class FocusTimer {
     })
   }
 
-  getState(): Readonly<TimerExternalState> {
+  getExternalState(): Readonly<TimerExternalState> {
     return this.internalState.toExternalState()
   }
 
@@ -183,7 +183,7 @@ export class FocusTimer {
   }
 
   private notifyTimerUpdate() {
-    this.onTimerUpdate(this.getState())
+    this.onTimerUpdate(this.getExternalState())
   }
 
   private completeCurrentStage() {
