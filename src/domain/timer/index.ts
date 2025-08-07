@@ -64,12 +64,18 @@ export class FocusTimer {
 
   setConfig(config: TimerConfig) {
     this.config = this.newInternalConfig(config)
-    this.setState({
-      remaining: this.config.focusDuration,
-      isRunning: false,
-      stage: TimerStage.FOCUS,
-      focusSessionsCompleted: 0
-    })
+    const now = new Date()
+    this.setInternalState(
+      new TimerInternalState({
+        pausedAt: now,
+        endAt: getDateAfter({
+          from: now,
+          duration: this.config.focusDuration
+        }),
+        stage: TimerStage.FOCUS,
+        focusSessionsCompleted: 0
+      })
+    )
   }
 
   private remaining() {
@@ -229,10 +235,6 @@ export class FocusTimer {
     this.internalState = this.internalState.pausedWith(this.config.focusDuration).withUpdate({
       stage: TimerStage.FOCUS
     })
-  }
-
-  setState(state: TimerExternalState) {
-    this.setInternalState(TimerInternalState.fromExternalState(state))
   }
 
   setInternalState(state: TimerInternalState) {
