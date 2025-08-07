@@ -14,7 +14,6 @@ import { TimerStage } from '../domain/timer/stage'
 import { TimerInternalState } from '../domain/timer/state/internal'
 import { type Badge, type BadgeColor } from '../infra/badge'
 import { setUpListener } from '../test_utils/listener'
-import { getDateAfter } from '../utils/date'
 import type { ClientPort } from './listener'
 import { WorkRequestName } from './request'
 
@@ -335,9 +334,8 @@ describe('BackgroundListener', () => {
       })
     })
 
-    const targetState = TimerInternalState.newTestInstance({
-      pausedAt: undefined,
-      endAt: getDateAfter({ duration: new Duration({ seconds: 1 }) }),
+    const targetState = TimerInternalState.newRunningState({
+      remaining: new Duration({ seconds: 1 }),
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
     })
