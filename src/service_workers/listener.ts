@@ -234,7 +234,7 @@ export class BackgroundListener {
     return this.timerStateSubscriptionManager.getSubscriptionCount()
   }
 
-  getTimerState() {
+  getTimerExternalState() {
     return this.timer.getExternalState()
   }
 

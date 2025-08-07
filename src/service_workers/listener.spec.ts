@@ -292,7 +292,7 @@ describe('BackgroundListener', () => {
     await clientPort.send({ name: WorkRequestName.START_TIMER })
     vi.advanceTimersByTime(1000)
 
-    expect(listener.getTimerState().remaining).toEqual(new Duration({ seconds: 2 }))
+    expect(listener.getTimerExternalState().remaining).toEqual(new Duration({ seconds: 2 }))
   })
 
   it('should back up update of timer to storage', async () => {
@@ -306,13 +306,13 @@ describe('BackgroundListener', () => {
     vi.advanceTimersByTime(1000)
 
     expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
-      listener.getTimerState()
+      listener.getTimerExternalState()
     )
 
     await clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
 
     expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
-      listener.getTimerState()
+      listener.getTimerExternalState()
     )
   })
 
@@ -334,7 +334,7 @@ describe('BackgroundListener', () => {
 
     await listener.start()
 
-    expect(listener.getTimerState()).toEqual(targetState.toExternalState())
+    expect(listener.getTimerExternalState()).toEqual(targetState.toExternalState())
   })
 
   it('should reset timer config also clear the badge', async () => {
@@ -458,8 +458,8 @@ describe('BackgroundListener', () => {
     desktopNotificationService.simulateClickStart()
     await flushPromises()
 
-    expect(listener.getTimerState().isRunning).toBe(true)
-    expect(listener.getTimerState().stage).toBe(TimerStage.SHORT_BREAK)
+    expect(listener.getTimerExternalState().isRunning).toBe(true)
+    expect(listener.getTimerExternalState().stage).toBe(TimerStage.SHORT_BREAK)
   })
 
   it('should timer start remove desktop notification', async () => {
