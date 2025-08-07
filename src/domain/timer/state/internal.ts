@@ -19,6 +19,20 @@ export class TimerInternalState {
     })
   }
 
+  static newTestInstance({
+    pausedAt = undefined,
+    endAt = new Date(),
+    stage = TimerStage.FOCUS,
+    focusSessionsCompleted = 0
+  }: Partial<TimerInternalState> = {}) {
+    return new TimerInternalState({
+      pausedAt,
+      endAt,
+      stage,
+      focusSessionsCompleted
+    })
+  }
+
   constructor({
     pausedAt,
     endAt,

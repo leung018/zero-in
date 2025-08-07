@@ -1,9 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { FocusTimer } from '.'
+import { getDateAfter } from '../../utils/date'
 import { TimerConfig } from './config'
 import { Duration } from './duration'
 import { TimerStage } from './stage'
-import { newTestTimerExternalState, type TimerExternalState } from './state/external'
+import { type TimerExternalState } from './state/external'
+import { TimerInternalState } from './state/internal'
 
 describe('FocusTimer', () => {
   beforeEach(() => {
@@ -587,7 +589,7 @@ describe('FocusTimer', () => {
     expect(timer.getExternalState().focusSessionsCompleted).toBe(0)
   })
 
-  it('should able to set state', async () => {
+  it('should able to set internal state', async () => {
     const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ seconds: 3 }),
@@ -596,48 +598,60 @@ describe('FocusTimer', () => {
       })
     )
 
-    const targetState: TimerExternalState = {
+    const internalState1: TimerInternalState = new TimerInternalState({
+      pausedAt: undefined,
+      endAt: getDateAfter(new Date(), new Duration({ seconds: 2 })),
+      stage: TimerStage.FOCUS,
+      focusSessionsCompleted: 1
+    })
+    const expectedExternalState: TimerExternalState = {
       remaining: new Duration({ seconds: 2 }),
       isRunning: true,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
     }
 
-    timer.setState(targetState)
+    timer.setInternalState(internalState1)
 
-    expect(timer.getExternalState()).toEqual(targetState)
+    expect(timer.getExternalState()).toEqual(expectedExternalState)
 
-    const targetState2: TimerExternalState = {
+    const internalState2: TimerInternalState = new TimerInternalState({
+      pausedAt: new Date(),
+      endAt: getDateAfter(new Date(), new Duration({ seconds: 1 })),
+      stage: TimerStage.SHORT_BREAK,
+      focusSessionsCompleted: 2
+    })
+    const expectedExternalState2: TimerExternalState = {
       remaining: new Duration({ seconds: 1 }),
       isRunning: false,
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 2
     }
-    timer.setState(targetState2)
+    timer.setInternalState(internalState2)
 
-    expect(timer.getExternalState()).toEqual(targetState2)
+    expect(timer.getExternalState()).toEqual(expectedExternalState2)
   })
 
-  it('should start the timer if newState is running', async () => {
+  it('should start the timer if new state is running', async () => {
     const timer = newTimer()
-
-    const targetState = newTestTimerExternalState({
-      remaining: new Duration({ seconds: 3 }),
-      isRunning: true
-    })
 
     const updates: TimerExternalState[] = []
     timer.setOnTimerUpdate((state) => {
       updates.push(state)
     })
 
-    timer.setState(targetState)
+    timer.setInternalState(
+      TimerInternalState.newTestInstance({
+        pausedAt: undefined,
+        endAt: getDateAfter(new Date(), new Duration({ seconds: 3 }))
+      })
+    )
     vi.advanceTimersByTime(1000)
 
     expect(updates[updates.length - 1].remaining).toEqual(new Duration({ seconds: 2 }))
   })
 
-  it('should pause the timer if newState is not running', async () => {
+  it('should pause the timer if new state is not running', async () => {
     const timer = newTimer()
 
     const updates: TimerExternalState[] = []
@@ -648,12 +662,12 @@ describe('FocusTimer', () => {
     timer.start()
     vi.advanceTimersByTime(1000)
 
-    const targetState = newTestTimerExternalState({
-      remaining: new Duration({ seconds: 200 }),
-      isRunning: false
-    })
-
-    timer.setState(targetState)
+    timer.setInternalState(
+      TimerInternalState.newTestInstance({
+        pausedAt: new Date(),
+        endAt: getDateAfter(new Date(), new Duration({ seconds: 200 }))
+      })
+    )
     const originalUpdatesLength = updates.length
 
     vi.advanceTimersByTime(3000)
@@ -686,12 +700,11 @@ describe('FocusTimer', () => {
 
     timer.pause()
     expect(triggerCount).toBe(4)
-    timer.setState({
-      remaining: new Duration({ seconds: 10 }),
-      isRunning: true,
-      stage: TimerStage.FOCUS,
-      focusSessionsCompleted: 0
-    })
+    timer.setInternalState(
+      TimerInternalState.newTestInstance({
+        pausedAt: undefined
+      })
+    )
     expect(triggerCount).toBe(5)
   })
 })
