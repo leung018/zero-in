@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { FocusSessionRecord } from '.'
+import { newFocusSessionRecord, type FocusSessionRecord } from '.'
 import { FocusSessionRecordHousekeeper } from './house_keep'
 import { FocusSessionRecordStorageService } from './storage'
 
@@ -8,8 +8,8 @@ describe('FocusSessionRecordHousekeeper', () => {
     const focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
 
     const originalRecords: FocusSessionRecord[] = [
-      { completedAt: new Date('2025-02-03T10:59:59') },
-      { completedAt: new Date('2025-02-04T11:00:00') }
+      newFocusSessionRecord({ completedAt: new Date('2025-02-03T10:59:59') }),
+      newFocusSessionRecord({ completedAt: new Date('2025-02-04T11:00:00') })
     ]
     await focusSessionRecordStorageService.saveAll(originalRecords)
 

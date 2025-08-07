@@ -17,13 +17,13 @@ export class FocusSessionRecordStorageService {
     return new FocusSessionRecordStorageService(LocalStorageWrapper.createFake())
   }
 
-  private storageManager: StorageManager<FocusSessionRecordsSchemas[1]>
+  private storageManager: StorageManager<FocusSessionRecordsSchemas[2]>
 
   constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: FocusSessionRecordStorageService.STORAGE_KEY,
-      currentDataVersion: 1,
+      currentDataVersion: 2,
       migrators: [
         {
           oldDataVersion: undefined,
@@ -31,6 +31,18 @@ export class FocusSessionRecordStorageService {
             return {
               dataVersion: 1,
               completedAts: oldData.map((record) => record.completedAt)
+            }
+          }
+        },
+        {
+          oldDataVersion: 1,
+          migratorFunc: (oldData: FocusSessionRecordsSchemas[1]): FocusSessionRecordsSchemas[2] => {
+            return {
+              dataVersion: 2,
+              records: oldData.completedAts.map((completedAt) => ({
+                completedAt: new Date(completedAt).getTime(),
+                startedAt: null
+              }))
             }
           }
         }

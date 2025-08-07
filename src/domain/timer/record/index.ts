@@ -6,6 +6,9 @@ export type FocusSessionRecord = {
 export function newFocusSessionRecord({
   startedAt = undefined,
   completedAt = new Date()
+}: {
+  startedAt?: Date | undefined
+  completedAt?: Date
 } = {}): FocusSessionRecord {
   return {
     startedAt,
