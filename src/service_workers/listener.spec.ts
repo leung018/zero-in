@@ -11,9 +11,10 @@ import { TimerConfig } from '../domain/timer/config'
 import { Duration } from '../domain/timer/duration'
 import type { FocusSessionRecord } from '../domain/timer/record'
 import { TimerStage } from '../domain/timer/stage'
-import type { TimerExternalState } from '../domain/timer/state/external'
+import { TimerInternalState } from '../domain/timer/state/internal'
 import { type Badge, type BadgeColor } from '../infra/badge'
 import { setUpListener } from '../test_utils/listener'
+import { getDateAfter } from '../utils/date'
 import type { ClientPort } from './listener'
 import { WorkRequestName } from './request'
 
@@ -304,11 +305,15 @@ describe('BackgroundListener', () => {
     await clientPort.send({ name: WorkRequestName.START_TIMER })
     vi.advanceTimersByTime(1000)
 
-    expect(await timerStateStorageService.get()).toEqual(listener.getTimerState())
+    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
+      listener.getTimerState()
+    )
 
     await clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
 
-    expect(await timerStateStorageService.get()).toEqual(listener.getTimerState())
+    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
+      listener.getTimerState()
+    )
   })
 
   it('should restore timer state from storage', async () => {
@@ -319,17 +324,17 @@ describe('BackgroundListener', () => {
       })
     })
 
-    const targetState: TimerExternalState = {
-      remaining: new Duration({ seconds: 1000 }),
-      isRunning: true,
+    const targetState = TimerInternalState.newTestInstance({
+      pausedAt: undefined,
+      endAt: getDateAfter(new Date(), new Duration({ seconds: 1 })),
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
-    }
+    })
     await timerStateStorageService.save(targetState)
 
     await listener.start()
 
-    expect(listener.getTimerState()).toEqual(targetState)
+    expect(listener.getTimerState()).toEqual(targetState.toExternalState())
   })
 
   it('should reset timer config also clear the badge', async () => {

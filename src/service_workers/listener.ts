@@ -12,6 +12,7 @@ import { FocusSessionRecordStorageService } from '../domain/timer/record/storage
 import { TimerStage } from '../domain/timer/stage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
 import type { TimerExternalState } from '../domain/timer/state/external'
+import { TimerInternalState } from '../domain/timer/state/internal'
 import { TimerStateStorageService } from '../domain/timer/state/storage'
 import { type ActionService } from '../infra/action'
 import { type BadgeColor, type BadgeDisplayService } from '../infra/badge'
@@ -149,9 +150,9 @@ export class BackgroundListener {
   private async setUpTimer() {
     const timerConfig = await this.timerConfigStorageService.get()
     this.timer.setConfig(timerConfig)
-    const backupState = await this.timerStateStorageService.get()
-    if (backupState) {
-      this.timer.setState(backupState)
+    const backupInternalState = await this.timerStateStorageService.get()
+    if (backupInternalState) {
+      this.timer.setInternalState(backupInternalState)
     }
 
     this.timer.setOnStageCompleted((lastStage) => {
@@ -165,7 +166,7 @@ export class BackgroundListener {
     })
 
     this.timer.setOnTimerUpdate((newState) => {
-      this.timerStateStorageService.save(newState)
+      this.timerStateStorageService.save(TimerInternalState.fromExternalState(newState))
       this.timerStateSubscriptionManager.broadcast(newState)
 
       if (newState.isRunning) {
