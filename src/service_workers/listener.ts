@@ -12,7 +12,6 @@ import { FocusSessionRecordStorageService } from '../domain/timer/record/storage
 import { TimerStage } from '../domain/timer/stage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
 import type { TimerExternalState } from '../domain/timer/state/external'
-import { TimerInternalState } from '../domain/timer/state/internal'
 import { TimerStateStorageService } from '../domain/timer/state/storage'
 import { type ActionService } from '../infra/action'
 import { type BadgeColor, type BadgeDisplayService } from '../infra/badge'
@@ -156,6 +155,8 @@ export class BackgroundListener {
     }
 
     this.timer.setOnStageCompleted((lastStage) => {
+      this.timerStateStorageService.save(this.timer.getInternalState())
+
       this.triggerNotification()
       this.badgeDisplayService.clearBadge()
       this.toggleBrowsingRules()
@@ -165,19 +166,19 @@ export class BackgroundListener {
       }
     })
 
-    this.timer.setOnTimerUpdate((newState) => {
-      this.timerStateStorageService.save(TimerInternalState.fromExternalState(newState))
-      this.timerStateSubscriptionManager.broadcast(newState)
+    this.timer.setOnTimerUpdate((newExternalState) => {
+      this.timerStateSubscriptionManager.broadcast(newExternalState)
 
-      if (newState.isRunning) {
+      if (newExternalState.isRunning) {
         this.badgeDisplayService.displayBadge({
-          text: roundUpToRemainingMinutes(newState.remaining.remainingSeconds()).toString(),
-          color: getBadgeColor(newState.stage)
+          text: roundUpToRemainingMinutes(newExternalState.remaining.remainingSeconds()).toString(),
+          color: getBadgeColor(newExternalState.stage)
         })
       }
     })
 
     this.timer.setOnTimerStart(() => {
+      this.timerStateStorageService.save(this.timer.getInternalState())
       this.closeTabsService.trigger()
       this.toggleBrowsingRules()
       this.desktopNotificationService.clear()
@@ -271,6 +272,7 @@ export class BackgroundListener {
               this.timer.pause()
               this.badgeDisplayService.clearBadge()
               this.toggleBrowsingRules()
+              this.timerStateStorageService.save(this.timer.getInternalState())
               break
             }
             case WorkRequestName.LISTEN_TO_TIMER: {

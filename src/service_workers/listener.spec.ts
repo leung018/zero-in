@@ -314,6 +314,17 @@ describe('BackgroundListener', () => {
     expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
       listener.getTimerExternalState()
     )
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+
+    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
+      listener.getTimerExternalState()
+    )
+
+    vi.advanceTimersByTime(2000) // Complete Focus Session
+    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
+      listener.getTimerExternalState()
+    )
   })
 
   it('should restore timer state from storage', async () => {

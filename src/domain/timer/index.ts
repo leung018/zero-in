@@ -56,6 +56,10 @@ export class FocusTimer {
     return this.internalState.toExternalState()
   }
 
+  getInternalState(): Readonly<TimerInternalState> {
+    return this.internalState
+  }
+
   getConfig(): Readonly<TimerConfig> {
     return this.config
   }
