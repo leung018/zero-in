@@ -72,11 +72,11 @@ describe('BrowsingControlTogglingService', () => {
         pauseBlockingDuringBreaks: false,
         pauseBlockingWhenTimerNotRunning: false,
         focusSessionRecords: [
-          newFocusSessionRecord(new Date('2025-02-03T11:00:00')),
-          newFocusSessionRecord(new Date('2025-02-03T11:26:00')),
+          newFocusSessionRecord({ completedAt: new Date('2025-02-03T11:00:00') }),
+          newFocusSessionRecord({ completedAt: new Date('2025-02-03T11:26:00') }),
 
-          newFocusSessionRecord(new Date('2025-02-04T08:59:59')),
-          newFocusSessionRecord(new Date('2025-02-04T09:00:00'))
+          newFocusSessionRecord({ completedAt: new Date('2025-02-04T08:59:59') }),
+          newFocusSessionRecord({ completedAt: new Date('2025-02-04T09:00:00') })
         ]
       })
     ).toEqual(browsingRules)
@@ -89,8 +89,8 @@ describe('BrowsingControlTogglingService', () => {
         pauseBlockingDuringBreaks: false,
         pauseBlockingWhenTimerNotRunning: false,
         focusSessionRecords: [
-          newFocusSessionRecord(new Date('2025-02-03T09:00:00')),
-          newFocusSessionRecord(new Date('2025-02-03T16:59:59'))
+          newFocusSessionRecord({ completedAt: new Date('2025-02-03T09:00:00') }),
+          newFocusSessionRecord({ completedAt: new Date('2025-02-03T16:59:59') })
         ]
       })
     ).toBeNull()

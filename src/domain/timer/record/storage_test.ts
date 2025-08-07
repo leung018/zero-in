@@ -12,8 +12,8 @@ export function runFocusSessionRecordStorageServiceTests(storage: StorageInterfa
   it('should save and get FocusSessionRecord', async () => {
     const service = new FocusSessionRecordStorageService(storage)
     const focusSessionRecords = [
-      newFocusSessionRecord(new Date('2021-01-01')),
-      newFocusSessionRecord(new Date('2021-01-02'))
+      newFocusSessionRecord({ completedAt: new Date('2021-01-01') }),
+      newFocusSessionRecord({ completedAt: new Date('2021-01-02') })
     ]
 
     await service.saveAll(focusSessionRecords)

@@ -16,6 +16,7 @@ export function deserializeFocusSessionRecords(
   serializedRecords: SerializedFocusSessionRecords
 ): FocusSessionRecord[] {
   return serializedRecords.completedAts.map((completedAt) => ({
-    completedAt: new Date(completedAt)
+    completedAt: new Date(completedAt),
+    startedAt: undefined
   }))
 }
