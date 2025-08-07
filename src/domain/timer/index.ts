@@ -1,6 +1,5 @@
 import config from '../../config'
 import { PeriodicTaskScheduler } from '../../infra/scheduler'
-import { dateDiff, getDateAfter } from '../../utils/date'
 import type { TimerConfig } from './config'
 import { Duration } from './duration'
 import { TimerStage } from './stage'
@@ -99,12 +98,7 @@ export class FocusTimer {
       { intervalMs: 1000, startAfterMs: this.getMsUntilNextSecond() }
     )
 
-    this.internalState = this.internalState.withUpdate({
-      pausedAt: undefined,
-      endAt: getDateAfter({
-        duration: dateDiff(this.internalState.pausedAt, this.internalState.endAt)
-      })
-    })
+    this.internalState = this.internalState.copyAsRunningWith(this.remaining())
 
     this.notifyTimerUpdate()
   }
@@ -119,9 +113,7 @@ export class FocusTimer {
   }
 
   private stopRunning() {
-    this.internalState = this.internalState.withUpdate({
-      pausedAt: new Date()
-    })
+    this.internalState = this.internalState.copyAsPausedNow()
     this.scheduler.stopTask()
   }
 
@@ -156,7 +148,7 @@ export class FocusTimer {
     const upperLimit = this.config.focusSessionsPerCycle - 1
     n = Math.min(upperLimit, n)
     n = Math.max(0, n)
-    this.internalState = this.internalState.withUpdate({
+    this.internalState = this.internalState.copyWith({
       focusSessionsCompleted: n
     })
   }
@@ -192,7 +184,7 @@ export class FocusTimer {
   }
 
   private handleFocusComplete() {
-    this.internalState = this.internalState.withUpdate({
+    this.internalState = this.internalState.copyWith({
       focusSessionsCompleted: this.focusSessionsCompleted() + 1
     })
 
@@ -205,7 +197,7 @@ export class FocusTimer {
 
   private handleBreakComplete() {
     if (this.stage() === TimerStage.LONG_BREAK) {
-      this.internalState = this.internalState.withUpdate({
+      this.internalState = this.internalState.copyWith({
         focusSessionsCompleted: 0
       })
     }
@@ -213,25 +205,29 @@ export class FocusTimer {
   }
 
   private setToBeginOfLongBreak() {
-    this.internalState = this.internalState.pausedWith(this.config.longBreakDuration).withUpdate({
-      stage: TimerStage.LONG_BREAK
-    })
+    this.internalState = this.internalState
+      .copyAsPausedWith(this.config.longBreakDuration)
+      .copyWith({
+        stage: TimerStage.LONG_BREAK
+      })
   }
 
   private setToBeginOfShortBreak() {
-    this.internalState = this.internalState.pausedWith(this.config.shortBreakDuration).withUpdate({
-      stage: TimerStage.SHORT_BREAK
-    })
+    this.internalState = this.internalState
+      .copyAsPausedWith(this.config.shortBreakDuration)
+      .copyWith({
+        stage: TimerStage.SHORT_BREAK
+      })
   }
 
   private setToBeginOfFocus() {
-    this.internalState = this.internalState.pausedWith(this.config.focusDuration).withUpdate({
+    this.internalState = this.internalState.copyAsPausedWith(this.config.focusDuration).copyWith({
       stage: TimerStage.FOCUS
     })
   }
 
   setInternalState(state: TimerInternalState) {
-    this.internalState = state.pausedWith(state.remaining())
+    this.internalState = state.copyAsPausedWith(state.remaining())
 
     if (state.isRunning()) {
       this.start()

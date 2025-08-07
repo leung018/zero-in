@@ -95,7 +95,14 @@ export class TimerInternalState {
     return this.pausedAt === undefined
   }
 
-  pausedWith(remaining: Duration): TimerInternalState {
+  copyAsPausedNow(): TimerInternalState {
+    return new TimerInternalState({
+      ...this,
+      pausedAt: new Date()
+    })
+  }
+
+  copyAsPausedWith(remaining: Duration): TimerInternalState {
     const now = new Date()
     return new TimerInternalState({
       ...this,
@@ -104,7 +111,15 @@ export class TimerInternalState {
     })
   }
 
-  withUpdate(update: Partial<TimerInternalState>): TimerInternalState {
+  copyAsRunningWith(remaining: Duration): TimerInternalState {
+    return new TimerInternalState({
+      ...this,
+      pausedAt: undefined,
+      endAt: getDateAfter({ duration: remaining })
+    })
+  }
+
+  copyWith(update: Partial<TimerInternalState>): TimerInternalState {
     return new TimerInternalState({ ...this, ...update })
   }
 }
