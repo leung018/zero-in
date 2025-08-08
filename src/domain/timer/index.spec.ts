@@ -304,16 +304,20 @@ describe('FocusTimer', () => {
     )
     let lastStage: TimerStage | null = null
     let currentStage: TimerStage | null = null
-    timer.setOnStageCompleted((stage) => {
+    let lastSessionStartTime: Date | null = null
+    timer.setOnStageCompleted(({ lastStage: stage, lastSessionStartTime: time }) => {
       lastStage = stage
       currentStage = timer.getExternalState().stage
+      lastSessionStartTime = time ?? null
     })
 
+    const startTime = new Date()
     timer.start()
     vi.advanceTimersByTime(3000)
 
     expect(lastStage).toBe(TimerStage.FOCUS)
     expect(currentStage).toBe(TimerStage.SHORT_BREAK)
+    expect(lastSessionStartTime).toEqual(startTime)
 
     timer.start()
     vi.advanceTimersByTime(1000)

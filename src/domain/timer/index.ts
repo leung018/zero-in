@@ -6,6 +6,11 @@ import { TimerStage } from './stage'
 import type { TimerExternalState } from './state/external'
 import { TimerInternalState } from './state/internal'
 
+type OnStageCompletedArgs = {
+  lastStage: TimerStage
+  lastSessionStartTime?: Date
+}
+
 export class FocusTimer {
   static create(timerConfig: TimerConfig = config.getDefaultTimerConfig()) {
     return new FocusTimer({
@@ -19,7 +24,7 @@ export class FocusTimer {
 
   private scheduler = new PeriodicTaskScheduler()
 
-  private onStageCompleted: (lastStage: TimerStage) => void = () => {}
+  private onStageCompleted: (args: OnStageCompletedArgs) => void = () => {}
 
   private onTimerUpdate: (state: TimerExternalState) => void = () => {}
 
@@ -127,7 +132,7 @@ export class FocusTimer {
     this.notifyTimerUpdate()
   }
 
-  setOnStageCompleted(callback: (lastStage: TimerStage) => void) {
+  setOnStageCompleted(callback: (args: OnStageCompletedArgs) => void) {
     this.onStageCompleted = callback
   }
 
@@ -180,12 +185,16 @@ export class FocusTimer {
 
   private completeCurrentStage() {
     const lastStage = this.stage()
+    const lastSessionStartTime = this.internalState.sessionStartTime
     if (this.stage() === TimerStage.FOCUS) {
       this.handleFocusComplete()
     } else {
       this.handleBreakComplete()
     }
-    this.onStageCompleted(lastStage)
+    this.onStageCompleted({
+      lastStage,
+      lastSessionStartTime
+    })
   }
 
   private handleFocusComplete() {

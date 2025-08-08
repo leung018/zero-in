@@ -154,7 +154,7 @@ export class BackgroundListener {
       this.timer.setInternalState(backupInternalState)
     }
 
-    this.timer.setOnStageCompleted((lastStage) => {
+    this.timer.setOnStageCompleted(({ lastStage }) => {
       this.timerStateStorageService.save(this.timer.getInternalState())
 
       this.triggerNotification()
