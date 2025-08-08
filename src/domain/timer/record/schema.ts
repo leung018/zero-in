@@ -5,5 +5,12 @@ export type FocusSessionRecordsSchemas = [
   {
     dataVersion: 1
     completedAts: string[]
+  },
+  {
+    dataVersion: 2
+    records: {
+      completedAt: number
+      startedAt: number | null
+    }[]
   }
 ]

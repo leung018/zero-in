@@ -66,9 +66,9 @@ describe('ReminderPage', () => {
     vi.setSystemTime(new Date(2025, 2, 2, 14, 0))
     const { wrapper } = await mountPage({
       focusSessionRecords: [
-        newFocusSessionRecord(new Date(2025, 2, 1, 15, 2)),
-        newFocusSessionRecord(new Date(2025, 2, 1, 15, 3)),
-        newFocusSessionRecord(new Date(2025, 2, 1, 15, 5))
+        newFocusSessionRecord({ completedAt: new Date(2025, 2, 1, 15, 2) }),
+        newFocusSessionRecord({ completedAt: new Date(2025, 2, 1, 15, 3) }),
+        newFocusSessionRecord({ completedAt: new Date(2025, 2, 1, 15, 5) })
       ],
       dailyCutOffTime: new Time(15, 3)
     })

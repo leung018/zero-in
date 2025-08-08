@@ -6,6 +6,11 @@ import { TimerStage } from './stage'
 import type { TimerExternalState } from './state/external'
 import { TimerInternalState } from './state/internal'
 
+type OnStageCompletedArgs = {
+  lastStage: TimerStage
+  lastSessionStartTime: Date
+}
+
 export class FocusTimer {
   static create(timerConfig: TimerConfig = config.getDefaultTimerConfig()) {
     return new FocusTimer({
@@ -19,7 +24,7 @@ export class FocusTimer {
 
   private scheduler = new PeriodicTaskScheduler()
 
-  private onStageCompleted: (lastStage: TimerStage) => void = () => {}
+  private onStageCompleted: (args: OnStageCompletedArgs) => void = () => {}
 
   private onTimerUpdate: (state: TimerExternalState) => void = () => {}
 
@@ -99,6 +104,11 @@ export class FocusTimer {
     )
 
     this.internalState = this.internalState.copyAsRunningWith(this.remaining())
+    if (!this.internalState.sessionStartTime) {
+      this.internalState = this.internalState.copyWith({
+        sessionStartTime: new Date()
+      })
+    }
 
     this.notifyTimerUpdate()
   }
@@ -122,7 +132,7 @@ export class FocusTimer {
     this.notifyTimerUpdate()
   }
 
-  setOnStageCompleted(callback: (lastStage: TimerStage) => void) {
+  setOnStageCompleted(callback: (args: OnStageCompletedArgs) => void) {
     this.onStageCompleted = callback
   }
 
@@ -175,12 +185,16 @@ export class FocusTimer {
 
   private completeCurrentStage() {
     const lastStage = this.stage()
+    const lastSessionStartTime = this.internalState.sessionStartTime ?? new Date() // Defensive fallback - sessionStartTime should always exist when timer is running
     if (this.stage() === TimerStage.FOCUS) {
       this.handleFocusComplete()
     } else {
       this.handleBreakComplete()
     }
-    this.onStageCompleted(lastStage)
+    this.onStageCompleted({
+      lastStage,
+      lastSessionStartTime
+    })
   }
 
   private handleFocusComplete() {
@@ -206,7 +220,7 @@ export class FocusTimer {
 
   private setToBeginOfLongBreak() {
     this.internalState = this.internalState
-      .copyAsPausedWith(this.config.longBreakDuration)
+      .copyAsResetWith(this.config.longBreakDuration)
       .copyWith({
         stage: TimerStage.LONG_BREAK
       })
@@ -214,20 +228,22 @@ export class FocusTimer {
 
   private setToBeginOfShortBreak() {
     this.internalState = this.internalState
-      .copyAsPausedWith(this.config.shortBreakDuration)
+      .copyAsResetWith(this.config.shortBreakDuration)
       .copyWith({
         stage: TimerStage.SHORT_BREAK
       })
   }
 
   private setToBeginOfFocus() {
-    this.internalState = this.internalState.copyAsPausedWith(this.config.focusDuration).copyWith({
+    this.internalState = this.internalState.copyAsResetWith(this.config.focusDuration).copyWith({
       stage: TimerStage.FOCUS
     })
   }
 
   setInternalState(state: TimerInternalState) {
-    this.internalState = state.copyAsPausedWith(state.remaining())
+    this.internalState = state.copyAsResetWith(state.remaining()).copyWith({
+      sessionStartTime: state.sessionStartTime
+    })
 
     if (state.isRunning()) {
       this.start()

@@ -1,21 +1,25 @@
 import type { FocusSessionRecord } from '.'
 import { FocusSessionRecordsSchemas } from './schema'
 
-type SerializedFocusSessionRecords = FocusSessionRecordsSchemas[1]
+type SerializedFocusSessionRecords = FocusSessionRecordsSchemas[2]
 
 export function serializeFocusSessionRecords(
   records: FocusSessionRecord[]
 ): SerializedFocusSessionRecords {
   return {
-    dataVersion: 1,
-    completedAts: records.map((record) => record.completedAt.toUTCString())
+    dataVersion: 2,
+    records: records.map((record) => ({
+      completedAt: record.completedAt.getTime(),
+      startedAt: record.startedAt?.getTime() ?? null
+    }))
   }
 }
 
 export function deserializeFocusSessionRecords(
   serializedRecords: SerializedFocusSessionRecords
 ): FocusSessionRecord[] {
-  return serializedRecords.completedAts.map((completedAt) => ({
-    completedAt: new Date(completedAt)
+  return serializedRecords.records.map((record) => ({
+    completedAt: new Date(record.completedAt),
+    startedAt: record.startedAt ? new Date(record.startedAt) : undefined
   }))
 }
