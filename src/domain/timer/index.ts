@@ -8,7 +8,7 @@ import { TimerInternalState } from './state/internal'
 
 type OnStageCompletedArgs = {
   lastStage: TimerStage
-  lastSessionStartTime?: Date
+  lastSessionStartTime: Date
 }
 
 export class FocusTimer {
@@ -185,7 +185,7 @@ export class FocusTimer {
 
   private completeCurrentStage() {
     const lastStage = this.stage()
-    const lastSessionStartTime = this.internalState.sessionStartTime
+    const lastSessionStartTime = this.internalState.sessionStartTime ?? new Date() // Defensive fallback - sessionStartTime should always exist when timer is running
     if (this.stage() === TimerStage.FOCUS) {
       this.handleFocusComplete()
     } else {
