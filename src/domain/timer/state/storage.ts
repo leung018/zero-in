@@ -18,13 +18,13 @@ export class TimerStateStorageService {
     return new TimerStateStorageService(storage)
   }
 
-  private storageManager: StorageManager<TimerStateSchemas[3]>
+  private storageManager: StorageManager<TimerStateSchemas[4]>
 
   private constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: TimerStateStorageService.STORAGE_KEY,
-      currentDataVersion: 3,
+      currentDataVersion: 4,
       migrators: [
         {
           oldDataVersion: undefined,
