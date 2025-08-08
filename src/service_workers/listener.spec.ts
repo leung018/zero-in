@@ -14,6 +14,7 @@ import { TimerStage } from '../domain/timer/stage'
 import { TimerInternalState } from '../domain/timer/state/internal'
 import { type Badge, type BadgeColor } from '../infra/badge'
 import { setUpListener } from '../test_utils/listener'
+import { getDateAfter } from '../utils/date'
 import type { ClientPort } from './listener'
 import { WorkRequestName } from './request'
 
@@ -49,6 +50,9 @@ describe('BackgroundListener', () => {
       })
     })
 
+    const startTime = new Date()
+    vi.setSystemTime(startTime)
+
     // Focus
     await clientPort.send({ name: WorkRequestName.START_TIMER })
     vi.advanceTimersByTime(3000)
@@ -56,7 +60,10 @@ describe('BackgroundListener', () => {
 
     const focusSessionRecords = await focusSessionRecordStorageService.getAll()
     expect(focusSessionRecords.length).toBe(1)
-    expect(focusSessionRecords[0].completedAt).toBeInstanceOf(Date)
+    expect(focusSessionRecords[0].completedAt).toEqual(
+      getDateAfter({ from: startTime, duration: new Duration({ seconds: 3 }) })
+    )
+    expect(focusSessionRecords[0].startedAt).toEqual(startTime)
 
     // Break
     await clientPort.send({ name: WorkRequestName.START_TIMER })

@@ -154,7 +154,7 @@ export class BackgroundListener {
       this.timer.setInternalState(backupInternalState)
     }
 
-    this.timer.setOnStageCompleted(({ lastStage }) => {
+    this.timer.setOnStageCompleted(({ lastStage, lastSessionStartTime }) => {
       this.timerStateStorageService.save(this.timer.getInternalState())
 
       this.triggerNotification()
@@ -162,7 +162,7 @@ export class BackgroundListener {
       this.toggleBrowsingRules()
 
       if (lastStage === TimerStage.FOCUS) {
-        this.updateFocusSessionRecords()
+        this.updateFocusSessionRecords(lastSessionStartTime)
       }
     })
 
@@ -203,11 +203,16 @@ export class BackgroundListener {
     this.notificationServicesContainer.trigger()
   }
 
-  private async updateFocusSessionRecords() {
+  private async updateFocusSessionRecords(lastSessionStartTime: Date) {
     return this.focusSessionRecordStorageService
       .getAll()
       .then((records) => {
-        this.focusSessionRecordStorageService.saveAll([...records, newFocusSessionRecord()])
+        this.focusSessionRecordStorageService.saveAll([
+          ...records,
+          newFocusSessionRecord({
+            startedAt: lastSessionStartTime
+          })
+        ])
       })
       .then(() => {
         FocusSessionRecordHousekeeper.houseKeep({
