@@ -21,6 +21,7 @@ export class TimerInternalState {
   }) {
     const now = new Date()
     return new TimerInternalState({
+      sessionStartTime: undefined,
       pausedAt: now,
       endAt: getDateAfter({ from: now, duration: remaining }),
       stage,
@@ -111,7 +112,7 @@ export class TimerInternalState {
     })
   }
 
-  copyAsPausedWith(remaining: Duration): TimerInternalState {
+  copyAsResetWith(remaining: Duration): TimerInternalState {
     return TimerInternalState.newPausedState({
       ...this,
       remaining
@@ -125,7 +126,11 @@ export class TimerInternalState {
     })
   }
 
-  copyWith(update: { focusSessionsCompleted?: number; stage?: TimerStage }): TimerInternalState {
+  copyWith(update: {
+    focusSessionsCompleted?: number
+    stage?: TimerStage
+    sessionStartTime?: Date
+  }): TimerInternalState {
     return new TimerInternalState({ ...this, ...update })
   }
 }

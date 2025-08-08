@@ -600,6 +600,7 @@ describe('FocusTimer', () => {
 
     // State that is running
     const internalState1: TimerInternalState = TimerInternalState.newRunningState({
+      sessionStartTime: new Date(),
       remaining: new Duration({ seconds: 2 }),
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
@@ -610,7 +611,6 @@ describe('FocusTimer', () => {
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1
     }
-
     timer.setInternalState(internalState1)
 
     expect(timer.getExternalState()).toEqual(expectedExternalState)
@@ -621,6 +621,8 @@ describe('FocusTimer', () => {
       remaining: new Duration({ seconds: 1 }),
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 2
+    }).copyWith({
+      sessionStartTime: internalState1.sessionStartTime
     })
     const expectedExternalState2: TimerExternalState = {
       remaining: new Duration({ seconds: 1 }),
@@ -676,6 +678,42 @@ describe('FocusTimer', () => {
 
     expect(updates.length).toBe(originalUpdatesLength)
     expect(timer.getExternalState().remaining).toEqual(new Duration({ seconds: 200 }))
+  })
+
+  it('should record sessionStartTime when timer start focus', () => {
+    const now = new Date()
+    vi.setSystemTime(now)
+
+    const timer = newTimer(
+      newConfig({
+        focusDuration: new Duration({ minutes: 10 })
+      })
+    )
+    timer.start()
+
+    vi.advanceTimersByTime(1001)
+    timer.pause()
+    timer.start() // Extra start won't affect the sessionStartTime. sessionStartTime only consider the initial start
+
+    expect(timer.getInternalState().sessionStartTime).toEqual(now)
+  })
+
+  it('should update sessionStartTime when restart focus', () => {
+    const firstSessionStartTime = new Date()
+    vi.setSystemTime(firstSessionStartTime)
+
+    const timer = newTimer(
+      newConfig({
+        focusDuration: new Duration({ minutes: 10 })
+      })
+    )
+    timer.start()
+
+    vi.advanceTimersByTime(1001)
+    const restartTime = new Date()
+    timer.restartFocus()
+
+    expect(timer.getInternalState().sessionStartTime).toEqual(restartTime)
   })
 })
 
