@@ -128,7 +128,9 @@ describe('BrowsingControlTogglingService', () => {
       await getBrowsingRulesAfterToggling({
         browsingRules,
         schedules,
-        focusSessionRecords: [newFocusSessionRecord(new Date('2025-02-03T10:00:00'))],
+        focusSessionRecords: [
+          newFocusSessionRecord({ completedAt: new Date('2025-02-03T10:00:00') })
+        ],
         pauseBlockingDuringBreaks: false,
         pauseBlockingWhenTimerNotRunning: false
       })
