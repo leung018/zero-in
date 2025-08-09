@@ -16,7 +16,8 @@ export function runFocusSessionRecordStorageServiceTests(storage: StorageInterfa
         completedAt: new Date('2021-01-01T00:10:00Z'),
         startedAt: new Date('2021-01-01T00:00:00Z')
       }),
-      newFocusSessionRecord({ completedAt: new Date('2021-01-02'), startedAt: undefined })
+      newFocusSessionRecord({ completedAt: new Date('2021-01-02'), startedAt: undefined }),
+      newFocusSessionRecord({ completedAt: new Date('2021-01-03'), startedAt: undefined })
     ]
 
     await service.saveAll(focusSessionRecords)

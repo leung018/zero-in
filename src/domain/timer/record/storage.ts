@@ -51,7 +51,22 @@ export class FocusSessionRecordStorageService {
   }
 
   async saveAll(records: FocusSessionRecord[]) {
-    return this.storageManager.set(serializeFocusSessionRecords(records))
+    return this.storageManager.set(serializeFocusSessionRecords(this.deduplicateRecords(records)))
+  }
+
+  private deduplicateRecords(records: FocusSessionRecord[]): FocusSessionRecord[] {
+    const startedAtSet = new Set()
+    const result: FocusSessionRecord[] = []
+    for (const record of records) {
+      if (record.startedAt && !startedAtSet.has(record.startedAt.getTime())) {
+        startedAtSet.add(record.startedAt.getTime())
+        result.push(record)
+      }
+      if (!record.startedAt) {
+        result.push(record)
+      }
+    }
+    return result
   }
 
   async getAll(): Promise<FocusSessionRecord[]> {

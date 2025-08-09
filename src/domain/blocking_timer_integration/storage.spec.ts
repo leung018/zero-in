@@ -3,7 +3,7 @@ import { BlockingTimerIntegration } from '.'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
 import { BlockingTimerIntegrationSchemas } from './schema'
 import { BlockingTimerIntegrationStorageService } from './storage'
-import { runBlockingTimerIntegrationStorageServiceTests } from './storage_test'
+import { runBlockingTimerIntegrationStorageServiceTests } from './storage_shared_spec'
 
 describe('BlockingTimerIntegrationStorageService', () => {
   let storage = LocalStorageWrapper.createFake()

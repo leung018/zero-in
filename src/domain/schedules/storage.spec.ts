@@ -4,7 +4,7 @@ import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
 import { Time } from '../time'
 import { WeeklyScheduleSchemas } from './schema'
 import { WeeklyScheduleStorageService } from './storage'
-import { runWeeklyScheduleStorageServiceTests } from './storage_test'
+import { runWeeklyScheduleStorageServiceTests } from './storage_shared_spec'
 
 describe('WeeklyScheduleStorageService', () => {
   let storage = LocalStorageWrapper.createFake()

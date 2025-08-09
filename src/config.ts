@@ -37,7 +37,7 @@ const getDefaultBlockingTimerIntegration = (): BlockingTimerIntegration => {
   }
 }
 
-const getFocusSessionRecordHouseKeepDays = () => 30
+const getFocusSessionRecordHouseKeepDays = () => 10
 
 const getBadgeColorConfig = (): {
   focusBadgeColor: BadgeColor
