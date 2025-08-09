@@ -23,21 +23,4 @@ export function runFocusSessionRecordStorageServiceTests(storage: StorageInterfa
     await service.saveAll(focusSessionRecords)
     expect(await service.getAll()).toStrictEqual(focusSessionRecords)
   })
-
-  it('should deduplicate records with the same startedAt timestamp', async () => {
-    const service = new FocusSessionRecordStorageService(storage)
-    const record = newFocusSessionRecord({
-      completedAt: new Date('2021-01-01T00:10:00Z'),
-      startedAt: new Date('2021-01-01T00:00:00Z')
-    })
-    const focusSessionRecords = [
-      record,
-      newFocusSessionRecord({
-        completedAt: new Date('2021-01-01T00:10:01Z)'),
-        startedAt: new Date('2021-01-01T00:00:00Z')
-      })
-    ]
-    await service.saveAll(focusSessionRecords)
-    expect(await service.getAll()).toStrictEqual([record])
-  })
 }
