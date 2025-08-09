@@ -3,7 +3,7 @@ import { FocusSessionRecord, newFocusSessionRecord } from '.'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
 import { FocusSessionRecordsSchemas } from './schema'
 import { FocusSessionRecordStorageService } from './storage'
-import { runFocusSessionRecordStorageServiceTests } from './storage_test'
+import { runFocusSessionRecordStorageServiceTests } from './storage_shared_spec'
 
 describe('FocusSessionRecordStorageService', () => {
   let storage = LocalStorageWrapper.createFake()

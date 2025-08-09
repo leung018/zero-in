@@ -1,6 +1,6 @@
 import { beforeEach, describe } from 'vitest'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
-import { runDailyResetTimeStorageServiceTests } from './storage_test'
+import { runDailyResetTimeStorageServiceTests } from './storage_shared_spec'
 
 describe('DailyResetTimeStorageService', () => {
   let storage = LocalStorageWrapper.createFake()

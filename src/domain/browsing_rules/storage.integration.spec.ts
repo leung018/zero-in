@@ -1,7 +1,7 @@
 import { beforeEach, describe } from 'vitest'
 import { signInAndGetFirestoreStorage } from '../../test_utils/firestore'
 import { BrowsingRulesStorageService } from './storage'
-import { runBrowsingRulesStorageServiceTests } from './storage_test'
+import { runBrowsingRulesStorageServiceTests } from './storage_shared_spec'
 
 describe('BrowsingRulesStorageService', async () => {
   const firestoreStorage = await signInAndGetFirestoreStorage()
