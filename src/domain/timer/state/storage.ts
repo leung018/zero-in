@@ -1,6 +1,7 @@
 import { StorageInterface } from '../../../infra/storage/interface'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../../infra/storage/manager'
+import { AdaptiveStorageProvider } from '../../../infra/storage/provider'
 import { getDateAfter } from '../../../utils/date'
 import { Duration } from '../duration'
 import { TimerInternalState } from './internal'
@@ -11,7 +12,7 @@ export class TimerStateStorageService {
   static readonly STORAGE_KEY = 'timerState'
 
   static create() {
-    return new TimerStateStorageService(LocalStorageWrapper.create())
+    return new TimerStateStorageService(AdaptiveStorageProvider.create())
   }
 
   static createFake(storage = LocalStorageWrapper.createFake()) {
@@ -20,7 +21,7 @@ export class TimerStateStorageService {
 
   private storageManager: StorageManager<TimerStateSchemas[4]>
 
-  private constructor(storage: StorageInterface) {
+  constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: TimerStateStorageService.STORAGE_KEY,
