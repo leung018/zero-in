@@ -20,7 +20,7 @@ export class TimerStateStorageService {
 
   private storageManager: StorageManager<TimerStateSchemas[4]>
 
-  private constructor(storage: StorageInterface) {
+  constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: TimerStateStorageService.STORAGE_KEY,
