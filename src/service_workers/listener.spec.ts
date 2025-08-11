@@ -308,29 +308,28 @@ describe('BackgroundListener', () => {
       })
     })
 
+    const assertTimerStatesMatch = async () => {
+      expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
+        listener.getTimerExternalState()
+      )
+    }
+
+    // Start Timer
     await clientPort.send({ name: WorkRequestName.START_TIMER })
     vi.advanceTimersByTime(1000)
+    await assertTimerStatesMatch()
 
-    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
-      listener.getTimerExternalState()
-    )
-
+    // Pause Timer
     await clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
+    await assertTimerStatesMatch()
 
-    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
-      listener.getTimerExternalState()
-    )
-
+    // Resume Timer
     await clientPort.send({ name: WorkRequestName.START_TIMER })
+    await assertTimerStatesMatch()
 
-    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
-      listener.getTimerExternalState()
-    )
-
-    vi.advanceTimersByTime(2000) // Complete Focus Session
-    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
-      listener.getTimerExternalState()
-    )
+    // Complete Focus Session
+    vi.advanceTimersByTime(2000)
+    await assertTimerStatesMatch()
   })
 
   it('should restore timer state from storage', async () => {
