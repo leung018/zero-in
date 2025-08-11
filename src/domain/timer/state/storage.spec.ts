@@ -33,7 +33,7 @@ describe('TimerStateStorageService', () => {
     }
     storage.set(TimerStateStorageService.STORAGE_KEY, data)
 
-    const timerStateStorageService = TimerStateStorageService.createFake(storage)
+    const timerStateStorageService = new TimerStateStorageService(storage)
     const result = await timerStateStorageService.get()
     expect(result).toStrictEqual(
       TimerInternalState.newRunningState({
@@ -54,7 +54,7 @@ describe('TimerStateStorageService', () => {
     }
     storage.set(TimerStateStorageService.STORAGE_KEY, data)
 
-    const timerStateStorageService = TimerStateStorageService.createFake(storage)
+    const timerStateStorageService = new TimerStateStorageService(storage)
     const result = await timerStateStorageService.get()
     expect(result).toStrictEqual(
       TimerInternalState.newPausedState({
