@@ -53,7 +53,7 @@ onBeforeMount(async () => {
     name: WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE
   })
 
-  startPeriodicPing(port, 1000 * 60 * 5)
+  startPeriodicPing(port, 1000 * 30)
 })
 
 /*
