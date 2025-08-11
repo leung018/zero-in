@@ -166,6 +166,15 @@ export class BackgroundListener {
       }
     })
 
+    // Use setOnTimerStart instead of putting these actions under START_TIMER to avoid duplication.
+    // Restarting focus or break also need these actions.
+    this.timer.setOnTimerStart(() => {
+      this.timerStateStorageService.save(this.timer.getInternalState())
+      this.closeTabsService.trigger()
+      this.toggleBrowsingRules()
+      this.desktopNotificationService.clear()
+    })
+
     this.timer.setOnTimerUpdate((newExternalState) => {
       this.timerStateSubscriptionManager.broadcast(newExternalState)
 
@@ -264,10 +273,6 @@ export class BackgroundListener {
             }
             case WorkRequestName.START_TIMER: {
               this.timer.start()
-              this.timerStateStorageService.save(this.timer.getInternalState())
-              this.closeTabsService.trigger()
-              this.toggleBrowsingRules()
-              this.desktopNotificationService.clear()
               break
             }
             case WorkRequestName.PAUSE_TIMER: {
@@ -315,17 +320,14 @@ export class BackgroundListener {
             }
             case WorkRequestName.RESTART_FOCUS: {
               this.timer.restartFocus(message.payload?.nth)
-              this.timerStateStorageService.save(this.timer.getInternalState())
               break
             }
             case WorkRequestName.RESTART_SHORT_BREAK: {
               this.timer.restartShortBreak(message.payload?.nth)
-              this.timerStateStorageService.save(this.timer.getInternalState())
               break
             }
             case WorkRequestName.RESTART_LONG_BREAK: {
               this.timer.restartLongBreak()
-              this.timerStateStorageService.save(this.timer.getInternalState())
               break
             }
             case WorkRequestName.RESET_TIMER_CONFIG: {
