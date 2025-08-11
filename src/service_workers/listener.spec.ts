@@ -343,6 +343,11 @@ describe('BackgroundListener', () => {
     // Restart Long Break
     await clientPort.send({ name: WorkRequestName.RESTART_LONG_BREAK })
     await assertTimerStatesMatch()
+
+    // Reset Config
+    await clientPort.send({ name: WorkRequestName.RESET_TIMER_CONFIG })
+    await flushPromises()
+    await assertTimerStatesMatch()
   })
 
   it('should restore timer state from storage', async () => {

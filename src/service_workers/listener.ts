@@ -334,6 +334,7 @@ export class BackgroundListener {
               this.timerConfigStorageService.get().then((config) => {
                 this.timer.setConfig(config)
                 this.badgeDisplayService.clearBadge()
+                this.timerStateStorageService.save(this.timer.getInternalState())
               })
               break
             }
