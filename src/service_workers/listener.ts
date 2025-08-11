@@ -315,14 +315,17 @@ export class BackgroundListener {
             }
             case WorkRequestName.RESTART_FOCUS: {
               this.timer.restartFocus(message.payload?.nth)
+              this.timerStateStorageService.save(this.timer.getInternalState())
               break
             }
             case WorkRequestName.RESTART_SHORT_BREAK: {
               this.timer.restartShortBreak(message.payload?.nth)
+              this.timerStateStorageService.save(this.timer.getInternalState())
               break
             }
             case WorkRequestName.RESTART_LONG_BREAK: {
               this.timer.restartLongBreak()
+              this.timerStateStorageService.save(this.timer.getInternalState())
               break
             }
             case WorkRequestName.RESET_TIMER_CONFIG: {

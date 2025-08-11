@@ -304,7 +304,8 @@ describe('BackgroundListener', () => {
   it('should back up update of timer to storage', async () => {
     const { timerStateStorageService, clientPort, listener } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
-        focusDuration: new Duration({ seconds: 3 })
+        focusDuration: new Duration({ seconds: 3 }),
+        focusSessionsPerCycle: 3
       })
     })
 
@@ -329,6 +330,18 @@ describe('BackgroundListener', () => {
 
     // Complete Focus Session
     vi.advanceTimersByTime(2000)
+    await assertTimerStatesMatch()
+
+    // Restart Focus
+    await clientPort.send({ name: WorkRequestName.RESTART_FOCUS, payload: { nth: 1 } })
+    await assertTimerStatesMatch()
+
+    // Restart Short Break
+    await clientPort.send({ name: WorkRequestName.RESTART_SHORT_BREAK, payload: { nth: 1 } })
+    await assertTimerStatesMatch()
+
+    // Restart Long Break
+    await clientPort.send({ name: WorkRequestName.RESTART_LONG_BREAK })
     await assertTimerStatesMatch()
   })
 
