@@ -30,6 +30,8 @@ export class FocusTimer {
 
   private onTimerStart: () => void = () => {}
 
+  private onTimerPause: () => void = () => {}
+
   private constructor({ timerConfig }: { timerConfig: TimerConfig }) {
     this.config = this.newInternalConfig(timerConfig)
     this.internalState = TimerInternalState.newPausedState({
@@ -122,6 +124,7 @@ export class FocusTimer {
 
   pause() {
     this.stopRunning()
+    this.onTimerPause()
     this.notifyTimerUpdate()
   }
 
@@ -132,6 +135,10 @@ export class FocusTimer {
 
   setOnTimerStart(callback: () => void) {
     this.onTimerStart = callback
+  }
+
+  setOnTimerPause(callback: () => void) {
+    this.onTimerPause = callback
   }
 
   setOnTimerUpdate(callback: (state: TimerExternalState) => void) {

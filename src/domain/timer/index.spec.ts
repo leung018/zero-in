@@ -751,6 +751,30 @@ describe('FocusTimer', () => {
     )
     expect(triggerCount).toBe(5)
   })
+
+  it('should after set onTimerPause callback, every time timer pause, it should be called', () => {
+    const timer = newTimer()
+
+    let triggerCount = 0
+    const onTimerPause = () => {
+      triggerCount++
+    }
+    timer.setOnTimerPause(onTimerPause)
+
+    timer.pause()
+    expect(triggerCount).toBe(1)
+
+    // Set config will pause the timer
+    timer.setConfig(newConfig())
+    expect(triggerCount).toBe(2)
+
+    timer.setInternalState(
+      TimerInternalState.newTestInstance({
+        pausedAt: new Date()
+      })
+    )
+    expect(triggerCount).toBe(3)
+  })
 })
 
 const newConfig = TimerConfig.newTestInstance
