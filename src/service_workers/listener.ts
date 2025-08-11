@@ -166,6 +166,22 @@ export class BackgroundListener {
       }
     })
 
+    // Use setOnTimerStart instead of putting these actions under START_TIMER to avoid duplication.
+    // Restarting focus or break also need these actions.
+    this.timer.setOnTimerStart(() => {
+      this.timerStateStorageService.save(this.timer.getInternalState())
+      this.closeTabsService.trigger()
+      this.toggleBrowsingRules()
+      this.desktopNotificationService.clear()
+    })
+
+    // See comments above. The reason of using setOnTimerPause is similar.
+    this.timer.setOnTimerPause(() => {
+      this.badgeDisplayService.clearBadge()
+      this.toggleBrowsingRules()
+      this.timerStateStorageService.save(this.timer.getInternalState())
+    })
+
     this.timer.setOnTimerUpdate((newExternalState) => {
       this.timerStateSubscriptionManager.broadcast(newExternalState)
 
@@ -264,17 +280,10 @@ export class BackgroundListener {
             }
             case WorkRequestName.START_TIMER: {
               this.timer.start()
-              this.timerStateStorageService.save(this.timer.getInternalState())
-              this.closeTabsService.trigger()
-              this.toggleBrowsingRules()
-              this.desktopNotificationService.clear()
               break
             }
             case WorkRequestName.PAUSE_TIMER: {
               this.timer.pause()
-              this.badgeDisplayService.clearBadge()
-              this.toggleBrowsingRules()
-              this.timerStateStorageService.save(this.timer.getInternalState())
               break
             }
             case WorkRequestName.LISTEN_TO_TIMER: {
@@ -328,7 +337,6 @@ export class BackgroundListener {
             case WorkRequestName.RESET_TIMER_CONFIG: {
               this.timerConfigStorageService.get().then((config) => {
                 this.timer.setConfig(config)
-                this.badgeDisplayService.clearBadge()
               })
               break
             }

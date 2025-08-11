@@ -719,6 +719,62 @@ describe('FocusTimer', () => {
 
     expect(timer.getInternalState().sessionStartTime).toEqual(restartTime)
   })
+
+  it('should after set onTimerStart callback, every time timer start running, it should be called', () => {
+    const timer = newTimer()
+
+    let triggerCount = 0
+    const onTimerStart = () => {
+      triggerCount++
+    }
+
+    timer.setOnTimerStart(onTimerStart)
+
+    timer.start()
+    expect(triggerCount).toBe(1)
+
+    timer.restartFocus()
+    expect(triggerCount).toBe(2)
+
+    timer.restartShortBreak()
+    expect(triggerCount).toBe(3)
+
+    timer.restartLongBreak()
+    expect(triggerCount).toBe(4)
+
+    timer.pause()
+    expect(triggerCount).toBe(4)
+    timer.setInternalState(
+      TimerInternalState.newTestInstance({
+        pausedAt: undefined
+      })
+    )
+    expect(triggerCount).toBe(5)
+  })
+
+  it('should after set onTimerPause callback, every time timer pause, it should be called', () => {
+    const timer = newTimer()
+
+    let triggerCount = 0
+    const onTimerPause = () => {
+      triggerCount++
+    }
+    timer.setOnTimerPause(onTimerPause)
+
+    timer.pause()
+    expect(triggerCount).toBe(1)
+
+    // Set config will pause the timer
+    timer.setConfig(newConfig())
+    expect(triggerCount).toBe(2)
+
+    timer.setInternalState(
+      TimerInternalState.newTestInstance({
+        pausedAt: new Date()
+      })
+    )
+    expect(triggerCount).toBe(3)
+  })
 })
 
 const newConfig = TimerConfig.newTestInstance

@@ -304,33 +304,50 @@ describe('BackgroundListener', () => {
   it('should back up update of timer to storage', async () => {
     const { timerStateStorageService, clientPort, listener } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
-        focusDuration: new Duration({ seconds: 3 })
+        focusDuration: new Duration({ seconds: 3 }),
+        focusSessionsPerCycle: 3
       })
     })
 
+    const assertTimerStatesMatch = async () => {
+      expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
+        listener.getTimerExternalState()
+      )
+    }
+
+    // Start Timer
     await clientPort.send({ name: WorkRequestName.START_TIMER })
     vi.advanceTimersByTime(1000)
+    await assertTimerStatesMatch()
 
-    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
-      listener.getTimerExternalState()
-    )
-
+    // Pause Timer
     await clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
+    await assertTimerStatesMatch()
 
-    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
-      listener.getTimerExternalState()
-    )
-
+    // Resume Timer
     await clientPort.send({ name: WorkRequestName.START_TIMER })
+    await assertTimerStatesMatch()
 
-    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
-      listener.getTimerExternalState()
-    )
+    // Complete Focus Session
+    vi.advanceTimersByTime(2000)
+    await assertTimerStatesMatch()
 
-    vi.advanceTimersByTime(2000) // Complete Focus Session
-    expect((await timerStateStorageService.get())?.toExternalState()).toEqual(
-      listener.getTimerExternalState()
-    )
+    // Restart Focus
+    await clientPort.send({ name: WorkRequestName.RESTART_FOCUS, payload: { nth: 1 } })
+    await assertTimerStatesMatch()
+
+    // Restart Short Break
+    await clientPort.send({ name: WorkRequestName.RESTART_SHORT_BREAK, payload: { nth: 1 } })
+    await assertTimerStatesMatch()
+
+    // Restart Long Break
+    await clientPort.send({ name: WorkRequestName.RESTART_LONG_BREAK })
+    await assertTimerStatesMatch()
+
+    // Reset Config
+    await clientPort.send({ name: WorkRequestName.RESET_TIMER_CONFIG })
+    await flushPromises()
+    await assertTimerStatesMatch()
   })
 
   it('should restore timer state from storage', async () => {
