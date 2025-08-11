@@ -175,6 +175,13 @@ export class BackgroundListener {
       this.desktopNotificationService.clear()
     })
 
+    // See comments above. The reason of using setOnTimerPause is similar.
+    this.timer.setOnTimerPause(() => {
+      this.badgeDisplayService.clearBadge()
+      this.toggleBrowsingRules()
+      this.timerStateStorageService.save(this.timer.getInternalState())
+    })
+
     this.timer.setOnTimerUpdate((newExternalState) => {
       this.timerStateSubscriptionManager.broadcast(newExternalState)
 
@@ -277,9 +284,6 @@ export class BackgroundListener {
             }
             case WorkRequestName.PAUSE_TIMER: {
               this.timer.pause()
-              this.badgeDisplayService.clearBadge()
-              this.toggleBrowsingRules()
-              this.timerStateStorageService.save(this.timer.getInternalState())
               break
             }
             case WorkRequestName.LISTEN_TO_TIMER: {
@@ -333,8 +337,6 @@ export class BackgroundListener {
             case WorkRequestName.RESET_TIMER_CONFIG: {
               this.timerConfigStorageService.get().then((config) => {
                 this.timer.setConfig(config)
-                this.badgeDisplayService.clearBadge()
-                this.timerStateStorageService.save(this.timer.getInternalState())
               })
               break
             }
