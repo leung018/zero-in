@@ -80,4 +80,12 @@ export class TimerStateStorageService {
   async save(timerState: TimerInternalState): Promise<void> {
     return this.storageManager.set(serializeTimerState(timerState))
   }
+
+  async onChange(callback: (data: TimerInternalState) => void): Promise<void> {
+    return this.storageManager.onChange((data) => {
+      if (data) {
+        callback(deserializeTimerState(data))
+      }
+    })
+  }
 }
