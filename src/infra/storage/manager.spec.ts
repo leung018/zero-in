@@ -61,6 +61,24 @@ describe('StorageManager', () => {
     expect(result).toEqual(data)
   })
 
+  it('should trigger onChange if set data is called', async () => {
+    const storageManager = StorageManager.createFake({
+      currentDataVersion: 2
+    })
+
+    const data: V2Schema = {
+      dataVersion: 2,
+      fullname: 'John Doe'
+    }
+
+    const dataList: V2Schema[] = []
+    storageManager.onChange(() => {
+      dataList.push(data)
+    })
+    await storageManager.set(data)
+    expect(dataList).toEqual([data])
+  })
+
   it('should get old version and migrate to new version', async () => {
     const fakeStorage = LocalStorageWrapper.createFake()
 

@@ -19,6 +19,11 @@ export class AdaptiveStorageProvider implements StorageInterface {
     return storage.set(key, data)
   }
 
+  async onChange(key: string, callback: (data: any) => void) {
+    const storage = await this.getStorage()
+    return storage.onChange(key, callback)
+  }
+
   private async getStorage() {
     if (await FirebaseServices.isAuthenticated()) {
       return FirebaseServices.getFirestoreStorage()

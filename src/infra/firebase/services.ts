@@ -16,6 +16,7 @@ import {
   doc,
   getDoc,
   getFirestore,
+  onSnapshot,
   setDoc
 } from 'firebase/firestore'
 import { StorageInterface } from '../storage/interface'
@@ -102,6 +103,12 @@ class FirestoreStorage implements StorageInterface {
 
   async delete(key: string): Promise<void> {
     await deleteDoc(this.getDocRef(key))
+  }
+
+  onChange(key: string, callback: (data: any) => void) {
+    return onSnapshot(this.getDocRef(key), (snapshot) => {
+      callback(snapshot.data())
+    })
   }
 
   private getDocRef(key: string) {
