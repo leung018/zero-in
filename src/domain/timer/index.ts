@@ -92,9 +92,7 @@ export class FocusTimer {
   }
 
   start() {
-    if (!this.internalState.pausedAt) {
-      return
-    }
+    this.scheduler.stopTask()
 
     this.scheduler.scheduleTask(
       () => {

@@ -684,6 +684,35 @@ describe('FocusTimer', () => {
     expect(timer.getExternalState().remaining).toEqual(new Duration({ seconds: 200 }))
   })
 
+  it('should adjust the onTimeUpdate interval properly if the timer is already running after setting state', async () => {
+    const timer = newTimer(newConfig({ focusDuration: new Duration({ minutes: 3 }) }))
+
+    const updates: TimerExternalState[] = []
+    timer.setOnTimerUpdate((state) => {
+      updates.push(state)
+    })
+
+    timer.start()
+    vi.advanceTimersByTime(1500)
+
+    timer.setInternalState(
+      TimerInternalState.newRunningState({
+        sessionStartTime: new Date(),
+        remaining: new Duration({ seconds: 2 }),
+        stage: TimerStage.FOCUS,
+        focusSessionsCompleted: 0
+      })
+    )
+
+    const originalUpdatesLength = updates.length
+    vi.advanceTimersByTime(500)
+    expect(updates.length).toBe(originalUpdatesLength)
+
+    vi.advanceTimersByTime(500)
+    expect(updates.length).toBe(originalUpdatesLength + 1)
+    expect(updates[updates.length - 1].remaining).toEqual(new Duration({ seconds: 1 }))
+  })
+
   it('should record sessionStartTime when timer start focus', () => {
     const now = new Date()
     vi.setSystemTime(now)
