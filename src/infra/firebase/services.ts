@@ -92,17 +92,19 @@ class FirestoreStorage implements StorageInterface {
   constructor(public readonly userId: string) {}
 
   async set(key: string, value: any): Promise<void> {
-    await setDoc(doc(db, 'users', this.userId, 'application', key), value)
+    await setDoc(this.getDocRef(key), value)
   }
 
   async get(key: string): Promise<any> {
-    const docRef = doc(db, 'users', this.userId, 'application', key)
-    const docSnap = await getDoc(docRef)
+    const docSnap = await getDoc(this.getDocRef(key))
     return docSnap.data()
   }
 
   async delete(key: string): Promise<void> {
-    const docRef = doc(db, 'users', this.userId, 'application', key)
-    await deleteDoc(docRef)
+    await deleteDoc(this.getDocRef(key))
+  }
+
+  private getDocRef(key: string) {
+    return doc(db, 'users', this.userId, 'application', key)
   }
 }
