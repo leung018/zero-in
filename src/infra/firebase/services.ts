@@ -89,7 +89,7 @@ export class FirebaseServices {
   }
 }
 
-class FirestoreStorage implements StorageInterface {
+export class FirestoreStorage implements StorageInterface {
   constructor(public readonly userId: string) {}
 
   async set(key: string, value: any): Promise<void> {
