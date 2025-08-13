@@ -613,6 +613,7 @@ describe('FocusTimer', () => {
         focusSessionsPerCycle: 3
       })
     )
+    const timerId = timer.getId()
 
     // State that is running
     const internalState1: TimerInternalState = TimerInternalState.newRunningState({
@@ -630,7 +631,7 @@ describe('FocusTimer', () => {
     timer.setInternalState(internalState1)
 
     expect(timer.getExternalState()).toEqual(expectedExternalState)
-    expect(timer.getInternalState()).toEqual(internalState1)
+    expect(timer.getInternalState()).toEqual({ ...internalState1, timerId })
 
     // State that is paused
     const internalState2: TimerInternalState = TimerInternalState.newPausedState({
@@ -649,7 +650,7 @@ describe('FocusTimer', () => {
     timer.setInternalState(internalState2)
 
     expect(timer.getExternalState()).toEqual(expectedExternalState2)
-    expect(timer.getInternalState()).toEqual(internalState2)
+    expect(timer.getInternalState()).toEqual({ ...internalState2, timerId })
   })
 
   it('should start the timer if new state is running', async () => {

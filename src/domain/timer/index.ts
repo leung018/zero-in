@@ -257,12 +257,16 @@ export class FocusTimer {
     })
   }
 
-  setInternalState(state: TimerInternalState) {
-    this.internalState = state.copyAsResetWith(state.remaining()).copyWith({
-      sessionStartTime: state.sessionStartTime
-    })
+  setInternalState(update: {
+    sessionStartTime?: Date
+    pausedAt?: Date
+    endAt: Date
+    stage: TimerStage
+    focusSessionsCompleted: number
+  }) {
+    this.internalState = this.internalState.copyWith(update)
 
-    if (state.isRunning()) {
+    if (this.internalState.isRunning()) {
       this.start()
     } else {
       this.pause()

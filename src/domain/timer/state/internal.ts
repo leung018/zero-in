@@ -139,10 +139,12 @@ export class TimerInternalState {
   }
 
   copyWith(update: {
+    pausedAt?: Date
+    endAt?: Date
     focusSessionsCompleted?: number
     stage?: TimerStage
     sessionStartTime?: Date
   }): TimerInternalState {
-    return new TimerInternalState({ ...this, ...update })
+    return new TimerInternalState({ ...this, ...update, timerId: this.timerId })
   }
 }
