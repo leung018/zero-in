@@ -37,7 +37,7 @@ describe('TimerStateStorageService', () => {
     const result = await timerStateStorageService.get()
     expect(result).toStrictEqual(
       TimerInternalState.newRunningState({
-        sessionStartTime: undefined,
+        sessionStartTime: null,
         remaining: new Duration({ seconds: 100 }),
         stage: TimerStage.FOCUS,
         focusSessionsCompleted: 9,

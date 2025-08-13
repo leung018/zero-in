@@ -665,7 +665,7 @@ describe('FocusTimer', () => {
 
     timer.setInternalState(
       TimerInternalState.newTestInstance({
-        pausedAt: undefined,
+        pausedAt: null,
         endAt: getDateAfter({ duration: new Duration({ seconds: 3 }) })
       })
     )
@@ -791,7 +791,7 @@ describe('FocusTimer', () => {
     expect(triggerCount).toBe(4)
     timer.setInternalState(
       TimerInternalState.newTestInstance({
-        pausedAt: undefined
+        pausedAt: null
       })
     )
     expect(triggerCount).toBe(5)

@@ -18,8 +18,8 @@ export function serializeTimerState(timerState: TimerInternalState): SerializedT
 export function deserializeTimerState(data: SerializedTimerState): TimerInternalState {
   return new TimerInternalState({
     timerId: data.timerId,
-    sessionStartTime: data.sessionStartTime ? new Date(data.sessionStartTime) : undefined,
-    pausedAt: data.pausedAt ? new Date(data.pausedAt) : undefined,
+    sessionStartTime: data.sessionStartTime ? new Date(data.sessionStartTime) : null,
+    pausedAt: data.pausedAt ? new Date(data.pausedAt) : null,
     endAt: new Date(data.endAt),
     stage: data.stage,
     focusSessionsCompleted: data.focusSessionsCompleted

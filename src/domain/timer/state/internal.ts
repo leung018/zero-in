@@ -5,8 +5,8 @@ import type { TimerExternalState } from './external'
 
 export class TimerInternalState {
   readonly timerId: string
-  readonly sessionStartTime?: Date
-  readonly pausedAt?: Date
+  readonly sessionStartTime: Date | null
+  readonly pausedAt: Date | null
   readonly endAt: Date
   readonly stage: TimerStage
   readonly focusSessionsCompleted: number
@@ -25,7 +25,7 @@ export class TimerInternalState {
     const now = new Date()
     return new TimerInternalState({
       timerId,
-      sessionStartTime: undefined,
+      sessionStartTime: null,
       pausedAt: now,
       endAt: getDateAfter({ from: now, duration: remaining }),
       stage,
@@ -35,13 +35,13 @@ export class TimerInternalState {
 
   static newRunningState({
     timerId,
-    sessionStartTime,
+    sessionStartTime = null,
     remaining,
     stage,
     focusSessionsCompleted
   }: {
     timerId: string
-    sessionStartTime?: Date
+    sessionStartTime?: Date | null
     remaining: Duration
     stage: TimerStage
     focusSessionsCompleted: number
@@ -49,7 +49,7 @@ export class TimerInternalState {
     return new TimerInternalState({
       timerId,
       sessionStartTime,
-      pausedAt: undefined,
+      pausedAt: null,
       endAt: getDateAfter({ duration: remaining }),
       stage,
       focusSessionsCompleted
@@ -59,7 +59,7 @@ export class TimerInternalState {
   static newTestInstance({
     timerId = 'temp-789',
     sessionStartTime = new Date(),
-    pausedAt = undefined,
+    pausedAt = null,
     endAt = getDateAfter({ duration: new Duration({ minutes: 10 }) }),
     stage = TimerStage.FOCUS,
     focusSessionsCompleted = 0
@@ -83,8 +83,8 @@ export class TimerInternalState {
     focusSessionsCompleted
   }: {
     timerId: string
-    sessionStartTime?: Date
-    pausedAt?: Date
+    sessionStartTime: Date | null
+    pausedAt: Date | null
     endAt: Date
     stage: TimerStage
     focusSessionsCompleted: number
@@ -107,14 +107,14 @@ export class TimerInternalState {
   }
 
   remaining(now: Date = new Date()): Duration {
-    if (this.pausedAt === undefined) {
-      return dateDiff(now, this.endAt)
+    if (this.pausedAt) {
+      return dateDiff(this.pausedAt, this.endAt)
     }
-    return dateDiff(this.pausedAt, this.endAt)
+    return dateDiff(now, this.endAt)
   }
 
   isRunning(): boolean {
-    return this.pausedAt === undefined
+    return this.pausedAt === null
   }
 
   copyAsPausedNow(): TimerInternalState {
@@ -139,11 +139,11 @@ export class TimerInternalState {
   }
 
   copyWith(update: {
-    pausedAt?: Date
+    pausedAt?: Date | null
     endAt?: Date
     focusSessionsCompleted?: number
     stage?: TimerStage
-    sessionStartTime?: Date
+    sessionStartTime?: Date | null
   }): TimerInternalState {
     return new TimerInternalState({ ...this, ...update, timerId: this.timerId })
   }

@@ -259,8 +259,8 @@ export class FocusTimer {
   }
 
   setInternalState(update: {
-    sessionStartTime?: Date
-    pausedAt?: Date
+    sessionStartTime: Date | null
+    pausedAt: Date | null
     endAt: Date
     stage: TimerStage
     focusSessionsCompleted: number

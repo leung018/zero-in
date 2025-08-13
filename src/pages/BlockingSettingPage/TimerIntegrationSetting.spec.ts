@@ -79,7 +79,7 @@ describe('TimerIntegrationSetting', () => {
       }),
       timerState: TimerInternalState.newTestInstance({
         stage: TimerStage.SHORT_BREAK,
-        pausedAt: undefined
+        pausedAt: null
       }),
       browsingRules,
       weeklySchedules: []
