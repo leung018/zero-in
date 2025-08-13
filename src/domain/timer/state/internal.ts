@@ -147,4 +147,14 @@ export class TimerInternalState {
   }): TimerInternalState {
     return new TimerInternalState({ ...this, ...update, timerId: this.timerId })
   }
+
+  equalsIgnoringId(other: TimerInternalState): boolean {
+    return (
+      this.sessionStartTime?.getTime() === other.sessionStartTime?.getTime() &&
+      this.pausedAt?.getTime() === other.pausedAt?.getTime() &&
+      this.endAt.getTime() === other.endAt.getTime() &&
+      this.stage === other.stage &&
+      this.focusSessionsCompleted === other.focusSessionsCompleted
+    )
+  }
 }
