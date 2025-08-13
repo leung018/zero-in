@@ -359,6 +359,7 @@ describe('BackgroundListener', () => {
     })
 
     const targetState = TimerInternalState.newRunningState({
+      timerId: 'not matter',
       remaining: new Duration({ seconds: 1 }),
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 1

@@ -77,6 +77,7 @@ export class FocusTimer {
     this.config = this.newInternalConfig(config)
     this.setInternalState(
       TimerInternalState.newPausedState({
+        timerId: this.internalState.timerId,
         remaining: this.config.focusDuration,
         stage: TimerStage.FOCUS,
         focusSessionsCompleted: 0

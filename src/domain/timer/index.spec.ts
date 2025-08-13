@@ -617,6 +617,7 @@ describe('FocusTimer', () => {
 
     // State that is running
     const internalState1: TimerInternalState = TimerInternalState.newRunningState({
+      timerId: 'not matter',
       sessionStartTime: new Date(),
       remaining: new Duration({ seconds: 2 }),
       stage: TimerStage.FOCUS,
@@ -635,6 +636,7 @@ describe('FocusTimer', () => {
 
     // State that is paused
     const internalState2: TimerInternalState = TimerInternalState.newPausedState({
+      timerId: 'not matter',
       remaining: new Duration({ seconds: 1 }),
       stage: TimerStage.SHORT_BREAK,
       focusSessionsCompleted: 2
@@ -710,6 +712,7 @@ describe('FocusTimer', () => {
 
     timer.setInternalState(
       TimerInternalState.newRunningState({
+        timerId: 'not matter',
         sessionStartTime: new Date(),
         remaining: new Duration({ seconds: 2 }),
         stage: TimerStage.FOCUS,

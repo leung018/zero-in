@@ -15,6 +15,7 @@ export function runTimerStateStorageServiceTests(storage: StorageInterface) {
     const service = new TimerStateStorageService(storage)
 
     const state = TimerInternalState.newPausedState({
+      timerId: 'id01',
       remaining: new Duration({ seconds: 100 }),
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 9
@@ -23,6 +24,7 @@ export function runTimerStateStorageServiceTests(storage: StorageInterface) {
     expect(await service.get()).toStrictEqual(state)
 
     const state2 = TimerInternalState.newRunningState({
+      timerId: 'id02',
       sessionStartTime: new Date(),
       remaining: new Duration({ seconds: 100 }),
       stage: TimerStage.SHORT_BREAK,

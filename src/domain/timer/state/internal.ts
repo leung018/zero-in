@@ -4,7 +4,7 @@ import { TimerStage } from '../stage'
 import type { TimerExternalState } from './external'
 
 export class TimerInternalState {
-  readonly timerId: string = ''
+  readonly timerId: string
   readonly sessionStartTime?: Date
   readonly pausedAt?: Date
   readonly endAt: Date
@@ -12,12 +12,12 @@ export class TimerInternalState {
   readonly focusSessionsCompleted: number
 
   static newPausedState({
-    timerId = 'temp-123',
+    timerId,
     remaining,
     stage,
     focusSessionsCompleted
   }: {
-    timerId?: string
+    timerId: string
     remaining: Duration
     stage: TimerStage
     focusSessionsCompleted: number
@@ -34,13 +34,13 @@ export class TimerInternalState {
   }
 
   static newRunningState({
-    timerId = 'temp-456',
+    timerId,
     sessionStartTime,
     remaining,
     stage,
     focusSessionsCompleted
   }: {
-    timerId?: string
+    timerId: string
     sessionStartTime?: Date
     remaining: Duration
     stage: TimerStage
@@ -75,14 +75,14 @@ export class TimerInternalState {
   }
 
   constructor({
-    timerId = '',
+    timerId,
     sessionStartTime,
     pausedAt,
     endAt,
     stage,
     focusSessionsCompleted
   }: {
-    timerId?: string
+    timerId: string
     sessionStartTime?: Date
     pausedAt?: Date
     endAt: Date
