@@ -12,6 +12,7 @@ import { Duration } from '../domain/timer/duration'
 import type { FocusSessionRecord } from '../domain/timer/record'
 import { TimerStage } from '../domain/timer/stage'
 import { TimerInternalState } from '../domain/timer/state/internal'
+import { TimerStateStorageService } from '../domain/timer/state/storage'
 import { type Badge, type BadgeColor } from '../infra/badge'
 import { setUpListener } from '../test_utils/listener'
 import { getDateAfter } from '../utils/date'
@@ -530,6 +531,23 @@ describe('BackgroundListener', () => {
     const browsingRules = browsingControlService.getActivatedBrowsingRules()
     expect(browsingRules).toEqual(new BrowsingRules({ blockedDomains: [newDomain] }))
   })
+
+  it('should sync timer states between listeners', async () => {
+    const {
+      clientPort: clientPort1,
+      listener: listener1,
+      timerStateStorageService
+    } = await startListener()
+    const { listener: listener2 } = await startListener({
+      timerStateStorageService
+    })
+
+    await clientPort1.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
+    expect(listener1.getTimerExternalState().isRunning).toBe(true)
+    expect(listener2.getTimerExternalState()).toEqual(listener1.getTimerExternalState())
+  })
 })
 
 async function startListener({
@@ -538,11 +556,13 @@ async function startListener({
   focusSessionRecordHouseKeepDays = 30,
   blockingTimerIntegration = newTestBlockingTimerIntegration(),
   browsingRules = new BrowsingRules(),
-  weeklySchedules = []
+  weeklySchedules = [],
+  timerStateStorageService = TimerStateStorageService.createFake()
 } = {}) {
   const context = await setUpListener({
     timerConfig,
-    focusSessionRecordHouseKeepDays
+    focusSessionRecordHouseKeepDays,
+    timerStateStorageService
   })
 
   await context.blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
