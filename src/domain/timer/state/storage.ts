@@ -19,13 +19,13 @@ export class TimerStateStorageService {
     return new TimerStateStorageService(storage)
   }
 
-  private storageManager: StorageManager<TimerStateSchemas[4]>
+  private storageManager: StorageManager<TimerStateSchemas[5]>
 
   constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: TimerStateStorageService.STORAGE_KEY,
-      currentDataVersion: 4,
+      currentDataVersion: 5,
       migrators: [
         {
           oldDataVersion: undefined,
@@ -62,6 +62,26 @@ export class TimerStateStorageService {
               }).getTime(),
               stage: oldData.stage,
               focusSessionsCompleted: oldData.focusSessionsCompleted
+            }
+          }
+        },
+        {
+          oldDataVersion: 3,
+          migratorFunc: (oldData: TimerStateSchemas[3]): TimerStateSchemas[4] => {
+            return {
+              ...oldData,
+              dataVersion: 4,
+              sessionStartTime: null
+            }
+          }
+        },
+        {
+          oldDataVersion: 4,
+          migratorFunc: (oldData: TimerStateSchemas[4]): TimerStateSchemas[5] => {
+            return {
+              ...oldData,
+              dataVersion: 5,
+              timerId: ''
             }
           }
         }

@@ -4,6 +4,7 @@ import { TimerStage } from '../stage'
 import type { TimerExternalState } from './external'
 
 export class TimerInternalState {
+  readonly timerId: string = ''
   readonly sessionStartTime?: Date
   readonly pausedAt?: Date
   readonly endAt: Date
@@ -11,16 +12,19 @@ export class TimerInternalState {
   readonly focusSessionsCompleted: number
 
   static newPausedState({
+    timerId = 'temp-123',
     remaining,
     stage,
     focusSessionsCompleted
   }: {
+    timerId?: string
     remaining: Duration
     stage: TimerStage
     focusSessionsCompleted: number
   }) {
     const now = new Date()
     return new TimerInternalState({
+      timerId,
       sessionStartTime: undefined,
       pausedAt: now,
       endAt: getDateAfter({ from: now, duration: remaining }),
@@ -30,17 +34,20 @@ export class TimerInternalState {
   }
 
   static newRunningState({
+    timerId = 'temp-456',
     sessionStartTime,
     remaining,
     stage,
     focusSessionsCompleted
   }: {
+    timerId?: string
     sessionStartTime?: Date
     remaining: Duration
     stage: TimerStage
     focusSessionsCompleted: number
   }) {
     return new TimerInternalState({
+      timerId,
       sessionStartTime,
       pausedAt: undefined,
       endAt: getDateAfter({ duration: remaining }),
@@ -50,6 +57,7 @@ export class TimerInternalState {
   }
 
   static newTestInstance({
+    timerId = 'temp-789',
     sessionStartTime = new Date(),
     pausedAt = undefined,
     endAt = getDateAfter({ duration: new Duration({ minutes: 10 }) }),
@@ -57,6 +65,7 @@ export class TimerInternalState {
     focusSessionsCompleted = 0
   }: Partial<TimerInternalState> = {}) {
     return new TimerInternalState({
+      timerId,
       sessionStartTime,
       pausedAt,
       endAt,
@@ -66,18 +75,21 @@ export class TimerInternalState {
   }
 
   constructor({
+    timerId = '',
     sessionStartTime,
     pausedAt,
     endAt,
     stage,
     focusSessionsCompleted
   }: {
+    timerId?: string
     sessionStartTime?: Date
     pausedAt?: Date
     endAt: Date
     stage: TimerStage
     focusSessionsCompleted: number
   }) {
+    this.timerId = timerId
     this.sessionStartTime = sessionStartTime
     this.pausedAt = pausedAt
     this.endAt = endAt
