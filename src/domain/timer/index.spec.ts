@@ -593,6 +593,18 @@ describe('FocusTimer', () => {
     expect(timer.getExternalState().focusSessionsCompleted).toBe(0)
   })
 
+  it('should getId return timerId in internalSate', () => {
+    const timer = newTimer()
+    expect(timer.getId()).toBe(timer.getInternalState().timerId)
+  })
+
+  it('should two timer instance with different timerId', async () => {
+    const timer1 = newTimer()
+    const timer2 = newTimer()
+
+    expect(timer1.getId()).not.toBe(timer2.getId())
+  })
+
   it('should able to set internal state', async () => {
     const timer = newTimer(
       newConfig({

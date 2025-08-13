@@ -35,6 +35,7 @@ export class FocusTimer {
   private constructor({ timerConfig }: { timerConfig: TimerConfig }) {
     this.config = this.newInternalConfig(timerConfig)
     this.internalState = TimerInternalState.newPausedState({
+      timerId: crypto.randomUUID(),
       remaining: this.config.focusDuration,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
@@ -66,6 +67,10 @@ export class FocusTimer {
 
   getConfig(): Readonly<TimerConfig> {
     return this.config
+  }
+
+  getId() {
+    return this.internalState.timerId
   }
 
   setConfig(config: TimerConfig) {
