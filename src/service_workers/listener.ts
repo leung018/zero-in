@@ -154,6 +154,15 @@ export class BackgroundListener {
       this.timer.setInternalState(backupInternalState)
     }
 
+    this.timerStateStorageService.onChange((newInternalState) => {
+      if (
+        newInternalState.timerId != this.timer.getId() &&
+        !newInternalState.equalsIgnoringId(this.timer.getInternalState())
+      ) {
+        this.timer.setInternalState(newInternalState)
+      }
+    })
+
     this.timer.setOnStageCompleted(({ lastStage, lastSessionStartTime }) => {
       this.timerStateStorageService.save(this.timer.getInternalState())
 

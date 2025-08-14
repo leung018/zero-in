@@ -40,4 +40,17 @@ describe('AdaptiveStorageProvider', async () => {
     const unauthenticatedData = await unauthenticatedStorage.get(TEST_KEY)
     expect(unauthenticatedData).toStrictEqual(testData)
   })
+
+  it('should onChange can listen to changes for firestore', async () => {
+    const firestoreStorage = await signInAndGetFirestoreStorage()
+    const provider = new AdaptiveStorageProvider(LocalStorageWrapper.createFake())
+
+    const receivedData: any[] = []
+    provider.onChange(TEST_KEY, (data) => {
+      receivedData.push(data)
+    })
+
+    await firestoreStorage.set(TEST_KEY, testData)
+    expect(receivedData).toStrictEqual([testData])
+  })
 })

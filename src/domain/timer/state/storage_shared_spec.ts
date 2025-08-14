@@ -15,6 +15,7 @@ export function runTimerStateStorageServiceTests(storage: StorageInterface) {
     const service = new TimerStateStorageService(storage)
 
     const state = TimerInternalState.newPausedState({
+      timerId: 'id01',
       remaining: new Duration({ seconds: 100 }),
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 9
@@ -23,6 +24,7 @@ export function runTimerStateStorageServiceTests(storage: StorageInterface) {
     expect(await service.get()).toStrictEqual(state)
 
     const state2 = TimerInternalState.newRunningState({
+      timerId: 'id02',
       sessionStartTime: new Date(),
       remaining: new Duration({ seconds: 100 }),
       stage: TimerStage.SHORT_BREAK,
@@ -30,5 +32,18 @@ export function runTimerStateStorageServiceTests(storage: StorageInterface) {
     })
     await service.save(state2)
     expect(await service.get()).toStrictEqual(state2)
+  })
+
+  it('should onChange triggered when TimerState is changed', async () => {
+    const service = new TimerStateStorageService(storage)
+    const states: TimerInternalState[] = []
+    service.onChange((data) => {
+      states.push(data)
+    })
+
+    const targetState = TimerInternalState.newTestInstance()
+
+    await service.save(targetState)
+    expect(states).toEqual([targetState])
   })
 }

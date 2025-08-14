@@ -35,6 +35,7 @@ export class FocusTimer {
   private constructor({ timerConfig }: { timerConfig: TimerConfig }) {
     this.config = this.newInternalConfig(timerConfig)
     this.internalState = TimerInternalState.newPausedState({
+      timerId: crypto.randomUUID(),
       remaining: this.config.focusDuration,
       stage: TimerStage.FOCUS,
       focusSessionsCompleted: 0
@@ -68,10 +69,15 @@ export class FocusTimer {
     return this.config
   }
 
+  getId() {
+    return this.internalState.timerId
+  }
+
   setConfig(config: TimerConfig) {
     this.config = this.newInternalConfig(config)
     this.setInternalState(
       TimerInternalState.newPausedState({
+        timerId: this.internalState.timerId,
         remaining: this.config.focusDuration,
         stage: TimerStage.FOCUS,
         focusSessionsCompleted: 0
@@ -92,9 +98,7 @@ export class FocusTimer {
   }
 
   start() {
-    if (!this.internalState.pausedAt) {
-      return
-    }
+    this.scheduler.stopTask()
 
     this.scheduler.scheduleTask(
       () => {
@@ -107,7 +111,10 @@ export class FocusTimer {
       { intervalMs: 1000, startAfterMs: this.getMsUntilNextSecond() }
     )
 
-    this.internalState = this.internalState.copyAsRunningWith(this.remaining())
+    if (this.internalState.pausedAt) {
+      this.internalState = this.internalState.copyAsRunningWith(this.remaining())
+    }
+
     if (!this.internalState.sessionStartTime) {
       this.internalState = this.internalState.copyWith({
         sessionStartTime: new Date()
@@ -129,7 +136,9 @@ export class FocusTimer {
   }
 
   private stopRunning() {
-    this.internalState = this.internalState.copyAsPausedNow()
+    if (this.internalState.isRunning()) {
+      this.internalState = this.internalState.copyAsPausedNow()
+    }
     this.scheduler.stopTask()
   }
 
@@ -254,12 +263,16 @@ export class FocusTimer {
     })
   }
 
-  setInternalState(state: TimerInternalState) {
-    this.internalState = state.copyAsResetWith(state.remaining()).copyWith({
-      sessionStartTime: state.sessionStartTime
-    })
+  setInternalState(update: {
+    sessionStartTime: Date | null
+    pausedAt: Date | null
+    endAt: Date
+    stage: TimerStage
+    focusSessionsCompleted: number
+  }) {
+    this.internalState = this.internalState.copyWith(update)
 
-    if (state.isRunning()) {
+    if (this.internalState.isRunning()) {
       this.start()
     } else {
       this.pause()

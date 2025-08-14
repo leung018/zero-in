@@ -81,4 +81,8 @@ export class StorageManager<S> {
   async set(update: S): Promise<void> {
     return this.storage.set(this.key, update)
   }
+
+  async onChange(callback: (data: S) => void): Promise<void> {
+    return this.storage.onChange(this.key, callback)
+  }
 }

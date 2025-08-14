@@ -19,13 +19,13 @@ export class TimerStateStorageService {
     return new TimerStateStorageService(storage)
   }
 
-  private storageManager: StorageManager<TimerStateSchemas[4]>
+  private storageManager: StorageManager<TimerStateSchemas[5]>
 
   constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: TimerStateStorageService.STORAGE_KEY,
-      currentDataVersion: 4,
+      currentDataVersion: 5,
       migrators: [
         {
           oldDataVersion: undefined,
@@ -64,6 +64,26 @@ export class TimerStateStorageService {
               focusSessionsCompleted: oldData.focusSessionsCompleted
             }
           }
+        },
+        {
+          oldDataVersion: 3,
+          migratorFunc: (oldData: TimerStateSchemas[3]): TimerStateSchemas[4] => {
+            return {
+              ...oldData,
+              dataVersion: 4,
+              sessionStartTime: null
+            }
+          }
+        },
+        {
+          oldDataVersion: 4,
+          migratorFunc: (oldData: TimerStateSchemas[4]): TimerStateSchemas[5] => {
+            return {
+              ...oldData,
+              dataVersion: 5,
+              timerId: ''
+            }
+          }
         }
       ]
     })
@@ -79,5 +99,13 @@ export class TimerStateStorageService {
 
   async save(timerState: TimerInternalState): Promise<void> {
     return this.storageManager.set(serializeTimerState(timerState))
+  }
+
+  async onChange(callback: (data: TimerInternalState) => void): Promise<void> {
+    return this.storageManager.onChange((data) => {
+      if (data) {
+        callback(deserializeTimerState(data))
+      }
+    })
   }
 }
