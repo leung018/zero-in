@@ -3,6 +3,7 @@ import { Page } from '@playwright/test'
 import { formatNumber } from '../src/utils/format.js'
 import { expect, test } from './fixtures.js'
 import { assertWithRetry } from './utils/assertion.js'
+import { changeFocusDuration } from './utils/interactions/testing_config.js'
 import {
   goToBlockingSettingPage,
   goToFocusTimer,
@@ -328,12 +329,6 @@ async function addNonActiveSchedule(page: Page) {
   await page.getByTestId('end-time-input').fill(`${formatNumber(endHours)}:00`)
 
   await page.getByTestId('add-schedule-button').click()
-}
-
-async function changeFocusDuration(page: Page, seconds: number) {
-  const input = page.getByTestId('focus-duration')
-  await input.fill(seconds.toString())
-  await page.getByTestId('save-button').click()
 }
 
 const TEXT_IN_BLOCKED_TEMPLATE = 'Stay Focused'
