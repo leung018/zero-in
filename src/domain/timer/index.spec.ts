@@ -605,57 +605,7 @@ describe('FocusTimer', () => {
     expect(timer1.getId()).not.toBe(timer2.getId())
   })
 
-  it('should able to set internal state', async () => {
-    const timer = newTimer(
-      newConfig({
-        focusDuration: new Duration({ seconds: 3 }),
-        shortBreakDuration: new Duration({ seconds: 1 }),
-        focusSessionsPerCycle: 3
-      })
-    )
-    const timerId = timer.getId()
-
-    // State that is running
-    const internalState1: TimerInternalState = TimerInternalState.newRunningState({
-      timerId: 'not matter',
-      sessionStartTime: new Date(),
-      remaining: new Duration({ seconds: 2 }),
-      stage: TimerStage.FOCUS,
-      focusSessionsCompleted: 1
-    })
-    const expectedExternalState: TimerExternalState = {
-      remaining: new Duration({ seconds: 2 }),
-      isRunning: true,
-      stage: TimerStage.FOCUS,
-      focusSessionsCompleted: 1
-    }
-    timer.setInternalState(internalState1)
-
-    expect(timer.getExternalState()).toEqual(expectedExternalState)
-    expect(timer.getInternalState()).toEqual({ ...internalState1, timerId })
-
-    // State that is paused
-    const internalState2: TimerInternalState = TimerInternalState.newPausedState({
-      timerId: 'not matter',
-      remaining: new Duration({ seconds: 1 }),
-      stage: TimerStage.SHORT_BREAK,
-      focusSessionsCompleted: 2
-    }).copyWith({
-      sessionStartTime: internalState1.sessionStartTime
-    })
-    const expectedExternalState2: TimerExternalState = {
-      remaining: new Duration({ seconds: 1 }),
-      isRunning: false,
-      stage: TimerStage.SHORT_BREAK,
-      focusSessionsCompleted: 2
-    }
-    timer.setInternalState(internalState2)
-
-    expect(timer.getExternalState()).toEqual(expectedExternalState2)
-    expect(timer.getInternalState()).toEqual({ ...internalState2, timerId })
-  })
-
-  it('should setInternalState can set past paused state', () => {
+  it('should setInternalState can set paused state', () => {
     const timer = newTimer()
     const internalState = TimerInternalState.newTestInstance({
       timerId: timer.getId(),
@@ -663,11 +613,50 @@ describe('FocusTimer', () => {
       endAt: getDateAfter({
         from: new Date('2023-01-01T00:00:00.000Z'),
         duration: new Duration({ seconds: 3 })
-      })
+      }),
+      focusSessionsCompleted: 2,
+      sessionStartTime: new Date(),
+      stage: TimerStage.FOCUS
     })
     timer.setInternalState(internalState)
 
     expect(timer.getInternalState()).toEqual(internalState)
+
+    const expectedExternalState: TimerExternalState = {
+      remaining: new Duration({ seconds: 3 }),
+      isRunning: false,
+      stage: TimerStage.FOCUS,
+      focusSessionsCompleted: 2
+    }
+    expect(timer.getExternalState()).toEqual(expectedExternalState)
+  })
+
+  it('should setInternalState can set running state', () => {
+    const timer = newTimer()
+    const internalState = TimerInternalState.newRunningState({
+      timerId: timer.getId(),
+      sessionStartTime: new Date(),
+      remaining: new Duration({ seconds: 2 }),
+      stage: TimerStage.FOCUS,
+      focusSessionsCompleted: 1
+    })
+    timer.setInternalState(internalState)
+
+    expect(timer.getInternalState()).toEqual(internalState)
+
+    const expectedExternalState: TimerExternalState = {
+      remaining: new Duration({ seconds: 2 }),
+      isRunning: true,
+      stage: TimerStage.FOCUS,
+      focusSessionsCompleted: 1
+    }
+    expect(timer.getExternalState()).toEqual(expectedExternalState)
+  })
+
+  it('should setInternalState not mutating timerId', () => {
+    const timer = newTimer()
+    timer.setInternalState(TimerInternalState.newTestInstance({ timerId: 'other' }))
+    expect(timer.getId()).not.toBe('other')
   })
 
   it('should start the timer if new state is running', async () => {
