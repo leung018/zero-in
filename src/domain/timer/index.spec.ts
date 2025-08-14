@@ -655,6 +655,21 @@ describe('FocusTimer', () => {
     expect(timer.getInternalState()).toEqual({ ...internalState2, timerId })
   })
 
+  it('should setInternalState can set past paused state', () => {
+    const timer = newTimer()
+    const internalState = TimerInternalState.newTestInstance({
+      timerId: timer.getId(),
+      pausedAt: new Date('2023-01-01T00:00:00.000Z'),
+      endAt: getDateAfter({
+        from: new Date('2023-01-01T00:00:00.000Z'),
+        duration: new Duration({ seconds: 3 })
+      })
+    })
+    timer.setInternalState(internalState)
+
+    expect(timer.getInternalState()).toEqual(internalState)
+  })
+
   it('should start the timer if new state is running', async () => {
     const timer = newTimer()
 

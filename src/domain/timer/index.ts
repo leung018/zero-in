@@ -133,7 +133,9 @@ export class FocusTimer {
   }
 
   private stopRunning() {
-    this.internalState = this.internalState.copyAsPausedNow()
+    if (this.internalState.isRunning()) {
+      this.internalState = this.internalState.copyAsPausedNow()
+    }
     this.scheduler.stopTask()
   }
 
