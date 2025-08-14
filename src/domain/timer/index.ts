@@ -111,7 +111,10 @@ export class FocusTimer {
       { intervalMs: 1000, startAfterMs: this.getMsUntilNextSecond() }
     )
 
-    this.internalState = this.internalState.copyAsRunningWith(this.remaining())
+    if (this.internalState.pausedAt) {
+      this.internalState = this.internalState.copyAsRunningWith(this.remaining())
+    }
+
     if (!this.internalState.sessionStartTime) {
       this.internalState = this.internalState.copyWith({
         sessionStartTime: new Date()
