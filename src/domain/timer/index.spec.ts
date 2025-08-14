@@ -124,10 +124,13 @@ describe('FocusTimer', () => {
 
     timer.start()
     vi.advanceTimersByTime(950)
+    const endAtBeforeExtraStart = timer.getInternalState().endAt
+
     timer.start()
     vi.advanceTimersByTime(1050)
 
     expect(timer.getExternalState().remaining).toEqual(new Duration({ minutes: 9, seconds: 58 }))
+    expect(timer.getInternalState().endAt).toEqual(endAtBeforeExtraStart)
   })
 
   it('should able to pause', () => {
