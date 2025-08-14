@@ -25,6 +25,13 @@ export class LocalStorageWrapper implements StorageInterface {
   }
 
   onChange(key: string, callback: (data: any) => void) {
+    // TODO: This function is for testing purpose and should not trigger in the production app
+    // May need think of better way that not using if condition here to achieve it
+
+    if (!(this.localStorage instanceof FakeLocalStorage)) {
+      return
+    }
+
     if (!this.onChangeListeners.has(key)) {
       this.onChangeListeners.set(key, [])
     }
