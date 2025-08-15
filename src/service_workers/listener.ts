@@ -146,6 +146,11 @@ export class BackgroundListener {
     this.setUpListener()
   }
 
+  async reload() {
+    this.timer.setOnTimerPause(() => {}) // So that setConfig in setUpTimer won't mutate and persist the timerState
+    await this.setUpTimer()
+  }
+
   private async setUpTimer() {
     const timerConfig = await this.timerConfigStorageService.get()
     this.timer.setConfig(timerConfig)
@@ -260,6 +265,10 @@ export class BackgroundListener {
 
   getTimerExternalState() {
     return this.timer.getExternalState()
+  }
+
+  getTimerConfig() {
+    return this.timer.getConfig()
   }
 
   addBlockedDomain(domain: string) {

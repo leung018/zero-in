@@ -548,6 +548,39 @@ describe('BackgroundListener', () => {
     expect(listener1.getTimerExternalState().isRunning).toBe(true)
     expect(listener2.getTimerExternalState()).toEqual(listener1.getTimerExternalState())
   })
+
+  it('should reload can get the new timer state and timer config', async () => {
+    const { listener, clientPort, timerStateStorageService, timerConfigStorageService } =
+      await startListener({
+        timerConfig: TimerConfig.newTestInstance({
+          focusDuration: new Duration({ seconds: 1 })
+        })
+      })
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
+    const newConfig = TimerConfig.newTestInstance({
+      focusDuration: new Duration({ seconds: 3 })
+    })
+    await timerConfigStorageService.save(newConfig)
+
+    timerStateStorageService.unsubscribeAll()
+    const newState = TimerInternalState.newTestInstance({
+      pausedAt: new Date(),
+      endAt: getDateAfter({
+        duration: new Duration({ seconds: 2 })
+      })
+    })
+    await timerStateStorageService.save(newState)
+
+    await listener.reload()
+
+    expect(listener.getTimerExternalState().remaining).toEqual(new Duration({ seconds: 2 }))
+    expect(listener.getTimerExternalState().isRunning).toBe(false)
+
+    expect(listener.getTimerConfig()).toEqual(newConfig)
+  })
 })
 
 async function startListener({
