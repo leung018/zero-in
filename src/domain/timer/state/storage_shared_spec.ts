@@ -34,7 +34,7 @@ export function runTimerStateStorageServiceTests(storage: StorageInterface) {
     expect(await service.get()).toStrictEqual(state2)
   })
 
-  it('should onChange triggered when TimerState is changed', async () => {
+  it('should onChange triggered when TimerState is changed and unsubscribeAll can unsubscribe', async () => {
     const service = new TimerStateStorageService(storage)
     const states: TimerInternalState[] = []
     service.onChange((data) => {
@@ -43,6 +43,10 @@ export function runTimerStateStorageServiceTests(storage: StorageInterface) {
 
     const targetState = TimerInternalState.newTestInstance()
 
+    await service.save(targetState)
+    expect(states).toEqual([targetState])
+
+    service.unsubscribeAll()
     await service.save(targetState)
     expect(states).toEqual([targetState])
   })

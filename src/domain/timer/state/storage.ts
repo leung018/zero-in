@@ -21,6 +21,8 @@ export class TimerStateStorageService {
 
   private storageManager: StorageManager<TimerStateSchemas[5]>
 
+  private unsubscribes: (() => void)[] = []
+
   constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
@@ -102,10 +104,16 @@ export class TimerStateStorageService {
   }
 
   async onChange(callback: (data: TimerInternalState) => void): Promise<void> {
-    return this.storageManager.onChange((data) => {
+    const unsubscribe = await this.storageManager.onChange((data) => {
       if (data) {
         callback(deserializeTimerState(data))
       }
     })
+    this.unsubscribes.push(unsubscribe)
+  }
+
+  unsubscribeAll() {
+    this.unsubscribes.forEach((unsubscribe) => unsubscribe())
+    this.unsubscribes = []
   }
 }
