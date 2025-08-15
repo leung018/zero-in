@@ -1,12 +1,12 @@
 import { StorageInterface } from './storage/interface'
-import { LocalStorageWrapper } from './storage/local_storage_wrapper'
+import { FakeObservableStorage, LocalStorageWrapper } from './storage/local_storage_wrapper'
 
 export class FeatureFlagsService {
   static readonly STORAGE_KEY = 'featureFlags'
   private storage: StorageInterface
 
   static createFake(): FeatureFlagsService {
-    return new FeatureFlagsService(LocalStorageWrapper.createFake())
+    return new FeatureFlagsService(FakeObservableStorage.create())
   }
 
   static init(): FeatureFlagsService {
