@@ -581,6 +581,30 @@ describe('BackgroundListener', () => {
 
     expect(listener.getTimerConfig()).toEqual(newConfig)
   })
+
+  it('should reload can set the new notification setting from storage service', async () => {
+    const { clientPort, listener, desktopNotificationService, notificationSettingStorageService } =
+      await startListener({
+        timerConfig: TimerConfig.newTestInstance({
+          focusDuration: new Duration({ seconds: 1 })
+        }),
+        notificationSetting: newTestNotificationSetting({
+          desktopNotification: true
+        })
+      })
+
+    await notificationSettingStorageService.save(
+      newTestNotificationSetting({
+        desktopNotification: false
+      })
+    )
+    await listener.reload()
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    vi.advanceTimersByTime(1000)
+
+    expect(desktopNotificationService.isNotificationActive()).toBe(false)
+  })
 })
 
 async function startListener({
