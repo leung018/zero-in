@@ -1,4 +1,4 @@
-import { StorageInterface } from './interface'
+import { StorageInterface, Unsubscribe } from './interface'
 import { LocalStorageWrapper } from './local_storage_wrapper'
 
 interface Schema {
@@ -82,7 +82,7 @@ export class StorageManager<S> {
     return this.storage.set(this.key, update)
   }
 
-  async onChange(callback: (data: S) => void): Promise<void> {
+  async onChange(callback: (data: S) => void): Promise<Unsubscribe> {
     return this.storage.onChange(this.key, callback)
   }
 }

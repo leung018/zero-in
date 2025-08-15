@@ -1,4 +1,4 @@
-import { StorageInterface } from './interface'
+import { StorageInterface, Unsubscribe } from './interface'
 import { FakeLocalStorage, LocalStorage } from './local_storage'
 
 export class LocalStorageWrapper implements StorageInterface {
@@ -24,17 +24,23 @@ export class LocalStorageWrapper implements StorageInterface {
     this.onChangeListeners.get(key)?.forEach((callback) => callback(data))
   }
 
-  onChange(key: string, callback: (data: any) => void) {
+  async onChange(key: string, callback: (data: any) => void): Promise<Unsubscribe> {
     // TODO: This function is for testing purpose and should not trigger in the production app
     // May need think of better way that not using if condition here to achieve it
 
     if (!(this.localStorage instanceof FakeLocalStorage)) {
-      return
+      return Promise.resolve(() => {})
     }
 
     if (!this.onChangeListeners.has(key)) {
       this.onChangeListeners.set(key, [])
     }
     this.onChangeListeners.get(key)?.push(callback)
+
+    const callbackIndex = (this.onChangeListeners.get(key)?.length || 1) - 1
+
+    return () => {
+      this.onChangeListeners.get(key)?.splice(callbackIndex, 1)
+    }
   }
 }

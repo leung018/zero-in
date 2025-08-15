@@ -61,7 +61,7 @@ describe('StorageManager', () => {
     expect(result).toEqual(data)
   })
 
-  it('should trigger onChange if set data is called', async () => {
+  it('should able to subscribe and unsubscribe change of data', async () => {
     const storageManager = StorageManager.createFake({
       currentDataVersion: 2
     })
@@ -72,10 +72,18 @@ describe('StorageManager', () => {
     }
 
     const dataList: V2Schema[] = []
-    storageManager.onChange(() => {
-      dataList.push(data)
+    const unsubscribe = await storageManager.onChange((newData) => {
+      dataList.push(newData as V2Schema)
     })
     await storageManager.set(data)
+    expect(dataList).toEqual([data])
+
+    unsubscribe()
+    const data2: V2Schema = {
+      dataVersion: 2,
+      fullname: 'Jane Smith'
+    }
+    await storageManager.set(data2)
     expect(dataList).toEqual([data])
   })
 

@@ -105,9 +105,11 @@ export class FirestoreStorage implements StorageInterface {
     await deleteDoc(this.getDocRef(key))
   }
 
-  onChange(key: string, callback: (data: any) => void) {
+  async onChange(key: string, callback: (data: any) => void) {
     return onSnapshot(this.getDocRef(key), (snapshot) => {
-      callback(snapshot.data())
+      if (snapshot.exists()) {
+        callback(snapshot.data())
+      }
     })
   }
 

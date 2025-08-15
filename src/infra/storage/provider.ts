@@ -1,5 +1,5 @@
 import { FirebaseServices } from '../firebase/services'
-import { StorageInterface } from './interface'
+import { StorageInterface, Unsubscribe } from './interface'
 import { LocalStorageWrapper } from './local_storage_wrapper'
 
 export class AdaptiveStorageProvider implements StorageInterface {
@@ -19,7 +19,7 @@ export class AdaptiveStorageProvider implements StorageInterface {
     return storage.set(key, data)
   }
 
-  async onChange(key: string, callback: (data: any) => void) {
+  async onChange(key: string, callback: (data: any) => void): Promise<Unsubscribe> {
     const storage = await this.getStorage()
     return storage.onChange(key, callback)
   }
