@@ -1,11 +1,11 @@
 import { expect, it } from 'vitest'
 import { TimerConfig } from '.'
 import config from '../../../config'
-import { StorageInterface } from '../../../infra/storage/interface'
+import { ObservableStorage } from '../../../infra/storage/interface'
 import { Duration } from '../duration'
 import { TimerConfigStorageService } from './storage'
 
-export function runTimerConfigStorageServiceTests(storage: StorageInterface) {
+export function runTimerConfigStorageServiceTests(storage: ObservableStorage) {
   it('should initial value from TimerConfigStorageService same as config.getDefaultTimerConfig()', async () => {
     const service = new TimerConfigStorageService(storage)
     const timerConfig = await service.get()

@@ -1,5 +1,5 @@
 import type { FocusSessionRecord } from '.'
-import { StorageInterface } from '../../../infra/storage/interface'
+import { ObservableStorage } from '../../../infra/storage/interface'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../../infra/storage/provider'
@@ -19,7 +19,7 @@ export class FocusSessionRecordStorageService {
 
   private storageManager: StorageManager<FocusSessionRecordsSchemas[2]>
 
-  constructor(storage: StorageInterface) {
+  constructor(storage: ObservableStorage) {
     this.storageManager = new StorageManager({
       storage,
       key: FocusSessionRecordStorageService.STORAGE_KEY,

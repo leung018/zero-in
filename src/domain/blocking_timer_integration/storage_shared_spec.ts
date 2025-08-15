@@ -1,10 +1,10 @@
 import { expect, it } from 'vitest'
 import { BlockingTimerIntegration } from '.'
 import config from '../../config'
-import { StorageInterface } from '../../infra/storage/interface'
+import { ObservableStorage } from '../../infra/storage/interface'
 import { BlockingTimerIntegrationStorageService } from './storage'
 
-export function runBlockingTimerIntegrationStorageServiceTests(storage: StorageInterface) {
+export function runBlockingTimerIntegrationStorageServiceTests(storage: ObservableStorage) {
   it('should get default integration setting when no integration setting is saved', async () => {
     const service = new BlockingTimerIntegrationStorageService(storage)
     expect(await service.get()).toStrictEqual(config.getDefaultBlockingTimerIntegration())

@@ -1,13 +1,13 @@
 import { FirebaseServices } from '../firebase/services'
-import { StorageInterface, Unsubscribe } from './interface'
+import { ObservableStorage, Unsubscribe } from './interface'
 import { LocalStorageWrapper } from './local_storage_wrapper'
 
-export class AdaptiveStorageProvider implements StorageInterface {
+export class AdaptiveStorageProvider implements ObservableStorage {
   static create(storage = LocalStorageWrapper.create()): AdaptiveStorageProvider {
     return new AdaptiveStorageProvider(storage)
   }
 
-  constructor(private unauthenticatedStorage: StorageInterface) {}
+  constructor(private unauthenticatedStorage: ObservableStorage) {}
 
   async get(key: string): Promise<any> {
     const storage = await this.getStorage()

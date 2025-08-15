@@ -1,7 +1,7 @@
-import { StorageInterface, Unsubscribe } from './interface'
+import { ObservableStorage, Unsubscribe } from './interface'
 import { FakeLocalStorage, LocalStorage } from './local_storage'
 
-export class LocalStorageWrapper implements StorageInterface {
+export class LocalStorageWrapper implements ObservableStorage {
   static create() {
     return new LocalStorageWrapper(browser.storage.local)
   }

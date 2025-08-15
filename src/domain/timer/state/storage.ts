@@ -1,4 +1,4 @@
-import { StorageInterface } from '../../../infra/storage/interface'
+import { ObservableStorage } from '../../../infra/storage/interface'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../../infra/storage/provider'
@@ -23,7 +23,7 @@ export class TimerStateStorageService {
 
   private unsubscribes: (() => void)[] = []
 
-  constructor(storage: StorageInterface) {
+  constructor(storage: ObservableStorage) {
     this.storageManager = new StorageManager({
       storage,
       key: TimerStateStorageService.STORAGE_KEY,

@@ -19,7 +19,7 @@ import {
   onSnapshot,
   setDoc
 } from 'firebase/firestore'
-import { StorageInterface } from '../storage/interface'
+import { ObservableStorage } from '../storage/interface'
 import { LocalStorageUserIdCache } from './local_storage_cache'
 
 const app = initializeApp(config.getFirebaseConfig())
@@ -89,7 +89,7 @@ export class FirebaseServices {
   }
 }
 
-export class FirestoreStorage implements StorageInterface {
+export class FirestoreStorage implements ObservableStorage {
   constructor(public readonly userId: string) {}
 
   async set(key: string, value: any): Promise<void> {
