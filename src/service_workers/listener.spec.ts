@@ -634,6 +634,33 @@ describe('BackgroundListener', () => {
     // Reload can reset subscription inside listener
     expect(listener.getTimerExternalState().remaining).toEqual(new Duration({ seconds: 2 }))
   })
+
+  it('should reload toggle browsing rules', async () => {
+    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
+
+    const { listener, timerStateStorageService, browsingControlService } = await startListener({
+      browsingRules,
+      blockingTimerIntegration: newTestBlockingTimerIntegration({
+        pauseBlockingWhenTimerNotRunning: true
+      }),
+      weeklySchedules: []
+    })
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+
+    timerStateStorageService.unsubscribeAll()
+    await timerStateStorageService.save(
+      TimerInternalState.newTestInstance({
+        pausedAt: undefined,
+        endAt: getDateAfter({ duration: new Duration({ seconds: 2 }) })
+      })
+    )
+
+    await listener.reload()
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+  })
 })
 
 async function startListener({
