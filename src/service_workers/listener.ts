@@ -149,6 +149,7 @@ export class BackgroundListener {
   async reload() {
     this.timer.setOnTimerPause(() => {}) // So that setConfig in setUpTimer won't mutate and persist the timerState
     this.timerStateStorageService.unsubscribeAll()
+    this.badgeDisplayService.clearBadge()
     await this.setUpTimer()
     await this.setUpNotification()
   }

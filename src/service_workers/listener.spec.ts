@@ -659,6 +659,32 @@ describe('BackgroundListener', () => {
 
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
   })
+
+  it('should reload can reset display badge', async () => {
+    const { badgeDisplayService, clientPort, timerStateStorageService, listener } =
+      await startListener({
+        timerConfig: TimerConfig.newTestInstance({
+          focusDuration: new Duration({ seconds: 1 })
+        })
+      })
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
+    expect(badgeDisplayService.getDisplayedBadge()).not.toBeNull()
+
+    timerStateStorageService.unsubscribeAll()
+    await timerStateStorageService.save(
+      TimerInternalState.newTestInstance({
+        pausedAt: new Date()
+      })
+    )
+
+    await listener.reload()
+    await flushPromises()
+
+    expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
+  })
 })
 
 async function startListener({
