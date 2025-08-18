@@ -148,6 +148,7 @@ export class BackgroundListener {
 
   async reload() {
     this.timer.setOnTimerPause(() => {}) // So that setConfig in setUpTimer won't mutate and persist the timerState
+    this.timerStateStorageService.unsubscribeAll()
     await this.setUpTimer()
     await this.setUpNotification()
   }
@@ -159,15 +160,6 @@ export class BackgroundListener {
     if (backupInternalState) {
       this.timer.setInternalState(backupInternalState)
     }
-
-    this.timerStateStorageService.onChange((newInternalState) => {
-      if (
-        newInternalState.timerId != this.timer.getId() &&
-        !newInternalState.equalsIgnoringId(this.timer.getInternalState())
-      ) {
-        this.timer.setInternalState(newInternalState)
-      }
-    })
 
     this.timer.setOnStageCompleted(({ lastStage, lastSessionStartTime }) => {
       this.timerStateStorageService.save(this.timer.getInternalState())
@@ -205,6 +197,15 @@ export class BackgroundListener {
           text: roundUpToRemainingMinutes(newExternalState.remaining.remainingSeconds()).toString(),
           color: getBadgeColor(newExternalState.stage)
         })
+      }
+    })
+
+    return this.timerStateStorageService.onChange((newInternalState) => {
+      if (
+        newInternalState.timerId != this.timer.getId() &&
+        !newInternalState.equalsIgnoringId(this.timer.getInternalState())
+      ) {
+        this.timer.setInternalState(newInternalState)
       }
     })
   }

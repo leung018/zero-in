@@ -605,6 +605,35 @@ describe('BackgroundListener', () => {
 
     expect(desktopNotificationService.isNotificationActive()).toBe(false)
   })
+
+  it('should reload unsubscribe previous subscription in timerStateStorageService', async () => {
+    const { listener, timerStateStorageService } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 3 })
+      })
+    })
+
+    let changeCounter = 0
+    await timerStateStorageService.onChange(() => {
+      changeCounter++
+    })
+
+    await listener.reload()
+
+    // Unsubscribe previous subscription in timerStateStorageService
+    await timerStateStorageService.save(
+      TimerInternalState.newTestInstance({
+        pausedAt: new Date(),
+        endAt: getDateAfter({
+          duration: new Duration({ seconds: 2 })
+        })
+      })
+    )
+    expect(changeCounter).toBe(0)
+
+    // Reload can reset subscription inside listener
+    expect(listener.getTimerExternalState().remaining).toEqual(new Duration({ seconds: 2 }))
+  })
 })
 
 async function startListener({
