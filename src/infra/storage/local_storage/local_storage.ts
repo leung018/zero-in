@@ -5,7 +5,7 @@ export interface LocalStorage {
 
 /**
  * Use LocalStorageWrapper.createFake instead of using this class.
- * This class only aim for simulate extension local storage and provide fake implementation of LocalStorageWrapper.
+ * This class only aims for simulate extension local storage.
  */
 export class FakeLocalStorage implements LocalStorage {
   private storage: any = {}

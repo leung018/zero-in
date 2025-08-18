@@ -1,6 +1,6 @@
 import { BrowsingRules } from '.'
-import { StorageInterface } from '../../infra/storage/interface'
-import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
+import { FakeObservableStorage } from '../../infra/storage/fake'
+import { ObservableStorage } from '../../infra/storage/interface'
 import { StorageManager } from '../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import {
@@ -13,7 +13,7 @@ export class BrowsingRulesStorageService {
   static readonly STORAGE_KEY = 'browsingRules'
 
   static createFake(): BrowsingRulesStorageService {
-    return new BrowsingRulesStorageService(LocalStorageWrapper.createFake())
+    return new BrowsingRulesStorageService(FakeObservableStorage.create())
   }
 
   static create(): BrowsingRulesStorageService {
@@ -22,7 +22,7 @@ export class BrowsingRulesStorageService {
 
   private storageManager: StorageManager<SerializedBrowsingRules>
 
-  constructor(storage: StorageInterface) {
+  constructor(storage: ObservableStorage) {
     this.storageManager = new StorageManager({
       storage,
       key: BrowsingRulesStorageService.STORAGE_KEY,

@@ -1,16 +1,16 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { Weekday, WeeklySchedule } from '.'
-import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
+import { FakeObservableStorage } from '../../infra/storage/fake'
 import { Time } from '../time'
 import { WeeklyScheduleSchemas } from './schema'
 import { WeeklyScheduleStorageService } from './storage'
 import { runWeeklyScheduleStorageServiceTests } from './storage_shared_spec'
 
 describe('WeeklyScheduleStorageService', () => {
-  let storage = LocalStorageWrapper.createFake()
+  let storage = FakeObservableStorage.create()
 
   beforeEach(() => {
-    storage = LocalStorageWrapper.createFake()
+    storage = FakeObservableStorage.create()
   })
 
   runWeeklyScheduleStorageServiceTests(storage)

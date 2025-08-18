@@ -1,12 +1,12 @@
 import { beforeEach, describe } from 'vitest'
-import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
+import { FakeObservableStorage } from '../../infra/storage/fake'
 import { runBrowsingRulesStorageServiceTests } from './storage_shared_spec'
 
 describe('BrowsingRulesStorageService', () => {
-  let storage = LocalStorageWrapper.createFake()
+  let storage = FakeObservableStorage.create()
 
   beforeEach(() => {
-    storage = LocalStorageWrapper.createFake()
+    storage = FakeObservableStorage.create()
   })
 
   runBrowsingRulesStorageServiceTests(storage)

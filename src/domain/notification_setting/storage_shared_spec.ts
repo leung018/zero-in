@@ -1,10 +1,10 @@
 import { expect, it } from 'vitest'
 import { NotificationSetting } from '.'
 import config from '../../config'
-import { StorageInterface } from '../../infra/storage/interface'
+import { ObservableStorage } from '../../infra/storage/interface'
 import { NotificationSettingStorageService } from './storage'
 
-export function runNotificationSettingStorageServiceTests(storage: StorageInterface) {
+export function runNotificationSettingStorageServiceTests(storage: ObservableStorage) {
   it('should get the default notification setting', async () => {
     const service = new NotificationSettingStorageService(storage)
     expect(await service.get()).toStrictEqual(config.getDefaultNotificationSetting())

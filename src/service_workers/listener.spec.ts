@@ -389,10 +389,10 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
 
-  it('should toggle browsing control when start timer or complete stage', async () => {
+  it('should toggle browsing rules when start timer or complete stage', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
 
-    const { browsingControlService, clientPort, listener } = await startListener({
+    const { browsingControlService, clientPort } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 })
@@ -405,12 +405,10 @@ describe('BackgroundListener', () => {
       weeklySchedules: []
     })
 
-    listener.toggleBrowsingRules()
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     await flushPromises()
-
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
 
-    await clientPort.send({ name: WorkRequestName.START_TIMER })
     vi.advanceTimersByTime(3000)
     await flushPromises()
 
@@ -430,7 +428,7 @@ describe('BackgroundListener', () => {
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
   })
 
-  it('should toggle browsing control when timer is paused in focus session', async () => {
+  it('should toggle browsing rules when timer is paused in focus session', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
 
     const { browsingControlService, clientPort, listener } = await startListener({
@@ -547,6 +545,148 @@ describe('BackgroundListener', () => {
 
     expect(listener1.getTimerExternalState().isRunning).toBe(true)
     expect(listener2.getTimerExternalState()).toEqual(listener1.getTimerExternalState())
+  })
+
+  it('should reload can get the new timer state and timer config', async () => {
+    const { listener, clientPort, timerStateStorageService, timerConfigStorageService } =
+      await startListener({
+        timerConfig: TimerConfig.newTestInstance({
+          focusDuration: new Duration({ seconds: 1 })
+        })
+      })
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
+    const newConfig = TimerConfig.newTestInstance({
+      focusDuration: new Duration({ seconds: 3 })
+    })
+    await timerConfigStorageService.save(newConfig)
+
+    timerStateStorageService.unsubscribeAll()
+    const newState = TimerInternalState.newTestInstance({
+      pausedAt: new Date(),
+      endAt: getDateAfter({
+        duration: new Duration({ seconds: 2 })
+      })
+    })
+    await timerStateStorageService.save(newState)
+
+    await listener.reload()
+
+    expect(listener.getTimerExternalState().remaining).toEqual(new Duration({ seconds: 2 }))
+    expect(listener.getTimerExternalState().isRunning).toBe(false)
+
+    expect(listener.getTimerConfig()).toEqual(newConfig)
+  })
+
+  it('should reload can set the new notification setting from storage service', async () => {
+    const { clientPort, listener, desktopNotificationService, notificationSettingStorageService } =
+      await startListener({
+        timerConfig: TimerConfig.newTestInstance({
+          focusDuration: new Duration({ seconds: 1 })
+        }),
+        notificationSetting: newTestNotificationSetting({
+          desktopNotification: true
+        })
+      })
+
+    await notificationSettingStorageService.save(
+      newTestNotificationSetting({
+        desktopNotification: false
+      })
+    )
+    await listener.reload()
+
+    clientPort.send({ name: WorkRequestName.START_TIMER })
+    vi.advanceTimersByTime(1000)
+
+    expect(desktopNotificationService.isNotificationActive()).toBe(false)
+  })
+
+  it('should reload unsubscribe previous subscription in timerStateStorageService', async () => {
+    const { listener, timerStateStorageService } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 3 })
+      })
+    })
+
+    let changeCounter = 0
+    await timerStateStorageService.onChange(() => {
+      changeCounter++
+    })
+
+    await listener.reload()
+
+    // Unsubscribe previous subscription in timerStateStorageService
+    await timerStateStorageService.save(
+      TimerInternalState.newTestInstance({
+        pausedAt: new Date(),
+        endAt: getDateAfter({
+          duration: new Duration({ seconds: 2 })
+        })
+      })
+    )
+    expect(changeCounter).toBe(0)
+
+    // Reload can reset subscription inside listener
+    expect(listener.getTimerExternalState().remaining).toEqual(new Duration({ seconds: 2 }))
+  })
+
+  it('should reload toggle browsing rules', async () => {
+    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
+
+    const { listener, clientPort, timerStateStorageService, browsingControlService } =
+      await startListener({
+        browsingRules,
+        blockingTimerIntegration: newTestBlockingTimerIntegration({
+          pauseBlockingWhenTimerNotRunning: true
+        }),
+        weeklySchedules: []
+      })
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+
+    timerStateStorageService.unsubscribeAll()
+    await timerStateStorageService.save(
+      TimerInternalState.newTestInstance({
+        pausedAt: new Date()
+      })
+    )
+
+    await listener.reload()
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+  })
+
+  it('should reload can reset display badge', async () => {
+    const { badgeDisplayService, clientPort, timerStateStorageService, listener } =
+      await startListener({
+        timerConfig: TimerConfig.newTestInstance({
+          focusDuration: new Duration({ seconds: 1 })
+        })
+      })
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
+    expect(badgeDisplayService.getDisplayedBadge()).not.toBeNull()
+
+    timerStateStorageService.unsubscribeAll()
+    await timerStateStorageService.save(
+      TimerInternalState.newTestInstance({
+        pausedAt: new Date()
+      })
+    )
+
+    await listener.reload()
+    await flushPromises()
+
+    expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
 })
 

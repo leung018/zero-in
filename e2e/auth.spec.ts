@@ -1,5 +1,10 @@
 import { expect, test } from './fixtures.js'
-import { goToBlockingSettingPage, goToFocusTimer } from './utils/navigation.js'
+import { changeFocusDuration } from './utils/interactions/testing_config.js'
+import {
+  goToBlockingSettingPage,
+  goToFocusTimer,
+  goToTestingConfigPage
+} from './utils/navigation.js'
 import { enableSignInFeatureFlag, signIn } from './utils/operation.js'
 
 test('should sign in and sign out buttons render according to state of authentication', async ({
@@ -42,4 +47,23 @@ test('should render sign in button in popup when user has not authenticated', as
   await page.reload()
 
   await expect(page.getByTestId('sign-in-button')).toBeHidden()
+})
+
+test('should sign in trigger restart of service worker so that the timer config is updated', async ({
+  page,
+  extensionId
+}) => {
+  await goToTestingConfigPage(page, extensionId)
+  await changeFocusDuration(page, 60)
+
+  await goToFocusTimer(page, extensionId)
+  await enableSignInFeatureFlag(page)
+  await page.reload()
+
+  await signIn(page)
+  await page.reload()
+
+  // Before sign in: set focus duration to 1 minute
+  // After sign in: service worker restarts → config resets → should not be 1 minute anymore
+  await expect(page.getByTestId('timer-display')).not.toContainText('01:00')
 })

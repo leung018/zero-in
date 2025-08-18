@@ -1,5 +1,5 @@
-import { StorageInterface } from '../../../infra/storage/interface'
-import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
+import { FakeObservableStorage } from '../../../infra/storage/fake'
+import { ObservableStorage } from '../../../infra/storage/interface'
 import { StorageManager } from '../../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../../infra/storage/provider'
 import { getDateAfter } from '../../../utils/date'
@@ -15,13 +15,15 @@ export class TimerStateStorageService {
     return new TimerStateStorageService(AdaptiveStorageProvider.create())
   }
 
-  static createFake(storage = LocalStorageWrapper.createFake()) {
+  static createFake(storage = FakeObservableStorage.create()) {
     return new TimerStateStorageService(storage)
   }
 
   private storageManager: StorageManager<TimerStateSchemas[5]>
 
-  constructor(storage: StorageInterface) {
+  private unsubscribes: (() => void)[] = []
+
+  constructor(storage: ObservableStorage) {
     this.storageManager = new StorageManager({
       storage,
       key: TimerStateStorageService.STORAGE_KEY,
@@ -102,10 +104,16 @@ export class TimerStateStorageService {
   }
 
   async onChange(callback: (data: TimerInternalState) => void): Promise<void> {
-    return this.storageManager.onChange((data) => {
+    const unsubscribe = await this.storageManager.onChange((data) => {
       if (data) {
         callback(deserializeTimerState(data))
       }
     })
+    this.unsubscribes.push(unsubscribe)
+  }
+
+  unsubscribeAll() {
+    this.unsubscribes.forEach((unsubscribe) => unsubscribe())
+    this.unsubscribes = []
   }
 }

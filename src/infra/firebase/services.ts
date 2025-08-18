@@ -19,7 +19,7 @@ import {
   onSnapshot,
   setDoc
 } from 'firebase/firestore'
-import { StorageInterface } from '../storage/interface'
+import { ObservableStorage } from '../storage/interface'
 import { LocalStorageUserIdCache } from './local_storage_cache'
 
 const app = initializeApp(config.getFirebaseConfig())
@@ -89,7 +89,7 @@ export class FirebaseServices {
   }
 }
 
-export class FirestoreStorage implements StorageInterface {
+export class FirestoreStorage implements ObservableStorage {
   constructor(public readonly userId: string) {}
 
   async set(key: string, value: any): Promise<void> {
@@ -105,9 +105,11 @@ export class FirestoreStorage implements StorageInterface {
     await deleteDoc(this.getDocRef(key))
   }
 
-  onChange(key: string, callback: (data: any) => void) {
+  async onChange(key: string, callback: (data: any) => void) {
     return onSnapshot(this.getDocRef(key), (snapshot) => {
-      callback(snapshot.data())
+      if (snapshot.exists()) {
+        callback(snapshot.data())
+      }
     })
   }
 

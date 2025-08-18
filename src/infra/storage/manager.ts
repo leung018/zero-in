@@ -1,5 +1,5 @@
-import { StorageInterface } from './interface'
-import { LocalStorageWrapper } from './local_storage_wrapper'
+import { FakeObservableStorage } from './fake'
+import { ObservableStorage, Unsubscribe } from './interface'
 
 interface Schema {
   dataVersion: number
@@ -12,13 +12,13 @@ type Migrator = { oldDataVersion?: number; migratorFunc: MigratorFunc }
 type Migrators = ReadonlyArray<Migrator>
 
 export class StorageManager<S> {
-  private storage: StorageInterface
+  private storage: ObservableStorage
   private key: string
   private migrators: Migrators
   private currentDataVersion?: number
 
   static createFake<S>({
-    storage = LocalStorageWrapper.createFake(),
+    storage = FakeObservableStorage.create(),
     migrators = [] as Migrators,
     key = 'STORAGE_KEY',
     currentDataVersion = undefined as number | undefined
@@ -37,7 +37,7 @@ export class StorageManager<S> {
     migrators,
     currentDataVersion
   }: {
-    storage: StorageInterface
+    storage: ObservableStorage
     key: string
     migrators: Migrators
     currentDataVersion?: number
@@ -82,7 +82,7 @@ export class StorageManager<S> {
     return this.storage.set(this.key, update)
   }
 
-  async onChange(callback: (data: S) => void): Promise<void> {
+  async onChange(callback: (data: S) => void): Promise<Unsubscribe> {
     return this.storage.onChange(this.key, callback)
   }
 }

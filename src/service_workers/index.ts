@@ -1,3 +1,6 @@
+import { initializeApp } from 'firebase/app'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import config from '../config'
 import { BrowserNewTabService } from '../infra/browser/new_tab'
 import { firebaseAuth } from '../infra/browser/sign_in'
 import { BackgroundListener } from './listener'
@@ -23,6 +26,9 @@ export default function main() {
         })
       }
     })
+  })
+  onAuthStateChanged(getAuth(initializeApp(config.getFirebaseConfig())), () => {
+    listener.reload()
   })
 
   // Periodically toggling browsing rules

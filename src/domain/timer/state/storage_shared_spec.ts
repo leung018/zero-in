@@ -1,11 +1,11 @@
 import { expect, it } from 'vitest'
-import { StorageInterface } from '../../../infra/storage/interface'
+import { ObservableStorage } from '../../../infra/storage/interface'
 import { Duration } from '../duration'
 import { TimerStage } from '../stage'
 import { TimerInternalState } from './internal'
 import { TimerStateStorageService } from './storage'
 
-export function runTimerStateStorageServiceTests(storage: StorageInterface) {
+export function runTimerStateStorageServiceTests(storage: ObservableStorage) {
   it('should get null if no TimerState is saved ', async () => {
     const service = new TimerStateStorageService(storage)
     expect(await service.get()).toBeNull()
@@ -34,7 +34,7 @@ export function runTimerStateStorageServiceTests(storage: StorageInterface) {
     expect(await service.get()).toStrictEqual(state2)
   })
 
-  it('should onChange triggered when TimerState is changed', async () => {
+  it('should onChange triggered when TimerState is changed and unsubscribeAll can unsubscribe', async () => {
     const service = new TimerStateStorageService(storage)
     const states: TimerInternalState[] = []
     service.onChange((data) => {
@@ -43,6 +43,10 @@ export function runTimerStateStorageServiceTests(storage: StorageInterface) {
 
     const targetState = TimerInternalState.newTestInstance()
 
+    await service.save(targetState)
+    expect(states).toEqual([targetState])
+
+    service.unsubscribeAll()
     await service.save(targetState)
     expect(states).toEqual([targetState])
   })

@@ -1,4 +1,4 @@
-import { StorageInterface } from './interface'
+import { StorageInterface } from '../interface'
 import { FakeLocalStorage, LocalStorage } from './local_storage'
 
 export class LocalStorageWrapper implements StorageInterface {
@@ -10,9 +10,7 @@ export class LocalStorageWrapper implements StorageInterface {
     return new LocalStorageWrapper(new FakeLocalStorage())
   }
 
-  private constructor(private localStorage: LocalStorage) {}
-
-  private onChangeListeners: Map<string, ((data: any) => void)[]> = new Map()
+  constructor(private localStorage: LocalStorage) {}
 
   async get(key: string): Promise<any> {
     const result = await this.localStorage.get(key)
@@ -21,13 +19,5 @@ export class LocalStorageWrapper implements StorageInterface {
 
   async set(key: string, data: any): Promise<void> {
     await this.localStorage.set({ [key]: data })
-    this.onChangeListeners.get(key)?.forEach((callback) => callback(data))
-  }
-
-  onChange(key: string, callback: (data: any) => void) {
-    if (!this.onChangeListeners.has(key)) {
-      this.onChangeListeners.set(key, [])
-    }
-    this.onChangeListeners.get(key)?.push(callback)
   }
 }
