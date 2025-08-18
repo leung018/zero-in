@@ -159,7 +159,7 @@ export class BackgroundListener {
 
   private async setUpTimer() {
     const timerConfig = await this.timerConfigStorageService.get()
-    this.timer.setConfig(timerConfig)
+    this.timer.setConfigAndResetState(timerConfig)
     const backupInternalState = await this.timerStateStorageService.get()
     if (backupInternalState) {
       this.timer.setInternalState(backupInternalState)
@@ -213,7 +213,7 @@ export class BackgroundListener {
       }
     })
     await this.timerConfigStorageService.onChange((newConfig) => {
-      this.timer.setConfig(newConfig)
+      this.timer.setConfigAndResetState(newConfig)
     })
   }
 
@@ -363,7 +363,7 @@ export class BackgroundListener {
             }
             case WorkRequestName.RESET_TIMER_CONFIG: {
               this.timerConfigStorageService.get().then((config) => {
-                this.timer.setConfig(config)
+                this.timer.setConfigAndResetState(config)
               })
               break
             }

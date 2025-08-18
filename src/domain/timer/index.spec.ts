@@ -54,7 +54,7 @@ describe('FocusTimer', () => {
     expect(timer.getConfig()).toEqual(expected)
 
     // Set operation have same effects
-    timer.setConfig(
+    timer.setConfigAndResetState(
       newConfig({
         focusDuration: new Duration({ minutes: 5, milliseconds: 1 }),
         shortBreakDuration: new Duration({ minutes: 2, milliseconds: 1 }),
@@ -72,7 +72,7 @@ describe('FocusTimer', () => {
     expect(timer.getConfig()).toEqual(expected)
   })
 
-  it('should setConfig reset the state too', () => {
+  it('should setConfigAndResetState reset the state too', () => {
     const timer = newTimer(
       newConfig({
         focusDuration: new Duration({ minutes: 10 }),
@@ -82,7 +82,7 @@ describe('FocusTimer', () => {
     timer.restartFocus(3)
     vi.advanceTimersByTime(1000)
 
-    timer.setConfig(
+    timer.setConfigAndResetState(
       newConfig({
         focusDuration: new Duration({ minutes: 4, seconds: 59, milliseconds: 1 })
       })
@@ -816,8 +816,8 @@ describe('FocusTimer', () => {
     timer.pause()
     expect(triggerCount).toBe(1)
 
-    // Set config will pause the timer
-    timer.setConfig(newConfig())
+    // SetConfigAndResetState will pause the timer
+    timer.setConfigAndResetState(newConfig())
     expect(triggerCount).toBe(2)
 
     timer.setInternalState(

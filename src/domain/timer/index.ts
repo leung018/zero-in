@@ -73,7 +73,7 @@ export class FocusTimer {
     return this.internalState.timerId
   }
 
-  setConfig(config: TimerConfig) {
+  setConfigAndResetState(config: TimerConfig) {
     this.config = this.newInternalConfig(config)
     this.setInternalState(
       TimerInternalState.newPausedState({
