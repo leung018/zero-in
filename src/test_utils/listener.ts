@@ -17,7 +17,8 @@ import { BackgroundListener } from '../service_workers/listener'
 export async function setUpListener({
   focusSessionRecordHouseKeepDays = 30,
   timerConfig = config.getDefaultTimerConfig(),
-  timerStateStorageService = TimerStateStorageService.createFake()
+  timerStateStorageService = TimerStateStorageService.createFake(),
+  timerConfigStorageService = TimerConfigStorageService.createFake()
 } = {}) {
   const params = {
     notificationSettingStorageService: NotificationSettingStorageService.createFake(),
@@ -31,7 +32,7 @@ export async function setUpListener({
     badgeDisplayService: new FakeBadgeDisplayService(),
     communicationManager: new FakeCommunicationManager(),
     timerStateStorageService,
-    timerConfigStorageService: TimerConfigStorageService.createFake(),
+    timerConfigStorageService,
     closeTabsService: new FakeActionService(),
     focusSessionRecordStorageService: FocusSessionRecordStorageService.createFake()
   }

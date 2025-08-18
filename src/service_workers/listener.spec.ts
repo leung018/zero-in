@@ -8,6 +8,7 @@ import {
   type NotificationSetting
 } from '../domain/notification_setting'
 import { TimerConfig } from '../domain/timer/config'
+import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { Duration } from '../domain/timer/duration'
 import type { FocusSessionRecord } from '../domain/timer/record'
 import { TimerStage } from '../domain/timer/stage'
@@ -547,6 +548,21 @@ describe('BackgroundListener', () => {
     expect(listener2.getTimerExternalState()).toEqual(listener1.getTimerExternalState())
   })
 
+  it('should sync timer config to listener from timerConfigStorageService', async () => {
+    const { listener, timerConfigStorageService } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 1
+      })
+    })
+
+    const newConfig = TimerConfig.newTestInstance({
+      focusSessionsPerCycle: 4
+    })
+    await timerConfigStorageService.save(newConfig)
+
+    expect(listener.getTimerConfig()).toEqual(newConfig)
+  })
+
   it('should reload can get the new timer state and timer config', async () => {
     const { listener, clientPort, timerStateStorageService, timerConfigStorageService } =
       await startListener({
@@ -698,12 +714,14 @@ async function startListener({
   blockingTimerIntegration = newTestBlockingTimerIntegration(),
   browsingRules = new BrowsingRules(),
   weeklySchedules = [],
-  timerStateStorageService = TimerStateStorageService.createFake()
+  timerStateStorageService = TimerStateStorageService.createFake(),
+  timerConfigStorageService = TimerConfigStorageService.createFake()
 } = {}) {
   const context = await setUpListener({
     timerConfig,
     focusSessionRecordHouseKeepDays,
-    timerStateStorageService
+    timerStateStorageService,
+    timerConfigStorageService
   })
 
   await context.blockingTimerIntegrationStorageService.save(blockingTimerIntegration)

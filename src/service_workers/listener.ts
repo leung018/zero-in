@@ -204,13 +204,16 @@ export class BackgroundListener {
       }
     })
 
-    return this.timerStateStorageService.onChange((newInternalState) => {
+    await this.timerStateStorageService.onChange((newInternalState) => {
       if (
         newInternalState.timerId != this.timer.getId() &&
         !newInternalState.equalsIgnoringId(this.timer.getInternalState())
       ) {
         this.timer.setInternalState(newInternalState)
       }
+    })
+    await this.timerConfigStorageService.onChange((newConfig) => {
+      this.timer.setConfig(newConfig)
     })
   }
 
