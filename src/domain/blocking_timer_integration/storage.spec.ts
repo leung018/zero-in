@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { BlockingTimerIntegration } from '.'
-import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
+import { FakeObservableStorage } from '../../infra/storage/fake'
 import { BlockingTimerIntegrationSchemas } from './schema'
 import { BlockingTimerIntegrationStorageService } from './storage'
 import { runBlockingTimerIntegrationStorageServiceTests } from './storage_shared_spec'
 
 describe('BlockingTimerIntegrationStorageService', () => {
-  let storage = LocalStorageWrapper.createFake()
+  let storage = FakeObservableStorage.create()
 
   beforeEach(() => {
-    storage = LocalStorageWrapper.createFake()
+    storage = FakeObservableStorage.create()
   })
 
   runBlockingTimerIntegrationStorageServiceTests(storage)

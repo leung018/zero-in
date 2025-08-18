@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { signInAndGetFirestoreStorage } from '../../test_utils/firestore'
 import { FirebaseServices } from '../firebase/services'
-import { LocalStorageWrapper } from './local_storage_wrapper'
+import { FakeObservableStorage } from './fake'
 import { AdaptiveStorageProvider } from './provider'
 
 describe('AdaptiveStorageProvider', async () => {
@@ -17,7 +17,7 @@ describe('AdaptiveStorageProvider', async () => {
   it('should use firebaseStorage if user is authenticated', async () => {
     const firestoreStorage = await signInAndGetFirestoreStorage()
 
-    const provider = new AdaptiveStorageProvider(LocalStorageWrapper.createFake())
+    const provider = new AdaptiveStorageProvider(FakeObservableStorage.create())
 
     await provider.set(TEST_KEY, testData)
     const data = await provider.get(TEST_KEY)
@@ -30,7 +30,7 @@ describe('AdaptiveStorageProvider', async () => {
   it('should use unauthenticatedStorage if user is not authenticated', async () => {
     await FirebaseServices.signOut()
 
-    const unauthenticatedStorage = LocalStorageWrapper.createFake()
+    const unauthenticatedStorage = FakeObservableStorage.create()
     const provider = new AdaptiveStorageProvider(unauthenticatedStorage)
 
     await provider.set(TEST_KEY, testData)
@@ -43,7 +43,7 @@ describe('AdaptiveStorageProvider', async () => {
 
   it('should able to subscribe and unsubscribe changes for firestore', async () => {
     const firestoreStorage = await signInAndGetFirestoreStorage()
-    const provider = new AdaptiveStorageProvider(LocalStorageWrapper.createFake())
+    const provider = new AdaptiveStorageProvider(FakeObservableStorage.create())
 
     const receivedData: any[] = []
     const unsubscribe = await provider.onChange(TEST_KEY, (data) => {

@@ -1,6 +1,6 @@
 import { BrowsingRules } from '.'
+import { FakeObservableStorage } from '../../infra/storage/fake'
 import { ObservableStorage } from '../../infra/storage/interface'
-import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import {
@@ -13,7 +13,7 @@ export class BrowsingRulesStorageService {
   static readonly STORAGE_KEY = 'browsingRules'
 
   static createFake(): BrowsingRulesStorageService {
-    return new BrowsingRulesStorageService(LocalStorageWrapper.createFake())
+    return new BrowsingRulesStorageService(FakeObservableStorage.create())
   }
 
   static create(): BrowsingRulesStorageService {

@@ -1,7 +1,7 @@
 import type { TimerConfig } from '.'
 import config from '../../../config'
+import { FakeObservableStorage } from '../../../infra/storage/fake'
 import { ObservableStorage } from '../../../infra/storage/interface'
-import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../../infra/storage/provider'
 import {
@@ -18,7 +18,7 @@ export class TimerConfigStorageService {
   }
 
   static createFake() {
-    return new TimerConfigStorageService(LocalStorageWrapper.createFake())
+    return new TimerConfigStorageService(FakeObservableStorage.create())
   }
 
   private storageManager: StorageManager<SerializedTimerConfig>

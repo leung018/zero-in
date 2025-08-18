@@ -1,5 +1,5 @@
+import { FakeObservableStorage } from './fake'
 import { ObservableStorage, Unsubscribe } from './interface'
-import { LocalStorageWrapper } from './local_storage_wrapper'
 
 interface Schema {
   dataVersion: number
@@ -18,7 +18,7 @@ export class StorageManager<S> {
   private currentDataVersion?: number
 
   static createFake<S>({
-    storage = LocalStorageWrapper.createFake(),
+    storage = FakeObservableStorage.create(),
     migrators = [] as Migrators,
     key = 'STORAGE_KEY',
     currentDataVersion = undefined as number | undefined

@@ -1,5 +1,5 @@
+import { FakeObservableStorage } from '../../infra/storage/fake'
 import { ObservableStorage } from '../../infra/storage/interface'
-import { LocalStorageWrapper } from '../../infra/storage/local_storage_wrapper'
 import { StorageManager } from '../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import { Time } from '../time'
@@ -13,7 +13,7 @@ export class DailyResetTimeStorageService {
   }
 
   static createFake() {
-    return new DailyResetTimeStorageService(LocalStorageWrapper.createFake())
+    return new DailyResetTimeStorageService(FakeObservableStorage.create())
   }
 
   private storageManager: StorageManager<SerializedTime>

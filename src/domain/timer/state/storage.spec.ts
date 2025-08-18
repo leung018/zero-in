@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { LocalStorageWrapper } from '../../../infra/storage/local_storage_wrapper'
+import { FakeObservableStorage } from '../../../infra/storage/fake'
 import { Duration } from '../duration'
 import { TimerStage } from '../stage'
 import { TimerInternalState } from './internal'
@@ -8,10 +8,10 @@ import { TimerStateStorageService } from './storage'
 import { runTimerStateStorageServiceTests } from './storage_shared_spec'
 
 describe('TimerStateStorageService', () => {
-  let storage = LocalStorageWrapper.createFake()
+  let storage = FakeObservableStorage.create()
 
   beforeEach(() => {
-    storage = LocalStorageWrapper.createFake()
+    storage = FakeObservableStorage.create()
   })
 
   beforeEach(() => {

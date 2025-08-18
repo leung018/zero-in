@@ -1,6 +1,6 @@
 import { LocalStorageUserIdCache } from '@/infra/firebase/local_storage_cache'
+import { LocalStorageWrapper } from '@/infra/storage/local_storage/'
 import { vi } from 'vitest'
-import { LocalStorageWrapper } from './src/infra/storage/local_storage_wrapper'
 
 vi.spyOn(LocalStorageUserIdCache, 'localStorageWrapper', 'get').mockReturnValue(
   LocalStorageWrapper.createFake()

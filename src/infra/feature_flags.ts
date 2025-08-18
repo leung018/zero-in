@@ -1,5 +1,5 @@
 import { StorageInterface } from './storage/interface'
-import { LocalStorageWrapper } from './storage/local_storage_wrapper'
+import { LocalStorageWrapper } from './storage/local_storage/'
 
 export class FeatureFlagsService {
   static readonly STORAGE_KEY = 'featureFlags'

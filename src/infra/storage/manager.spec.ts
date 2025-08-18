@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { LocalStorageWrapper } from './local_storage_wrapper'
+import { FakeObservableStorage } from './fake'
 import { StorageManager } from './manager'
 
 describe('StorageManager', () => {
@@ -40,7 +40,7 @@ describe('StorageManager', () => {
 
   it('should get null if no data is saved', async () => {
     const storageManager = StorageManager.createFake({
-      storage: LocalStorageWrapper.createFake()
+      storage: FakeObservableStorage.create()
     })
 
     expect(await storageManager.get()).toBeNull()
@@ -88,7 +88,7 @@ describe('StorageManager', () => {
   })
 
   it('should get old version and migrate to new version', async () => {
-    const fakeStorage = LocalStorageWrapper.createFake()
+    const fakeStorage = FakeObservableStorage.create()
 
     const storageManager = StorageManager.createFake({
       storage: fakeStorage,
@@ -153,7 +153,7 @@ describe('StorageManager', () => {
   ])(
     'should not migrate if dataVersion is same as currentDataVersion',
     async ({ oldData, currentDataVersion }) => {
-      const fakeStorage = LocalStorageWrapper.createFake()
+      const fakeStorage = FakeObservableStorage.create()
 
       const storageManager = StorageManager.createFake({
         storage: fakeStorage,
@@ -170,7 +170,7 @@ describe('StorageManager', () => {
   )
 
   it('should migrate up to the current data version only', async () => {
-    const fakeStorage = LocalStorageWrapper.createFake()
+    const fakeStorage = FakeObservableStorage.create()
 
     const storageManager = StorageManager.createFake({
       storage: fakeStorage,
