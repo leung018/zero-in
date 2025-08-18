@@ -45,12 +45,12 @@ describe('FocusTimer', () => {
       })
     )
 
-    let expected: TimerConfig = {
+    let expected: TimerConfig = new TimerConfig({
       focusDuration: new Duration({ seconds: 11 }),
       shortBreakDuration: new Duration({ seconds: 4 }),
       longBreakDuration: new Duration({ seconds: 3 }),
       focusSessionsPerCycle: 5
-    }
+    })
     expect(timer.getConfig()).toEqual(expected)
 
     // Set operation have same effects
@@ -63,12 +63,12 @@ describe('FocusTimer', () => {
       })
     )
 
-    expected = {
+    expected = new TimerConfig({
       focusDuration: new Duration({ minutes: 5, seconds: 1 }),
       shortBreakDuration: new Duration({ minutes: 2, seconds: 1 }),
       longBreakDuration: new Duration({ minutes: 3, seconds: 1 }),
       focusSessionsPerCycle: 4
-    }
+    })
     expect(timer.getConfig()).toEqual(expected)
   })
 
