@@ -558,6 +558,7 @@ describe('BackgroundListener', () => {
     await clientPort.send({ name: WorkRequestName.START_TIMER })
     await flushPromises()
 
+    timerConfigStorageService.unsubscribeAll()
     const newConfig = TimerConfig.newTestInstance({
       focusDuration: new Duration({ seconds: 3 })
     })
