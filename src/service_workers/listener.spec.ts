@@ -636,28 +636,31 @@ describe('BackgroundListener', () => {
   it('should reload toggle browsing rules', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
 
-    const { listener, timerStateStorageService, browsingControlService } = await startListener({
-      browsingRules,
-      blockingTimerIntegration: newTestBlockingTimerIntegration({
-        pauseBlockingWhenTimerNotRunning: true
-      }),
-      weeklySchedules: []
-    })
+    const { listener, clientPort, timerStateStorageService, browsingControlService } =
+      await startListener({
+        browsingRules,
+        blockingTimerIntegration: newTestBlockingTimerIntegration({
+          pauseBlockingWhenTimerNotRunning: true
+        }),
+        weeklySchedules: []
+      })
 
-    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
 
     timerStateStorageService.unsubscribeAll()
     await timerStateStorageService.save(
       TimerInternalState.newTestInstance({
-        pausedAt: undefined,
-        endAt: getDateAfter({ duration: new Duration({ seconds: 2 }) })
+        pausedAt: new Date()
       })
     )
 
     await listener.reload()
     await flushPromises()
 
-    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
   })
 
   it('should reload can reset display badge', async () => {
