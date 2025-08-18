@@ -23,6 +23,8 @@ export class TimerConfigStorageService {
 
   private storageManager: StorageManager<SerializedTimerConfig>
 
+  private unsubscribes: (() => void)[] = []
+
   constructor(storage: ObservableStorage) {
     this.storageManager = new StorageManager({
       storage,
@@ -42,5 +44,17 @@ export class TimerConfigStorageService {
 
   async save(timerConfig: TimerConfig) {
     return this.storageManager.set(serializeTimerConfig(timerConfig))
+  }
+
+  async onChange(callback: (config: TimerConfig) => void) {
+    const unsubscribe = await this.storageManager.onChange((data) => {
+      callback(deserializeTimerConfig(data))
+    })
+    this.unsubscribes.push(unsubscribe)
+  }
+
+  unsubscribeAll() {
+    this.unsubscribes.forEach((unsubscribe) => unsubscribe())
+    this.unsubscribes = []
   }
 }
