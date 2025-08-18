@@ -103,7 +103,7 @@ export class TimerStateStorageService {
     return this.storageManager.set(serializeTimerState(timerState))
   }
 
-  async onChange(callback: (data: TimerInternalState) => void): Promise<void> {
+  async onChange(callback: (state: TimerInternalState) => void): Promise<void> {
     const unsubscribe = await this.storageManager.onChange((data) => {
       callback(deserializeTimerState(data))
     })
