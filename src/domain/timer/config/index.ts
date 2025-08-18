@@ -48,4 +48,13 @@ export class TimerConfig {
     this.longBreakDuration = longBreakDuration
     this.focusSessionsPerCycle = focusSessionsPerCycle
   }
+
+  isEqual(other: TimerConfig): boolean {
+    return (
+      this.focusDuration.isEqual(other.focusDuration) &&
+      this.shortBreakDuration.isEqual(other.shortBreakDuration) &&
+      this.longBreakDuration.isEqual(other.longBreakDuration) &&
+      this.focusSessionsPerCycle === other.focusSessionsPerCycle
+    )
+  }
 }

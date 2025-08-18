@@ -50,4 +50,55 @@ describe('TimerConfig', () => {
     expect(config.longBreakDuration).toEqual(new Duration({ seconds: 1 }))
     expect(config.focusSessionsPerCycle).toBe(1)
   })
+
+  it('should isEqual return true for equal config', () => {
+    const config1 = TimerConfig.newTestInstance({
+      focusDuration: new Duration({ seconds: 1 }),
+      shortBreakDuration: new Duration({ seconds: 1 }),
+      longBreakDuration: new Duration({ seconds: 1 }),
+      focusSessionsPerCycle: 1
+    })
+    const config2 = TimerConfig.newTestInstance({
+      focusDuration: new Duration({ seconds: 1 }),
+      shortBreakDuration: new Duration({ seconds: 1 }),
+      longBreakDuration: new Duration({ seconds: 1 }),
+      focusSessionsPerCycle: 1
+    })
+    expect(config1.isEqual(config2)).toBe(true)
+  })
+
+  it.each([
+    TimerConfig.newTestInstance({
+      focusDuration: new Duration({ seconds: 2 }),
+      shortBreakDuration: new Duration({ seconds: 1 }),
+      longBreakDuration: new Duration({ seconds: 1 }),
+      focusSessionsPerCycle: 1
+    }),
+    TimerConfig.newTestInstance({
+      focusDuration: new Duration({ seconds: 1 }),
+      shortBreakDuration: new Duration({ seconds: 2 }),
+      longBreakDuration: new Duration({ seconds: 1 }),
+      focusSessionsPerCycle: 1
+    }),
+    TimerConfig.newTestInstance({
+      focusDuration: new Duration({ seconds: 1 }),
+      shortBreakDuration: new Duration({ seconds: 1 }),
+      longBreakDuration: new Duration({ seconds: 2 }),
+      focusSessionsPerCycle: 1
+    }),
+    TimerConfig.newTestInstance({
+      focusDuration: new Duration({ seconds: 1 }),
+      shortBreakDuration: new Duration({ seconds: 1 }),
+      longBreakDuration: new Duration({ seconds: 1 }),
+      focusSessionsPerCycle: 2
+    })
+  ])('should isEqual return false for not equal config', (differentConfig) => {
+    const baseConfig = TimerConfig.newTestInstance({
+      focusDuration: new Duration({ seconds: 1 }),
+      shortBreakDuration: new Duration({ seconds: 1 }),
+      longBreakDuration: new Duration({ seconds: 1 }),
+      focusSessionsPerCycle: 1
+    })
+    expect(baseConfig.isEqual(differentConfig)).toBe(false)
+  })
 })
