@@ -389,10 +389,10 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
 
-  it('should toggle browsing control when start timer or complete stage', async () => {
+  it('should toggle browsing rules when start timer or complete stage', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
 
-    const { browsingControlService, clientPort, listener } = await startListener({
+    const { browsingControlService, clientPort } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 })
@@ -405,12 +405,10 @@ describe('BackgroundListener', () => {
       weeklySchedules: []
     })
 
-    listener.toggleBrowsingRules()
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
     await flushPromises()
-
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
 
-    await clientPort.send({ name: WorkRequestName.START_TIMER })
     vi.advanceTimersByTime(3000)
     await flushPromises()
 
@@ -430,7 +428,7 @@ describe('BackgroundListener', () => {
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
   })
 
-  it('should toggle browsing control when timer is paused in focus session', async () => {
+  it('should toggle browsing rules when timer is paused in focus session', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
 
     const { browsingControlService, clientPort, listener } = await startListener({
