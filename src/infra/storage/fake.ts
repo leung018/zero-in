@@ -1,3 +1,4 @@
+import { SubscriptionManager } from '@/utils/subscription'
 import { ObservableStorage, Unsubscribe } from './interface'
 import { LocalStorageWrapper } from './local_storage'
 
@@ -8,7 +9,10 @@ export class FakeObservableStorage implements ObservableStorage {
 
   private constructor(private localStorage: LocalStorageWrapper) {}
 
-  private onChangeListeners: Map<string, ((data: any) => void)[]> = new Map()
+  private subscriptionManager = new SubscriptionManager<{
+    key: string
+    data: any
+  }>()
 
   async get(key: string): Promise<any> {
     return this.localStorage.get(key)
@@ -16,19 +20,18 @@ export class FakeObservableStorage implements ObservableStorage {
 
   async set(key: string, data: any): Promise<void> {
     await this.localStorage.set(key, data)
-    this.onChangeListeners.get(key)?.forEach((callback) => callback(data))
+    this.subscriptionManager.broadcast({ key, data })
   }
 
   async onChange(key: string, callback: (data: any) => void): Promise<Unsubscribe> {
-    if (!this.onChangeListeners.has(key)) {
-      this.onChangeListeners.set(key, [])
-    }
-    this.onChangeListeners.get(key)?.push(callback)
-
-    const callbackIndex = (this.onChangeListeners.get(key)?.length || 1) - 1
+    const subscriptionId = this.subscriptionManager.subscribe((operation) => {
+      if (operation.key === key) {
+        callback(operation.data)
+      }
+    })
 
     return () => {
-      this.onChangeListeners.get(key)?.splice(callbackIndex, 1)
+      this.subscriptionManager.unsubscribe(subscriptionId)
     }
   }
 }
