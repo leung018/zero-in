@@ -32,4 +32,11 @@ describe('Duration', () => {
     expect(new Duration({ minutes: 0, seconds: 1, milliseconds: 0 }).isZero()).toBe(false)
     expect(new Duration({ minutes: 1 }).isZero()).toBe(false)
   })
+
+  it('should isEqual check for equal duration', () => {
+    expect(new Duration({ minutes: 1 }).isEqual(new Duration({ seconds: 60 }))).toBe(true)
+    expect(
+      new Duration({ minutes: 1 }).isEqual(new Duration({ seconds: 60, milliseconds: 1 }))
+    ).toBe(false)
+  })
 })

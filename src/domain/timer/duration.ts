@@ -24,4 +24,8 @@ export class Duration {
   isZero(): boolean {
     return this.totalMilliseconds === 0
   }
+
+  isEqual(other: Duration): boolean {
+    return this.totalMilliseconds === other.totalMilliseconds
+  }
 }
