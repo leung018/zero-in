@@ -105,9 +105,7 @@ export class TimerStateStorageService {
 
   async onChange(callback: (data: TimerInternalState) => void): Promise<void> {
     const unsubscribe = await this.storageManager.onChange((data) => {
-      if (data) {
-        callback(deserializeTimerState(data))
-      }
+      callback(deserializeTimerState(data))
     })
     this.unsubscribes.push(unsubscribe)
   }
