@@ -73,8 +73,14 @@ export class FocusTimer {
     return this.internalState.timerId
   }
 
-  setConfigAndResetState(config: TimerConfig) {
+  setConfig(config: TimerConfig) {
+    // Unit tests of this method is covered by setConfigAndResetState
+    // And i.e. no need to make extra unit tests for it
     this.config = this.newInternalConfig(config)
+  }
+
+  setConfigAndResetState(config: TimerConfig) {
+    this.setConfig(config)
     this.setInternalState(
       TimerInternalState.newPausedState({
         timerId: this.internalState.timerId,

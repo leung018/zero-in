@@ -213,7 +213,7 @@ export class BackgroundListener {
       }
     })
     await this.timerConfigStorageService.onChange((newConfig) => {
-      this.timer.setConfigAndResetState(newConfig)
+      this.timer.setConfig(newConfig)
     })
   }
 

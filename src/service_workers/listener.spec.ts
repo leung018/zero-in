@@ -549,11 +549,13 @@ describe('BackgroundListener', () => {
   })
 
   it('should sync timer config to listener from timerConfigStorageService', async () => {
-    const { listener, timerConfigStorageService } = await startListener({
+    const { listener, timerConfigStorageService, clientPort } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusSessionsPerCycle: 1
       })
     })
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
 
     const newConfig = TimerConfig.newTestInstance({
       focusSessionsPerCycle: 4
@@ -561,6 +563,7 @@ describe('BackgroundListener', () => {
     await timerConfigStorageService.save(newConfig)
 
     expect(listener.getTimerConfig()).toEqual(newConfig)
+    expect(listener.getTimerExternalState().isRunning).toBe(true) // Not to reset timer when sync timer config
   })
 
   it('should reload can get the new timer state and timer config', async () => {
