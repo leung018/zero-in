@@ -12,9 +12,11 @@ const { browsingRulesStorageService, port } = defineProps<{
 
 const browsingRules = ref<BrowsingRules>(new BrowsingRules())
 const newDomain = ref<string>('')
+const isLoading = ref(true)
 
 browsingRulesStorageService.get().then((rules) => {
   browsingRules.value = rules
+  isLoading.value = false
 })
 
 async function onClickAdd() {
@@ -59,20 +61,30 @@ async function updateBrowsingRules(newBrowsingRules: BrowsingRules) {
       >Add</BButton
     >
   </form>
-  <ul class="list-group mt-4" v-if="browsingRules.blockedDomains.length > 0">
-    <li
-      v-for="domain in browsingRules.blockedDomains"
-      :key="domain"
-      class="list-group-item d-flex justify-content-between align-items-center"
-    >
-      <span data-test="blocked-domain">{{ domain }}</span>
-      <BButton
-        class="bg-transparent text-danger border-0"
-        :data-test="`remove-${domain}`"
-        @click="onClickRemove(domain)"
+  <div
+    v-if="isLoading"
+    class="d-flex justify-content-center align-items-center"
+    style="height: 100px"
+  >
+    <span class="spinner-border"></span>
+    <span class="ms-2">Loading...</span>
+  </div>
+  <div v-else>
+    <ul class="list-group mt-4" v-if="browsingRules.blockedDomains.length > 0">
+      <li
+        v-for="domain in browsingRules.blockedDomains"
+        :key="domain"
+        class="list-group-item d-flex justify-content-between align-items-center"
       >
-        X
-      </BButton>
-    </li>
-  </ul>
+        <span data-test="blocked-domain">{{ domain }}</span>
+        <BButton
+          class="bg-transparent text-danger border-0"
+          :data-test="`remove-${domain}`"
+          @click="onClickRemove(domain)"
+        >
+          X
+        </BButton>
+      </li>
+    </ul>
+  </div>
 </template>
