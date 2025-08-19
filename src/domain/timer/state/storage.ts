@@ -1,5 +1,6 @@
 import { FakeObservableStorage } from '../../../infra/storage/fake'
 import { ObservableStorage, StorageInterface } from '../../../infra/storage/interface'
+import { LocalStorageWrapper } from '../../../infra/storage/local_storage'
 import { StorageManager } from '../../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../../infra/storage/provider'
 import { getDateAfter } from '../../../utils/date'
@@ -16,6 +17,10 @@ export class TimerStateStorageService {
   }
 
   static createFake() {
+    return new TimerStateStorageService(LocalStorageWrapper.createFake())
+  }
+
+  static createObservableFake() {
     return new TimerStateStorageService(FakeObservableStorage.create())
   }
 
