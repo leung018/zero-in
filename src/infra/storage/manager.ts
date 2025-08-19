@@ -82,6 +82,10 @@ export class StorageManager<S> {
     return this.storage.set(this.key, update)
   }
 
+  /**
+   * Listen for changes to the stored data.
+   * Note: Only works if the storage implementation supports change notifications.
+   */
   async onChange(callback: (data: S) => void): Promise<Unsubscribe> {
     if ('onChange' in this.storage) {
       return this.storage.onChange(this.key, callback)
