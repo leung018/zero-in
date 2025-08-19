@@ -1,9 +1,9 @@
 import { expect, it } from 'vitest'
-import { ObservableStorage } from '../../infra/storage/interface'
+import { StorageInterface } from '../../infra/storage/interface'
 import { Time } from '../time'
 import { DailyResetTimeStorageService } from './storage'
 
-export function runDailyResetTimeStorageServiceTests(storage: ObservableStorage) {
+export function runDailyResetTimeStorageServiceTests(storage: StorageInterface) {
   it('should return 00:00am if no DailyResetTime is saved', async () => {
     const service = new DailyResetTimeStorageService(storage)
     expect(await service.get()).toStrictEqual(new Time(0, 0))

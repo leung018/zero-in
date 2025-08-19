@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { FocusSessionRecord, newFocusSessionRecord } from '.'
-import { FakeObservableStorage } from '../../../infra/storage/fake'
+import { LocalStorageWrapper } from '../../../infra/storage/local_storage'
 import { FocusSessionRecordsSchemas } from './schema'
 import { FocusSessionRecordStorageService } from './storage'
 import { runFocusSessionRecordStorageServiceTests } from './storage_shared_spec'
 
 describe('FocusSessionRecordStorageService', () => {
-  let storage = FakeObservableStorage.create()
+  let storage = LocalStorageWrapper.createFake()
 
   beforeEach(() => {
-    storage = FakeObservableStorage.create()
+    storage = LocalStorageWrapper.createFake()
   })
 
   runFocusSessionRecordStorageServiceTests(storage)

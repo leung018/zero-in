@@ -1,10 +1,10 @@
 import { expect, it } from 'vitest'
 import { Weekday, WeeklySchedule } from '.'
-import { ObservableStorage } from '../../infra/storage/interface'
+import { StorageInterface } from '../../infra/storage/interface'
 import { Time } from '../time'
 import { WeeklyScheduleStorageService } from './storage'
 
-export function runWeeklyScheduleStorageServiceTests(storage: ObservableStorage) {
+export function runWeeklyScheduleStorageServiceTests(storage: StorageInterface) {
   it('should return empty array if no WeeklySchedules are saved', async () => {
     const service = new WeeklyScheduleStorageService(storage)
     expect(await service.getAll()).toStrictEqual([])
