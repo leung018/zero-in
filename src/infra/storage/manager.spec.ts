@@ -63,7 +63,8 @@ describe('StorageManager', () => {
 
   it('should able to subscribe and unsubscribe change of data', async () => {
     const storageManager = StorageManager.createFake({
-      currentDataVersion: 2
+      currentDataVersion: 2,
+      storage: FakeObservableStorage.create()
     })
 
     const data: V2Schema = {
