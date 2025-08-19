@@ -26,7 +26,7 @@ import { type CommunicationManager, type Port } from '../infra/communication'
 import { DesktopNotificationService } from '../infra/desktop_notification'
 import { MultipleActionService } from '../infra/multiple_actions'
 import { SubscriptionManager } from '../utils/subscription'
-import { WorkRequestName, type WorkRequest } from './request'
+import { newTimerConfig, WorkRequestName, type WorkRequest } from './request'
 import { WorkResponseName, type WorkResponse } from './response'
 
 type ListenerParams = {
@@ -159,7 +159,7 @@ export class BackgroundListener {
 
   private async setUpTimer() {
     const timerConfig = await this.timerConfigStorageService.get()
-    this.timer.setConfig(timerConfig)
+    this.timer.setConfigAndResetState(timerConfig)
     const backupInternalState = await this.timerStateStorageService.get()
     if (backupInternalState) {
       this.timer.setInternalState(backupInternalState)
@@ -204,13 +204,16 @@ export class BackgroundListener {
       }
     })
 
-    return this.timerStateStorageService.onChange((newInternalState) => {
+    await this.timerStateStorageService.onChange((newInternalState) => {
       if (
         newInternalState.timerId != this.timer.getId() &&
         !newInternalState.equalsIgnoringId(this.timer.getInternalState())
       ) {
         this.timer.setInternalState(newInternalState)
       }
+    })
+    await this.timerConfigStorageService.onChange((newConfig) => {
+      this.timer.setConfig(newConfig)
     })
   }
 
@@ -359,8 +362,15 @@ export class BackgroundListener {
               break
             }
             case WorkRequestName.RESET_TIMER_CONFIG: {
-              this.timerConfigStorageService.get().then((config) => {
-                this.timer.setConfig(config)
+              // Original implementation fetched timer config from storage to reset it,
+              // but Firestore may return stale data causing bugs. Now we receive the
+              // config directly in the payload to avoid this issue.
+              const timerConfig = newTimerConfig(message.payload)
+              this.timerConfigStorageService.save(timerConfig).then(() => {
+                this.timer.setConfigAndResetState(timerConfig)
+                backgroundPort.send({
+                  name: WorkResponseName.RESET_TIMER_CONFIG_SUCCESS
+                })
               })
               break
             }

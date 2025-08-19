@@ -24,4 +24,20 @@ export function runTimerConfigStorageServiceTests(storage: ObservableStorage) {
     await service.save(timerConfig)
     expect(await service.get()).toStrictEqual(timerConfig)
   })
+
+  it('should onChange triggered when TimerConfig is saved and unsubscribeAll can unsubscribe', async () => {
+    const service = new TimerConfigStorageService(storage)
+    const configs: TimerConfig[] = []
+    await service.onChange((data) => {
+      configs.push(data)
+    })
+
+    const targetConfig = TimerConfig.newTestInstance()
+    await service.save(targetConfig)
+    expect(configs).toEqual([targetConfig])
+
+    service.unsubscribeAll()
+    await service.save(targetConfig)
+    expect(configs).toEqual([targetConfig])
+  })
 }

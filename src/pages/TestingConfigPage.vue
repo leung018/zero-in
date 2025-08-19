@@ -4,7 +4,7 @@ import { onBeforeMount, ref } from 'vue'
 import { TimerConfig } from '../domain/timer/config'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { Duration } from '../domain/timer/duration'
-import { WorkRequestName } from '../service_workers/request'
+import { newResetTimerConfigRequest } from '../service_workers/request'
 
 const { timerConfigStorageService, port } = defineProps<{
   port: ClientPort
@@ -32,10 +32,7 @@ const onClickSave = async () => {
     longBreakDuration: new Duration({ seconds: longBreakDurationSeconds.value }),
     focusSessionsPerCycle: focusSessionsPerCycle.value
   })
-  await timerConfigStorageService.save(timerConfig)
-  await port.send({
-    name: WorkRequestName.RESET_TIMER_CONFIG
-  })
+  await port.send(newResetTimerConfigRequest(timerConfig))
 }
 </script>
 

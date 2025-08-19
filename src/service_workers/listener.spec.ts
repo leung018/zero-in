@@ -8,6 +8,7 @@ import {
   type NotificationSetting
 } from '../domain/notification_setting'
 import { TimerConfig } from '../domain/timer/config'
+import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { Duration } from '../domain/timer/duration'
 import type { FocusSessionRecord } from '../domain/timer/record'
 import { TimerStage } from '../domain/timer/stage'
@@ -17,7 +18,7 @@ import { type Badge, type BadgeColor } from '../infra/badge'
 import { setUpListener } from '../test_utils/listener'
 import { getDateAfter } from '../utils/date'
 import type { ClientPort } from './listener'
-import { WorkRequestName } from './request'
+import { newResetTimerConfigRequest, WorkRequestName } from './request'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -346,7 +347,7 @@ describe('BackgroundListener', () => {
     await assertTimerStatesMatch()
 
     // Reset Config
-    await clientPort.send({ name: WorkRequestName.RESET_TIMER_CONFIG })
+    await clientPort.send(newResetTimerConfigRequest(TimerConfig.newTestInstance()))
     await flushPromises()
     await assertTimerStatesMatch()
   })
@@ -383,7 +384,7 @@ describe('BackgroundListener', () => {
 
     expect(badgeDisplayService.getDisplayedBadge()).not.toBeNull()
 
-    await clientPort.send({ name: WorkRequestName.RESET_TIMER_CONFIG })
+    await clientPort.send(newResetTimerConfigRequest(TimerConfig.newTestInstance()))
     await flushPromises()
 
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
@@ -547,6 +548,24 @@ describe('BackgroundListener', () => {
     expect(listener2.getTimerExternalState()).toEqual(listener1.getTimerExternalState())
   })
 
+  it('should sync timer config to listener from timerConfigStorageService', async () => {
+    const { listener, timerConfigStorageService, clientPort } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusSessionsPerCycle: 1
+      })
+    })
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+
+    const newConfig = TimerConfig.newTestInstance({
+      focusSessionsPerCycle: 4
+    })
+    await timerConfigStorageService.save(newConfig)
+
+    expect(listener.getTimerConfig()).toEqual(newConfig)
+    expect(listener.getTimerExternalState().isRunning).toBe(true) // Not to reset timer when sync timer config
+  })
+
   it('should reload can get the new timer state and timer config', async () => {
     const { listener, clientPort, timerStateStorageService, timerConfigStorageService } =
       await startListener({
@@ -558,6 +577,7 @@ describe('BackgroundListener', () => {
     await clientPort.send({ name: WorkRequestName.START_TIMER })
     await flushPromises()
 
+    timerConfigStorageService.unsubscribeAll()
     const newConfig = TimerConfig.newTestInstance({
       focusDuration: new Duration({ seconds: 3 })
     })
@@ -697,12 +717,14 @@ async function startListener({
   blockingTimerIntegration = newTestBlockingTimerIntegration(),
   browsingRules = new BrowsingRules(),
   weeklySchedules = [],
-  timerStateStorageService = TimerStateStorageService.createFake()
+  timerStateStorageService = TimerStateStorageService.createFake(),
+  timerConfigStorageService = TimerConfigStorageService.createFake()
 } = {}) {
   const context = await setUpListener({
     timerConfig,
     focusSessionRecordHouseKeepDays,
-    timerStateStorageService
+    timerStateStorageService,
+    timerConfigStorageService
   })
 
   await context.blockingTimerIntegrationStorageService.save(blockingTimerIntegration)

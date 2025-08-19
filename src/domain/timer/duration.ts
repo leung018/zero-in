@@ -21,15 +21,11 @@ export class Duration {
     return Math.ceil(this.totalMilliseconds / 1000)
   }
 
-  subtract(duration: Duration): Duration {
-    let newTotalMilliseconds = this.totalMilliseconds - duration.totalMilliseconds
-    if (newTotalMilliseconds < 0) {
-      newTotalMilliseconds = 0
-    }
-    return new Duration({ milliseconds: newTotalMilliseconds })
-  }
-
   isZero(): boolean {
     return this.totalMilliseconds === 0
+  }
+
+  isEqual(other: Duration): boolean {
+    return this.totalMilliseconds === other.totalMilliseconds
   }
 }

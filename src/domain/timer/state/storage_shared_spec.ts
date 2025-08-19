@@ -34,10 +34,10 @@ export function runTimerStateStorageServiceTests(storage: ObservableStorage) {
     expect(await service.get()).toStrictEqual(state2)
   })
 
-  it('should onChange triggered when TimerState is changed and unsubscribeAll can unsubscribe', async () => {
+  it('should onChange triggered when TimerState is saved and unsubscribeAll can unsubscribe', async () => {
     const service = new TimerStateStorageService(storage)
     const states: TimerInternalState[] = []
-    service.onChange((data) => {
+    await service.onChange((data) => {
       states.push(data)
     })
 

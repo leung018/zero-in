@@ -1,6 +1,6 @@
 import config from '../../config'
 import { PeriodicTaskScheduler } from '../../infra/scheduler'
-import type { TimerConfig } from './config'
+import { TimerConfig } from './config'
 import { Duration } from './duration'
 import { TimerStage } from './stage'
 import type { TimerExternalState } from './state/external'
@@ -43,12 +43,12 @@ export class FocusTimer {
   }
 
   private newInternalConfig(config: TimerConfig): TimerConfig {
-    return {
+    return new TimerConfig({
       ...config,
       focusDuration: this.roundUpToSeconds(config.focusDuration),
       shortBreakDuration: this.roundUpToSeconds(config.shortBreakDuration),
       longBreakDuration: this.roundUpToSeconds(config.longBreakDuration)
-    }
+    })
   }
 
   private roundUpToSeconds(duration: Duration): Duration {
@@ -74,7 +74,13 @@ export class FocusTimer {
   }
 
   setConfig(config: TimerConfig) {
+    // Unit tests of this method is covered by setConfigAndResetState
+    // And i.e. no need to make extra unit tests for it
     this.config = this.newInternalConfig(config)
+  }
+
+  setConfigAndResetState(config: TimerConfig) {
+    this.setConfig(config)
     this.setInternalState(
       TimerInternalState.newPausedState({
         timerId: this.internalState.timerId,

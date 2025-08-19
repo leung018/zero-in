@@ -2,11 +2,12 @@
 import config from '@/config'
 import type { ActionService } from '@/infra/action'
 import type { ClientPort } from '@/service_workers/listener'
+import { WorkResponseName } from '@/service_workers/response'
 import { onBeforeMount, ref } from 'vue'
 import { TimerConfig } from '../domain/timer/config'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { Duration } from '../domain/timer/duration'
-import { WorkRequestName } from '../service_workers/request'
+import { newResetTimerConfigRequest } from '../service_workers/request'
 import ContentTemplate from './components/ContentTemplate.vue'
 
 const { timerConfigStorageService, port, updateSuccessNotifierService } = defineProps<{
@@ -28,6 +29,12 @@ function durationToMinutes(d: Duration): number {
 onBeforeMount(async () => {
   const timerConfig = await timerConfigStorageService.get()
   loadConfig(timerConfig)
+
+  port.onMessage((message) => {
+    if (message.name === WorkResponseName.RESET_TIMER_CONFIG_SUCCESS) {
+      updateSuccessNotifierService.trigger()
+    }
+  })
 })
 
 function loadConfig(config: TimerConfig) {
@@ -50,13 +57,7 @@ const onClickSave = async () => {
     focusSessionsPerCycle: cycleMode.value ? focusSessionsPerCycle.value : 1
   })
 
-  await timerConfigStorageService.save(config)
-
-  await port.send({
-    name: WorkRequestName.RESET_TIMER_CONFIG
-  })
-
-  updateSuccessNotifierService.trigger()
+  await port.send(newResetTimerConfigRequest(config))
 }
 
 const presetDefault = () => {

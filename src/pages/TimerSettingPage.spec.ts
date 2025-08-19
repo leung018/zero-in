@@ -86,6 +86,21 @@ describe('TimerSettingPage', () => {
     expect(timer.getConfig()).toEqual(newConfig)
   })
 
+  it('should reset the timer after update config', async () => {
+    const { wrapper, timer } = await mountPage(
+      TimerConfig.newTestInstance({
+        focusDuration: new Duration({ minutes: 24 })
+      })
+    )
+    timer.start()
+
+    await wrapper.find(dataTestSelector('focus-duration')).setValue(1)
+    await saveSetting(wrapper)
+
+    expect(timer.getExternalState().remaining).toEqual(new Duration({ minutes: 1 }))
+    expect(timer.getExternalState().isRunning).toBe(false)
+  })
+
   it('should ignore the value of short break when perform cycle is unchecked', async () => {
     const { timerConfigStorageService, wrapper } = await mountPage(
       TimerConfig.newTestInstance({

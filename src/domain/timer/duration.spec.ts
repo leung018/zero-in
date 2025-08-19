@@ -26,29 +26,17 @@ describe('Duration', () => {
     expect(() => new Duration({ milliseconds: 0 })).not.toThrow()
   })
 
-  it('should subtract return new duration that is subtracted', () => {
-    const original = new Duration({ minutes: 10, seconds: 30 })
-
-    const subtracted = original.subtract(
-      new Duration({ minutes: 1, seconds: 29, milliseconds: 500 })
-    )
-
-    expect(subtracted).toEqual(new Duration({ minutes: 9, seconds: 0, milliseconds: 500 }))
-    expect(original).toEqual(new Duration({ minutes: 10, seconds: 30 }))
-  })
-
-  it('should become 0 if the subtracted duration is greater than the original', () => {
-    const original = new Duration({ minutes: 10, seconds: 30 })
-
-    const subtracted = original.subtract(new Duration({ minutes: 10, seconds: 31 }))
-
-    expect(subtracted).toEqual(new Duration({ minutes: 0, seconds: 0 }))
-  })
-
   it('should isZero check for zero duration', () => {
     expect(new Duration({ minutes: 0, seconds: 0, milliseconds: 0 }).isZero()).toBe(true)
     expect(new Duration({ minutes: 0, seconds: 0, milliseconds: 1 }).isZero()).toBe(false)
     expect(new Duration({ minutes: 0, seconds: 1, milliseconds: 0 }).isZero()).toBe(false)
     expect(new Duration({ minutes: 1 }).isZero()).toBe(false)
+  })
+
+  it('should isEqual check for equal duration', () => {
+    expect(new Duration({ minutes: 1 }).isEqual(new Duration({ seconds: 60 }))).toBe(true)
+    expect(
+      new Duration({ minutes: 1 }).isEqual(new Duration({ seconds: 60, milliseconds: 1 }))
+    ).toBe(false)
   })
 })
