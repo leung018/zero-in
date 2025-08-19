@@ -536,8 +536,8 @@ describe('BackgroundListener', () => {
       clientPort: clientPort1,
       listener: listener1,
       timerStateStorageService
-    } = await startListener()
-    const { listener: listener2 } = await startListener({
+    } = await startListenerWithTimerSync()
+    const { listener: listener2 } = await startListenerWithTimerSync({
       timerStateStorageService
     })
 
@@ -549,7 +549,7 @@ describe('BackgroundListener', () => {
   })
 
   it('should sync timer config to listener from timerConfigStorageService', async () => {
-    const { listener, timerConfigStorageService, clientPort } = await startListener({
+    const { listener, timerConfigStorageService, clientPort } = await startListenerWithTimerSync({
       timerConfig: TimerConfig.newTestInstance({
         focusSessionsPerCycle: 1
       })
@@ -568,7 +568,7 @@ describe('BackgroundListener', () => {
 
   it('should reload can get the new timer state and timer config', async () => {
     const { listener, clientPort, timerStateStorageService, timerConfigStorageService } =
-      await startListener({
+      await startListenerWithTimerSync({
         timerConfig: TimerConfig.newTestInstance({
           focusDuration: new Duration({ seconds: 1 })
         })
@@ -625,7 +625,7 @@ describe('BackgroundListener', () => {
   })
 
   it('should reload unsubscribe previous subscription in timerStateStorageService', async () => {
-    const { listener, timerStateStorageService } = await startListener({
+    const { listener, timerStateStorageService } = await startListenerWithTimerSync({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 })
       })
@@ -657,7 +657,7 @@ describe('BackgroundListener', () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
 
     const { listener, clientPort, timerStateStorageService, browsingControlService } =
-      await startListener({
+      await startListenerWithTimerSync({
         browsingRules,
         blockingTimerIntegration: newTestBlockingTimerIntegration({
           pauseBlockingWhenTimerNotRunning: true
@@ -685,7 +685,7 @@ describe('BackgroundListener', () => {
 
   it('should reload can reset display badge', async () => {
     const { badgeDisplayService, clientPort, timerStateStorageService, listener } =
-      await startListener({
+      await startListenerWithTimerSync({
         timerConfig: TimerConfig.newTestInstance({
           focusDuration: new Duration({ seconds: 1 })
         })
@@ -740,4 +740,26 @@ async function startListener({
     ...context,
     clientPort
   }
+}
+
+/**
+ * Using timerStateStorageService and timerConfigStorageService with ObservableStorage as default parameters
+ */
+async function startListenerWithTimerSync({
+  timerConfig = TimerConfig.newTestInstance(),
+  notificationSetting = newTestNotificationSetting(),
+  blockingTimerIntegration = newTestBlockingTimerIntegration(),
+  browsingRules = new BrowsingRules(),
+  weeklySchedules = [],
+  timerStateStorageService = TimerStateStorageService.createObservableFake()
+} = {}) {
+  return startListener({
+    timerConfig,
+    notificationSetting,
+    blockingTimerIntegration,
+    browsingRules,
+    weeklySchedules,
+    timerStateStorageService,
+    timerConfigStorageService: TimerConfigStorageService.createObservableFake()
+  })
 }

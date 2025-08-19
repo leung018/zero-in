@@ -1,7 +1,7 @@
 import type { BlockingTimerIntegration } from '.'
 import config from '../../config'
-import { FakeObservableStorage } from '../../infra/storage/fake'
-import { ObservableStorage } from '../../infra/storage/interface'
+import { StorageInterface } from '../../infra/storage/interface'
+import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { StorageManager } from '../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import { BlockingTimerIntegrationSchemas } from './schema'
@@ -15,12 +15,12 @@ export class BlockingTimerIntegrationStorageService {
   }
 
   static createFake() {
-    return new BlockingTimerIntegrationStorageService(FakeObservableStorage.create())
+    return new BlockingTimerIntegrationStorageService(LocalStorageWrapper.createFake())
   }
 
   private storageManager: StorageManager<BlockingTimerIntegrationSchemas[1]>
 
-  constructor(storage: ObservableStorage) {
+  constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: BlockingTimerIntegrationStorageService.STORAGE_KEY,

@@ -1,6 +1,6 @@
 import { WeeklySchedule } from '.'
-import { FakeObservableStorage } from '../../infra/storage/fake'
-import { ObservableStorage } from '../../infra/storage/interface'
+import { StorageInterface } from '../../infra/storage/interface'
+import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { StorageManager } from '../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import { WeeklyScheduleSchemas } from './schema'
@@ -9,8 +9,8 @@ import { deserializeWeeklySchedules, serializeWeeklySchedules } from './serializ
 export class WeeklyScheduleStorageService {
   static readonly STORAGE_KEY = 'weeklySchedules'
 
-  static createFake(storage = FakeObservableStorage.create()): WeeklyScheduleStorageService {
-    return new WeeklyScheduleStorageService(storage)
+  static createFake(): WeeklyScheduleStorageService {
+    return new WeeklyScheduleStorageService(LocalStorageWrapper.createFake())
   }
 
   static create(): WeeklyScheduleStorageService {
@@ -19,7 +19,7 @@ export class WeeklyScheduleStorageService {
 
   private storageManager: StorageManager<WeeklyScheduleSchemas[2]>
 
-  constructor(storage: ObservableStorage) {
+  constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
       key: WeeklyScheduleStorageService.STORAGE_KEY,

@@ -1,9 +1,9 @@
 import { expect, it } from 'vitest'
 import { BrowsingRules } from '.'
-import { ObservableStorage } from '../../infra/storage/interface'
+import { StorageInterface } from '../../infra/storage/interface'
 import { BrowsingRulesStorageService } from './storage'
 
-export function runBrowsingRulesStorageServiceTests(storage: ObservableStorage) {
+export function runBrowsingRulesStorageServiceTests(storage: StorageInterface) {
   it('should return BrowsingRules with empty blockedDomains if no BrowsingRules are saved', async () => {
     const service = new BrowsingRulesStorageService(storage)
     expect(await service.get()).toStrictEqual(new BrowsingRules())

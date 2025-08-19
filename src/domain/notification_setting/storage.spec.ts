@@ -1,12 +1,12 @@
 import { beforeEach, describe } from 'vitest'
-import { FakeObservableStorage } from '../../infra/storage/fake'
+import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { runNotificationSettingStorageServiceTests } from './storage_shared_spec'
 
 describe('NotificationSettingStorageService', () => {
-  let storage = FakeObservableStorage.create()
+  let storage = LocalStorageWrapper.createFake()
 
   beforeEach(() => {
-    storage = FakeObservableStorage.create()
+    storage = LocalStorageWrapper.createFake()
   })
 
   runNotificationSettingStorageServiceTests(storage)

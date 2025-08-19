@@ -1,9 +1,9 @@
 import { expect, it } from 'vitest'
 import { newFocusSessionRecord } from '.'
-import { ObservableStorage } from '../../../infra/storage/interface'
+import { StorageInterface } from '../../../infra/storage/interface'
 import { FocusSessionRecordStorageService } from './storage'
 
-export function runFocusSessionRecordStorageServiceTests(storage: ObservableStorage) {
+export function runFocusSessionRecordStorageServiceTests(storage: StorageInterface) {
   it('should return empty array if no FocusSessionRecords are saved', async () => {
     const service = new FocusSessionRecordStorageService(storage)
     expect(await service.getAll()).toStrictEqual([])
