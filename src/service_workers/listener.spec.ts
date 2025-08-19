@@ -18,7 +18,7 @@ import { type Badge, type BadgeColor } from '../infra/badge'
 import { setUpListener } from '../test_utils/listener'
 import { getDateAfter } from '../utils/date'
 import type { ClientPort } from './listener'
-import { WorkRequestName } from './request'
+import { newResetTimerConfigRequest, WorkRequestName } from './request'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
 describe('BackgroundListener', () => {
@@ -347,7 +347,7 @@ describe('BackgroundListener', () => {
     await assertTimerStatesMatch()
 
     // Reset Config
-    await clientPort.send({ name: WorkRequestName.RESET_TIMER_CONFIG })
+    await clientPort.send(newResetTimerConfigRequest(TimerConfig.newTestInstance()))
     await flushPromises()
     await assertTimerStatesMatch()
   })
@@ -384,7 +384,7 @@ describe('BackgroundListener', () => {
 
     expect(badgeDisplayService.getDisplayedBadge()).not.toBeNull()
 
-    await clientPort.send({ name: WorkRequestName.RESET_TIMER_CONFIG })
+    await clientPort.send(newResetTimerConfigRequest(TimerConfig.newTestInstance()))
     await flushPromises()
 
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()

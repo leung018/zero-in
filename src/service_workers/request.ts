@@ -1,3 +1,10 @@
+import { TimerConfig } from '../domain/timer/config'
+import {
+  deserializeTimerConfig,
+  SerializedTimerConfig,
+  serializeTimerConfig
+} from '../domain/timer/config/serialize'
+
 export enum WorkRequestName {
   TOGGLE_BROWSING_RULES,
   START_TIMER,
@@ -14,6 +21,12 @@ export enum WorkRequestName {
 
 export type RestartNthPayload = {
   nth: number
+}
+
+export type ResetTimerConfigPayload = SerializedTimerConfig
+
+export function newTimerConfig(data: ResetTimerConfigPayload) {
+  return deserializeTimerConfig(data)
 }
 
 export type WorkRequest =
@@ -45,6 +58,7 @@ export type WorkRequest =
     }
   | {
       name: WorkRequestName.RESET_TIMER_CONFIG
+      payload: ResetTimerConfigPayload
     }
   | {
       name: WorkRequestName.RESET_NOTIFICATION
@@ -52,3 +66,10 @@ export type WorkRequest =
   | {
       name: WorkRequestName.PING
     }
+
+export function newResetTimerConfigRequest(config: TimerConfig): WorkRequest {
+  return {
+    name: WorkRequestName.RESET_TIMER_CONFIG,
+    payload: serializeTimerConfig(config)
+  }
+}
