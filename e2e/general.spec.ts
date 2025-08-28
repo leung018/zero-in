@@ -193,7 +193,7 @@ test('should able to save daily reset time', async ({ page, extensionId }) => {
 
   await page.getByTestId('time-input').fill('10:30')
 
-  await page.getByTestId('save-button').click()
+  await page.getByTestId('daily-reset-time-save-button').click()
 
   await expect(page.getByTestId('time-input')).toHaveValue('10:30')
 
@@ -210,7 +210,7 @@ test('should able to change timer config', async ({ page, extensionId }) => {
   await page.getByTestId('long-break-duration').fill('4')
   await page.getByTestId('focus-sessions-per-cycle').fill('3')
 
-  await page.getByTestId('save-button').click()
+  await page.getByTestId('testing-config-save-button').click()
   await page.reload()
 
   await expect(page.getByTestId('focus-duration')).toHaveValue('10')
@@ -268,7 +268,7 @@ test('should able to persist and retrieve notification setting', async ({ page, 
   await page.getByTestId('desktop-notification-option').check()
   await page.getByTestId('sound-option').uncheck()
 
-  await page.getByTestId('save-button').click()
+  await page.getByTestId('notification-save-button').click()
 
   await page.reload()
 

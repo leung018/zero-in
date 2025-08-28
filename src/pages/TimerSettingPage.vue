@@ -183,7 +183,11 @@ const preset5217 = () => {
             data-test="long-break-duration"
           ></b-form-input>
         </b-form-group>
-        <b-button type="submit" variant="primary" data-test="save-button" @click="onClickSave"
+        <b-button
+          type="submit"
+          variant="primary"
+          data-test="timer-setting-save-button"
+          @click="onClickSave"
           >Save</b-button
         >
         <p class="small mt-2"><b>* Caution: After saving, the timer will be reset</b></p>

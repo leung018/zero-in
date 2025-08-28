@@ -68,6 +68,8 @@ const onClickSave = async () => {
       </LoadingWrapper>
     </div>
 
-    <BButton variant="primary" data-test="save-button" @click="onClickSave"> Save </BButton>
+    <BButton variant="primary" data-test="notification-save-button" @click="onClickSave">
+      Save
+    </BButton>
   </ContentTemplate>
 </template>
