@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { BrowsingRules } from '@/domain/browsing_rules'
 import type { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
+import LoadingWrapper from '@/pages/components/LoadingWrapper.vue'
 import type { ClientPort } from '@/service_workers/listener'
 import { WorkRequestName } from '@/service_workers/request'
 import { ref } from 'vue'
@@ -61,15 +62,7 @@ async function updateBrowsingRules(newBrowsingRules: BrowsingRules) {
       >Add</BButton
     >
   </form>
-  <div
-    v-if="isLoading"
-    class="d-flex justify-content-center align-items-center"
-    style="height: 100px"
-  >
-    <span class="spinner-border"></span>
-    <span class="ms-2">Loading...</span>
-  </div>
-  <div v-else>
+  <LoadingWrapper :isLoading="isLoading">
     <ul class="list-group mt-4" v-if="browsingRules.blockedDomains.length > 0">
       <li
         v-for="domain in browsingRules.blockedDomains"
@@ -86,5 +79,5 @@ async function updateBrowsingRules(newBrowsingRules: BrowsingRules) {
         </BButton>
       </li>
     </ul>
-  </div>
+  </LoadingWrapper>
 </template>
