@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ClientPort } from '@/service_workers/listener'
-import { onBeforeMount, ref } from 'vue'
+import { ref } from 'vue'
 import { TimerConfig } from '../domain/timer/config'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { Duration } from '../domain/timer/duration'
@@ -16,13 +16,11 @@ const shortBreakDurationSeconds = ref(0)
 const longBreakDurationSeconds = ref(0)
 const focusSessionsPerCycle = ref(0)
 
-onBeforeMount(async () => {
-  const timerConfig = await timerConfigStorageService.get()
-
-  focusDurationSeconds.value = timerConfig.focusDuration.remainingSeconds()
-  shortBreakDurationSeconds.value = timerConfig.shortBreakDuration.remainingSeconds()
-  longBreakDurationSeconds.value = timerConfig.longBreakDuration.remainingSeconds()
-  focusSessionsPerCycle.value = timerConfig.focusSessionsPerCycle
+timerConfigStorageService.get().then((config) => {
+  focusDurationSeconds.value = config.focusDuration.remainingSeconds()
+  shortBreakDurationSeconds.value = config.shortBreakDuration.remainingSeconds()
+  longBreakDurationSeconds.value = config.longBreakDuration.remainingSeconds()
+  focusSessionsPerCycle.value = config.focusSessionsPerCycle
 })
 
 const onClickSave = async () => {

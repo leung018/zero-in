@@ -21,8 +21,8 @@ featureFlagsService.isEnabled('sign-in').then((enabled) => {
 
 const isAuthenticated = ref<boolean>(false)
 
-onBeforeMount(async () => {
-  isAuthenticated.value = await FirebaseServices.isAuthenticated()
+FirebaseServices.isAuthenticated().then((isAuthenticatedValue) => {
+  isAuthenticated.value = isAuthenticatedValue
 })
 </script>
 

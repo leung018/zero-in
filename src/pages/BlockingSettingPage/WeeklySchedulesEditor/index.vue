@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ClientPort } from '@/service_workers/listener'
-import { computed, onBeforeMount, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { Weekday, WeeklySchedule } from '../../../domain/schedules'
 import type { WeeklyScheduleStorageService } from '../../../domain/schedules/storage'
 import { Time } from '../../../domain/time'
@@ -27,8 +27,8 @@ const errorMessage = ref<string | null>(null)
 
 const showSaved = computed(() => weeklySchedules.value.length > 0)
 
-onBeforeMount(async () => {
-  weeklySchedules.value = await weeklyScheduleStorageService.getAll()
+weeklyScheduleStorageService.getAll().then((schedules) => {
+  weeklySchedules.value = schedules
 })
 
 const onClickAdd = async () => {

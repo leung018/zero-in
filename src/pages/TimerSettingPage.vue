@@ -3,7 +3,7 @@ import config from '@/config'
 import type { ActionService } from '@/infra/action'
 import type { ClientPort } from '@/service_workers/listener'
 import { WorkResponseName } from '@/service_workers/response'
-import { onBeforeMount, ref } from 'vue'
+import { ref } from 'vue'
 import { TimerConfig } from '../domain/timer/config'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { Duration } from '../domain/timer/duration'
@@ -26,15 +26,8 @@ function durationToMinutes(d: Duration): number {
   return Math.floor(d.remainingSeconds() / 60)
 }
 
-onBeforeMount(async () => {
-  const timerConfig = await timerConfigStorageService.get()
-  loadConfig(timerConfig)
-
-  port.onMessage((message) => {
-    if (message.name === WorkResponseName.RESET_TIMER_CONFIG_SUCCESS) {
-      updateSuccessNotifierService.trigger()
-    }
-  })
+timerConfigStorageService.get().then((config) => {
+  loadConfig(config)
 })
 
 function loadConfig(config: TimerConfig) {
@@ -44,6 +37,12 @@ function loadConfig(config: TimerConfig) {
   focusSessionsPerCycle.value = config.focusSessionsPerCycle
   cycleMode.value = config.focusSessionsPerCycle > 1
 }
+
+port.onMessage((message) => {
+  if (message.name === WorkResponseName.RESET_TIMER_CONFIG_SUCCESS) {
+    updateSuccessNotifierService.trigger()
+  }
+})
 
 const onClickSave = async () => {
   const originalConfig = await timerConfigStorageService.get()

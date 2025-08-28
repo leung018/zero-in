@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ClientPort } from '@/service_workers/listener'
 import { formatNumber } from '@/utils/format'
-import { computed, onBeforeMount, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { Duration } from '../domain/timer/duration'
 import { TimerStage } from '../domain/timer/stage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
@@ -38,23 +38,23 @@ const currentStage = computed(() => {
   })
 })
 
-onBeforeMount(async () => {
-  port.onMessage((message) => {
-    if (message.name !== WorkResponseName.TIMER_STATE || !message.payload) {
-      return
-    }
+// Subscribe to timer state
+port.onMessage((message) => {
+  if (message.name !== WorkResponseName.TIMER_STATE || !message.payload) {
+    return
+  }
 
-    timerStage.value = message.payload.stage
-    durationLeft.value = new Duration({ seconds: message.payload.remainingSeconds })
-    isRunning.value = message.payload.isRunning
-    focusSessionsCompleted.value = message.payload.focusSessionsCompleted
-    focusSessionsPerCycle.value = message.payload.focusSessionsPerCycle
-  })
-  port.send({
-    name: WorkRequestName.LISTEN_TO_TIMER
-  })
+  timerStage.value = message.payload.stage
+  durationLeft.value = new Duration({ seconds: message.payload.remainingSeconds })
+  isRunning.value = message.payload.isRunning
+  focusSessionsCompleted.value = message.payload.focusSessionsCompleted
+  focusSessionsPerCycle.value = message.payload.focusSessionsPerCycle
+})
+port.send({
+  name: WorkRequestName.LISTEN_TO_TIMER
 })
 
+// onClick setup
 const onClickStart = () => {
   port.send({
     name: WorkRequestName.START_TIMER

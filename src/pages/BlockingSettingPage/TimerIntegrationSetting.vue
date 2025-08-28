@@ -2,7 +2,7 @@
 import type { ActionService } from '@/infra/action'
 import type { ClientPort } from '@/service_workers/listener'
 import { WorkRequestName } from '@/service_workers/request'
-import { onBeforeMount, ref } from 'vue'
+import { ref } from 'vue'
 import type { BlockingTimerIntegrationStorageService } from '../../domain/blocking_timer_integration/storage'
 
 const { blockingTimerIntegrationStorageService, updateSuccessNotifierService, port } = defineProps<{
@@ -14,10 +14,9 @@ const { blockingTimerIntegrationStorageService, updateSuccessNotifierService, po
 const pauseBlockingDuringBreaks = ref(false)
 const pauseBlockingWhenTimerNotRunning = ref(false)
 
-onBeforeMount(async () => {
-  const blockingTimerIntegration = await blockingTimerIntegrationStorageService.get()
-  pauseBlockingDuringBreaks.value = blockingTimerIntegration.pauseBlockingDuringBreaks
-  pauseBlockingWhenTimerNotRunning.value = blockingTimerIntegration.pauseBlockingWhenTimerNotRunning
+blockingTimerIntegrationStorageService.get().then((config) => {
+  pauseBlockingDuringBreaks.value = config.pauseBlockingDuringBreaks
+  pauseBlockingWhenTimerNotRunning.value = config.pauseBlockingWhenTimerNotRunning
 })
 
 async function onClickSave() {
