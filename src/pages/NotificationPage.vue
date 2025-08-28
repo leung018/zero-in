@@ -5,6 +5,7 @@ import type { ClientPort } from '@/service_workers/listener'
 import { ref } from 'vue'
 import { WorkRequestName } from '../service_workers/request'
 import ContentTemplate from './components/ContentTemplate.vue'
+import LoadingWrapper from './components/LoadingWrapper.vue'
 
 const { notificationSettingStorageService, updateSuccessNotifierService, port } = defineProps<{
   notificationSettingStorageService: NotificationSettingStorageService
@@ -15,10 +16,12 @@ const reminderTab = ref(false)
 const desktopNotification = ref(false)
 const sound = ref(false)
 
+const isLoading = ref(true)
 notificationSettingStorageService.get().then((setting) => {
   reminderTab.value = setting.reminderTab
   desktopNotification.value = setting.desktopNotification
   sound.value = setting.sound
+  isLoading.value = false
 })
 
 const onClickSave = async () => {
@@ -42,25 +45,27 @@ const onClickSave = async () => {
     </p>
 
     <div class="card mb-4">
-      <div class="card-body">
-        <h5 class="card-title mb-3">When time's up:</h5>
+      <LoadingWrapper :isLoading="isLoading">
+        <div class="card-body">
+          <h5 class="card-title mb-3">When time's up:</h5>
 
-        <BFormCheckbox data-test="reminder-tab-option" class="mb-3" v-model="reminderTab">
-          Open reminder tab
-        </BFormCheckbox>
+          <BFormCheckbox data-test="reminder-tab-option" class="mb-3" v-model="reminderTab">
+            Open reminder tab
+          </BFormCheckbox>
 
-        <BFormCheckbox
-          data-test="desktop-notification-option"
-          class="mb-3"
-          v-model="desktopNotification"
-        >
-          Show desktop notification
-        </BFormCheckbox>
+          <BFormCheckbox
+            data-test="desktop-notification-option"
+            class="mb-3"
+            v-model="desktopNotification"
+          >
+            Show desktop notification
+          </BFormCheckbox>
 
-        <BFormCheckbox data-test="sound-option" class="mb-3" v-model="sound">
-          Play sound
-        </BFormCheckbox>
-      </div>
+          <BFormCheckbox data-test="sound-option" class="mb-3" v-model="sound">
+            Play sound
+          </BFormCheckbox>
+        </div>
+      </LoadingWrapper>
     </div>
 
     <BButton variant="primary" data-test="save-button" @click="onClickSave"> Save </BButton>
