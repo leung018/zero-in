@@ -115,10 +115,10 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
     </BNav>
     <!-- I don't use an approach of mapping component by path here because the current explicit v-if/v-else-if structure 
      preserves TypeScript prop validation for each component -->
-    <BlockingSettingPage v-if="currentPath === PATH.ROOT" :port="port" />
+    <BlockingSettingPage v-show="currentPath === PATH.ROOT" :port="port" />
 
     <StatisticsPage
-      v-else-if="currentPath === PATH.STATISTICS"
+      v-show="currentPath === PATH.STATISTICS"
       :daily-reset-time-storage-service="DailyResetTimeStorageService.create()"
       :update-success-notifier-service="updateSuccessNotifierService"
       :focus-session-record-storage-service="FocusSessionRecordStorageService.create()"
@@ -126,19 +126,19 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
     />
 
     <TimerSettingPage
-      v-else-if="currentPath === PATH.TIMER_SETTING"
+      v-show="currentPath === PATH.TIMER_SETTING"
       :timer-config-storage-service="TimerConfigStorageService.create()"
       :port="port"
       :update-success-notifier-service="updateSuccessNotifierService"
     />
 
     <NotificationPage
-      v-else-if="currentPath === PATH.NOTIFICATION"
+      v-show="currentPath === PATH.NOTIFICATION"
       :notification-setting-storage-service="NotificationSettingStorageService.create()"
       :update-success-notifier-service="updateSuccessNotifierService"
       :port="port"
     />
 
-    <FeedbackPage v-else-if="currentPath === PATH.FEEDBACK" />
+    <FeedbackPage v-show="currentPath === PATH.FEEDBACK" />
   </main>
 </template>

@@ -163,7 +163,7 @@ async function saveTime(wrapper: VueWrapper, newTime: string) {
   const timerInput = wrapper.find(dataTestSelector('time-input'))
   timerInput.setValue(newTime)
 
-  const saveButton = wrapper.find(dataTestSelector('save-button'))
+  const saveButton = wrapper.find(dataTestSelector('daily-reset-time-save-button'))
   saveButton.trigger('click')
   await flushPromises()
 }

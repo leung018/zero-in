@@ -46,7 +46,7 @@ describe('TestingConfigPage', () => {
       .find(dataTestSelector('focus-sessions-per-cycle'))
       .setValue(newFocusSessionsPerCycle)
 
-    await wrapper.find(dataTestSelector('save-button')).trigger('click')
+    await wrapper.find(dataTestSelector('testing-config-save-button')).trigger('click')
     await flushPromises()
 
     const newConfig = new TimerConfig({

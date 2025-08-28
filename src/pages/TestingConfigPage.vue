@@ -78,7 +78,7 @@ const onClickSave = async () => {
           variant="danger"
           type="button"
           class="me-2"
-          data-test="save-button"
+          data-test="testing-config-save-button"
           @click="onClickSave"
         >
           Save

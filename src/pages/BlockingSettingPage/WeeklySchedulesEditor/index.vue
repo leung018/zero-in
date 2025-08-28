@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LoadingWrapper from '@/pages/components/LoadingWrapper.vue'
 import type { ClientPort } from '@/service_workers/listener'
 import { computed, ref } from 'vue'
 import { Weekday, WeeklySchedule } from '../../../domain/schedules'
@@ -27,8 +28,10 @@ const errorMessage = ref<string | null>(null)
 
 const showSaved = computed(() => weeklySchedules.value.length > 0)
 
+const isLoading = ref(true)
 weeklyScheduleStorageService.getAll().then((schedules) => {
   weeklySchedules.value = schedules
+  isLoading.value = false
 })
 
 const onClickAdd = async () => {
@@ -112,8 +115,10 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
       {{ errorMessage }}
     </div>
   </b-form>
-  <div class="mt-4" data-test="saved-schedules-section" v-if="showSaved">
-    <h3>Saved</h3>
-    <SchedulesList :weeklySchedules="weeklySchedules" @remove="handleRemove" />
-  </div>
+  <LoadingWrapper :isLoading="isLoading">
+    <div class="mt-4" data-test="saved-schedules-section" v-if="showSaved">
+      <h3>Saved</h3>
+      <SchedulesList :weeklySchedules="weeklySchedules" @remove="handleRemove" />
+    </div>
+  </LoadingWrapper>
 </template>

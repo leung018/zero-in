@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { BrowsingRules } from '@/domain/browsing_rules'
 import type { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
+import LoadingWrapper from '@/pages/components/LoadingWrapper.vue'
 import type { ClientPort } from '@/service_workers/listener'
 import { WorkRequestName } from '@/service_workers/request'
 import { ref } from 'vue'
@@ -12,9 +13,11 @@ const { browsingRulesStorageService, port } = defineProps<{
 
 const browsingRules = ref<BrowsingRules>(new BrowsingRules())
 const newDomain = ref<string>('')
+const isLoading = ref(true)
 
 browsingRulesStorageService.get().then((rules) => {
   browsingRules.value = rules
+  isLoading.value = false
 })
 
 async function onClickAdd() {
@@ -59,20 +62,22 @@ async function updateBrowsingRules(newBrowsingRules: BrowsingRules) {
       >Add</BButton
     >
   </form>
-  <ul class="list-group mt-4" v-if="browsingRules.blockedDomains.length > 0">
-    <li
-      v-for="domain in browsingRules.blockedDomains"
-      :key="domain"
-      class="list-group-item d-flex justify-content-between align-items-center"
-    >
-      <span data-test="blocked-domain">{{ domain }}</span>
-      <BButton
-        class="bg-transparent text-danger border-0"
-        :data-test="`remove-${domain}`"
-        @click="onClickRemove(domain)"
+  <LoadingWrapper :isLoading="isLoading">
+    <ul class="list-group mt-4" v-if="browsingRules.blockedDomains.length > 0">
+      <li
+        v-for="domain in browsingRules.blockedDomains"
+        :key="domain"
+        class="list-group-item d-flex justify-content-between align-items-center"
       >
-        X
-      </BButton>
-    </li>
-  </ul>
+        <span data-test="blocked-domain">{{ domain }}</span>
+        <BButton
+          class="bg-transparent text-danger border-0"
+          :data-test="`remove-${domain}`"
+          @click="onClickRemove(domain)"
+        >
+          X
+        </BButton>
+      </li>
+    </ul>
+  </LoadingWrapper>
 </template>

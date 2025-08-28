@@ -175,6 +175,6 @@ async function saveNotificationSetting(
     soundOption.setValue(notificationSetting.sound)
   ])
 
-  wrapper.find(dataTestSelector('save-button')).trigger('click')
+  wrapper.find(dataTestSelector('notification-save-button')).trigger('click')
   await flushPromises()
 }

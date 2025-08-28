@@ -225,6 +225,6 @@ async function mountPage(initialTimerConfig: TimerConfig = TimerConfig.newTestIn
 }
 
 async function saveSetting(wrapper: VueWrapper<any>) {
-  await wrapper.find(dataTestSelector('save-button')).trigger('click')
+  await wrapper.find(dataTestSelector('timer-setting-save-button')).trigger('click')
   await flushPromises()
 }
