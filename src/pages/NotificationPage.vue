@@ -2,7 +2,7 @@
 import type { NotificationSettingStorageService } from '@/domain/notification_setting/storage'
 import type { ActionService } from '@/infra/action'
 import type { ClientPort } from '@/service_workers/listener'
-import { onBeforeMount, ref } from 'vue'
+import { ref } from 'vue'
 import { WorkRequestName } from '../service_workers/request'
 import ContentTemplate from './components/ContentTemplate.vue'
 
@@ -15,8 +15,7 @@ const reminderTab = ref(false)
 const desktopNotification = ref(false)
 const sound = ref(false)
 
-onBeforeMount(async () => {
-  const setting = await notificationSettingStorageService.get()
+notificationSettingStorageService.get().then((setting) => {
   reminderTab.value = setting.reminderTab
   desktopNotification.value = setting.desktopNotification
   sound.value = setting.sound

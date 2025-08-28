@@ -66,8 +66,8 @@ const signOut = () => {
 
 const isAuthenticated = ref<boolean>(false)
 
-onBeforeMount(async () => {
-  isAuthenticated.value = await FirebaseServices.isAuthenticated()
+FirebaseServices.isAuthenticated().then((isAuthenticatedValue) => {
+  isAuthenticated.value = isAuthenticatedValue
 })
 
 const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICATION]

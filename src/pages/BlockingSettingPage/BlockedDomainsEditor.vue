@@ -3,7 +3,7 @@ import { BrowsingRules } from '@/domain/browsing_rules'
 import type { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import type { ClientPort } from '@/service_workers/listener'
 import { WorkRequestName } from '@/service_workers/request'
-import { onBeforeMount, ref } from 'vue'
+import { ref } from 'vue'
 
 const { browsingRulesStorageService, port } = defineProps<{
   port: ClientPort
@@ -13,8 +13,8 @@ const { browsingRulesStorageService, port } = defineProps<{
 const browsingRules = ref<BrowsingRules>(new BrowsingRules())
 const newDomain = ref<string>('')
 
-onBeforeMount(async () => {
-  browsingRules.value = await browsingRulesStorageService.get()
+browsingRulesStorageService.get().then((rules) => {
+  browsingRules.value = rules
 })
 
 async function onClickAdd() {

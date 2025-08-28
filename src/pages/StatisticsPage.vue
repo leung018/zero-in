@@ -2,7 +2,7 @@
 import type { UpdateSuccessNotifierService } from '@/infra/browser/update_success_notifier'
 import type { ClientPort } from '@/service_workers/listener'
 import { getMostRecentDate } from '@/utils/date'
-import { onBeforeMount, ref } from 'vue'
+import { ref } from 'vue'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { Time } from '../domain/time'
 import type { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
@@ -38,23 +38,23 @@ function initialStats(): Stat[] {
   return stats
 }
 
-onBeforeMount(async () => {
-  dailyResetTime.value = await dailyResetTimeStorageService.get()
-  await setStats(dailyResetTime.value)
-
-  port.onMessage((message) => {
-    if (message.name !== WorkResponseName.FOCUS_SESSION_RECORDS_UPDATED) {
-      return
-    }
-    setStats(dailyResetTime.value)
-  })
-
-  port.send({
-    name: WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE
-  })
-
-  startPeriodicPing(port, 1000 * 30)
+dailyResetTimeStorageService.get().then((time) => {
+  dailyResetTime.value = time
+  setStats(time)
 })
+
+port.onMessage((message) => {
+  if (message.name !== WorkResponseName.FOCUS_SESSION_RECORDS_UPDATED) {
+    return
+  }
+  setStats(dailyResetTime.value)
+})
+
+port.send({
+  name: WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE
+})
+
+startPeriodicPing(port, 1000 * 30)
 
 /*
  * Periodically sends a ping message to the service worker.

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ClientPort } from '@/service_workers/listener'
 import { getMostRecentDate } from '@/utils/date'
-import { computed, onBeforeMount, ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { Time } from '../domain/time'
 import type { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
@@ -33,21 +33,32 @@ const hintMsg = computed(() => {
   return `Start ${stageLabel}`
 })
 
-onBeforeMount(async () => {
-  port.onMessage((message) => {
-    if (message.name !== WorkResponseName.TIMER_STATE || !message.payload) {
-      return
-    }
-    timerStage.value = message.payload.stage
-    focusSessionsPerCycle.value = message.payload.focusSessionsPerCycle
-    focusSessionsCompleted.value = message.payload.focusSessionsCompleted
-  })
-  port.send({
-    name: WorkRequestName.LISTEN_TO_TIMER
-  })
-  dailyResetTime.value = await dailyResetTimeStorageService.get()
-  dailyCompletedFocusSessions.value = await getTotalFocusSessionsAfter(dailyResetTime.value)
+// Subscribe to timer state
+port.onMessage((message) => {
+  if (message.name !== WorkResponseName.TIMER_STATE || !message.payload) {
+    return
+  }
+  timerStage.value = message.payload.stage
+  focusSessionsPerCycle.value = message.payload.focusSessionsPerCycle
+  focusSessionsCompleted.value = message.payload.focusSessionsCompleted
 })
+port.send({
+  name: WorkRequestName.LISTEN_TO_TIMER
+})
+
+// Get stats of today focus sessions completed
+dailyResetTimeStorageService
+  .get()
+  .then((dailyResetTimeValue) => {
+    dailyResetTime.value = dailyResetTimeValue
+    return dailyResetTimeValue
+  })
+  .then((dailyResetTimeValue) => {
+    return getTotalFocusSessionsAfter(dailyResetTimeValue)
+  })
+  .then((totalFocusSessions) => {
+    dailyCompletedFocusSessions.value = totalFocusSessions
+  })
 
 async function getTotalFocusSessionsAfter(dailyResetTime: Time): Promise<number> {
   const startDate = getMostRecentDate(dailyResetTime)
