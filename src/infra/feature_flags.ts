@@ -1,6 +1,13 @@
 import { StorageInterface } from './storage/interface'
 import { LocalStorageWrapper } from './storage/local_storage/'
 
+export enum FeatureFlag {
+  PLACE_HOLDER = 'place-holder',
+  SIGN_IN = 'sign-in'
+}
+
+type FeatureFlagParameter = FeatureFlag | `${FeatureFlag}`
+
 export class FeatureFlagsService {
   static readonly STORAGE_KEY = 'featureFlags'
   private storage: StorageInterface
@@ -24,21 +31,35 @@ export class FeatureFlagsService {
     this.storage = storage
   }
 
-  async isEnabled(target: string): Promise<boolean> {
+  async isEnabled(target: FeatureFlagParameter): Promise<boolean> {
     const flags = await this.getFlags()
     return flags[target] === true
   }
 
-  async enable(target: string): Promise<void> {
+  async enable(target: FeatureFlagParameter): Promise<void> {
     const flags = await this.getFlags()
     flags[target] = true
-    return this.setFlags(flags)
+    return this.saveFlags(flags)
   }
 
-  async disable(target: string): Promise<void> {
+  async enableAll(): Promise<void> {
+    for (const flag of Object.values(FeatureFlag)) {
+      await this.enable(flag)
+    }
+  }
+
+  async disable(target: FeatureFlagParameter): Promise<void> {
     const flags = await this.getFlags()
     delete flags[target]
-    return this.setFlags(flags)
+    return this.saveFlags(flags)
+  }
+
+  async disableAll(): Promise<void> {
+    const flags = await this.getFlags()
+    for (const flag of Object.values(FeatureFlag)) {
+      delete flags[flag]
+    }
+    return this.saveFlags(flags)
   }
 
   private async getFlags(): Promise<Record<string, boolean>> {
@@ -46,7 +67,7 @@ export class FeatureFlagsService {
     return data || {}
   }
 
-  private async setFlags(flags: Record<string, boolean>): Promise<void> {
+  private async saveFlags(flags: Record<string, boolean>): Promise<void> {
     return this.storage.set(FeatureFlagsService.STORAGE_KEY, flags)
   }
 }

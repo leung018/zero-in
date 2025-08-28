@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import { BrowserNewTabService } from '@/infra/browser/new_tab'
-import { FeatureFlagsService } from '@/infra/feature_flags'
+import { FeatureFlag, FeatureFlagsService } from '@/infra/feature_flags'
 import FocusTimerPage from '@/pages/FocusTimerPage.vue'
 import { FirebaseServices } from '../../infra/firebase/services'
 
@@ -15,7 +15,7 @@ const openSignInPage = () => {
 
 const featureFlagsService = FeatureFlagsService.init()
 const signInEnabled = ref<boolean>(false)
-featureFlagsService.isEnabled('sign-in').then((enabled) => {
+featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
   signInEnabled.value = enabled
 })
 

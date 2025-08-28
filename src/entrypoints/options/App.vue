@@ -12,7 +12,7 @@ import NotificationPage from '@/pages/NotificationPage.vue'
 import StatisticsPage from '@/pages/StatisticsPage.vue'
 import TimerSettingPage from '@/pages/TimerSettingPage.vue'
 import { onMounted, ref } from 'vue'
-import { FeatureFlagsService } from '../../infra/feature_flags'
+import { FeatureFlag, FeatureFlagsService } from '../../infra/feature_flags'
 
 const port = new BrowserCommunicationManager().clientConnect()
 const updateSuccessNotifierService = new UpdateSuccessNotifierService()
@@ -50,7 +50,7 @@ function getPathFromWindowLocation(): PATH {
 
 const featureFlagsService = FeatureFlagsService.init()
 const signInEnabled = ref<boolean>(false)
-featureFlagsService.isEnabled('sign-in').then((enabled) => {
+featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
   signInEnabled.value = enabled
 })
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { FeatureFlag, FeatureFlagsService } from '@/infra/feature_flags'
 import { FirebaseServices } from '../../infra/firebase/services'
 
 // Require manual testing
@@ -18,10 +19,17 @@ const signIn = () => {
     type: 'SIGN_IN'
   })
 }
+
+const featureFlagsService = FeatureFlagsService.init()
+
+const signInEnabled = ref<boolean>(false)
+featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
+  signInEnabled.value = enabled
+})
 </script>
 
 <template>
-  <div class="signin-container">
+  <div v-if="signInEnabled" class="signin-container">
     <h2 class="mb-4">Sign in to Zero In</h2>
 
     <div class="message-box">
