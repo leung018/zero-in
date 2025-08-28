@@ -9,6 +9,7 @@ import type { FocusSessionRecordStorageService } from '../domain/timer/record/st
 import { WorkRequestName } from '../service_workers/request'
 import { WorkResponseName } from '../service_workers/response'
 import ContentTemplate from './components/ContentTemplate.vue'
+import LoadingWrapper from './components/LoadingWrapper.vue'
 import TimeInput from './components/TimeInput.vue'
 
 type Stat = { day: string; completedFocusSessions: number }
@@ -38,9 +39,11 @@ function initialStats(): Stat[] {
   return stats
 }
 
-dailyResetTimeStorageService.get().then((time) => {
+const isLoading = ref(true)
+dailyResetTimeStorageService.get().then(async (time) => {
   dailyResetTime.value = time
-  setStats(time)
+  await setStats(time)
+  isLoading.value = false
 })
 
 port.onMessage((message) => {
@@ -98,33 +101,35 @@ const onClickSave = async () => {
 
 <template>
   <ContentTemplate title="Statistics">
-    <BFormGroup label="Set daily reset time:">
-      <TimeInput v-model="dailyResetTime" data-test="time-input" />
-      <p class="mt-1">
-        <small>
-          The daily reset time defines when a new day starts for tracking focus sessions. For
-          example, with a 4:00 AM reset, sessions completed between 4:00 AM today and 3:59 AM
-          tomorrow count as today's.
-        </small>
-      </p>
-    </BFormGroup>
-    <BButton variant="primary" data-test="save-button" @click="onClickSave">Save</BButton>
-    <div class="mt-4">
-      <h2>Last 7 Days</h2>
-      <table class="table" data-test="stats-table">
-        <thead>
-          <tr>
-            <th>Day</th>
-            <th>Focus Sessions Completed</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="stat in stats" :key="stat.day">
-            <td data-test="day-field">{{ stat.day }}</td>
-            <td data-test="completed-focus-sessions">{{ stat.completedFocusSessions }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <LoadingWrapper :isLoading="isLoading">
+      <BFormGroup label="Set daily reset time:">
+        <TimeInput v-model="dailyResetTime" data-test="time-input" />
+        <p class="mt-1">
+          <small>
+            The daily reset time defines when a new day starts for tracking focus sessions. For
+            example, with a 4:00 AM reset, sessions completed between 4:00 AM today and 3:59 AM
+            tomorrow count as today's.
+          </small>
+        </p>
+      </BFormGroup>
+      <BButton variant="primary" data-test="save-button" @click="onClickSave">Save</BButton>
+      <div class="mt-4">
+        <h2>Last 7 Days</h2>
+        <table class="table" data-test="stats-table">
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Focus Sessions Completed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="stat in stats" :key="stat.day">
+              <td data-test="day-field">{{ stat.day }}</td>
+              <td data-test="completed-focus-sessions">{{ stat.completedFocusSessions }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </LoadingWrapper>
   </ContentTemplate>
 </template>
