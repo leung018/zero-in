@@ -123,7 +123,7 @@ describe('StorageManager', () => {
     })
   })
 
-  it('should return original data if no migrators are provided', async () => {
+  it('should get return original data if no migrators are provided', async () => {
     const data: OldestSchema = {
       name: 'John Doe'
     }
@@ -135,6 +135,27 @@ describe('StorageManager', () => {
 
     await storageManager.set(data)
     expect(await storageManager.get()).toEqual(data)
+  })
+
+  it('should get return original data if current data version of manager smaller than the coming data version', async () => {
+    const fakeStorage = FakeObservableStorage.create()
+
+    const storageManager = StorageManager.createFake({
+      storage: fakeStorage,
+      migrators,
+      key: 'key1',
+      currentDataVersion: 2
+    })
+
+    const data = {
+      dataVersion: 3,
+      fullname: 'John Doe',
+      age: 50
+    }
+
+    fakeStorage.set('key1', data)
+
+    expect(await storageManager.get()).toStrictEqual(data)
   })
 
   it.each([
