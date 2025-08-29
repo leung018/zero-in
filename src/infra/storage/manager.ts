@@ -11,6 +11,10 @@ type Migrator = { oldDataVersion?: number; migratorFunc: MigratorFunc }
 
 type Migrators = ReadonlyArray<Migrator>
 
+function getVersion(version: number | undefined) {
+  return version ?? -Infinity
+}
+
 export class StorageManager<S> {
   private storage: ObservableStorage | StorageInterface
   private key: string
@@ -53,12 +57,16 @@ export class StorageManager<S> {
     if (!data) {
       return null
     }
-
-    if (data?.dataVersion === this.currentDataVersion) {
-      return data
+    if (this.shouldMigrateData(data)) {
+      return this.migrateData(data)
     }
+    return data
+  }
 
-    return this.migrateData(data)
+  private shouldMigrateData(data: any) {
+    const comingDataVersion = getVersion(data?.dataVersion)
+    const currentDataVersion = getVersion(this.currentDataVersion)
+    return comingDataVersion < currentDataVersion
   }
 
   private migrateData(oldData: any): S {
