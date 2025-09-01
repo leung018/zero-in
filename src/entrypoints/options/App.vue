@@ -123,7 +123,6 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
       :daily-reset-time-storage-service="DailyResetTimeStorageService.create()"
       :update-success-notifier-service="updateSuccessNotifierService"
       :focus-session-record-storage-service="FocusSessionRecordStorageService.create()"
-      :port="port"
     />
 
     <TimerSettingPage
