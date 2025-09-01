@@ -59,7 +59,7 @@ const getBadgeColorConfig = (): {
   }
 }
 
-const getSignInUrl = () => {
+const getAuthUrl = () => {
   return 'https://' + getFirebaseConfig().authDomain
 }
 
@@ -86,6 +86,6 @@ export default {
   getDefaultNotificationSetting,
   getDefaultBlockingTimerIntegration,
   getSignInPageUrl,
-  getSignInUrl,
+  getAuthUrl,
   getFirebaseConfig
 }

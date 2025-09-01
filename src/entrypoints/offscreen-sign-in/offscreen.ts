@@ -1,7 +1,7 @@
 import config from '../../config'
 
 const iframe = document.createElement('iframe')
-iframe.src = config.getSignInUrl()
+iframe.src = config.getAuthUrl()
 document.documentElement.appendChild(iframe)
 
 const handleBrowserMessages: Parameters<typeof browser.runtime.onMessage.addListener>[0] = (
@@ -34,7 +34,7 @@ const handleBrowserMessages: Parameters<typeof browser.runtime.onMessage.addList
   // Initialize the authentication flow in the iframed document. You must set the
   // second argument (targetOrigin) of the message in order for it to be successfully
   // delivered.
-  iframe.contentWindow?.postMessage({ initAuth: true }, new URL(config.getSignInUrl()).origin)
+  iframe.contentWindow?.postMessage({ initAuth: true }, new URL(config.getAuthUrl()).origin)
   return true
 }
 
