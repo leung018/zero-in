@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import type { UpdateSuccessNotifierService } from '@/infra/browser/update_success_notifier'
-import type { ClientPort } from '@/service_workers/listener'
 import { getMostRecentDate } from '@/utils/date'
 import { ref } from 'vue'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { Time } from '../domain/time'
 import type { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
-import { WorkRequestName } from '../service_workers/request'
-import { WorkResponseName } from '../service_workers/response'
 import ContentTemplate from './components/ContentTemplate.vue'
 import LoadingWrapper from './components/LoadingWrapper.vue'
 import TimeInput from './components/TimeInput.vue'
@@ -17,13 +14,11 @@ type Stat = { day: string; completedFocusSessions: number }
 const {
   dailyResetTimeStorageService,
   updateSuccessNotifierService,
-  focusSessionRecordStorageService,
-  port
+  focusSessionRecordStorageService
 } = defineProps<{
   dailyResetTimeStorageService: DailyResetTimeStorageService
   updateSuccessNotifierService: UpdateSuccessNotifierService
   focusSessionRecordStorageService: FocusSessionRecordStorageService
-  port: ClientPort
 }>()
 
 const dailyResetTime = ref<Time>(new Time(0, 0))
@@ -45,37 +40,6 @@ dailyResetTimeStorageService.get().then(async (time) => {
   await setStats(time)
   isLoading.value = false
 })
-
-port.onMessage((message) => {
-  if (message.name !== WorkResponseName.FOCUS_SESSION_RECORDS_UPDATED) {
-    return
-  }
-  setStats(dailyResetTime.value)
-})
-
-port.send({
-  name: WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE
-})
-
-startPeriodicPing(port, 1000 * 30)
-
-/*
- * Periodically sends a ping message to the service worker.
- * This may reduce the chance of the connection being closed due to inactivity,
- * but does not guarantee the connection will always stay open.
- *
- * If the connection is closed, cannot update the stats in real-time.
- *
- * Don't plan to automate test this part because it doesn't have obvious testable impact.
- * Hope this will help but I am not 100% sure.
- */
-function startPeriodicPing(port: ClientPort, intervalMs: number) {
-  setInterval(() => {
-    port.send({
-      name: WorkRequestName.PING
-    })
-  }, intervalMs)
-}
 
 async function setStats(dailyResetTime: Time) {
   const records = await focusSessionRecordStorageService.getAll()

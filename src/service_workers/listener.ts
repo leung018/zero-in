@@ -89,7 +89,6 @@ export class BackgroundListener {
 
   private focusSessionRecordStorageService: FocusSessionRecordStorageService
   private focusSessionRecordHouseKeepDays: number
-  private focusSessionRecordsUpdateSubscriptionManager = new SubscriptionManager()
 
   private notificationServicesContainer: ActionService
   private notificationSettingStorageService: NotificationSettingStorageService
@@ -259,13 +258,6 @@ export class BackgroundListener {
           houseKeepDays: this.focusSessionRecordHouseKeepDays
         })
       })
-      .then(() => {
-        this.focusSessionRecordsUpdateSubscriptionManager.broadcast(undefined)
-      })
-  }
-
-  getFocusSessionRecordsUpdateSubscriptionCount() {
-    return this.focusSessionRecordsUpdateSubscriptionManager.getSubscriptionCount()
   }
 
   getTimerStateSubscriptionCount() {
@@ -333,19 +325,6 @@ export class BackgroundListener {
 
                 // console.debug('Connection closed, unsubscribing timer update.')
                 this.timerStateSubscriptionManager.unsubscribe(subscriptionId)
-              })
-              break
-            }
-            case WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE: {
-              const subscriptionId = this.focusSessionRecordsUpdateSubscriptionManager.subscribe(
-                () => {
-                  backgroundPort.send({
-                    name: WorkResponseName.FOCUS_SESSION_RECORDS_UPDATED
-                  })
-                }
-              )
-              backgroundPort.onDisconnect(() => {
-                this.focusSessionRecordsUpdateSubscriptionManager.unsubscribe(subscriptionId)
               })
               break
             }

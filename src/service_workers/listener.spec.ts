@@ -98,22 +98,6 @@ describe('BackgroundListener', () => {
     expect(newRecords[0].completedAt > oldDate).toBe(true)
   })
 
-  it('should able to subscribe or unsubscribe to focus session records update', async () => {
-    const { listener, clientPort } = await startListener()
-
-    const initialSubscriptionCount = listener.getFocusSessionRecordsUpdateSubscriptionCount()
-
-    await clientPort.send({ name: WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE })
-
-    expect(listener.getFocusSessionRecordsUpdateSubscriptionCount()).toBe(
-      initialSubscriptionCount + 1
-    )
-
-    clientPort.disconnect()
-
-    expect(listener.getFocusSessionRecordsUpdateSubscriptionCount()).toBe(initialSubscriptionCount)
-  })
-
   it('should display badge when the timer is started', async () => {
     const { badgeDisplayService, clientPort } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
