@@ -42,8 +42,13 @@ featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
 
     <p class="mt-3 text-muted" style="font-size: 0.85em">
       By signing in, you agree to the
-      <a href="#" class="text-decoration-none">Terms of Service</a> and
-      <a href="#" class="text-decoration-none">Privacy Policy</a>.
+      <a href="https://zeroin.dev/tos" class="text-decoration-none" target="_blank"
+        >Terms of Service</a
+      >
+      and
+      <a href="https://zeroin.dev/privacy" class="text-decoration-none" target="_blank"
+        >Privacy Policy</a
+      >.
     </p>
 
     <button class="gsi-material-button" @click="signIn">
