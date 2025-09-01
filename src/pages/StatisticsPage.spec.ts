@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { Time } from '../domain/time'
 import { TimerConfig } from '../domain/timer/config'
-import { Duration } from '../domain/timer/duration'
 import { newFocusSessionRecord, type FocusSessionRecord } from '../domain/timer/record'
 import { FakeActionService } from '../infra/action'
 import { assertSelectorInputValue } from '../test_utils/assert'
@@ -106,27 +105,6 @@ describe('StatisticsPage', () => {
     expect(newRows[5].find(dataTestSelector('completed-focus-sessions')).text()).toBe('2') // 2025-04-06 10:30 - 2025-04-07 10:29
     expect(newRows[6].find(dataTestSelector('completed-focus-sessions')).text()).toBe('0') // 2025-04-05 10:30 - 2025-04-06 10:29
   })
-
-  it('should reload statistics after completed a focus session', async () => {
-    vi.setSystemTime(new Date(2025, 3, 4, 10, 30))
-    const { wrapper, timer } = await mountStatisticsPage({
-      dailyResetTime: new Time(9, 30),
-      timerConfig: TimerConfig.newTestInstance({
-        focusDuration: new Duration({ seconds: 1 })
-      }),
-      focusSessionRecords: []
-    })
-    timer.start()
-
-    let rows = wrapper.find('tbody').findAll('tr')
-    expect(rows[0].find(dataTestSelector('completed-focus-sessions')).text()).toBe('0')
-
-    vi.advanceTimersByTime(1001)
-    await flushPromises()
-
-    rows = wrapper.find('tbody').findAll('tr')
-    expect(rows[0].find(dataTestSelector('completed-focus-sessions')).text()).toBe('1')
-  })
 })
 
 async function mountStatisticsPage({
@@ -137,10 +115,9 @@ async function mountStatisticsPage({
   const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
   await dailyResetTimeStorageService.save(dailyResetTime)
 
-  const { timer, communicationManager, listener, focusSessionRecordStorageService } =
-    await setUpListener({
-      timerConfig
-    })
+  const { timer, listener, focusSessionRecordStorageService } = await setUpListener({
+    timerConfig
+  })
 
   await focusSessionRecordStorageService.saveAll(focusSessionRecords)
 
@@ -151,8 +128,7 @@ async function mountStatisticsPage({
     props: {
       dailyResetTimeStorageService,
       updateSuccessNotifierService,
-      focusSessionRecordStorageService,
-      port: communicationManager.clientConnect()
+      focusSessionRecordStorageService
     }
   })
   await flushPromises()

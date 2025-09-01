@@ -13,7 +13,6 @@ export enum WorkRequestName {
   RESTART_FOCUS,
   RESTART_SHORT_BREAK,
   RESTART_LONG_BREAK,
-  LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE,
   RESET_TIMER_CONFIG,
   RESET_NOTIFICATION,
   PING
@@ -52,9 +51,6 @@ export type WorkRequest =
     }
   | {
       name: WorkRequestName.RESTART_LONG_BREAK
-    }
-  | {
-      name: WorkRequestName.LISTEN_TO_FOCUS_SESSION_RECORDS_UPDATE
     }
   | {
       name: WorkRequestName.RESET_TIMER_CONFIG
