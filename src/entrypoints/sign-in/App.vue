@@ -40,7 +40,13 @@ featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
       </p>
     </div>
 
-    <button class="gsi-material-button mt-3" @click="signIn">
+    <p class="mt-3 text-muted" style="font-size: 0.85em">
+      By signing in, you agree to the
+      <a href="#" class="text-decoration-none">Terms of Service</a> and
+      <a href="#" class="text-decoration-none">Privacy Policy</a>.
+    </p>
+
+    <button class="gsi-material-button" @click="signIn">
       <div class="gsi-material-button-state"></div>
       <div class="gsi-material-button-content-wrapper">
         <div class="gsi-material-button-icon">
@@ -74,12 +80,6 @@ featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
         <span style="display: none">Sign in with Google</span>
       </div>
     </button>
-
-    <p class="mt-3 text-muted" style="font-size: 0.85em">
-      By signing in, you agree to the
-      <a href="#" class="text-decoration-none">Terms of Service</a> and
-      <a href="#" class="text-decoration-none">Privacy Policy</a>.
-    </p>
   </div>
 </template>
 
