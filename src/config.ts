@@ -12,6 +12,10 @@ const getReminderPageUrl = () => {
   return browser.runtime.getURL('/reminder.html')
 }
 
+const getSignInPageUrl = () => {
+  return browser.runtime.getURL('/sign-in.html')
+}
+
 const getDefaultTimerConfig = () => {
   return new TimerConfig({
     focusDuration: new Duration({ minutes: 26 }),
@@ -81,6 +85,7 @@ export default {
   getReminderPageUrl,
   getDefaultNotificationSetting,
   getDefaultBlockingTimerIntegration,
+  getSignInPageUrl,
   getSignInUrl,
   getFirebaseConfig
 }
