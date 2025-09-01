@@ -32,7 +32,7 @@ import ContentTemplate from '@/pages/components/ContentTemplate.vue'
         >
           <IMdiGithub class="me-2 social-icon" />
         </a>
-        <a href="mailto:leung-cheng@outlook.com" class="text-decoration-none">
+        <a href="mailto:zero.in.app@outlook.com" class="text-decoration-none">
           <IMdiEmail class="me-2 social-icon" />
         </a>
       </div>
