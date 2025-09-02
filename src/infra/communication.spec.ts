@@ -73,4 +73,29 @@ describe('FakeCommunicationManager', () => {
 
     expect(isOnDisconnectCalled).toBe(true)
   })
+
+  it('should deep clone messages (no reference sharing)', async () => {
+    const fakeCommunicationManager = new FakeCommunicationManager()
+    let received: any
+    fakeCommunicationManager.onNewClientConnect((backgroundPort) => {
+      backgroundPort.onMessage((msg) => {
+        received = msg
+      })
+    })
+
+    const clientPort = fakeCommunicationManager.clientConnect()
+    const obj = { a: 1 }
+    await clientPort.send(obj)
+    // Mutate original object after sending
+    obj.a = 2
+
+    expect(received).toEqual({ a: 1 })
+  })
+
+  it('should throw error if send sth non-JSON-serializable', async () => {
+    const fakeCommunicationManager = new FakeCommunicationManager()
+    const clientPort = fakeCommunicationManager.clientConnect()
+
+    await expect(clientPort.send(() => {})).rejects.toThrowError()
+  })
 })

@@ -44,7 +44,7 @@ class FakePort implements Port {
   }
 
   async send(message: any) {
-    this.emitter.emit(this.otherId, message)
+    this.emitter.emit(this.otherId, JSON.parse(JSON.stringify(message)))
   }
 
   onMessage(callback: (message: any) => void): void {
