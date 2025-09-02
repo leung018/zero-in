@@ -45,7 +45,7 @@
     "@wxt-dev/module-vue": "^1.0.2",
     "eslint": "^9.30.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-playwright": "^2.2.0",
+    "eslint-plugin-playwright": "^2.2.2",
     "eslint-plugin-vue": "^10.1.0",
     "firebase-tools": "^14.15.1",
     "globals": "^16.2.0",
