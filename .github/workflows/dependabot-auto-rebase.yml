@@ -22,10 +22,10 @@ jobs:
             --json number > dependabot_prs.json
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: Label to Trigger Rebase
+      - name: Comment to Trigger Rebase
         run: |
           for pr in $(jq -r '.[].number' dependabot_prs.json); do
-            gh pr edit $pr --repo "$GITHUB_REPOSITORY" --add-label "dependabot: rebase"
+            gh pr comment --repo "$GITHUB_REPOSITORY"  $pr --body "@dependabot rebase"
           done
         env:
           GH_TOKEN: ${{  secrets.GITHUB_TOKEN }}
