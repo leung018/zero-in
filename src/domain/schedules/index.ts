@@ -18,18 +18,18 @@ export class WeeklySchedule {
   weekdaySet: ReadonlySet<Weekday>
   readonly startTime: Time
   readonly endTime: Time
-  readonly targetFocusSessions?: number
+  readonly targetFocusSessions: number | null
 
   constructor({
     weekdaySet,
     startTime,
     endTime,
-    targetFocusSessions
+    targetFocusSessions = null
   }: {
     weekdaySet: ReadonlySet<Weekday>
     startTime: Time
     endTime: Time
-    targetFocusSessions?: number
+    targetFocusSessions?: number | null
   }) {
     if (weekdaySet.size === 0) {
       throw new Error('weekdaySet must not be empty')
@@ -44,6 +44,8 @@ export class WeeklySchedule {
 
     if (targetFocusSessions && targetFocusSessions > 0) {
       this.targetFocusSessions = targetFocusSessions
+    } else {
+      this.targetFocusSessions = null
     }
   }
 

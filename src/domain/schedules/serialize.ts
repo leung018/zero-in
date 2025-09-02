@@ -13,7 +13,7 @@ export function serializeWeeklySchedules(
       weekdays: Array.from(schedule.weekdaySet),
       startTime: serializeTime(schedule.startTime),
       endTime: serializeTime(schedule.endTime),
-      targetFocusSessions: schedule.targetFocusSessions ?? null
+      targetFocusSessions: schedule.targetFocusSessions
     }))
   }
 }
@@ -24,7 +24,7 @@ export function deserializeWeeklySchedules(data: SerializedWeeklySchedules): Wee
       weekdaySet: new Set(schedule.weekdays),
       startTime: deserializeTime(schedule.startTime),
       endTime: deserializeTime(schedule.endTime),
-      targetFocusSessions: schedule.targetFocusSessions ?? undefined
+      targetFocusSessions: schedule.targetFocusSessions
     })
   })
 }
