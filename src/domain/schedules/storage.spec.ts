@@ -31,7 +31,7 @@ describe('WeeklyScheduleStorageService', () => {
         weekdaySet: new Set([Weekday.SUN, Weekday.MON]),
         startTime: new Time(10, 59),
         endTime: new Time(12, 12),
-        targetFocusSessions: undefined
+        targetFocusSessions: null
       })
     ]
     const result = await service.getAll()
