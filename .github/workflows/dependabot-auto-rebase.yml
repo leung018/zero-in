@@ -2,8 +2,8 @@ name: Auto Rebase Dependabot PRs
 
 on:
   push:
-    branches:
-      - main
+    # branches:
+    #   - main
 
 permissions:
   pull-requests: write
