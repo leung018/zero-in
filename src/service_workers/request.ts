@@ -8,7 +8,7 @@ import {
 export enum WorkRequestName {
   TOGGLE_BROWSING_RULES,
   START_TIMER,
-  LISTEN_TO_TIMER,
+  QUERY_TIMER_STATE,
   PAUSE_TIMER,
   RESTART_FOCUS,
   RESTART_SHORT_BREAK,
@@ -36,7 +36,7 @@ export type WorkRequest =
       name: WorkRequestName.START_TIMER
     }
   | {
-      name: WorkRequestName.LISTEN_TO_TIMER
+      name: WorkRequestName.QUERY_TIMER_STATE
     }
   | {
       name: WorkRequestName.PAUSE_TIMER

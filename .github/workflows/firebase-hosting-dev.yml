@@ -1,5 +1,8 @@
 name: Deploy to Development Firebase Hosting
-on: pull_request
+on:
+  pull_request:
+    paths:
+      - 'firebase_hosting/**'
 permissions:
   checks: write
   contents: read

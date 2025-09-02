@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'firebase_hosting/**'
 permissions:
   checks: write
   contents: read

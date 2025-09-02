@@ -51,7 +51,7 @@ port.onMessage((message) => {
   focusSessionsPerCycle.value = message.payload.focusSessionsPerCycle
 })
 port.send({
-  name: WorkRequestName.LISTEN_TO_TIMER
+  name: WorkRequestName.QUERY_TIMER_STATE
 })
 
 // onClick setup
