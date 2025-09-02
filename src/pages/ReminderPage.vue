@@ -43,7 +43,7 @@ port.onMessage((message) => {
   focusSessionsCompleted.value = message.payload.focusSessionsCompleted
 })
 port.send({
-  name: WorkRequestName.LISTEN_TO_TIMER
+  name: WorkRequestName.QUERY_TIMER_STATE
 })
 
 // Get stats of today focus sessions completed

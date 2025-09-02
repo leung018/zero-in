@@ -12,6 +12,10 @@ const getReminderPageUrl = () => {
   return browser.runtime.getURL('/reminder.html')
 }
 
+const getSignInPageUrl = () => {
+  return browser.runtime.getURL('/sign-in.html')
+}
+
 const getDefaultTimerConfig = () => {
   return new TimerConfig({
     focusDuration: new Duration({ minutes: 26 }),
@@ -55,7 +59,7 @@ const getBadgeColorConfig = (): {
   }
 }
 
-const getSignInUrl = () => {
+const getAuthUrl = () => {
   return 'https://' + getFirebaseConfig().authDomain
 }
 
@@ -81,6 +85,7 @@ export default {
   getReminderPageUrl,
   getDefaultNotificationSetting,
   getDefaultBlockingTimerIntegration,
-  getSignInUrl,
+  getSignInPageUrl,
+  getAuthUrl,
   getFirebaseConfig
 }

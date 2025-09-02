@@ -23,8 +23,17 @@ class BrowserPortWrapper implements Port {
   private browserPort: BrowserPort
 
   constructor(browserPort: BrowserPort) {
-    this.browserPort = browserPort
+    this.browserPort = this.initBrowserPort(browserPort)
   }
+
+  private initBrowserPort(browserPort: BrowserPort) {
+    browserPort.onMessage.addListener((message) => {
+      this.onMessageListeners.forEach((listener) => listener(message))
+    })
+    return browserPort
+  }
+
+  private onMessageListeners: ((message: any) => void)[] = []
 
   async send(message: any, retryCount = 0): Promise<void> {
     if (retryCount > BrowserPortWrapper.MAX_RETRIES) {
@@ -47,12 +56,12 @@ class BrowserPortWrapper implements Port {
 
   private reconnect() {
     return wakeUpServiceWorkerIfIdle().then(() => {
-      this.browserPort = browser.runtime.connect()
+      this.browserPort = this.initBrowserPort(browser.runtime.connect())
     })
   }
 
   onMessage(callback: (message: any) => void): void {
-    this.browserPort.onMessage.addListener(callback)
+    this.onMessageListeners.push(callback)
   }
 
   onDisconnect(callback: () => void): void {
