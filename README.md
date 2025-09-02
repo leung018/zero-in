@@ -44,7 +44,7 @@ yarn test:unit
 npx playwright install
 
 # When testing on CI, must build the project first
-yarn build
+yarn build:ci
 
 # Runs the end-to-end tests
 yarn test:e2e
