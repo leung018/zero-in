@@ -291,26 +291,7 @@ export class BackgroundListener {
   private setUpListener() {
     this.communicationManager.onNewClientConnect(
       (backgroundPort: Port<WorkResponse, WorkRequest>) => {
-        const subscriptionId = this.timerStateSubscriptionManager.subscribe((newState) => {
-          backgroundPort.send({
-            name: WorkResponseName.TIMER_STATE,
-            payload: {
-              remainingSeconds: newState.remaining.remainingSeconds(),
-              isRunning: newState.isRunning,
-              stage: newState.stage,
-              focusSessionsCompleted: newState.focusSessionsCompleted,
-              focusSessionsPerCycle: this.timer.getConfig().focusSessionsPerCycle
-            }
-          })
-        })
-        this.timerStateSubscriptionManager.broadcast(this.timer.getExternalState())
-        backgroundPort.onDisconnect(() => {
-          // To verify the disconnect and onDisconnect behavior of port in application, can uncomment below debug log.
-          // And then see if the below log is printed when disconnect is triggered (e.g. closing timer popup will trigger disconnect)
-
-          // console.debug('Connection closed, unsubscribing timer update.')
-          this.timerStateSubscriptionManager.unsubscribe(subscriptionId)
-        })
+        this.setupTimerStateSubscription(backgroundPort)
 
         const listener = (message: WorkRequest) => {
           switch (message.name) {
@@ -318,7 +299,7 @@ export class BackgroundListener {
               this.toggleBrowsingRules()
               break
             }
-            case WorkRequestName.LISTEN_TO_TIMER:
+            case WorkRequestName.QUERY_TIMER_STATE:
               this.timerStateSubscriptionManager.broadcast(this.timer.getExternalState())
               break
             case WorkRequestName.START_TIMER: {
@@ -363,6 +344,29 @@ export class BackgroundListener {
         backgroundPort.onMessage(listener)
       }
     )
+  }
+
+  private setupTimerStateSubscription(backgroundPort: Port<WorkResponse, WorkRequest>) {
+    const subscriptionId = this.timerStateSubscriptionManager.subscribe((newState) => {
+      backgroundPort.send({
+        name: WorkResponseName.TIMER_STATE,
+        payload: {
+          remainingSeconds: newState.remaining.remainingSeconds(),
+          isRunning: newState.isRunning,
+          stage: newState.stage,
+          focusSessionsCompleted: newState.focusSessionsCompleted,
+          focusSessionsPerCycle: this.timer.getConfig().focusSessionsPerCycle
+        }
+      })
+    })
+    this.timerStateSubscriptionManager.broadcast(this.timer.getExternalState())
+    backgroundPort.onDisconnect(() => {
+      // To verify the disconnect and onDisconnect behavior of port in application, can uncomment below debug log.
+      // And then see if the below log is printed when disconnect is triggered (e.g. closing timer popup will trigger disconnect)
+
+      // console.debug('Connection closed, unsubscribing timer update.')
+      this.timerStateSubscriptionManager.unsubscribe(subscriptionId)
+    })
   }
 }
 
