@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.27.0",
+    "@eslint/js": "^9.34.0",
     "@iconify-json/ic": "^1.2.2",
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/prime": "^1.2.2",
