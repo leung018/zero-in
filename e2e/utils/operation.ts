@@ -1,8 +1,10 @@
 import { Page } from '@playwright/test'
 
-export async function goToStopServiceWorker(page: Page) {
-  await page.goto(`chrome://serviceworker-internals/`)
-  await page.getByRole('button', { name: 'Stop' }).click()
+export async function stopServiceWorker(page: Page) {
+  const newPage = await page.context().newPage()
+  await newPage.goto(`chrome://serviceworker-internals/`)
+  await newPage.getByRole('button', { name: 'Stop' }).click()
+  await newPage.close()
 }
 
 export function sleep(ms: number) {
