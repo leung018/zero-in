@@ -1,5 +1,7 @@
 name: Auto Rebase Dependabot PRs
 
+# TODO: Turn out this may not working properly. Remove this workflow and PAT token if decide to remove it later
+
 on:
   push:
     # branches:
