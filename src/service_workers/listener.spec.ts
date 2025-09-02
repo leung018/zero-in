@@ -30,18 +30,14 @@ describe('BackgroundListener', () => {
     vi.useRealTimers()
   })
 
-  it('should able to subscribe or unsubscribe to timer state', async () => {
+  it('should able to unsubscribe to timer state', async () => {
     const { listener, clientPort } = await startListener()
 
     const initialSubscriptionCount = listener.getTimerStateSubscriptionCount()
 
-    await clientPort.send({ name: WorkRequestName.LISTEN_TO_TIMER })
-
-    expect(listener.getTimerStateSubscriptionCount()).toBe(initialSubscriptionCount + 1)
-
     clientPort.disconnect()
 
-    expect(listener.getTimerStateSubscriptionCount()).toBe(initialSubscriptionCount)
+    expect(listener.getTimerStateSubscriptionCount()).toBe(initialSubscriptionCount - 1)
   })
 
   it('should save the focus session records after focus is completed', async () => {

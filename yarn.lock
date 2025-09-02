@@ -5834,9 +5834,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"firebase-tools@npm:^14.11.1":
-  version: 14.11.1
-  resolution: "firebase-tools@npm:14.11.1"
+"firebase-tools@npm:^14.15.1":
+  version: 14.15.1
+  resolution: "firebase-tools@npm:14.15.1"
   dependencies:
     "@electric-sql/pglite": "npm:^0.3.3"
     "@electric-sql/pglite-tools": "npm:^0.2.8"
@@ -5914,7 +5914,7 @@ __metadata:
     zod-to-json-schema: "npm:^3.24.5"
   bin:
     firebase: lib/bin/firebase.js
-  checksum: 10c0/2d210c4c5dcba3dfd38f6f0d9cce9c1ba98d3ad681e1f0d973eabecc6af72cbfa0657b94ace17121a11ec5819a36d65bc8f4723c073a593f465b904a5b4d7bcb
+  checksum: 10c0/879695978618edf81ad1fec91587814a03018dd1d6e861779c64cfaca98cdced810df84ec5b1411a30333810fdf8440bf34f215667d614f9abb72b11fe97011f
   languageName: node
   linkType: hard
 
@@ -12948,7 +12948,7 @@ __metadata:
     eslint-plugin-playwright: "npm:^2.2.2"
     eslint-plugin-vue: "npm:^10.1.0"
     firebase: "npm:^12.0.0"
-    firebase-tools: "npm:^14.11.1"
+    firebase-tools: "npm:^14.15.1"
     globals: "npm:^16.2.0"
     jsdom: "npm:^26.1.0"
     prettier: "npm:^3.6.2"

@@ -12,7 +12,7 @@ import {
   goToStatisticsPage,
   goToTestingConfigPage
 } from './utils/navigation.js'
-import { goToStopServiceWorker, sleep } from './utils/operation.js'
+import { sleep, stopServiceWorker } from './utils/operation.js'
 
 // This file aim at testing some dependencies related to chrome/browser extension api and make sure integrate them properly
 // e.g. browser.local.storage
@@ -156,6 +156,9 @@ test('should focus timer count successfully', async ({ page, extensionId }) => {
 
   await goToFocusTimer(page, extensionId)
 
+  // Also make sure when service worker is idle and port is disconnected, everything can function properly
+  await stopServiceWorker(page)
+
   await expect(page.getByTestId('timer-display')).toContainText('25:00')
 
   await page.getByTestId('start-button').click()
@@ -176,8 +179,6 @@ test('should close tab properly after clicking start on reminder page and even a
   await goToReminderPage(page, extensionId)
 
   const extraPage = await page.context().newPage()
-
-  await goToStopServiceWorker(extraPage) // Also make sure when service worker is idle, everything can function properly
 
   await page.getByTestId('start-button').click()
 

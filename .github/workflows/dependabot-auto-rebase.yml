@@ -1,0 +1,31 @@
+name: Auto Rebase Dependabot PRs
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  pull-requests: write
+
+jobs:
+  rebase-dependabot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List Dependabot PRs for current branch
+        run: |
+          gh pr list \
+            --repo "$GITHUB_REPOSITORY" \
+            --author 'dependabot[bot]' \
+            --base "$GITHUB_REF_NAME" \
+            --state open \
+            --json number > dependabot_prs.json
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Comment to Trigger Rebase
+        run: |
+          for pr in $(jq -r '.[].number' dependabot_prs.json); do
+            gh pr comment --repo "$GITHUB_REPOSITORY"  $pr --body "@dependabot rebase"
+          done
+        env:
+          GH_TOKEN: ${{  secrets.GITHUB_TOKEN }}
