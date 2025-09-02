@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import config from '@/config'
 import { DailyResetTimeStorageService } from '@/domain/daily_reset_time/storage'
 import { NotificationSettingStorageService } from '@/domain/notification_setting/storage'
 import { TimerConfigStorageService } from '@/domain/timer/config/storage'
@@ -55,7 +56,7 @@ featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
 })
 
 const goToSignIn = () => {
-  window.location.href = browser.runtime.getURL('/sign-in.html')
+  window.location.href = config.getSignInPageUrl()
 }
 
 const signOut = () => {
@@ -122,7 +123,6 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
       :daily-reset-time-storage-service="DailyResetTimeStorageService.create()"
       :update-success-notifier-service="updateSuccessNotifierService"
       :focus-session-record-storage-service="FocusSessionRecordStorageService.create()"
-      :port="port"
     />
 
     <TimerSettingPage
