@@ -18,6 +18,5 @@ jobs:
           node-version: '20.x'
           cache: 'yarn'
           cache-dependency-path: ./yarn.lock
-      - run: yarn global add firebase-tools
       - name: Deploy Firestore Rules
-        run: firebase deploy --only firestore:rules --project ${{ vars.VITE_FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ZERO_IN_8211F }}
+        run: yarn dlx firebase-tools deploy --only firestore:rules --project ${{ vars.VITE_FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ZERO_IN_8211F }}
