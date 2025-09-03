@@ -1,8 +1,8 @@
 name: Deploy to Production Firestore
 on:
   push:
-    # branches:
-    #   - main
+    branches:
+      - main
     paths:
       - 'firebase/firestore.**'
 jobs:
