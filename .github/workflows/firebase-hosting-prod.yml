@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - 'firebase_hosting/**'
+      - 'firebase/hosting/**'
 permissions:
   checks: write
   contents: read
@@ -24,7 +24,7 @@ jobs:
           cache-dependency-path: ./yarn.lock
       - run: yarn install --immutable
       - run: yarn build
-        working-directory: ./firebase_hosting
+        working-directory: ./firebase/hosting
         env:
           VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY }}
           VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.VITE_FIREBASE_AUTH_DOMAIN }}
@@ -39,5 +39,5 @@ jobs:
           channelId: live
           firebaseServiceAccount: ${{ env.FIREBASE_SERVICE_ACCOUNT }}
           projectId: ${{ vars.VITE_FIREBASE_PROJECT_ID }}
-          entryPoint: ./firebase_hosting
+          entryPoint: ./firebase
           target: ${{ vars.VITE_FIREBASE_PROJECT_ID }}

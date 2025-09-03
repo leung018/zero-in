@@ -5932,9 +5932,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"firebase_hosting@workspace:firebase_hosting":
+"firebase_hosting@workspace:firebase/hosting":
   version: 0.0.0-use.local
-  resolution: "firebase_hosting@workspace:firebase_hosting"
+  resolution: "firebase_hosting@workspace:firebase/hosting"
   dependencies:
     firebase: "npm:^12.0.0"
     vite: "npm:^7.0.3"
