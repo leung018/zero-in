@@ -1,4 +1,4 @@
-name: Deploy to Production Firebase Hosting
+name: Deploy to Production Firestore
 on:
   push:
     # branches:
