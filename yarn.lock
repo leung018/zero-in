@@ -44,7 +44,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@antfu/install-pkg@npm:^1.0.0":
+"@antfu/install-pkg@npm:^1.0.0, @antfu/install-pkg@npm:^1.1.0":
   version: 1.1.0
   resolution: "@antfu/install-pkg@npm:1.1.0"
   dependencies:
@@ -11798,15 +11798,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin-icons@npm:^22.1.0":
-  version: 22.1.0
-  resolution: "unplugin-icons@npm:22.1.0"
+"unplugin-icons@npm:^22.2.0":
+  version: 22.2.0
+  resolution: "unplugin-icons@npm:22.2.0"
   dependencies:
-    "@antfu/install-pkg": "npm:^1.0.0"
+    "@antfu/install-pkg": "npm:^1.1.0"
     "@iconify/utils": "npm:^2.3.0"
-    debug: "npm:^4.4.0"
-    local-pkg: "npm:^1.0.0"
-    unplugin: "npm:^2.2.0"
+    debug: "npm:^4.4.1"
+    local-pkg: "npm:^1.1.1"
+    unplugin: "npm:^2.3.5"
   peerDependencies:
     "@svgr/core": ">=7.0.0"
     "@svgx/core": ^1.0.1
@@ -11827,7 +11827,7 @@ __metadata:
       optional: true
     vue-template-es2015-compiler:
       optional: true
-  checksum: 10c0/febed00f6e65bc0ef0e07005d7bef3ec0dbb7a8077bd73c7ad798c705814a40b3172d5f3e7df0d9f9fdfda1b6dd1a31922c0f9f32123623872bb7117c35545cc
+  checksum: 10c0/7d0a1ce4d714ebf640f78905941fdb9070ce33548d0dd88e2faae6e7dee4cf0ec16ce8e991b5d7cda5a8ad7bff1377a52dbbe2a1f91a3a5a3a6704e2aa064f8d
   languageName: node
   linkType: hard
 
@@ -11866,7 +11866,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin@npm:^2.2.0, unplugin@npm:^2.3.2, unplugin@npm:^2.3.5":
+"unplugin@npm:^2.3.2, unplugin@npm:^2.3.5":
   version: 2.3.5
   resolution: "unplugin@npm:2.3.5"
   dependencies:
@@ -12955,7 +12955,7 @@ __metadata:
     prettier-plugin-organize-imports: "npm:^4.1.0"
     typescript: "npm:^5.9.2"
     typescript-eslint: "npm:^8.32.1"
-    unplugin-icons: "npm:^22.1.0"
+    unplugin-icons: "npm:^22.2.0"
     unplugin-vue-components: "npm:^28.8.0"
     vitest: "npm:^3.2.4"
     vue: "npm:^3.5.13"
