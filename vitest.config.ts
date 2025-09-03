@@ -34,7 +34,10 @@ export default defineConfig({
         test: {
           name: 'integration',
           include: ['src/**/*.integration.{test,spec}.ts'],
-          exclude: [...configDefaults.exclude, 'e2e/**']
+          exclude: [...configDefaults.exclude, 'e2e/**'],
+          env: {
+            VITE_USE_FIREBASE_EMULATOR: 'true'
+          }
         }
       }
     ],
