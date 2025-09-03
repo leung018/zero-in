@@ -44,7 +44,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@antfu/install-pkg@npm:^1.0.0":
+"@antfu/install-pkg@npm:^1.0.0, @antfu/install-pkg@npm:^1.1.0":
   version: 1.1.0
   resolution: "@antfu/install-pkg@npm:1.1.0"
   dependencies:
@@ -3414,9 +3414,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bootstrap-vue-next@npm:^0.30.4":
-  version: 0.30.4
-  resolution: "bootstrap-vue-next@npm:0.30.4"
+"bootstrap-vue-next@npm:^0.30.5":
+  version: 0.30.5
+  resolution: "bootstrap-vue-next@npm:0.30.5"
   peerDependencies:
     "@floating-ui/vue": "*"
     "@vueuse/core": "*"
@@ -3429,7 +3429,7 @@ __metadata:
       optional: true
     vue-router:
       optional: true
-  checksum: 10c0/292d730f9a47b7bb7436b443dc2d5aabed9dd87202b0a3d1870c634ee4a164dc3da3bb20937e2b749bb48d5c515f3302d62e3772c5123f1cc74a567b134c6ada
+  checksum: 10c0/0c431539fdb87961bab6cfc6576a736202d647faead5bd4240871a95ef30e43fb1002a1875adae0677969ac8da8df6a4556ec10e667347ffadb1899a9808f432
   languageName: node
   linkType: hard
 
@@ -11610,23 +11610,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.8.3":
-  version: 5.8.3
-  resolution: "typescript@npm:5.8.3"
+"typescript@npm:^5.9.2":
+  version: 5.9.2
+  resolution: "typescript@npm:5.9.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/5f8bb01196e542e64d44db3d16ee0e4063ce4f3e3966df6005f2588e86d91c03e1fb131c2581baf0fb65ee79669eea6e161cd448178986587e9f6844446dbb48
+  checksum: 10c0/cd635d50f02d6cf98ed42de2f76289701c1ec587a363369255f01ed15aaf22be0813226bff3c53e99d971f9b540e0b3cc7583dbe05faded49b1b0bed2f638a18
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.8.3#optional!builtin<compat/typescript>":
-  version: 5.8.3
-  resolution: "typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=8c6c40"
+"typescript@patch:typescript@npm%3A^5.9.2#optional!builtin<compat/typescript>":
+  version: 5.9.2
+  resolution: "typescript@patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=8c6c40"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/92ea03509e06598948559ddcdd8a4ae5a7ab475766d5589f1b796f5731b3d631a4c7ddfb86a3bd44d58d10102b132cd4b4994dda9b63e6273c66d77d6a271dbd
+  checksum: 10c0/66fc07779427a7c3fa97da0cf2e62595eaff2cea4594d45497d294bfa7cb514d164f0b6ce7a5121652cf44c0822af74e29ee579c771c405e002d1f23cf06bfde
   languageName: node
   linkType: hard
 
@@ -11756,15 +11756,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin-icons@npm:^22.1.0":
-  version: 22.1.0
-  resolution: "unplugin-icons@npm:22.1.0"
+"unplugin-icons@npm:^22.2.0":
+  version: 22.2.0
+  resolution: "unplugin-icons@npm:22.2.0"
   dependencies:
-    "@antfu/install-pkg": "npm:^1.0.0"
+    "@antfu/install-pkg": "npm:^1.1.0"
     "@iconify/utils": "npm:^2.3.0"
-    debug: "npm:^4.4.0"
-    local-pkg: "npm:^1.0.0"
-    unplugin: "npm:^2.2.0"
+    debug: "npm:^4.4.1"
+    local-pkg: "npm:^1.1.1"
+    unplugin: "npm:^2.3.5"
   peerDependencies:
     "@svgr/core": ">=7.0.0"
     "@svgx/core": ^1.0.1
@@ -11785,7 +11785,7 @@ __metadata:
       optional: true
     vue-template-es2015-compiler:
       optional: true
-  checksum: 10c0/febed00f6e65bc0ef0e07005d7bef3ec0dbb7a8077bd73c7ad798c705814a40b3172d5f3e7df0d9f9fdfda1b6dd1a31922c0f9f32123623872bb7117c35545cc
+  checksum: 10c0/7d0a1ce4d714ebf640f78905941fdb9070ce33548d0dd88e2faae6e7dee4cf0ec16ce8e991b5d7cda5a8ad7bff1377a52dbbe2a1f91a3a5a3a6704e2aa064f8d
   languageName: node
   linkType: hard
 
@@ -11824,7 +11824,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin@npm:^2.2.0, unplugin@npm:^2.3.2, unplugin@npm:^2.3.5":
+"unplugin@npm:^2.3.2, unplugin@npm:^2.3.5":
   version: 2.3.5
   resolution: "unplugin@npm:2.3.5"
   dependencies:
@@ -12900,7 +12900,7 @@ __metadata:
     "@vue/test-utils": "npm:^2.4.6"
     "@wxt-dev/module-vue": "npm:^1.0.2"
     bootstrap: "npm:^5.3.7"
-    bootstrap-vue-next: "npm:^0.30.4"
+    bootstrap-vue-next: "npm:^0.30.5"
     eslint: "npm:^9.30.0"
     eslint-config-prettier: "npm:^10.1.8"
     eslint-plugin-playwright: "npm:^2.2.2"
@@ -12911,9 +12911,9 @@ __metadata:
     jsdom: "npm:^26.1.0"
     prettier: "npm:^3.6.2"
     prettier-plugin-organize-imports: "npm:^4.1.0"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:^5.9.2"
     typescript-eslint: "npm:^8.32.1"
-    unplugin-icons: "npm:^22.1.0"
+    unplugin-icons: "npm:^22.2.0"
     unplugin-vue-components: "npm:^28.8.0"
     vitest: "npm:^3.2.4"
     vue: "npm:^3.5.20"

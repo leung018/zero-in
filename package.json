@@ -27,7 +27,7 @@
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.7",
-    "bootstrap-vue-next": "^0.30.4",
+    "bootstrap-vue-next": "^0.30.5",
     "firebase": "^12.0.0",
     "vue": "^3.5.20"
   },
@@ -52,9 +52,9 @@
     "jsdom": "^26.1.0",
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.1.0",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.2",
     "typescript-eslint": "^8.32.1",
-    "unplugin-icons": "^22.1.0",
+    "unplugin-icons": "^22.2.0",
     "unplugin-vue-components": "^28.8.0",
     "vitest": "^3.2.4",
     "vue-eslint-parser": "^10.2.0",
