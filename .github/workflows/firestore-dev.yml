@@ -19,4 +19,5 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: ./yarn.lock
       - name: Deploy Firestore Rules
+        working-directory: ./firebase
         run: yarn dlx firebase-tools deploy --only firestore:rules --project ${{ vars.VITE_FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ZERO_IN_8211F }}
