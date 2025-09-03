@@ -314,11 +314,12 @@ async function addWeeklySchedule(
     weekdaySet: ReadonlySet<Weekday>
     startTime: Time
     endTime: Time
-    targetFocusSessions?: number
+    targetFocusSessions?: number | null
   } = {
     weekdaySet: new Set([Weekday.MON]),
     startTime: new Time(10, 0),
-    endTime: new Time(12, 0)
+    endTime: new Time(12, 0),
+    targetFocusSessions: null
   }
 ) {
   for (const weekday of weeklyScheduleInput.weekdaySet) {

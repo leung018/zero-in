@@ -88,9 +88,9 @@ describe('WeeklySchedules', () => {
         targetFocusSessions
       })
     }
-    expect(newWeeklySchedule(0).targetFocusSessions).toBeUndefined()
-    expect(newWeeklySchedule(-1).targetFocusSessions).toBeUndefined()
-    expect(newWeeklySchedule().targetFocusSessions).toBeUndefined()
+    expect(newWeeklySchedule(0).targetFocusSessions).toBeNull()
+    expect(newWeeklySchedule(-1).targetFocusSessions).toBeNull()
+    expect(newWeeklySchedule().targetFocusSessions).toBeNull()
 
     expect(newWeeklySchedule(1).targetFocusSessions).toBe(1)
   })

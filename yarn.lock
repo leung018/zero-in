@@ -588,10 +588,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:^9.27.0":
-  version: 9.27.0
-  resolution: "@eslint/js@npm:9.27.0"
-  checksum: 10c0/79b219ceda79182732954b52f7a494f49995a9a6419c7ae0316866e324d3706afeb857e1306bb6f35a4caaf176a5174d00228fc93d36781a570d32c587736564
+"@eslint/js@npm:^9.34.0":
+  version: 9.34.0
+  resolution: "@eslint/js@npm:9.34.0"
+  checksum: 10c0/53f1bfd2a374683d9382a6850354555f6e89a88416c34a5d34e9fbbaf717e97c2b06300e8f93e5eddba8bda8951ccab7f93a680e56ded1a3d21d526019e69bab
   languageName: node
   linkType: hard
 
@@ -1777,14 +1777,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.54.2":
-  version: 1.54.2
-  resolution: "@playwright/test@npm:1.54.2"
+"@playwright/test@npm:^1.55.0":
+  version: 1.55.0
+  resolution: "@playwright/test@npm:1.55.0"
   dependencies:
-    playwright: "npm:1.54.2"
+    playwright: "npm:1.55.0"
   bin:
     playwright: cli.js
-  checksum: 10c0/a032d9714a91d6dc40405575ca65ec52f95b0ca95974cd0140e2c12b6c39fbe5311239b2d581b289acaa1e227dd871cf5c43a537f32457f6329723e4add6e6f1
+  checksum: 10c0/e68b59cd8271f1b57c0649fc0562ab2d5f6bba8c3653dd7bd52ca1338dc380fde34588d0254e3cd3f0f2b20af04a80dfb080419ceb7475990bb2fc4d8c474984
   languageName: node
   linkType: hard
 
@@ -5164,14 +5164,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-playwright@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "eslint-plugin-playwright@npm:2.2.0"
+"eslint-plugin-playwright@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "eslint-plugin-playwright@npm:2.2.2"
   dependencies:
     globals: "npm:^13.23.0"
   peerDependencies:
     eslint: ">=8.40.0"
-  checksum: 10c0/508b817ff71ae9c9dbd07a40b11b5f81804b3a143e45d9397aa98a72dcde99527e473808117dbd5bbf6ef82666a76635e830f654a4628c1576628ed1ed512ee2
+  checksum: 10c0/05ea134e5567ad5427774ee51ec43ca51044951e3a8ba392158cbbf9e6e700e2752b417ba8499584e5a95d1b53950f1b93a8a1e7a939d9360d73ce7c9fdf8df4
   languageName: node
   linkType: hard
 
@@ -5819,9 +5819,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"firebase-tools@npm:^14.11.1":
-  version: 14.11.1
-  resolution: "firebase-tools@npm:14.11.1"
+"firebase-tools@npm:^14.15.1":
+  version: 14.15.1
+  resolution: "firebase-tools@npm:14.15.1"
   dependencies:
     "@electric-sql/pglite": "npm:^0.3.3"
     "@electric-sql/pglite-tools": "npm:^0.2.8"
@@ -5899,7 +5899,7 @@ __metadata:
     zod-to-json-schema: "npm:^3.24.5"
   bin:
     firebase: lib/bin/firebase.js
-  checksum: 10c0/2d210c4c5dcba3dfd38f6f0d9cce9c1ba98d3ad681e1f0d973eabecc6af72cbfa0657b94ace17121a11ec5819a36d65bc8f4723c073a593f465b904a5b4d7bcb
+  checksum: 10c0/879695978618edf81ad1fec91587814a03018dd1d6e861779c64cfaca98cdced810df84ec5b1411a30333810fdf8440bf34f215667d614f9abb72b11fe97011f
   languageName: node
   linkType: hard
 
@@ -6407,10 +6407,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^16.2.0":
-  version: 16.2.0
-  resolution: "globals@npm:16.2.0"
-  checksum: 10c0/c2b3ea163faa6f8a38076b471b12f4bda891f7df7f7d2e8294fb4801d735a51a73431bf4c1696c5bf5dbca5e0a0db894698acfcbd3068730c6b12eef185dea25
+"globals@npm:^16.3.0":
+  version: 16.3.0
+  resolution: "globals@npm:16.3.0"
+  checksum: 10c0/c62dc20357d1c0bf2be4545d6c4141265d1a229bf1c3294955efb5b5ef611145391895e3f2729f8603809e81b30b516c33e6c2597573844449978606aad6eb38
   languageName: node
   linkType: hard
 
@@ -9557,27 +9557,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.54.2":
-  version: 1.54.2
-  resolution: "playwright-core@npm:1.54.2"
+"playwright-core@npm:1.55.0":
+  version: 1.55.0
+  resolution: "playwright-core@npm:1.55.0"
   bin:
     playwright-core: cli.js
-  checksum: 10c0/44850e20bf35237c8c3dedf1096c655f8af939dde53c5469f72cae3dd744966858a302419b909a73d7a2093323123e7ebcc0fdd55151b4193afb7812c1fd2c88
+  checksum: 10c0/c39d6aa30e7a4e73965942ca5e13405ae05c9cb49f755a35f04248c864c0b24cf662d9767f1797b3ec48d1cf4e54774dce4a19c16534bd5cfd2aa3da81c9dc3a
   languageName: node
   linkType: hard
 
-"playwright@npm:1.54.2":
-  version: 1.54.2
-  resolution: "playwright@npm:1.54.2"
+"playwright@npm:1.55.0":
+  version: 1.55.0
+  resolution: "playwright@npm:1.55.0"
   dependencies:
     fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.54.2"
+    playwright-core: "npm:1.55.0"
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     playwright: cli.js
-  checksum: 10c0/6f642fa70179eee5d5bf8a90df2a6147c9638ff926f4f3ad0a0517396b8a3fe00ccebf13377e032a75b3f0b2610ec1562293e0cfc3bde234181c7a50af8af80a
+  checksum: 10c0/51605b7e57a5650e57972c5fdfc09d7a9934cca1cbee5beacca716fa801e25cb5bb7c1663de90c22b300fde884e5545a2b13a0505a93270b660687791c478304
   languageName: node
   linkType: hard
 
@@ -9674,12 +9674,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.5.3":
-  version: 3.5.3
-  resolution: "prettier@npm:3.5.3"
+"prettier@npm:^3.6.2":
+  version: 3.6.2
+  resolution: "prettier@npm:3.6.2"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/3880cb90b9dc0635819ab52ff571518c35bd7f15a6e80a2054c05dbc8a3aa6e74f135519e91197de63705bcb38388ded7e7230e2178432a1468005406238b877
+  checksum: 10c0/488cb2f2b99ec13da1e50074912870217c11edaddedeadc649b1244c749d15ba94e846423d062e2c4c9ae683e2d65f754de28889ba06e697ac4f988d44f45812
   languageName: node
   linkType: hard
 
@@ -12888,11 +12888,11 @@ __metadata:
   resolution: "zero-in@workspace:."
   dependencies:
     "@eslint/eslintrc": "npm:^3.3.1"
-    "@eslint/js": "npm:^9.27.0"
+    "@eslint/js": "npm:^9.34.0"
     "@iconify-json/ic": "npm:^1.2.2"
     "@iconify-json/mdi": "npm:^1.2.3"
     "@iconify-json/prime": "npm:^1.2.2"
-    "@playwright/test": "npm:^1.54.2"
+    "@playwright/test": "npm:^1.55.0"
     "@popperjs/core": "npm:^2.11.8"
     "@tsconfig/node20": "npm:^20.1.6"
     "@vitejs/plugin-vue": "npm:^6.0.0"
@@ -12903,13 +12903,13 @@ __metadata:
     bootstrap-vue-next: "npm:^0.30.4"
     eslint: "npm:^9.30.0"
     eslint-config-prettier: "npm:^10.1.8"
-    eslint-plugin-playwright: "npm:^2.2.0"
+    eslint-plugin-playwright: "npm:^2.2.2"
     eslint-plugin-vue: "npm:^10.1.0"
     firebase: "npm:^12.0.0"
-    firebase-tools: "npm:^14.11.1"
-    globals: "npm:^16.2.0"
+    firebase-tools: "npm:^14.15.1"
+    globals: "npm:^16.3.0"
     jsdom: "npm:^26.1.0"
-    prettier: "npm:^3.5.3"
+    prettier: "npm:^3.6.2"
     prettier-plugin-organize-imports: "npm:^4.1.0"
     typescript: "npm:^5.8.3"
     typescript-eslint: "npm:^8.32.1"

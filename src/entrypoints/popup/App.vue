@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import config from '@/config'
 import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import { BrowserNewTabService } from '@/infra/browser/new_tab'
 import { FeatureFlag, FeatureFlagsService } from '@/infra/feature_flags'
@@ -10,7 +11,7 @@ const openOptionsPage = () => {
 }
 
 const openSignInPage = () => {
-  new BrowserNewTabService(browser.runtime.getURL('/sign-in.html')).trigger()
+  new BrowserNewTabService(config.getSignInPageUrl()).trigger()
 }
 
 const featureFlagsService = FeatureFlagsService.init()
