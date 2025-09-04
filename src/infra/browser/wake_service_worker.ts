@@ -14,7 +14,7 @@ export async function wakeUpServiceWorkerIfIdle(retryCount = 0) {
   try {
     await browser.runtime.sendMessage({ type: 'PING' })
   } catch (error) {
-    console.error('Error waking up service worker:', error)
+    console.info('Failed to wake up service worker — will retry. Error:', error)
     await sleep(500)
     return wakeUpServiceWorkerIfIdle(retryCount + 1)
   }
