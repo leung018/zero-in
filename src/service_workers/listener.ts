@@ -148,7 +148,6 @@ export class BackgroundListener {
   }
 
   async reload() {
-    this.timer.setOnTimerPause(() => {}) // So that setConfigAndResetState in setUpTimer won't persist the timerState and corrupt the backupInternalState
     this.timerStateStorageService.unsubscribeAll()
     this.badgeDisplayService.clearBadge()
 
@@ -170,6 +169,7 @@ export class BackgroundListener {
   }
 
   private async setUpTimerImpl() {
+    this.timer.setOnTimerPause(() => {}) // So that setConfigAndResetState won't persist the timerState and corrupt the backupInternalState, in case setTimerPause has been set before.
     const timerConfig = await this.timerConfigStorageService.get()
     this.timer.setConfigAndResetState(timerConfig)
     const backupInternalState = await this.timerStateStorageService.get()
