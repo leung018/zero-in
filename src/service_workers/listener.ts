@@ -96,6 +96,8 @@ export class BackgroundListener {
   private desktopNotificationService: DesktopNotificationService
   private reminderTabService: ActionService
 
+  private isSettingUpTimer = false
+
   private constructor(params: ListenerParams) {
     this.communicationManager = params.communicationManager
     this.browsingControlTogglingService = new BrowsingControlTogglingService({
@@ -157,6 +159,17 @@ export class BackgroundListener {
   }
 
   private async setUpTimer() {
+    if (this.isSettingUpTimer) {
+      throw new Error(
+        'Timer is being set up, can not set up again. Otherwise, will cause unexpected behavior'
+      )
+    }
+    this.isSettingUpTimer = true
+    await this.setUpTimerImpl()
+    this.isSettingUpTimer = false
+  }
+
+  private async setUpTimerImpl() {
     const timerConfig = await this.timerConfigStorageService.get()
     this.timer.setConfigAndResetState(timerConfig)
     const backupInternalState = await this.timerStateStorageService.get()
