@@ -688,6 +688,11 @@ describe('BackgroundListener', () => {
 
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
+
+  it('should occurrence of reload, start can not be overlapped', async () => {
+    const { listener } = await setUpListener()
+    await expect(Promise.all([listener.reload(), listener.start()])).rejects.toThrow()
+  })
 })
 
 async function startListener({
