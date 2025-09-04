@@ -26,9 +26,9 @@ export default function main() {
         })
       }
     })
-  })
-  onAuthStateChanged(getAuth(initializeApp(config.getFirebaseConfig())), () => {
-    listener.reload()
+    onAuthStateChanged(getAuth(initializeApp(config.getFirebaseConfig())), () => {
+      listener.reload()
+    })
   })
 
   // Periodically toggling browsing rules
