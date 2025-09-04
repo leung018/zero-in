@@ -45,6 +45,9 @@ export default defineConfig({
         resolvers: [IconsResolve(), BootstrapVueNextResolver()],
         dts: true
       }) as any
-    ]
+    ],
+    build: {
+      chunkSizeWarningLimit: 1500
+    }
   })
 })
