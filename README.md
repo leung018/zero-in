@@ -91,3 +91,11 @@ chrome.storage.local.get(null, function (data) {
 ```
 
 For the `TARGET_EXTENSION_ID`, you can find it in the URL of page in that extension, which looks like `chrome-extension://<extension-id>/`. OR you can find it in the `chrome://extensions/`.
+
+### How to update Third-Party Licenses
+
+```
+license-checker --production --markdown --out THIRD_PARTY_LICENSES_LIBRARIES.md
+```
+
+And remove the last line of zero in itself.
