@@ -21,3 +21,7 @@
    - Copyright: PrimeTek
 
 These icons are used in accordance with their respective licenses. No modifications have been made to the original icon assets.
+
+## Libraries
+
+See [THIRD_PARTY_LICENSES_LIBRARIES.md](./THIRD_PARTY_LICENSES_LIBRARIES.md) for a list of third-party libraries used in this project along with their licenses.
