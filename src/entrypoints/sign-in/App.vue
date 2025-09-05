@@ -34,9 +34,10 @@ featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
 
     <div class="message-box">
       <p>
-        <strong>Sign in</strong> to unlock <strong>premium features</strong>! Enjoy a
-        <strong>free trial</strong> during this <strong>limited-time promotion</strong>, though it
-        may end at any time.
+        <strong>Sign in</strong> to unlock
+        <a href="https://zeroin.dev/premium" target="_blank"><strong>premium features</strong></a
+        >! Enjoy a <strong>free trial</strong> during this <strong>limited-time promotion</strong>,
+        though it may end at any time.
       </p>
     </div>
 
