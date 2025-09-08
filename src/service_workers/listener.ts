@@ -164,8 +164,11 @@ export class BackgroundListener {
       )
     }
     this.isSettingUpTimer = true
-    await this.setUpTimerImpl()
-    this.isSettingUpTimer = false
+    try {
+      await this.setUpTimerImpl()
+    } finally {
+      this.isSettingUpTimer = false
+    }
   }
 
   private async setUpTimerImpl() {

@@ -693,6 +693,21 @@ describe('BackgroundListener', () => {
     const { listener } = await setUpListener()
     await expect(Promise.all([listener.reload(), listener.start()])).rejects.toThrow()
   })
+
+  it('should failure in setUpTimer in previous start wont block the next start', async () => {
+    const { listener, timerConfigStorageService } = await setUpListener()
+
+    const backupGet = timerConfigStorageService.get
+    // So that setUpTimer in start will throw error
+    timerConfigStorageService.get = async () => {
+      throw new Error('any error')
+    }
+    await expect(listener.start()).rejects.toThrow()
+
+    timerConfigStorageService.get = backupGet
+
+    await expect(listener.start()).resolves.not.toThrow()
+  })
 })
 
 async function startListener({
