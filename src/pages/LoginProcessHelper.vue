@@ -5,8 +5,10 @@
     <div class="spinner-border text-primary mb-3" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
-    <h4 class="mb-2">Processing your Login Request...</h4>
-    <p class="text-muted">Just a moment while we securely sign you in.</p>
+    <h4 class="mb-2">Signing you in...</h4>
+    <p class="text-muted">
+      Please don't close this page. We're securely connecting your account now.
+    </p>
   </div>
 </template>
 
