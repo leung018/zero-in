@@ -9,6 +9,7 @@ const showProcessHelper = ref(false)
 
 browser.runtime.onMessage.addListener((message) => {
   if (message.type === 'SIGN_IN_SUCCESS') {
+    showProcessHelper.value = true
     FirebaseServices.signInWithToken(message.payload._tokenResponse.oauthIdToken).then(() => {
       browser.runtime.openOptionsPage().then(() => {
         window.close()
