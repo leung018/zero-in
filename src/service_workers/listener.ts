@@ -151,8 +151,7 @@ export class BackgroundListener {
     this.timerStateStorageService.unsubscribeAll()
     this.badgeDisplayService.clearBadge()
 
-    await this.setUpTimer()
-    await this.setUpNotification()
+    await Promise.all([this.setUpTimer(), this.setUpNotification()])
 
     this.toggleBrowsingRules()
   }
