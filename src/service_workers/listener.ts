@@ -144,15 +144,14 @@ export class BackgroundListener {
 
   async start() {
     await Promise.all([this.setUpTimer(), this.setUpNotification()])
-    this.setUpListener()
+    this.setUpPortListening()
   }
 
   async reload() {
     this.timerStateStorageService.unsubscribeAll()
     this.badgeDisplayService.clearBadge()
 
-    await this.setUpTimer()
-    await this.setUpNotification()
+    await Promise.all([this.setUpTimer(), this.setUpNotification()])
 
     this.toggleBrowsingRules()
   }
@@ -164,8 +163,11 @@ export class BackgroundListener {
       )
     }
     this.isSettingUpTimer = true
-    await this.setUpTimerImpl()
-    this.isSettingUpTimer = false
+    try {
+      await this.setUpTimerImpl()
+    } finally {
+      this.isSettingUpTimer = false
+    }
   }
 
   private async setUpTimerImpl() {
@@ -301,7 +303,7 @@ export class BackgroundListener {
     this.browsingControlTogglingService.run()
   }
 
-  private setUpListener() {
+  private setUpPortListening() {
     this.communicationManager.onNewClientConnect(
       (backgroundPort: Port<WorkResponse, WorkRequest>) => {
         this.setupTimerStateSubscription(backgroundPort)
