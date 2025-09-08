@@ -689,8 +689,9 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
 
-  it('should occurrence of reload, start can not be overlapped', async () => {
+  it('should reload, start can not setting up timer at the same time', async () => {
     const { listener } = await setUpListener()
+    // So that reload/start will throw error when setting up timer if other haven't finished yet
     await expect(Promise.all([listener.reload(), listener.start()])).rejects.toThrow()
   })
 
