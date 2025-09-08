@@ -144,7 +144,7 @@ export class BackgroundListener {
 
   async start() {
     await Promise.all([this.setUpTimer(), this.setUpNotification()])
-    this.setUpListener()
+    this.setUpPortListening()
   }
 
   async reload() {
@@ -303,7 +303,7 @@ export class BackgroundListener {
     this.browsingControlTogglingService.run()
   }
 
-  private setUpListener() {
+  private setUpPortListening() {
     this.communicationManager.onNewClientConnect(
       (backgroundPort: Port<WorkResponse, WorkRequest>) => {
         this.setupTimerStateSubscription(backgroundPort)
