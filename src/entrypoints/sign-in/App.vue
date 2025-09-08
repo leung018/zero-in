@@ -5,6 +5,8 @@ import LoginProcessHelper from '../../pages/LoginProcessHelper.vue'
 
 // Require manual testing
 
+const showProcessHelper = ref(false)
+
 const signIn = () => {
   browser.runtime.onMessage.addListener((message) => {
     if (message.type === 'SIGN_IN_SUCCESS') {
@@ -19,6 +21,7 @@ const signIn = () => {
   browser.runtime.sendMessage({
     type: 'SIGN_IN'
   })
+  showProcessHelper.value = true
 }
 
 const featureFlagsService = FeatureFlagsService.init()
@@ -89,7 +92,7 @@ featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
     </button>
   </div>
 
-  <LoginProcessHelper />
+  <LoginProcessHelper v-show="showProcessHelper" />
 </template>
 
 <style scoped>
