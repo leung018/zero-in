@@ -11,7 +11,8 @@ export default function main() {
 
   const listener = BackgroundListener.create()
 
-  // Noted that e2e tests are hard to cover all of the below related to browser api properly. Better use a bit manual testing if needed.
+  // Noted that e2e tests are hard to cover all of the below properly. Better use a bit manual testing if needed.
+
   listener.start().then(() => {
     browser.runtime.onMessage.addListener((message) => {
       if (message.type === 'PING') {
