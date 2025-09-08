@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { FeatureFlag, FeatureFlagsService } from '@/infra/feature_flags'
 import { FirebaseServices } from '../../infra/firebase/services'
+import LoginProcessHelper from '../../pages/LoginProcessHelper.vue'
 
 // Require manual testing
 
@@ -87,6 +88,8 @@ featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
       </div>
     </button>
   </div>
+
+  <LoginProcessHelper />
 </template>
 
 <style scoped>
