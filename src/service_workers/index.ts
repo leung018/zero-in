@@ -11,7 +11,8 @@ export default function main() {
 
   const listener = BackgroundListener.create()
 
-  // Noted that e2e tests are hard to cover all of the below related to browser api properly. Better use a bit manual testing if needed.
+  // Noted that e2e tests are hard to cover all of the below properly. Better use a bit manual testing if needed.
+
   listener.start().then(() => {
     browser.runtime.onMessage.addListener((message) => {
       if (message.type === 'PING') {
@@ -26,6 +27,10 @@ export default function main() {
         })
       }
     })
+
+    // Execute reload only when listener.start is resolved.
+    // Now, reload/start will throw error if they are called at the same time to prevent some strange issues.
+    // Hard to cover that I call reload/start not at the same time in e2e tests.
     onAuthStateChanged(getAuth(initializeApp(config.getFirebaseConfig())), () => {
       listener.reload()
     })
