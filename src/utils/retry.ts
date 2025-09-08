@@ -1,4 +1,4 @@
-export async function retry<T>(
+export async function retryUntilSuccess<T>(
   fn: () => Promise<T>,
   {
     retryIntervalMs = 2000,
@@ -10,6 +10,6 @@ export async function retry<T>(
   } catch (e) {
     console.error(`Function ${functionName} failed, retrying...`, e)
     await new Promise((resolve) => setTimeout(resolve, retryIntervalMs))
-    return retry(fn, { retryIntervalMs, functionName })
+    return retryUntilSuccess(fn, { retryIntervalMs, functionName })
   }
 }

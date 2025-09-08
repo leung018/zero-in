@@ -3,7 +3,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import config from '../config'
 import { BrowserNewTabService } from '../infra/browser/new_tab'
 import { firebaseAuth } from '../infra/browser/sign_in'
-import { retry } from '../utils/retry'
+import { retryUntilSuccess } from '../utils/retry'
 import { BackgroundListener } from './listener'
 import { MenuItemId } from './menu_item_id'
 
@@ -14,7 +14,7 @@ export default function main() {
 
   // Noted that e2e tests are hard to cover all of the below properly. Better use a bit manual testing if needed.
 
-  retry(
+  retryUntilSuccess(
     () => {
       return listener.start()
     },
@@ -40,7 +40,7 @@ export default function main() {
     // Now, reload/start will throw error if they are called at the same time to prevent some strange issues.
     // Hard to cover that I call reload/start not at the same time in e2e tests.
     onAuthStateChanged(getAuth(initializeApp(config.getFirebaseConfig())), () => {
-      retry(
+      retryUntilSuccess(
         () => {
           return listener.reload()
         },

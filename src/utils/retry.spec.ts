@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { retry } from './retry'
+import { retryUntilSuccess } from './retry'
 
-describe('retry', () => {
+describe('retryUntilSuccess', () => {
   let consoleErrorSpy: any
 
   beforeEach(() => {
@@ -16,7 +16,7 @@ describe('retry', () => {
   it('should returns the result when the function succeeds on first try', async () => {
     const fn = vi.fn(async () => 'ok')
 
-    const result = await retry(fn)
+    const result = await retryUntilSuccess(fn)
 
     expect(result).toBe('ok')
     expect(fn).toHaveBeenCalledTimes(1)
@@ -33,7 +33,7 @@ describe('retry', () => {
       return 'done'
     })
 
-    const p = retry(fn, { retryIntervalMs: 1000, functionName: 'myFn' })
+    const p = retryUntilSuccess(fn, { retryIntervalMs: 1000, functionName: 'myFn' })
 
     // first attempt happens immediately
     expect(fn).toHaveBeenCalledTimes(1)
