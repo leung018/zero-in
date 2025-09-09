@@ -13,6 +13,10 @@ const signIn = async () => {
   })
   if (response.type === 'SIGN_IN_SUCCESS') {
     showProcessHelper.value = true
+
+    // For why sign in here instead of in service worker:
+    // because when browserLocalPersistence is enabled in firebase sign in api, service worker cannot call it and will throw error.
+    // So have to sign in here first.
     FirebaseServices.signInWithToken(response.payload._tokenResponse.oauthIdToken).then(() => {
       browser.runtime.openOptionsPage().then(() => {
         window.close()
