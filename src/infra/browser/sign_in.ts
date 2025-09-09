@@ -9,6 +9,8 @@ export async function firebaseAuth(onAuthSuccess: (auth: any) => void): Promise<
   if (offscreenContexts.length === 0) {
     await setupOffscreenDocument()
   } else if (offscreenContexts[0].documentUrl !== browser.runtime.getURL(OFFSCREEN_DOCUMENT_PATH)) {
+    // In case there are other offscreen documents opened like sound effect, they need to be closed first.
+    // Because only one offscreen document is allowed at a time.
     await browser.offscreen.closeDocument()
     await setupOffscreenDocument()
   }
