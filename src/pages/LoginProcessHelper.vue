@@ -2,9 +2,7 @@
 
 <template>
   <div class="signin-container processing-message">
-    <div class="spinner-border text-primary mb-3" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
+    <div class="spinner-border text-primary mb-3"></div>
     <h4 class="mb-2">Signing you in...</h4>
     <p class="text-muted">
       Please don't close this page. We're securely connecting your account now.
