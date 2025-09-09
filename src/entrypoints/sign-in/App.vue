@@ -7,22 +7,18 @@ import LoginProcessHelper from '../../pages/LoginProcessHelper.vue'
 
 const showProcessHelper = ref(false)
 
-browser.runtime.onMessage.addListener((message) => {
-  if (message.type === 'SIGN_IN_SUCCESS') {
-    showProcessHelper.value = true
-    FirebaseServices.signInWithToken(message.payload._tokenResponse.oauthIdToken).then(() => {
+const signIn = async () => {
+  showProcessHelper.value = true
+  const response = await browser.runtime.sendMessage({
+    type: 'SIGN_IN'
+  })
+  if (response.type === 'SIGN_IN_SUCCESS') {
+    FirebaseServices.signInWithToken(response.payload._tokenResponse.oauthIdToken).then(() => {
       browser.runtime.openOptionsPage().then(() => {
         window.close()
       })
     })
   }
-})
-
-const signIn = () => {
-  browser.runtime.sendMessage({
-    type: 'SIGN_IN'
-  })
-  showProcessHelper.value = true
 }
 
 const featureFlagsService = FeatureFlagsService.init()
