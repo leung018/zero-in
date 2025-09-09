@@ -1,7 +1,7 @@
 const OFFSCREEN_DOCUMENT_PATH = '/offscreen-sign-in.html'
 
 // Require Manual testing
-export async function firebaseAuth(onAuthSuccess: (auth: any) => void): Promise<any> {
+export async function firebaseAuth(): Promise<any> {
   const offscreenContexts = await browser.runtime.getContexts({
     contextTypes: [browser.runtime.ContextType.OFFSCREEN_DOCUMENT]
   })
@@ -15,22 +15,7 @@ export async function firebaseAuth(onAuthSuccess: (auth: any) => void): Promise<
     await setupOffscreenDocument()
   }
 
-  await getAuth()
-    .then((result) => {
-      onAuthSuccess(result)
-    })
-    .catch((err) => {
-      if (err.code === 'auth/operation-not-allowed') {
-        console.error(
-          'You must enable an OAuth provider in the Firebase' +
-            ' console in order to use signInWithPopup. This sample' +
-            ' uses Google by default.'
-        )
-      } else {
-        console.error(err)
-      }
-    })
-    .finally(browser.offscreen.closeDocument)
+  return sendOffscreenAuthRequest().finally(browser.offscreen.closeDocument)
 }
 
 let creating: Promise<void> | null = null // A global promise to avoid concurrency issues
@@ -48,7 +33,7 @@ async function setupOffscreenDocument() {
   }
 }
 
-async function getAuth() {
+async function sendOffscreenAuthRequest() {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
     const auth = await browser.runtime.sendMessage({

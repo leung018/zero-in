@@ -27,12 +27,19 @@ export default function main() {
         sendResponse({ type: 'PONG' })
       }
       if (message.type === 'SIGN_IN') {
-        firebaseAuth((auth) => {
-          sendResponse({
-            type: 'SIGN_IN_SUCCESS',
-            payload: auth
+        firebaseAuth()
+          .then((auth) => {
+            sendResponse({
+              type: 'SIGN_IN_SUCCESS',
+              payload: auth
+            })
           })
-        })
+          .catch((error) => {
+            console.error('Sign in failed', error)
+            sendResponse({
+              type: 'SIGN_IN_FAILURE'
+            })
+          })
       }
       return true
     })
