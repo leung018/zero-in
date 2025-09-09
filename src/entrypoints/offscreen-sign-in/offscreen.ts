@@ -21,6 +21,13 @@ const handleBrowserMessages: Parameters<typeof browser.runtime.onMessage.addList
         return
       }
       data = JSON.parse(data)
+
+      if (data.code === 'auth/cancelled-popup-request') {
+        // This will trigger if user closes the popup and try to login again.
+        // If not ignore it, it will cause the sign in process stuck because this reject the promise in getAuth() too early.
+        return
+      }
+
       self.removeEventListener('message', handleIframeMessage)
 
       sendResponse(data)

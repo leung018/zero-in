@@ -22,18 +22,26 @@ export default function main() {
       functionName: 'BackgroundListener.start'
     }
   ).then(() => {
-    browser.runtime.onMessage.addListener((message) => {
+    browser.runtime.onMessage.addListener((message, _, sendResponse) => {
       if (message.type === 'PING') {
-        return Promise.resolve({ type: 'PONG' })
+        sendResponse({ type: 'PONG' })
       }
       if (message.type === 'SIGN_IN') {
-        return firebaseAuth((auth) => {
-          browser.runtime.sendMessage({
-            type: 'SIGN_IN_SUCCESS',
-            payload: auth
+        firebaseAuth()
+          .then((auth) => {
+            sendResponse({
+              type: 'SIGN_IN_SUCCESS',
+              payload: auth
+            })
           })
-        })
+          .catch((error) => {
+            console.error('Sign in failed', error)
+            sendResponse({
+              type: 'SIGN_IN_FAILURE'
+            })
+          })
       }
+      return true
     })
 
     // Execute reload only when listener.start is resolved.

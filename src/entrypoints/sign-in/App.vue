@@ -1,23 +1,28 @@
 <script setup lang="ts">
 import { FeatureFlag, FeatureFlagsService } from '@/infra/feature_flags'
 import { FirebaseServices } from '../../infra/firebase/services'
+import LoginProcessHelper from '../../pages/LoginProcessHelper.vue'
 
 // Require manual testing
 
-const signIn = () => {
-  browser.runtime.onMessage.addListener((message) => {
-    if (message.type === 'SIGN_IN_SUCCESS') {
-      FirebaseServices.signInWithToken(message.payload._tokenResponse.oauthIdToken).then(() => {
-        browser.runtime.openOptionsPage().then(() => {
-          window.close()
-        })
-      })
-    }
-  })
+const showProcessHelper = ref(false)
 
-  browser.runtime.sendMessage({
+const signIn = async () => {
+  const response = await browser.runtime.sendMessage({
     type: 'SIGN_IN'
   })
+  if (response.type === 'SIGN_IN_SUCCESS') {
+    showProcessHelper.value = true
+
+    // For why sign in here instead of in service worker:
+    // because when browserLocalPersistence is enabled in firebase sign in api, service worker cannot call it and will throw error.
+    // So have to sign in here first.
+    FirebaseServices.signInWithToken(response.payload._tokenResponse.oauthIdToken).then(() => {
+      browser.runtime.openOptionsPage().then(() => {
+        window.close()
+      })
+    })
+  }
 }
 
 const featureFlagsService = FeatureFlagsService.init()
@@ -87,6 +92,8 @@ featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
       </div>
     </button>
   </div>
+
+  <LoginProcessHelper v-show="showProcessHelper" />
 </template>
 
 <style scoped>
