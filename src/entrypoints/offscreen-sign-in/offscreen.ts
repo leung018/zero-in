@@ -21,6 +21,11 @@ const handleBrowserMessages: Parameters<typeof browser.runtime.onMessage.addList
         return
       }
       data = JSON.parse(data)
+
+      if (data.code === 'auth/cancelled-popup-request') {
+        return
+      }
+
       self.removeEventListener('message', handleIframeMessage)
 
       sendResponse(data)
