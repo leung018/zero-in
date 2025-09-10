@@ -1,15 +1,32 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue'
+
+enum LoginProcessState {
+  INITIAL,
+  IMPORT_PROMPT
+}
+
+const state = ref(LoginProcessState.INITIAL)
+
+defineExpose({
+  triggerHelperProcess: async () => {
+    state.value = LoginProcessState.IMPORT_PROMPT
+  }
+})
+</script>
 
 <template>
   <div class="signin-container processing-message">
     <div class="spinner-border text-primary mb-3"></div>
-    <div data-test="sign-in-initial-message" v-if="false">
+
+    <div data-test="sign-in-initial-message" v-if="state === LoginProcessState.INITIAL">
       <h4 class="mb-2">Signing you in...</h4>
       <p class="text-muted">
         Please don't close this page. We're securely connecting your account now.
       </p>
     </div>
-    <div data-test="import-prompt">
+
+    <div data-test="import-prompt" v-if="state === LoginProcessState.IMPORT_PROMPT">
       <h4 class="mb-2">Would you like to import settings from existing device?</h4>
       <p class="text-muted mb-4">
         Importing will replace any existing account settings. You can import them or start fresh.

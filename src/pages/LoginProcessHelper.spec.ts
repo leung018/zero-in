@@ -7,6 +7,11 @@ import { dataTestSelector } from '../test_utils/selector'
 import LoginProcessHelper from './LoginProcessHelper.vue'
 
 describe('LoginProcessHelper', () => {
+  it('should render initial sign in message if helper process is not triggered', async () => {
+    const { wrapper } = await mountPage()
+    assertInitialSignInMessageIsRendered(wrapper)
+  })
+
   it('should render import prompt if importRecord is empty and local has data', async () => {
     const { wrapper, blockingTimerIntegrationStorageService, triggerHelperProcess } =
       await mountPage({
@@ -36,11 +41,19 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
     wrapper,
     clientPort,
     blockingTimerIntegrationStorageService,
-    triggerHelperProcess: async () => {}
+    triggerHelperProcess: async () => {
+      wrapper.vm.triggerHelperProcess()
+      await flushPromises()
+    }
   }
 }
 
 function assertImportPromptIsRendered(wrapper: VueWrapper) {
   expect(wrapper.find(dataTestSelector('sign-in-initial-message')).exists()).toBe(false)
   expect(wrapper.find(dataTestSelector('import-prompt')).exists()).toBe(true)
+}
+
+function assertInitialSignInMessageIsRendered(wrapper: VueWrapper) {
+  expect(wrapper.find(dataTestSelector('sign-in-initial-message')).exists()).toBe(true)
+  expect(wrapper.find(dataTestSelector('import-prompt')).exists()).toBe(false)
 }
