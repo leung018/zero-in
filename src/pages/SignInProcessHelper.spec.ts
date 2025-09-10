@@ -4,9 +4,9 @@ import { newTestBlockingTimerIntegration } from '../domain/blocking_timer_integr
 import { newEmptyImportRecord } from '../domain/import_record/record'
 import { setUpListener } from '../test_utils/listener'
 import { dataTestSelector } from '../test_utils/selector'
-import LoginProcessHelper from './LoginProcessHelper.vue'
+import SignInProcessHelper from './SignInProcessHelper.vue'
 
-describe('LoginProcessHelper', () => {
+describe('SignInProcessHelper', () => {
   it('should render initial sign in message if helper process is not triggered', async () => {
     const { wrapper } = await mountPage()
     assertInitialSignInMessageIsRendered(wrapper)
@@ -31,7 +31,7 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
 
   const clientPort = communicationManager.clientConnect()
 
-  const wrapper = mount(LoginProcessHelper, {
+  const wrapper = mount(SignInProcessHelper, {
     props: {
       port: clientPort
     }
