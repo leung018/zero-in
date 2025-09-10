@@ -1,7 +1,10 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { newTestBlockingTimerIntegration } from '../domain/blocking_timer_integration'
+import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
+import { HasDataService } from '../domain/import_record/has_data_service'
 import { newEmptyImportRecord } from '../domain/import_record/record'
+import { LocalStorageWrapper } from '../infra/storage/local_storage'
 import { setUpListener } from '../test_utils/listener'
 import { dataTestSelector } from '../test_utils/selector'
 import SignInProcessHelper from './SignInProcessHelper.vue'
@@ -13,34 +16,50 @@ describe('SignInProcessHelper', () => {
   })
 
   it('should render import prompt if importRecord is empty and local has data', async () => {
-    const { wrapper, blockingTimerIntegrationStorageService, triggerHelperProcess } =
+    const { wrapper, localBlockingTimerIntegrationStorageService, triggerHelperProcess } =
       await mountPage({
         importRecord: newEmptyImportRecord()
       })
-    await blockingTimerIntegrationStorageService.save(newTestBlockingTimerIntegration())
+    await localBlockingTimerIntegrationStorageService.save(newTestBlockingTimerIntegration())
 
     await triggerHelperProcess()
 
     assertImportPromptIsRendered(wrapper)
   })
+
+  it('should not render import prompt if importRecord is empty and local has no data', async () => {
+    const { wrapper, triggerHelperProcess } = await mountPage({
+      importRecord: newEmptyImportRecord()
+    })
+
+    await triggerHelperProcess()
+
+    assertInitialSignInMessageIsRendered(wrapper)
+  })
 })
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
-  const { communicationManager, blockingTimerIntegrationStorageService } = await setUpListener()
+  const { communicationManager } = await setUpListener()
+
+  const localStorage = LocalStorageWrapper.createFake()
+  const localBlockingTimerIntegrationStorageService = new BlockingTimerIntegrationStorageService(
+    localStorage
+  )
 
   const clientPort = communicationManager.clientConnect()
 
   const wrapper = mount(SignInProcessHelper, {
     props: {
-      port: clientPort
+      port: clientPort,
+      localHasDataService: new HasDataService(localStorage)
     }
   })
   await flushPromises()
   return {
     wrapper,
     clientPort,
-    blockingTimerIntegrationStorageService,
+    localBlockingTimerIntegrationStorageService,
     triggerHelperProcess: async () => {
       wrapper.vm.triggerHelperProcess()
       await flushPromises()

@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { HasDataService } from '../domain/import_record/has_data_service'
+
+const { localHasDataService } = defineProps<{
+  localHasDataService: HasDataService
+}>()
 
 enum ProcessState {
   INITIAL,
@@ -10,7 +15,10 @@ const state = ref(ProcessState.INITIAL)
 
 defineExpose({
   triggerHelperProcess: async () => {
-    state.value = ProcessState.IMPORT_PROMPT
+    const hasLocalData = await localHasDataService.hasData()
+    if (hasLocalData) {
+      state.value = ProcessState.IMPORT_PROMPT
+    }
   }
 })
 </script>
