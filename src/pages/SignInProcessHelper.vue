@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { HasDataService } from '../domain/import_record/has_data_service'
+import { SettingsExistenceService } from '../domain/import_record/settings_existence'
 
-const { localHasDataService } = defineProps<{
-  localHasDataService: HasDataService
+const { localSettingsExistenceService } = defineProps<{
+  localSettingsExistenceService: SettingsExistenceService
 }>()
 
 enum ProcessState {
@@ -15,7 +15,7 @@ const state = ref(ProcessState.INITIAL)
 
 defineExpose({
   triggerHelperProcess: async () => {
-    const hasLocalData = await localHasDataService.hasData()
+    const hasLocalData = await localSettingsExistenceService.hasSettings()
     if (hasLocalData) {
       state.value = ProcessState.IMPORT_PROMPT
     }

@@ -2,8 +2,8 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { newTestBlockingTimerIntegration } from '../domain/blocking_timer_integration'
 import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
-import { HasDataService } from '../domain/import_record/has_data_service'
 import { newEmptyImportRecord } from '../domain/import_record/record'
+import { SettingsExistenceService } from '../domain/import_record/settings_existence'
 import { LocalStorageWrapper } from '../infra/storage/local_storage'
 import { setUpListener } from '../test_utils/listener'
 import { dataTestSelector } from '../test_utils/selector'
@@ -52,7 +52,7 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
   const wrapper = mount(SignInProcessHelper, {
     props: {
       port: clientPort,
-      localHasDataService: new HasDataService(localStorage)
+      localSettingsExistenceService: new SettingsExistenceService(localStorage)
     }
   })
   await flushPromises()
