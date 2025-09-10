@@ -49,11 +49,24 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
 }
 
 function assertImportPromptIsRendered(wrapper: VueWrapper) {
-  expect(wrapper.find(dataTestSelector('sign-in-initial-message')).exists()).toBe(false)
-  expect(wrapper.find(dataTestSelector('import-prompt')).exists()).toBe(true)
+  assertRendered(wrapper, { initialSignInMessage: false, importPrompt: true })
 }
 
 function assertInitialSignInMessageIsRendered(wrapper: VueWrapper) {
-  expect(wrapper.find(dataTestSelector('sign-in-initial-message')).exists()).toBe(true)
-  expect(wrapper.find(dataTestSelector('import-prompt')).exists()).toBe(false)
+  assertRendered(wrapper, { initialSignInMessage: true, importPrompt: false })
+}
+
+function assertRendered(
+  wrapper: VueWrapper,
+  componentsRendered: {
+    initialSignInMessage: boolean
+    importPrompt: boolean
+  }
+) {
+  expect(wrapper.find(dataTestSelector('sign-in-initial-message')).exists()).toBe(
+    componentsRendered.initialSignInMessage
+  )
+  expect(wrapper.find(dataTestSelector('import-prompt')).exists()).toBe(
+    componentsRendered.importPrompt
+  )
 }
