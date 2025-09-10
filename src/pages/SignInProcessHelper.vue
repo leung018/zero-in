@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { SettingsExistenceService } from '../domain/import_record/settings_existence'
+import { SettingsExistenceService } from '../domain/import/settings_existence'
 
 const { localSettingsExistenceService } = defineProps<{
   localSettingsExistenceService: SettingsExistenceService
