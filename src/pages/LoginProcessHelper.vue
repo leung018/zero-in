@@ -3,10 +3,22 @@
 <template>
   <div class="signin-container processing-message">
     <div class="spinner-border text-primary mb-3"></div>
-    <h4 class="mb-2">Signing you in...</h4>
-    <p class="text-muted">
-      Please don't close this page. We're securely connecting your account now.
-    </p>
+    <div data-test="sign-in-initial-message" v-if="false">
+      <h4 class="mb-2">Signing you in...</h4>
+      <p class="text-muted">
+        Please don't close this page. We're securely connecting your account now.
+      </p>
+    </div>
+    <div data-test="import-prompt">
+      <h4 class="mb-2">Would you like to import settings from existing device?</h4>
+      <p class="text-muted mb-4">
+        Importing will replace any existing account settings. You can import them or start fresh.
+      </p>
+      <div class="button-group">
+        <button class="btn btn-primary me-2">Import</button>
+        <button class="btn btn-secondary">Skip</button>
+      </div>
+    </div>
   </div>
 </template>
 
