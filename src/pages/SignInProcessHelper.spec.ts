@@ -38,7 +38,6 @@ describe('SignInProcessHelper', () => {
   })
 })
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
   const { communicationManager } = await setUpListener()
 
@@ -52,7 +51,8 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
   const wrapper = mount(SignInProcessHelper, {
     props: {
       port: clientPort,
-      localSettingsExistenceService: new SettingsExistenceService(localStorage)
+      localSettingsExistenceService: SettingsExistenceService.createFake({ storage: localStorage }),
+      importRecord
     }
   })
   await flushPromises()
