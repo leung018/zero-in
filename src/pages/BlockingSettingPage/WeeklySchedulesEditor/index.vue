@@ -3,15 +3,15 @@ import LoadingWrapper from '@/pages/components/LoadingWrapper.vue'
 import type { ClientPort } from '@/service_workers/listener'
 import { computed, ref } from 'vue'
 import { Weekday, WeeklySchedule } from '../../../domain/schedules'
-import type { WeeklyScheduleStorageService } from '../../../domain/schedules/storage'
+import type { WeeklySchedulesStorageService } from '../../../domain/schedules/storage'
 import { Time } from '../../../domain/time'
 import { WorkRequestName } from '../../../service_workers/request'
 import TimeInput from '../../components/TimeInput.vue'
 import SchedulesList from './SchedulesList.vue'
 import WeekdaysSelector from './WeekdaysSelector.vue'
 
-const { weeklyScheduleStorageService, port } = defineProps<{
-  weeklyScheduleStorageService: WeeklyScheduleStorageService
+const { weeklySchedulesStorageService, port } = defineProps<{
+  weeklySchedulesStorageService: WeeklySchedulesStorageService
   port: ClientPort
 }>()
 
@@ -29,7 +29,7 @@ const errorMessage = ref<string | null>(null)
 const showSaved = computed(() => weeklySchedules.value.length > 0)
 
 const isLoading = ref(true)
-weeklyScheduleStorageService.getAll().then((schedules) => {
+weeklySchedulesStorageService.getAll().then((schedules) => {
   weeklySchedules.value = schedules
   isLoading.value = false
 })
@@ -65,7 +65,7 @@ const handleRemove = async (indexToRemove: number) => {
 }
 
 const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
-  await weeklyScheduleStorageService.saveAll(newWeeklySchedules)
+  await weeklySchedulesStorageService.saveAll(newWeeklySchedules)
   port.send({ name: WorkRequestName.TOGGLE_BROWSING_RULES })
   weeklySchedules.value = newWeeklySchedules
 }

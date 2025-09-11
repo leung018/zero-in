@@ -7,15 +7,15 @@ import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import { WeeklyScheduleSchemas } from './schema'
 import { deserializeWeeklySchedules, serializeWeeklySchedules } from './serialize'
 
-export class WeeklyScheduleStorageService {
+export class WeeklySchedulesStorageService {
   static readonly STORAGE_KEY: StorageKey = 'weeklySchedules'
 
-  static createFake(): WeeklyScheduleStorageService {
-    return new WeeklyScheduleStorageService(LocalStorageWrapper.createFake())
+  static createFake(): WeeklySchedulesStorageService {
+    return new WeeklySchedulesStorageService(LocalStorageWrapper.createFake())
   }
 
-  static create(): WeeklyScheduleStorageService {
-    return new WeeklyScheduleStorageService(AdaptiveStorageProvider.create())
+  static create(): WeeklySchedulesStorageService {
+    return new WeeklySchedulesStorageService(AdaptiveStorageProvider.create())
   }
 
   private storageManager: StorageManager<WeeklyScheduleSchemas[2]>
@@ -23,7 +23,7 @@ export class WeeklyScheduleStorageService {
   constructor(storage: StorageInterface) {
     this.storageManager = new StorageManager({
       storage,
-      key: WeeklyScheduleStorageService.STORAGE_KEY,
+      key: WeeklySchedulesStorageService.STORAGE_KEY,
       currentDataVersion: 2,
       migrators: [
         {

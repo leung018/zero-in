@@ -729,7 +729,7 @@ async function startListener({
   })
 
   await context.blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
-  await context.weeklyScheduleStorageService.saveAll(weeklySchedules)
+  await context.weeklySchedulesStorageService.saveAll(weeklySchedules)
   await context.browsingRulesStorageService.save(browsingRules)
   await context.notificationSettingStorageService.save(notificationSetting)
 

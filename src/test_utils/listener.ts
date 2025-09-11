@@ -2,7 +2,7 @@ import config from '../config'
 import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
-import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
+import { WeeklySchedulesStorageService } from '../domain/schedules/storage'
 import { FocusTimer } from '../domain/timer'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
@@ -24,7 +24,7 @@ export async function setUpListener({
     notificationSettingStorageService: NotificationSettingStorageService.createFake(),
     blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.createFake(),
     browsingControlService: new FakeBrowsingControlService(),
-    weeklyScheduleStorageService: WeeklyScheduleStorageService.createFake(),
+    weeklySchedulesStorageService: WeeklySchedulesStorageService.createFake(),
     browsingRulesStorageService: BrowsingRulesStorageService.createFake(),
     desktopNotificationService: DesktopNotificationService.createFake(),
     reminderTabService: new FakeActionService(),

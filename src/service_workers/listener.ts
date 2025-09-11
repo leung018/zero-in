@@ -3,7 +3,7 @@ import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer
 import { BrowsingControlTogglingService } from '../domain/browsing_control_toggling'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
-import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
+import { WeeklySchedulesStorageService } from '../domain/schedules/storage'
 import { FocusTimer } from '../domain/timer'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { newFocusSessionRecord } from '../domain/timer/record'
@@ -42,7 +42,7 @@ type ListenerParams = {
   closeTabsService: ActionService
   browsingControlService: BrowsingControlService
   browsingRulesStorageService: BrowsingRulesStorageService
-  weeklyScheduleStorageService: WeeklyScheduleStorageService
+  weeklySchedulesStorageService: WeeklySchedulesStorageService
   blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
   focusSessionRecordHouseKeepDays: number
   timer: FocusTimer
@@ -64,7 +64,7 @@ export class BackgroundListener {
       closeTabsService: new BrowserCloseTabsService(config.getReminderPageUrl()),
       browsingControlService: new BrowserBrowsingControlService(),
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
-      weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
+      weeklySchedulesStorageService: WeeklySchedulesStorageService.create(),
       blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.create(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
       timer: FocusTimer.create()
@@ -103,7 +103,7 @@ export class BackgroundListener {
     this.browsingControlTogglingService = new BrowsingControlTogglingService({
       browsingControlService: params.browsingControlService,
       browsingRulesStorageService: params.browsingRulesStorageService,
-      weeklyScheduleStorageService: params.weeklyScheduleStorageService,
+      weeklySchedulesStorageService: params.weeklySchedulesStorageService,
       blockingTimerIntegrationStorageService: params.blockingTimerIntegrationStorageService,
       focusSessionRecordStorageService: params.focusSessionRecordStorageService,
       timerInfoGetter: {

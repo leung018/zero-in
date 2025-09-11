@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { BlockingTimerIntegrationStorageService } from '@/domain/blocking_timer_integration/storage'
 import { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
-import { WeeklyScheduleStorageService } from '@/domain/schedules/storage'
+import { WeeklySchedulesStorageService } from '@/domain/schedules/storage'
 import { UpdateSuccessNotifierService } from '@/infra/browser/update_success_notifier'
 import type { ClientPort } from '@/service_workers/listener'
 import ContentTemplate from '../components/ContentTemplate.vue'
@@ -36,7 +36,7 @@ const { port } = defineProps<{
     <BCard class="mb-4 shadow-sm">
       <h2 class="mb-3 mt-1">Schedules</h2>
       <WeeklySchedulesEditor
-        :weekly-schedule-storage-service="WeeklyScheduleStorageService.create()"
+        :weekly-schedule-storage-service="WeeklySchedulesStorageService.create()"
         :port="port"
       />
     </BCard>
