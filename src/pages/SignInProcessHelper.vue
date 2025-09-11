@@ -2,8 +2,9 @@
 import { ref } from 'vue'
 import { SettingsExistenceService } from '../domain/import/settings_existence'
 
-const { localSettingsExistenceService } = defineProps<{
+const { localSettingsExistenceService, remoteSettingsExistenceService } = defineProps<{
   localSettingsExistenceService: SettingsExistenceService
+  remoteSettingsExistenceService: SettingsExistenceService
 }>()
 
 enum ProcessState {
@@ -17,7 +18,9 @@ defineExpose({
   triggerHelperProcess: async () => {
     const hasLocalData = await localSettingsExistenceService.hasSettings()
     if (hasLocalData) {
-      state.value = ProcessState.IMPORT_PROMPT
+      if (!(await remoteSettingsExistenceService.hasSettings())) {
+        state.value = ProcessState.IMPORT_PROMPT
+      }
     }
   }
 })

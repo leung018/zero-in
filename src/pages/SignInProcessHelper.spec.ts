@@ -37,25 +37,46 @@ describe('SignInProcessHelper', () => {
     assertInitialSignInMessageIsRendered(wrapper)
   })
 
-  it('should not render import prompt if user skipped import and remote has data', async () => {
-    const { wrapper, triggerHelperProcess, remoteNotificationSettingStorageService } =
+  it('should not render import prompt if user skipped import and remote has data, even local has data', async () => {
+    const {
+      wrapper,
+      triggerHelperProcess,
+      remoteNotificationSettingStorageService,
+      localNotificationSettingStorageService
+    } = await mountPage({
+      importRecord: {
+        status: ImportStatus.USER_SKIPPED
+      }
+    })
+    await remoteNotificationSettingStorageService.save(newTestNotificationSetting())
+    await localNotificationSettingStorageService.save(newTestNotificationSetting())
+
+    await triggerHelperProcess()
+
+    assertInitialSignInMessageIsRendered(wrapper)
+  })
+
+  it('should render import prompt if user skipped import and remote has no data and local has data', async () => {
+    const { wrapper, triggerHelperProcess, localNotificationSettingStorageService } =
       await mountPage({
         importRecord: {
           status: ImportStatus.USER_SKIPPED
         }
       })
-    await remoteNotificationSettingStorageService.save(newTestNotificationSetting())
+
+    await localNotificationSettingStorageService.save(newTestNotificationSetting())
 
     await triggerHelperProcess()
 
-    assertInitialSignInMessageIsRendered(wrapper)
+    assertImportPromptIsRendered(wrapper)
   })
 })
 
 async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
   const {
     communicationManager,
-    notificationSettingStorageService: remoteNotificationSettingStorageService
+    notificationSettingStorageService: remoteNotificationSettingStorageService,
+    storage: remoteStorage
   } = await setUpListener()
 
   const localStorage = LocalStorageWrapper.createFake()
@@ -67,6 +88,9 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
     props: {
       port: clientPort,
       localSettingsExistenceService: SettingsExistenceService.createFake({ storage: localStorage }),
+      remoteSettingsExistenceService: SettingsExistenceService.createFake({
+        storage: remoteStorage
+      }),
       importRecord
     }
   })
