@@ -1,9 +1,9 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { newTestBlockingTimerIntegration } from '../domain/blocking_timer_integration'
-import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
 import { newEmptyImportRecord } from '../domain/import/record/index'
 import { SettingsExistenceService } from '../domain/import/settings_existence'
+import { newTestNotificationSetting } from '../domain/notification_setting'
+import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 import { LocalStorageWrapper } from '../infra/storage/local_storage'
 import { setUpListener } from '../test_utils/listener'
 import { dataTestSelector } from '../test_utils/selector'
@@ -16,11 +16,11 @@ describe('SignInProcessHelper', () => {
   })
 
   it('should render import prompt if importRecord is empty and local has data', async () => {
-    const { wrapper, localBlockingTimerIntegrationStorageService, triggerHelperProcess } =
+    const { wrapper, localNotificationSettingStorageService, triggerHelperProcess } =
       await mountPage({
         importRecord: newEmptyImportRecord()
       })
-    await localBlockingTimerIntegrationStorageService.save(newTestBlockingTimerIntegration())
+    await localNotificationSettingStorageService.save(newTestNotificationSetting())
 
     await triggerHelperProcess()
 
@@ -42,9 +42,7 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
   const { communicationManager } = await setUpListener()
 
   const localStorage = LocalStorageWrapper.createFake()
-  const localBlockingTimerIntegrationStorageService = new BlockingTimerIntegrationStorageService(
-    localStorage
-  )
+  const localNotificationSettingStorageService = new NotificationSettingStorageService(localStorage)
 
   const clientPort = communicationManager.clientConnect()
 
@@ -59,7 +57,7 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
   return {
     wrapper,
     clientPort,
-    localBlockingTimerIntegrationStorageService,
+    localNotificationSettingStorageService,
     triggerHelperProcess: async () => {
       wrapper.vm.triggerHelperProcess()
       await flushPromises()
