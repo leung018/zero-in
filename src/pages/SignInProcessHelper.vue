@@ -21,21 +21,29 @@ enum ProcessState {
 
 const state = ref(ProcessState.INITIAL)
 
+async function shouldShowImportPrompt() {
+  const importRecord = await importRecordStorageService.get()
+  if (importRecord.status === ImportStatus.IMPORTED) {
+    return false
+  }
+
+  const hasLocalData = await localSettingsExistenceService.hasSettings()
+  if (!hasLocalData) {
+    return false
+  }
+
+  const hasRemoteData = await remoteSettingsExistenceService.hasSettings()
+  if (!hasRemoteData || importRecord.status === ImportStatus.NOT_STARTED) {
+    return true
+  }
+
+  return false
+}
+
 defineExpose({
   triggerHelperProcess: async () => {
-    const importRecord = await importRecordStorageService.get()
-    if (importRecord.status === ImportStatus.IMPORTED) {
-      return
-    }
-
-    const hasLocalData = await localSettingsExistenceService.hasSettings()
-    if (hasLocalData) {
-      if (
-        importRecord.status === ImportStatus.NOT_STARTED ||
-        !(await remoteSettingsExistenceService.hasSettings())
-      ) {
-        state.value = ProcessState.IMPORT_PROMPT
-      }
+    if (await shouldShowImportPrompt()) {
+      state.value = ProcessState.IMPORT_PROMPT
     }
   }
 })
