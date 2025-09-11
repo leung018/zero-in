@@ -104,6 +104,34 @@ describe('SignInProcessHelper', () => {
 
     assertImportPromptIsRendered(wrapper)
   })
+
+  it('should import data to remote if user clicked import on import prompt', async () => {
+    const {
+      wrapper,
+      triggerHelperProcess,
+      remoteNotificationSettingStorageService,
+      localNotificationSettingStorageService
+    } = await mountPage({
+      importRecord: newEmptyImportRecord()
+    })
+
+    await localNotificationSettingStorageService.save(
+      newTestNotificationSetting({
+        // All false must not be default notification setting.
+        // So if import not success, setting in remote won't match below.
+        desktopNotification: false,
+        reminderTab: false,
+        sound: false
+      })
+    )
+    await triggerHelperProcess()
+
+    await wrapper.find(dataTestSelector('import-button')).trigger('click')
+
+    await expect(remoteNotificationSettingStorageService.get()).resolves.toEqual(
+      await localNotificationSettingStorageService.get()
+    )
+  })
 })
 
 async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {

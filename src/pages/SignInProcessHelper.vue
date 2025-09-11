@@ -66,7 +66,7 @@ defineExpose({
         Importing will replace any existing account settings. You can import them or start fresh.
       </p>
       <div class="button-group">
-        <button class="btn btn-primary me-2">Import</button>
+        <button class="btn btn-primary me-2" data-test="import-button">Import</button>
         <button class="btn btn-secondary">Skip</button>
       </div>
     </div>
