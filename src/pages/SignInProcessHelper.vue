@@ -30,7 +30,10 @@ defineExpose({
 
     const hasLocalData = await localSettingsExistenceService.hasSettings()
     if (hasLocalData) {
-      if (!(await remoteSettingsExistenceService.hasSettings())) {
+      if (
+        importRecord.status === ImportStatus.NOT_STARTED ||
+        !(await remoteSettingsExistenceService.hasSettings())
+      ) {
         state.value = ProcessState.IMPORT_PROMPT
       }
     }

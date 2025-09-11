@@ -72,6 +72,24 @@ describe('SignInProcessHelper', () => {
     assertInitialSignInMessageIsRendered(wrapper)
   })
 
+  it('should render import prompt if import record is empty and both remote, local has data', async () => {
+    const {
+      wrapper,
+      triggerHelperProcess,
+      remoteNotificationSettingStorageService,
+      localNotificationSettingStorageService
+    } = await mountPage({
+      importRecord: newEmptyImportRecord()
+    })
+
+    await remoteNotificationSettingStorageService.save(newTestNotificationSetting())
+    await localNotificationSettingStorageService.save(newTestNotificationSetting())
+
+    await triggerHelperProcess()
+
+    assertImportPromptIsRendered(wrapper)
+  })
+
   it('should render import prompt if user skipped import and remote has no data and local has data', async () => {
     const { wrapper, triggerHelperProcess, localNotificationSettingStorageService } =
       await mountPage({
