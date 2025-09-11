@@ -1,6 +1,7 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { ImportStatus, newEmptyImportRecord } from '../domain/import/record/index'
+import { ImportRecordStorageService } from '../domain/import/record/storage'
 import { SettingsExistenceService } from '../domain/import/settings_existence'
 import { newTestNotificationSetting } from '../domain/notification_setting'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
@@ -56,6 +57,21 @@ describe('SignInProcessHelper', () => {
     assertInitialSignInMessageIsRendered(wrapper)
   })
 
+  it('should not render import prompt if user imported, even local has data', async () => {
+    const { wrapper, triggerHelperProcess, localNotificationSettingStorageService } =
+      await mountPage({
+        importRecord: {
+          status: ImportStatus.IMPORTED
+        }
+      })
+
+    await localNotificationSettingStorageService.save(newTestNotificationSetting())
+
+    await triggerHelperProcess()
+
+    assertInitialSignInMessageIsRendered(wrapper)
+  })
+
   it('should render import prompt if user skipped import and remote has no data and local has data', async () => {
     const { wrapper, triggerHelperProcess, localNotificationSettingStorageService } =
       await mountPage({
@@ -82,6 +98,9 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
   const localStorage = LocalStorageWrapper.createFake()
   const localNotificationSettingStorageService = new NotificationSettingStorageService(localStorage)
 
+  const importRecordStorageService = ImportRecordStorageService.createFake()
+  await importRecordStorageService.save(importRecord)
+
   const clientPort = communicationManager.clientConnect()
 
   const wrapper = mount(SignInProcessHelper, {
@@ -91,7 +110,7 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
       remoteSettingsExistenceService: SettingsExistenceService.createFake({
         storage: remoteStorage
       }),
-      importRecord
+      importRecordStorageService
     }
   })
   await flushPromises()

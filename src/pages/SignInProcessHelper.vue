@@ -1,10 +1,17 @@
 <script setup lang="ts">
+import { ImportStatus } from '@/domain/import/record'
 import { ref } from 'vue'
+import { ImportRecordStorageService } from '../domain/import/record/storage'
 import { SettingsExistenceService } from '../domain/import/settings_existence'
 
-const { localSettingsExistenceService, remoteSettingsExistenceService } = defineProps<{
+const {
+  localSettingsExistenceService,
+  remoteSettingsExistenceService,
+  importRecordStorageService
+} = defineProps<{
   localSettingsExistenceService: SettingsExistenceService
   remoteSettingsExistenceService: SettingsExistenceService
+  importRecordStorageService: ImportRecordStorageService
 }>()
 
 enum ProcessState {
@@ -16,6 +23,11 @@ const state = ref(ProcessState.INITIAL)
 
 defineExpose({
   triggerHelperProcess: async () => {
+    const importRecord = await importRecordStorageService.get()
+    if (importRecord.status === ImportStatus.IMPORTED) {
+      return
+    }
+
     const hasLocalData = await localSettingsExistenceService.hasSettings()
     if (hasLocalData) {
       if (!(await remoteSettingsExistenceService.hasSettings())) {

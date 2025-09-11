@@ -13,4 +13,4 @@ export enum SettingsStorageKey {
   TimerState = 'timerState'
 }
 
-export type StorageKey = `${SettingsStorageKey}` | 'featureFlags'
+export type StorageKey = `${SettingsStorageKey}` | 'featureFlags' | 'importRecord'
