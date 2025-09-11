@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SettingsExistenceService } from '@/domain/import/settings_existence'
 import { FeatureFlag, FeatureFlagsService } from '@/infra/feature_flags'
 import { FirebaseServices } from '../../infra/firebase/services'
 import SignInProcessHelper from '../../pages/SignInProcessHelper.vue'
@@ -93,7 +94,10 @@ featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
     </button>
   </div>
 
-  <SignInProcessHelper v-show="showProcessHelper" />
+  <SignInProcessHelper
+    v-show="showProcessHelper"
+    :localSettingsExistenceService="SettingsExistenceService.createLocal()"
+  />
 </template>
 
 <style scoped>

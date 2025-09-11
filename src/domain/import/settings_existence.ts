@@ -5,9 +5,16 @@ export class SettingsExistenceService {
   private storage: StorageInterface
   private interestedStorageKeys: string[]
 
+  static createLocal() {
+    return new SettingsExistenceService({
+      storage: LocalStorageWrapper.create(),
+      interestedStorageKeys: Object.values(SettingsStorageKey)
+    })
+  }
+
   static createFake({
     storage = LocalStorageWrapper.createFake(),
-    interestedStorageKeys = Object.values(SettingsStorageKey)
+    interestedStorageKeys = Object.values(SettingsStorageKey) as string[]
   } = {}) {
     return new SettingsExistenceService({
       storage,

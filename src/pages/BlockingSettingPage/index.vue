@@ -36,7 +36,7 @@ const { port } = defineProps<{
     <BCard class="mb-4 shadow-sm">
       <h2 class="mb-3 mt-1">Schedules</h2>
       <WeeklySchedulesEditor
-        :weekly-schedule-storage-service="WeeklySchedulesStorageService.create()"
+        :weekly-schedules-storage-service="WeeklySchedulesStorageService.create()"
         :port="port"
       />
     </BCard>
