@@ -30,7 +30,7 @@ export class TimerStateStorageService {
   private unsubscribes: (() => void)[] = []
 
   constructor(storage: ObservableStorage | StorageInterface) {
-    this.storageManager = new StorageManager({
+    this.storageManager = StorageManager.create({
       storage,
       key: TimerStateStorageService.STORAGE_KEY,
       currentDataVersion: 5,

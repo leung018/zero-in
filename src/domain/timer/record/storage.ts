@@ -21,7 +21,7 @@ export class FocusSessionRecordStorageService {
   private storageManager: StorageManager<FocusSessionRecordsSchemas[2]>
 
   constructor(storage: StorageInterface) {
-    this.storageManager = new StorageManager({
+    this.storageManager = StorageManager.create({
       storage,
       key: FocusSessionRecordStorageService.STORAGE_KEY,
       currentDataVersion: 2,

@@ -1,5 +1,6 @@
 import { FakeObservableStorage } from './fake'
 import { ObservableStorage, StorageInterface, Unsubscribe } from './interface'
+import { StorageKey } from './key'
 
 interface Schema {
   dataVersion: number
@@ -20,6 +21,25 @@ export class StorageManager<S> {
   private key: string
   private migrators: Migrators
   private currentDataVersion?: number
+
+  static create<S>({
+    storage,
+    key,
+    migrators,
+    currentDataVersion
+  }: {
+    storage: ObservableStorage | StorageInterface
+    key: StorageKey
+    migrators: Migrators
+    currentDataVersion?: number
+  }): StorageManager<S> {
+    return new StorageManager({
+      storage,
+      key,
+      migrators,
+      currentDataVersion
+    })
+  }
 
   static createFake<S>({
     storage = FakeObservableStorage.create(),

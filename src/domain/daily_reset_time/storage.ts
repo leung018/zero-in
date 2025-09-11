@@ -20,7 +20,7 @@ export class DailyResetTimeStorageService {
   private storageManager: StorageManager<SerializedTime>
 
   constructor(storage: StorageInterface) {
-    this.storageManager = new StorageManager({
+    this.storageManager = StorageManager.create({
       storage,
       key: DailyResetTimeStorageService.STORAGE_KEY,
       migrators: []

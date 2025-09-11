@@ -32,7 +32,7 @@ export class TimerConfigStorageService {
   private unsubscribes: (() => void)[] = []
 
   constructor(storage: ObservableStorage | StorageInterface) {
-    this.storageManager = new StorageManager({
+    this.storageManager = StorageManager.create({
       storage,
       key: TimerConfigStorageService.STORAGE_KEY,
       migrators: []

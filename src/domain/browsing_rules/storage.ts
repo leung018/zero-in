@@ -24,7 +24,7 @@ export class BrowsingRulesStorageService {
   private storageManager: StorageManager<SerializedBrowsingRules>
 
   constructor(storage: StorageInterface) {
-    this.storageManager = new StorageManager({
+    this.storageManager = StorageManager.create({
       storage,
       key: BrowsingRulesStorageService.STORAGE_KEY,
       migrators: []

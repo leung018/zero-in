@@ -22,7 +22,7 @@ export class BlockingTimerIntegrationStorageService {
   private storageManager: StorageManager<BlockingTimerIntegrationSchemas[1]>
 
   constructor(storage: StorageInterface) {
-    this.storageManager = new StorageManager({
+    this.storageManager = StorageManager.create({
       storage,
       key: BlockingTimerIntegrationStorageService.STORAGE_KEY,
       currentDataVersion: 1,
