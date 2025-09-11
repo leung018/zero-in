@@ -7,7 +7,7 @@ export enum SettingsStorageKey {
   WeeklySchedules = 'weeklySchedules',
   FocusSessionRecords = 'focusSessionRecords',
   BrowsingRules = 'browsingRules',
-  DailyCutoffTime = 'dailyCutoffTime',
+  DailyResetTime = 'dailyCutoffTime',
   NotificationSetting = 'notificationSetting',
   BlockingTimerIntegration = 'blockingTimerIntegration',
   TimerState = 'timerState'
