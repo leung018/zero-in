@@ -12,6 +12,7 @@ import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeBrowsingControlService } from '../infra/browsing_control'
 import { FakeCommunicationManager } from '../infra/communication'
 import { DesktopNotificationService } from '../infra/desktop_notification'
+import { LocalStorageWrapper } from '../infra/storage/local_storage'
 import { BackgroundListener } from '../service_workers/listener'
 
 export async function setUpListener({
@@ -20,12 +21,14 @@ export async function setUpListener({
   timerStateStorageService = TimerStateStorageService.createFake(),
   timerConfigStorageService = TimerConfigStorageService.createFake()
 } = {}) {
+  const storage = LocalStorageWrapper.createFake()
+
   const params = {
-    notificationSettingStorageService: NotificationSettingStorageService.createFake(),
-    blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.createFake(),
+    notificationSettingStorageService: new NotificationSettingStorageService(storage),
+    blockingTimerIntegrationStorageService: new BlockingTimerIntegrationStorageService(storage),
     browsingControlService: new FakeBrowsingControlService(),
-    weeklySchedulesStorageService: WeeklySchedulesStorageService.createFake(),
-    browsingRulesStorageService: BrowsingRulesStorageService.createFake(),
+    weeklySchedulesStorageService: new WeeklySchedulesStorageService(storage),
+    browsingRulesStorageService: new BrowsingRulesStorageService(storage),
     desktopNotificationService: DesktopNotificationService.createFake(),
     reminderTabService: new FakeActionService(),
     soundService: new FakeActionService(),
@@ -34,7 +37,7 @@ export async function setUpListener({
     timerStateStorageService,
     timerConfigStorageService,
     closeTabsService: new FakeActionService(),
-    focusSessionRecordStorageService: FocusSessionRecordStorageService.createFake()
+    focusSessionRecordStorageService: new FocusSessionRecordStorageService(storage)
   }
 
   await params.timerConfigStorageService.save(timerConfig)
@@ -47,6 +50,7 @@ export async function setUpListener({
   })
 
   return {
+    storage,
     timer,
     listener,
     ...params
