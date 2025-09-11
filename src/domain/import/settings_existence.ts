@@ -1,26 +1,13 @@
 import { StorageInterface } from '../../infra/storage/interface'
+import { SettingsStorageKey } from '../../infra/storage/key'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
-import { BlockingTimerIntegrationStorageService } from '../blocking_timer_integration/storage'
-import { BrowsingRulesStorageService } from '../browsing_rules/storage'
-import { WeeklyScheduleStorageService } from '../schedules/storage'
-import { TimerConfigStorageService } from '../timer/config/storage'
-import { FocusSessionRecordStorageService } from '../timer/record/storage'
-
 export class SettingsExistenceService {
-  static INTERESTED_STORAGE_KEYS = [
-    BlockingTimerIntegrationStorageService.STORAGE_KEY,
-    TimerConfigStorageService.STORAGE_KEY,
-    WeeklyScheduleStorageService.STORAGE_KEY,
-    FocusSessionRecordStorageService.STORAGE_KEY,
-    BrowsingRulesStorageService.STORAGE_KEY
-  ]
-
   private storage: StorageInterface
   private interestedStorageKeys: string[]
 
   static createFake({
     storage = LocalStorageWrapper.createFake(),
-    interestedStorageKeys = SettingsExistenceService.INTERESTED_STORAGE_KEYS
+    interestedStorageKeys = Object.values(SettingsStorageKey)
   } = {}) {
     return new SettingsExistenceService({
       storage,
@@ -28,7 +15,7 @@ export class SettingsExistenceService {
     })
   }
 
-  constructor({
+  private constructor({
     storage,
     interestedStorageKeys
   }: {
