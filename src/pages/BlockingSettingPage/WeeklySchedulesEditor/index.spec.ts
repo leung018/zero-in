@@ -95,7 +95,7 @@ describe('WeeklySchedulesEditor', () => {
       }
     ])
 
-    expect(await weeklySchedulesStorageService.getAll()).toEqual([weeklySchedule])
+    expect(await weeklySchedulesStorageService.get()).toEqual([weeklySchedule])
 
     const extraWeeklySchedule = new WeeklySchedule({
       weekdaySet: new Set([Weekday.SAT]),
@@ -117,10 +117,7 @@ describe('WeeklySchedulesEditor', () => {
       }
     ])
 
-    expect(await weeklySchedulesStorageService.getAll()).toEqual([
-      weeklySchedule,
-      extraWeeklySchedule
-    ])
+    expect(await weeklySchedulesStorageService.get()).toEqual([weeklySchedule, extraWeeklySchedule])
   })
 
   it('should reset input values after adding weekly schedule', async () => {
@@ -148,7 +145,7 @@ describe('WeeklySchedulesEditor', () => {
       endTime: new Time(12, 0)
     })
 
-    expect(await weeklySchedulesStorageService.getAll()).toEqual([])
+    expect(await weeklySchedulesStorageService.get()).toEqual([])
     expect(wrapper.find(dataTestSelector('error-message')).text()).toContain(
       'Please select weekdays'
     )
@@ -169,7 +166,7 @@ describe('WeeklySchedulesEditor', () => {
     })
     await addWeeklySchedule(wrapper, weeklySchedule)
 
-    expect(await weeklySchedulesStorageService.getAll()).toEqual([weeklySchedule])
+    expect(await weeklySchedulesStorageService.get()).toEqual([weeklySchedule])
   })
 
   it('should display error message if start time is not before end time', async () => {
@@ -183,7 +180,7 @@ describe('WeeklySchedulesEditor', () => {
       endTime: new Time(9, 0)
     })
 
-    expect(await weeklySchedulesStorageService.getAll()).toEqual([])
+    expect(await weeklySchedulesStorageService.get()).toEqual([])
     expect(wrapper.find(dataTestSelector('error-message')).text()).toContain(
       'Start time must be before end time'
     )
@@ -238,7 +235,7 @@ describe('WeeklySchedulesEditor', () => {
         displayedTime: '10:00 - 12:00'
       }
     ])
-    expect(await weeklySchedulesStorageService.getAll()).toEqual([originalSchedule])
+    expect(await weeklySchedulesStorageService.get()).toEqual([originalSchedule])
   })
 
   it('should add or remove schedule affect the activated redirect', async () => {
@@ -292,7 +289,7 @@ async function mountWeeklySchedulesEditor({
     browsingControlService
   } = await setUpListener()
 
-  await weeklySchedulesStorageService.saveAll(weeklySchedules)
+  await weeklySchedulesStorageService.save(weeklySchedules)
   await browsingRulesStorageService.save(browsingRules)
 
   await listener.start()

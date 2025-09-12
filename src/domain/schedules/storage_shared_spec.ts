@@ -7,7 +7,7 @@ import { WeeklySchedulesStorageService } from './storage'
 export function runWeeklyScheduleStorageServiceTests(storage: StorageInterface) {
   it('should return empty array if no WeeklySchedules are saved', async () => {
     const service = new WeeklySchedulesStorageService(storage)
-    expect(await service.getAll()).toStrictEqual([])
+    expect(await service.get()).toStrictEqual([])
   })
 
   it('should save and get WeeklySchedules', async () => {
@@ -26,7 +26,7 @@ export function runWeeklyScheduleStorageServiceTests(storage: StorageInterface) 
       })
     ]
 
-    await service.saveAll(weeklySchedules)
-    expect(await service.getAll()).toStrictEqual(weeklySchedules)
+    await service.save(weeklySchedules)
+    expect(await service.get()).toStrictEqual(weeklySchedules)
   })
 }

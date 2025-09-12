@@ -121,7 +121,7 @@ async function mountTimerIntegrationSetting({
 
   await blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
   await browsingRulesStorageService.save(browsingRules)
-  await weeklySchedulesStorageService.saveAll(weeklySchedules)
+  await weeklySchedulesStorageService.save(weeklySchedules)
   await timerStateStorageService.save(timerState)
 
   await listener.start()

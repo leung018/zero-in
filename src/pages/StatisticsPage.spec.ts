@@ -119,7 +119,7 @@ async function mountStatisticsPage({
     timerConfig
   })
 
-  await focusSessionRecordStorageService.saveAll(focusSessionRecords)
+  await focusSessionRecordStorageService.save(focusSessionRecords)
 
   await listener.start()
 

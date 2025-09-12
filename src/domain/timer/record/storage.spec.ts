@@ -26,7 +26,7 @@ describe('FocusSessionRecordStorageService', () => {
       { startedAt: undefined, completedAt: new Date('2023-01-01T00:00:00Z') },
       { startedAt: undefined, completedAt: new Date('2023-01-02T00:00:00Z') }
     ]
-    const actual = await service.getAll()
+    const actual = await service.get()
     expect(actual).toEqual(expected)
   })
 
@@ -43,7 +43,7 @@ describe('FocusSessionRecordStorageService', () => {
         startedAt: new Date('2021-01-01T00:00:00Z')
       })
     ]
-    await service.saveAll(focusSessionRecords)
-    expect(await service.getAll()).toStrictEqual([record])
+    await service.save(focusSessionRecords)
+    expect(await service.get()).toStrictEqual([record])
   })
 })

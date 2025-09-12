@@ -56,7 +56,7 @@ describe('BackgroundListener', () => {
     vi.advanceTimersByTime(3000)
     await flushPromises()
 
-    const focusSessionRecords = await focusSessionRecordStorageService.getAll()
+    const focusSessionRecords = await focusSessionRecordStorageService.get()
     expect(focusSessionRecords.length).toBe(1)
     expect(focusSessionRecords[0].completedAt).toEqual(
       getDateAfter({ from: startTime, duration: new Duration({ seconds: 3 }) })
@@ -68,7 +68,7 @@ describe('BackgroundListener', () => {
     vi.advanceTimersByTime(1000)
     await flushPromises()
 
-    expect((await focusSessionRecordStorageService.getAll()).length).toBe(1)
+    expect((await focusSessionRecordStorageService.get()).length).toBe(1)
   })
 
   it('should house keep the focus session records', async () => {
@@ -82,14 +82,14 @@ describe('BackgroundListener', () => {
     const oldDate = new Date()
     oldDate.setDate(oldDate.getDate() - 10)
     const oldRecord: FocusSessionRecord = { completedAt: oldDate }
-    await focusSessionRecordStorageService.saveAll([oldRecord])
+    await focusSessionRecordStorageService.save([oldRecord])
 
     // Focus
     await clientPort.send({ name: WorkRequestName.START_TIMER })
     vi.advanceTimersByTime(3000)
     await flushPromises()
 
-    const newRecords = await focusSessionRecordStorageService.getAll()
+    const newRecords = await focusSessionRecordStorageService.get()
     expect(newRecords.length).toBe(1)
     expect(newRecords[0].completedAt > oldDate).toBe(true)
   })
@@ -729,7 +729,7 @@ async function startListener({
   })
 
   await context.blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
-  await context.weeklySchedulesStorageService.saveAll(weeklySchedules)
+  await context.weeklySchedulesStorageService.save(weeklySchedules)
   await context.browsingRulesStorageService.save(browsingRules)
   await context.notificationSettingStorageService.save(notificationSetting)
 

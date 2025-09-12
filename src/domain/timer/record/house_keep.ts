@@ -13,8 +13,8 @@ export class FocusSessionRecordHousekeeper {
     const oldestDate = new Date(now)
     oldestDate.setDate(oldestDate.getDate() - houseKeepDays)
 
-    const records = await focusSessionRecordStorageService.getAll()
+    const records = await focusSessionRecordStorageService.get()
     const newRecords = records.filter((record) => record.completedAt >= oldestDate)
-    await focusSessionRecordStorageService.saveAll(newRecords)
+    await focusSessionRecordStorageService.save(newRecords)
   }
 }

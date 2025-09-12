@@ -34,7 +34,7 @@ describe('WeeklyScheduleStorageService', () => {
         targetFocusSessions: null
       })
     ]
-    const result = await service.getAll()
+    const result = await service.get()
     expect(result).toStrictEqual(expected)
   })
 })

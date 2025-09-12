@@ -1,6 +1,6 @@
 import type { BlockingTimerIntegration } from '.'
 import config from '../../config'
-import { StorageInterface } from '../../infra/storage/interface'
+import { StorageInterface, StorageService } from '../../infra/storage/interface'
 import { StorageKey } from '../../infra/storage/key'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { StorageManager } from '../../infra/storage/manager'
@@ -8,7 +8,9 @@ import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import { BlockingTimerIntegrationSchemas } from './schema'
 import { deserializeBlockingTimerIntegration, serializeBlockingTimerIntegration } from './serialize'
 
-export class BlockingTimerIntegrationStorageService {
+export class BlockingTimerIntegrationStorageService
+  implements StorageService<BlockingTimerIntegration>
+{
   static readonly STORAGE_KEY: StorageKey = 'blockingTimerIntegration'
 
   static create(): BlockingTimerIntegrationStorageService {

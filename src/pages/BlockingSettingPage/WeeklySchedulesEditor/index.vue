@@ -29,7 +29,7 @@ const errorMessage = ref<string | null>(null)
 const showSaved = computed(() => weeklySchedules.value.length > 0)
 
 const isLoading = ref(true)
-weeklySchedulesStorageService.getAll().then((schedules) => {
+weeklySchedulesStorageService.get().then((schedules) => {
   weeklySchedules.value = schedules
   isLoading.value = false
 })
@@ -65,7 +65,7 @@ const handleRemove = async (indexToRemove: number) => {
 }
 
 const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
-  await weeklySchedulesStorageService.saveAll(newWeeklySchedules)
+  await weeklySchedulesStorageService.save(newWeeklySchedules)
   port.send({ name: WorkRequestName.TOGGLE_BROWSING_RULES })
   weeklySchedules.value = newWeeklySchedules
 }

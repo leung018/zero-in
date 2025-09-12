@@ -90,7 +90,7 @@ async function mountPage({
   const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
   await dailyResetTimeStorageService.save(dailyCutOffTime)
 
-  await focusSessionRecordStorageService.saveAll(focusSessionRecords)
+  await focusSessionRecordStorageService.save(focusSessionRecords)
 
   await listener.start()
 

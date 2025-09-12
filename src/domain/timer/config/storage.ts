@@ -1,7 +1,11 @@
 import type { TimerConfig } from '.'
 import config from '../../../config'
 import { FakeObservableStorage } from '../../../infra/storage/fake'
-import { ObservableStorage, StorageInterface } from '../../../infra/storage/interface'
+import {
+  ObservableStorage,
+  StorageInterface,
+  StorageService
+} from '../../../infra/storage/interface'
 import { StorageKey } from '../../../infra/storage/key'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage'
 import { StorageManager } from '../../../infra/storage/manager'
@@ -12,7 +16,7 @@ import {
   type SerializedTimerConfig
 } from './serialize'
 
-export class TimerConfigStorageService {
+export class TimerConfigStorageService implements StorageService<TimerConfig> {
   static readonly STORAGE_KEY: StorageKey = 'timerConfig'
 
   static create() {

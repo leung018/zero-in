@@ -42,7 +42,7 @@ dailyResetTimeStorageService.get().then(async (time) => {
 })
 
 async function setStats(dailyResetTime: Time) {
-  const records = await focusSessionRecordStorageService.getAll()
+  const records = await focusSessionRecordStorageService.get()
   let inclusiveEndDate = new Date()
   const inclusiveStartDate = getMostRecentDate(dailyResetTime, inclusiveEndDate)
   for (let i = 0; i < stats.value.length; i++) {

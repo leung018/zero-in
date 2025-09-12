@@ -258,9 +258,9 @@ export class BackgroundListener {
 
   private async updateFocusSessionRecords(lastSessionStartTime: Date) {
     return this.focusSessionRecordStorageService
-      .getAll()
+      .get()
       .then((records) => {
-        this.focusSessionRecordStorageService.saveAll([
+        this.focusSessionRecordStorageService.save([
           ...records,
           newFocusSessionRecord({
             startedAt: lastSessionStartTime

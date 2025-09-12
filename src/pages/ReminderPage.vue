@@ -65,7 +65,7 @@ async function getTotalFocusSessionsAfter(dailyResetTime: Time): Promise<number>
 
   const totalFocusSessions = (
     await focusSessionRecordStorageService
-      .getAll()
+      .get()
       .then((records) => records.filter((record) => record.completedAt >= startDate))
   ).length
   return totalFocusSessions

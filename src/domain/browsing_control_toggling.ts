@@ -95,7 +95,7 @@ export class BrowsingControlTogglingService {
       return false
     }
 
-    const schedules = await this.weeklySchedulesStorageService.getAll()
+    const schedules = await this.weeklySchedulesStorageService.get()
 
     if (schedules.length === 0) {
       return true
@@ -110,7 +110,7 @@ export class BrowsingControlTogglingService {
     const now = new Date()
     const schedules = inputSchedules.filter((schedule) => schedule.isContain(now))
 
-    const focusSessionRecords = await this.focusSessionRecordStorageService.getAll()
+    const focusSessionRecords = await this.focusSessionRecordStorageService.get()
 
     for (const schedule of schedules) {
       if (!schedule.targetFocusSessions) {

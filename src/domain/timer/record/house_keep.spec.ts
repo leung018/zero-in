@@ -11,7 +11,7 @@ describe('FocusSessionRecordHousekeeper', () => {
       newFocusSessionRecord({ completedAt: new Date('2025-02-03T10:59:59') }),
       newFocusSessionRecord({ completedAt: new Date('2025-02-04T11:00:00') })
     ]
-    await focusSessionRecordStorageService.saveAll(originalRecords)
+    await focusSessionRecordStorageService.save(originalRecords)
 
     await FocusSessionRecordHousekeeper.houseKeep({
       now: new Date('2025-02-14T11:00:00'),
@@ -19,7 +19,7 @@ describe('FocusSessionRecordHousekeeper', () => {
       houseKeepDays: 10
     })
 
-    const newRecords = await focusSessionRecordStorageService.getAll()
+    const newRecords = await focusSessionRecordStorageService.get()
     expect(newRecords).toEqual([originalRecords[1]])
   })
 })

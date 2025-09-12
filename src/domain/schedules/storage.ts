@@ -1,5 +1,5 @@
 import { WeeklySchedule } from '.'
-import { StorageInterface } from '../../infra/storage/interface'
+import { StorageInterface, StorageService } from '../../infra/storage/interface'
 import { StorageKey } from '../../infra/storage/key'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { StorageManager } from '../../infra/storage/manager'
@@ -7,7 +7,7 @@ import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import { WeeklyScheduleSchemas } from './schema'
 import { deserializeWeeklySchedules, serializeWeeklySchedules } from './serialize'
 
-export class WeeklySchedulesStorageService {
+export class WeeklySchedulesStorageService implements StorageService<WeeklySchedule[]> {
   static readonly STORAGE_KEY: StorageKey = 'weeklySchedules'
 
   static createFake(): WeeklySchedulesStorageService {
@@ -57,11 +57,11 @@ export class WeeklySchedulesStorageService {
     })
   }
 
-  async saveAll(weeklySchedules: WeeklySchedule[]): Promise<void> {
+  async save(weeklySchedules: WeeklySchedule[]): Promise<void> {
     return this.storageManager.set(serializeWeeklySchedules(weeklySchedules))
   }
 
-  async getAll(): Promise<WeeklySchedule[]> {
+  async get(): Promise<WeeklySchedule[]> {
     const result = await this.storageManager.get()
     if (result == null) {
       return []

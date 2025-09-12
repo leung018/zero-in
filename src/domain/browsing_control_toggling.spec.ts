@@ -306,7 +306,7 @@ async function getBrowsingRulesAfterToggling({
   await browsingRulesStorageService.save(browsingRules)
 
   const weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake()
-  await weeklySchedulesStorageService.saveAll(schedules)
+  await weeklySchedulesStorageService.save(schedules)
 
   const browsingControlService = new FakeBrowsingControlService()
 
@@ -318,7 +318,7 @@ async function getBrowsingRulesAfterToggling({
   await blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
 
   const focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
-  await focusSessionRecordStorageService.saveAll(focusSessionRecords)
+  await focusSessionRecordStorageService.save(focusSessionRecords)
 
   const browsingControlTogglingService = BrowsingControlTogglingService.createFake({
     browsingRulesStorageService,
