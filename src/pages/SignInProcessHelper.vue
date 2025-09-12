@@ -55,11 +55,14 @@ defineExpose({
   }
 })
 
+const emit = defineEmits(['onHelperProcessComplete'])
+
 const onClickImport = async () => {
   await importService.importFromLocalToRemote()
   await recordImportStatus(ImportStatus.IMPORTED)
 
   state.value = ProcessState.IMPORT_SUCCESS
+  emit('onHelperProcessComplete')
 }
 
 const onClickSkip = async () => {

@@ -132,6 +132,9 @@ describe('SignInProcessHelper', () => {
 
     // Display the import success message
     assertImportSuccessMessageIsRendered(wrapper)
+
+    // Verify the onHelperProcessComplete event is emitted
+    await expect(wrapper.emitted('onHelperProcessComplete')).toBeTruthy()
   })
 
   it('should skip import if user clicked skip on import prompt', async () => {
