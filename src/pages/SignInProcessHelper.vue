@@ -56,12 +56,16 @@ defineExpose({
 
 const onClickImport = async () => {
   await importService.importFromLocalToRemote()
-  await recordImportCompletion()
+  await recordImportStatus(ImportStatus.IMPORTED)
 }
 
-async function recordImportCompletion() {
+const onClickSkip = async () => {
+  await recordImportStatus(ImportStatus.USER_SKIPPED)
+}
+
+async function recordImportStatus(status: ImportStatus) {
   const newImportRecord: ImportRecord = {
-    status: ImportStatus.IMPORTED
+    status
   }
   await importRecordStorageService.save(newImportRecord)
 }
@@ -87,7 +91,7 @@ async function recordImportCompletion() {
         <button class="btn btn-primary me-2" data-test="import-button" @click="onClickImport">
           Import
         </button>
-        <button class="btn btn-secondary">Skip</button>
+        <button class="btn btn-secondary" data-test="skip-button" @click="onClickSkip">Skip</button>
       </div>
     </div>
   </div>

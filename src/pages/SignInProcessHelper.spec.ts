@@ -2,7 +2,7 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { ImportStatus, newEmptyImportRecord } from '../domain/import/record/index'
 import { ImportRecordStorageService } from '../domain/import/record/storage'
-import { newTestNotificationSetting } from '../domain/notification_setting'
+import { newTestNotificationSetting, NotificationSetting } from '../domain/notification_setting'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 import { LocalStorageWrapper } from '../infra/storage/local_storage'
 import { setUpListener } from '../test_utils/listener'
@@ -115,26 +115,43 @@ describe('SignInProcessHelper', () => {
       importRecord: newEmptyImportRecord()
     })
 
-    await localNotificationSettingStorageService.save(
-      newTestNotificationSetting({
-        // All false must not be default notification setting.
-        // So if import not success, setting in remote won't match below.
-        desktopNotification: false,
-        reminderTab: false,
-        sound: false
-      })
-    )
+    await localNotificationSettingStorageService.save(nonDefaultNotificationSetting)
     await triggerHelperProcess()
 
     await wrapper.find(dataTestSelector('import-button')).trigger('click')
     await flushPromises()
 
     await expect(remoteNotificationSettingStorageService.get()).resolves.toEqual(
-      await localNotificationSettingStorageService.get()
+      nonDefaultNotificationSetting
     )
 
     const record = await importRecordStorageService.get()
     expect(record.status).toBe(ImportStatus.IMPORTED)
+  })
+
+  it('should skip import if user clicked skip on import prompt', async () => {
+    const {
+      wrapper,
+      triggerHelperProcess,
+      remoteNotificationSettingStorageService,
+      localNotificationSettingStorageService,
+      importRecordStorageService
+    } = await mountPage({
+      importRecord: newEmptyImportRecord()
+    })
+
+    await localNotificationSettingStorageService.save(nonDefaultNotificationSetting)
+    await triggerHelperProcess()
+
+    await wrapper.find(dataTestSelector('skip-button')).trigger('click')
+    await flushPromises()
+
+    const record = await importRecordStorageService.get()
+    expect(record.status).toBe(ImportStatus.USER_SKIPPED)
+
+    await expect(remoteNotificationSettingStorageService.get()).resolves.not.toEqual(
+      nonDefaultNotificationSetting
+    )
   })
 })
 
@@ -197,3 +214,11 @@ function assertRendered(
     componentsRendered.importPrompt
   )
 }
+
+const nonDefaultNotificationSetting: Readonly<NotificationSetting> = newTestNotificationSetting({
+  // All false must not be default notification setting.
+  // So if import not success, setting in remote won't match below.
+  desktopNotification: false,
+  reminderTab: false,
+  sound: false
+})
