@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ImportStatus } from '@/domain/import/record'
+import { ImportRecord, ImportStatus } from '@/domain/import/record'
 import { ref } from 'vue'
 import { ImportRecordStorageService } from '../domain/import/record/storage'
 import { ImportService } from '../domain/import/service'
@@ -56,6 +56,14 @@ defineExpose({
 
 const onClickImport = async () => {
   await importService.importFromLocalToRemote()
+  await recordImportCompletion()
+}
+
+async function recordImportCompletion() {
+  const newImportRecord: ImportRecord = {
+    status: ImportStatus.IMPORTED
+  }
+  await importRecordStorageService.save(newImportRecord)
 }
 </script>
 

@@ -109,7 +109,8 @@ describe('SignInProcessHelper', () => {
       wrapper,
       triggerHelperProcess,
       remoteNotificationSettingStorageService,
-      localNotificationSettingStorageService
+      localNotificationSettingStorageService,
+      importRecordStorageService
     } = await mountPage({
       importRecord: newEmptyImportRecord()
     })
@@ -131,6 +132,9 @@ describe('SignInProcessHelper', () => {
     await expect(remoteNotificationSettingStorageService.get()).resolves.toEqual(
       await localNotificationSettingStorageService.get()
     )
+
+    const record = await importRecordStorageService.get()
+    expect(record.status).toBe(ImportStatus.IMPORTED)
   })
 })
 
@@ -163,6 +167,7 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
     clientPort,
     localNotificationSettingStorageService,
     remoteNotificationSettingStorageService,
+    importRecordStorageService,
     triggerHelperProcess: async () => {
       wrapper.vm.triggerHelperProcess()
       await flushPromises()
