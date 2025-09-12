@@ -14,24 +14,24 @@ type StorageServicesMap = {
   [key in SettingsStorageKey]: StorageService<any>
 }
 
-const newStorageServicesMap = (storage: StorageInterface): StorageServicesMap => {
-  return {
-    [SettingsStorageKey.BlockingTimerIntegration]: new BlockingTimerIntegrationStorageService(
-      storage
-    ),
-    [SettingsStorageKey.BrowsingRules]: new BrowsingRulesStorageService(storage),
-    [SettingsStorageKey.NotificationSetting]: new NotificationSettingStorageService(storage),
-    [SettingsStorageKey.WeeklySchedules]: new WeeklySchedulesStorageService(storage),
-    [SettingsStorageKey.DailyResetTime]: new DailyResetTimeStorageService(storage),
-    [SettingsStorageKey.TimerState]: new TimerStateStorageService(storage),
-    [SettingsStorageKey.TimerConfig]: new TimerConfigStorageService(storage),
-    [SettingsStorageKey.FocusSessionRecords]: new FocusSessionRecordsStorageService(storage)
-  }
-}
-
 export class ImportService {
   private localStorageServicesMap: StorageServicesMap
   private remoteStorageServicesMap: StorageServicesMap
+
+  static newSettingStorageServicesMap = (storage: StorageInterface): StorageServicesMap => {
+    return {
+      [SettingsStorageKey.BlockingTimerIntegration]: new BlockingTimerIntegrationStorageService(
+        storage
+      ),
+      [SettingsStorageKey.BrowsingRules]: new BrowsingRulesStorageService(storage),
+      [SettingsStorageKey.NotificationSetting]: new NotificationSettingStorageService(storage),
+      [SettingsStorageKey.WeeklySchedules]: new WeeklySchedulesStorageService(storage),
+      [SettingsStorageKey.DailyResetTime]: new DailyResetTimeStorageService(storage),
+      [SettingsStorageKey.TimerState]: new TimerStateStorageService(storage),
+      [SettingsStorageKey.TimerConfig]: new TimerConfigStorageService(storage),
+      [SettingsStorageKey.FocusSessionRecords]: new FocusSessionRecordsStorageService(storage)
+    }
+  }
 
   static createFake({
     localStorage = LocalStorageWrapper.createFake(),
@@ -50,8 +50,8 @@ export class ImportService {
     localStorage: StorageInterface
     remoteStorage: StorageInterface
   }) {
-    this.localStorageServicesMap = newStorageServicesMap(localStorage)
-    this.remoteStorageServicesMap = newStorageServicesMap(remoteStorage)
+    this.localStorageServicesMap = ImportService.newSettingStorageServicesMap(localStorage)
+    this.remoteStorageServicesMap = ImportService.newSettingStorageServicesMap(remoteStorage)
   }
 
   async importFromLocalToRemote() {
