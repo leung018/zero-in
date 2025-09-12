@@ -1,4 +1,4 @@
-import { StorageInterface } from '../../infra/storage/interface'
+import { StorageInterface, StorageService } from '../../infra/storage/interface'
 import { SettingsStorageKey } from '../../infra/storage/key'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { BlockingTimerIntegrationStorageService } from '../blocking_timer_integration/storage'
@@ -11,7 +11,7 @@ import { FocusSessionRecordsStorageService } from '../timer/record/storage'
 import { TimerStateStorageService } from '../timer/state/storage'
 
 type StorageServicesMap = {
-  [key in SettingsStorageKey]: any
+  [key in SettingsStorageKey]: StorageService<any>
 }
 
 const newStorageServicesMap = (storage: StorageInterface): StorageServicesMap => {
@@ -55,16 +55,24 @@ export class ImportService {
   }
 
   async importFromLocalToRemote() {
-    // TODO: support other storageServices
+    const importPromises = []
 
-    const remoteNotificationSettingStorageService =
-      this.remoteStorageServicesMap[SettingsStorageKey.NotificationSetting]
+    for (const storageKey of Object.values(SettingsStorageKey)) {
+      const remoteStorageService = this.remoteStorageServicesMap[storageKey]
+      const localStorageService = this.localStorageServicesMap[storageKey]
+      importPromises.push(this.import(localStorageService, remoteStorageService))
+    }
 
-    const localNotificationSettingStorageService =
-      this.localStorageServicesMap[SettingsStorageKey.NotificationSetting]
+    await Promise.all(importPromises)
+  }
 
-    await remoteNotificationSettingStorageService.save(
-      await localNotificationSettingStorageService.get()
-    )
+  private async import<T>(
+    sourceStorageService: StorageService<T>,
+    targetStorageService: StorageService<T>
+  ) {
+    const result = await sourceStorageService.get()
+    if (result) {
+      await targetStorageService.save(result)
+    }
   }
 }
