@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ImportStatus } from '@/domain/import/record'
+import { ImportService } from '@/domain/import/service'
 import { ref } from 'vue'
 import { ImportRecordStorageService } from '../domain/import/record/storage'
 import { SettingsExistenceService } from '../domain/import/settings_existence'
@@ -7,11 +8,13 @@ import { SettingsExistenceService } from '../domain/import/settings_existence'
 const {
   localSettingsExistenceService,
   remoteSettingsExistenceService,
-  importRecordStorageService
+  importRecordStorageService,
+  importService
 } = defineProps<{
   localSettingsExistenceService: SettingsExistenceService
   remoteSettingsExistenceService: SettingsExistenceService
   importRecordStorageService: ImportRecordStorageService
+  importService: ImportService
 }>()
 
 enum ProcessState {
@@ -47,6 +50,10 @@ defineExpose({
     }
   }
 })
+
+const onClickImport = async () => {
+  await importService.importFromLocalToRemote()
+}
 </script>
 
 <template>
@@ -66,7 +73,9 @@ defineExpose({
         Importing will replace any existing account settings. You can import them or start fresh.
       </p>
       <div class="button-group">
-        <button class="btn btn-primary me-2" data-test="import-button">Import</button>
+        <button class="btn btn-primary me-2" data-test="import-button" @click="onClickImport">
+          Import
+        </button>
         <button class="btn btn-secondary">Skip</button>
       </div>
     </div>

@@ -2,6 +2,7 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { ImportStatus, newEmptyImportRecord } from '../domain/import/record/index'
 import { ImportRecordStorageService } from '../domain/import/record/storage'
+import { ImportService } from '../domain/import/service'
 import { SettingsExistenceService } from '../domain/import/settings_existence'
 import { newTestNotificationSetting } from '../domain/notification_setting'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
@@ -127,6 +128,7 @@ describe('SignInProcessHelper', () => {
     await triggerHelperProcess()
 
     await wrapper.find(dataTestSelector('import-button')).trigger('click')
+    await flushPromises()
 
     await expect(remoteNotificationSettingStorageService.get()).resolves.toEqual(
       await localNotificationSettingStorageService.get()
@@ -156,7 +158,11 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
       remoteSettingsExistenceService: SettingsExistenceService.createFake({
         storage: remoteStorage
       }),
-      importRecordStorageService
+      importRecordStorageService,
+      importService: ImportService.createFake({
+        localStorage,
+        remoteStorage
+      })
     }
   })
   await flushPromises()

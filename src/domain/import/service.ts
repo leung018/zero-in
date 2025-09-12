@@ -1,5 +1,6 @@
 import { StorageInterface } from '../../infra/storage/interface'
 import { SettingsStorageKey } from '../../infra/storage/key'
+import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { BlockingTimerIntegrationStorageService } from '../blocking_timer_integration/storage'
 import { BrowsingRulesStorageService } from '../browsing_rules/storage'
 import { DailyResetTimeStorageService } from '../daily_reset_time/storage'
@@ -32,7 +33,17 @@ export class ImportService {
   private localStorageServicesMap: StorageServicesMap
   private remoteStorageServicesMap: StorageServicesMap
 
-  constructor({
+  static createFake({
+    localStorage = LocalStorageWrapper.createFake(),
+    remoteStorage = LocalStorageWrapper.createFake()
+  }) {
+    return new ImportService({
+      localStorage,
+      remoteStorage
+    })
+  }
+
+  private constructor({
     localStorage,
     remoteStorage
   }: {
@@ -41,5 +52,19 @@ export class ImportService {
   }) {
     this.localStorageServicesMap = newStorageServicesMap(localStorage)
     this.remoteStorageServicesMap = newStorageServicesMap(remoteStorage)
+  }
+
+  async importFromLocalToRemote() {
+    // TODO: support other storageServices
+
+    const remoteNotificationSettingStorageService =
+      this.remoteStorageServicesMap[SettingsStorageKey.NotificationSetting]
+
+    const localNotificationSettingStorageService =
+      this.localStorageServicesMap[SettingsStorageKey.NotificationSetting]
+
+    await remoteNotificationSettingStorageService.save(
+      await localNotificationSettingStorageService.get()
+    )
   }
 }
