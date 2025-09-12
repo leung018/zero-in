@@ -9,6 +9,7 @@ describe('ImportService', () => {
   it('should newSettingStorageServicesMap initialize the services correctly', async () => {
     const services = ImportService.newSettingStorageServicesMap(LocalStorageWrapper.createFake())
 
+    // Verify each service is mapped to its correct storage key
     for (const [key, service] of Object.entries(services)) {
       expect(key).toBe((service.constructor as any).STORAGE_KEY)
     }
