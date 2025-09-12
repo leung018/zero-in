@@ -120,22 +120,22 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
 
     <StatisticsPage
       v-show="currentPath === PATH.STATISTICS"
-      :daily-reset-time-storage-service="DailyResetTimeStorageService.create()"
-      :update-success-notifier-service="updateSuccessNotifierService"
-      :focus-session-record-storage-service="FocusSessionRecordsStorageService.create()"
+      :dailyResetTimeStorageService="DailyResetTimeStorageService.create()"
+      :updateSuccessNotifierService="updateSuccessNotifierService"
+      :focusSessionRecordsStorageService="FocusSessionRecordsStorageService.create()"
     />
 
     <TimerSettingPage
       v-show="currentPath === PATH.TIMER_SETTING"
-      :timer-config-storage-service="TimerConfigStorageService.create()"
+      :timerConfigStorageService="TimerConfigStorageService.create()"
       :port="port"
-      :update-success-notifier-service="updateSuccessNotifierService"
+      :updateSuccessNotifierService="updateSuccessNotifierService"
     />
 
     <NotificationPage
       v-show="currentPath === PATH.NOTIFICATION"
-      :notification-setting-storage-service="NotificationSettingStorageService.create()"
-      :update-success-notifier-service="updateSuccessNotifierService"
+      :notificationSettingStorageService="NotificationSettingStorageService.create()"
+      :updateSuccessNotifierService="updateSuccessNotifierService"
       :port="port"
     />
 
