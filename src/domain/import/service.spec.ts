@@ -15,12 +15,12 @@ describe('ImportService', () => {
   })
 
   it('should importFromLocalToRemote can import the local setting storage to remote setting storage', async () => {
-    /* This test don't need to check all the storage type and assume the implementation of ImportService
-     * will handle the import process according to newSettingStorageServicesMap.
+    /* This test doesn't need to check all storage types, assuming ImportService
+     * correctly handles the import process via newSettingStorageServicesMap.
      *
-     * So if previous test verify the newSettingStorageServicesMap initialize the services correctly,
-     * then if this test verify one of the storageService can be imported correctly,
-     * then this test will verify the import process for other storageService can work correctly too. */
+     * Since the previous test verifies that newSettingStorageServicesMap initializes
+     * services correctly, testing one storage service import validates that all
+     * storage service imports work correctly. */
 
     const localStorage = LocalStorageWrapper.createFake()
     const remoteStorage = LocalStorageWrapper.createFake()
