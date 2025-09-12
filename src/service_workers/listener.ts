@@ -3,12 +3,12 @@ import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer
 import { BrowsingControlTogglingService } from '../domain/browsing_control_toggling'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
-import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
+import { WeeklySchedulesStorageService } from '../domain/schedules/storage'
 import { FocusTimer } from '../domain/timer'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { newFocusSessionRecord } from '../domain/timer/record'
 import { FocusSessionRecordHousekeeper } from '../domain/timer/record/house_keep'
-import { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
+import { FocusSessionRecordsStorageService } from '../domain/timer/record/storage'
 import { TimerStage } from '../domain/timer/stage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
 import type { TimerExternalState } from '../domain/timer/state/external'
@@ -38,11 +38,11 @@ type ListenerParams = {
   badgeDisplayService: BadgeDisplayService
   timerStateStorageService: TimerStateStorageService
   timerConfigStorageService: TimerConfigStorageService
-  focusSessionRecordStorageService: FocusSessionRecordStorageService
+  focusSessionRecordsStorageService: FocusSessionRecordsStorageService
   closeTabsService: ActionService
   browsingControlService: BrowsingControlService
   browsingRulesStorageService: BrowsingRulesStorageService
-  weeklyScheduleStorageService: WeeklyScheduleStorageService
+  weeklySchedulesStorageService: WeeklySchedulesStorageService
   blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
   focusSessionRecordHouseKeepDays: number
   timer: FocusTimer
@@ -60,11 +60,11 @@ export class BackgroundListener {
       badgeDisplayService: new BrowserBadgeDisplayService(),
       timerStateStorageService: TimerStateStorageService.create(),
       timerConfigStorageService: TimerConfigStorageService.create(),
-      focusSessionRecordStorageService: FocusSessionRecordStorageService.create(),
+      focusSessionRecordsStorageService: FocusSessionRecordsStorageService.create(),
       closeTabsService: new BrowserCloseTabsService(config.getReminderPageUrl()),
       browsingControlService: new BrowserBrowsingControlService(),
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
-      weeklyScheduleStorageService: WeeklyScheduleStorageService.create(),
+      weeklySchedulesStorageService: WeeklySchedulesStorageService.create(),
       blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.create(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
       timer: FocusTimer.create()
@@ -87,7 +87,7 @@ export class BackgroundListener {
 
   private timerStateSubscriptionManager = new SubscriptionManager<TimerExternalState>()
 
-  private focusSessionRecordStorageService: FocusSessionRecordStorageService
+  private focusSessionRecordsStorageService: FocusSessionRecordsStorageService
   private focusSessionRecordHouseKeepDays: number
 
   private notificationServicesContainer: ActionService
@@ -103,9 +103,9 @@ export class BackgroundListener {
     this.browsingControlTogglingService = new BrowsingControlTogglingService({
       browsingControlService: params.browsingControlService,
       browsingRulesStorageService: params.browsingRulesStorageService,
-      weeklyScheduleStorageService: params.weeklyScheduleStorageService,
+      weeklySchedulesStorageService: params.weeklySchedulesStorageService,
       blockingTimerIntegrationStorageService: params.blockingTimerIntegrationStorageService,
-      focusSessionRecordStorageService: params.focusSessionRecordStorageService,
+      focusSessionRecordsStorageService: params.focusSessionRecordsStorageService,
       timerInfoGetter: {
         getTimerInfo: () => {
           const timerState = params.timer.getExternalState()
@@ -136,7 +136,7 @@ export class BackgroundListener {
     this.timerStateStorageService = params.timerStateStorageService
     this.timerConfigStorageService = params.timerConfigStorageService
     this.closeTabsService = params.closeTabsService
-    this.focusSessionRecordStorageService = params.focusSessionRecordStorageService
+    this.focusSessionRecordsStorageService = params.focusSessionRecordsStorageService
     this.focusSessionRecordHouseKeepDays = params.focusSessionRecordHouseKeepDays
 
     this.timer = params.timer
@@ -257,10 +257,10 @@ export class BackgroundListener {
   }
 
   private async updateFocusSessionRecords(lastSessionStartTime: Date) {
-    return this.focusSessionRecordStorageService
-      .getAll()
+    return this.focusSessionRecordsStorageService
+      .get()
       .then((records) => {
-        this.focusSessionRecordStorageService.saveAll([
+        this.focusSessionRecordsStorageService.save([
           ...records,
           newFocusSessionRecord({
             startedAt: lastSessionStartTime
@@ -269,7 +269,7 @@ export class BackgroundListener {
       })
       .then(() => {
         FocusSessionRecordHousekeeper.houseKeep({
-          focusSessionRecordStorageService: this.focusSessionRecordStorageService,
+          focusSessionRecordsStorageService: this.focusSessionRecordsStorageService,
           houseKeepDays: this.focusSessionRecordHouseKeepDays
         })
       })

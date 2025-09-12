@@ -1,5 +1,6 @@
 import { BrowsingRules } from '.'
-import { StorageInterface } from '../../infra/storage/interface'
+import { StorageInterface, StorageService } from '../../infra/storage/interface'
+import { StorageKey } from '../../infra/storage/key'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { StorageManager } from '../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../infra/storage/provider'
@@ -9,8 +10,8 @@ import {
   type SerializedBrowsingRules
 } from './serialize'
 
-export class BrowsingRulesStorageService {
-  static readonly STORAGE_KEY = 'browsingRules'
+export class BrowsingRulesStorageService implements StorageService<BrowsingRules> {
+  static readonly STORAGE_KEY: StorageKey = 'browsingRules'
 
   static createFake(): BrowsingRulesStorageService {
     return new BrowsingRulesStorageService(LocalStorageWrapper.createFake())
@@ -23,7 +24,7 @@ export class BrowsingRulesStorageService {
   private storageManager: StorageManager<SerializedBrowsingRules>
 
   constructor(storage: StorageInterface) {
-    this.storageManager = new StorageManager({
+    this.storageManager = StorageManager.create({
       storage,
       key: BrowsingRulesStorageService.STORAGE_KEY,
       migrators: []

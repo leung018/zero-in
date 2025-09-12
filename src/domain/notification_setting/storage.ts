@@ -1,13 +1,14 @@
 import type { NotificationSetting } from '.'
 import config from '../../config'
-import { StorageInterface } from '../../infra/storage/interface'
+import { StorageInterface, StorageService } from '../../infra/storage/interface'
+import { StorageKey } from '../../infra/storage/key'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { StorageManager } from '../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import type { SerializedNotificationSetting } from './serialize'
 
-export class NotificationSettingStorageService {
-  static readonly STORAGE_KEY = 'notificationSetting'
+export class NotificationSettingStorageService implements StorageService<NotificationSetting> {
+  static readonly STORAGE_KEY: StorageKey = 'notificationSetting'
 
   static create() {
     return new NotificationSettingStorageService(AdaptiveStorageProvider.create())
@@ -20,7 +21,7 @@ export class NotificationSettingStorageService {
   private storageManager: StorageManager<SerializedNotificationSetting>
 
   constructor(storage: StorageInterface) {
-    this.storageManager = new StorageManager({
+    this.storageManager = StorageManager.create({
       storage,
       key: NotificationSettingStorageService.STORAGE_KEY,
       migrators: []

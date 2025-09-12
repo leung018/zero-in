@@ -4,7 +4,7 @@ import { getMostRecentDate } from '@/utils/date'
 import { ref } from 'vue'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { Time } from '../domain/time'
-import type { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
+import type { FocusSessionRecordsStorageService } from '../domain/timer/record/storage'
 import ContentTemplate from './components/ContentTemplate.vue'
 import LoadingWrapper from './components/LoadingWrapper.vue'
 import TimeInput from './components/TimeInput.vue'
@@ -14,11 +14,11 @@ type Stat = { day: string; completedFocusSessions: number }
 const {
   dailyResetTimeStorageService,
   updateSuccessNotifierService,
-  focusSessionRecordStorageService
+  focusSessionRecordsStorageService
 } = defineProps<{
   dailyResetTimeStorageService: DailyResetTimeStorageService
   updateSuccessNotifierService: UpdateSuccessNotifierService
-  focusSessionRecordStorageService: FocusSessionRecordStorageService
+  focusSessionRecordsStorageService: FocusSessionRecordsStorageService
 }>()
 
 const dailyResetTime = ref<Time>(new Time(0, 0))
@@ -42,7 +42,7 @@ dailyResetTimeStorageService.get().then(async (time) => {
 })
 
 async function setStats(dailyResetTime: Time) {
-  const records = await focusSessionRecordStorageService.getAll()
+  const records = await focusSessionRecordsStorageService.get()
   let inclusiveEndDate = new Date()
   const inclusiveStartDate = getMostRecentDate(dailyResetTime, inclusiveEndDate)
   for (let i = 0; i < stats.value.length; i++) {

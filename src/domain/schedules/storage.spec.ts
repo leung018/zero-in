@@ -3,7 +3,7 @@ import { Weekday, WeeklySchedule } from '.'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { Time } from '../time'
 import { WeeklyScheduleSchemas } from './schema'
-import { WeeklyScheduleStorageService } from './storage'
+import { WeeklySchedulesStorageService } from './storage'
 import { runWeeklyScheduleStorageServiceTests } from './storage_shared_spec'
 
 describe('WeeklyScheduleStorageService', () => {
@@ -23,9 +23,9 @@ describe('WeeklyScheduleStorageService', () => {
         endTime: { hour: 12, minute: 12 }
       }
     ]
-    storage.set(WeeklyScheduleStorageService.STORAGE_KEY, data)
+    storage.set(WeeklySchedulesStorageService.STORAGE_KEY, data)
 
-    const service = new WeeklyScheduleStorageService(storage)
+    const service = new WeeklySchedulesStorageService(storage)
     const expected: WeeklySchedule[] = [
       new WeeklySchedule({
         weekdaySet: new Set([Weekday.SUN, Weekday.MON]),
@@ -34,7 +34,7 @@ describe('WeeklyScheduleStorageService', () => {
         targetFocusSessions: null
       })
     ]
-    const result = await service.getAll()
+    const result = await service.get()
     expect(result).toStrictEqual(expected)
   })
 })

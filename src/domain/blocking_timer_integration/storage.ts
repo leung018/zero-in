@@ -1,14 +1,17 @@
 import type { BlockingTimerIntegration } from '.'
 import config from '../../config'
-import { StorageInterface } from '../../infra/storage/interface'
+import { StorageInterface, StorageService } from '../../infra/storage/interface'
+import { StorageKey } from '../../infra/storage/key'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { StorageManager } from '../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import { BlockingTimerIntegrationSchemas } from './schema'
 import { deserializeBlockingTimerIntegration, serializeBlockingTimerIntegration } from './serialize'
 
-export class BlockingTimerIntegrationStorageService {
-  static readonly STORAGE_KEY = 'blockingTimerIntegration'
+export class BlockingTimerIntegrationStorageService
+  implements StorageService<BlockingTimerIntegration>
+{
+  static readonly STORAGE_KEY: StorageKey = 'blockingTimerIntegration'
 
   static create(): BlockingTimerIntegrationStorageService {
     return new BlockingTimerIntegrationStorageService(AdaptiveStorageProvider.create())
@@ -21,7 +24,7 @@ export class BlockingTimerIntegrationStorageService {
   private storageManager: StorageManager<BlockingTimerIntegrationSchemas[1]>
 
   constructor(storage: StorageInterface) {
-    this.storageManager = new StorageManager({
+    this.storageManager = StorageManager.create({
       storage,
       key: BlockingTimerIntegrationStorageService.STORAGE_KEY,
       currentDataVersion: 1,

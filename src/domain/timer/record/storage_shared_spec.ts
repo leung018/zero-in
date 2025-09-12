@@ -1,16 +1,16 @@
 import { expect, it } from 'vitest'
 import { newFocusSessionRecord } from '.'
 import { StorageInterface } from '../../../infra/storage/interface'
-import { FocusSessionRecordStorageService } from './storage'
+import { FocusSessionRecordsStorageService } from './storage'
 
-export function runFocusSessionRecordStorageServiceTests(storage: StorageInterface) {
+export function runFocusSessionRecordsStorageServiceTests(storage: StorageInterface) {
   it('should return empty array if no FocusSessionRecords are saved', async () => {
-    const service = new FocusSessionRecordStorageService(storage)
-    expect(await service.getAll()).toStrictEqual([])
+    const service = new FocusSessionRecordsStorageService(storage)
+    expect(await service.get()).toStrictEqual([])
   })
 
   it('should save and get FocusSessionRecord', async () => {
-    const service = new FocusSessionRecordStorageService(storage)
+    const service = new FocusSessionRecordsStorageService(storage)
     const focusSessionRecords = [
       newFocusSessionRecord({
         completedAt: new Date('2021-01-01T00:10:00Z'),
@@ -20,7 +20,7 @@ export function runFocusSessionRecordStorageServiceTests(storage: StorageInterfa
       newFocusSessionRecord({ completedAt: new Date('2021-01-03'), startedAt: undefined })
     ]
 
-    await service.saveAll(focusSessionRecords)
-    expect(await service.getAll()).toStrictEqual(focusSessionRecords)
+    await service.save(focusSessionRecords)
+    expect(await service.get()).toStrictEqual(focusSessionRecords)
   })
 }

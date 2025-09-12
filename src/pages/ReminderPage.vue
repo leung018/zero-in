@@ -4,15 +4,15 @@ import { getMostRecentDate } from '@/utils/date'
 import { computed, ref } from 'vue'
 import type { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { Time } from '../domain/time'
-import type { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
+import type { FocusSessionRecordsStorageService } from '../domain/timer/record/storage'
 import { TimerStage } from '../domain/timer/stage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
 import { WorkRequestName } from '../service_workers/request'
 import { WorkResponseName } from '../service_workers/response'
 
-const { port, focusSessionRecordStorageService, dailyResetTimeStorageService } = defineProps<{
+const { port, focusSessionRecordsStorageService, dailyResetTimeStorageService } = defineProps<{
   port: ClientPort
-  focusSessionRecordStorageService: FocusSessionRecordStorageService
+  focusSessionRecordsStorageService: FocusSessionRecordsStorageService
   dailyResetTimeStorageService: DailyResetTimeStorageService
 }>()
 
@@ -64,8 +64,8 @@ async function getTotalFocusSessionsAfter(dailyResetTime: Time): Promise<number>
   const startDate = getMostRecentDate(dailyResetTime)
 
   const totalFocusSessions = (
-    await focusSessionRecordStorageService
-      .getAll()
+    await focusSessionRecordsStorageService
+      .get()
       .then((records) => records.filter((record) => record.completedAt >= startDate))
   ).length
   return totalFocusSessions

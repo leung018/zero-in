@@ -1,12 +1,13 @@
-import { StorageInterface } from '../../infra/storage/interface'
+import { StorageInterface, StorageService } from '../../infra/storage/interface'
+import { StorageKey } from '../../infra/storage/key'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { StorageManager } from '../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import { Time } from '../time'
 import { deserializeTime, serializeTime, type SerializedTime } from '../time/serialize'
 
-export class DailyResetTimeStorageService {
-  static readonly STORAGE_KEY = 'dailyCutoffTime'
+export class DailyResetTimeStorageService implements StorageService<Time> {
+  static readonly STORAGE_KEY: StorageKey = 'dailyCutoffTime'
 
   static create() {
     return new DailyResetTimeStorageService(AdaptiveStorageProvider.create())
@@ -19,7 +20,7 @@ export class DailyResetTimeStorageService {
   private storageManager: StorageManager<SerializedTime>
 
   constructor(storage: StorageInterface) {
-    this.storageManager = new StorageManager({
+    this.storageManager = StorageManager.create({
       storage,
       key: DailyResetTimeStorageService.STORAGE_KEY,
       migrators: []

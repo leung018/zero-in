@@ -1,7 +1,12 @@
 import type { TimerConfig } from '.'
 import config from '../../../config'
 import { FakeObservableStorage } from '../../../infra/storage/fake'
-import { ObservableStorage, StorageInterface } from '../../../infra/storage/interface'
+import {
+  ObservableStorage,
+  StorageInterface,
+  StorageService
+} from '../../../infra/storage/interface'
+import { StorageKey } from '../../../infra/storage/key'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage'
 import { StorageManager } from '../../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../../infra/storage/provider'
@@ -11,8 +16,8 @@ import {
   type SerializedTimerConfig
 } from './serialize'
 
-export class TimerConfigStorageService {
-  static readonly STORAGE_KEY = 'timerConfig'
+export class TimerConfigStorageService implements StorageService<TimerConfig> {
+  static readonly STORAGE_KEY: StorageKey = 'timerConfig'
 
   static create() {
     return new TimerConfigStorageService(AdaptiveStorageProvider.create())
@@ -31,7 +36,7 @@ export class TimerConfigStorageService {
   private unsubscribes: (() => void)[] = []
 
   constructor(storage: ObservableStorage | StorageInterface) {
-    this.storageManager = new StorageManager({
+    this.storageManager = StorageManager.create({
       storage,
       key: TimerConfigStorageService.STORAGE_KEY,
       migrators: []

@@ -1,20 +1,20 @@
-import { FocusSessionRecordStorageService } from './storage'
+import { FocusSessionRecordsStorageService } from './storage'
 
 export class FocusSessionRecordHousekeeper {
   static async houseKeep({
     now = new Date(),
-    focusSessionRecordStorageService,
+    focusSessionRecordsStorageService,
     houseKeepDays
   }: {
     now?: Date
-    focusSessionRecordStorageService: FocusSessionRecordStorageService
+    focusSessionRecordsStorageService: FocusSessionRecordsStorageService
     houseKeepDays: number
   }) {
     const oldestDate = new Date(now)
     oldestDate.setDate(oldestDate.getDate() - houseKeepDays)
 
-    const records = await focusSessionRecordStorageService.getAll()
+    const records = await focusSessionRecordsStorageService.get()
     const newRecords = records.filter((record) => record.completedAt >= oldestDate)
-    await focusSessionRecordStorageService.saveAll(newRecords)
+    await focusSessionRecordsStorageService.save(newRecords)
   }
 }

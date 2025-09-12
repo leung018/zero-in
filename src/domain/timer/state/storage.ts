@@ -1,5 +1,10 @@
 import { FakeObservableStorage } from '../../../infra/storage/fake'
-import { ObservableStorage, StorageInterface } from '../../../infra/storage/interface'
+import {
+  ObservableStorage,
+  StorageInterface,
+  StorageService
+} from '../../../infra/storage/interface'
+import { StorageKey } from '../../../infra/storage/key'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage'
 import { StorageManager } from '../../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../../infra/storage/provider'
@@ -9,8 +14,8 @@ import { TimerInternalState } from './internal'
 import { type TimerStateSchemas } from './schema'
 import { deserializeTimerState, serializeTimerState } from './serialize'
 
-export class TimerStateStorageService {
-  static readonly STORAGE_KEY = 'timerState'
+export class TimerStateStorageService implements StorageService<TimerInternalState> {
+  static readonly STORAGE_KEY: StorageKey = 'timerState'
 
   static create() {
     return new TimerStateStorageService(AdaptiveStorageProvider.create())
@@ -29,7 +34,7 @@ export class TimerStateStorageService {
   private unsubscribes: (() => void)[] = []
 
   constructor(storage: ObservableStorage | StorageInterface) {
-    this.storageManager = new StorageManager({
+    this.storageManager = StorageManager.create({
       storage,
       key: TimerStateStorageService.STORAGE_KEY,
       currentDataVersion: 5,

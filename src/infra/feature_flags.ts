@@ -1,4 +1,5 @@
 import { StorageInterface } from './storage/interface'
+import { StorageKey } from './storage/key'
 import { LocalStorageWrapper } from './storage/local_storage/'
 
 export enum FeatureFlag {
@@ -9,7 +10,7 @@ export enum FeatureFlag {
 type FeatureFlagParameter = FeatureFlag | `${FeatureFlag}`
 
 export class FeatureFlagsService {
-  static readonly STORAGE_KEY = 'featureFlags'
+  static readonly STORAGE_KEY: StorageKey = 'featureFlags'
   private storage: StorageInterface
 
   static createFake(): FeatureFlagsService {

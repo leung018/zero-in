@@ -8,3 +8,8 @@ export interface ObservableStorage extends StorageInterface {
 }
 
 export type Unsubscribe = () => void
+
+export interface StorageService<T> {
+  get(): Promise<T | null>
+  save(data: T): Promise<void>
+}

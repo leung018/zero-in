@@ -2,16 +2,17 @@ import config from '../config'
 import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
-import { WeeklyScheduleStorageService } from '../domain/schedules/storage'
+import { WeeklySchedulesStorageService } from '../domain/schedules/storage'
 import { FocusTimer } from '../domain/timer'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
-import { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
+import { FocusSessionRecordsStorageService } from '../domain/timer/record/storage'
 import { TimerStateStorageService } from '../domain/timer/state/storage'
 import { FakeActionService } from '../infra/action'
 import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeBrowsingControlService } from '../infra/browsing_control'
 import { FakeCommunicationManager } from '../infra/communication'
 import { DesktopNotificationService } from '../infra/desktop_notification'
+import { LocalStorageWrapper } from '../infra/storage/local_storage'
 import { BackgroundListener } from '../service_workers/listener'
 
 export async function setUpListener({
@@ -20,12 +21,14 @@ export async function setUpListener({
   timerStateStorageService = TimerStateStorageService.createFake(),
   timerConfigStorageService = TimerConfigStorageService.createFake()
 } = {}) {
+  const storage = LocalStorageWrapper.createFake()
+
   const params = {
-    notificationSettingStorageService: NotificationSettingStorageService.createFake(),
-    blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.createFake(),
+    notificationSettingStorageService: new NotificationSettingStorageService(storage),
+    blockingTimerIntegrationStorageService: new BlockingTimerIntegrationStorageService(storage),
     browsingControlService: new FakeBrowsingControlService(),
-    weeklyScheduleStorageService: WeeklyScheduleStorageService.createFake(),
-    browsingRulesStorageService: BrowsingRulesStorageService.createFake(),
+    weeklySchedulesStorageService: new WeeklySchedulesStorageService(storage),
+    browsingRulesStorageService: new BrowsingRulesStorageService(storage),
     desktopNotificationService: DesktopNotificationService.createFake(),
     reminderTabService: new FakeActionService(),
     soundService: new FakeActionService(),
@@ -34,7 +37,7 @@ export async function setUpListener({
     timerStateStorageService,
     timerConfigStorageService,
     closeTabsService: new FakeActionService(),
-    focusSessionRecordStorageService: FocusSessionRecordStorageService.createFake()
+    focusSessionRecordsStorageService: new FocusSessionRecordsStorageService(storage)
   }
 
   await params.timerConfigStorageService.save(timerConfig)
@@ -47,6 +50,7 @@ export async function setUpListener({
   })
 
   return {
+    storage,
     timer,
     listener,
     ...params

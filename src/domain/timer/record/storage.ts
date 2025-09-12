@@ -1,28 +1,29 @@
 import type { FocusSessionRecord } from '.'
-import { StorageInterface } from '../../../infra/storage/interface'
+import { StorageInterface, StorageService } from '../../../infra/storage/interface'
+import { StorageKey } from '../../../infra/storage/key'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage'
 import { StorageManager } from '../../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../../infra/storage/provider'
 import { FocusSessionRecordsSchemas } from './schema'
 import { deserializeFocusSessionRecords, serializeFocusSessionRecords } from './serialize'
 
-export class FocusSessionRecordStorageService {
-  static readonly STORAGE_KEY = 'focusSessionRecords'
+export class FocusSessionRecordsStorageService implements StorageService<FocusSessionRecord[]> {
+  static readonly STORAGE_KEY: StorageKey = 'focusSessionRecords'
 
   static create() {
-    return new FocusSessionRecordStorageService(AdaptiveStorageProvider.create())
+    return new FocusSessionRecordsStorageService(AdaptiveStorageProvider.create())
   }
 
   static createFake() {
-    return new FocusSessionRecordStorageService(LocalStorageWrapper.createFake())
+    return new FocusSessionRecordsStorageService(LocalStorageWrapper.createFake())
   }
 
   private storageManager: StorageManager<FocusSessionRecordsSchemas[2]>
 
   constructor(storage: StorageInterface) {
-    this.storageManager = new StorageManager({
+    this.storageManager = StorageManager.create({
       storage,
-      key: FocusSessionRecordStorageService.STORAGE_KEY,
+      key: FocusSessionRecordsStorageService.STORAGE_KEY,
       currentDataVersion: 2,
       migrators: [
         {
@@ -50,7 +51,7 @@ export class FocusSessionRecordStorageService {
     })
   }
 
-  async saveAll(records: FocusSessionRecord[]) {
+  async save(records: FocusSessionRecord[]) {
     return this.storageManager.set(serializeFocusSessionRecords(this.deduplicateRecords(records)))
   }
 
@@ -69,7 +70,7 @@ export class FocusSessionRecordStorageService {
     return result
   }
 
-  async getAll(): Promise<FocusSessionRecord[]> {
+  async get(): Promise<FocusSessionRecord[]> {
     const result = await this.storageManager.get()
     if (!result) {
       return []

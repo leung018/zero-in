@@ -1,14 +1,14 @@
 import { beforeEach, describe } from 'vitest'
 import { signInAndGetFirestoreStorage } from '../../../test_utils/firestore'
-import { FocusSessionRecordStorageService } from './storage'
-import { runFocusSessionRecordStorageServiceTests } from './storage_shared_spec'
+import { FocusSessionRecordsStorageService } from './storage'
+import { runFocusSessionRecordsStorageServiceTests } from './storage_shared_spec'
 
-describe('FocusSessionRecordStorageService', async () => {
+describe('FocusSessionRecordsStorageService', async () => {
   const firestoreStorage = await signInAndGetFirestoreStorage()
 
   beforeEach(async () => {
-    return firestoreStorage.delete(FocusSessionRecordStorageService.STORAGE_KEY)
+    return firestoreStorage.delete(FocusSessionRecordsStorageService.STORAGE_KEY)
   })
 
-  runFocusSessionRecordStorageServiceTests(firestoreStorage)
+  runFocusSessionRecordsStorageServiceTests(firestoreStorage)
 })

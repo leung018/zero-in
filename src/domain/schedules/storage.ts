@@ -1,28 +1,29 @@
 import { WeeklySchedule } from '.'
-import { StorageInterface } from '../../infra/storage/interface'
+import { StorageInterface, StorageService } from '../../infra/storage/interface'
+import { StorageKey } from '../../infra/storage/key'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { StorageManager } from '../../infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import { WeeklyScheduleSchemas } from './schema'
 import { deserializeWeeklySchedules, serializeWeeklySchedules } from './serialize'
 
-export class WeeklyScheduleStorageService {
-  static readonly STORAGE_KEY = 'weeklySchedules'
+export class WeeklySchedulesStorageService implements StorageService<WeeklySchedule[]> {
+  static readonly STORAGE_KEY: StorageKey = 'weeklySchedules'
 
-  static createFake(): WeeklyScheduleStorageService {
-    return new WeeklyScheduleStorageService(LocalStorageWrapper.createFake())
+  static createFake(): WeeklySchedulesStorageService {
+    return new WeeklySchedulesStorageService(LocalStorageWrapper.createFake())
   }
 
-  static create(): WeeklyScheduleStorageService {
-    return new WeeklyScheduleStorageService(AdaptiveStorageProvider.create())
+  static create(): WeeklySchedulesStorageService {
+    return new WeeklySchedulesStorageService(AdaptiveStorageProvider.create())
   }
 
   private storageManager: StorageManager<WeeklyScheduleSchemas[2]>
 
   constructor(storage: StorageInterface) {
-    this.storageManager = new StorageManager({
+    this.storageManager = StorageManager.create({
       storage,
-      key: WeeklyScheduleStorageService.STORAGE_KEY,
+      key: WeeklySchedulesStorageService.STORAGE_KEY,
       currentDataVersion: 2,
       migrators: [
         {
@@ -56,11 +57,11 @@ export class WeeklyScheduleStorageService {
     })
   }
 
-  async saveAll(weeklySchedules: WeeklySchedule[]): Promise<void> {
+  async save(weeklySchedules: WeeklySchedule[]): Promise<void> {
     return this.storageManager.set(serializeWeeklySchedules(weeklySchedules))
   }
 
-  async getAll(): Promise<WeeklySchedule[]> {
+  async get(): Promise<WeeklySchedule[]> {
     const result = await this.storageManager.get()
     if (result == null) {
       return []
