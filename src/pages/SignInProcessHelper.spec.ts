@@ -2,8 +2,6 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { ImportStatus, newEmptyImportRecord } from '../domain/import/record/index'
 import { ImportRecordStorageService } from '../domain/import/record/storage'
-import { ImportService } from '../domain/import/service'
-import { SettingsExistenceService } from '../domain/import/settings_existence'
 import { newTestNotificationSetting } from '../domain/notification_setting'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 import { LocalStorageWrapper } from '../infra/storage/local_storage'
@@ -154,15 +152,9 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
   const wrapper = mount(SignInProcessHelper, {
     props: {
       port: clientPort,
-      localSettingsExistenceService: SettingsExistenceService.createFake({ storage: localStorage }),
-      remoteSettingsExistenceService: SettingsExistenceService.createFake({
-        storage: remoteStorage
-      }),
-      importRecordStorageService,
-      importService: ImportService.createFake({
-        localStorage,
-        remoteStorage
-      })
+      localStorage,
+      remoteStorage,
+      importRecordStorageService
     }
   })
   await flushPromises()

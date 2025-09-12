@@ -5,9 +5,9 @@ export class SettingsExistenceService {
   private storage: StorageInterface
   private interestedStorageKeys: string[]
 
-  static createLocal() {
+  static create(storage: StorageInterface) {
     return new SettingsExistenceService({
-      storage: LocalStorageWrapper.create(),
+      storage,
       interestedStorageKeys: Object.values(SettingsStorageKey)
     })
   }

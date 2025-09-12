@@ -2,10 +2,15 @@ import { StorageInterface } from '../../../infra/storage/interface'
 import { StorageKey } from '../../../infra/storage/key'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage'
 import { StorageManager } from '../../../infra/storage/manager'
+import { AdaptiveStorageProvider } from '../../../infra/storage/provider'
 import { ImportRecord, newEmptyImportRecord } from './index'
 
 export class ImportRecordStorageService {
   static readonly STORAGE_KEY: StorageKey = 'importRecord'
+
+  static create(): ImportRecordStorageService {
+    return new ImportRecordStorageService(AdaptiveStorageProvider.create())
+  }
 
   static createFake(): ImportRecordStorageService {
     return new ImportRecordStorageService(LocalStorageWrapper.createFake())
@@ -13,7 +18,7 @@ export class ImportRecordStorageService {
 
   private storageManager: StorageManager<ImportRecord>
 
-  constructor(storage: StorageInterface) {
+  private constructor(storage: StorageInterface) {
     this.storageManager = StorageManager.create({
       storage,
       key: ImportRecordStorageService.STORAGE_KEY,

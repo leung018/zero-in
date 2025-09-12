@@ -1,21 +1,24 @@
 <script setup lang="ts">
 import { ImportStatus } from '@/domain/import/record'
-import { ImportService } from '@/domain/import/service'
 import { ref } from 'vue'
 import { ImportRecordStorageService } from '../domain/import/record/storage'
+import { ImportService } from '../domain/import/service'
 import { SettingsExistenceService } from '../domain/import/settings_existence'
+import { StorageInterface } from '../infra/storage/interface'
 
-const {
-  localSettingsExistenceService,
-  remoteSettingsExistenceService,
-  importRecordStorageService,
-  importService
-} = defineProps<{
-  localSettingsExistenceService: SettingsExistenceService
-  remoteSettingsExistenceService: SettingsExistenceService
+const { localStorage, remoteStorage, importRecordStorageService } = defineProps<{
+  localStorage: StorageInterface
+  remoteStorage: StorageInterface
   importRecordStorageService: ImportRecordStorageService
-  importService: ImportService
 }>()
+
+const localSettingsExistenceService = SettingsExistenceService.create(localStorage)
+const remoteSettingsExistenceService = SettingsExistenceService.create(remoteStorage)
+
+const importService = new ImportService({
+  localStorage,
+  remoteStorage
+})
 
 enum ProcessState {
   INITIAL,

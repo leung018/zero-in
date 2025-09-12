@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { SettingsExistenceService } from '@/domain/import/settings_existence'
 import { FeatureFlag, FeatureFlagsService } from '@/infra/feature_flags'
+import { ImportRecordStorageService } from '../../domain/import/record/storage'
 import { FirebaseServices } from '../../infra/firebase/services'
+import { LocalStorageWrapper } from '../../infra/storage/local_storage'
+import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import SignInProcessHelper from '../../pages/SignInProcessHelper.vue'
 
 // Require manual testing
@@ -96,7 +98,9 @@ featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
 
   <SignInProcessHelper
     v-show="showProcessHelper"
-    :localSettingsExistenceService="SettingsExistenceService.createLocal()"
+    :localStorage="LocalStorageWrapper.create()"
+    :remoteStorage="AdaptiveStorageProvider.create()"
+    :importRecordStorageService="ImportRecordStorageService.create()"
   />
 </template>
 

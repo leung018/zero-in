@@ -43,7 +43,7 @@ export class ImportService {
     })
   }
 
-  private constructor({
+  constructor({
     localStorage,
     remoteStorage
   }: {
