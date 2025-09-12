@@ -7,7 +7,7 @@ import { DailyResetTimeStorageService } from '../daily_reset_time/storage'
 import { NotificationSettingStorageService } from '../notification_setting/storage'
 import { WeeklySchedulesStorageService } from '../schedules/storage'
 import { TimerConfigStorageService } from '../timer/config/storage'
-import { FocusSessionRecordStorageService } from '../timer/record/storage'
+import { FocusSessionRecordsStorageService } from '../timer/record/storage'
 import { TimerStateStorageService } from '../timer/state/storage'
 
 type StorageServicesMap = {
@@ -25,7 +25,7 @@ const newStorageServicesMap = (storage: StorageInterface): StorageServicesMap =>
     [SettingsStorageKey.DailyResetTime]: new DailyResetTimeStorageService(storage),
     [SettingsStorageKey.TimerState]: new TimerStateStorageService(storage),
     [SettingsStorageKey.TimerConfig]: new TimerConfigStorageService(storage),
-    [SettingsStorageKey.FocusSessionRecords]: new FocusSessionRecordStorageService(storage)
+    [SettingsStorageKey.FocusSessionRecords]: new FocusSessionRecordsStorageService(storage)
   }
 }
 

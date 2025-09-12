@@ -10,7 +10,7 @@ import { WeeklySchedulesStorageService } from './schedules/storage'
 import { Time } from './time'
 import { Duration } from './timer/duration'
 import { newFocusSessionRecord } from './timer/record'
-import { FocusSessionRecordStorageService } from './timer/record/storage'
+import { FocusSessionRecordsStorageService } from './timer/record/storage'
 import { TimerStage } from './timer/stage'
 
 describe('BrowsingControlTogglingService', () => {
@@ -317,15 +317,15 @@ async function getBrowsingRulesAfterToggling({
   const blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake()
   await blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
 
-  const focusSessionRecordStorageService = FocusSessionRecordStorageService.createFake()
-  await focusSessionRecordStorageService.save(focusSessionRecords)
+  const focusSessionRecordsStorageService = FocusSessionRecordsStorageService.createFake()
+  await focusSessionRecordsStorageService.save(focusSessionRecords)
 
   const browsingControlTogglingService = BrowsingControlTogglingService.createFake({
     browsingRulesStorageService,
     browsingControlService,
     weeklySchedulesStorageService,
     blockingTimerIntegrationStorageService,
-    focusSessionRecordStorageService,
+    focusSessionRecordsStorageService,
     timerInfoGetter: { getTimerInfo: () => timerInfo }
   })
 

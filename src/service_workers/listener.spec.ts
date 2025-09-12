@@ -41,7 +41,7 @@ describe('BackgroundListener', () => {
   })
 
   it('should save the focus session records after focus is completed', async () => {
-    const { clientPort, focusSessionRecordStorageService } = await startListener({
+    const { clientPort, focusSessionRecordsStorageService } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 })
@@ -56,7 +56,7 @@ describe('BackgroundListener', () => {
     vi.advanceTimersByTime(3000)
     await flushPromises()
 
-    const focusSessionRecords = await focusSessionRecordStorageService.get()
+    const focusSessionRecords = await focusSessionRecordsStorageService.get()
     expect(focusSessionRecords.length).toBe(1)
     expect(focusSessionRecords[0].completedAt).toEqual(
       getDateAfter({ from: startTime, duration: new Duration({ seconds: 3 }) })
@@ -68,11 +68,11 @@ describe('BackgroundListener', () => {
     vi.advanceTimersByTime(1000)
     await flushPromises()
 
-    expect((await focusSessionRecordStorageService.get()).length).toBe(1)
+    expect((await focusSessionRecordsStorageService.get()).length).toBe(1)
   })
 
   it('should house keep the focus session records', async () => {
-    const { focusSessionRecordStorageService, clientPort } = await startListener({
+    const { focusSessionRecordsStorageService, clientPort } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 })
       }),
@@ -82,14 +82,14 @@ describe('BackgroundListener', () => {
     const oldDate = new Date()
     oldDate.setDate(oldDate.getDate() - 10)
     const oldRecord: FocusSessionRecord = { completedAt: oldDate }
-    await focusSessionRecordStorageService.save([oldRecord])
+    await focusSessionRecordsStorageService.save([oldRecord])
 
     // Focus
     await clientPort.send({ name: WorkRequestName.START_TIMER })
     vi.advanceTimersByTime(3000)
     await flushPromises()
 
-    const newRecords = await focusSessionRecordStorageService.get()
+    const newRecords = await focusSessionRecordsStorageService.get()
     expect(newRecords.length).toBe(1)
     expect(newRecords[0].completedAt > oldDate).toBe(true)
   })

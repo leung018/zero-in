@@ -5,7 +5,7 @@ import { NotificationSettingStorageService } from '../domain/notification_settin
 import { WeeklySchedulesStorageService } from '../domain/schedules/storage'
 import { FocusTimer } from '../domain/timer'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
-import { FocusSessionRecordStorageService } from '../domain/timer/record/storage'
+import { FocusSessionRecordsStorageService } from '../domain/timer/record/storage'
 import { TimerStateStorageService } from '../domain/timer/state/storage'
 import { FakeActionService } from '../infra/action'
 import { FakeBadgeDisplayService } from '../infra/badge'
@@ -37,7 +37,7 @@ export async function setUpListener({
     timerStateStorageService,
     timerConfigStorageService,
     closeTabsService: new FakeActionService(),
-    focusSessionRecordStorageService: new FocusSessionRecordStorageService(storage)
+    focusSessionRecordsStorageService: new FocusSessionRecordsStorageService(storage)
   }
 
   await params.timerConfigStorageService.save(timerConfig)

@@ -115,11 +115,11 @@ async function mountStatisticsPage({
   const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
   await dailyResetTimeStorageService.save(dailyResetTime)
 
-  const { timer, listener, focusSessionRecordStorageService } = await setUpListener({
+  const { timer, listener, focusSessionRecordsStorageService } = await setUpListener({
     timerConfig
   })
 
-  await focusSessionRecordStorageService.save(focusSessionRecords)
+  await focusSessionRecordsStorageService.save(focusSessionRecords)
 
   await listener.start()
 
@@ -128,7 +128,7 @@ async function mountStatisticsPage({
     props: {
       dailyResetTimeStorageService,
       updateSuccessNotifierService,
-      focusSessionRecordStorageService
+      focusSessionRecordsStorageService
     }
   })
   await flushPromises()
