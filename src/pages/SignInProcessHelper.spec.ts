@@ -136,9 +136,6 @@ describe('SignInProcessHelper', () => {
     const record = await importRecordStorageService.get()
     expect(record.status).toBe(ImportStatus.IMPORTED)
 
-    // Display the import success message
-    assertImportSuccessMessageIsRendered(wrapper)
-
     // Verify the onHelperProcessComplete event is emitted
     expect(wrapper.emitted('onHelperProcessComplete')).toBeTruthy()
   })
@@ -214,24 +211,14 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
 function assertImportPromptIsRendered(wrapper: VueWrapper) {
   assertRendered(wrapper, {
     initialSignInMessage: false,
-    importPrompt: true,
-    importSuccessMessage: false
+    importPrompt: true
   })
 }
 
 function assertInitialSignInMessageIsRendered(wrapper: VueWrapper) {
   assertRendered(wrapper, {
     initialSignInMessage: true,
-    importPrompt: false,
-    importSuccessMessage: false
-  })
-}
-
-function assertImportSuccessMessageIsRendered(wrapper: VueWrapper) {
-  assertRendered(wrapper, {
-    initialSignInMessage: false,
-    importPrompt: false,
-    importSuccessMessage: true
+    importPrompt: false
   })
 }
 
@@ -240,7 +227,6 @@ function assertRendered(
   componentsRendered: {
     initialSignInMessage: boolean
     importPrompt: boolean
-    importSuccessMessage: boolean
   }
 ) {
   expect(wrapper.find(dataTestSelector('sign-in-initial-message')).exists()).toBe(
@@ -248,9 +234,6 @@ function assertRendered(
   )
   expect(wrapper.find(dataTestSelector('import-prompt')).exists()).toBe(
     componentsRendered.importPrompt
-  )
-  expect(wrapper.find(dataTestSelector('import-success-message')).exists()).toBe(
-    componentsRendered.importSuccessMessage
   )
 }
 

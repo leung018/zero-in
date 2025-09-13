@@ -22,8 +22,7 @@ const importService = new ImportService({
 
 enum ProcessState {
   INITIAL,
-  IMPORT_PROMPT,
-  IMPORT_SUCCESS
+  IMPORT_PROMPT
 }
 
 const state = ref(ProcessState.INITIAL)
@@ -62,8 +61,6 @@ const emit = defineEmits(['onHelperProcessComplete'])
 const onClickImport = async () => {
   await importService.importFromLocalToRemote()
   await recordImportStatus(ImportStatus.IMPORTED)
-
-  state.value = ProcessState.IMPORT_SUCCESS
   emit('onHelperProcessComplete')
 }
 
@@ -102,13 +99,6 @@ async function recordImportStatus(status: ImportStatus) {
         </button>
         <button class="btn btn-secondary" data-test="skip-button" @click="onClickSkip">Skip</button>
       </div>
-    </div>
-
-    <div data-test="import-success-message" v-if="state === ProcessState.IMPORT_SUCCESS">
-      <h4 class="mb-2">Settings imported successfully!</h4>
-      <p class="text-muted mb-4">
-        Your settings have been imported from your existing device. You will be signed in now.
-      </p>
     </div>
   </div>
 </template>
