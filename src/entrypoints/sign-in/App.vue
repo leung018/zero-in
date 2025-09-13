@@ -9,6 +9,7 @@ import SignInProcessHelper from '../../pages/SignInProcessHelper.vue'
 // Require manual testing
 
 const showProcessHelper = ref(false)
+const signInProcessHelperRef = ref<InstanceType<typeof SignInProcessHelper> | null>(null)
 
 const signIn = async () => {
   const response = await browser.runtime.sendMessage({
@@ -21,11 +22,15 @@ const signIn = async () => {
     // because when browserLocalPersistence is enabled in firebase sign in api, service worker cannot call it and will throw error.
     // So have to sign in here first.
     FirebaseServices.signInWithToken(response.payload._tokenResponse.oauthIdToken).then(() => {
-      browser.runtime.openOptionsPage().then(() => {
-        window.close()
-      })
+      signInProcessHelperRef.value?.triggerHelperProcess()
     })
   }
+}
+
+const onHelperProcessComplete = () => {
+  browser.runtime.openOptionsPage().then(() => {
+    window.close()
+  })
 }
 
 const featureFlagsService = FeatureFlagsService.init()
@@ -97,10 +102,12 @@ featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
   </div>
 
   <SignInProcessHelper
+    ref="signInProcessHelperRef"
     v-show="showProcessHelper"
     :localStorage="LocalStorageWrapper.create()"
     :remoteStorage="AdaptiveStorageProvider.create()"
     :importRecordStorageService="ImportRecordStorageService.create()"
+    @onHelperProcessComplete="onHelperProcessComplete"
   />
 </template>
 
