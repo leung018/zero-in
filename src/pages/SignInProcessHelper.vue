@@ -51,6 +51,7 @@ defineExpose({
   triggerHelperProcess: async () => {
     if (await shouldShowImportPrompt()) {
       state.value = ProcessState.IMPORT_PROMPT
+      return
     }
     emit('onHelperProcessComplete')
   }

@@ -25,6 +25,9 @@ describe('SignInProcessHelper', () => {
     await triggerHelperProcess()
 
     assertImportPromptIsRendered(wrapper)
+
+    // When import prompt is rendered, onHelperProcessComplete should not be emitted yet
+    expect(wrapper.emitted('onHelperProcessComplete')).toBeFalsy()
   })
 
   it('should not render import prompt if local has no data', async () => {
