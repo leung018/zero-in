@@ -154,12 +154,17 @@ describe('SignInProcessHelper', () => {
     await wrapper.find(dataTestSelector('skip-button')).trigger('click')
     await flushPromises()
 
+    // Verify the import status is updated
     const record = await importRecordStorageService.get()
     expect(record.status).toBe(ImportStatus.USER_SKIPPED)
 
+    // Verify the remote storage is not updated
     await expect(remoteNotificationSettingStorageService.get()).resolves.not.toEqual(
       nonDefaultNotificationSetting
     )
+
+    // Verify the onHelperProcessComplete event is emitted
+    await expect(wrapper.emitted('onHelperProcessComplete')).toBeTruthy()
   })
 })
 

@@ -67,6 +67,7 @@ const onClickImport = async () => {
 
 const onClickSkip = async () => {
   await recordImportStatus(ImportStatus.USER_SKIPPED)
+  emit('onHelperProcessComplete')
 }
 
 async function recordImportStatus(status: ImportStatus) {
