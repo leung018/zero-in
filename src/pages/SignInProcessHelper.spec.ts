@@ -36,7 +36,7 @@ describe('SignInProcessHelper', () => {
 
     assertInitialSignInMessageIsRendered(wrapper)
 
-    // When import prompt is not rendered, helper process should be complete
+    // When import prompt is not rendered, onHelperProcessComplete should be emitted
     expect(wrapper.emitted('onHelperProcessComplete')).toBeTruthy()
   })
 
