@@ -3,7 +3,8 @@ import type { TimerStage } from '../domain/timer/stage'
 export enum WorkResponseName {
   TIMER_STATE,
   FOCUS_SESSION_RECORDS_UPDATED,
-  RESET_TIMER_CONFIG_SUCCESS
+  RESET_TIMER_CONFIG_SUCCESS,
+  RELOAD_LISTENER_SUCCESS
 }
 
 export type WorkResponse =
@@ -22,4 +23,7 @@ export type WorkResponse =
     }
   | {
       name: WorkResponseName.RESET_TIMER_CONFIG_SUCCESS
+    }
+  | {
+      name: WorkResponseName.RELOAD_LISTENER_SUCCESS
     }
