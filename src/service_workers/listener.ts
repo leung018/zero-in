@@ -354,6 +354,10 @@ export class BackgroundListener {
               this.setUpNotification()
               break
             }
+            case WorkRequestName.RELOAD_LISTENER: {
+              this.reload()
+              break
+            }
           }
         }
         backgroundPort.onMessage(listener)

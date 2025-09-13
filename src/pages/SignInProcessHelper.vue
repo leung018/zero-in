@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { ImportRecord, ImportStatus } from '@/domain/import/record'
+import { ClientPort } from '@/service_workers/listener'
+import { WorkRequestName } from '@/service_workers/request'
 import { ref } from 'vue'
 import { ImportRecordStorageService } from '../domain/import/record/storage'
 import { ImportService } from '../domain/import/service'
 import { SettingsExistenceService } from '../domain/import/settings_existence'
 import { StorageInterface } from '../infra/storage/interface'
 
-const { localStorage, remoteStorage, importRecordStorageService } = defineProps<{
+const { localStorage, remoteStorage, importRecordStorageService, port } = defineProps<{
   localStorage: StorageInterface
   remoteStorage: StorageInterface
   importRecordStorageService: ImportRecordStorageService
+  port: ClientPort
 }>()
 
 const localSettingsExistenceService = SettingsExistenceService.create(localStorage)
@@ -61,6 +64,7 @@ const emit = defineEmits(['onHelperProcessComplete'])
 const onClickImport = async () => {
   await importService.importFromLocalToRemote()
   await recordImportStatus(ImportStatus.IMPORTED)
+  port.send({ name: WorkRequestName.RELOAD_LISTENER })
   emit('onHelperProcessComplete')
 }
 
