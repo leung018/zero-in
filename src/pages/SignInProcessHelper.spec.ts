@@ -35,6 +35,9 @@ describe('SignInProcessHelper', () => {
     await triggerHelperProcess()
 
     assertInitialSignInMessageIsRendered(wrapper)
+
+    // When import prompt is not rendered, helper process should be complete
+    expect(wrapper.emitted('onHelperProcessComplete')).toBeTruthy()
   })
 
   it('should not render import prompt if user skipped import and remote has data, even local has data', async () => {

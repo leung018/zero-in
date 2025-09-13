@@ -52,6 +52,7 @@ defineExpose({
     if (await shouldShowImportPrompt()) {
       state.value = ProcessState.IMPORT_PROMPT
     }
+    emit('onHelperProcessComplete')
   }
 })
 
