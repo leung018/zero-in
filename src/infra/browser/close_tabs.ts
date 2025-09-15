@@ -7,13 +7,14 @@ export class BrowserCloseTabsService implements ActionService {
     this.targetUrl = targetUrl
   }
 
-  trigger(): void {
-    browser.tabs.query({}, (tabs) => {
-      tabs.forEach((tab) => {
-        if (tab && tab.url && tab.id && tab.url.includes(this.targetUrl)) {
-          browser.tabs.remove(tab.id)
-        }
-      })
+  async trigger(): Promise<void> {
+    const tabs = await browser.tabs.query({})
+    const tabsRemovePromises: Promise<unknown>[] = []
+    tabs.forEach((tab) => {
+      if (tab && tab.url && tab.id && tab.url.includes(this.targetUrl)) {
+        tabsRemovePromises.push(browser.tabs.remove(tab.id))
+      }
     })
+    await Promise.all(tabsRemovePromises)
   }
 }
