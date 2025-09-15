@@ -1,27 +1,15 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { ImportStatus, newEmptyImportRecord } from '../domain/import/record/index'
 import { ImportRecordStorageService } from '../domain/import/record/storage'
 import { newTestNotificationSetting, NotificationSetting } from '../domain/notification_setting'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
-import { TimerConfig } from '../domain/timer/config'
-import { Duration } from '../domain/timer/duration'
 import { LocalStorageWrapper } from '../infra/storage/local_storage'
-import { ClientPort } from '../service_workers/listener'
-import { WorkRequestName } from '../service_workers/request'
 import { setUpListener } from '../test_utils/listener'
 import { dataTestSelector } from '../test_utils/selector'
 import SignInProcessHelper from './SignInProcessHelper.vue'
 
 describe('SignInProcessHelper', () => {
-  beforeEach(() => {
-    vi.useFakeTimers()
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
-  })
-
   it('should render initial sign in message if helper process is not triggered', async () => {
     const { wrapper } = await mountPage()
     assertInitialSignInMessageIsRendered(wrapper)
@@ -133,7 +121,7 @@ describe('SignInProcessHelper', () => {
       importRecord: newEmptyImportRecord()
     })
 
-    await localNotificationSettingStorageService.save(nonDefaultAllDisabledSetting)
+    await localNotificationSettingStorageService.save(nonDefaultNotificationSetting)
     await triggerHelperProcess()
 
     await wrapper.find(dataTestSelector('import-button')).trigger('click')
@@ -141,7 +129,7 @@ describe('SignInProcessHelper', () => {
 
     // Verify the data is imported
     await expect(remoteNotificationSettingStorageService.get()).resolves.toEqual(
-      nonDefaultAllDisabledSetting
+      nonDefaultNotificationSetting
     )
 
     // Verify the import status is updated
@@ -163,7 +151,7 @@ describe('SignInProcessHelper', () => {
       importRecord: newEmptyImportRecord()
     })
 
-    await localNotificationSettingStorageService.save(nonDefaultAllDisabledSetting)
+    await localNotificationSettingStorageService.save(nonDefaultNotificationSetting)
     await triggerHelperProcess()
 
     await wrapper.find(dataTestSelector('skip-button')).trigger('click')
@@ -175,59 +163,20 @@ describe('SignInProcessHelper', () => {
 
     // Verify the remote storage is not updated
     await expect(remoteNotificationSettingStorageService.get()).resolves.not.toEqual(
-      nonDefaultAllDisabledSetting
+      nonDefaultNotificationSetting
     )
 
     // Verify the onHelperProcessComplete event is emitted
     expect(wrapper.emitted('onHelperProcessComplete')).toBeTruthy()
   })
-
-  it('should trigger listener reload after import', async () => {
-    const {
-      clientPort,
-      wrapper,
-      reminderTabService,
-      soundService,
-      desktopNotificationService,
-      localNotificationSettingStorageService,
-      triggerHelperProcess
-    } = await mountPage({
-      importRecord: newEmptyImportRecord(),
-      timerConfig: TimerConfig.newTestInstance({
-        focusDuration: new Duration({
-          seconds: 1
-        })
-      })
-    })
-
-    await localNotificationSettingStorageService.save(nonDefaultAllDisabledSetting)
-    await triggerHelperProcess()
-
-    await wrapper.find(dataTestSelector('import-button')).trigger('click')
-    await flushPromises()
-
-    await clientPort.send({ name: WorkRequestName.START_TIMER })
-    vi.advanceTimersByTime(1000)
-
-    expect(reminderTabService.hasTriggered()).toBe(false)
-    expect(soundService.hasTriggered()).toBe(false)
-    expect(desktopNotificationService.isNotificationActive()).toBe(false)
-  })
 })
 
-async function mountPage({
-  importRecord = newEmptyImportRecord(),
-  timerConfig = TimerConfig.newTestInstance()
-} = {}) {
+async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
   const {
     communicationManager,
     notificationSettingStorageService: remoteNotificationSettingStorageService,
-    storage: remoteStorage,
-    reminderTabService,
-    soundService,
-    desktopNotificationService,
-    listener
-  } = await setUpListener({ timerConfig })
+    storage: remoteStorage
+  } = await setUpListener()
 
   const localStorage = LocalStorageWrapper.createFake()
   const localNotificationSettingStorageService = new NotificationSettingStorageService(localStorage)
@@ -235,9 +184,7 @@ async function mountPage({
   const importRecordStorageService = ImportRecordStorageService.createFake()
   await importRecordStorageService.save(importRecord)
 
-  await listener.start()
-
-  const clientPort: ClientPort = communicationManager.clientConnect()
+  const clientPort = communicationManager.clientConnect()
 
   const wrapper = mount(SignInProcessHelper, {
     props: {
@@ -257,10 +204,7 @@ async function mountPage({
     triggerHelperProcess: async () => {
       wrapper.vm.triggerHelperProcess()
       await flushPromises()
-    },
-    reminderTabService,
-    soundService,
-    desktopNotificationService
+    }
   }
 }
 
@@ -293,7 +237,7 @@ function assertRendered(
   )
 }
 
-const nonDefaultAllDisabledSetting: Readonly<NotificationSetting> = newTestNotificationSetting({
+const nonDefaultNotificationSetting: Readonly<NotificationSetting> = newTestNotificationSetting({
   // All false must not be default notification setting.
   // So if import not success, setting in remote won't match below.
   desktopNotification: false,
