@@ -4,8 +4,8 @@ import { BrowserNewTabService } from '@/infra/browser/new_tab'
 import { FeatureFlag, FeatureFlagsService } from '@/infra/feature_flags'
 import { ImportRecordStorageService } from '../../domain/import/record/storage'
 import { FirebaseServices } from '../../infra/firebase/services'
+import { AdaptiveStorageProvider } from '../../infra/storage/adaptive'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
-import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import SignInProcessHelper from '../../pages/SignInProcessHelper.vue'
 
 // Require manual testing

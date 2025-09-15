@@ -1,5 +1,6 @@
 import type { TimerConfig } from '.'
 import config from '../../../config'
+import { AdaptiveStorageProvider } from '../../../infra/storage/adaptive'
 import { FakeObservableStorage } from '../../../infra/storage/fake'
 import {
   ObservableStorage,
@@ -9,7 +10,6 @@ import {
 import { StorageKey } from '../../../infra/storage/key'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage'
 import { StorageManager } from '../../../infra/storage/manager'
-import { AdaptiveStorageProvider } from '../../../infra/storage/provider'
 import {
   deserializeTimerConfig,
   serializeTimerConfig,
