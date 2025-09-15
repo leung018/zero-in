@@ -355,11 +355,7 @@ export class BackgroundListener {
               break
             }
             case WorkRequestName.RELOAD_LISTENER: {
-              this.reload().then(() => {
-                backgroundPort.send({
-                  name: WorkResponseName.RELOAD_LISTENER_SUCCESS
-                })
-              })
+              this.reload()
               break
             }
           }

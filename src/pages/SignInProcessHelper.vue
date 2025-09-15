@@ -2,7 +2,6 @@
 import { ImportRecord, ImportStatus } from '@/domain/import/record'
 import { ClientPort } from '@/service_workers/listener'
 import { WorkRequestName } from '@/service_workers/request'
-import { WorkResponseName } from '@/service_workers/response'
 import { ref } from 'vue'
 import { ImportRecordStorageService } from '../domain/import/record/storage'
 import { ImportService } from '../domain/import/service'
@@ -65,14 +64,8 @@ const emit = defineEmits(['onHelperProcessComplete'])
 const onClickImport = async () => {
   await importService.importFromLocalToRemote()
   await recordImportStatus(ImportStatus.IMPORTED)
-
-  port.onMessage((message) => {
-    if (message.name === WorkResponseName.RELOAD_LISTENER_SUCCESS) {
-      emit('onHelperProcessComplete')
-    }
-  })
-
   port.send({ name: WorkRequestName.RELOAD_LISTENER })
+  emit('onHelperProcessComplete')
 }
 
 const onClickSkip = async () => {
