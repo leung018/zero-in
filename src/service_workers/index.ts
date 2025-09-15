@@ -41,6 +41,21 @@ export default function main() {
             })
           })
       }
+      if (message.type == 'RELOAD') {
+        listener
+          .reload()
+          .then(() => {
+            sendResponse({ type: 'RELOAD_SUCCESS' })
+          })
+          .catch((err) => {
+            if (err.code === 'permission-denied') {
+              console.log('Permission denied')
+              sendResponse({ type: 'RELOAD_FAILURE' })
+            } else {
+              throw err
+            }
+          })
+      }
       return true
     })
 

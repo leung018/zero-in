@@ -42,8 +42,10 @@ if (import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
+    console.log('User signed in', user)
     LocalStorageUserIdCache.setSignInUser(user.uid)
   } else {
+    console.log('User signed out')
     LocalStorageUserIdCache.setSignOut()
   }
 })

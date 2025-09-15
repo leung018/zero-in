@@ -30,6 +30,9 @@ const signIn = async () => {
 }
 
 const onHelperProcessComplete = async () => {
+  await browser.runtime.sendMessage({
+    type: 'RELOAD'
+  })
   // Note: Not using browser.runtime.openOptionsPage here.
   // Reason: onAuthStateChanged only fires when a *new* page is opened.
   // If the options page is already open, browser.runtime.openOptionsPage
