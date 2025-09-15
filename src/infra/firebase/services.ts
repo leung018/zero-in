@@ -54,9 +54,12 @@ export class FirebaseServices {
   }
 
   static async signInWithToken(token: string) {
-    await setPersistence(auth, browserLocalPersistence)
     const credential = await signInWithCredential(auth, GoogleAuthProvider.credential(token))
     await LocalStorageUserIdCache.setSignInUser(credential.user.uid)
+  }
+
+  static async setPersistence() {
+    await setPersistence(auth, browserLocalPersistence)
   }
 
   static async getFirestoreStorage(): Promise<FirestoreStorage> {

@@ -24,12 +24,17 @@ const signIn = async () => {
     // because when browserLocalPersistence is enabled in firebase sign in api, service worker cannot call it and will throw error.
     // So have to sign in here first.
     FirebaseServices.signInWithToken(response.payload._tokenResponse.oauthIdToken).then(() => {
-      signInProcessHelperRef.value?.triggerHelperProcess()
+      signInProcessHelperRef.value!.triggerHelperProcess()
     })
   }
 }
 
 const onHelperProcessComplete = async () => {
+  // If setPersistence inside signInWithToken and I open popup or other page before helperProcess complete,
+  // I found that it may cause the firebase authentication error in the import process.
+  // But if set it below, the problem seem fixed
+  await FirebaseServices.setPersistence()
+
   await browser.runtime.sendMessage({
     type: 'RELOAD'
   })
