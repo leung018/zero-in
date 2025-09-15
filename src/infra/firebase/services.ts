@@ -42,31 +42,6 @@ if (import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
   }
 }
 
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    console.log('User signed in', user)
-    LocalStorageUserIdCache.setSignInUser(user.uid)
-  } else {
-    console.log('User signed out')
-    LocalStorageUserIdCache.setSignOut()
-  }
-})
-
-async function getCurrentUserId(): Promise<string | null> {
-  return new Promise((resolve) => {
-    return LocalStorageUserIdCache.get().then(({ userId, isCacheSet }) => {
-      if (!isCacheSet) {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-          unsubscribe()
-          resolve(user?.uid ?? null)
-        })
-      } else {
-        resolve(userId)
-      }
-    })
-  })
-}
-
 export class FirebaseServices {
   static async signOut() {
     await signOut(auth)
@@ -74,7 +49,7 @@ export class FirebaseServices {
   }
 
   static async isAuthenticated(): Promise<boolean> {
-    const userId = await getCurrentUserId()
+    const userId = await this.getCurrentUserId()
     return userId !== null
   }
 
@@ -85,7 +60,7 @@ export class FirebaseServices {
   }
 
   static async getFirestoreStorage(): Promise<FirestoreStorage> {
-    const userId = await getCurrentUserId()
+    const userId = await this.getCurrentUserId()
     if (!userId) {
       throw new Error('User not authenticated')
     }
@@ -95,7 +70,32 @@ export class FirebaseServices {
   static onAuthStateChanged(callback: NextOrObserver<User>) {
     return onAuthStateChanged(auth, callback)
   }
+
+  private static async getCurrentUserId(): Promise<string | null> {
+    return new Promise((resolve) => {
+      return LocalStorageUserIdCache.get().then(({ userId, isCacheSet }) => {
+        if (!isCacheSet) {
+          const unsubscribe = FirebaseServices.onAuthStateChanged((user) => {
+            unsubscribe()
+            resolve(user?.uid ?? null)
+          })
+        } else {
+          resolve(userId)
+        }
+      })
+    })
+  }
 }
+
+FirebaseServices.onAuthStateChanged((user) => {
+  if (user) {
+    console.log('User signed in', user)
+    LocalStorageUserIdCache.setSignInUser(user.uid)
+  } else {
+    console.log('User signed out')
+    LocalStorageUserIdCache.setSignOut()
+  }
+})
 
 export class FirestoreStorage implements ObservableStorage {
   constructor(public readonly userId: string) {}
