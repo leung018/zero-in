@@ -16,6 +16,10 @@ const getSignInPageUrl = () => {
   return browser.runtime.getURL('/sign-in.html')
 }
 
+const getOptionsPageUrl = () => {
+  return browser.runtime.getURL('/options.html')
+}
+
 const getDefaultTimerConfig = () => {
   return new TimerConfig({
     focusDuration: new Duration({ minutes: 26 }),
@@ -86,6 +90,7 @@ export default {
   getDefaultNotificationSetting,
   getDefaultBlockingTimerIntegration,
   getSignInPageUrl,
+  getOptionsPageUrl,
   getAuthUrl,
   getFirebaseConfig
 }

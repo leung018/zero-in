@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import config from '@/config'
+import { BrowserNewTabService } from '@/infra/browser/new_tab'
 import { FeatureFlag, FeatureFlagsService } from '@/infra/feature_flags'
 import { ImportRecordStorageService } from '../../domain/import/record/storage'
 import { FirebaseServices } from '../../infra/firebase/services'
@@ -27,10 +29,17 @@ const signIn = async () => {
   }
 }
 
-const onHelperProcessComplete = () => {
-  browser.runtime.openOptionsPage().then(() => {
-    window.close()
-  })
+const onHelperProcessComplete = async () => {
+  // Note: Not using browser.runtime.openOptionsPage here.
+  // Reason: onAuthStateChanged only fires when a *new* page is opened.
+  // If the options page is already open, browser.runtime.openOptionsPage
+  // will just focus the existing tab, which does not re-trigger onAuthStateChanged.
+  //
+  // By explicitly opening a new tab, we ensure onAuthStateChanged is triggered,
+  // which is necessary to reload the listener and guarantee the sign-in
+  // + import flow works correctly.
+  await new BrowserNewTabService(config.getOptionsPageUrl()).trigger()
+  window.close()
 }
 
 const featureFlagsService = FeatureFlagsService.init()
