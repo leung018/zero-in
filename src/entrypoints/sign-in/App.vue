@@ -4,7 +4,7 @@ import { BrowserNewTabService } from '@/infra/browser/new_tab'
 import { FeatureFlag, FeatureFlagsService } from '@/infra/feature_flags'
 import { ImportRecordStorageService } from '../../domain/import/record/storage'
 import { FirebaseServices } from '../../infra/firebase/services'
-import { AdaptiveStorageProvider } from '../../infra/storage/adaptive'
+import { FirestoreStorageWrapper } from '../../infra/storage/firestore'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import SignInProcessHelper from '../../pages/SignInProcessHelper.vue'
 
@@ -117,7 +117,7 @@ featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
     ref="signInProcessHelperRef"
     v-show="showProcessHelper"
     :localStorage="LocalStorageWrapper.create()"
-    :remoteStorage="AdaptiveStorageProvider.create()"
+    :remoteStorage="FirestoreStorageWrapper.create()"
     :importRecordStorageService="ImportRecordStorageService.create()"
     @onHelperProcessComplete="onHelperProcessComplete"
   />
