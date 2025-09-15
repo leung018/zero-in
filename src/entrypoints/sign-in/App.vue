@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import { FeatureFlag, FeatureFlagsService } from '@/infra/feature_flags'
 import { ImportRecordStorageService } from '../../domain/import/record/storage'
 import { FirebaseServices } from '../../infra/firebase/services'
@@ -108,7 +107,6 @@ featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
     :localStorage="LocalStorageWrapper.create()"
     :remoteStorage="AdaptiveStorageProvider.create()"
     :importRecordStorageService="ImportRecordStorageService.create()"
-    :port="new BrowserCommunicationManager().clientConnect()"
     @onHelperProcessComplete="onHelperProcessComplete"
   />
 </template>
