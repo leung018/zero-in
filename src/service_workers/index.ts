@@ -1,8 +1,6 @@
-import { initializeApp } from 'firebase/app'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import config from '../config'
 import { BrowserNewTabService } from '../infra/browser/new_tab'
 import { firebaseAuth } from '../infra/browser/sign_in'
+import { FirebaseServices } from '../infra/firebase/services'
 import { retryUntilSuccess } from '../utils/retry'
 import { BackgroundListener } from './listener'
 import { MenuItemId } from './menu_item_id'
@@ -62,8 +60,9 @@ export default function main() {
     // Execute reload only when listener.start is resolved.
     // Now, reload/start will throw error if they are called at the same time to prevent some strange issues.
     // Hard to cover that I call reload/start not at the same time in e2e tests.
-    onAuthStateChanged(getAuth(initializeApp(config.getFirebaseConfig())), (auth) => {
+    FirebaseServices.onAuthStateChanged((auth) => {
       console.log('Auth state changed', auth)
+
       retryUntilSuccess(
         () => {
           return listener.reload()

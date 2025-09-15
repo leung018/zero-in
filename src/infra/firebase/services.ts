@@ -5,10 +5,12 @@ import {
   connectAuthEmulator,
   getAuth,
   GoogleAuthProvider,
+  NextOrObserver,
   onAuthStateChanged,
   setPersistence,
   signInWithCredential,
-  signOut
+  signOut,
+  User
 } from 'firebase/auth'
 import {
   connectFirestoreEmulator,
@@ -88,6 +90,10 @@ export class FirebaseServices {
       throw new Error('User not authenticated')
     }
     return new FirestoreStorage(userId)
+  }
+
+  static onAuthStateChanged(callback: NextOrObserver<User>) {
+    return onAuthStateChanged(auth, callback)
   }
 }
 
