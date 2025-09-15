@@ -15,8 +15,7 @@ export enum WorkRequestName {
   RESTART_LONG_BREAK,
   RESET_TIMER_CONFIG,
   RESET_NOTIFICATION,
-  PING,
-  RELOAD_LISTENER
+  PING
 }
 
 export type RestartNthPayload = {
@@ -62,9 +61,6 @@ export type WorkRequest =
     }
   | {
       name: WorkRequestName.PING
-    }
-  | {
-      name: WorkRequestName.RELOAD_LISTENER
     }
 
 export function newResetTimerConfigRequest(config: TimerConfig): WorkRequest {
