@@ -5,7 +5,6 @@ import { ImportRecordStorageService } from '../domain/import/record/storage'
 import { newTestNotificationSetting, NotificationSetting } from '../domain/notification_setting'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 import { LocalStorageWrapper } from '../infra/storage/local_storage'
-import { setUpListener } from '../test_utils/listener'
 import { dataTestSelector } from '../test_utils/selector'
 import SignInProcessHelper from './SignInProcessHelper.vue'
 
@@ -172,11 +171,10 @@ describe('SignInProcessHelper', () => {
 })
 
 async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
-  const {
-    communicationManager,
-    notificationSettingStorageService: remoteNotificationSettingStorageService,
-    storage: remoteStorage
-  } = await setUpListener()
+  const remoteStorage = LocalStorageWrapper.createFake() // Simulate remote storage
+  const remoteNotificationSettingStorageService = new NotificationSettingStorageService(
+    remoteStorage
+  )
 
   const localStorage = LocalStorageWrapper.createFake()
   const localNotificationSettingStorageService = new NotificationSettingStorageService(localStorage)
@@ -184,11 +182,8 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
   const importRecordStorageService = ImportRecordStorageService.createFake()
   await importRecordStorageService.save(importRecord)
 
-  const clientPort = communicationManager.clientConnect()
-
   const wrapper = mount(SignInProcessHelper, {
     props: {
-      port: clientPort,
       localStorage,
       remoteStorage,
       importRecordStorageService
@@ -197,7 +192,6 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
   await flushPromises()
   return {
     wrapper,
-    clientPort,
     localNotificationSettingStorageService,
     remoteNotificationSettingStorageService,
     importRecordStorageService,
