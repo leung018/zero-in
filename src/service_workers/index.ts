@@ -49,7 +49,9 @@ export default function main() {
           })
           .catch((err) => {
             if (err.code === 'permission-denied') {
-              console.log('Permission denied')
+              console.log(
+                'Permission denied during reload - ignoring as onAuthStateChanged will handle the reload'
+              )
               sendResponse({ type: 'RELOAD_FAILURE' })
             } else {
               throw err
