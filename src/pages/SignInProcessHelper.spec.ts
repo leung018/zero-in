@@ -2,10 +2,9 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { ImportStatus, newEmptyImportRecord } from '../domain/import/record/index'
 import { ImportRecordStorageService } from '../domain/import/record/storage'
-import { newTestNotificationSetting } from '../domain/notification_setting'
+import { newTestNotificationSetting, NotificationSetting } from '../domain/notification_setting'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 import { LocalStorageWrapper } from '../infra/storage/local_storage'
-import { setUpListener } from '../test_utils/listener'
 import { dataTestSelector } from '../test_utils/selector'
 import SignInProcessHelper from './SignInProcessHelper.vue'
 
@@ -25,6 +24,9 @@ describe('SignInProcessHelper', () => {
     await triggerHelperProcess()
 
     assertImportPromptIsRendered(wrapper)
+
+    // When import prompt is rendered, onHelperProcessComplete should not be emitted yet
+    expect(wrapper.emitted('onHelperProcessComplete')).toBeFalsy()
   })
 
   it('should not render import prompt if local has no data', async () => {
@@ -35,6 +37,9 @@ describe('SignInProcessHelper', () => {
     await triggerHelperProcess()
 
     assertInitialSignInMessageIsRendered(wrapper)
+
+    // When import prompt is not rendered, onHelperProcessComplete should be emitted
+    expect(wrapper.emitted('onHelperProcessComplete')).toBeTruthy()
   })
 
   it('should not render import prompt if user skipped import and remote has data, even local has data', async () => {
@@ -109,37 +114,67 @@ describe('SignInProcessHelper', () => {
       wrapper,
       triggerHelperProcess,
       remoteNotificationSettingStorageService,
-      localNotificationSettingStorageService
+      localNotificationSettingStorageService,
+      importRecordStorageService
     } = await mountPage({
       importRecord: newEmptyImportRecord()
     })
 
-    await localNotificationSettingStorageService.save(
-      newTestNotificationSetting({
-        // All false must not be default notification setting.
-        // So if import not success, setting in remote won't match below.
-        desktopNotification: false,
-        reminderTab: false,
-        sound: false
-      })
-    )
+    await localNotificationSettingStorageService.save(nonDefaultNotificationSetting)
     await triggerHelperProcess()
 
     await wrapper.find(dataTestSelector('import-button')).trigger('click')
     await flushPromises()
 
+    // Verify the data is imported
     await expect(remoteNotificationSettingStorageService.get()).resolves.toEqual(
-      await localNotificationSettingStorageService.get()
+      nonDefaultNotificationSetting
     )
+
+    // Verify the import status is updated
+    const record = await importRecordStorageService.get()
+    expect(record.status).toBe(ImportStatus.IMPORTED)
+
+    // Verify the onHelperProcessComplete event is emitted
+    expect(wrapper.emitted('onHelperProcessComplete')).toBeTruthy()
+  })
+
+  it('should skip import if user clicked skip on import prompt', async () => {
+    const {
+      wrapper,
+      triggerHelperProcess,
+      remoteNotificationSettingStorageService,
+      localNotificationSettingStorageService,
+      importRecordStorageService
+    } = await mountPage({
+      importRecord: newEmptyImportRecord()
+    })
+
+    await localNotificationSettingStorageService.save(nonDefaultNotificationSetting)
+    await triggerHelperProcess()
+
+    await wrapper.find(dataTestSelector('skip-button')).trigger('click')
+    await flushPromises()
+
+    // Verify the import status is updated
+    const record = await importRecordStorageService.get()
+    expect(record.status).toBe(ImportStatus.USER_SKIPPED)
+
+    // Verify the remote storage is not updated
+    await expect(remoteNotificationSettingStorageService.get()).resolves.not.toEqual(
+      nonDefaultNotificationSetting
+    )
+
+    // Verify the onHelperProcessComplete event is emitted
+    expect(wrapper.emitted('onHelperProcessComplete')).toBeTruthy()
   })
 })
 
 async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
-  const {
-    communicationManager,
-    notificationSettingStorageService: remoteNotificationSettingStorageService,
-    storage: remoteStorage
-  } = await setUpListener()
+  const remoteStorage = LocalStorageWrapper.createFake() // Simulate remote storage
+  const remoteNotificationSettingStorageService = new NotificationSettingStorageService(
+    remoteStorage
+  )
 
   const localStorage = LocalStorageWrapper.createFake()
   const localNotificationSettingStorageService = new NotificationSettingStorageService(localStorage)
@@ -147,11 +182,8 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
   const importRecordStorageService = ImportRecordStorageService.createFake()
   await importRecordStorageService.save(importRecord)
 
-  const clientPort = communicationManager.clientConnect()
-
   const wrapper = mount(SignInProcessHelper, {
     props: {
-      port: clientPort,
       localStorage,
       remoteStorage,
       importRecordStorageService
@@ -160,9 +192,9 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
   await flushPromises()
   return {
     wrapper,
-    clientPort,
     localNotificationSettingStorageService,
     remoteNotificationSettingStorageService,
+    importRecordStorageService,
     triggerHelperProcess: async () => {
       wrapper.vm.triggerHelperProcess()
       await flushPromises()
@@ -171,11 +203,17 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
 }
 
 function assertImportPromptIsRendered(wrapper: VueWrapper) {
-  assertRendered(wrapper, { initialSignInMessage: false, importPrompt: true })
+  assertRendered(wrapper, {
+    initialSignInMessage: false,
+    importPrompt: true
+  })
 }
 
 function assertInitialSignInMessageIsRendered(wrapper: VueWrapper) {
-  assertRendered(wrapper, { initialSignInMessage: true, importPrompt: false })
+  assertRendered(wrapper, {
+    initialSignInMessage: true,
+    importPrompt: false
+  })
 }
 
 function assertRendered(
@@ -192,3 +230,11 @@ function assertRendered(
     componentsRendered.importPrompt
   )
 }
+
+const nonDefaultNotificationSetting: Readonly<NotificationSetting> = newTestNotificationSetting({
+  // All false must not be default notification setting.
+  // So if import not success, setting in remote won't match below.
+  desktopNotification: false,
+  reminderTab: false,
+  sound: false
+})

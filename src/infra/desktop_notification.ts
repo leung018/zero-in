@@ -2,7 +2,7 @@ import type { ActionService } from './action'
 import { BrowserDesktopNotifier } from './browser/desktop_notification'
 
 export interface DesktopNotifier {
-  triggerNotification: (notificationId: string, buttons: { title: string }[]) => void
+  triggerNotification: (notificationId: string, buttons: { title: string }[]) => Promise<void>
 
   clearNotification: (notificationId: string) => void
 
@@ -12,7 +12,7 @@ export interface DesktopNotifier {
 }
 
 class DummyDesktopNotifier implements DesktopNotifier {
-  triggerNotification(): void {}
+  async triggerNotification(): Promise<void> {}
 
   clearNotification(): void {}
 
@@ -65,8 +65,8 @@ export class DesktopNotificationService implements ActionService {
     this.nextButtonTitle = title
   }
 
-  trigger(): void {
-    this.desktopNotifier.triggerNotification(NOTIFICATION_ID, [
+  async trigger(): Promise<void> {
+    await this.desktopNotifier.triggerNotification(NOTIFICATION_ID, [
       {
         title: this.nextButtonTitle
       }

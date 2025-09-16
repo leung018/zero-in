@@ -1,3 +1,4 @@
+import { AdaptiveStorageProvider } from '../../../infra/storage/adaptive'
 import { FakeObservableStorage } from '../../../infra/storage/fake'
 import {
   ObservableStorage,
@@ -7,7 +8,6 @@ import {
 import { StorageKey } from '../../../infra/storage/key'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage'
 import { StorageManager } from '../../../infra/storage/manager'
-import { AdaptiveStorageProvider } from '../../../infra/storage/provider'
 import { getDateAfter } from '../../../utils/date'
 import { Duration } from '../duration'
 import { TimerInternalState } from './internal'

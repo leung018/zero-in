@@ -67,8 +67,18 @@ const signOut = () => {
 
 const isAuthenticated = ref<boolean>(false)
 
+let authenticationResolved = false
 FirebaseServices.isAuthenticated().then((isAuthenticatedValue) => {
   isAuthenticated.value = isAuthenticatedValue
+  authenticationResolved = true
+})
+
+// This can prevent sometime the isAuthenticated return staled cache value
+FirebaseServices.onAuthStateChanged((auth) => {
+  const newIsAuthenticated = auth !== null
+  if (authenticationResolved && newIsAuthenticated !== isAuthenticated.value) {
+    window.location.reload()
+  }
 })
 
 const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICATION]

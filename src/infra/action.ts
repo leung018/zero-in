@@ -1,11 +1,11 @@
 export interface ActionService {
-  trigger(): void
+  trigger(): Promise<void>
 }
 
 export class FakeActionService implements ActionService {
   private _hasTriggered: boolean = false
 
-  trigger() {
+  async trigger() {
     this._hasTriggered = true
   }
 

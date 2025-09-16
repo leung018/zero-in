@@ -101,6 +101,7 @@ describe('NotificationPage', () => {
     // Start the timer and finish the focus session. Notification should be triggered when finish focus session
     await clientPort.send({ name: WorkRequestName.START_TIMER })
     vi.advanceTimersByTime(1000)
+    await flushPromises()
 
     expect(reminderTabService.hasTriggered()).toBe(false)
     expect(desktopNotificationService.isNotificationActive()).toBe(true)

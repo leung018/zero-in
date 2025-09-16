@@ -1,8 +1,6 @@
-import { initializeApp } from 'firebase/app'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import config from '../config'
 import { BrowserNewTabService } from '../infra/browser/new_tab'
 import { firebaseAuth } from '../infra/browser/sign_in'
+import { FirebaseServices } from '../infra/firebase/services'
 import { retryUntilSuccess } from '../utils/retry'
 import { BackgroundListener } from './listener'
 import { MenuItemId } from './menu_item_id'
@@ -29,9 +27,11 @@ export default function main() {
       if (message.type === 'SIGN_IN') {
         firebaseAuth()
           .then((auth) => {
-            sendResponse({
-              type: 'SIGN_IN_SUCCESS',
-              payload: auth
+            return FirebaseServices.signInWithToken(auth._tokenResponse.oauthIdToken).then(() => {
+              sendResponse({
+                type: 'SIGN_IN_SUCCESS',
+                payload: auth
+              })
             })
           })
           .catch((error) => {
@@ -41,13 +41,30 @@ export default function main() {
             })
           })
       }
+      if (message.type == 'RELOAD') {
+        listener
+          .reload()
+          .then(() => {
+            sendResponse({ type: 'RELOAD_SUCCESS' })
+          })
+          .catch((err) => {
+            if (err.code === 'permission-denied') {
+              console.log(
+                'Permission denied during reload - ignoring as onAuthStateChanged will handle the reload'
+              )
+              sendResponse({ type: 'RELOAD_FAILURE' })
+            } else {
+              throw err
+            }
+          })
+      }
       return true
     })
 
     // Execute reload only when listener.start is resolved.
     // Now, reload/start will throw error if they are called at the same time to prevent some strange issues.
     // Hard to cover that I call reload/start not at the same time in e2e tests.
-    onAuthStateChanged(getAuth(initializeApp(config.getFirebaseConfig())), () => {
+    FirebaseServices.onAuthStateChanged(() => {
       retryUntilSuccess(
         () => {
           return listener.reload()

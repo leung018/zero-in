@@ -3,8 +3,8 @@ import type { ActionService } from '../action'
 export class BrowserSoundService implements ActionService {
   // Require manual testing
 
-  trigger(): void {
-    browser.offscreen
+  async trigger() {
+    return browser.offscreen
       .createDocument({
         url: 'offscreen-sound.html',
         reasons: ['AUDIO_PLAYBACK'],

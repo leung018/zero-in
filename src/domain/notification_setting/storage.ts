@@ -1,10 +1,10 @@
 import type { NotificationSetting } from '.'
 import config from '../../config'
+import { AdaptiveStorageProvider } from '../../infra/storage/adaptive'
 import { StorageInterface, StorageService } from '../../infra/storage/interface'
 import { StorageKey } from '../../infra/storage/key'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { StorageManager } from '../../infra/storage/manager'
-import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import type { SerializedNotificationSetting } from './serialize'
 
 export class NotificationSettingStorageService implements StorageService<NotificationSetting> {

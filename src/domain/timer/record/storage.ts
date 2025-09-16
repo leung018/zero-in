@@ -1,9 +1,9 @@
 import type { FocusSessionRecord } from '.'
+import { AdaptiveStorageProvider } from '../../../infra/storage/adaptive'
 import { StorageInterface, StorageService } from '../../../infra/storage/interface'
 import { StorageKey } from '../../../infra/storage/key'
 import { LocalStorageWrapper } from '../../../infra/storage/local_storage'
 import { StorageManager } from '../../../infra/storage/manager'
-import { AdaptiveStorageProvider } from '../../../infra/storage/provider'
 import { FocusSessionRecordsSchemas } from './schema'
 import { deserializeFocusSessionRecords, serializeFocusSessionRecords } from './serialize'
 

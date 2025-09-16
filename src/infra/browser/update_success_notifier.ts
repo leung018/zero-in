@@ -1,7 +1,9 @@
-export class UpdateSuccessNotifierService {
+import { ActionService } from '../action'
+
+export class UpdateSuccessNotifierService implements ActionService {
   // Require manual testing
 
-  trigger() {
+  async trigger() {
     // Create a popup element
     const popup = document.createElement('div')
     popup.style.position = 'fixed'

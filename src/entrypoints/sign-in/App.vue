@@ -2,30 +2,39 @@
 import { FeatureFlag, FeatureFlagsService } from '@/infra/feature_flags'
 import { ImportRecordStorageService } from '../../domain/import/record/storage'
 import { FirebaseServices } from '../../infra/firebase/services'
+import { FirestoreStorageWrapper } from '../../infra/storage/firestore'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
-import { AdaptiveStorageProvider } from '../../infra/storage/provider'
 import SignInProcessHelper from '../../pages/SignInProcessHelper.vue'
 
 // Require manual testing
 
 const showProcessHelper = ref(false)
+const signInProcessHelperRef = ref<InstanceType<typeof SignInProcessHelper> | null>(null)
 
 const signIn = async () => {
-  const response = await browser.runtime.sendMessage({
+  browser.runtime.sendMessage({
     type: 'SIGN_IN'
   })
-  if (response.type === 'SIGN_IN_SUCCESS') {
-    showProcessHelper.value = true
+  FirebaseServices.onAuthStateChanged(async (auth) => {
+    if (auth) {
+      showProcessHelper.value = true
+      signInProcessHelperRef.value!.triggerHelperProcess()
+    }
+  })
+}
 
-    // For why sign in here instead of in service worker:
-    // because when browserLocalPersistence is enabled in firebase sign in api, service worker cannot call it and will throw error.
-    // So have to sign in here first.
-    FirebaseServices.signInWithToken(response.payload._tokenResponse.oauthIdToken).then(() => {
-      browser.runtime.openOptionsPage().then(() => {
-        window.close()
-      })
-    })
-  }
+const onHelperProcessComplete = async () => {
+  // Cannot setPersistence inside service worker. So have to set it outside service worker.
+  //
+  // If setPersistence before helper process complete, seem have some problem.
+  // But if set it below, the problem seem fixed.
+  await FirebaseServices.setPersistence()
+
+  await browser.runtime.sendMessage({
+    type: 'RELOAD'
+  })
+  await browser.runtime.openOptionsPage()
+  window.close()
 }
 
 const featureFlagsService = FeatureFlagsService.init()
@@ -97,10 +106,12 @@ featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
   </div>
 
   <SignInProcessHelper
+    ref="signInProcessHelperRef"
     v-show="showProcessHelper"
     :localStorage="LocalStorageWrapper.create()"
-    :remoteStorage="AdaptiveStorageProvider.create()"
+    :remoteStorage="FirestoreStorageWrapper.create()"
     :importRecordStorageService="ImportRecordStorageService.create()"
+    @onHelperProcessComplete="onHelperProcessComplete"
   />
 </template>
 
