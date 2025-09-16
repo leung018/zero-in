@@ -24,7 +24,7 @@ const { port } = defineProps<{
       />
     </BCard>
     <BCard class="mb-4 shadow-sm">
-      <h2 class="mb-3 mt-1">Timer Integration</h2>
+      <h2 class="mb-3 mt-1">Timer-Based</h2>
       <TimerIntegrationSetting
         :blocking-timer-integration-storage-service="
           BlockingTimerIntegrationStorageService.create()
