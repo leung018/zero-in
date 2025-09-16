@@ -1,37 +1,10 @@
 import { StorageInterface, StorageService } from '../../infra/storage/interface'
-import { SettingsStorageKey } from '../../infra/storage/key'
+import { SettingsStorageKey, newSettingStorageServicesMap } from '../../infra/storage/key'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
-import { BlockingTimerIntegrationStorageService } from '../blocking_timer_integration/storage'
-import { BrowsingRulesStorageService } from '../browsing_rules/storage'
-import { DailyResetTimeStorageService } from '../daily_reset_time/storage'
-import { NotificationSettingStorageService } from '../notification_setting/storage'
-import { WeeklySchedulesStorageService } from '../schedules/storage'
-import { TimerConfigStorageService } from '../timer/config/storage'
-import { FocusSessionRecordsStorageService } from '../timer/record/storage'
-import { TimerStateStorageService } from '../timer/state/storage'
-
-type StorageServicesMap = {
-  [key in SettingsStorageKey]: StorageService<any>
-}
 
 export class ImportService {
-  private localStorageServicesMap: StorageServicesMap
-  private remoteStorageServicesMap: StorageServicesMap
-
-  static newSettingStorageServicesMap = (storage: StorageInterface): StorageServicesMap => {
-    return {
-      [SettingsStorageKey.BlockingTimerIntegration]: new BlockingTimerIntegrationStorageService(
-        storage
-      ),
-      [SettingsStorageKey.BrowsingRules]: new BrowsingRulesStorageService(storage),
-      [SettingsStorageKey.NotificationSetting]: new NotificationSettingStorageService(storage),
-      [SettingsStorageKey.WeeklySchedules]: new WeeklySchedulesStorageService(storage),
-      [SettingsStorageKey.DailyResetTime]: new DailyResetTimeStorageService(storage),
-      [SettingsStorageKey.TimerState]: new TimerStateStorageService(storage),
-      [SettingsStorageKey.TimerConfig]: new TimerConfigStorageService(storage),
-      [SettingsStorageKey.FocusSessionRecords]: new FocusSessionRecordsStorageService(storage)
-    }
-  }
+  private localStorageServicesMap: ReturnType<typeof newSettingStorageServicesMap>
+  private remoteStorageServicesMap: ReturnType<typeof newSettingStorageServicesMap>
 
   static createFake({
     localStorage = LocalStorageWrapper.createFake(),
@@ -50,8 +23,8 @@ export class ImportService {
     localStorage: StorageInterface
     remoteStorage: StorageInterface
   }) {
-    this.localStorageServicesMap = ImportService.newSettingStorageServicesMap(localStorage)
-    this.remoteStorageServicesMap = ImportService.newSettingStorageServicesMap(remoteStorage)
+    this.localStorageServicesMap = newSettingStorageServicesMap(localStorage)
+    this.remoteStorageServicesMap = newSettingStorageServicesMap(remoteStorage)
   }
 
   async importFromLocalToRemote() {
