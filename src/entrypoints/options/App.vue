@@ -93,17 +93,12 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
             v-if="!isAuthenticated"
             size="sm"
             class="ms-2"
+            variant="warning"
             @click="goToSignIn"
             data-test="sign-in-button"
             >Sign In</BButton
           >
-          <BButton
-            v-else
-            size="sm"
-            class="ms-2"
-            variant="warning"
-            @click="signOut"
-            data-test="sign-out-button"
+          <BButton v-else size="sm" class="ms-2" @click="signOut" data-test="sign-out-button"
             >Sign Out</BButton
           >
         </div>
