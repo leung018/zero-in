@@ -1,7 +1,6 @@
 import { flushPromises } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import config from '../config'
-import { newTestBlockingTimerIntegration } from '../domain/blocking_timer_integration'
 import { BrowsingRules } from '../domain/browsing_rules'
 import {
   newTestNotificationSetting,
@@ -14,6 +13,7 @@ import type { FocusSessionRecord } from '../domain/timer/record'
 import { TimerStage } from '../domain/timer/stage'
 import { TimerInternalState } from '../domain/timer/state/internal'
 import { TimerStateStorageService } from '../domain/timer/state/storage'
+import { newTestTimerBasedBlockingRules } from '../domain/timer_based_blocking'
 import { type Badge, type BadgeColor } from '../infra/badge'
 import { setUpListener } from '../test_utils/listener'
 import { getDateAfter } from '../utils/date'
@@ -379,7 +379,7 @@ describe('BackgroundListener', () => {
         focusDuration: new Duration({ seconds: 3 }),
         shortBreakDuration: new Duration({ seconds: 1 })
       }),
-      blockingTimerIntegration: newTestBlockingTimerIntegration({
+      timerBasedBlockingRules: newTestTimerBasedBlockingRules({
         pauseBlockingDuringBreaks: true,
         pauseBlockingWhenTimerNotRunning: false
       }),
@@ -414,7 +414,7 @@ describe('BackgroundListener', () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
 
     const { browsingControlService, clientPort, listener } = await startListener({
-      blockingTimerIntegration: newTestBlockingTimerIntegration({
+      timerBasedBlockingRules: newTestTimerBasedBlockingRules({
         pauseBlockingWhenTimerNotRunning: true
       }),
       browsingRules,
@@ -640,7 +640,7 @@ describe('BackgroundListener', () => {
     const { listener, clientPort, timerStateStorageService, browsingControlService } =
       await startListenerWithTimerSync({
         browsingRules,
-        blockingTimerIntegration: newTestBlockingTimerIntegration({
+        timerBasedBlockingRules: newTestTimerBasedBlockingRules({
           pauseBlockingWhenTimerNotRunning: true
         }),
         weeklySchedules: []
@@ -716,7 +716,7 @@ async function startListener({
   timerConfig = TimerConfig.newTestInstance(),
   notificationSetting = newTestNotificationSetting(),
   focusSessionRecordHouseKeepDays = 30,
-  blockingTimerIntegration = newTestBlockingTimerIntegration(),
+  timerBasedBlockingRules = newTestTimerBasedBlockingRules(),
   browsingRules = new BrowsingRules(),
   weeklySchedules = [],
   timerStateStorageService = TimerStateStorageService.createFake(),
@@ -729,7 +729,7 @@ async function startListener({
     timerConfigStorageService
   })
 
-  await context.blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
+  await context.timerBasedBlockingRulesStorageService.save(timerBasedBlockingRules)
   await context.weeklySchedulesStorageService.save(weeklySchedules)
   await context.browsingRulesStorageService.save(browsingRules)
   await context.notificationSettingStorageService.save(notificationSetting)
@@ -750,7 +750,7 @@ async function startListener({
 async function startListenerWithTimerSync({
   timerConfig = TimerConfig.newTestInstance(),
   notificationSetting = newTestNotificationSetting(),
-  blockingTimerIntegration = newTestBlockingTimerIntegration(),
+  timerBasedBlockingRules = newTestTimerBasedBlockingRules(),
   browsingRules = new BrowsingRules(),
   weeklySchedules = [],
   timerStateStorageService = TimerStateStorageService.createObservableFake()
@@ -758,7 +758,7 @@ async function startListenerWithTimerSync({
   return startListener({
     timerConfig,
     notificationSetting,
-    blockingTimerIntegration,
+    timerBasedBlockingRules,
     browsingRules,
     weeklySchedules,
     timerStateStorageService,

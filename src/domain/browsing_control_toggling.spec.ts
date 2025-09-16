@@ -1,7 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { FakeBrowsingControlService } from '../infra/browsing_control'
-import type { BlockingTimerIntegration } from './blocking_timer_integration'
-import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 import { BrowsingControlTogglingService } from './browsing_control_toggling'
 import { BrowsingRules } from './browsing_rules'
 import { BrowsingRulesStorageService } from './browsing_rules/storage'
@@ -12,6 +10,8 @@ import { Duration } from './timer/duration'
 import { newFocusSessionRecord } from './timer/record'
 import { FocusSessionRecordsStorageService } from './timer/record/storage'
 import { TimerStage } from './timer/stage'
+import type { TimerBasedBlockingRules } from './timer_based_blocking'
+import { TimerBasedBlockingRulesStorageService } from './timer_based_blocking/storage'
 
 describe('BrowsingControlTogglingService', () => {
   const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
@@ -310,12 +310,12 @@ async function getBrowsingRulesAfterToggling({
 
   const browsingControlService = new FakeBrowsingControlService()
 
-  const blockingTimerIntegration: BlockingTimerIntegration = {
+  const timerBasedBlockingRules: TimerBasedBlockingRules = {
     pauseBlockingDuringBreaks,
     pauseBlockingWhenTimerNotRunning
   }
-  const blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake()
-  await blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
+  const timerBasedBlockingRulesStorageService = TimerBasedBlockingRulesStorageService.createFake()
+  await timerBasedBlockingRulesStorageService.save(timerBasedBlockingRules)
 
   const focusSessionRecordsStorageService = FocusSessionRecordsStorageService.createFake()
   await focusSessionRecordsStorageService.save(focusSessionRecords)
@@ -324,7 +324,7 @@ async function getBrowsingRulesAfterToggling({
     browsingRulesStorageService,
     browsingControlService,
     weeklySchedulesStorageService,
-    blockingTimerIntegrationStorageService,
+    timerBasedBlockingRulesStorageService,
     focusSessionRecordsStorageService,
     timerInfoGetter: { getTimerInfo: () => timerInfo }
   })

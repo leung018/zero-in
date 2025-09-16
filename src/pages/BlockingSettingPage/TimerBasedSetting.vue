@@ -4,10 +4,10 @@ import LoadingWrapper from '@/pages/components/LoadingWrapper.vue'
 import type { ClientPort } from '@/service_workers/listener'
 import { WorkRequestName } from '@/service_workers/request'
 import { ref } from 'vue'
-import type { BlockingTimerIntegrationStorageService } from '../../domain/blocking_timer_integration/storage'
+import type { TimerBasedBlockingRulesStorageService } from '../../domain/timer_based_blocking/storage'
 
-const { blockingTimerIntegrationStorageService, updateSuccessNotifierService, port } = defineProps<{
-  blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
+const { timerBasedBlockingRulesStorageService, updateSuccessNotifierService, port } = defineProps<{
+  timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
   updateSuccessNotifierService: ActionService
   port: ClientPort
 }>()
@@ -16,14 +16,14 @@ const pauseBlockingDuringBreaks = ref(false)
 const pauseBlockingWhenTimerNotRunning = ref(false)
 const isLoading = ref(true)
 
-blockingTimerIntegrationStorageService.get().then((config) => {
+timerBasedBlockingRulesStorageService.get().then((config) => {
   pauseBlockingDuringBreaks.value = config.pauseBlockingDuringBreaks
   pauseBlockingWhenTimerNotRunning.value = config.pauseBlockingWhenTimerNotRunning
   isLoading.value = false
 })
 
 async function onClickSave() {
-  await blockingTimerIntegrationStorageService.save({
+  await timerBasedBlockingRulesStorageService.save({
     pauseBlockingDuringBreaks: pauseBlockingDuringBreaks.value,
     pauseBlockingWhenTimerNotRunning: pauseBlockingWhenTimerNotRunning.value
   })

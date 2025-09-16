@@ -1,12 +1,12 @@
 import { FakeBrowsingControlService, type BrowsingControlService } from '../infra/browsing_control'
 import { isSameDay } from '../utils/date'
-import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 import { BrowsingRulesStorageService } from './browsing_rules/storage'
 import type { WeeklySchedule } from './schedules'
 import { WeeklySchedulesStorageService } from './schedules/storage'
 import { Duration } from './timer/duration'
 import { FocusSessionRecordsStorageService } from './timer/record/storage'
 import { TimerStage } from './timer/stage'
+import { TimerBasedBlockingRulesStorageService } from './timer_based_blocking/storage'
 
 interface TimerInfoGetter {
   getTimerInfo(): {
@@ -23,14 +23,14 @@ export class BrowsingControlTogglingService {
   private browsingRulesStorageService: BrowsingRulesStorageService
   private weeklySchedulesStorageService: WeeklySchedulesStorageService
   private focusSessionRecordsStorageService: FocusSessionRecordsStorageService
-  private blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
+  private timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
   private timerInfoGetter: TimerInfoGetter
 
   static createFake({
     browsingControlService = new FakeBrowsingControlService(),
     browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
     weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake(),
-    blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake(),
+    timerBasedBlockingRulesStorageService = TimerBasedBlockingRulesStorageService.createFake(),
     focusSessionRecordsStorageService = FocusSessionRecordsStorageService.createFake(),
     timerInfoGetter = {
       getTimerInfo: () => ({
@@ -46,7 +46,7 @@ export class BrowsingControlTogglingService {
       browsingControlService,
       browsingRulesStorageService,
       weeklySchedulesStorageService,
-      blockingTimerIntegrationStorageService,
+      timerBasedBlockingRulesStorageService,
       focusSessionRecordsStorageService,
       timerInfoGetter
     })
@@ -57,20 +57,20 @@ export class BrowsingControlTogglingService {
     browsingRulesStorageService,
     focusSessionRecordsStorageService,
     weeklySchedulesStorageService,
-    blockingTimerIntegrationStorageService,
+    timerBasedBlockingRulesStorageService,
     timerInfoGetter
   }: {
     browsingControlService: BrowsingControlService
     browsingRulesStorageService: BrowsingRulesStorageService
     focusSessionRecordsStorageService: FocusSessionRecordsStorageService
     weeklySchedulesStorageService: WeeklySchedulesStorageService
-    blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
+    timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
     timerInfoGetter: TimerInfoGetter
   }) {
     this.browsingControlService = browsingControlService
     this.browsingRulesStorageService = browsingRulesStorageService
     this.weeklySchedulesStorageService = weeklySchedulesStorageService
-    this.blockingTimerIntegrationStorageService = blockingTimerIntegrationStorageService
+    this.timerBasedBlockingRulesStorageService = timerBasedBlockingRulesStorageService
     this.focusSessionRecordsStorageService = focusSessionRecordsStorageService
     this.timerInfoGetter = timerInfoGetter
   }
@@ -85,13 +85,13 @@ export class BrowsingControlTogglingService {
   }
 
   private async shouldActivateBrowsingRules(): Promise<boolean> {
-    const blockingTimerIntegration = await this.blockingTimerIntegrationStorageService.get()
+    const timerBasedBlockingRules = await this.timerBasedBlockingRulesStorageService.get()
 
-    if (blockingTimerIntegration.pauseBlockingWhenTimerNotRunning && !this.isRunning()) {
+    if (timerBasedBlockingRules.pauseBlockingWhenTimerNotRunning && !this.isRunning()) {
       return false
     }
 
-    if (blockingTimerIntegration.pauseBlockingDuringBreaks && this.isInBreak()) {
+    if (timerBasedBlockingRules.pauseBlockingDuringBreaks && this.isInBreak()) {
       return false
     }
 

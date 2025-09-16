@@ -1,5 +1,4 @@
 import config from '../config'
-import { BlockingTimerIntegrationStorageService } from '../domain/blocking_timer_integration/storage'
 import { BrowsingControlTogglingService } from '../domain/browsing_control_toggling'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
@@ -13,6 +12,7 @@ import { TimerStage } from '../domain/timer/stage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
 import type { TimerExternalState } from '../domain/timer/state/external'
 import { TimerStateStorageService } from '../domain/timer/state/storage'
+import { TimerBasedBlockingRulesStorageService } from '../domain/timer_based_blocking/storage'
 import { type ActionService } from '../infra/action'
 import { type BadgeColor, type BadgeDisplayService } from '../infra/badge'
 import { BrowserBadgeDisplayService } from '../infra/browser/badge'
@@ -43,7 +43,7 @@ type ListenerParams = {
   browsingControlService: BrowsingControlService
   browsingRulesStorageService: BrowsingRulesStorageService
   weeklySchedulesStorageService: WeeklySchedulesStorageService
-  blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
+  timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
   focusSessionRecordHouseKeepDays: number
   timer: FocusTimer
 }
@@ -65,7 +65,7 @@ export class BackgroundListener {
       browsingControlService: new BrowserBrowsingControlService(),
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
       weeklySchedulesStorageService: WeeklySchedulesStorageService.create(),
-      blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService.create(),
+      timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService.create(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
       timer: FocusTimer.create()
     })
@@ -104,7 +104,7 @@ export class BackgroundListener {
       browsingControlService: params.browsingControlService,
       browsingRulesStorageService: params.browsingRulesStorageService,
       weeklySchedulesStorageService: params.weeklySchedulesStorageService,
-      blockingTimerIntegrationStorageService: params.blockingTimerIntegrationStorageService,
+      timerBasedBlockingRulesStorageService: params.timerBasedBlockingRulesStorageService,
       focusSessionRecordsStorageService: params.focusSessionRecordsStorageService,
       timerInfoGetter: {
         getTimerInfo: () => {
