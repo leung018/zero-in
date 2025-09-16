@@ -27,9 +27,11 @@ export default function main() {
       if (message.type === 'SIGN_IN') {
         firebaseAuth()
           .then((auth) => {
-            sendResponse({
-              type: 'SIGN_IN_SUCCESS',
-              payload: auth
+            return FirebaseServices.signInWithToken(auth._tokenResponse.oauthIdToken).then(() => {
+              sendResponse({
+                type: 'SIGN_IN_SUCCESS',
+                payload: auth
+              })
             })
           })
           .catch((error) => {

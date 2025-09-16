@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import config from '@/config'
-import { BrowserNewTabService } from '@/infra/browser/new_tab'
 import { FeatureFlag, FeatureFlagsService } from '@/infra/feature_flags'
 import { ImportRecordStorageService } from '../../domain/import/record/storage'
 import { FirebaseServices } from '../../infra/firebase/services'
@@ -14,39 +12,28 @@ const showProcessHelper = ref(false)
 const signInProcessHelperRef = ref<InstanceType<typeof SignInProcessHelper> | null>(null)
 
 const signIn = async () => {
-  const response = await browser.runtime.sendMessage({
+  browser.runtime.sendMessage({
     type: 'SIGN_IN'
   })
-  if (response.type === 'SIGN_IN_SUCCESS') {
-    showProcessHelper.value = true
-
-    // For why sign in here instead of in service worker:
-    // because when browserLocalPersistence is enabled in firebase sign in api, service worker cannot call it and will throw error.
-    // So have to sign in here first.
-    FirebaseServices.signInWithToken(response.payload._tokenResponse.oauthIdToken).then(() => {
+  FirebaseServices.onAuthStateChanged(async (auth) => {
+    if (auth) {
+      showProcessHelper.value = true
       signInProcessHelperRef.value!.triggerHelperProcess()
-    })
-  }
+    }
+  })
 }
 
 const onHelperProcessComplete = async () => {
-  // If setPersistence inside signInWithToken and I open popup or other page before helperProcess complete,
-  // I found that it may cause the firebase authentication error in the import process.
-  // But if set it below, the problem seem fixed
+  // Cannot setPersistence inside service worker. So have to set it outside service worker.
+  //
+  // If setPersistence before helper process complete, seem have some problem.
+  // But if set it below, the problem seem fixed.
   await FirebaseServices.setPersistence()
 
   await browser.runtime.sendMessage({
     type: 'RELOAD'
   })
-  // Note: Not using browser.runtime.openOptionsPage here.
-  // Reason: onAuthStateChanged only fires when a *new* page is opened.
-  // If the options page is already open, browser.runtime.openOptionsPage
-  // will just focus the existing tab, which does not re-trigger onAuthStateChanged.
-  //
-  // By explicitly opening a new tab, we ensure onAuthStateChanged is triggered,
-  // which is necessary to reload the listener and guarantee the sign-in
-  // + import flow works correctly.
-  await new BrowserNewTabService(config.getOptionsPageUrl()).trigger()
+  await browser.runtime.openOptionsPage()
   window.close()
 }
 
