@@ -1,12 +1,12 @@
 import { FakeBrowsingControlService, type BrowsingControlService } from '../infra/browsing_control'
 import { isSameDay } from '../utils/date'
-import { BlockingTimerIntegrationStorageService } from './blocking_timer_integration/storage'
 import { BrowsingRulesStorageService } from './browsing_rules/storage'
 import type { WeeklySchedule } from './schedules'
 import { WeeklySchedulesStorageService } from './schedules/storage'
 import { Duration } from './timer/duration'
 import { FocusSessionRecordsStorageService } from './timer/record/storage'
 import { TimerStage } from './timer/stage'
+import { TimerBasedBlockingStorageService } from './timer_based_blocking/storage'
 
 interface TimerInfoGetter {
   getTimerInfo(): {
@@ -23,14 +23,14 @@ export class BrowsingControlTogglingService {
   private browsingRulesStorageService: BrowsingRulesStorageService
   private weeklySchedulesStorageService: WeeklySchedulesStorageService
   private focusSessionRecordsStorageService: FocusSessionRecordsStorageService
-  private blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
+  private timerBasedBlockingStorageService: TimerBasedBlockingStorageService
   private timerInfoGetter: TimerInfoGetter
 
   static createFake({
     browsingControlService = new FakeBrowsingControlService(),
     browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
     weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake(),
-    blockingTimerIntegrationStorageService = BlockingTimerIntegrationStorageService.createFake(),
+    timerBasedBlockingStorageService = TimerBasedBlockingStorageService.createFake(),
     focusSessionRecordsStorageService = FocusSessionRecordsStorageService.createFake(),
     timerInfoGetter = {
       getTimerInfo: () => ({
@@ -46,7 +46,7 @@ export class BrowsingControlTogglingService {
       browsingControlService,
       browsingRulesStorageService,
       weeklySchedulesStorageService,
-      blockingTimerIntegrationStorageService,
+      timerBasedBlockingStorageService,
       focusSessionRecordsStorageService,
       timerInfoGetter
     })
@@ -57,20 +57,20 @@ export class BrowsingControlTogglingService {
     browsingRulesStorageService,
     focusSessionRecordsStorageService,
     weeklySchedulesStorageService,
-    blockingTimerIntegrationStorageService,
+    timerBasedBlockingStorageService,
     timerInfoGetter
   }: {
     browsingControlService: BrowsingControlService
     browsingRulesStorageService: BrowsingRulesStorageService
     focusSessionRecordsStorageService: FocusSessionRecordsStorageService
     weeklySchedulesStorageService: WeeklySchedulesStorageService
-    blockingTimerIntegrationStorageService: BlockingTimerIntegrationStorageService
+    timerBasedBlockingStorageService: TimerBasedBlockingStorageService
     timerInfoGetter: TimerInfoGetter
   }) {
     this.browsingControlService = browsingControlService
     this.browsingRulesStorageService = browsingRulesStorageService
     this.weeklySchedulesStorageService = weeklySchedulesStorageService
-    this.blockingTimerIntegrationStorageService = blockingTimerIntegrationStorageService
+    this.timerBasedBlockingStorageService = timerBasedBlockingStorageService
     this.focusSessionRecordsStorageService = focusSessionRecordsStorageService
     this.timerInfoGetter = timerInfoGetter
   }
@@ -85,13 +85,13 @@ export class BrowsingControlTogglingService {
   }
 
   private async shouldActivateBrowsingRules(): Promise<boolean> {
-    const blockingTimerIntegration = await this.blockingTimerIntegrationStorageService.get()
+    const timerBasedBlocking = await this.timerBasedBlockingStorageService.get()
 
-    if (blockingTimerIntegration.pauseBlockingWhenTimerNotRunning && !this.isRunning()) {
+    if (timerBasedBlocking.pauseBlockingWhenTimerNotRunning && !this.isRunning()) {
       return false
     }
 
-    if (blockingTimerIntegration.pauseBlockingDuringBreaks && this.isInBreak()) {
+    if (timerBasedBlocking.pauseBlockingDuringBreaks && this.isInBreak()) {
       return false
     }
 

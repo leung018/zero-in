@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { BlockingTimerIntegrationStorageService } from '@/domain/blocking_timer_integration/storage'
 import { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { WeeklySchedulesStorageService } from '@/domain/schedules/storage'
+import { TimerBasedBlockingStorageService } from '@/domain/timer_based_blocking/storage'
 import { UpdateSuccessNotifierService } from '@/infra/browser/update_success_notifier'
 import type { ClientPort } from '@/service_workers/listener'
 import ContentTemplate from '../components/ContentTemplate.vue'
 import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
-import TimerIntegrationSetting from './TimerIntegrationSetting.vue'
+import TimerBasedSetting from './TimerBasedSetting.vue'
 import WeeklySchedulesEditor from './WeeklySchedulesEditor/index.vue'
 
 const { port } = defineProps<{
@@ -25,10 +25,8 @@ const { port } = defineProps<{
     </BCard>
     <BCard class="mb-4 shadow-sm">
       <h2 class="mb-3 mt-1">Timer-Based</h2>
-      <TimerIntegrationSetting
-        :blocking-timer-integration-storage-service="
-          BlockingTimerIntegrationStorageService.create()
-        "
+      <TimerBasedSetting
+        :timer-based-blocking-storage-service="TimerBasedBlockingStorageService.create()"
         :update-success-notifier-service="new UpdateSuccessNotifierService()"
         :port="port"
       />

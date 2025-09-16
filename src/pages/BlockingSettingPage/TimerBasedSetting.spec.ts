@@ -1,23 +1,23 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import config from '../../config'
-import {
-  newTestBlockingTimerIntegration,
-  type BlockingTimerIntegration
-} from '../../domain/blocking_timer_integration'
 import { BrowsingRules } from '../../domain/browsing_rules'
 import { TimerStage } from '../../domain/timer/stage'
 import { TimerInternalState } from '../../domain/timer/state/internal'
+import {
+  newTestTimerBasedBlocking,
+  type TimerBasedBlocking
+} from '../../domain/timer_based_blocking'
 import { FakeActionService } from '../../infra/action'
 import { assertSelectorCheckboxValue } from '../../test_utils/assert'
 import { setUpListener } from '../../test_utils/listener'
 import { dataTestSelector } from '../../test_utils/selector'
-import TimerIntegrationSetting from './TimerIntegrationSetting.vue'
+import TimerBasedSetting from './TimerBasedSetting.vue'
 
-describe('TimerIntegrationSetting', () => {
+describe('TimerBasedSetting', () => {
   it('should render saved setting', async () => {
-    const { wrapper: wrapper1 } = await mountTimerIntegrationSetting({
-      blockingTimerIntegration: {
+    const { wrapper: wrapper1 } = await mountTimerBasedSetting({
+      timerBasedBlocking: {
         pauseBlockingDuringBreaks: false,
         pauseBlockingWhenTimerNotRunning: true
       }
@@ -29,8 +29,8 @@ describe('TimerIntegrationSetting', () => {
       true
     )
 
-    const { wrapper: wrapper2 } = await mountTimerIntegrationSetting({
-      blockingTimerIntegration: {
+    const { wrapper: wrapper2 } = await mountTimerBasedSetting({
+      timerBasedBlocking: {
         pauseBlockingDuringBreaks: true,
         pauseBlockingWhenTimerNotRunning: false
       }
@@ -44,28 +44,28 @@ describe('TimerIntegrationSetting', () => {
   })
 
   it('should persist setting after clicking save', async () => {
-    const { wrapper, blockingTimerIntegrationStorageService } = await mountTimerIntegrationSetting({
-      blockingTimerIntegration: {
+    const { wrapper, timerBasedBlockingStorageService } = await mountTimerBasedSetting({
+      timerBasedBlocking: {
         pauseBlockingDuringBreaks: false,
         pauseBlockingWhenTimerNotRunning: true
       }
     })
 
-    const expectedIntegration: BlockingTimerIntegration = {
+    const expectedIntegration: TimerBasedBlocking = {
       pauseBlockingDuringBreaks: true,
       pauseBlockingWhenTimerNotRunning: false
     }
-    await saveBlockingTimerIntegration(wrapper, expectedIntegration)
+    await saveTimerBasedBlocking(wrapper, expectedIntegration)
 
-    expect(await blockingTimerIntegrationStorageService.get()).toEqual(expectedIntegration)
+    expect(await timerBasedBlockingStorageService.get()).toEqual(expectedIntegration)
   })
 
   it('should trigger notifierService when clicking save', async () => {
-    const { wrapper, updateSuccessNotifierService } = await mountTimerIntegrationSetting()
+    const { wrapper, updateSuccessNotifierService } = await mountTimerBasedSetting()
 
     expect(updateSuccessNotifierService.hasTriggered()).toBe(false)
 
-    await saveBlockingTimerIntegration(wrapper)
+    await saveTimerBasedBlocking(wrapper)
 
     expect(updateSuccessNotifierService.hasTriggered()).toBe(true)
   })
@@ -73,8 +73,8 @@ describe('TimerIntegrationSetting', () => {
   it('should toggle browsing control after clicking save', async () => {
     const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
 
-    const { wrapper, browsingControlService, listener } = await mountTimerIntegrationSetting({
-      blockingTimerIntegration: newTestBlockingTimerIntegration({
+    const { wrapper, browsingControlService, listener } = await mountTimerBasedSetting({
+      timerBasedBlocking: newTestTimerBasedBlocking({
         pauseBlockingDuringBreaks: false
       }),
       timerState: TimerInternalState.newTestInstance({
@@ -90,9 +90,9 @@ describe('TimerIntegrationSetting', () => {
 
     expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
 
-    await saveBlockingTimerIntegration(
+    await saveTimerBasedBlocking(
       wrapper,
-      newTestBlockingTimerIntegration({
+      newTestTimerBasedBlocking({
         pauseBlockingDuringBreaks: true
       })
     )
@@ -101,8 +101,8 @@ describe('TimerIntegrationSetting', () => {
   })
 })
 
-async function mountTimerIntegrationSetting({
-  blockingTimerIntegration = config.getDefaultBlockingTimerIntegration(),
+async function mountTimerBasedSetting({
+  timerBasedBlocking = config.getDefaultTimerBasedBlocking(),
   browsingRules = new BrowsingRules(),
   weeklySchedules = [],
   timerState = TimerInternalState.newTestInstance()
@@ -113,22 +113,22 @@ async function mountTimerIntegrationSetting({
     browsingControlService,
     communicationManager,
     listener,
-    blockingTimerIntegrationStorageService,
+    timerBasedBlockingStorageService,
     browsingRulesStorageService,
     weeklySchedulesStorageService,
     timerStateStorageService
   } = await setUpListener()
 
-  await blockingTimerIntegrationStorageService.save(blockingTimerIntegration)
+  await timerBasedBlockingStorageService.save(timerBasedBlocking)
   await browsingRulesStorageService.save(browsingRules)
   await weeklySchedulesStorageService.save(weeklySchedules)
   await timerStateStorageService.save(timerState)
 
   await listener.start()
 
-  const wrapper = mount(TimerIntegrationSetting, {
+  const wrapper = mount(TimerBasedSetting, {
     props: {
-      blockingTimerIntegrationStorageService,
+      timerBasedBlockingStorageService,
       updateSuccessNotifierService,
       port: communicationManager.clientConnect()
     }
@@ -138,25 +138,25 @@ async function mountTimerIntegrationSetting({
     browsingControlService,
     listener,
     wrapper,
-    blockingTimerIntegrationStorageService,
+    timerBasedBlockingStorageService,
     updateSuccessNotifierService
   }
 }
 
-async function saveBlockingTimerIntegration(
+async function saveTimerBasedBlocking(
   wrapper: VueWrapper,
-  blockingTimerIntegration: BlockingTimerIntegration = {
+  timerBasedBlocking: TimerBasedBlocking = {
     pauseBlockingDuringBreaks: false,
     pauseBlockingWhenTimerNotRunning: false
   }
 ) {
   await wrapper
     .find(dataTestSelector('pause-blocking-during-breaks'))
-    .setValue(blockingTimerIntegration.pauseBlockingDuringBreaks)
+    .setValue(timerBasedBlocking.pauseBlockingDuringBreaks)
 
   await wrapper
     .find(dataTestSelector('pause-blocking-when-timer-not-running'))
-    .setValue(blockingTimerIntegration.pauseBlockingWhenTimerNotRunning)
+    .setValue(timerBasedBlocking.pauseBlockingWhenTimerNotRunning)
 
   const saveButton = wrapper.find(dataTestSelector('save-timer-integration-button'))
   await saveButton.trigger('click')

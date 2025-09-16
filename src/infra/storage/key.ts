@@ -1,4 +1,3 @@
-import { BlockingTimerIntegrationStorageService } from '../../domain/blocking_timer_integration/storage'
 import { BrowsingRulesStorageService } from '../../domain/browsing_rules/storage'
 import { DailyResetTimeStorageService } from '../../domain/daily_reset_time/storage'
 import { NotificationSettingStorageService } from '../../domain/notification_setting/storage'
@@ -6,6 +5,7 @@ import { WeeklySchedulesStorageService } from '../../domain/schedules/storage'
 import { TimerConfigStorageService } from '../../domain/timer/config/storage'
 import { FocusSessionRecordsStorageService } from '../../domain/timer/record/storage'
 import { TimerStateStorageService } from '../../domain/timer/state/storage'
+import { TimerBasedBlockingStorageService } from '../../domain/timer_based_blocking/storage'
 import { StorageInterface, StorageService } from './interface'
 
 /**
@@ -19,7 +19,7 @@ export enum SettingsStorageKey {
   BrowsingRules = 'browsingRules',
   DailyResetTime = 'dailyCutoffTime',
   NotificationSetting = 'notificationSetting',
-  BlockingTimerIntegration = 'blockingTimerIntegration',
+  TimerBasedBlocking = 'blockingTimerIntegration',
   TimerState = 'timerState'
 }
 
@@ -31,9 +31,7 @@ type StorageServicesMap = {
 
 export const newSettingStorageServicesMap = (storage: StorageInterface): StorageServicesMap => {
   return {
-    [SettingsStorageKey.BlockingTimerIntegration]: new BlockingTimerIntegrationStorageService(
-      storage
-    ),
+    [SettingsStorageKey.TimerBasedBlocking]: new TimerBasedBlockingStorageService(storage),
     [SettingsStorageKey.BrowsingRules]: new BrowsingRulesStorageService(storage),
     [SettingsStorageKey.NotificationSetting]: new NotificationSettingStorageService(storage),
     [SettingsStorageKey.WeeklySchedules]: new WeeklySchedulesStorageService(storage),

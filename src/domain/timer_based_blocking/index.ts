@@ -1,12 +1,12 @@
-export type BlockingTimerIntegration = {
+export type TimerBasedBlocking = {
   pauseBlockingDuringBreaks: boolean
   pauseBlockingWhenTimerNotRunning: boolean
 }
 
-export function newTestBlockingTimerIntegration({
+export function newTestTimerBasedBlocking({
   pauseBlockingDuringBreaks = true,
   pauseBlockingWhenTimerNotRunning = false
-}: Partial<BlockingTimerIntegration> = {}): BlockingTimerIntegration {
+}: Partial<TimerBasedBlocking> = {}): TimerBasedBlocking {
   return {
     pauseBlockingDuringBreaks,
     pauseBlockingWhenTimerNotRunning

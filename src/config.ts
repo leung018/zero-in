@@ -1,7 +1,7 @@
-import type { BlockingTimerIntegration } from './domain/blocking_timer_integration'
 import type { NotificationSetting } from './domain/notification_setting'
 import { TimerConfig } from './domain/timer/config'
 import { Duration } from './domain/timer/duration'
+import type { TimerBasedBlocking } from './domain/timer_based_blocking'
 import type { BadgeColor } from './infra/badge'
 
 const getBlockedTemplateUrl = () => {
@@ -38,7 +38,7 @@ const getDefaultNotificationSetting = () => {
   return notificationSetting
 }
 
-const getDefaultBlockingTimerIntegration = (): BlockingTimerIntegration => {
+const getDefaultTimerBasedBlocking = (): TimerBasedBlocking => {
   return {
     pauseBlockingDuringBreaks: true,
     pauseBlockingWhenTimerNotRunning: false
@@ -88,7 +88,7 @@ export default {
   getBadgeColorConfig,
   getReminderPageUrl,
   getDefaultNotificationSetting,
-  getDefaultBlockingTimerIntegration,
+  getDefaultTimerBasedBlocking,
   getSignInPageUrl,
   getOptionsPageUrl,
   getAuthUrl,
