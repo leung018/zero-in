@@ -12,7 +12,7 @@ import { TimerStage } from '../domain/timer/stage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
 import type { TimerExternalState } from '../domain/timer/state/external'
 import { TimerStateStorageService } from '../domain/timer/state/storage'
-import { TimerBasedBlockingStorageService } from '../domain/timer_based_blocking/storage'
+import { TimerBasedBlockingRulesStorageService } from '../domain/timer_based_blocking/storage'
 import { type ActionService } from '../infra/action'
 import { type BadgeColor, type BadgeDisplayService } from '../infra/badge'
 import { BrowserBadgeDisplayService } from '../infra/browser/badge'
@@ -43,7 +43,7 @@ type ListenerParams = {
   browsingControlService: BrowsingControlService
   browsingRulesStorageService: BrowsingRulesStorageService
   weeklySchedulesStorageService: WeeklySchedulesStorageService
-  timerBasedBlockingStorageService: TimerBasedBlockingStorageService
+  timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
   focusSessionRecordHouseKeepDays: number
   timer: FocusTimer
 }
@@ -65,7 +65,7 @@ export class BackgroundListener {
       browsingControlService: new BrowserBrowsingControlService(),
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
       weeklySchedulesStorageService: WeeklySchedulesStorageService.create(),
-      timerBasedBlockingStorageService: TimerBasedBlockingStorageService.create(),
+      timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService.create(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
       timer: FocusTimer.create()
     })
@@ -104,7 +104,7 @@ export class BackgroundListener {
       browsingControlService: params.browsingControlService,
       browsingRulesStorageService: params.browsingRulesStorageService,
       weeklySchedulesStorageService: params.weeklySchedulesStorageService,
-      timerBasedBlockingStorageService: params.timerBasedBlockingStorageService,
+      timerBasedBlockingRulesStorageService: params.timerBasedBlockingRulesStorageService,
       focusSessionRecordsStorageService: params.focusSessionRecordsStorageService,
       timerInfoGetter: {
         getTimerInfo: () => {

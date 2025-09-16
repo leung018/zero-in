@@ -5,7 +5,7 @@ import { WeeklySchedulesStorageService } from '../../domain/schedules/storage'
 import { TimerConfigStorageService } from '../../domain/timer/config/storage'
 import { FocusSessionRecordsStorageService } from '../../domain/timer/record/storage'
 import { TimerStateStorageService } from '../../domain/timer/state/storage'
-import { TimerBasedBlockingStorageService } from '../../domain/timer_based_blocking/storage'
+import { TimerBasedBlockingRulesStorageService } from '../../domain/timer_based_blocking/storage'
 import { StorageInterface, StorageService } from './interface'
 
 /**
@@ -19,7 +19,7 @@ export enum SettingsStorageKey {
   BrowsingRules = 'browsingRules',
   DailyResetTime = 'dailyCutoffTime',
   NotificationSetting = 'notificationSetting',
-  TimerBasedBlocking = 'blockingTimerIntegration',
+  TimerBasedBlockingRules = 'blockingTimerIntegration',
   TimerState = 'timerState'
 }
 
@@ -31,7 +31,9 @@ type StorageServicesMap = {
 
 export const newSettingStorageServicesMap = (storage: StorageInterface): StorageServicesMap => {
   return {
-    [SettingsStorageKey.TimerBasedBlocking]: new TimerBasedBlockingStorageService(storage),
+    [SettingsStorageKey.TimerBasedBlockingRules]: new TimerBasedBlockingRulesStorageService(
+      storage
+    ),
     [SettingsStorageKey.BrowsingRules]: new BrowsingRulesStorageService(storage),
     [SettingsStorageKey.NotificationSetting]: new NotificationSettingStorageService(storage),
     [SettingsStorageKey.WeeklySchedules]: new WeeklySchedulesStorageService(storage),

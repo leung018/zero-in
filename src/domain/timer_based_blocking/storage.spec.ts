@@ -1,26 +1,26 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { TimerBasedBlocking } from '.'
+import { TimerBasedBlockingRules } from '.'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
-import { TimerBasedBlockingSchemas } from './schema'
-import { TimerBasedBlockingStorageService } from './storage'
-import { runTimerBasedBlockingStorageServiceTests } from './storage_shared_spec'
+import { TimerBasedBlockingRulesSchemas } from './schema'
+import { TimerBasedBlockingRulesStorageService } from './storage'
+import { runTimerBasedBlockingRulesStorageServiceTests } from './storage_shared_spec'
 
-describe('TimerBasedBlockingStorageService', () => {
+describe('TimerBasedBlockingRulesStorageService', () => {
   let storage = LocalStorageWrapper.createFake()
 
   beforeEach(() => {
     storage = LocalStorageWrapper.createFake()
   })
 
-  runTimerBasedBlockingStorageServiceTests(storage)
+  runTimerBasedBlockingRulesStorageServiceTests(storage)
 
   it('should migrate properly', async () => {
-    const data: TimerBasedBlockingSchemas[0] = {
+    const data: TimerBasedBlockingRulesSchemas[0] = {
       shouldPauseBlockingDuringBreaks: true
     }
-    storage.set(TimerBasedBlockingStorageService.STORAGE_KEY, data)
-    const service = new TimerBasedBlockingStorageService(storage)
-    const expected: TimerBasedBlocking = {
+    storage.set(TimerBasedBlockingRulesStorageService.STORAGE_KEY, data)
+    const service = new TimerBasedBlockingRulesStorageService(storage)
+    const expected: TimerBasedBlockingRules = {
       pauseBlockingDuringBreaks: true,
       pauseBlockingWhenTimerNotRunning: false
     }

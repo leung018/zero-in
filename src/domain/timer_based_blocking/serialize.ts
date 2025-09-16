@@ -1,11 +1,11 @@
-import type { TimerBasedBlocking } from '.'
-import { TimerBasedBlockingSchemas } from './schema'
+import type { TimerBasedBlockingRules } from '.'
+import { TimerBasedBlockingRulesSchemas } from './schema'
 
-type SerializedTimerBasedBlocking = TimerBasedBlockingSchemas[1]
+type SerializedTimerBasedBlockingRules = TimerBasedBlockingRulesSchemas[1]
 
-export function serializeTimerBasedBlocking(
-  integration: TimerBasedBlocking
-): SerializedTimerBasedBlocking {
+export function serializeTimerBasedBlockingRules(
+  integration: TimerBasedBlockingRules
+): SerializedTimerBasedBlockingRules {
   return {
     dataVersion: 1,
     pauseBlockingDuringBreaks: integration.pauseBlockingDuringBreaks,
@@ -13,9 +13,9 @@ export function serializeTimerBasedBlocking(
   }
 }
 
-export function deserializeTimerBasedBlocking(
-  data: SerializedTimerBasedBlocking
-): TimerBasedBlocking {
+export function deserializeTimerBasedBlockingRules(
+  data: SerializedTimerBasedBlockingRules
+): TimerBasedBlockingRules {
   return {
     pauseBlockingDuringBreaks: data.pauseBlockingDuringBreaks,
     pauseBlockingWhenTimerNotRunning: data.pauseBlockingWhenTimerNotRunning

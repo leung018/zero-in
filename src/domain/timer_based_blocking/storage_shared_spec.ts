@@ -1,18 +1,18 @@
 import { expect, it } from 'vitest'
-import { TimerBasedBlocking } from '.'
+import { TimerBasedBlockingRules } from '.'
 import config from '../../config'
 import { StorageInterface } from '../../infra/storage/interface'
-import { TimerBasedBlockingStorageService } from './storage'
+import { TimerBasedBlockingRulesStorageService } from './storage'
 
-export function runTimerBasedBlockingStorageServiceTests(storage: StorageInterface) {
+export function runTimerBasedBlockingRulesStorageServiceTests(storage: StorageInterface) {
   it('should get default integration setting when no integration setting is saved', async () => {
-    const service = new TimerBasedBlockingStorageService(storage)
-    expect(await service.get()).toStrictEqual(config.getDefaultTimerBasedBlocking())
+    const service = new TimerBasedBlockingRulesStorageService(storage)
+    expect(await service.get()).toStrictEqual(config.getDefaultTimerBasedBlockingRules())
   })
 
   it('should save and get integration setting', async () => {
-    const service = new TimerBasedBlockingStorageService(storage)
-    const integration: TimerBasedBlocking = {
+    const service = new TimerBasedBlockingRulesStorageService(storage)
+    const integration: TimerBasedBlockingRules = {
       pauseBlockingDuringBreaks: false,
       pauseBlockingWhenTimerNotRunning: true
     }

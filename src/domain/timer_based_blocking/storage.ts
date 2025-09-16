@@ -1,35 +1,39 @@
-import type { TimerBasedBlocking } from '.'
+import type { TimerBasedBlockingRules } from '.'
 import config from '../../config'
 import { AdaptiveStorageProvider } from '../../infra/storage/adaptive'
 import { StorageInterface, StorageService } from '../../infra/storage/interface'
 import { StorageKey } from '../../infra/storage/key'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { StorageManager } from '../../infra/storage/manager'
-import { TimerBasedBlockingSchemas } from './schema'
-import { deserializeTimerBasedBlocking, serializeTimerBasedBlocking } from './serialize'
+import { TimerBasedBlockingRulesSchemas } from './schema'
+import { deserializeTimerBasedBlockingRules, serializeTimerBasedBlockingRules } from './serialize'
 
-export class TimerBasedBlockingStorageService implements StorageService<TimerBasedBlocking> {
+export class TimerBasedBlockingRulesStorageService
+  implements StorageService<TimerBasedBlockingRules>
+{
   static readonly STORAGE_KEY: StorageKey = 'blockingTimerIntegration'
 
-  static create(): TimerBasedBlockingStorageService {
-    return new TimerBasedBlockingStorageService(AdaptiveStorageProvider.create())
+  static create(): TimerBasedBlockingRulesStorageService {
+    return new TimerBasedBlockingRulesStorageService(AdaptiveStorageProvider.create())
   }
 
   static createFake() {
-    return new TimerBasedBlockingStorageService(LocalStorageWrapper.createFake())
+    return new TimerBasedBlockingRulesStorageService(LocalStorageWrapper.createFake())
   }
 
-  private storageManager: StorageManager<TimerBasedBlockingSchemas[1]>
+  private storageManager: StorageManager<TimerBasedBlockingRulesSchemas[1]>
 
   constructor(storage: StorageInterface) {
     this.storageManager = StorageManager.create({
       storage,
-      key: TimerBasedBlockingStorageService.STORAGE_KEY,
+      key: TimerBasedBlockingRulesStorageService.STORAGE_KEY,
       currentDataVersion: 1,
       migrators: [
         {
           oldDataVersion: undefined,
-          migratorFunc: (oldData: TimerBasedBlockingSchemas[0]): TimerBasedBlockingSchemas[1] => {
+          migratorFunc: (
+            oldData: TimerBasedBlockingRulesSchemas[0]
+          ): TimerBasedBlockingRulesSchemas[1] => {
             return {
               dataVersion: 1,
               pauseBlockingDuringBreaks: oldData.shouldPauseBlockingDuringBreaks,
@@ -41,15 +45,15 @@ export class TimerBasedBlockingStorageService implements StorageService<TimerBas
     })
   }
 
-  async get(): Promise<TimerBasedBlocking> {
+  async get(): Promise<TimerBasedBlockingRules> {
     const result = await this.storageManager.get()
     if (result) {
-      return deserializeTimerBasedBlocking(result)
+      return deserializeTimerBasedBlockingRules(result)
     }
-    return config.getDefaultTimerBasedBlocking()
+    return config.getDefaultTimerBasedBlockingRules()
   }
 
-  async save(setting: TimerBasedBlocking) {
-    return this.storageManager.set(serializeTimerBasedBlocking(setting))
+  async save(setting: TimerBasedBlockingRules) {
+    return this.storageManager.set(serializeTimerBasedBlockingRules(setting))
   }
 }

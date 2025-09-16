@@ -10,8 +10,8 @@ import { Duration } from './timer/duration'
 import { newFocusSessionRecord } from './timer/record'
 import { FocusSessionRecordsStorageService } from './timer/record/storage'
 import { TimerStage } from './timer/stage'
-import type { TimerBasedBlocking } from './timer_based_blocking'
-import { TimerBasedBlockingStorageService } from './timer_based_blocking/storage'
+import type { TimerBasedBlockingRules } from './timer_based_blocking'
+import { TimerBasedBlockingRulesStorageService } from './timer_based_blocking/storage'
 
 describe('BrowsingControlTogglingService', () => {
   const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
@@ -310,12 +310,12 @@ async function getBrowsingRulesAfterToggling({
 
   const browsingControlService = new FakeBrowsingControlService()
 
-  const timerBasedBlocking: TimerBasedBlocking = {
+  const timerBasedBlockingRules: TimerBasedBlockingRules = {
     pauseBlockingDuringBreaks,
     pauseBlockingWhenTimerNotRunning
   }
-  const timerBasedBlockingStorageService = TimerBasedBlockingStorageService.createFake()
-  await timerBasedBlockingStorageService.save(timerBasedBlocking)
+  const timerBasedBlockingRulesStorageService = TimerBasedBlockingRulesStorageService.createFake()
+  await timerBasedBlockingRulesStorageService.save(timerBasedBlockingRules)
 
   const focusSessionRecordsStorageService = FocusSessionRecordsStorageService.createFake()
   await focusSessionRecordsStorageService.save(focusSessionRecords)
@@ -324,7 +324,7 @@ async function getBrowsingRulesAfterToggling({
     browsingRulesStorageService,
     browsingControlService,
     weeklySchedulesStorageService,
-    timerBasedBlockingStorageService,
+    timerBasedBlockingRulesStorageService,
     focusSessionRecordsStorageService,
     timerInfoGetter: { getTimerInfo: () => timerInfo }
   })

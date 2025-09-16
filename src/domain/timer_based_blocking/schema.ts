@@ -1,4 +1,4 @@
-export type TimerBasedBlockingSchemas = [
+export type TimerBasedBlockingRulesSchemas = [
   {
     shouldPauseBlockingDuringBreaks: boolean
   },

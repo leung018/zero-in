@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
 import { WeeklySchedulesStorageService } from '@/domain/schedules/storage'
-import { TimerBasedBlockingStorageService } from '@/domain/timer_based_blocking/storage'
+import { TimerBasedBlockingRulesStorageService } from '@/domain/timer_based_blocking/storage'
 import { UpdateSuccessNotifierService } from '@/infra/browser/update_success_notifier'
 import type { ClientPort } from '@/service_workers/listener'
 import ContentTemplate from '../components/ContentTemplate.vue'
@@ -26,7 +26,7 @@ const { port } = defineProps<{
     <BCard class="mb-4 shadow-sm">
       <h2 class="mb-3 mt-1">Timer-Based</h2>
       <TimerBasedSetting
-        :timer-based-blocking-storage-service="TimerBasedBlockingStorageService.create()"
+        :timerBasedBlockingRulesStorageService="TimerBasedBlockingRulesStorageService.create()"
         :update-success-notifier-service="new UpdateSuccessNotifierService()"
         :port="port"
       />

@@ -6,7 +6,7 @@ import { FocusTimer } from '../domain/timer'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { FocusSessionRecordsStorageService } from '../domain/timer/record/storage'
 import { TimerStateStorageService } from '../domain/timer/state/storage'
-import { TimerBasedBlockingStorageService } from '../domain/timer_based_blocking/storage'
+import { TimerBasedBlockingRulesStorageService } from '../domain/timer_based_blocking/storage'
 import { FakeActionService } from '../infra/action'
 import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeBrowsingControlService } from '../infra/browsing_control'
@@ -25,7 +25,7 @@ export async function setUpListener({
 
   const params = {
     notificationSettingStorageService: new NotificationSettingStorageService(storage),
-    timerBasedBlockingStorageService: new TimerBasedBlockingStorageService(storage),
+    timerBasedBlockingRulesStorageService: new TimerBasedBlockingRulesStorageService(storage),
     browsingControlService: new FakeBrowsingControlService(),
     weeklySchedulesStorageService: new WeeklySchedulesStorageService(storage),
     browsingRulesStorageService: new BrowsingRulesStorageService(storage),
