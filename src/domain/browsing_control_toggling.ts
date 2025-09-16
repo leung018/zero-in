@@ -78,10 +78,9 @@ export class BrowsingControlTogglingService {
   async run(): Promise<void> {
     if (await this.shouldActivateBrowsingRules()) {
       const browsingRules = await this.browsingRulesStorageService.get()
-      this.browsingControlService.setAndActivateNewRules(browsingRules)
-    } else {
-      this.browsingControlService.deactivateExistingRules()
+      return this.browsingControlService.setAndActivateNewRules(browsingRules)
     }
+    return this.browsingControlService.deactivateExistingRules()
   }
 
   private async shouldActivateBrowsingRules(): Promise<boolean> {

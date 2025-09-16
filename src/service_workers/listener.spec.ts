@@ -505,8 +505,7 @@ describe('BackgroundListener', () => {
     })
     const newDomain = 'example.com'
 
-    listener.addBlockedDomain(newDomain)
-    await flushPromises()
+    await listener.addBlockedDomain(newDomain)
 
     const browsingRules = browsingControlService.getActivatedBrowsingRules()
     expect(browsingRules).toEqual(new BrowsingRules({ blockedDomains: [newDomain] }))
@@ -659,7 +658,6 @@ describe('BackgroundListener', () => {
     )
 
     await listener.reload()
-    await flushPromises()
 
     expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
   })

@@ -152,8 +152,7 @@ export class BackgroundListener {
     this.badgeDisplayService.clearBadge()
 
     await Promise.all([this.setUpTimer(), this.setUpNotification()])
-
-    this.toggleBrowsingRules()
+    await this.toggleBrowsingRules() // toggleBrowsingRules should call after timer is set
   }
 
   private async setUpTimer() {
@@ -287,7 +286,7 @@ export class BackgroundListener {
     return this.timer.getConfig()
   }
 
-  addBlockedDomain(domain: string) {
+  async addBlockedDomain(domain: string) {
     return this.browsingRulesStorageService
       .get()
       .then((browsingRules) => {
@@ -295,12 +294,12 @@ export class BackgroundListener {
         return this.browsingRulesStorageService.save(newBrowsingRules)
       })
       .then(() => {
-        this.toggleBrowsingRules()
+        return this.toggleBrowsingRules()
       })
   }
 
-  toggleBrowsingRules() {
-    this.browsingControlTogglingService.run()
+  async toggleBrowsingRules() {
+    return this.browsingControlTogglingService.run()
   }
 
   private setUpPortListening() {
