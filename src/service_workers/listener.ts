@@ -148,7 +148,6 @@ export class BackgroundListener {
   }
 
   async reload() {
-    console.log('reload triggered')
     this.timerStateStorageService.unsubscribeAll()
     this.badgeDisplayService.clearBadge()
 

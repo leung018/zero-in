@@ -92,10 +92,8 @@ export class FirebaseServices {
 
 FirebaseServices.onAuthStateChanged((user) => {
   if (user) {
-    console.log('User signed in', user)
     LocalStorageUserIdCache.setSignInUser(user.uid)
   } else {
-    console.log('User signed out')
     LocalStorageUserIdCache.setSignOut()
   }
 })
