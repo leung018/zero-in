@@ -19,7 +19,7 @@ const { port } = defineProps<{
     <BCard class="mb-4 shadow-sm">
       <h2 class="mb-3 mt-1">Blocked Domains</h2>
       <BlockedDomainsEditor
-        :browsing-rules-storage-service="BrowsingRulesStorageService.create()"
+        :browsingRulesStorageService="BrowsingRulesStorageService.create()"
         :port="port"
       />
     </BCard>
@@ -27,14 +27,14 @@ const { port } = defineProps<{
       <h2 class="mb-3 mt-1">Timer-Based</h2>
       <TimerBasedSetting
         :timerBasedBlockingRulesStorageService="TimerBasedBlockingRulesStorageService.create()"
-        :update-success-notifier-service="new UpdateSuccessNotifierService()"
+        :updateSuccessNotifierService="new UpdateSuccessNotifierService()"
         :port="port"
       />
     </BCard>
     <BCard class="mb-4 shadow-sm">
       <h2 class="mb-3 mt-1">Schedules</h2>
       <WeeklySchedulesEditor
-        :weekly-schedules-storage-service="WeeklySchedulesStorageService.create()"
+        :weeklySchedulesStorageService="WeeklySchedulesStorageService.create()"
         :port="port"
       />
     </BCard>
