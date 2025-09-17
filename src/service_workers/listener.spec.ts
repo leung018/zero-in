@@ -581,7 +581,7 @@ describe('BackgroundListener', () => {
   })
 
   it('should reload can set the timer state according to timerConfig if timerStateStorageService contain no state', async () => {
-    const { listener, timerConfigStorageService } = await startListener({
+    const { listener, timerConfigStorageService, timerStateStorageService } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 1 })
       })
@@ -595,6 +595,21 @@ describe('BackgroundListener', () => {
     await listener.reload()
 
     expect(listener.getTimerExternalState().remaining).toEqual(new Duration({ seconds: 4 }))
+
+    // It won't save the default state to timerStateStorageService
+    expect(await timerStateStorageService.get()).toBeNull()
+  })
+
+  it('should reload preserve behaviors of onTimerPause', async () => {
+    const { listener, badgeDisplayService, clientPort } = await startListener()
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    await listener.reload()
+
+    await clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
+
+    expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
+    // I don't assert all behaviors of onTimerPause here since I assume only through one share private method to set onTimerPause.
   })
 
   it('should reload can set the new notification setting from storage service', async () => {
