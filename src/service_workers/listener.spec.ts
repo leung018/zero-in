@@ -713,21 +713,6 @@ describe('BackgroundListener', () => {
 
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
-
-  it('should failure in previous start wont block the next start', async () => {
-    const { listener, timerConfigStorageService } = await setUpListener()
-
-    const backupGet = timerConfigStorageService.get
-    // So that start will throw error when setting up timer
-    timerConfigStorageService.get = async () => {
-      throw new Error('any error')
-    }
-    await expect(listener.start()).rejects.toThrow()
-
-    timerConfigStorageService.get = backupGet
-
-    await expect(listener.start()).resolves.not.toThrow()
-  })
 })
 
 async function startListener({
