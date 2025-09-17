@@ -149,6 +149,7 @@ export class BackgroundListener {
 
   async reload() {
     this.timerStateStorageService.unsubscribeAll()
+    this.timerConfigStorageService.unsubscribeAll()
     this.badgeDisplayService.clearBadge()
 
     await Promise.all([this.setUpTimer(), this.setUpNotification()])
