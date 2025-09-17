@@ -62,8 +62,6 @@ export default function main() {
     })
 
     // Execute reload only when listener.start is resolved.
-    // Now, reload/start will throw error if they are called at the same time to prevent some strange issues.
-    // Hard to cover that I call reload/start not at the same time in e2e tests.
     FirebaseServices.onAuthStateChanged(() => {
       retryUntilSuccess(
         () => {
