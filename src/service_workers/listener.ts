@@ -277,22 +277,16 @@ export class BackgroundListener {
   }
 
   private async updateFocusSessionRecords(lastSessionStartTime: Date) {
-    return this.focusSessionRecordsStorageService
-      .get()
-      .then((records) => {
-        this.focusSessionRecordsStorageService.save([
-          ...records,
-          newFocusSessionRecord({
-            startedAt: lastSessionStartTime
-          })
-        ])
-      })
-      .then(() => {
-        FocusSessionRecordHousekeeper.houseKeep({
-          focusSessionRecordsStorageService: this.focusSessionRecordsStorageService,
-          houseKeepDays: this.focusSessionRecordHouseKeepDays
-        })
-      })
+    const newRecord = newFocusSessionRecord({
+      startedAt: lastSessionStartTime
+    })
+    const oldRecords = await this.focusSessionRecordsStorageService.get()
+
+    await this.focusSessionRecordsStorageService.save([...oldRecords, newRecord])
+    await FocusSessionRecordHousekeeper.houseKeep({
+      focusSessionRecordsStorageService: this.focusSessionRecordsStorageService,
+      houseKeepDays: this.focusSessionRecordHouseKeepDays
+    })
   }
 
   getTimerStateSubscriptionCount() {
