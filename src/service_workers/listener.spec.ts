@@ -44,7 +44,8 @@ describe('BackgroundListener', () => {
     const { clientPort, focusSessionRecordsStorageService } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
-        shortBreakDuration: new Duration({ seconds: 1 })
+        shortBreakDuration: new Duration({ seconds: 1 }),
+        focusSessionsPerCycle: 3
       })
     })
 
@@ -69,6 +70,13 @@ describe('BackgroundListener', () => {
     await flushPromises()
 
     expect((await focusSessionRecordsStorageService.get()).length).toBe(1)
+
+    // 2nd Focus
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    vi.advanceTimersByTime(3000)
+    await flushPromises()
+
+    expect((await focusSessionRecordsStorageService.get()).length).toBe(2)
   })
 
   it('should house keep the focus session records', async () => {
