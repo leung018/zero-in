@@ -604,7 +604,7 @@ describe('BackgroundListener', () => {
     expect(desktopNotificationService.isNotificationActive()).toBe(false)
   })
 
-  it('should reload unsubscribe previous subscription in timerStateStorageService', async () => {
+  it('should reload reset subscription in timerStateStorageService', async () => {
     const { listener, timerStateStorageService } = await startListenerWithTimerSync({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 })
@@ -618,7 +618,7 @@ describe('BackgroundListener', () => {
 
     await listener.reload()
 
-    // Unsubscribe previous subscription in timerStateStorageService
+    // Unsubscribed previous subscription in timerStateStorageService
     await timerStateStorageService.save(
       TimerInternalState.newTestInstance({
         pausedAt: new Date(),
@@ -631,6 +631,32 @@ describe('BackgroundListener', () => {
 
     // Reload can reset subscription inside listener
     expect(listener.getTimerExternalState().remaining).toEqual(new Duration({ seconds: 2 }))
+  })
+
+  it('should reload reset subscription in timerConfigStorageService', async () => {
+    const { listener, timerConfigStorageService } = await startListenerWithTimerSync({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 3 })
+      })
+    })
+
+    let changeCounter = 0
+    await timerConfigStorageService.onChange(() => {
+      changeCounter++
+    })
+
+    await listener.reload()
+
+    // Unsubscribed previous subscription in timerConfigStorageService
+    await timerConfigStorageService.save(
+      TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 2 })
+      })
+    )
+    expect(changeCounter).toBe(0)
+
+    // Reload can reset subscription inside listener
+    expect(listener.getTimerConfig().focusDuration).toEqual(new Duration({ seconds: 2 }))
   })
 
   it('should reload toggle browsing rules', async () => {
