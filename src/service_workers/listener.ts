@@ -199,15 +199,7 @@ export class BackgroundListener {
       this.toggleBrowsingRules()
 
       if (lastStage === TimerStage.FOCUS) {
-        retryUntilSuccess(
-          () => {
-            return this.updateFocusSessionRecords(lastSessionStartTime)
-          },
-          {
-            retryIntervalMs: BackgroundListener.UPDATE_SESSION_RECORDS_RETRY_MS,
-            functionName: 'BackgroundListener.updateFocusSessionRecords'
-          }
-        )
+        this.updateFocusSessionRecords(lastSessionStartTime)
       }
     })
 
@@ -291,13 +283,21 @@ export class BackgroundListener {
     const newRecord = newFocusSessionRecord({
       startedAt: lastSessionStartTime
     })
-    const oldRecords = await this.focusSessionRecordsStorageService.get()
+    await retryUntilSuccess(
+      async () => {
+        const oldRecords = await this.focusSessionRecordsStorageService.get()
 
-    await this.focusSessionRecordsStorageService.save([...oldRecords, newRecord])
-    await FocusSessionRecordHousekeeper.houseKeep({
-      focusSessionRecordsStorageService: this.focusSessionRecordsStorageService,
-      houseKeepDays: this.focusSessionRecordHouseKeepDays
-    })
+        await this.focusSessionRecordsStorageService.save([...oldRecords, newRecord])
+        await FocusSessionRecordHousekeeper.houseKeep({
+          focusSessionRecordsStorageService: this.focusSessionRecordsStorageService,
+          houseKeepDays: this.focusSessionRecordHouseKeepDays
+        })
+      },
+      {
+        retryIntervalMs: BackgroundListener.UPDATE_SESSION_RECORDS_RETRY_MS,
+        functionName: 'BackgroundListener.updateFocusSessionRecords'
+      }
+    )
   }
 
   getTimerStateSubscriptionCount() {
