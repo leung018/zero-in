@@ -126,7 +126,7 @@ describe('BackgroundListener', () => {
     // Make Sure first call is fail. And have to wait for retry
     expect((await focusSessionRecordsStorageService.get()).length).toBe(0)
 
-    vi.advanceTimersByTime(BackgroundListener.UPDATE_FOCUS_SESSION_RECORDS_RETRY_INTERVAL_MS)
+    vi.advanceTimersByTime(BackgroundListener.UPDATE_SESSION_RECORDS_RETRY_MS)
     await flushPromises()
     expect((await focusSessionRecordsStorageService.get()).length).toBe(1)
   })

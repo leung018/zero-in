@@ -76,7 +76,7 @@ export class BackgroundListener {
     return new BackgroundListener(params)
   }
 
-  static UPDATE_FOCUS_SESSION_RECORDS_RETRY_INTERVAL_MS = 10000
+  static UPDATE_SESSION_RECORDS_RETRY_MS = 10000
 
   private browsingControlTogglingService: BrowsingControlTogglingService
   private browsingRulesStorageService: BrowsingRulesStorageService
@@ -204,7 +204,7 @@ export class BackgroundListener {
             return this.updateFocusSessionRecords(lastSessionStartTime)
           },
           {
-            retryIntervalMs: BackgroundListener.UPDATE_FOCUS_SESSION_RECORDS_RETRY_INTERVAL_MS,
+            retryIntervalMs: BackgroundListener.UPDATE_SESSION_RECORDS_RETRY_MS,
             functionName: 'BackgroundListener.updateFocusSessionRecords'
           }
         )
