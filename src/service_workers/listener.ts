@@ -149,31 +149,41 @@ export class BackgroundListener {
 
   async reload() {
     this.timerStateStorageService.unsubscribeAll()
+    this.timerConfigStorageService.unsubscribeAll()
     this.badgeDisplayService.clearBadge()
 
-    await Promise.all([this.setUpTimer(), this.setUpNotification()])
+    await Promise.all([this.reloadTimer(), this.setUpNotification()])
     await this.toggleBrowsingRules() // toggleBrowsingRules should call after timer is set
   }
 
-  private async setUpTimer() {
-    if (this.isSettingUpTimer) {
-      throw new Error(
-        'Timer is being set up, can not set up again. Otherwise, will cause unexpected behavior'
-      )
+  private async reloadTimer() {
+    this.removeTimerSubscriptions()
+
+    const [timerConfig, backupInternalState] = await Promise.all([
+      this.timerConfigStorageService.get(),
+      this.timerStateStorageService.get()
+    ])
+
+    if (backupInternalState) {
+      this.timer.setConfig(timerConfig)
+      this.timer.setInternalState(backupInternalState)
+    } else {
+      this.timer.setConfigAndResetState(timerConfig)
     }
-    this.isSettingUpTimer = true
-    try {
-      await this.setUpTimerImpl()
-    } finally {
-      this.isSettingUpTimer = false
-    }
+
+    await this.setupTimerSubscriptions()
   }
 
-  private async setUpTimerImpl() {
-    this.timer.setOnTimerPause(() => {}) // So that setConfigAndResetState won't persist the timerState and corrupt the backupInternalState, in case setTimerPause has been set before.
-    const timerConfig = await this.timerConfigStorageService.get()
+  /**
+   * Note: Can't call this method in reload.
+   * Because setConfigAndResetState will corrupt the backupInternalState who are subscribing it.
+   */
+  private async setUpTimer() {
+    const [timerConfig, backupInternalState] = await Promise.all([
+      this.timerConfigStorageService.get(),
+      this.timerStateStorageService.get()
+    ])
     this.timer.setConfigAndResetState(timerConfig)
-    const backupInternalState = await this.timerStateStorageService.get()
     if (backupInternalState) {
       this.timer.setInternalState(backupInternalState)
     }
@@ -217,17 +227,28 @@ export class BackgroundListener {
       }
     })
 
-    await this.timerStateStorageService.onChange((newInternalState) => {
-      if (
-        newInternalState.timerId != this.timer.getId() &&
-        !newInternalState.equalsIgnoringId(this.timer.getInternalState())
-      ) {
-        this.timer.setInternalState(newInternalState)
-      }
-    })
-    await this.timerConfigStorageService.onChange((newConfig) => {
-      this.timer.setConfig(newConfig)
-    })
+    await this.setupTimerSubscriptions()
+  }
+
+  private removeTimerSubscriptions() {
+    this.timerStateStorageService.unsubscribeAll()
+    this.timerConfigStorageService.unsubscribeAll()
+  }
+
+  private async setupTimerSubscriptions() {
+    return Promise.all([
+      this.timerStateStorageService.onChange((newInternalState) => {
+        if (
+          newInternalState.timerId != this.timer.getId() &&
+          !newInternalState.equalsIgnoringId(this.timer.getInternalState())
+        ) {
+          this.timer.setInternalState(newInternalState)
+        }
+      }),
+      this.timerConfigStorageService.onChange((newConfig) => {
+        this.timer.setConfig(newConfig)
+      })
+    ])
   }
 
   private async setUpNotification() {

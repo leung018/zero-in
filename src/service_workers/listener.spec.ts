@@ -580,6 +580,23 @@ describe('BackgroundListener', () => {
     expect(listener.getTimerConfig()).toEqual(newConfig)
   })
 
+  it('should reload can set the timer state according to timerConfig if timerStateStorageService contain no state', async () => {
+    const { listener, timerConfigStorageService } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 1 })
+      })
+    })
+
+    await timerConfigStorageService.save(
+      TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 4 })
+      })
+    )
+    await listener.reload()
+
+    expect(listener.getTimerExternalState().remaining).toEqual(new Duration({ seconds: 4 }))
+  })
+
   it('should reload can set the new notification setting from storage service', async () => {
     const { clientPort, listener, desktopNotificationService, notificationSettingStorageService } =
       await startListener({
@@ -604,7 +621,7 @@ describe('BackgroundListener', () => {
     expect(desktopNotificationService.isNotificationActive()).toBe(false)
   })
 
-  it('should reload unsubscribe previous subscription in timerStateStorageService', async () => {
+  it('should reload reset subscription in timerStateStorageService', async () => {
     const { listener, timerStateStorageService } = await startListenerWithTimerSync({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 })
@@ -618,7 +635,7 @@ describe('BackgroundListener', () => {
 
     await listener.reload()
 
-    // Unsubscribe previous subscription in timerStateStorageService
+    // Unsubscribed previous subscription in timerStateStorageService
     await timerStateStorageService.save(
       TimerInternalState.newTestInstance({
         pausedAt: new Date(),
@@ -631,6 +648,32 @@ describe('BackgroundListener', () => {
 
     // Reload can reset subscription inside listener
     expect(listener.getTimerExternalState().remaining).toEqual(new Duration({ seconds: 2 }))
+  })
+
+  it('should reload reset subscription in timerConfigStorageService', async () => {
+    const { listener, timerConfigStorageService } = await startListenerWithTimerSync({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 3 })
+      })
+    })
+
+    let changeCounter = 0
+    await timerConfigStorageService.onChange(() => {
+      changeCounter++
+    })
+
+    await listener.reload()
+
+    // Unsubscribed previous subscription in timerConfigStorageService
+    await timerConfigStorageService.save(
+      TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 2 })
+      })
+    )
+    expect(changeCounter).toBe(0)
+
+    // Reload can reset subscription inside listener
+    expect(listener.getTimerConfig().focusDuration).toEqual(new Duration({ seconds: 2 }))
   })
 
   it('should reload toggle browsing rules', async () => {
@@ -686,27 +729,6 @@ describe('BackgroundListener', () => {
     await flushPromises()
 
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
-  })
-
-  it('should reload, start can not setting up timer at the same time', async () => {
-    const { listener } = await setUpListener()
-    // So that reload/start will throw error when setting up timer if other haven't finished yet
-    await expect(Promise.all([listener.reload(), listener.start()])).rejects.toThrow()
-  })
-
-  it('should failure in previous start wont block the next start', async () => {
-    const { listener, timerConfigStorageService } = await setUpListener()
-
-    const backupGet = timerConfigStorageService.get
-    // So that start will throw error when setting up timer
-    timerConfigStorageService.get = async () => {
-      throw new Error('any error')
-    }
-    await expect(listener.start()).rejects.toThrow()
-
-    timerConfigStorageService.get = backupGet
-
-    await expect(listener.start()).resolves.not.toThrow()
   })
 })
 
