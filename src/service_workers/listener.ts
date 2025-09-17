@@ -25,6 +25,7 @@ import type { BrowsingControlService } from '../infra/browsing_control'
 import { type CommunicationManager, type Port } from '../infra/communication'
 import { DesktopNotificationService } from '../infra/desktop_notification'
 import { MultipleActionService } from '../infra/multiple_actions'
+import { retryUntilSuccess } from '../utils/retry'
 import { SubscriptionManager } from '../utils/subscription'
 import { newTimerConfig, WorkRequestName, type WorkRequest } from './request'
 import { WorkResponseName, type WorkResponse } from './response'
@@ -74,6 +75,8 @@ export class BackgroundListener {
   static createFake(params: ListenerParams) {
     return new BackgroundListener(params)
   }
+
+  static UPDATE_FOCUS_SESSION_RECORDS_RETRY_INTERVAL_MS = 10000
 
   private browsingControlTogglingService: BrowsingControlTogglingService
   private browsingRulesStorageService: BrowsingRulesStorageService
@@ -196,7 +199,15 @@ export class BackgroundListener {
       this.toggleBrowsingRules()
 
       if (lastStage === TimerStage.FOCUS) {
-        this.updateFocusSessionRecords(lastSessionStartTime)
+        retryUntilSuccess(
+          () => {
+            return this.updateFocusSessionRecords(lastSessionStartTime)
+          },
+          {
+            retryIntervalMs: BackgroundListener.UPDATE_FOCUS_SESSION_RECORDS_RETRY_INTERVAL_MS,
+            functionName: 'BackgroundListener.updateFocusSessionRecords'
+          }
+        )
       }
     })
 
