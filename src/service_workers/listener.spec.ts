@@ -580,6 +580,23 @@ describe('BackgroundListener', () => {
     expect(listener.getTimerConfig()).toEqual(newConfig)
   })
 
+  it('should reload can set the timer state according to timerConfig if timerStateStorageService contain no state', async () => {
+    const { listener, timerConfigStorageService } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 1 })
+      })
+    })
+
+    await timerConfigStorageService.save(
+      TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 4 })
+      })
+    )
+    await listener.reload()
+
+    expect(listener.getTimerExternalState().remaining).toEqual(new Duration({ seconds: 4 }))
+  })
+
   it('should reload can set the new notification setting from storage service', async () => {
     const { clientPort, listener, desktopNotificationService, notificationSettingStorageService } =
       await startListener({

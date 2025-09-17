@@ -159,11 +159,16 @@ export class BackgroundListener {
   private async reloadTimer() {
     this.removeTimerSubscriptions()
 
-    const timerConfig = await this.timerConfigStorageService.get()
-    this.timer.setConfig(timerConfig)
-    const backupInternalState = await this.timerStateStorageService.get()
+    const [timerConfig, backupInternalState] = await Promise.all([
+      this.timerConfigStorageService.get(),
+      this.timerStateStorageService.get()
+    ])
+
     if (backupInternalState) {
+      this.timer.setConfig(timerConfig)
       this.timer.setInternalState(backupInternalState)
+    } else {
+      this.timer.setConfigAndResetState(timerConfig)
     }
 
     await this.setupTimerSubscriptions()
