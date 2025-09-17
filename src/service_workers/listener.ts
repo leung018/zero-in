@@ -158,7 +158,6 @@ export class BackgroundListener {
 
   private async reloadTimer() {
     this.removeTimerSubscriptions()
-    this.timer.setOnTimerPause(() => {})
 
     const [timerConfig, backupInternalState] = await Promise.all([
       this.timerConfigStorageService.get(),
@@ -171,8 +170,6 @@ export class BackgroundListener {
     } else {
       this.timer.setConfigAndResetState(timerConfig)
     }
-
-    this.setOnTimerPause()
 
     await this.setupTimerSubscriptions()
   }
@@ -213,7 +210,11 @@ export class BackgroundListener {
     })
 
     // See comments above. The reason of using setOnTimerPause is similar.
-    this.setOnTimerPause()
+    this.timer.setOnTimerPause(() => {
+      this.badgeDisplayService.clearBadge()
+      this.toggleBrowsingRules()
+      this.timerStateStorageService.save(this.timer.getInternalState())
+    })
 
     this.timer.setOnTimerUpdate((newExternalState) => {
       this.timerStateSubscriptionManager.broadcast(newExternalState)
@@ -248,14 +249,6 @@ export class BackgroundListener {
         this.timer.setConfig(newConfig)
       })
     ])
-  }
-
-  private setOnTimerPause() {
-    this.timer.setOnTimerPause(() => {
-      this.badgeDisplayService.clearBadge()
-      this.toggleBrowsingRules()
-      this.timerStateStorageService.save(this.timer.getInternalState())
-    })
   }
 
   private async setUpNotification() {
