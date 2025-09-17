@@ -152,26 +152,28 @@ export class BackgroundListener {
     this.timerConfigStorageService.unsubscribeAll()
     this.badgeDisplayService.clearBadge()
 
-    await Promise.all([this.setUpTimer(), this.setUpNotification()])
+    await Promise.all([this.reloadTimer(), this.setUpNotification()])
     await this.toggleBrowsingRules() // toggleBrowsingRules should call after timer is set
   }
 
-  private async setUpTimer() {
-    if (this.isSettingUpTimer) {
-      throw new Error(
-        'Timer is being set up, can not set up again. Otherwise, will cause unexpected behavior'
-      )
+  private async reloadTimer() {
+    this.removeTimerSubscriptions()
+
+    const timerConfig = await this.timerConfigStorageService.get()
+    this.timer.setConfig(timerConfig)
+    const backupInternalState = await this.timerStateStorageService.get()
+    if (backupInternalState) {
+      this.timer.setInternalState(backupInternalState)
     }
-    this.isSettingUpTimer = true
-    try {
-      await this.setUpTimerImpl()
-    } finally {
-      this.isSettingUpTimer = false
-    }
+
+    await this.setupTimerSubscriptions()
   }
 
-  private async setUpTimerImpl() {
-    this.timer.setOnTimerPause(() => {}) // So that setConfigAndResetState won't persist the timerState and corrupt the backupInternalState, in case setTimerPause has been set before.
+  /**
+   * Note: Can't call this method in reload.
+   * Because setConfigAndResetState will corrupt the backupInternalState who are subscribing it.
+   */
+  private async setUpTimer() {
     const timerConfig = await this.timerConfigStorageService.get()
     this.timer.setConfigAndResetState(timerConfig)
     const backupInternalState = await this.timerStateStorageService.get()
@@ -218,6 +220,15 @@ export class BackgroundListener {
       }
     })
 
+    await this.setupTimerSubscriptions()
+  }
+
+  private removeTimerSubscriptions() {
+    this.timerStateStorageService.unsubscribeAll()
+    this.timerConfigStorageService.unsubscribeAll()
+  }
+
+  private async setupTimerSubscriptions() {
     await this.timerStateStorageService.onChange((newInternalState) => {
       if (
         newInternalState.timerId != this.timer.getId() &&

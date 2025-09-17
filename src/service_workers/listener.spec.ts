@@ -714,12 +714,6 @@ describe('BackgroundListener', () => {
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
 
-  it('should reload, start can not setting up timer at the same time', async () => {
-    const { listener } = await setUpListener()
-    // So that reload/start will throw error when setting up timer if other haven't finished yet
-    await expect(Promise.all([listener.reload(), listener.start()])).rejects.toThrow()
-  })
-
   it('should failure in previous start wont block the next start', async () => {
     const { listener, timerConfigStorageService } = await setUpListener()
 
