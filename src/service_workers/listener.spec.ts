@@ -17,7 +17,7 @@ import { newTestTimerBasedBlockingRules } from '../domain/timer_based_blocking'
 import { type Badge, type BadgeColor } from '../infra/badge'
 import { setUpListener } from '../test_utils/listener'
 import { getDateAfter } from '../utils/date'
-import type { ClientPort } from './listener'
+import { BackgroundListener, type ClientPort } from './listener'
 import { newResetTimerConfigRequest, WorkRequestName } from './request'
 
 // Noted that below doesn't cover all the behaviors of BackgroundListener. Some of that is covered in other vue component tests.
@@ -44,7 +44,8 @@ describe('BackgroundListener', () => {
     const { clientPort, focusSessionRecordsStorageService } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
         focusDuration: new Duration({ seconds: 3 }),
-        shortBreakDuration: new Duration({ seconds: 1 })
+        shortBreakDuration: new Duration({ seconds: 1 }),
+        focusSessionsPerCycle: 3
       })
     })
 
@@ -69,6 +70,13 @@ describe('BackgroundListener', () => {
     await flushPromises()
 
     expect((await focusSessionRecordsStorageService.get()).length).toBe(1)
+
+    // 2nd Focus
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    vi.advanceTimersByTime(3000)
+    await flushPromises()
+
+    expect((await focusSessionRecordsStorageService.get()).length).toBe(2)
   })
 
   it('should house keep the focus session records', async () => {
@@ -92,6 +100,35 @@ describe('BackgroundListener', () => {
     const newRecords = await focusSessionRecordsStorageService.get()
     expect(newRecords.length).toBe(1)
     expect(newRecords[0].completedAt > oldDate).toBe(true)
+  })
+
+  it('should update focus session record auto retry if fail', async () => {
+    const { focusSessionRecordsStorageService, clientPort } = await startListener({
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 3 })
+      })
+    })
+
+    let runCounter = 0
+    const backupSave = focusSessionRecordsStorageService.save
+    focusSessionRecordsStorageService.save = async (records: FocusSessionRecord[]) => {
+      runCounter++
+      if (runCounter > 1) {
+        return backupSave.call(focusSessionRecordsStorageService, records)
+      }
+      throw Error('Simulate Network Error')
+    }
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    vi.advanceTimersByTime(3000)
+    await flushPromises()
+
+    // Make Sure first call is fail. And have to wait for retry
+    expect((await focusSessionRecordsStorageService.get()).length).toBe(0)
+
+    vi.advanceTimersByTime(BackgroundListener.UPDATE_SESSION_RECORDS_RETRY_MS)
+    await flushPromises()
+    expect((await focusSessionRecordsStorageService.get()).length).toBe(1)
   })
 
   it('should display badge when the timer is started', async () => {

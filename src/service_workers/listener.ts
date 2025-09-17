@@ -25,6 +25,7 @@ import type { BrowsingControlService } from '../infra/browsing_control'
 import { type CommunicationManager, type Port } from '../infra/communication'
 import { DesktopNotificationService } from '../infra/desktop_notification'
 import { MultipleActionService } from '../infra/multiple_actions'
+import { retryUntilSuccess } from '../utils/retry'
 import { SubscriptionManager } from '../utils/subscription'
 import { newTimerConfig, WorkRequestName, type WorkRequest } from './request'
 import { WorkResponseName, type WorkResponse } from './response'
@@ -74,6 +75,8 @@ export class BackgroundListener {
   static createFake(params: ListenerParams) {
     return new BackgroundListener(params)
   }
+
+  static UPDATE_SESSION_RECORDS_RETRY_MS = 10000
 
   private browsingControlTogglingService: BrowsingControlTogglingService
   private browsingRulesStorageService: BrowsingRulesStorageService
@@ -277,22 +280,24 @@ export class BackgroundListener {
   }
 
   private async updateFocusSessionRecords(lastSessionStartTime: Date) {
-    return this.focusSessionRecordsStorageService
-      .get()
-      .then((records) => {
-        this.focusSessionRecordsStorageService.save([
-          ...records,
-          newFocusSessionRecord({
-            startedAt: lastSessionStartTime
-          })
-        ])
-      })
-      .then(() => {
-        FocusSessionRecordHousekeeper.houseKeep({
+    const newRecord = newFocusSessionRecord({
+      startedAt: lastSessionStartTime
+    })
+    await retryUntilSuccess(
+      async () => {
+        const oldRecords = await this.focusSessionRecordsStorageService.get()
+
+        await this.focusSessionRecordsStorageService.save([...oldRecords, newRecord])
+        await FocusSessionRecordHousekeeper.houseKeep({
           focusSessionRecordsStorageService: this.focusSessionRecordsStorageService,
           houseKeepDays: this.focusSessionRecordHouseKeepDays
         })
-      })
+      },
+      {
+        retryIntervalMs: BackgroundListener.UPDATE_SESSION_RECORDS_RETRY_MS,
+        functionName: 'BackgroundListener.updateFocusSessionRecords'
+      }
+    )
   }
 
   getTimerStateSubscriptionCount() {
