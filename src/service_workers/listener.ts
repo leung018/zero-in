@@ -179,9 +179,11 @@ export class BackgroundListener {
    * Because setConfigAndResetState will corrupt the backupInternalState who are subscribing it.
    */
   private async setUpTimer() {
-    const timerConfig = await this.timerConfigStorageService.get()
+    const [timerConfig, backupInternalState] = await Promise.all([
+      this.timerConfigStorageService.get(),
+      this.timerStateStorageService.get()
+    ])
     this.timer.setConfigAndResetState(timerConfig)
-    const backupInternalState = await this.timerStateStorageService.get()
     if (backupInternalState) {
       this.timer.setInternalState(backupInternalState)
     }
@@ -234,17 +236,19 @@ export class BackgroundListener {
   }
 
   private async setupTimerSubscriptions() {
-    await this.timerStateStorageService.onChange((newInternalState) => {
-      if (
-        newInternalState.timerId != this.timer.getId() &&
-        !newInternalState.equalsIgnoringId(this.timer.getInternalState())
-      ) {
-        this.timer.setInternalState(newInternalState)
-      }
-    })
-    await this.timerConfigStorageService.onChange((newConfig) => {
-      this.timer.setConfig(newConfig)
-    })
+    return Promise.all([
+      this.timerStateStorageService.onChange((newInternalState) => {
+        if (
+          newInternalState.timerId != this.timer.getId() &&
+          !newInternalState.equalsIgnoringId(this.timer.getInternalState())
+        ) {
+          this.timer.setInternalState(newInternalState)
+        }
+      }),
+      this.timerConfigStorageService.onChange((newConfig) => {
+        this.timer.setConfig(newConfig)
+      })
+    ])
   }
 
   private async setUpNotification() {
