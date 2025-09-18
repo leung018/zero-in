@@ -41,5 +41,17 @@ import ContentTemplate from '@/pages/components/ContentTemplate.vue'
         </BLink>
       </div>
     </BCard>
+
+    <BCard class="mb-4 shadow-sm">
+      <h3 class="mt-1 mb-3">Home Page</h3>
+      <BLink
+        href="https://zeroin.dev"
+        target="_blank"
+        rel="noopener"
+        class="text-decoration-none fw-medium"
+      >
+        Visit Our Website
+      </BLink>
+    </BCard>
   </ContentTemplate>
 </template>
