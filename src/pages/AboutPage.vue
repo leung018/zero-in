@@ -10,12 +10,18 @@ import ContentTemplate from '@/pages/components/ContentTemplate.vue'
         For more details on our policies, please review the links below.
       </p>
       <div class="d-flex flex-column gap-2">
-        <BLink href="https://zeroin.dev/tos" target="_blank" class="text-decoration-none fw-medium">
+        <BLink
+          href="https://zeroin.dev/tos"
+          target="_blank"
+          rel="noopener"
+          class="text-decoration-none fw-medium"
+        >
           Terms of Service
         </BLink>
         <BLink
           href="https://zeroin.dev/privacy"
           target="_blank"
+          rel="noopener"
           class="text-decoration-none fw-medium"
         >
           Privacy Policy
@@ -30,6 +36,7 @@ import ContentTemplate from '@/pages/components/ContentTemplate.vue'
         <BLink
           href="https://github.com/leung018/zero-in/blob/main/THIRD_PARTY_LICENSES.md"
           target="_blank"
+          rel="noopener"
           class="text-decoration-none fw-medium"
         >
           View Licenses
