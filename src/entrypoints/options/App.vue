@@ -13,7 +13,6 @@ import NotificationPage from '@/pages/NotificationPage.vue'
 import StatisticsPage from '@/pages/StatisticsPage.vue'
 import TimerSettingPage from '@/pages/TimerSettingPage.vue'
 import { onMounted, ref } from 'vue'
-import { FeatureFlag, FeatureFlagsService } from '../../infra/feature_flags'
 
 const port = new BrowserCommunicationManager().clientConnect()
 const updateSuccessNotifierService = new UpdateSuccessNotifierService()
@@ -49,12 +48,6 @@ function getPathFromWindowLocation(): PATH {
   return Object.values(PATH).includes(path as PATH) ? (path as PATH) : PATH.ROOT
 }
 
-const featureFlagsService = FeatureFlagsService.init()
-const signInEnabled = ref<boolean>(false)
-featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
-  signInEnabled.value = enabled
-})
-
 const goToSignIn = () => {
   window.location.href = config.getSignInPageUrl()
 }
@@ -88,7 +81,7 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
   <main>
     <BNav tabs class="mt-2 d-flex w-100">
       <div class="ms-2 d-flex align-items-center" style="width: 100px">
-        <div v-if="signInEnabled">
+        <div>
           <BButton
             v-if="!isAuthenticated"
             size="sm"

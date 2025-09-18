@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { FeatureFlag, FeatureFlagsService } from '@/infra/feature_flags'
 import { ImportRecordStorageService } from '../../domain/import/record/storage'
 import { FirebaseServices } from '../../infra/firebase/services'
 import { FirestoreStorageWrapper } from '../../infra/storage/firestore'
@@ -36,17 +35,10 @@ const onHelperProcessComplete = async () => {
   await browser.runtime.openOptionsPage()
   window.close()
 }
-
-const featureFlagsService = FeatureFlagsService.init()
-
-const signInEnabled = ref<boolean>(false)
-featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
-  signInEnabled.value = enabled
-})
 </script>
 
 <template>
-  <div v-if="signInEnabled" class="signin-container">
+  <div class="signin-container">
     <h2 class="mb-4">Sign in to Zero In</h2>
 
     <div class="message-box">
