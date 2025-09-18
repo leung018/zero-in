@@ -2,7 +2,6 @@
 import config from '@/config'
 import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import { BrowserNewTabService } from '@/infra/browser/new_tab'
-import { FeatureFlag, FeatureFlagsService } from '@/infra/feature_flags'
 import FocusTimerPage from '@/pages/FocusTimerPage.vue'
 import { FirebaseServices } from '../../infra/firebase/services'
 
@@ -14,12 +13,6 @@ const openSignInPage = () => {
   new BrowserNewTabService(config.getSignInPageUrl()).trigger()
 }
 
-const featureFlagsService = FeatureFlagsService.init()
-const signInEnabled = ref<boolean>(false)
-featureFlagsService.isEnabled(FeatureFlag.SIGN_IN).then((enabled) => {
-  signInEnabled.value = enabled
-})
-
 const isAuthenticated = ref<boolean>(false)
 
 FirebaseServices.isAuthenticated().then((isAuthenticatedValue) => {
@@ -30,7 +23,7 @@ FirebaseServices.isAuthenticated().then((isAuthenticatedValue) => {
 <template>
   <div class="position-relative">
     <BButton
-      v-if="signInEnabled && !isAuthenticated"
+      v-if="!isAuthenticated"
       data-test="sign-in-button"
       variant="outline-secondary"
       class="position-absolute top-0 start-0 p-0 ms-2"
