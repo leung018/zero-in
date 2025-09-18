@@ -44,7 +44,8 @@ const onHelperProcessComplete = async () => {
     <div class="message-box">
       <p>
         <strong>Sign in</strong> to unlock
-        <a href="https://zeroin.dev/premium" target="_blank"><strong>premium features</strong></a
+        <a href="https://zeroin.dev/premium" target="_blank" rel="noopener"
+          ><strong>premium features</strong></a
         >! Enjoy a <strong>free trial</strong> during this <strong>limited-time promotion</strong>,
         though it may end at any time.
       </p>
@@ -52,11 +53,15 @@ const onHelperProcessComplete = async () => {
 
     <p class="mt-3 text-muted" style="font-size: 0.85em">
       By signing in, you agree to the
-      <a href="https://zeroin.dev/tos" class="text-decoration-none" target="_blank"
+      <a href="https://zeroin.dev/tos" class="text-decoration-none" target="_blank" rel="noopener"
         >Terms of Service</a
       >
       and
-      <a href="https://zeroin.dev/privacy" class="text-decoration-none" target="_blank"
+      <a
+        href="https://zeroin.dev/privacy"
+        class="text-decoration-none"
+        target="_blank"
+        rel="noopener"
         >Privacy Policy</a
       >.
     </p>

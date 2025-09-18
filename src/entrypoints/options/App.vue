@@ -7,6 +7,7 @@ import { FocusSessionRecordsStorageService } from '@/domain/timer/record/storage
 import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import { UpdateSuccessNotifierService } from '@/infra/browser/update_success_notifier'
 import { FirebaseServices } from '@/infra/firebase/services'
+import AboutPage from '@/pages/AboutPage.vue'
 import BlockingSettingPage from '@/pages/BlockingSettingPage/index.vue'
 import FeedbackPage from '@/pages/FeedbackPage.vue'
 import NotificationPage from '@/pages/NotificationPage.vue'
@@ -22,7 +23,8 @@ enum PATH {
   STATISTICS = '/statistics',
   TIMER_SETTING = '/timer-setting',
   NOTIFICATION = '/notification',
-  FEEDBACK = '/feedback'
+  FEEDBACK = '/feedback',
+  ABOUT = '/about'
 }
 
 const pathTitles = {
@@ -30,7 +32,8 @@ const pathTitles = {
   [PATH.STATISTICS]: 'Statistics',
   [PATH.TIMER_SETTING]: 'Timer Setting',
   [PATH.NOTIFICATION]: 'Notification',
-  [PATH.FEEDBACK]: 'Feedback'
+  [PATH.FEEDBACK]: 'Feedback',
+  [PATH.ABOUT]: 'About'
 }
 
 const currentPath = ref<PATH>(PATH.ROOT)
@@ -74,7 +77,8 @@ FirebaseServices.onAuthStateChanged((auth) => {
   }
 })
 
-const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICATION]
+const centerTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICATION]
+const rightTabs = [PATH.FEEDBACK, PATH.ABOUT]
 </script>
 
 <template>
@@ -98,7 +102,7 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
       </div>
       <div class="flex-grow-1 d-flex justify-content-center">
         <BNavItem
-          v-for="path in mainTabs"
+          v-for="path in centerTabs"
           :key="path"
           :href="`#${path}`"
           :active="path === currentPath"
@@ -106,10 +110,15 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
           {{ pathTitles[path] }}
         </BNavItem>
       </div>
-      <div class="me-2" style="width: 100px">
-        <BNavItem :active="currentPath === PATH.FEEDBACK" :href="`#${PATH.FEEDBACK}`"
-          >Feedback</BNavItem
+      <div class="me-2 d-flex">
+        <BNavItem
+          v-for="path in rightTabs"
+          :key="path"
+          :href="`#${path}`"
+          :active="path === currentPath"
         >
+          {{ pathTitles[path] }}
+        </BNavItem>
       </div>
     </BNav>
     <!-- I don't use an approach of mapping component by path here because the current explicit v-if/v-else-if structure 
@@ -138,5 +147,6 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
     />
 
     <FeedbackPage v-show="currentPath === PATH.FEEDBACK" />
+    <AboutPage v-show="currentPath === PATH.ABOUT" />
   </main>
 </template>
