@@ -77,7 +77,8 @@ FirebaseServices.onAuthStateChanged((auth) => {
   }
 })
 
-const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICATION]
+const centerTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICATION]
+const rightTabs = [PATH.FEEDBACK, PATH.ABOUT]
 </script>
 
 <template>
@@ -101,7 +102,7 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
       </div>
       <div class="flex-grow-1 d-flex justify-content-center">
         <BNavItem
-          v-for="path in mainTabs"
+          v-for="path in centerTabs"
           :key="path"
           :href="`#${path}`"
           :active="path === currentPath"
@@ -110,10 +111,14 @@ const mainTabs = [PATH.ROOT, PATH.STATISTICS, PATH.TIMER_SETTING, PATH.NOTIFICAT
         </BNavItem>
       </div>
       <div class="me-2 d-flex">
-        <BNavItem :active="currentPath === PATH.FEEDBACK" :href="`#${PATH.FEEDBACK}`"
-          >Feedback</BNavItem
+        <BNavItem
+          v-for="path in rightTabs"
+          :key="path"
+          :href="`#${path}`"
+          :active="path === currentPath"
         >
-        <BNavItem :active="currentPath === PATH.ABOUT" :href="`#${PATH.ABOUT}`">About</BNavItem>
+          {{ pathTitles[path] }}
+        </BNavItem>
       </div>
     </BNav>
     <!-- I don't use an approach of mapping component by path here because the current explicit v-if/v-else-if structure 
