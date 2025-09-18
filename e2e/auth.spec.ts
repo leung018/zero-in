@@ -5,7 +5,7 @@ import {
   goToFocusTimer,
   goToTestingConfigPage
 } from './utils/navigation.js'
-import { enableSignInFeatureFlag, signIn } from './utils/operation.js'
+import { signIn } from './utils/operation.js'
 
 test('should sign in and sign out buttons render according to state of authentication', async ({
   page,
@@ -13,10 +13,6 @@ test('should sign in and sign out buttons render according to state of authentic
 }) => {
   await goToBlockingSettingPage(page, extensionId)
 
-  // hidden by default without enable feature flag
-  await expect(page.getByTestId('sign-in-button')).toBeHidden()
-
-  await enableSignInFeatureFlag(page)
   await signIn(page)
   await page.reload()
 
@@ -35,12 +31,6 @@ test('should render sign in button in popup when user has not authenticated', as
 }) => {
   await goToFocusTimer(page, extensionId)
 
-  // hidden by default without enable feature flag
-  await expect(page.getByTestId('sign-in-button')).toBeHidden()
-
-  await enableSignInFeatureFlag(page)
-  await page.reload()
-
   await expect(page.getByTestId('sign-in-button')).toBeVisible()
 
   await signIn(page)
@@ -57,8 +47,6 @@ test('should sign in trigger restart of service worker so that the timer config 
   await changeFocusDuration(page, 60)
 
   await goToFocusTimer(page, extensionId)
-  await enableSignInFeatureFlag(page)
-  await page.reload()
 
   await signIn(page)
   await page.reload()

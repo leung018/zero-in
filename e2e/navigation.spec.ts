@@ -3,7 +3,6 @@ import { Page } from '@playwright/test'
 import { expect, test } from './fixtures.js'
 import { assertWithRetry } from './utils/assertion.js'
 import { goToBlockingSettingPage, goToFocusTimer } from './utils/navigation.js'
-import { enableSignInFeatureFlag } from './utils/operation.js'
 
 test('should clicking the options button in timer can go to options page', async ({
   page,
@@ -18,9 +17,6 @@ test('should clicking the options button in timer can go to options page', async
 
 test('should clicking the sign in button go to sign in page', async ({ page, extensionId }) => {
   await goToFocusTimer(page, extensionId)
-
-  await enableSignInFeatureFlag(page)
-  await page.reload()
 
   await page.getByTestId('sign-in-button').click()
 

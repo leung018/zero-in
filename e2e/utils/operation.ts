@@ -22,18 +22,3 @@ export async function signIn(page: Page) {
     await window.signInWithTestCredential()
   })
 }
-
-/**
- * Enable sign in feature flag but expecting the target page attached featureFlagsService in window
- */
-export async function enableSignInFeatureFlag(page: Page) {
-  await page.evaluate(async () => {
-    //@ts-expect-error Exposed method
-    while (!window.featureFlagsService) {
-      await new Promise((resolve) => setTimeout(resolve, 100))
-    }
-
-    //@ts-expect-error Exposed method
-    await window.featureFlagsService.enable('sign-in')
-  })
-}
