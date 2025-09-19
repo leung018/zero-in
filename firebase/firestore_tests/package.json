@@ -2,6 +2,7 @@
   "name": "firestore_tests",
   "packageManager": "yarn@4.4.1",
   "devDependencies": {
-    "@firebase/rules-unit-testing": "^5.0.0"
+    "@firebase/rules-unit-testing": "^5.0.0",
+    "vitest": "^3.2.4"
   }
 }
