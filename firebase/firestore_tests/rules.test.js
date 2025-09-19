@@ -3,7 +3,7 @@ import {
   assertSucceeds,
   initializeTestEnvironment
 } from '@firebase/rules-unit-testing'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { deleteDoc, doc, getDoc, setDoc } from 'firebase/firestore'
 import { readFileSync } from 'fs'
 import { afterAll, beforeAll, describe, it } from 'vitest'
 
@@ -67,5 +67,15 @@ describe('Firestore security rules', () => {
 
     ref = doc(bobDb, 'users/alice/profile/info')
     await assertFails(setDoc(ref, { age: '15' }))
+  })
+
+  it("should denies a user from deleting other user's document", async () => {
+    const bobDb = testEnv.authenticatedContext('bob').firestore()
+
+    let ref = doc(bobDb, 'users/alice')
+    await assertFails(deleteDoc(ref))
+
+    ref = doc(bobDb, 'users/alice/profile/info')
+    await assertFails(deleteDoc(ref))
   })
 })
