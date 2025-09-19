@@ -6119,9 +6119,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"firestore_rules@workspace:firebase/rules":
+"firestore_tests@workspace:firebase/firestore_tests":
   version: 0.0.0-use.local
-  resolution: "firestore_rules@workspace:firebase/rules"
+  resolution: "firestore_tests@workspace:firebase/firestore_tests"
   dependencies:
     "@firebase/rules-unit-testing": "npm:^5.0.0"
   languageName: unknown
