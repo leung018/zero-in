@@ -1,0 +1,7 @@
+{
+  "name": "firestore_rules",
+  "packageManager": "yarn@4.4.1",
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0"
+  }
+}

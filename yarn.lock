@@ -1090,6 +1090,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@firebase/rules-unit-testing@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@firebase/rules-unit-testing@npm:5.0.0"
+  peerDependencies:
+    firebase: ^12.0.0
+  checksum: 10c0/2165daa55bd5356279aabfa23c8d3f4779f67dbc50be27f54bf563f642be8f9b1446a2353a92313fe74aa9755e0c43642641b6195541310c9a9f25faee0942a1
+  languageName: node
+  linkType: hard
+
 "@firebase/storage-compat@npm:0.4.0":
   version: 0.4.0
   resolution: "@firebase/storage-compat@npm:0.4.0"
@@ -6109,6 +6118,14 @@ __metadata:
   checksum: 10c0/032949c923336f843015757f1aba90d19b9f0d7277ba91705958a5579d55c98a424700388ac263a1dc67d6a942403e25090443703ff0f38347a20e9dbc40e1a3
   languageName: node
   linkType: hard
+
+"firestore_rules@workspace:firebase/rules":
+  version: 0.0.0-use.local
+  resolution: "firestore_rules@workspace:firebase/rules"
+  dependencies:
+    "@firebase/rules-unit-testing": "npm:^5.0.0"
+  languageName: unknown
+  linkType: soft
 
 "flat-cache@npm:^4.0.0":
   version: 4.0.1
