@@ -6,7 +6,7 @@ on:
     paths:
       - 'firebase/firestore.**'
 jobs:
-  deploy-firestore:
+  deploy-prod-firestore:
     runs-on: ubuntu-latest
     environment: prod
     steps:

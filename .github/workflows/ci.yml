@@ -5,9 +5,9 @@ on:
   pull_request:
     branches:
       - main
-name: Continuous Integration
+name: Extension Continuous Integration
 jobs:
-  checks:
+  extension-checks:
     runs-on: ubuntu-latest
     if: |
       github.event_name == 'push' ||
@@ -37,7 +37,7 @@ jobs:
         run: yarn playwright install --with-deps chromium
       - name: End-to-End Tests
         run: xvfb-run yarn test:e2e
-  macos-e2e:
+  extension-macos-e2e:
     runs-on: macos-latest
     if: |
       github.event_name == 'push' ||
