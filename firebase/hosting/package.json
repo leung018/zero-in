@@ -2,7 +2,7 @@
   "name": "firebase_hosting",
   "packageManager": "yarn@4.4.1",
   "devDependencies": {
-    "vite": "^7.0.7"
+    "vite": "^7.1.6"
   },
   "scripts": {
     "build": "vite build"
