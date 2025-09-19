@@ -1,11 +1,11 @@
-name: Deploy to Development Firestore
+name: Firestore Continuous Integration
 on:
   pull_request:
     paths:
       - 'firebase/firestore.**'
       - 'firebase/firestore_tests/**'
 jobs:
-  deploy-firestore:
+  test-rules-and-deploy-dev-firestore:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     environment: dev

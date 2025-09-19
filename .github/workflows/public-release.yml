@@ -1,11 +1,11 @@
-name: Public Release
+name: Extension Public Release
 
 on:
   push:
     tags:
       - 'v*'
 jobs:
-  release:
+  extension-prod-release:
     permissions:
       contents: write
     runs-on: ubuntu-latest

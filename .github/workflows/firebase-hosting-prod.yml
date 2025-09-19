@@ -9,7 +9,7 @@ permissions:
   checks: write
   contents: read
 jobs:
-  build_and_preview:
+  deploy-prod-firebase-hosting:
     runs-on: ubuntu-latest
     environment: prod
     env:
