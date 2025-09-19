@@ -16,6 +16,9 @@ jobs:
           node-version: '22.x'
           cache: 'yarn'
           cache-dependency-path: ./yarn.lock
+      - run: yarn install --immutable
+      - run: yarn test
+        working-directory: ./firebase/firestore_tests
       - name: Deploy Firestore Rules
         working-directory: ./firebase
         run: yarn dlx firebase-tools deploy --only firestore:rules --project ${{ vars.VITE_FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
