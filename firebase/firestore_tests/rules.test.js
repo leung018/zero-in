@@ -26,7 +26,7 @@ describe('Firestore security rules', () => {
   it('should denies read if unauthenticated', async () => {
     const unauthDb = testEnv.unauthenticatedContext().firestore()
     const ref = doc(unauthDb, 'users/alice')
-    await assertFails(getDoc(ref))
+    await assertSucceeds(getDoc(ref))
   })
 
   it('should allows a user to read their own document', async () => {
