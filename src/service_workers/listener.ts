@@ -99,8 +99,6 @@ export class BackgroundListener {
   private desktopNotificationService: DesktopNotificationService
   private reminderTabService: ActionService
 
-  private isSettingUpTimer = false
-
   private constructor(params: ListenerParams) {
     this.communicationManager = params.communicationManager
     this.browsingControlTogglingService = new BrowsingControlTogglingService({

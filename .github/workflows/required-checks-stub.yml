@@ -1,0 +1,17 @@
+# Stub workflow to satisfy required status checks when path filters skip real jobs.
+# IMPORTANT: Job IDs here must exactly match the required checks configured in branch protection.
+
+name: Required Checks Stub
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  test-rules-and-deploy-dev-firestore:
+    runs-on: ubuntu-latest
+    steps:
+      - run: exit 0
+  deploy-dev-firebase-hosting:
+    runs-on: ubuntu-latest
+    steps:
+      - run: exit 0
