@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'firebase/hosting/**'
+  workflow_dispatch:
 permissions:
   checks: write
   contents: read
