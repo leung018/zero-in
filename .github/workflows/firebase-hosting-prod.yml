@@ -15,7 +15,7 @@ jobs:
     environment: prod
     defaults:
       run:
-        working-directory: firebase/hosting
+        working-directory: firebase
     env:
       FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ZERO_IN_PROD }}
     steps:
@@ -27,7 +27,7 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: firebase/yarn.lock
       - run: yarn install --immutable
-      - run: yarn build
+      - run: yarn build-hosting
         env:
           VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY }}
           VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.VITE_FIREBASE_AUTH_DOMAIN }}

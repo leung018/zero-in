@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: firebase/firestore-tests
+        working-directory: firebase
     environment: dev
     steps:
       - uses: actions/checkout@v4
@@ -25,5 +25,4 @@ jobs:
       - run: yarn install --immutable
       - run: yarn test
       - name: Deploy Firestore Rules
-        working-directory: firebase
         run: yarn dlx firebase-tools deploy --only firestore:rules --project ${{ vars.VITE_FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}

@@ -12,7 +12,7 @@
     "vitest": "^3.2.4"
   },
   "scripts": {
-    "build": "vite build",
+    "build-hosting": "vite build",
     "test-firestore": "firebase emulators:exec --only firestore 'vitest run --root .'"
   }
 }
