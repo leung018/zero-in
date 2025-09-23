@@ -3,7 +3,7 @@ on:
   pull_request:
     paths:
       - 'firebase/firestore.**'
-      - 'firebase/firestore_tests/**'
+      - 'firebase/firestore-tests/**'
   workflow_dispatch:
 jobs:
   test-rules-and-deploy-dev-firestore:

@@ -1,5 +1,5 @@
 {
-  "name": "firebase_hosting",
+  "name": "firebase-hosting",
   "private": true,
   "packageManager": "yarn@4.4.1",
   "devDependencies": {
