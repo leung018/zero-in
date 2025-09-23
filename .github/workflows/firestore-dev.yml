@@ -4,11 +4,15 @@ on:
     paths:
       - 'firebase/firestore.**'
       - 'firebase/firestore-tests/**'
+      - '.github/workflows/firestore-dev.yml'
   workflow_dispatch:
 jobs:
   test-rules-and-deploy-dev-firestore:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: firebase/firestore-tests
     environment: dev
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +24,6 @@ jobs:
           cache-dependency-path: ./yarn.lock
       - run: yarn install --immutable
       - run: yarn test
-        working-directory: ./firebase/firestore_tests
       - name: Deploy Firestore Rules
-        working-directory: ./firebase
+        working-directory: ../
         run: yarn dlx firebase-tools deploy --only firestore:rules --project ${{ vars.VITE_FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}

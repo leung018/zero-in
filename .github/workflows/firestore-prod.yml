@@ -5,9 +5,13 @@ on:
       - main
     paths:
       - 'firebase/firestore.**'
+      - '.github/workflows/firestore-prod.yml'
 jobs:
   deploy-prod-firestore:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: firebase/firestore-tests
     environment: prod
     steps:
       - uses: actions/checkout@v4
@@ -18,5 +22,5 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: ./yarn.lock
       - name: Deploy Firestore Rules
-        working-directory: ./firebase
+        working-directory: ../
         run: yarn dlx firebase-tools deploy --only firestore:rules --project ${{ vars.VITE_FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
