@@ -1,3 +1,5 @@
+name: Extension Continuous Integration
+
 on:
   push:
     branches-ignore:
@@ -5,7 +7,9 @@ on:
   pull_request:
     branches:
       - main
-name: Extension Continuous Integration
+defaults:
+  run:
+    working-directory: extension
 jobs:
   extension-checks:
     runs-on: ubuntu-latest
@@ -19,7 +23,7 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'yarn'
-          cache-dependency-path: ./yarn.lock
+          cache-dependency-path: extension/yarn.lock
       - run: yarn install --immutable
       - name: Lint
         run: yarn lint
@@ -49,7 +53,7 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'yarn'
-          cache-dependency-path: ./yarn.lock
+          cache-dependency-path: extension/yarn.lock
       - run: yarn install --immutable
       - name: Build
         run: yarn build:ci
