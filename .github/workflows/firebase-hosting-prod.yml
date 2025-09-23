@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'yarn'
-          cache-dependency-path: firebase/hosting/yarn.lock
+          cache-dependency-path: firebase/yarn.lock
       - run: yarn install --immutable
       - run: yarn build
         env:
