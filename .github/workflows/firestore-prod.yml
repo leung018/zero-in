@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'yarn'
-          cache-dependency-path: ./yarn.lock
+          cache-dependency-path: firebase/firestore-tests/yarn.lock
       - name: Deploy Firestore Rules
         working-directory: ../
         run: yarn dlx firebase-tools deploy --only firestore:rules --project ${{ vars.VITE_FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
