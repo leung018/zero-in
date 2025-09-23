@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - 'firebase/hosting/**'
+      - '.github/workflows/firebase-hosting-prod.yml'
 permissions:
   checks: write
   contents: read

@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'firebase/hosting/**'
+      - '.github/workflows/firebase-hosting-dev.yml'
   workflow_dispatch:
 permissions:
   checks: write
