@@ -8,6 +8,6 @@
     "vitest": "^3.2.4"
   },
   "scripts": {
-    "test": "firebase emulators:exec --only firestore 'vitest run'"
+    "test": "firebase emulators:exec --only firestore 'vitest run --config ./vitest.config.js'"
   }
 }
