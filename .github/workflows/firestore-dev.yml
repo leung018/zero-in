@@ -23,6 +23,6 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: firebase/yarn.lock
       - run: yarn install --immutable
-      - run: yarn test
+      - run: yarn test-firestore-rules
       - name: Deploy Firestore Rules
         run: yarn dlx firebase-tools deploy --only firestore:rules --project ${{ vars.VITE_FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}

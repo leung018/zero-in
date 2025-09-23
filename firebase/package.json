@@ -13,6 +13,6 @@
   },
   "scripts": {
     "build-hosting": "vite build",
-    "test-firestore": "firebase emulators:exec --only firestore 'vitest run --root .'"
+    "test-firestore-rules": "firebase emulators:exec --only firestore 'vitest run --root .'"
   }
 }
