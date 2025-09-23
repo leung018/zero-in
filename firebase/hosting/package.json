@@ -1,5 +1,6 @@
 {
   "name": "firebase_hosting",
+  "private": true,
   "packageManager": "yarn@4.4.1",
   "devDependencies": {
     "vite": "^7.1.6"
