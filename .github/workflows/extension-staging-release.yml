@@ -3,6 +3,8 @@ name: Extension Staging Release
 on:
   push:
     branches: [main]
+    paths:
+      - 'extension/**'
 defaults:
   run:
     working-directory: extension

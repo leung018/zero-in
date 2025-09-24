@@ -4,9 +4,13 @@ on:
   push:
     branches-ignore:
       - main # Because "Require branches to be up to date before merging" is enabled for main. The checking will be completed before pull request can be merged.
+    paths:
+      - 'extension/**'
   pull_request:
     branches:
       - main
+    paths:
+      - 'extension/**'
 defaults:
   run:
     working-directory: extension
