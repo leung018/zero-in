@@ -3,7 +3,7 @@ name: Extension Continuous Integration
 on:
   push:
     branches-ignore:
-      - main # Because "Require branches to be up to date before merging" is enabled for main. The checking will be completed before pull request can be merged.
+      - main # Ignore main; PR checks cover it (require up-to-date before merge).
     paths:
       - 'extension/**'
   pull_request:
