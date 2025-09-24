@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import { Weekday, WeeklySchedule } from '.'
+import { Time } from '../../../../shared/src/domain/time'
 import { StorageInterface } from '../../infra/storage/interface'
-import { Time } from '../time'
 import { WeeklySchedulesStorageService } from './storage'
 
 export function runWeeklyScheduleStorageServiceTests(storage: StorageInterface) {

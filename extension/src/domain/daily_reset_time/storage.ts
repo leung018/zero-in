@@ -1,8 +1,8 @@
+import { Time } from '@shared/domain/time'
+import { deserializeTime, serializeTime, type SerializedTime } from '@shared/domain/time/serialize'
 import { StorageInterface, StorageService } from '../../infra/storage/interface'
 import { StorageKey } from '../../infra/storage/key'
 import { StorageManager } from '../../infra/storage/manager'
-import { Time } from '../time'
-import { deserializeTime, serializeTime, type SerializedTime } from '../time/serialize'
 
 export class DailyResetTimeStorageService implements StorageService<Time> {
   static readonly STORAGE_KEY: StorageKey = 'dailyCutoffTime'

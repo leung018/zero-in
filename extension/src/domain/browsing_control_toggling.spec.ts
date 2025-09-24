@@ -1,3 +1,4 @@
+import { Time } from '@shared/domain/time'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { FakeBrowsingControlService } from '../infra/browsing_control'
 import {
@@ -9,7 +10,6 @@ import {
 import { BrowsingControlTogglingService } from './browsing_control_toggling'
 import { BrowsingRules } from './browsing_rules'
 import { Weekday, WeeklySchedule } from './schedules'
-import { Time } from './time'
 import { Duration } from './timer/duration'
 import { newFocusSessionRecord } from './timer/record'
 import { TimerStage } from './timer/stage'
