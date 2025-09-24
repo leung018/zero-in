@@ -51,7 +51,7 @@ export default defineConfig({
     ],
     resolve: {
       alias: {
-        shared: new URL('../shared/src', import.meta.url).pathname
+        '@shared': new URL('../shared/src', import.meta.url).pathname
       }
     },
     build: {
