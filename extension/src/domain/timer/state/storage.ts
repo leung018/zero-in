@@ -1,12 +1,9 @@
-import { AdaptiveStorageProvider } from '../../../infra/storage/adaptive'
-import { FakeObservableStorage } from '../../../infra/storage/fake'
 import {
   ObservableStorage,
   StorageInterface,
   StorageService
 } from '../../../infra/storage/interface'
 import { StorageKey } from '../../../infra/storage/key'
-import { LocalStorageWrapper } from '../../../infra/storage/local_storage'
 import { StorageManager } from '../../../infra/storage/manager'
 import { getDateAfter } from '../../../utils/date'
 import { Duration } from '../duration'
@@ -16,18 +13,6 @@ import { deserializeTimerState, serializeTimerState } from './serialize'
 
 export class TimerStateStorageService implements StorageService<TimerInternalState> {
   static readonly STORAGE_KEY: StorageKey = 'timerState'
-
-  static create() {
-    return new TimerStateStorageService(AdaptiveStorageProvider.create())
-  }
-
-  static createFake() {
-    return new TimerStateStorageService(LocalStorageWrapper.createFake())
-  }
-
-  static createObservableFake() {
-    return new TimerStateStorageService(FakeObservableStorage.create())
-  }
 
   private storageManager: StorageManager<TimerStateSchemas[5]>
 

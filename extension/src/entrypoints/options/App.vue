@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import config from '@/config'
-import { DailyResetTimeStorageService } from '@/domain/daily_reset_time/storage'
-import { NotificationSettingStorageService } from '@/domain/notification_setting/storage'
-import { TimerConfigStorageService } from '@/domain/timer/config/storage'
-import { FocusSessionRecordsStorageService } from '@/domain/timer/record/storage'
 import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import { UpdateSuccessNotifierService } from '@/infra/browser/update_success_notifier'
 import { FirebaseServices } from '@/infra/firebase/services'
+import {
+  realDailyResetTimeStorageService,
+  realFocusSessionRecordsStorageService,
+  realNotificationSettingStorageService,
+  realTimerConfigStorageService
+} from '@/infra/storage/factories/real'
 import AboutPage from '@/pages/AboutPage.vue'
 import BlockingSettingPage from '@/pages/BlockingSettingPage/index.vue'
 import FeedbackPage from '@/pages/FeedbackPage.vue'
@@ -127,21 +129,21 @@ const rightTabs = [PATH.FEEDBACK, PATH.ABOUT]
 
     <StatisticsPage
       v-show="currentPath === PATH.STATISTICS"
-      :dailyResetTimeStorageService="DailyResetTimeStorageService.create()"
+      :dailyResetTimeStorageService="realDailyResetTimeStorageService()"
       :updateSuccessNotifierService="updateSuccessNotifierService"
-      :focusSessionRecordsStorageService="FocusSessionRecordsStorageService.create()"
+      :focusSessionRecordsStorageService="realFocusSessionRecordsStorageService()"
     />
 
     <TimerSettingPage
       v-show="currentPath === PATH.TIMER_SETTING"
-      :timerConfigStorageService="TimerConfigStorageService.create()"
+      :timerConfigStorageService="realTimerConfigStorageService()"
       :port="port"
       :updateSuccessNotifierService="updateSuccessNotifierService"
     />
 
     <NotificationPage
       v-show="currentPath === PATH.NOTIFICATION"
-      :notificationSettingStorageService="NotificationSettingStorageService.create()"
+      :notificationSettingStorageService="realNotificationSettingStorageService()"
       :updateSuccessNotifierService="updateSuccessNotifierService"
       :port="port"
     />

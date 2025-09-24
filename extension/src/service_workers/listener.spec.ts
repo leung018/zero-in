@@ -15,6 +15,11 @@ import { TimerInternalState } from '../domain/timer/state/internal'
 import { TimerStateStorageService } from '../domain/timer/state/storage'
 import { newTestTimerBasedBlockingRules } from '../domain/timer_based_blocking'
 import { type Badge, type BadgeColor } from '../infra/badge'
+import {
+  fakeTimerConfigStorageService,
+  fakeTimerStateStorageService
+} from '../infra/storage/factories/fake'
+import { FakeObservableStorage } from '../infra/storage/fake'
 import { setUpListener } from '../test_utils/listener'
 import { getDateAfter } from '../utils/date'
 import { BackgroundListener, type ClientPort } from './listener'
@@ -776,8 +781,8 @@ async function startListener({
   timerBasedBlockingRules = newTestTimerBasedBlockingRules(),
   browsingRules = new BrowsingRules(),
   weeklySchedules = [],
-  timerStateStorageService = TimerStateStorageService.createFake(),
-  timerConfigStorageService = TimerConfigStorageService.createFake()
+  timerStateStorageService = fakeTimerStateStorageService(),
+  timerConfigStorageService = fakeTimerConfigStorageService()
 } = {}) {
   const context = await setUpListener({
     timerConfig,
@@ -810,7 +815,7 @@ async function startListenerWithTimerSync({
   timerBasedBlockingRules = newTestTimerBasedBlockingRules(),
   browsingRules = new BrowsingRules(),
   weeklySchedules = [],
-  timerStateStorageService = TimerStateStorageService.createObservableFake()
+  timerStateStorageService = new TimerStateStorageService(FakeObservableStorage.create())
 } = {}) {
   return startListener({
     timerConfig,
@@ -819,6 +824,6 @@ async function startListenerWithTimerSync({
     browsingRules,
     weeklySchedules,
     timerStateStorageService,
-    timerConfigStorageService: TimerConfigStorageService.createObservableFake()
+    timerConfigStorageService: new TimerConfigStorageService(FakeObservableStorage.create())
   })
 }

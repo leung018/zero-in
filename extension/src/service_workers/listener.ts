@@ -25,6 +25,15 @@ import type { BrowsingControlService } from '../infra/browsing_control'
 import { type CommunicationManager, type Port } from '../infra/communication'
 import { DesktopNotificationService } from '../infra/desktop_notification'
 import { MultipleActionService } from '../infra/multiple_actions'
+import {
+  realBrowsingRulesStorageService,
+  realFocusSessionRecordsStorageService,
+  realNotificationSettingStorageService,
+  realTimerBasedBlockingRulesStorageService,
+  realTimerConfigStorageService,
+  realTimerStateStorageService,
+  realWeeklySchedulesStorageService
+} from '../infra/storage/factories/real'
 import { retryUntilSuccess } from '../utils/retry'
 import { SubscriptionManager } from '../utils/subscription'
 import { newTimerConfig, WorkRequestName, type WorkRequest } from './request'
@@ -57,16 +66,16 @@ export class BackgroundListener {
       reminderTabService: new BrowserNewTabService(config.getReminderPageUrl()),
       desktopNotificationService: DesktopNotificationService.create(),
       soundService: new BrowserSoundService(),
-      notificationSettingStorageService: NotificationSettingStorageService.create(),
+      notificationSettingStorageService: realNotificationSettingStorageService(),
       badgeDisplayService: new BrowserBadgeDisplayService(),
-      timerStateStorageService: TimerStateStorageService.create(),
-      timerConfigStorageService: TimerConfigStorageService.create(),
-      focusSessionRecordsStorageService: FocusSessionRecordsStorageService.create(),
+      timerStateStorageService: realTimerStateStorageService(),
+      timerConfigStorageService: realTimerConfigStorageService(),
+      focusSessionRecordsStorageService: realFocusSessionRecordsStorageService(),
       closeTabsService: new BrowserCloseTabsService(config.getReminderPageUrl()),
       browsingControlService: new BrowserBrowsingControlService(),
-      browsingRulesStorageService: BrowsingRulesStorageService.create(),
-      weeklySchedulesStorageService: WeeklySchedulesStorageService.create(),
-      timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService.create(),
+      browsingRulesStorageService: realBrowsingRulesStorageService(),
+      weeklySchedulesStorageService: realWeeklySchedulesStorageService(),
+      timerBasedBlockingRulesStorageService: realTimerBasedBlockingRulesStorageService(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
       timer: FocusTimer.create()
     })

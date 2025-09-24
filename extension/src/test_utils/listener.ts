@@ -3,23 +3,25 @@ import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
 import { WeeklySchedulesStorageService } from '../domain/schedules/storage'
 import { FocusTimer } from '../domain/timer'
-import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { FocusSessionRecordsStorageService } from '../domain/timer/record/storage'
-import { TimerStateStorageService } from '../domain/timer/state/storage'
 import { TimerBasedBlockingRulesStorageService } from '../domain/timer_based_blocking/storage'
 import { FakeActionService } from '../infra/action'
 import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeBrowsingControlService } from '../infra/browsing_control'
 import { FakeCommunicationManager } from '../infra/communication'
 import { DesktopNotificationService } from '../infra/desktop_notification'
+import {
+  fakeTimerConfigStorageService,
+  fakeTimerStateStorageService
+} from '../infra/storage/factories/fake'
 import { LocalStorageWrapper } from '../infra/storage/local_storage'
 import { BackgroundListener } from '../service_workers/listener'
 
 export async function setUpListener({
   focusSessionRecordHouseKeepDays = 30,
   timerConfig = config.getDefaultTimerConfig(),
-  timerStateStorageService = TimerStateStorageService.createFake(),
-  timerConfigStorageService = TimerConfigStorageService.createFake()
+  timerStateStorageService = fakeTimerStateStorageService(),
+  timerConfigStorageService = fakeTimerConfigStorageService()
 } = {}) {
   const storage = LocalStorageWrapper.createFake()
 

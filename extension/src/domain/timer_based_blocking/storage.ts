@@ -1,9 +1,7 @@
 import type { TimerBasedBlockingRules } from '.'
 import config from '../../config'
-import { AdaptiveStorageProvider } from '../../infra/storage/adaptive'
 import { StorageInterface, StorageService } from '../../infra/storage/interface'
 import { StorageKey } from '../../infra/storage/key'
-import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { StorageManager } from '../../infra/storage/manager'
 import { TimerBasedBlockingRulesSchemas } from './schema'
 import { deserializeTimerBasedBlockingRules, serializeTimerBasedBlockingRules } from './serialize'
@@ -12,14 +10,6 @@ export class TimerBasedBlockingRulesStorageService
   implements StorageService<TimerBasedBlockingRules>
 {
   static readonly STORAGE_KEY: StorageKey = 'blockingTimerIntegration'
-
-  static create(): TimerBasedBlockingRulesStorageService {
-    return new TimerBasedBlockingRulesStorageService(AdaptiveStorageProvider.create())
-  }
-
-  static createFake() {
-    return new TimerBasedBlockingRulesStorageService(LocalStorageWrapper.createFake())
-  }
 
   private storageManager: StorageManager<TimerBasedBlockingRulesSchemas[1]>
 

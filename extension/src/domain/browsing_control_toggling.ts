@@ -1,4 +1,10 @@
 import { FakeBrowsingControlService, type BrowsingControlService } from '../infra/browsing_control'
+import {
+  fakeBrowsingRulesStorageService,
+  fakeFocusSessionRecordsStorageService,
+  fakeTimerBasedBlockingRulesStorageService,
+  fakeWeeklySchedulesStorageService
+} from '../infra/storage/factories/fake'
 import { isSameDay } from '../utils/date'
 import { BrowsingRulesStorageService } from './browsing_rules/storage'
 import type { WeeklySchedule } from './schedules'
@@ -28,10 +34,10 @@ export class BrowsingControlTogglingService {
 
   static createFake({
     browsingControlService = new FakeBrowsingControlService(),
-    browsingRulesStorageService = BrowsingRulesStorageService.createFake(),
-    weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake(),
-    timerBasedBlockingRulesStorageService = TimerBasedBlockingRulesStorageService.createFake(),
-    focusSessionRecordsStorageService = FocusSessionRecordsStorageService.createFake(),
+    browsingRulesStorageService = fakeBrowsingRulesStorageService(),
+    weeklySchedulesStorageService = fakeWeeklySchedulesStorageService(),
+    timerBasedBlockingRulesStorageService = fakeTimerBasedBlockingRulesStorageService(),
+    focusSessionRecordsStorageService = fakeFocusSessionRecordsStorageService(),
     timerInfoGetter = {
       getTimerInfo: () => ({
         timerStage: TimerStage.FOCUS,

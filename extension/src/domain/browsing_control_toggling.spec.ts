@@ -1,17 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { FakeBrowsingControlService } from '../infra/browsing_control'
+import {
+  fakeBrowsingRulesStorageService,
+  fakeFocusSessionRecordsStorageService,
+  fakeTimerBasedBlockingRulesStorageService,
+  fakeWeeklySchedulesStorageService
+} from '../infra/storage/factories/fake'
 import { BrowsingControlTogglingService } from './browsing_control_toggling'
 import { BrowsingRules } from './browsing_rules'
-import { BrowsingRulesStorageService } from './browsing_rules/storage'
 import { Weekday, WeeklySchedule } from './schedules'
-import { WeeklySchedulesStorageService } from './schedules/storage'
 import { Time } from './time'
 import { Duration } from './timer/duration'
 import { newFocusSessionRecord } from './timer/record'
-import { FocusSessionRecordsStorageService } from './timer/record/storage'
 import { TimerStage } from './timer/stage'
 import type { TimerBasedBlockingRules } from './timer_based_blocking'
-import { TimerBasedBlockingRulesStorageService } from './timer_based_blocking/storage'
 
 describe('BrowsingControlTogglingService', () => {
   const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })
@@ -302,10 +304,10 @@ async function getBrowsingRulesAfterToggling({
   timerInfo = newTimerInfo(),
   focusSessionRecords = [newFocusSessionRecord()]
 } = {}) {
-  const browsingRulesStorageService = BrowsingRulesStorageService.createFake()
+  const browsingRulesStorageService = fakeBrowsingRulesStorageService()
   await browsingRulesStorageService.save(browsingRules)
 
-  const weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake()
+  const weeklySchedulesStorageService = fakeWeeklySchedulesStorageService()
   await weeklySchedulesStorageService.save(schedules)
 
   const browsingControlService = new FakeBrowsingControlService()
@@ -314,10 +316,10 @@ async function getBrowsingRulesAfterToggling({
     pauseBlockingDuringBreaks,
     pauseBlockingWhenTimerNotRunning
   }
-  const timerBasedBlockingRulesStorageService = TimerBasedBlockingRulesStorageService.createFake()
+  const timerBasedBlockingRulesStorageService = fakeTimerBasedBlockingRulesStorageService()
   await timerBasedBlockingRulesStorageService.save(timerBasedBlockingRules)
 
-  const focusSessionRecordsStorageService = FocusSessionRecordsStorageService.createFake()
+  const focusSessionRecordsStorageService = fakeFocusSessionRecordsStorageService()
   await focusSessionRecordsStorageService.save(focusSessionRecords)
 
   const browsingControlTogglingService = BrowsingControlTogglingService.createFake({

@@ -1,9 +1,9 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { ImportStatus, newEmptyImportRecord } from '../domain/import/record/index'
-import { ImportRecordStorageService } from '../domain/import/record/storage'
 import { newTestNotificationSetting, NotificationSetting } from '../domain/notification_setting'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
+import { fakeImportRecordStorageService } from '../infra/storage/factories/fake'
 import { LocalStorageWrapper } from '../infra/storage/local_storage'
 import { dataTestSelector } from '../test_utils/selector'
 import SignInProcessHelper from './SignInProcessHelper.vue'
@@ -179,7 +179,7 @@ async function mountPage({ importRecord = newEmptyImportRecord() } = {}) {
   const localStorage = LocalStorageWrapper.createFake()
   const localNotificationSettingStorageService = new NotificationSettingStorageService(localStorage)
 
-  const importRecordStorageService = ImportRecordStorageService.createFake()
+  const importRecordStorageService = fakeImportRecordStorageService()
   await importRecordStorageService.save(importRecord)
 
   const wrapper = mount(SignInProcessHelper, {

@@ -1,12 +1,12 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { Time } from '../domain/time'
 import { TimerConfig } from '../domain/timer/config'
 import { Duration } from '../domain/timer/duration'
 import { newFocusSessionRecord } from '../domain/timer/record'
 import { TimerStage } from '../domain/timer/stage'
 import { FakeActionService } from '../infra/action'
+import { fakeDailyResetTimeStorageService } from '../infra/storage/factories/fake'
 import { setUpListener } from '../test_utils/listener'
 import { dataTestSelector } from '../test_utils/selector'
 import ReminderPage from './ReminderPage.vue'
@@ -87,7 +87,7 @@ async function mountPage({
     await setUpListener({
       timerConfig
     })
-  const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
+  const dailyResetTimeStorageService = fakeDailyResetTimeStorageService()
   await dailyResetTimeStorageService.save(dailyCutOffTime)
 
   await focusSessionRecordsStorageService.save(focusSessionRecords)

@@ -1,22 +1,12 @@
 import { WeeklySchedule } from '.'
-import { AdaptiveStorageProvider } from '../../infra/storage/adaptive'
 import { StorageInterface, StorageService } from '../../infra/storage/interface'
 import { StorageKey } from '../../infra/storage/key'
-import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { StorageManager } from '../../infra/storage/manager'
 import { WeeklyScheduleSchemas } from './schema'
 import { deserializeWeeklySchedules, serializeWeeklySchedules } from './serialize'
 
 export class WeeklySchedulesStorageService implements StorageService<WeeklySchedule[]> {
   static readonly STORAGE_KEY: StorageKey = 'weeklySchedules'
-
-  static createFake(): WeeklySchedulesStorageService {
-    return new WeeklySchedulesStorageService(LocalStorageWrapper.createFake())
-  }
-
-  static create(): WeeklySchedulesStorageService {
-    return new WeeklySchedulesStorageService(AdaptiveStorageProvider.create())
-  }
 
   private storageManager: StorageManager<WeeklyScheduleSchemas[2]>
 

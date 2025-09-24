@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
-import { WeeklySchedulesStorageService } from '@/domain/schedules/storage'
-import { TimerBasedBlockingRulesStorageService } from '@/domain/timer_based_blocking/storage'
 import { UpdateSuccessNotifierService } from '@/infra/browser/update_success_notifier'
+import {
+  realBrowsingRulesStorageService,
+  realTimerBasedBlockingRulesStorageService,
+  realWeeklySchedulesStorageService
+} from '@/infra/storage/factories/real'
 import type { ClientPort } from '@/service_workers/listener'
 import ContentTemplate from '../components/ContentTemplate.vue'
 import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
@@ -19,14 +21,14 @@ const { port } = defineProps<{
     <BCard class="mb-4 shadow-sm">
       <h2 class="mb-3 mt-1">Blocked Domains</h2>
       <BlockedDomainsEditor
-        :browsingRulesStorageService="BrowsingRulesStorageService.create()"
+        :browsingRulesStorageService="realBrowsingRulesStorageService()"
         :port="port"
       />
     </BCard>
     <BCard class="mb-4 shadow-sm">
       <h2 class="mb-3 mt-1">Timer-Based</h2>
       <TimerBasedSetting
-        :timerBasedBlockingRulesStorageService="TimerBasedBlockingRulesStorageService.create()"
+        :timerBasedBlockingRulesStorageService="realTimerBasedBlockingRulesStorageService()"
         :updateSuccessNotifierService="new UpdateSuccessNotifierService()"
         :port="port"
       />
@@ -34,7 +36,7 @@ const { port } = defineProps<{
     <BCard class="mb-4 shadow-sm">
       <h2 class="mb-3 mt-1">Schedules</h2>
       <WeeklySchedulesEditor
-        :weeklySchedulesStorageService="WeeklySchedulesStorageService.create()"
+        :weeklySchedulesStorageService="realWeeklySchedulesStorageService()"
         :port="port"
       />
     </BCard>

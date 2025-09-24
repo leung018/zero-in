@@ -1,21 +1,11 @@
-import { AdaptiveStorageProvider } from '../../infra/storage/adaptive'
 import { StorageInterface, StorageService } from '../../infra/storage/interface'
 import { StorageKey } from '../../infra/storage/key'
-import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 import { StorageManager } from '../../infra/storage/manager'
 import { Time } from '../time'
 import { deserializeTime, serializeTime, type SerializedTime } from '../time/serialize'
 
 export class DailyResetTimeStorageService implements StorageService<Time> {
   static readonly STORAGE_KEY: StorageKey = 'dailyCutoffTime'
-
-  static create() {
-    return new DailyResetTimeStorageService(AdaptiveStorageProvider.create())
-  }
-
-  static createFake() {
-    return new DailyResetTimeStorageService(LocalStorageWrapper.createFake())
-  }
 
   private storageManager: StorageManager<SerializedTime>
 

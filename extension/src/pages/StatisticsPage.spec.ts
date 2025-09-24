@@ -1,10 +1,10 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
 import { Time } from '../domain/time'
 import { TimerConfig } from '../domain/timer/config'
 import { newFocusSessionRecord, type FocusSessionRecord } from '../domain/timer/record'
 import { FakeActionService } from '../infra/action'
+import { fakeDailyResetTimeStorageService } from '../infra/storage/factories/fake'
 import { assertSelectorInputValue } from '../test_utils/assert'
 import { setUpListener } from '../test_utils/listener'
 import { dataTestSelector } from '../test_utils/selector'
@@ -112,7 +112,7 @@ async function mountStatisticsPage({
   dailyResetTime = new Time(15, 30),
   focusSessionRecords = [newFocusSessionRecord()]
 } = {}) {
-  const dailyResetTimeStorageService = DailyResetTimeStorageService.createFake()
+  const dailyResetTimeStorageService = fakeDailyResetTimeStorageService()
   await dailyResetTimeStorageService.save(dailyResetTime)
 
   const { timer, listener, focusSessionRecordsStorageService } = await setUpListener({
