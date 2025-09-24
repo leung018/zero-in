@@ -13,7 +13,8 @@ if (currentBranch !== 'main') {
   process.exit(1)
 }
 
-const tag = process.argv[2]
+const inputTag = process.argv[2]
+const tag = `extension-${inputTag}`
 const message = `version ${tag}`
 
 try {
