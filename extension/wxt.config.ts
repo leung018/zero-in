@@ -49,6 +49,11 @@ export default defineConfig({
         dts: true
       }) as any
     ],
+    resolve: {
+      alias: {
+        shared: new URL('../shared/src', import.meta.url).pathname
+      }
+    },
     build: {
       chunkSizeWarningLimit: 1500
     }

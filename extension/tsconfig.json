@@ -3,6 +3,19 @@
   "compilerOptions": {
     "composite": true,
     "types": ["unplugin-icons/types/vue"],
-    "strict": true
-  }
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["../shared/src/*"],
+      "@": ["./src"],
+      "@/*": ["./src/*"],
+      "~": ["./src"],
+      "~/*": ["./src/*"],
+      "@@": ["."],
+      "@@/*": ["./*"],
+      "~~": ["."],
+      "~~/*": ["./*"]
+    }
+  },
+  "include": ["**/*", "../shared/src", "./.wxt/wxt.d.ts"]
 }

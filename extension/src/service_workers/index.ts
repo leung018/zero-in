@@ -1,3 +1,4 @@
+import { sharedExampleValue } from '@shared/index'
 import { BrowserNewTabService } from '../infra/browser/new_tab'
 import { firebaseAuth } from '../infra/browser/sign_in'
 import { FirebaseServices } from '../infra/firebase/services'
@@ -6,6 +7,8 @@ import { BackgroundListener } from './listener'
 import { MenuItemId } from './menu_item_id'
 
 export default function main() {
+  console.log('sharedExampleValue:', sharedExampleValue)
+
   browser.runtime.onStartup.addListener(function () {}) // Register an empty onStartup listener to ensure the service worker activates immediately after browser restart
 
   const listener = BackgroundListener.create()
