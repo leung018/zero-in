@@ -9,6 +9,9 @@ export default defineConfig({
   modules: ['@wxt-dev/module-vue'],
   srcDir: 'src',
   outDir: 'dist',
+  zip: {
+    name: 'zero-in'
+  },
   manifestVersion: 3,
   manifest: {
     minimum_chrome_version: '116',
