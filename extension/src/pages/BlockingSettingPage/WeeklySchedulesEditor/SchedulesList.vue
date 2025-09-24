@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Time } from '../../../../../shared/src/domain/time'
+import { capitalized } from '../../../../../shared/src/utils/format'
 import { Weekday, WeeklySchedule } from '../../../domain/schedules'
-import { capitalized } from '../../../utils/format'
 
 const props = defineProps<{
   weeklySchedules: WeeklySchedule[]

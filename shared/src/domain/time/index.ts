@@ -1,4 +1,4 @@
-import { formatNumber } from '@/utils/format'
+import { formatNumber } from '@shared/utils/format'
 
 export class Time {
   readonly hour: number
