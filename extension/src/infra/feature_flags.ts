@@ -1,6 +1,6 @@
 import { StorageInterface } from './storage/interface'
 import { StorageKey } from './storage/key'
-import { LocalStorageWrapper } from './storage/local_storage/'
+import { LocalStorageWrapper } from './storage/local_storage'
 
 export enum FeatureFlag {
   PLACE_HOLDER = 'place-holder',

@@ -1,11 +1,19 @@
+name: Extension Continuous Integration
+
 on:
   push:
     branches-ignore:
-      - main # Because "Require branches to be up to date before merging" is enabled for main. The checking will be completed before pull request can be merged.
+      - main # Ignore main; PR checks cover it (require up-to-date before merge).
+    paths:
+      - 'extension/**'
   pull_request:
     branches:
       - main
-name: Extension Continuous Integration
+    paths:
+      - 'extension/**'
+defaults:
+  run:
+    working-directory: extension
 jobs:
   extension-checks:
     runs-on: ubuntu-latest
@@ -19,7 +27,7 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'yarn'
-          cache-dependency-path: ./yarn.lock
+          cache-dependency-path: extension/yarn.lock
       - run: yarn install --immutable
       - name: Lint
         run: yarn lint
@@ -49,7 +57,7 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'yarn'
-          cache-dependency-path: ./yarn.lock
+          cache-dependency-path: extension/yarn.lock
       - run: yarn install --immutable
       - name: Build
         run: yarn build:ci

@@ -1,7 +1,13 @@
+name: Extension Staging Release
+
 on:
   push:
     branches: [main]
-name: Extension Staging Release
+    paths:
+      - 'extension/**'
+defaults:
+  run:
+    working-directory: extension
 jobs:
   extension-staging-release:
     permissions:
@@ -19,7 +25,7 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'yarn'
-          cache-dependency-path: ./yarn.lock
+          cache-dependency-path: extension/yarn.lock
       - run: yarn install --immutable
       - name: Zip
         run: yarn zip
@@ -40,6 +46,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG_NAME }}
-          files: dist/zero-in-${{ env.TAG_NAME }}-chrome.zip
+          files: extension/dist/zero-in-${{ env.TAG_NAME }}-chrome.zip
           prerelease: true
           fail_on_unmatched_files: true
