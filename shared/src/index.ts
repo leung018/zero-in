@@ -1,1 +1,1 @@
-export const sharedExampleValue = 50;
+export const sharedExampleValue = 50
