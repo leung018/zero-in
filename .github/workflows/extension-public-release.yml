@@ -3,7 +3,7 @@ name: Extension Public Release
 on:
   push:
     tags:
-      - 'v*'
+      - "extension-v*"
 defaults:
   run:
     working-directory: extension
@@ -21,8 +21,8 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
-          cache: 'yarn'
+          node-version: "22.x"
+          cache: "yarn"
           cache-dependency-path: extension/yarn.lock
       - run: yarn install --immutable
       - name: Extract Version
