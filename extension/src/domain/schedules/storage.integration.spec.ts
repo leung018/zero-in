@@ -1,7 +1,7 @@
 import { beforeEach, describe } from 'vitest'
+import { WeeklySchedulesStorageService } from '../../../../shared/src/domain/schedules/storage'
+import { runWeeklyScheduleStorageServiceTests } from '../../../../shared/src/domain/schedules/storage_shared_spec'
 import { signInAndGetFirestoreStorage } from '../../test_utils/firestore'
-import { WeeklySchedulesStorageService } from './storage'
-import { runWeeklyScheduleStorageServiceTests } from './storage_shared_spec'
 
 describe('WeeklyScheduleStorageService', async () => {
   const firestoreStorage = await signInAndGetFirestoreStorage()

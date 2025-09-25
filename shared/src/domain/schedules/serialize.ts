@@ -1,5 +1,5 @@
 import { WeeklySchedule } from '.'
-import { deserializeTime, serializeTime } from '../../../../shared/src/domain/time/serialize'
+import { deserializeTime, serializeTime } from '../time/serialize'
 import { WeeklyScheduleSchemas } from './schema'
 
 type SerializedWeeklySchedules = WeeklyScheduleSchemas[2]

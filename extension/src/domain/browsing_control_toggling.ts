@@ -1,3 +1,5 @@
+import type { WeeklySchedule } from '../../../shared/src/domain/schedules'
+import { WeeklySchedulesStorageService } from '../../../shared/src/domain/schedules/storage'
 import { FakeBrowsingControlService, type BrowsingControlService } from '../infra/browsing_control'
 import {
   fakeBrowsingRulesStorageService,
@@ -7,8 +9,6 @@ import {
 } from '../infra/storage/factories/fake'
 import { isSameDay } from '../utils/date'
 import { BrowsingRulesStorageService } from './browsing_rules/storage'
-import type { WeeklySchedule } from './schedules'
-import { WeeklySchedulesStorageService } from './schedules/storage'
 import { Duration } from './timer/duration'
 import { FocusSessionRecordsStorageService } from './timer/record/storage'
 import { TimerStage } from './timer/stage'

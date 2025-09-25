@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { Weekday, WeeklySchedule } from '.'
+import { Weekday, WeeklySchedule } from '../../../../shared/src/domain/schedules'
+import { WeeklyScheduleSchemas } from '../../../../shared/src/domain/schedules/schema'
+import { WeeklySchedulesStorageService } from '../../../../shared/src/domain/schedules/storage'
+import { runWeeklyScheduleStorageServiceTests } from '../../../../shared/src/domain/schedules/storage_shared_spec'
 import { Time } from '../../../../shared/src/domain/time'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
-import { WeeklyScheduleSchemas } from './schema'
-import { WeeklySchedulesStorageService } from './storage'
-import { runWeeklyScheduleStorageServiceTests } from './storage_shared_spec'
 
 describe('WeeklyScheduleStorageService', () => {
   let storage = LocalStorageWrapper.createFake()

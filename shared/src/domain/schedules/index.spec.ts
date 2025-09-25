@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Weekday, WeeklySchedule } from '.'
-import { Time } from '../../../../shared/src/domain/time'
+import { Time } from '../time'
 
 describe('WeeklySchedules', () => {
   it('should reject empty weekday set', () => {

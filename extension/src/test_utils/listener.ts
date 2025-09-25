@@ -1,7 +1,7 @@
+import { WeeklySchedulesStorageService } from '../../../shared/src/domain/schedules/storage'
 import config from '../config'
 import { BrowsingRulesStorageService } from '../domain/browsing_rules/storage'
 import { NotificationSettingStorageService } from '../domain/notification_setting/storage'
-import { WeeklySchedulesStorageService } from '../domain/schedules/storage'
 import { FocusTimer } from '../domain/timer'
 import { FocusSessionRecordsStorageService } from '../domain/timer/record/storage'
 import { TimerBasedBlockingRulesStorageService } from '../domain/timer_based_blocking/storage'

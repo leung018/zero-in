@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Weekday } from '@/domain/schedules'
+import { Weekday } from '@shared/domain/schedules'
 import { capitalized } from '@shared/utils/format'
 import { computed } from 'vue'
 
