@@ -17,5 +17,5 @@
       "~~/*": ["./*"]
     }
   },
-  "include": ["**/*", "../shared/src", "./.wxt/wxt.d.ts"]
+  "include": ["**/*", "../shared/src/**/*.ts", "./.wxt/wxt.d.ts"]
 }
