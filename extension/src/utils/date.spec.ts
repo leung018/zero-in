@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
 import { Time } from '@shared/domain/time'
+import { describe, expect, it } from 'vitest'
 import { Duration } from '../domain/timer/duration'
 import { getDateAfter, getMostRecentDate, getStartOfNextMinute, isSameDay } from './date'
 

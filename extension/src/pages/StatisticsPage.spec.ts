@@ -1,6 +1,6 @@
+import { Time } from '@shared/domain/time'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { Time } from '@shared/domain/time'
 import { TimerConfig } from '../domain/timer/config'
 import { newFocusSessionRecord, type FocusSessionRecord } from '../domain/timer/record'
 import { FakeActionService } from '../infra/action'
