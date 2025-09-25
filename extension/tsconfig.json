@@ -17,6 +17,5 @@
       "~~/*": ["./*"]
     }
   },
-  "include": ["**/*", "../shared/src", "./.wxt/wxt.d.ts"],
-  "exclude": ["../shared/**/*.{spec,test}.ts"]
+  "include": ["**/*", "../shared/src", "./.wxt/wxt.d.ts"]
 }
