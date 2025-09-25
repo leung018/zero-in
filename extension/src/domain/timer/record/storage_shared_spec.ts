@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
 import { newFocusSessionRecord } from '.'
-import { StorageInterface } from '../../../infra/storage/interface'
+import { StorageInterface } from '../../../../../shared/src/infra/storage/interface'
 import { FocusSessionRecordsStorageService } from './storage'
 
 export function runFocusSessionRecordsStorageServiceTests(storage: StorageInterface) {

@@ -1,4 +1,5 @@
 import { WeeklySchedulesStorageService } from '../../../../shared/src/domain/schedules/storage'
+import { StorageInterface, StorageService } from '../../../../shared/src/infra/storage/interface'
 import { BrowsingRulesStorageService } from '../../domain/browsing_rules/storage'
 import { DailyResetTimeStorageService } from '../../domain/daily_reset_time/storage'
 import { NotificationSettingStorageService } from '../../domain/notification_setting/storage'
@@ -6,7 +7,6 @@ import { TimerConfigStorageService } from '../../domain/timer/config/storage'
 import { FocusSessionRecordsStorageService } from '../../domain/timer/record/storage'
 import { TimerStateStorageService } from '../../domain/timer/state/storage'
 import { TimerBasedBlockingRulesStorageService } from '../../domain/timer_based_blocking/storage'
-import { StorageInterface, StorageService } from './interface'
 
 /**
  * All storage types that for user settings should be listed here.

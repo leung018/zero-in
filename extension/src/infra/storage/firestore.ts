@@ -1,5 +1,5 @@
+import { ObservableStorage, Unsubscribe } from '../../../../shared/src/infra/storage/interface'
 import { FirebaseServices } from '../firebase/services'
-import { ObservableStorage, Unsubscribe } from './interface'
 
 export class FirestoreStorageWrapper implements ObservableStorage {
   static create(): FirestoreStorageWrapper {

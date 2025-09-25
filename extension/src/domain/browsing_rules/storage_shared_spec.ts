@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
 import { BrowsingRules } from '.'
-import { StorageInterface } from '../../infra/storage/interface'
+import { StorageInterface } from '../../../../shared/src/infra/storage/interface'
 import { BrowsingRulesStorageService } from './storage'
 
 export function runBrowsingRulesStorageServiceTests(storage: StorageInterface) {

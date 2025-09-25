@@ -1,4 +1,4 @@
-import { StorageInterface } from '../../infra/storage/interface'
+import { StorageInterface } from '../../../../shared/src/infra/storage/interface'
 import { SettingsStorageKey } from '../../infra/storage/key'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
 

@@ -1,7 +1,7 @@
 import { WeeklySchedule } from '.'
-import { StorageInterface, StorageService } from '../../../../extension/src/infra/storage/interface'
 import { StorageKey } from '../../../../extension/src/infra/storage/key'
 import { StorageManager } from '../../../../extension/src/infra/storage/manager'
+import { StorageInterface, StorageService } from '../../infra/storage/interface'
 import { WeeklyScheduleSchemas } from './schema'
 import { deserializeWeeklySchedules, serializeWeeklySchedules } from './serialize'
 

@@ -1,5 +1,9 @@
+import {
+  ObservableStorage,
+  StorageInterface,
+  Unsubscribe
+} from '../../../../shared/src/infra/storage/interface'
 import { FakeObservableStorage } from './fake'
-import { ObservableStorage, StorageInterface, Unsubscribe } from './interface'
 import { StorageKey } from './key'
 
 interface Schema {

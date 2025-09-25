@@ -1,5 +1,5 @@
 import { BrowsingRules } from '.'
-import { StorageInterface, StorageService } from '../../infra/storage/interface'
+import { StorageInterface, StorageService } from '../../../../shared/src/infra/storage/interface'
 import { StorageKey } from '../../infra/storage/key'
 import { StorageManager } from '../../infra/storage/manager'
 import {

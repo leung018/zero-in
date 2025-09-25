@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import { TimerConfig } from '.'
+import { ObservableStorage } from '../../../../../shared/src/infra/storage/interface'
 import config from '../../../config'
-import { ObservableStorage } from '../../../infra/storage/interface'
 import { Duration } from '../duration'
 import { TimerConfigStorageService } from './storage'
 

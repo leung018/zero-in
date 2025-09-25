@@ -21,7 +21,7 @@ import {
   onSnapshot,
   setDoc
 } from 'firebase/firestore'
-import { ObservableStorage } from '../storage/interface'
+import { ObservableStorage } from '../../../../shared/src/infra/storage/interface'
 import { LocalStorageUserIdCache } from './local_storage_cache'
 
 const app = initializeApp(config.getFirebaseConfig())

@@ -1,4 +1,4 @@
-import { StorageInterface } from '../interface'
+import { StorageInterface } from '../../../../../shared/src/infra/storage/interface'
 import { FakeLocalStorage, LocalStorage } from './local_storage'
 
 export class LocalStorageWrapper implements StorageInterface {

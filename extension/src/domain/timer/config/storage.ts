@@ -1,10 +1,10 @@
 import type { TimerConfig } from '.'
-import config from '../../../config'
 import {
   ObservableStorage,
   StorageInterface,
   StorageService
-} from '../../../infra/storage/interface'
+} from '../../../../../shared/src/infra/storage/interface'
+import config from '../../../config'
 import { StorageKey } from '../../../infra/storage/key'
 import { StorageManager } from '../../../infra/storage/manager'
 import {

@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import { NotificationSetting } from '.'
+import { StorageInterface } from '../../../../shared/src/infra/storage/interface'
 import config from '../../config'
-import { StorageInterface } from '../../infra/storage/interface'
 import { NotificationSettingStorageService } from './storage'
 
 export function runNotificationSettingStorageServiceTests(storage: StorageInterface) {

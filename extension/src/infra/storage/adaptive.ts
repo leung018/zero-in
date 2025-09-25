@@ -1,5 +1,9 @@
+import {
+  ObservableStorage,
+  StorageInterface,
+  Unsubscribe
+} from '../../../../shared/src/infra/storage/interface'
 import { FirebaseServices, FirestoreStorage } from '../firebase/services'
-import { ObservableStorage, StorageInterface, Unsubscribe } from './interface'
 import { LocalStorageWrapper } from './local_storage'
 
 export class AdaptiveStorageProvider implements ObservableStorage {

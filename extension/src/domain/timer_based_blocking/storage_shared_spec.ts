@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import { TimerBasedBlockingRules } from '.'
+import { StorageInterface } from '../../../../shared/src/infra/storage/interface'
 import config from '../../config'
-import { StorageInterface } from '../../infra/storage/interface'
 import { TimerBasedBlockingRulesStorageService } from './storage'
 
 export function runTimerBasedBlockingRulesStorageServiceTests(storage: StorageInterface) {

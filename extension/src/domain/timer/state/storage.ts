@@ -2,7 +2,7 @@ import {
   ObservableStorage,
   StorageInterface,
   StorageService
-} from '../../../infra/storage/interface'
+} from '../../../../../shared/src/infra/storage/interface'
 import { StorageKey } from '../../../infra/storage/key'
 import { StorageManager } from '../../../infra/storage/manager'
 import { getDateAfter } from '../../../utils/date'
