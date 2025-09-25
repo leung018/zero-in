@@ -18,7 +18,5 @@
     }
   },
   "include": ["**/*", "../shared/src", "./.wxt/wxt.d.ts"],
-  "references": [
-    { "path": "../shared" }
-  ]
+  "references": [{ "path": "../shared" }]
 }
