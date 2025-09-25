@@ -32,7 +32,7 @@ jobs:
           cache-dependency-path: extension/yarn.lock
       - name: Install Dependencies of extension
         run: yarn install --immutable
-      - name: Install Dependencies of shared
+      - name: Install Dependencies of shared # TODO: This step is to make type check pass. If missing this step, type check will report vitest is missing from tests import in shared package.
         working-directory: shared
         run: yarn install --immutable
       - name: Lint
