@@ -5,12 +5,14 @@ on:
     branches-ignore:
       - main # Ignore main; PR checks cover it (require up-to-date before merge).
     paths:
-      - 'extension/**'
+      - "extension/**"
+      - "shared/**"
   pull_request:
     branches:
       - main
     paths:
-      - 'extension/**'
+      - "extension/**"
+      - "shared/**"
 defaults:
   run:
     working-directory: extension
@@ -25,8 +27,8 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
-          cache: 'yarn'
+          node-version: "22.x"
+          cache: "yarn"
           cache-dependency-path: extension/yarn.lock
       - run: yarn install --immutable
       - name: Lint
@@ -55,8 +57,8 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
-          cache: 'yarn'
+          node-version: "22.x"
+          cache: "yarn"
           cache-dependency-path: extension/yarn.lock
       - run: yarn install --immutable
       - name: Build
