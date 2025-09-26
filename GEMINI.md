@@ -32,7 +32,7 @@ The project follows a layered architecture that separates concerns:
 
 - **Formatting**: Code formatting is handled automatically by **Prettier**. The configuration is in `.prettierrc.json`.
 - **Linting**: Code quality and style rules are enforced by **ESLint**. The configuration is in `eslint.config.js`.
-- **Commits**: Prefer atomic commits. Each commit should represent a single, logical step or change.
+- **Commits**: Prefer atomic commits where each commit represents a single, logical step. Do not use Conventional Commit prefixes (e.g., `feat:`, `fix:`).
 - **File Naming**: Test files should be co-located with the source code and named with a `.spec.ts` suffix.
 
 ## Testing Strategy
