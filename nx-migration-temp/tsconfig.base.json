@@ -10,21 +10,14 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@nx-migration-temp/core-domain": [
-        "core-domain/src/index.ts"
-      ]
+      "@nx-migration-temp/core-domain": ["core-domain/src/index.ts"],
+      "@nx-migration-temp/infra": ["infra/src/index.ts"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }
