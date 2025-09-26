@@ -12,11 +12,11 @@
     "format-check": "prettier --check ."
   },
   "devDependencies": {
-    "typescript": "^5.9.2",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.1.0",
-    "eslint": "^9.34.0",
-    "eslint-config-prettier": "^10.1.8"
+    "typescript": "^5.9.2"
   },
   "packageManager": "yarn@4.4.1"
 }
