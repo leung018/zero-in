@@ -5,12 +5,12 @@ on:
     branches-ignore:
       - main # Ignore main; PR checks cover it (require up-to-date before merge).
     paths:
-      - "extension/**"
+      - "apps/extension/**"
   pull_request:
     branches:
       - main
     paths:
-      - "extension/**"
+      - "apps/extension/**"
 defaults:
   run:
     working-directory: apps/extension

@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - "firebase/firestore.**"
+      - "apps/firebase/firestore.**"
       - ".github/workflows/firestore-prod.yml"
 jobs:
   deploy-prod-firestore:

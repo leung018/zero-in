@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - "firebase/hosting/**"
+      - "apps/firebase/hosting/**"
       - ".github/workflows/firebase-hosting-prod.yml"
 permissions:
   checks: write

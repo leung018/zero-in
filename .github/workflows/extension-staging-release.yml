@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "extension/**"
+      - "apps/extension/**"
 defaults:
   run:
     working-directory: apps/extension

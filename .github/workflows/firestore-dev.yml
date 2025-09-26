@@ -2,8 +2,8 @@ name: Firestore Continuous Integration
 on:
   pull_request:
     paths:
-      - "firebase/firestore.**"
-      - "firebase/firestore-tests/**"
+      - "apps/firebase/firestore.**"
+      - "apps/firebase/firestore-tests/**"
       - ".github/workflows/firestore-dev.yml"
   workflow_dispatch:
 jobs:
