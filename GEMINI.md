@@ -55,4 +55,4 @@ Once migrated to Nx, these commands will be run via `nx`, e.g., `npx nx build ex
 
 ## Collaboration Style
 
-- **Incremental Changes**: Please prefer making smaller, incremental changes. This allows for easier review and course correction.
+- **Atomic Changes**: Please propose changes that are atomic and can be contained within a single, logical commit. For example, refactoring a function and adding a new feature should be two separate steps.
