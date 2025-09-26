@@ -4,10 +4,10 @@ on:
   push:
     branches: [main]
     paths:
-      - 'extension/**'
+      - "extension/**"
 defaults:
   run:
-    working-directory: extension
+    working-directory: apps/extension
 jobs:
   extension-staging-release:
     permissions:
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     env:
-      NAME_SUFFIX: ' (STAGING)'
+      NAME_SUFFIX: " (STAGING)"
       TAG_NAME: staging
       VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.VITE_FIREBASE_AUTH_DOMAIN }}
     steps:
@@ -23,9 +23,9 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
-          cache: 'yarn'
-          cache-dependency-path: extension/yarn.lock
+          node-version: "22.x"
+          cache: "yarn"
+          cache-dependency-path: yarn.lock
       - run: yarn install --immutable
       - name: Zip
         run: yarn zip

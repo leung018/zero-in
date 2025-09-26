@@ -6,7 +6,7 @@ on:
       - "extension-v*"
 defaults:
   run:
-    working-directory: extension
+    working-directory: apps/extension
 jobs:
   extension-prod-release:
     permissions:
@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: "22.x"
           cache: "yarn"
-          cache-dependency-path: extension/yarn.lock
+          cache-dependency-path: yarn.lock
       - run: yarn install --immutable
       - name: Extract Version
         run: |
