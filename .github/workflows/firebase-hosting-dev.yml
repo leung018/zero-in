@@ -2,8 +2,8 @@ name: Deploy to Development Firebase Hosting
 on:
   pull_request:
     paths:
-      - "apps/firebase/hosting/**"
-      - ".github/workflows/firebase-hosting-dev.yml"
+      - 'apps/firebase/hosting/**'
+      - '.github/workflows/firebase-hosting-dev.yml'
   workflow_dispatch:
 permissions:
   checks: write
@@ -24,8 +24,8 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22.x"
-          cache: "yarn"
+          node-version: '22.x'
+          cache: 'yarn'
           cache-dependency-path: yarn.lock
       - run: yarn install --immutable
       - run: yarn build-hosting
