@@ -43,4 +43,4 @@ jobs:
           channelId: live
           firebaseServiceAccount: ${{ env.FIREBASE_SERVICE_ACCOUNT }}
           projectId: ${{ vars.VITE_FIREBASE_PROJECT_ID }}
-          entryPoint: firebase
+          entryPoint: apps/firebase
