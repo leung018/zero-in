@@ -4,9 +4,30 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
+    "@eslint/js": "^9.8.0",
+    "@nx/eslint": "21.5.3",
+    "@nx/eslint-plugin": "21.5.3",
+    "@nx/jest": "21.5.3",
     "@nx/js": "21.5.3",
     "@nx/workspace": "21.5.3",
-    "nx": "21.5.3"
+    "@swc-node/register": "~1.9.1",
+    "@swc/core": "~1.5.7",
+    "@swc/helpers": "~0.5.11",
+    "@types/jest": "^30.0.0",
+    "@types/node": "20.19.9",
+    "eslint": "^9.8.0",
+    "eslint-config-prettier": "^10.0.0",
+    "jest": "^30.0.2",
+    "jest-environment-node": "^30.0.2",
+    "jest-util": "^30.0.2",
+    "jsonc-eslint-parser": "^2.1.0",
+    "nx": "21.5.3",
+    "prettier": "^2.6.2",
+    "ts-jest": "^29.4.0",
+    "ts-node": "10.9.1",
+    "tslib": "^2.3.0",
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.40.0"
   },
   "packageManager": "yarn@4.4.1"
 }
