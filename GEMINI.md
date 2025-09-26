@@ -56,3 +56,4 @@ Once migrated to Nx, these commands will be run via `nx`, e.g., `npx nx build ex
 ## Collaboration Style
 
 - **Atomic Changes**: Please propose changes that are atomic and can be contained within a single, logical commit. For example, refactoring a function and adding a new feature should be two separate steps.
+- **Read-only Steps**: For read-only actions that do not change the project's code or configuration (e.g., reading files, listing directories, searching), you do not need to ask for permission. Please state the action and proceed directly.
