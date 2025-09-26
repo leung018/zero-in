@@ -18,6 +18,16 @@
           "core-domain/*.md"
         ]
       }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../../coverage/core-domain"
+      }
     }
   }
 }
