@@ -46,7 +46,4 @@ coverage
 test-results/
 playwright-report/
 
-staging/*
-!staging/update.sh
-
 .env
