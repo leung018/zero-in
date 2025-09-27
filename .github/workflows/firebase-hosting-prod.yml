@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - 'firebase/hosting/**'
+      - 'apps/firebase/hosting/**'
       - '.github/workflows/firebase-hosting-prod.yml'
 permissions:
   checks: write
@@ -15,7 +15,7 @@ jobs:
     environment: prod
     defaults:
       run:
-        working-directory: firebase
+        working-directory: apps/firebase
     env:
       FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ZERO_IN_PROD }}
     steps:
@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'yarn'
-          cache-dependency-path: firebase/yarn.lock
+          cache-dependency-path: yarn.lock
       - run: yarn install --immutable
       - run: yarn build-hosting
         env:
@@ -42,5 +42,5 @@ jobs:
           channelId: live
           firebaseServiceAccount: ${{ env.FIREBASE_SERVICE_ACCOUNT }}
           projectId: ${{ vars.VITE_FIREBASE_PROJECT_ID }}
-          entryPoint: firebase
+          entryPoint: apps/firebase
           target: ${{ vars.VITE_FIREBASE_PROJECT_ID }}

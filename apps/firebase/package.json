@@ -1,5 +1,5 @@
 {
-  "name": "zero-in-firebase-manager",
+  "name": "@zero-in/firebase-manager",
   "private": true,
   "packageManager": "yarn@4.4.1",
   "dependencies": {

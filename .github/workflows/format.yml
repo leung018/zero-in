@@ -1,0 +1,30 @@
+name: Format Check
+
+on:
+  # See the comments in .github/workflows/extension-ci.yml for why adding push and if condition below
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - 'apps/extension/**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-format:
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'push' ||
+      github.event.pull_request.head.repo.full_name != github.repository
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
+      - run: yarn install --immutable
+      - name: Run Formatter Check
+        run: yarn format-check
