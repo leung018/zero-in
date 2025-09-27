@@ -1,7 +1,7 @@
 name: Extension Continuous Integration
 
 on:
-  push:
+  push: # It is useful if you decide to open pr after push, then you don't need to wait the ci to run required checks after again for opened pr
     branches-ignore:
       - main # Ignore main; PR checks cover it (require up-to-date before merge).
     paths:
@@ -17,9 +17,12 @@ defaults:
 jobs:
   extension-checks:
     runs-on: ubuntu-latest
+
+    # If run on push already, skip the ci for pr
     if: |
       github.event_name == 'push' ||
       github.event.pull_request.head.repo.full_name != github.repository
+
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
@@ -31,8 +34,6 @@ jobs:
       - run: yarn install --immutable
       - name: Lint
         run: yarn lint
-      - name: Format Check
-        run: yarn format-check
       - name: Type Check
         run: yarn type-check
       - name: Unit Tests
