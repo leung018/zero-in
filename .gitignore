@@ -47,3 +47,30 @@ test-results/
 playwright-report/
 
 .env
+
+# For why not to use separate .gitignore files for each app, because prettier only base on the root .gitignore file
+
+# Extension
+/apps/extension/staging/*
+!/apps/extension/staging/update.sh
+
+# Firebase
+/apps/firebase/firebase-debug.log*
+/apps/firebase/firebase-debug.*.log*
+/apps/firebase/.firebase/
+/apps/firebase/pids
+/apps/firebase/*.pid
+/apps/firebase/*.seed
+/apps/firebase/*.pid.lock
+/apps/firebase/lib-cov
+/apps/firebase/.nyc_output
+/apps/firebase/.grunt
+/apps/firebase/bower_components
+/apps/firebase/.lock-wscript
+/apps/firebase/build/Release
+/apps/firebase/.npm
+/apps/firebase/.eslintcache
+/apps/firebase/.node_repl_history
+/apps/firebase/*.tgz
+/apps/firebase/.yarn-integrity
+/apps/firebase/.dataconnect
