@@ -1,15 +1,19 @@
+# This project uses a single, root .gitignore file for consistency and to ensure
+# all tools behave predictably. When tools like Prettier are run from the root,
+# they rely on a single source of truth for discovering and ignoring files.
+
+# Yarn
 **/.yarn/*
 **/!.yarn/patches
 **/!.yarn/plugins
 **/!.yarn/releases
 **/!.yarn/sdks
 **/!.yarn/versions
-
 # Swap the comments on the following lines if you don't wish to use zero-installs
 # Documentation here: https://yarnpkg.com/features/zero-installs
 # !.yarn/cache
-.pnp.*
 
+.pnp.*
 
 # Logs
 **/logs
@@ -19,15 +23,49 @@
 **/yarn-error.log*
 **/pnpm-debug.log*
 **/lerna-debug.log*
+firebase-debug.log*
+firebase-debug.*.log*
 
+# Dependency directories
 node_modules
-.DS_Store
+bower_components
+
+# Build output
 dist
 dist-ssr
+build/
+
+# Test & coverage
 coverage
+.nyc_output
+test-results/
+playwright-report/
+
+# Caches & temp files
+.DS_Store
 *.local
 .wxt
+.firebase/
+.npm
+.eslintcache
+# Prettier cache for faster formatting
+.prettier-cache
+*.tsbuildinfo
+.grunt
+.lock-wscript
 
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+lib-cov
+.node_repl_history
+*.tgz
+.yarn-integrity
+.dataconnect
+
+# Cypress
 /cypress/videos/
 /cypress/screenshots/
 
@@ -41,36 +79,12 @@ coverage
 *.sln
 *.sw?
 
-*.tsbuildinfo
-
-test-results/
-playwright-report/
-
+# Environment variables
 .env
 
-# For why not to use separate .gitignore files for each app, because prettier only base on the root .gitignore file
+# App-specific rules
+# ------------------
 
-# Extension
+# Rules specific to the 'extension' app
 /apps/extension/staging/*
 !/apps/extension/staging/update.sh
-
-# Firebase
-/apps/firebase/firebase-debug.log*
-/apps/firebase/firebase-debug.*.log*
-/apps/firebase/.firebase/
-/apps/firebase/pids
-/apps/firebase/*.pid
-/apps/firebase/*.seed
-/apps/firebase/*.pid.lock
-/apps/firebase/lib-cov
-/apps/firebase/.nyc_output
-/apps/firebase/.grunt
-/apps/firebase/bower_components
-/apps/firebase/.lock-wscript
-/apps/firebase/build/Release
-/apps/firebase/.npm
-/apps/firebase/.eslintcache
-/apps/firebase/.node_repl_history
-/apps/firebase/*.tgz
-/apps/firebase/.yarn-integrity
-/apps/firebase/.dataconnect
