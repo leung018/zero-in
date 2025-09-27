@@ -12,13 +12,8 @@
     "format-check": "prettier --check ."
   },
   "devDependencies": {
-    "eslint": "^9.34.0",
-    "eslint-config-prettier": "^10.1.8",
-    "firebase-tools": "^14.17.0",
     "prettier": "^3.6.2",
-    "prettier-plugin-organize-imports": "^4.1.0",
-    "typescript": "^5.9.2",
-    "vitest": "^3.2.4"
+    "prettier-plugin-organize-imports": "^4.1.0"
   },
   "packageManager": "yarn@4.4.1"
 }
