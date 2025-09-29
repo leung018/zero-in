@@ -3,12 +3,12 @@
 # they rely on a single source of truth for discovering and ignoring files.
 
 # Yarn
-**/.yarn/*
-**/!.yarn/patches
-**/!.yarn/plugins
-**/!.yarn/releases
-**/!.yarn/sdks
-**/!.yarn/versions
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 # Swap the comments on the following lines if you don't wish to use zero-installs
 # Documentation here: https://yarnpkg.com/features/zero-installs
 # !.yarn/cache
@@ -16,13 +16,13 @@
 .pnp.*
 
 # Logs
-**/logs
-**/*.log
-**/npm-debug.log*
-**/yarn-debug.log*
-**/yarn-error.log*
-**/pnpm-debug.log*
-**/lerna-debug.log*
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 firebase-debug.log*
 firebase-debug.*.log*
 
