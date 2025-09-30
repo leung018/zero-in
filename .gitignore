@@ -79,6 +79,8 @@ lib-cov
 *.sln
 *.sw?
 
+.turbo
+
 # Environment variables
 .env
 
