@@ -5,7 +5,7 @@
   "description": "Monorepo for the Zero-In project, including the browser extension and mobile app.",
   "workspaces": [
     "apps/*",
-    "shared"
+    "packages/*"
   ],
   "scripts": {
     "format": "prettier --write .",
