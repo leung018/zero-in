@@ -2656,6 +2656,7 @@ __metadata:
     "@vitest/coverage-v8": "npm:^3.2.4"
     "@vue/test-utils": "npm:^2.4.6"
     "@wxt-dev/module-vue": "npm:^1.0.2"
+    "@zero-in/shared": "workspace:*"
     bootstrap: "npm:^5.3.7"
     bootstrap-vue-next: "npm:^0.30.5"
     eslint: "npm:^9.34.0"
@@ -2687,6 +2688,12 @@ __metadata:
     firebase-tools: "npm:^14.17.0"
     vite: "npm:^7.1.6"
     vitest: "npm:^3.2.4"
+  languageName: unknown
+  linkType: soft
+
+"@zero-in/shared@workspace:*, @zero-in/shared@workspace:packages/shared":
+  version: 0.0.0-use.local
+  resolution: "@zero-in/shared@workspace:packages/shared"
   languageName: unknown
   linkType: soft
 
