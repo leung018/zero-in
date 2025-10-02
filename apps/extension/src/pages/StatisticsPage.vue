@@ -3,7 +3,7 @@ import type { UpdateSuccessNotifierService } from '@/infra/browser/update_succes
 import { getMostRecentDate } from '@/utils/date'
 import { ref } from 'vue'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
-import { Time } from '../domain/time'
+import { Time } from '@zero-in/shared/domain/time/index'
 import type { FocusSessionRecordsStorageService } from '../domain/timer/record/storage'
 import ContentTemplate from './components/ContentTemplate.vue'
 import LoadingWrapper from './components/LoadingWrapper.vue'

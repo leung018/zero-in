@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ClientPort } from '@/service_workers/listener'
-import { formatNumber } from '@/utils/format'
+import { formatNumber } from '@zero-in/shared/utils/format'
 import { computed, ref } from 'vue'
 import { Duration } from '../domain/timer/duration'
 import { TimerStage } from '../domain/timer/stage'

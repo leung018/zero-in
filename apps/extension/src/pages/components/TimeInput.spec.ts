@@ -1,6 +1,6 @@
 import { VueWrapper, mount } from '@vue/test-utils'
+import { Time } from '@zero-in/shared/domain/time/index'
 import { describe, expect, it } from 'vitest'
-import { Time } from '../../domain/time'
 import { assertInputValue } from '../../test_utils/assert'
 import TimerInput from './TimeInput.vue'
 

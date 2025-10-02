@@ -1,6 +1,6 @@
 /* eslint-disable playwright/expect-expect */
 import { Page } from '@playwright/test'
-import { formatNumber } from '../src/utils/format.js'
+import { formatNumber } from '@zero-in/shared/utils/format'
 import { expect, test } from './fixtures.js'
 import { assertWithRetry } from './utils/assertion.js'
 import { changeFocusDuration } from './utils/interactions/testing_config.js'

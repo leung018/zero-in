@@ -1,4 +1,4 @@
-import type { Time } from '../domain/time'
+import type { Time } from '@zero-in/shared/domain/time/index'
 import { Duration } from '../domain/timer/duration'
 
 export function getMostRecentDate(time: Time, currentDate = new Date()): Date {

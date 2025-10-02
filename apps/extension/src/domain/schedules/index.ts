@@ -1,4 +1,4 @@
-import { Time } from '../time'
+import { Time } from '@zero-in/shared/domain/time/index'
 
 export enum Weekday {
   SUN = 0,

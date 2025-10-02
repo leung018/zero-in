@@ -1,7 +1,7 @@
+import { Time } from '@zero-in/shared/domain/time/index'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { Weekday, WeeklySchedule } from '.'
 import { LocalStorageWrapper } from '../../infra/storage/local_storage'
-import { Time } from '../time'
 import { WeeklyScheduleSchemas } from './schema'
 import { WeeklySchedulesStorageService } from './storage'
 import { runWeeklyScheduleStorageServiceTests } from './storage_shared_spec'

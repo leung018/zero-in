@@ -1,7 +1,7 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
+import { Time } from '@zero-in/shared/domain/time/index'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
-import { Time } from '../domain/time'
 import { TimerConfig } from '../domain/timer/config'
 import { newFocusSessionRecord, type FocusSessionRecord } from '../domain/timer/record'
 import { FakeActionService } from '../infra/action'

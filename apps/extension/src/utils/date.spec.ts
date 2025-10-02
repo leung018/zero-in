@@ -1,5 +1,5 @@
+import { Time } from '@zero-in/shared/domain/time/index'
 import { describe, expect, it } from 'vitest'
-import { Time } from '../domain/time'
 import { Duration } from '../domain/timer/duration'
 import { getDateAfter, getMostRecentDate, getStartOfNextMinute, isSameDay } from './date'
 
