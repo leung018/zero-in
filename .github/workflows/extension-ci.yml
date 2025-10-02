@@ -40,6 +40,7 @@ jobs:
         run: yarn type-check
       - name: Unit Tests
         run: yarn extension-test-unit
+        working-directory: ${{ github.workspace }}
       - name: Integration Tests
         run: yarn test:integration
       - name: Build
