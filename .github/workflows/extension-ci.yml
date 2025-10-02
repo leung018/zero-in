@@ -6,11 +6,13 @@ on:
       - main # Ignore main; PR checks cover it (require up-to-date before merge).
     paths:
       - 'apps/extension/**'
+      - 'packages/shared/**'
   pull_request:
     branches:
       - main
     paths:
       - 'apps/extension/**'
+      - 'packages/shared/**'
 defaults:
   run:
     working-directory: apps/extension
@@ -37,7 +39,7 @@ jobs:
       - name: Type Check
         run: yarn type-check
       - name: Unit Tests
-        run: yarn test:unit
+        run: yarn extension-test-unit
       - name: Integration Tests
         run: yarn test:integration
       - name: Build
