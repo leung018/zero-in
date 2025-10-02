@@ -33,8 +33,7 @@ jobs:
       - name: Integration Tests
         run: yarn test:integration
       - name: Build
-        run: yarn extension-build:ci
-        working-directory: ${{ github.workspace }}
+        run: yarn build:ci
       - name: Install Playwright Browser
         run: yarn playwright install --with-deps chromium
       - name: End-to-End Tests
@@ -51,8 +50,7 @@ jobs:
           cache-dependency-path: yarn.lock
       - run: yarn install --immutable
       - name: Build
-        run: yarn extension-build:ci
-        working-directory: ${{ github.workspace }}
+        run: yarn build:ci
       - name: Install Playwright Browser
         run: yarn playwright install --with-deps chromium
       - name: End-to-End Tests (macOS)
