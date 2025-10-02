@@ -15,3 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: exit 0
+  extension-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - run: exit 0
+  extension-macos-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - run: exit 0
