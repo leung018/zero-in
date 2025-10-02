@@ -1,6 +1,9 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "tasks": {
+    "build:ci": {
+      "outputs": ["dist/**"]
+    },
     "test:unit": {
       "dependsOn": ["^test:unit"]
     }
