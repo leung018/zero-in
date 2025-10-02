@@ -3,8 +3,5 @@
   "private": true,
   "exports": {
     "./*": "./src/*"
-  },
-  "scripts": {
-    "type-checks": "tsc --noEmit"
   }
 }
