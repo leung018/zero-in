@@ -1,0 +1,21 @@
+name: Format Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
+      - run: yarn install --immutable
+      - name: Run Formatter Check
+        run: yarn format-check

@@ -1,0 +1,15 @@
+{
+  "name": "@zero-in/shared",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  },
+  "scripts": {
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest run --watch"
+  }
+}

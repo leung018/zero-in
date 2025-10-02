@@ -1,0 +1,14 @@
+{
+  "extends": "./.wxt/tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "types": ["unplugin-icons/types/vue"],
+    "strict": true,
+    "paths": {
+      "@zero-in/shared/*": ["../../packages/shared/src/*"],
+      "@": ["./src"],
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["./**/*", "./.wxt/wxt.d.ts", "../../packages/shared"]
+}

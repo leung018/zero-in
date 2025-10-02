@@ -1,3 +1,74 @@
+# This project uses a single, root .gitignore file for consistency and to ensure
+# all tools behave predictably. When tools like Prettier are run from the root,
+# they rely on a single source of truth for discovering and ignoring files.
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+# Swap the comments on the following lines if you don't wish to use zero-installs
+# Documentation here: https://yarnpkg.com/features/zero-installs
+# !.yarn/cache
+
+.pnp.*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+firebase-debug.log*
+firebase-debug.*.log*
+
+# Dependency directories
+node_modules
+bower_components
+
+# Build output
+dist
+dist-ssr
+build/
+
+# Test & coverage
+coverage
+.nyc_output
+test-results/
+playwright-report/
+
+# Caches & temp files
+.DS_Store
+*.local
+.wxt
+.firebase/
+.npm
+.eslintcache
+# Prettier cache for faster formatting
+.prettier-cache
+*.tsbuildinfo
+.grunt
+.lock-wscript
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+lib-cov
+.node_repl_history
+*.tgz
+.yarn-integrity
+.dataconnect
+
+# Cypress
+/cypress/videos/
+/cypress/screenshots/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -7,3 +78,15 @@
 *.njsproj
 *.sln
 *.sw?
+
+.turbo
+
+# Environment variables
+.env
+
+# App-specific rules
+# ------------------
+
+# Rules specific to the 'extension' app
+/apps/extension/staging/*
+!/apps/extension/staging/update.sh

@@ -2,8 +2,8 @@ name: Firestore Continuous Integration
 on:
   pull_request:
     paths:
-      - 'firebase/firestore.**'
-      - 'firebase/firestore-tests/**'
+      - 'apps/firebase/firestore.**'
+      - 'apps/firebase/firestore-tests/**'
       - '.github/workflows/firestore-dev.yml'
   workflow_dispatch:
 jobs:
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: firebase
+        working-directory: apps/firebase
     environment: dev
     steps:
       - uses: actions/checkout@v4
@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'yarn'
-          cache-dependency-path: firebase/yarn.lock
+          cache-dependency-path: yarn.lock
       - run: yarn install --immutable
       - run: yarn test-firestore
       - name: Deploy Firestore Rules

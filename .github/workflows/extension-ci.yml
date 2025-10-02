@@ -1,25 +1,19 @@
 name: Extension Continuous Integration
 
 on:
-  push:
-    branches-ignore:
-      - main # Ignore main; PR checks cover it (require up-to-date before merge).
-    paths:
-      - 'extension/**'
   pull_request:
     branches:
       - main
     paths:
-      - 'extension/**'
+      - 'apps/extension/**'
+      - 'packages/shared/**'
+      - '.github/workflows/extension-ci.yml'
 defaults:
   run:
-    working-directory: extension
+    working-directory: apps/extension
 jobs:
   extension-checks:
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'push' ||
-      github.event.pull_request.head.repo.full_name != github.repository
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
@@ -27,16 +21,15 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'yarn'
-          cache-dependency-path: extension/yarn.lock
+          cache-dependency-path: yarn.lock
       - run: yarn install --immutable
       - name: Lint
         run: yarn lint
-      - name: Format Check
-        run: yarn format-check
       - name: Type Check
         run: yarn type-check
       - name: Unit Tests
-        run: yarn test:unit
+        run: yarn extension-test-unit
+        working-directory: ${{ github.workspace }}
       - name: Integration Tests
         run: yarn test:integration
       - name: Build
@@ -47,9 +40,6 @@ jobs:
         run: xvfb-run yarn test:e2e
   extension-macos-e2e:
     runs-on: macos-latest
-    if: |
-      github.event_name == 'push' ||
-      github.event.pull_request.head.repo.full_name != github.repository
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
@@ -57,7 +47,7 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'yarn'
-          cache-dependency-path: extension/yarn.lock
+          cache-dependency-path: yarn.lock
       - run: yarn install --immutable
       - name: Build
         run: yarn build:ci

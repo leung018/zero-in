@@ -3,10 +3,10 @@ name: Extension Public Release
 on:
   push:
     tags:
-      - "extension-v*"
+      - 'extension-v*'
 defaults:
   run:
-    working-directory: extension
+    working-directory: apps/extension
 jobs:
   extension-prod-release:
     permissions:
@@ -21,9 +21,9 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22.x"
-          cache: "yarn"
-          cache-dependency-path: extension/yarn.lock
+          node-version: '22.x'
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
       - run: yarn install --immutable
       - name: Extract Version
         run: |
@@ -44,5 +44,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG_NAME  }}
-          files: extension/dist/zero-in-${{ env.TAG_NAME  }}-chrome.zip
+          files: apps/extension/dist/zero-in-${{ env.TAG_NAME  }}-chrome.zip
           fail_on_unmatched_files: true
