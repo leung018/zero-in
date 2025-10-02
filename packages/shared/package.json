@@ -8,6 +8,7 @@
     "vitest": "^3.2.4"
   },
   "scripts": {
-    "test:unit": "vitest"
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest run --watch"
   }
 }

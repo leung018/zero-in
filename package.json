@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "format": "prettier --write .",
-    "format-check": "prettier --check ."
+    "format-check": "prettier --check .",
+    "extension-test-unit": "turbo run test:unit --filter=@zero-in/extension..."
   },
   "devDependencies": {
     "prettier": "^3.6.2",
