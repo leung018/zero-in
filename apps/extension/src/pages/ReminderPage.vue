@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ClientPort } from '@/service_workers/listener'
 import { getMostRecentDate } from '@/utils/date'
+import { Time } from '@zero-in/shared/domain/time/index'
 import { computed, ref } from 'vue'
 import type { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
-import { Time } from '@zero-in/shared/domain/time/index'
 import type { FocusSessionRecordsStorageService } from '../domain/timer/record/storage'
 import { TimerStage } from '../domain/timer/stage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'

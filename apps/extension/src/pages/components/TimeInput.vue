@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import { Time } from '@zero-in/shared/domain/time/index'
+import { ref, watch } from 'vue'
 
 const { dataTest } = defineProps<{
   dataTest: string
