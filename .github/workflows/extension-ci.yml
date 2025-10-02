@@ -13,7 +13,7 @@ on:
     paths:
       - 'apps/extension/**'
       - 'packages/shared/**'
-      - 'workflows/extension-ci.yml'
+      - '.github/workflows/extension-ci.yml'
 defaults:
   run:
     working-directory: apps/extension
