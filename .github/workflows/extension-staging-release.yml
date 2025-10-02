@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'apps/extension/**'
+      - 'packages/shared/**'
 defaults:
   run:
     working-directory: apps/extension
