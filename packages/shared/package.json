@@ -1,5 +1,6 @@
 {
   "name": "@zero-in/shared",
+  "type": "module",
   "private": true,
   "exports": {
     "./*": "./src/*.ts"
