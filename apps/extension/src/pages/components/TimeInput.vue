@@ -40,7 +40,7 @@ const getTimeFromInput = (): Time | null => {
   <div>
     <BFormInput
       type="time"
-      style="width: 8rem"
+      style="width: 10rem"
       v-model="timeStr"
       :data-test="dataTest"
       @change="onInputChange"
