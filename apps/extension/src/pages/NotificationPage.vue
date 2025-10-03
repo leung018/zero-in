@@ -53,13 +53,14 @@ const onClickSave = async () => {
             Open reminder tab
           </BFormCheckbox>
 
-          <BFormCheckbox
-            data-test="desktop-notification-option"
-            class="mb-3"
-            v-model="desktopNotification"
-          >
-            Show desktop notification
-          </BFormCheckbox>
+          <div class="mb-3">
+            <BFormCheckbox data-test="desktop-notification-option" v-model="desktopNotification">
+              Show desktop notification
+            </BFormCheckbox>
+            <small class="text-muted ms-2">
+              (Enable browser notifications in your system settings first)
+            </small>
+          </div>
 
           <BFormCheckbox data-test="sound-option" class="mb-3" v-model="sound">
             Play sound
