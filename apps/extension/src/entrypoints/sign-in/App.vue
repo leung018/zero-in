@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import config from '@/config'
 import { ImportRecordStorageService } from '../../domain/import/record/storage'
 import { FirebaseServices } from '../../infra/firebase/services'
 import { FirestoreStorageWrapper } from '../../infra/storage/firestore'
@@ -10,7 +11,24 @@ import SignInProcessHelper from '../../pages/SignInProcessHelper.vue'
 const showProcessHelper = ref(false)
 const signInProcessHelperRef = ref<InstanceType<typeof SignInProcessHelper> | null>(null)
 
+const pollAndFocusLoginPopup = () => {
+  const intervalId = setInterval(() => {
+    browser.tabs.query({ url: '*://accounts.google.com/*' }).then((tabs) => {
+      const targetTab = tabs.find(
+        (tab) => tab.url && tab.url.includes(config.getFirebaseConfig().authDomain)
+      )
+
+      if (targetTab) {
+        browser.windows.update(targetTab.windowId, { focused: true })
+        clearInterval(intervalId)
+      }
+    })
+  }, 500)
+}
+
 const signIn = async () => {
+  pollAndFocusLoginPopup() // In mac os, the popup might be behind other windows. So add this workaround to bring it to front.
+
   browser.runtime.sendMessage({
     type: 'SIGN_IN'
   })
