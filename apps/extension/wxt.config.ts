@@ -52,5 +52,8 @@ export default defineConfig({
     build: {
       chunkSizeWarningLimit: 1500
     }
-  })
+  }),
+  webExt: {
+    chromiumArgs: ['--disable-blink-features=AutomationControlled'] // Prevent I can't google login when running wxt in dev mode
+  }
 })
