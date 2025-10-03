@@ -15,11 +15,11 @@ export default defineConfig({
   manifestVersion: 3,
   manifest: {
     minimum_chrome_version: '116',
-    name: 'Zero In - Boost Your Focus (BETA)' + (process.env.NAME_SUFFIX || ''),
+    name: 'Zero In - Boost Your Focus' + (process.env.NAME_SUFFIX || ''),
     description:
       'Helps you stay focused and productive with a customizable timer and website blocker —— great for work or study.',
     version: process.env.VERSION || '0.1',
-    version_name: process.env.TAG_NAME || 'local',
+    version_name: process.env.VERSION_NAME || process.env.TAG_NAME || 'local',
     action: {
       default_popup: 'popup.html'
     },
