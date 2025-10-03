@@ -78,58 +78,63 @@ async function recordImportStatus(status: ImportStatus) {
 </script>
 
 <template>
-  <div class="signin-container processing-message">
-    <div class="spinner-border text-primary mb-3"></div>
-
-    <div class="message-container text-center">
-      <p class="text-muted">
-        Please don't close this page. We're securely connecting your account now.
-      </p>
-    </div>
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary mb-4"></div>
 
     <div data-test="sign-in-initial-message" v-if="state === ProcessState.INITIAL">
-      <h4 class="mb-2">Signing you in...</h4>
+      <h4 class="mb-4">Signing you in...</h4>
     </div>
 
-    <div data-test="import-prompt" v-if="state === ProcessState.IMPORT_PROMPT">
-      <h4 class="mb-2">Would you like to import settings from a device?</h4>
-      <p class="text-muted mb-4">
-        Importing will replace any existing account settings. You can import them or start fresh.
-      </p>
-      <div class="button-group d-flex justify-content-center">
-        <button class="btn btn-primary me-2" data-test="import-button" @click="onClickImport">
-          Import
-        </button>
-        <button class="btn btn-secondary" data-test="skip-button" @click="onClickSkip">Skip</button>
+    <div
+      data-test="import-prompt"
+      v-if="state === ProcessState.IMPORT_PROMPT"
+      class="mx-auto import-prompt"
+    >
+      <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+          <h4 class="card-title mb-3">Import settings from this device?</h4>
+          <p class="card-text text-muted mb-4">
+            Importing will replace any existing account settings. You can import them or start
+            fresh.
+          </p>
+          <div class="d-flex gap-2 justify-content-center">
+            <button class="btn btn-primary" data-test="import-button" @click="onClickImport">
+              Import
+            </button>
+            <button class="btn btn-secondary" data-test="skip-button" @click="onClickSkip">
+              Skip
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mx-auto hint-box">
+      <div class="fw-bold mb-2">⚠️ Please keep this page open</div>
+      <div class="text-muted small">
+        Don't close this page while we connect your account. If nothing happens after a few moments,
+        refresh to try again.
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.processing-message {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 50px;
-}
-
 .spinner-border {
-  display: inline-block;
-  width: 2rem;
-  height: 2rem;
-  vertical-align: -0.125em;
-  border: 0.25em solid currentColor;
-  border-right-color: transparent;
-  border-radius: 50%;
-  -webkit-animation: 0.75s linear infinite spinner-border;
-  animation: 0.75s linear infinite spinner-border;
+  width: 2.5rem;
+  height: 2.5rem;
 }
 
-@keyframes spinner-border {
-  to {
-    transform: rotate(360deg);
-  }
+.import-prompt {
+  max-width: 500px;
+}
+
+.hint-box {
+  max-width: 500px;
+  background: #fff3cd;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border-left: 3px solid #ffc107;
+  color: #664d03;
 }
 </style>
