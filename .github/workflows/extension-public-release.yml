@@ -29,6 +29,7 @@ jobs:
         run: |
           VERSION=$(echo "${{ env.TAG_NAME }}" | sed -E 's/^.*-v([0-9]+(\.[0-9]+){0,3}).*$/\1/')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION_NAME=$VERSION" >> $GITHUB_ENV
       - name: Zip
         run: yarn zip
         env:

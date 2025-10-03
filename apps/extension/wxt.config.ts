@@ -19,7 +19,7 @@ export default defineConfig({
     description:
       'Helps you stay focused and productive with a customizable timer and website blocker —— great for work or study.',
     version: process.env.VERSION || '0.1',
-    version_name: process.env.TAG_NAME || 'local',
+    version_name: process.env.VERSION_NAME || process.env.TAG_NAME || 'local',
     action: {
       default_popup: 'popup.html'
     },
