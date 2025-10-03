@@ -9,12 +9,16 @@ import { TimerStage } from '../domain/timer/stage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
 import { WorkRequestName } from '../service_workers/request'
 import { WorkResponseName } from '../service_workers/response'
+import LoadingWrapper from './components/LoadingWrapper.vue'
 
 const { port, focusSessionRecordsStorageService, dailyResetTimeStorageService } = defineProps<{
   port: ClientPort
   focusSessionRecordsStorageService: FocusSessionRecordsStorageService
   dailyResetTimeStorageService: DailyResetTimeStorageService
 }>()
+
+const gotTimerState = ref(false)
+const gotStatistics = ref(false)
 
 const timerStage = ref<TimerStage>(TimerStage.FOCUS)
 const focusSessionsPerCycle = ref(0)
@@ -41,6 +45,8 @@ port.onMessage((message) => {
   timerStage.value = message.payload.stage
   focusSessionsPerCycle.value = message.payload.focusSessionsPerCycle
   focusSessionsCompleted.value = message.payload.focusSessionsCompleted
+
+  gotTimerState.value = true
 })
 port.send({
   name: WorkRequestName.QUERY_TIMER_STATE
@@ -58,6 +64,8 @@ dailyResetTimeStorageService
   })
   .then((totalFocusSessions) => {
     dailyCompletedFocusSessions.value = totalFocusSessions
+
+    gotStatistics.value = true
   })
 
 async function getTotalFocusSessionsAfter(dailyResetTime: Time): Promise<number> {
@@ -81,20 +89,25 @@ const onClickStart = () => {
 <template>
   <div class="container text-center mt-5">
     <div class="alert alert-info">
-      Time's up! <br /><span class="hint-message" data-test="hint-message">{{ hintMsg }}.</span>
+      Time's up! <br />
+      <LoadingWrapper :isLoading="!gotTimerState">
+        <span class="hint-message" data-test="hint-message">{{ hintMsg }}.</span>
+      </LoadingWrapper>
     </div>
     <BButton variant="success" data-test="start-button" @click="onClickStart">Start</BButton>
-    <p class="mt-3">
-      <span
-        >Number of focus sessions completed since last
-        <span data-test="reset-time">{{ dailyResetTime.toHhMmString() }}</span></span
-      >
-      <span
-        class="daily-completed-focus-sessions ms-2"
-        data-test="daily-completed-focus-sessions"
-        >{{ dailyCompletedFocusSessions }}</span
-      >
-    </p>
+    <LoadingWrapper :isLoading="!gotStatistics">
+      <p class="mt-3">
+        <span
+          >Number of focus sessions completed since last
+          <span data-test="reset-time">{{ dailyResetTime.toHhMmString() }}</span></span
+        >
+        <span
+          class="daily-completed-focus-sessions ms-2"
+          data-test="daily-completed-focus-sessions"
+          >{{ dailyCompletedFocusSessions }}</span
+        >
+      </p>
+    </LoadingWrapper>
   </div>
 </template>
 
