@@ -109,9 +109,12 @@ async function recordImportStatus(status: ImportStatus) {
       </div>
     </div>
 
-    <div class="mx-auto text-muted small hint-box">
-      <div class="mb-1">Keep this page open while we connect your account.</div>
-      <div>If nothing happens after a few moments, refresh to try again.</div>
+    <div class="mx-auto hint-box">
+      <div class="fw-bold mb-2">⚠️ Please keep this page open</div>
+      <div class="text-muted small">
+        Don't close this page while we connect your account. If nothing happens after a few moments,
+        refresh to try again.
+      </div>
     </div>
   </div>
 </template>
@@ -128,9 +131,10 @@ async function recordImportStatus(status: ImportStatus) {
 
 .hint-box {
   max-width: 500px;
-  background: #f8f9fa;
+  background: #fff3cd;
   padding: 0.75rem 1rem;
   border-radius: 6px;
-  border-left: 3px solid #6c757d;
+  border-left: 3px solid #ffc107;
+  color: #664d03;
 }
 </style>
