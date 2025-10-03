@@ -28,13 +28,13 @@ const pollAndFocusLoginPopup = () => {
 
 const signIn = async () => {
   pollAndFocusLoginPopup() // In mac os, the popup might be behind other windows. So add this workaround to bring it to front.
+  showProcessHelper.value = true
 
   browser.runtime.sendMessage({
     type: 'SIGN_IN'
   })
   FirebaseServices.onAuthStateChanged(async (auth) => {
     if (auth) {
-      showProcessHelper.value = true
       signInProcessHelperRef.value!.triggerHelperProcess()
     }
   })
