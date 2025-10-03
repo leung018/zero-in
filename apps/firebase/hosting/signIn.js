@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { GoogleAuthProvider, getAuth, signInWithRedirect } from 'firebase/auth'
+import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
 import firebaseConfig from './firebaseConfig.js'
 
 initializeApp(firebaseConfig)
@@ -26,6 +26,6 @@ globalThis.addEventListener('message', function ({ data }) {
     // extension's offscreen document.
     // To centralize logic, all responses are forwarded to the parent frame,
     // which goes on to forward them to the extension's service worker.
-    signInWithRedirect(auth, PROVIDER).then(sendResponse).catch(sendResponse)
+    signInWithPopup(auth, PROVIDER).then(sendResponse).catch(sendResponse)
   }
 })
