@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { BrowsingRulesStorageService } from '@/domain/browsing_rules/storage'
+import { BrowsingRulesStorageService } from '@/domain/browsing-rules/storage'
 import { WeeklySchedulesStorageService } from '@/domain/schedules/storage'
-import { TimerBasedBlockingRulesStorageService } from '@/domain/timer_based_blocking/storage'
-import { UpdateSuccessNotifierService } from '@/infra/browser/update_success_notifier'
-import type { ClientPort } from '@/service_workers/listener'
+import { TimerBasedBlockingRulesStorageService } from '@/domain/timer-based-blocking/storage'
+import { UpdateSuccessNotifierService } from '@/infra/browser/update-success-notifier'
+import type { ClientPort } from '@/service-workers/listener'
 import ContentTemplate from '../components/ContentTemplate.vue'
 import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
 import TimerBasedSetting from './TimerBasedSetting.vue'

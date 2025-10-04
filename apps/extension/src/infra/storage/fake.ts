@@ -1,6 +1,6 @@
 import { SubscriptionManager } from '@/utils/subscription'
 import { ObservableStorage, Unsubscribe } from './interface'
-import { LocalStorageWrapper } from './local_storage'
+import { LocalStorageWrapper } from './local-storage'
 
 export class FakeObservableStorage implements ObservableStorage {
   static create() {

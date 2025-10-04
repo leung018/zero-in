@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures.js'
-import { changeFocusDuration } from './utils/interactions/testing_config.js'
+import { changeFocusDuration } from './utils/interactions/testing-config.js'
 import {
   goToBlockingSettingPage,
   goToFocusTimer,

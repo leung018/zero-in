@@ -2,9 +2,9 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { TimerConfig } from '../domain/timer/config'
 import { Duration } from '../domain/timer/duration'
-import { assertSelectorInputValue } from '../test_utils/assert'
-import { setUpListener } from '../test_utils/listener'
-import { dataTestSelector } from '../test_utils/selector'
+import { assertSelectorInputValue } from '../test-utils/assert'
+import { setUpListener } from '../test-utils/listener'
+import { dataTestSelector } from '../test-utils/selector'
 import TestingConfigPage from './TestingConfigPage.vue'
 
 describe('TestingConfigPage', () => {

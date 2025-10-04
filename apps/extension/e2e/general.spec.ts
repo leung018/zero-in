@@ -3,7 +3,7 @@ import { Page } from '@playwright/test'
 import { formatNumber } from '@zero-in/shared/utils/format'
 import { expect, test } from './fixtures.js'
 import { assertWithRetry } from './utils/assertion.js'
-import { changeFocusDuration } from './utils/interactions/testing_config.js'
+import { changeFocusDuration } from './utils/interactions/testing-config.js'
 import {
   goToBlockingSettingPage,
   goToFocusTimer,

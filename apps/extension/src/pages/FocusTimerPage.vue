@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { ClientPort } from '@/service_workers/listener'
+import type { ClientPort } from '@/service-workers/listener'
 import { formatNumber } from '@zero-in/shared/utils/format'
 import { computed, ref } from 'vue'
 import { Duration } from '../domain/timer/duration'
 import { TimerStage } from '../domain/timer/stage'
-import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
-import { WorkRequestName } from '../service_workers/request'
-import { WorkResponseName } from '../service_workers/response'
+import { StageDisplayLabelHelper } from '../domain/timer/stage-display-label'
+import { WorkRequestName } from '../service-workers/request'
+import { WorkResponseName } from '../service-workers/response'
 
 const { port } = defineProps<{
   port: ClientPort

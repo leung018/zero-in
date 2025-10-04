@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UpdateSuccessNotifierService } from '@/infra/browser/update_success_notifier'
+import type { UpdateSuccessNotifierService } from '@/infra/browser/update-success-notifier'
 import { getMostRecentDate } from '@/utils/date'
 import { Time } from '@zero-in/shared/domain/time/index'
 import { ref } from 'vue'
-import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
+import { DailyResetTimeStorageService } from '../domain/daily-reset-time/storage'
 import type { FocusSessionRecordsStorageService } from '../domain/timer/record/storage'
 import ContentTemplate from './components/ContentTemplate.vue'
 import LoadingWrapper from './components/LoadingWrapper.vue'

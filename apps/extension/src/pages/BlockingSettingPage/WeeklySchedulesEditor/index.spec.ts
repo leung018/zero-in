@@ -1,12 +1,12 @@
 import { VueWrapper, flushPromises, mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { BrowsingRules } from '@/domain/browsing_rules'
+import { BrowsingRules } from '@/domain/browsing-rules'
 import { Weekday, WeeklySchedule } from '@/domain/schedules'
-import { setUpListener } from '@/test_utils/listener'
+import { setUpListener } from '@/test-utils/listener'
 import { Time } from '@zero-in/shared/domain/time/index'
-import { assertCheckboxValue, assertSelectorInputValue } from '../../../test_utils/assert'
-import { dataTestSelector } from '../../../test_utils/selector'
+import { assertCheckboxValue, assertSelectorInputValue } from '../../../test-utils/assert'
+import { dataTestSelector } from '../../../test-utils/selector'
 import WeeklySchedulesEditor from './index.vue'
 
 describe('WeeklySchedulesEditor', () => {

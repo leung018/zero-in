@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { ClientPort } from '@/service_workers/listener'
+import type { ClientPort } from '@/service-workers/listener'
 import { getMostRecentDate } from '@/utils/date'
 import { Time } from '@zero-in/shared/domain/time/index'
 import { computed, ref } from 'vue'
-import type { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
+import type { DailyResetTimeStorageService } from '../domain/daily-reset-time/storage'
 import type { FocusSessionRecordsStorageService } from '../domain/timer/record/storage'
 import { TimerStage } from '../domain/timer/stage'
-import { StageDisplayLabelHelper } from '../domain/timer/stage_display_label'
-import { WorkRequestName } from '../service_workers/request'
-import { WorkResponseName } from '../service_workers/response'
+import { StageDisplayLabelHelper } from '../domain/timer/stage-display-label'
+import { WorkRequestName } from '../service-workers/request'
+import { WorkResponseName } from '../service-workers/response'
 import LoadingWrapper from './components/LoadingWrapper.vue'
 
 const { port, focusSessionRecordsStorageService, dailyResetTimeStorageService } = defineProps<{

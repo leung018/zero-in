@@ -3,7 +3,7 @@ import { ImportRecord, ImportStatus } from '@/domain/import/record'
 import { ref } from 'vue'
 import { ImportRecordStorageService } from '../domain/import/record/storage'
 import { ImportService } from '../domain/import/service'
-import { SettingsExistenceService } from '../domain/import/settings_existence'
+import { SettingsExistenceService } from '../domain/import/settings-existence'
 import { StorageInterface } from '../infra/storage/interface'
 
 const { localStorage, remoteStorage, importRecordStorageService } = defineProps<{

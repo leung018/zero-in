@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DailyResetTimeStorageService } from '@/domain/daily_reset_time/storage'
+import { DailyResetTimeStorageService } from '@/domain/daily-reset-time/storage'
 import { FocusSessionRecordsStorageService } from '@/domain/timer/record/storage'
 import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import { BrowserSoundService } from '@/infra/browser/sound'

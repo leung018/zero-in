@@ -3,14 +3,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   newTestNotificationSetting,
   type NotificationSetting
-} from '../domain/notification_setting'
+} from '../domain/notification-setting'
 import { TimerConfig } from '../domain/timer/config'
 import { Duration } from '../domain/timer/duration'
 import { FakeActionService } from '../infra/action'
-import { WorkRequestName } from '../service_workers/request'
-import { assertSelectorCheckboxValue } from '../test_utils/assert'
-import { setUpListener } from '../test_utils/listener'
-import { dataTestSelector } from '../test_utils/selector'
+import { WorkRequestName } from '../service-workers/request'
+import { assertSelectorCheckboxValue } from '../test-utils/assert'
+import { setUpListener } from '../test-utils/listener'
+import { dataTestSelector } from '../test-utils/selector'
 import NotificationPage from './NotificationPage.vue'
 
 describe('NotificationPage', () => {

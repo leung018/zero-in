@@ -1,6 +1,6 @@
 import { beforeEach, describe } from 'vitest'
 import { FakeObservableStorage } from '../../../infra/storage/fake'
-import { runTimerConfigStorageServiceTests } from './storage_shared_spec'
+import { runTimerConfigStorageServiceTests } from './storage-shared-spec'
 
 describe('TimerConfigStorageService', () => {
   let storage = FakeObservableStorage.create()

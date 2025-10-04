@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { newSettingStorageServicesMap } from './key'
-import { LocalStorageWrapper } from './local_storage'
+import { LocalStorageWrapper } from './local-storage'
 
 describe('newSettingStorageServicesMap', () => {
   it('should initialize the services correctly', async () => {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import config from '@/config'
 import { BrowserCommunicationManager } from '@/infra/browser/communication'
-import { BrowserNewTabService } from '@/infra/browser/new_tab'
+import { BrowserNewTabService } from '@/infra/browser/new-tab'
 import FocusTimerPage from '@/pages/FocusTimerPage.vue'
 import { FirebaseServices } from '../../infra/firebase/services'
 

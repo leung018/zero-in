@@ -6,7 +6,7 @@ import {
   StorageService
 } from '../../../infra/storage/interface'
 import { StorageKey } from '../../../infra/storage/key'
-import { LocalStorageWrapper } from '../../../infra/storage/local_storage'
+import { LocalStorageWrapper } from '../../../infra/storage/local-storage'
 import { StorageManager } from '../../../infra/storage/manager'
 import { getDateAfter } from '../../../utils/date'
 import { Duration } from '../duration'

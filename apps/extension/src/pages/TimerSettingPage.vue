@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import config from '@/config'
 import type { ActionService } from '@/infra/action'
-import type { ClientPort } from '@/service_workers/listener'
-import { WorkResponseName } from '@/service_workers/response'
+import type { ClientPort } from '@/service-workers/listener'
+import { WorkResponseName } from '@/service-workers/response'
 import { ref } from 'vue'
 import { TimerConfig } from '../domain/timer/config'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { Duration } from '../domain/timer/duration'
-import { newResetTimerConfigRequest } from '../service_workers/request'
+import { newResetTimerConfigRequest } from '../service-workers/request'
 import ContentTemplate from './components/ContentTemplate.vue'
 import LoadingWrapper from './components/LoadingWrapper.vue'
 

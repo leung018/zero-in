@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { NotificationSettingStorageService } from '@/domain/notification_setting/storage'
+import type { NotificationSettingStorageService } from '@/domain/notification-setting/storage'
 import type { ActionService } from '@/infra/action'
-import type { ClientPort } from '@/service_workers/listener'
+import type { ClientPort } from '@/service-workers/listener'
 import { ref } from 'vue'
-import { WorkRequestName } from '../service_workers/request'
+import { WorkRequestName } from '../service-workers/request'
 import ContentTemplate from './components/ContentTemplate.vue'
 import LoadingWrapper from './components/LoadingWrapper.vue'
 

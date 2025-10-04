@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { BrowsingRules } from '@/domain/browsing_rules'
-import { setUpListener } from '@/test_utils/listener'
+import { BrowsingRules } from '@/domain/browsing-rules'
+import { setUpListener } from '@/test-utils/listener'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
-import { assertSelectorInputValue } from '../../test_utils/assert'
-import { dataTestSelector } from '../../test_utils/selector'
+import { assertSelectorInputValue } from '../../test-utils/assert'
+import { dataTestSelector } from '../../test-utils/selector'
 import BlockedDomainsEditor from './BlockedDomainsEditor.vue'
 
 describe('BlockedDomainsEditor', () => {

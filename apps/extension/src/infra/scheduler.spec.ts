@@ -1,6 +1,6 @@
 import { afterEach } from 'node:test'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { assertToThrowError } from '../test_utils/check_error'
+import { assertToThrowError } from '../test-utils/check-error'
 import { PeriodicTaskScheduler, TaskSchedulingError } from './scheduler'
 
 describe('PeriodicTaskSchedulerImpl', () => {

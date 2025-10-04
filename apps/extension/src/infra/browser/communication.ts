@@ -1,5 +1,5 @@
 import { type CommunicationManager, type Port } from '../communication'
-import { wakeUpServiceWorkerIfIdle } from './wake_service_worker'
+import { wakeUpServiceWorkerIfIdle } from './wake-service-worker'
 
 export class BrowserCommunicationManager implements CommunicationManager {
   clientConnect() {

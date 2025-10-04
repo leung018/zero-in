@@ -5,7 +5,7 @@ import { TimerStage } from '../stage'
 import { TimerInternalState } from './internal'
 import type { TimerStateSchemas } from './schema'
 import { TimerStateStorageService } from './storage'
-import { runTimerStateStorageServiceTests } from './storage_shared_spec'
+import { runTimerStateStorageServiceTests } from './storage-shared-spec'
 
 describe('TimerStateStorageService', () => {
   let storage = FakeObservableStorage.create()

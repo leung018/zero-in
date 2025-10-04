@@ -1,11 +1,11 @@
-import { BrowsingRulesStorageService } from '../../domain/browsing_rules/storage'
-import { DailyResetTimeStorageService } from '../../domain/daily_reset_time/storage'
-import { NotificationSettingStorageService } from '../../domain/notification_setting/storage'
+import { BrowsingRulesStorageService } from '../../domain/browsing-rules/storage'
+import { DailyResetTimeStorageService } from '../../domain/daily-reset-time/storage'
+import { NotificationSettingStorageService } from '../../domain/notification-setting/storage'
 import { WeeklySchedulesStorageService } from '../../domain/schedules/storage'
+import { TimerBasedBlockingRulesStorageService } from '../../domain/timer-based-blocking/storage'
 import { TimerConfigStorageService } from '../../domain/timer/config/storage'
 import { FocusSessionRecordsStorageService } from '../../domain/timer/record/storage'
 import { TimerStateStorageService } from '../../domain/timer/state/storage'
-import { TimerBasedBlockingRulesStorageService } from '../../domain/timer_based_blocking/storage'
 import { StorageInterface, StorageService } from './interface'
 
 /**

@@ -1,7 +1,7 @@
-import type { NotificationSetting } from './domain/notification_setting'
+import type { NotificationSetting } from './domain/notification-setting'
+import type { TimerBasedBlockingRules } from './domain/timer-based-blocking'
 import { TimerConfig } from './domain/timer/config'
 import { Duration } from './domain/timer/duration'
-import type { TimerBasedBlockingRules } from './domain/timer_based_blocking'
 import type { BadgeColor } from './infra/badge'
 
 const getBlockedTemplateUrl = () => {
