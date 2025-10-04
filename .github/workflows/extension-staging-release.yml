@@ -47,6 +47,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG_NAME }}
-          files: apps/extension/dist/zero-in-${{ env.TAG_NAME }}-chrome.zip
+          files: apps/extension/dist/zero-in-chrome.zip
           prerelease: true
           fail_on_unmatched_files: true
