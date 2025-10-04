@@ -10,7 +10,7 @@ export default defineConfig({
   srcDir: 'src',
   outDir: 'dist',
   zip: {
-    name: 'zero-in'
+    artifactTemplate: 'zero-in-{{browser}}.zip'
   },
   manifestVersion: 3,
   manifest: {
