@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { signInAndGetFirestoreStorage } from '../../test_utils/firestore'
+import { signInAndGetFirestoreStorage } from '../../test-utils/firestore'
 import { FirebaseServices } from '../firebase/services'
 import { AdaptiveStorageProvider } from './adaptive'
 import { FakeObservableStorage } from './fake'

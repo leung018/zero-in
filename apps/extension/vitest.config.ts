@@ -44,7 +44,7 @@ export default defineConfig({
     coverage: {
       include: ['src/**']
     },
-    setupFiles: ['./test_setup.ts'],
+    setupFiles: ['./test-setup.ts'],
     environment: 'jsdom'
   },
   resolve: {

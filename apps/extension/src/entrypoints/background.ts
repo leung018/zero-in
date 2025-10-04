@@ -1,4 +1,4 @@
-import main from '../service_workers'
+import main from '../service-workers'
 
 export default defineBackground(() => {
   main()

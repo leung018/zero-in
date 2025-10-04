@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import LoadingWrapper from '@/pages/components/LoadingWrapper.vue'
-import type { ClientPort } from '@/service_workers/listener'
+import type { ClientPort } from '@/service-workers/listener'
 import { Time } from '@zero-in/shared/domain/time/index'
 import { computed, ref } from 'vue'
 import { Weekday, WeeklySchedule } from '../../../domain/schedules'
 import type { WeeklySchedulesStorageService } from '../../../domain/schedules/storage'
-import { WorkRequestName } from '../../../service_workers/request'
+import { WorkRequestName } from '../../../service-workers/request'
 import TimeInput from '../../components/TimeInput.vue'
 import SchedulesList from './SchedulesList.vue'
 import WeekdaysSelector from './WeekdaysSelector.vue'

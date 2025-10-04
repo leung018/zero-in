@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { ClientPort } from '@/service_workers/listener'
+import type { ClientPort } from '@/service-workers/listener'
 import { ref } from 'vue'
 import { TimerConfig } from '../domain/timer/config'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { Duration } from '../domain/timer/duration'
-import { newResetTimerConfigRequest } from '../service_workers/request'
+import { newResetTimerConfigRequest } from '../service-workers/request'
 
 const { timerConfigStorageService, port } = defineProps<{
   port: ClientPort

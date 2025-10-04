@@ -1,17 +1,17 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import config from '../../config'
-import { BrowsingRules } from '../../domain/browsing_rules'
-import { TimerStage } from '../../domain/timer/stage'
-import { TimerInternalState } from '../../domain/timer/state/internal'
+import { BrowsingRules } from '../../domain/browsing-rules'
 import {
   newTestTimerBasedBlockingRules,
   type TimerBasedBlockingRules
-} from '../../domain/timer_based_blocking'
+} from '../../domain/timer-based-blocking'
+import { TimerStage } from '../../domain/timer/stage'
+import { TimerInternalState } from '../../domain/timer/state/internal'
 import { FakeActionService } from '../../infra/action'
-import { assertSelectorCheckboxValue } from '../../test_utils/assert'
-import { setUpListener } from '../../test_utils/listener'
-import { dataTestSelector } from '../../test_utils/selector'
+import { assertSelectorCheckboxValue } from '../../test-utils/assert'
+import { setUpListener } from '../../test-utils/listener'
+import { dataTestSelector } from '../../test-utils/selector'
 import TimerBasedSetting from './TimerBasedSetting.vue'
 
 describe('TimerBasedSetting', () => {

@@ -22,7 +22,7 @@ import {
   setDoc
 } from 'firebase/firestore'
 import { ObservableStorage } from '../storage/interface'
-import { LocalStorageUserIdCache } from './local_storage_cache'
+import { LocalStorageUserIdCache } from './local-storage-cache'
 
 const app = initializeApp(config.getFirebaseConfig())
 

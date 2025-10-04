@@ -3,7 +3,7 @@ import config from '@/config'
 import { ImportRecordStorageService } from '../../domain/import/record/storage'
 import { FirebaseServices } from '../../infra/firebase/services'
 import { FirestoreStorageWrapper } from '../../infra/storage/firestore'
-import { LocalStorageWrapper } from '../../infra/storage/local_storage'
+import { LocalStorageWrapper } from '../../infra/storage/local-storage'
 import SignInProcessHelper from '../../pages/SignInProcessHelper.vue'
 
 // Require manual testing

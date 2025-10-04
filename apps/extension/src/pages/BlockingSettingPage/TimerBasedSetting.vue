@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { ActionService } from '@/infra/action'
 import LoadingWrapper from '@/pages/components/LoadingWrapper.vue'
-import type { ClientPort } from '@/service_workers/listener'
-import { WorkRequestName } from '@/service_workers/request'
+import type { ClientPort } from '@/service-workers/listener'
+import { WorkRequestName } from '@/service-workers/request'
 import { ref } from 'vue'
-import type { TimerBasedBlockingRulesStorageService } from '../../domain/timer_based_blocking/storage'
+import type { TimerBasedBlockingRulesStorageService } from '../../domain/timer-based-blocking/storage'
 
 const { timerBasedBlockingRulesStorageService, updateSuccessNotifierService, port } = defineProps<{
   timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService

@@ -4,9 +4,9 @@ import config from '../config'
 import { TimerConfig } from '../domain/timer/config'
 import { Duration } from '../domain/timer/duration'
 import { FakeActionService } from '../infra/action'
-import { assertSelectorCheckboxValue, assertSelectorInputValue } from '../test_utils/assert'
-import { setUpListener } from '../test_utils/listener'
-import { dataTestSelector } from '../test_utils/selector'
+import { assertSelectorCheckboxValue, assertSelectorInputValue } from '../test-utils/assert'
+import { setUpListener } from '../test-utils/listener'
+import { dataTestSelector } from '../test-utils/selector'
 import TimerSettingPage from './TimerSettingPage.vue'
 
 describe('TimerSettingPage', () => {

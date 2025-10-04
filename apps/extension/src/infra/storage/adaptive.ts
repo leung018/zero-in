@@ -1,6 +1,6 @@
 import { FirebaseServices, FirestoreStorage } from '../firebase/services'
 import { ObservableStorage, StorageInterface, Unsubscribe } from './interface'
-import { LocalStorageWrapper } from './local_storage'
+import { LocalStorageWrapper } from './local-storage'
 
 export class AdaptiveStorageProvider implements ObservableStorage {
   static create(storage = LocalStorageWrapper.create()): AdaptiveStorageProvider {

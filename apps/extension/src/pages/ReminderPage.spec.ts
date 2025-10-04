@@ -1,14 +1,14 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { Time } from '@zero-in/shared/domain/time/index'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { DailyResetTimeStorageService } from '../domain/daily_reset_time/storage'
+import { DailyResetTimeStorageService } from '../domain/daily-reset-time/storage'
 import { TimerConfig } from '../domain/timer/config'
 import { Duration } from '../domain/timer/duration'
 import { newFocusSessionRecord } from '../domain/timer/record'
 import { TimerStage } from '../domain/timer/stage'
 import { FakeActionService } from '../infra/action'
-import { setUpListener } from '../test_utils/listener'
-import { dataTestSelector } from '../test_utils/selector'
+import { setUpListener } from '../test-utils/listener'
+import { dataTestSelector } from '../test-utils/selector'
 import ReminderPage from './ReminderPage.vue'
 
 describe('ReminderPage', () => {
