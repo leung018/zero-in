@@ -1,8 +1,6 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "tasks": {
-    "test:unit": {
-      "dependsOn": ["^test:unit"]
-    }
+    "test:unit": {}
   }
 }
