@@ -39,5 +39,19 @@ yarn-error.*
 app-example
 
 # generated native folders
-/ios
 /android
+/ios/*
+
+# --- Allow custom iOS native code ---
+# Un-ignore the Xcode project file itself
+!/ios/Zeroln.xcodeproj/project.pbxproj
+
+# Un-ignore the bridging header that connects Swift to React Native
+!/ios/ZeroIn/ZeroIn-Bridging-Header.h
+
+# Un-ignore the entitlements file for Family Controls (will be created soon)
+!/ios/Zeroln/*.entitlements
+
+# Un-ignore our custom module's source code
+!/ios/ScreenTime/
+!/ios/ZeroInExtension/
