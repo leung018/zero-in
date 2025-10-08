@@ -1,5 +1,5 @@
 import { Image } from 'expo-image'
-import { Platform, StyleSheet } from 'react-native'
+import { Alert, Button, NativeModules, Platform, StyleSheet } from 'react-native'
 
 import { HelloWave } from '@/components/hello-wave'
 import ParallaxScrollView from '@/components/parallax-scroll-view'
@@ -7,7 +7,43 @@ import { ThemedText } from '@/components/themed-text'
 import { ThemedView } from '@/components/themed-view'
 import { Link } from 'expo-router'
 
+const { ScreenTimeModule } = NativeModules
+
 export default function HomeScreen() {
+  const handleRequestAuthorization = async () => {
+    try {
+      const isAuthorized = await ScreenTimeModule.requestAuthorization()
+      if (isAuthorized) {
+        Alert.alert('Authorization successful!')
+      } else {
+        Alert.alert('Authorization denied.')
+      }
+    } catch (error) {
+      console.error(error)
+      Alert.alert('An error occurred during authorization.')
+    }
+  }
+
+  const handleBlockApps = async () => {
+    try {
+      await ScreenTimeModule.blockUsingAllowList()
+      Alert.alert('Apps blocked successfully!')
+    } catch (error) {
+      console.error(error)
+      Alert.alert('An error occurred while blocking apps.')
+    }
+  }
+
+  const handleUnblockApps = async () => {
+    try {
+      await ScreenTimeModule.unblockApps()
+      Alert.alert('Apps unblocked successfully!')
+    } catch (error) {
+      console.error(error)
+      Alert.alert('An error occurred while unblocking apps.')
+    }
+  }
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -18,6 +54,13 @@ export default function HomeScreen() {
         />
       }
     >
+      <ThemedView style={styles.stepContainer}>
+        <ThemedText type="subtitle">Screen Time Controls</ThemedText>
+        <Button title="Request Authorization" onPress={handleRequestAuthorization} />
+        <Button title="Block Apps (Hardcoded)" onPress={handleBlockApps} />
+        <Button title="Unblock Apps" onPress={handleUnblockApps} />
+      </ThemedView>
+
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
