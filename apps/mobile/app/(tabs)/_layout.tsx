@@ -31,6 +31,15 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />
         }}
       />
+      <Tabs.Screen
+        name="app-blocking"
+        options={{
+          title: 'App Blocking',
+          headerShown: true,
+          headerTitle: 'App Blocking',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="lock.fill" color={color} />
+        }}
+      />
     </Tabs>
   )
 }
