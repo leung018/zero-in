@@ -1,19 +1,21 @@
-import type { StyleProp, ViewStyle } from 'react-native';
-
-export type OnLoadEventPayload = {
-  url: string;
-};
-
 export type AppBlockingModuleEvents = {
-  onChange: (params: ChangeEventPayload) => void;
-};
+  onBlockedAppAttempt: (params: BlockedAppAttemptPayload) => void
+}
 
-export type ChangeEventPayload = {
-  value: string;
-};
+export type InstalledApp = {
+  packageName: string
+  label: string
+  isSystemApp: boolean
+}
 
-export type AppBlockingViewProps = {
-  url: string;
-  onLoad: (event: { nativeEvent: OnLoadEventPayload }) => void;
-  style?: StyleProp<ViewStyle>;
-};
+export type BlockedAppAttemptPayload = {
+  packageName: string
+}
+
+export interface AppBlockingInterface {
+  requestUsageStatsPermission(): Promise<void>
+  getInstalledApps(): Promise<InstalledApp[]>
+  setAllowedApps(packages: string[]): Promise<void>
+  getAllowedApps(): Promise<string[]>
+  checkBlockedApps(): Promise<void>
+}

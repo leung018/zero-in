@@ -21,7 +21,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.zeroin"
+      "package": "com.anonymous.zeroin",
+      "permissions": ["PACKAGE_USAGE_STATS", "QUERY_ALL_PACKAGES"]
     },
     "web": {
       "output": "static",
