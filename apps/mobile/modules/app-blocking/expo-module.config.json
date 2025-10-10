@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android", "web"],
+  "apple": {
+    "modules": ["AppBlockingModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.appblocking.AppBlockingModule"]
+  }
+}
