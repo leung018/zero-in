@@ -11,6 +11,29 @@ class AppBlockerModule : Module() {
 
         View(AppPickerView::class) {}
 
+        AsyncFunction("getPermissionStatus") {
+            val context = appContext.reactContext ?: throw Exception("No context")
+            val isEnabled = BlockingService.isServiceEnabled(context)
+            if (isEnabled) {
+                return@AsyncFunction mapOf("isEnabled" to true)
+            } else {
+                return@AsyncFunction mapOf(
+                    "isEnabled" to false,
+                    "prompt" to mapOf(
+                        "title" to "Enable Accessibility Service",
+                        "message" to "To block apps, you need to enable the accessibility service for Zero In. Please enable it in the next screen."
+                    )
+                )
+            }
+        }
+
+        AsyncFunction("requestPermission") {
+            val context = appContext.reactContext ?: throw Exception("No context")
+            val intent = Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        }
+
         AsyncFunction("blockApps") {
             val context = appContext.reactContext ?: throw Exception("No context")
 

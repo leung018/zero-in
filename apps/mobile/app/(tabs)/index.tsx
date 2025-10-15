@@ -1,7 +1,25 @@
 import AppBlockerModule, { AppPickerView } from '@/modules/app-blocker'
-import { Button, StyleSheet, View } from 'react-native'
+import { useEffect } from 'react'
+import { Alert, Button, StyleSheet, View } from 'react-native'
 
 export default function HomeScreen() {
+  useEffect(() => {
+    const checkService = async () => {
+      const status = await AppBlockerModule.getPermissionStatus()
+      if (!status.isEnabled && status.prompt) {
+        Alert.alert(
+          status.prompt.title,
+          status.prompt.message,
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Enable', onPress: () => AppBlockerModule.requestPermission() }
+          ]
+        )
+      }
+    }
+    checkService()
+  }, [])
+
   const handleBlockApps = async () => {
     try {
       await AppBlockerModule.blockApps()
