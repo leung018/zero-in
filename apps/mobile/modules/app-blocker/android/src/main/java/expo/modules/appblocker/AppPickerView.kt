@@ -22,8 +22,7 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
     init {
 
         adapter = AppListAdapter(context) { selectedPackages ->
-            // Emit event when selection changes
-            onSelectionChange(selectedPackages)
+            saveSelectedPackages(selectedPackages)
         }
 
         recyclerView.adapter = adapter
@@ -60,13 +59,12 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
         adapter.setApps(apps)
     }
 
-    private fun onSelectionChange(selectedPackages: List<String>) {
-        // Send event to React Native
-        val event = mapOf(
-            "apps" to selectedPackages,
-            "count" to selectedPackages.size
-        )
-        // Event emission handled by Expo modules
+    private fun saveSelectedPackages(selectedPackages: List<String>) {
+        val prefs = context.getSharedPreferences(BlockingService.PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().apply {
+            putStringSet(BlockingService.KEY_BLOCKED_APPS, selectedPackages.toSet())
+            apply()
+        }
     }
 }
 
