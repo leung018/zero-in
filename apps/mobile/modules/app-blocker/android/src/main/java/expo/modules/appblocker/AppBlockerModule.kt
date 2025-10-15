@@ -1,6 +1,7 @@
 package expo.modules.appblocker
 
 import android.content.Context
+import android.content.Intent
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -8,32 +9,40 @@ class AppBlockerModule : Module() {
     override fun definition() = ModuleDefinition {
         Name("AppBlocker")
 
-        View(AppPickerView::class) {
-            Events("onSelectionChange")
+        View(AppPickerView::class) {}
 
-            Prop("selectedApps") { view: AppPickerView, apps: List<String>? ->
-                view.setSelectedApps(apps ?: emptyList())
-            }
-        }
-
-        AsyncFunction("blockApps") { packageNames: List<String> ->
+        AsyncFunction("blockApps") {
             val context = appContext.reactContext ?: throw Exception("No context")
 
-            // Check if service is enabled
             if (!BlockingService.isServiceEnabled(context)) {
                 throw Exception("Accessibility service not enabled. Please enable it in Settings.")
             }
 
-            // Save blocked apps to SharedPreferences
-            val prefs = context.getSharedPreferences("app_blocker_prefs", Context.MODE_PRIVATE)
+            val prefs =
+                context.getSharedPreferences(BlockingService.PREFS_NAME, Context.MODE_PRIVATE)
             prefs.edit().apply {
-                putStringSet("blocked_apps", packageNames.toSet())
-                putBoolean("is_blocking", true)
+                putBoolean(BlockingService.KEY_IS_BLOCKING, true)
                 apply()
             }
 
-            // Notify the service (it will reload from SharedPreferences)
-            // The service automatically picks up changes when it detects app launches
+            val intent = Intent(BlockingService.ACTION_RELOAD_PREFERENCES)
+            context.sendBroadcast(intent)
+
+            return@AsyncFunction true
+        }
+
+        AsyncFunction("unblockApps") {
+            val context = appContext.reactContext ?: throw Exception("No context")
+
+            val prefs =
+                context.getSharedPreferences(BlockingService.PREFS_NAME, Context.MODE_PRIVATE)
+            prefs.edit().apply {
+                putBoolean(BlockingService.KEY_IS_BLOCKING, false)
+                apply()
+            }
+
+            val intent = Intent(BlockingService.ACTION_RELOAD_PREFERENCES)
+            context.sendBroadcast(intent)
 
             return@AsyncFunction true
         }
