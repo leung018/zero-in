@@ -2,15 +2,19 @@ package expo.modules.appblocker
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.PixelFormat
+import android.os.Build
 import android.view.Gravity
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.graphics.toColorInt
 
 class BlockingService : AccessibilityService() {
 
@@ -19,10 +23,19 @@ class BlockingService : AccessibilityService() {
     private var blockedApps: Set<String> = emptySet()
     private var isBlocking = false
 
+    private val preferencesReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == ACTION_RELOAD_PREFERENCES) {
+                loadBlockedApps()
+            }
+        }
+    }
+
     companion object {
-        private const val PREFS_NAME = "app_blocker_prefs"
-        private const val KEY_BLOCKED_APPS = "blocked_apps"
-        private const val KEY_IS_BLOCKING = "is_blocking"
+        const val PREFS_NAME = "app_blocker_prefs"
+        const val KEY_BLOCKED_APPS = "blocked_apps"
+        const val KEY_IS_BLOCKING = "is_blocking"
+        const val ACTION_RELOAD_PREFERENCES = "expo.modules.appblocker.RELOAD_PREFERENCES"
 
         fun isServiceEnabled(context: Context): Boolean {
             val prefString = android.provider.Settings.Secure.getString(
@@ -52,10 +65,17 @@ class BlockingService : AccessibilityService() {
         serviceInfo = info
 
         // Initialize WindowManager for overlay
-        windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
 
         // Load blocked apps from storage
         loadBlockedApps()
+
+        val filter = IntentFilter(ACTION_RELOAD_PREFERENCES)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(preferencesReceiver, filter, RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(preferencesReceiver, filter)
+        }
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -88,6 +108,8 @@ class BlockingService : AccessibilityService() {
     }
 
     override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(preferencesReceiver)
         hideBlockingOverlay()
     }
 
@@ -100,7 +122,7 @@ class BlockingService : AccessibilityService() {
 
         // Create overlay view
         overlayView = FrameLayout(this).apply {
-            setBackgroundColor(android.graphics.Color.parseColor("#F5F5F5"))
+            setBackgroundColor("#F5F5F5".toColorInt())
         }
 
         // Inflate custom layout or create programmatically
@@ -145,7 +167,7 @@ class BlockingService : AccessibilityService() {
         val appName = try {
             val appInfo = packageManager.getApplicationInfo(packageName, 0)
             packageManager.getApplicationLabel(appInfo).toString()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             "This app"
         }
 
@@ -215,8 +237,8 @@ class BlockingService : AccessibilityService() {
         overlayView?.let { view ->
             try {
                 windowManager.removeView(view)
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } catch (_: Exception) {
+                // Ignore exceptions when removing view
             }
             overlayView = null
         }
@@ -226,7 +248,7 @@ class BlockingService : AccessibilityService() {
      * Loads blocked apps list from SharedPreferences
      */
     private fun loadBlockedApps() {
-        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
         blockedApps = prefs.getStringSet(KEY_BLOCKED_APPS, emptySet()) ?: emptySet()
         isBlocking = prefs.getBoolean(KEY_IS_BLOCKING, false)
     }
@@ -240,7 +262,7 @@ class BlockingService : AccessibilityService() {
         isBlocking = shouldBlock
 
         // Save to storage
-        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
         prefs.edit().apply {
             putStringSet(KEY_BLOCKED_APPS, apps)
             putBoolean(KEY_IS_BLOCKING, shouldBlock)
