@@ -50,8 +50,6 @@ class AppBlockerModule : Module() {
 
             val intent = Intent(BlockingService.ACTION_RELOAD_PREFERENCES)
             context.sendBroadcast(intent)
-
-            return@AsyncFunction true
         }
 
         AsyncFunction("unblockApps") {
@@ -66,8 +64,6 @@ class AppBlockerModule : Module() {
 
             val intent = Intent(BlockingService.ACTION_RELOAD_PREFERENCES)
             context.sendBroadcast(intent)
-
-            return@AsyncFunction true
         }
     }
 }
