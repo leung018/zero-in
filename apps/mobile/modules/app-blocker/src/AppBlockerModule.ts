@@ -4,10 +4,11 @@ import { AppBlockerModuleEvents } from './AppBlocker.types'
 
 declare class AppBlockerModule extends NativeModule<AppBlockerModuleEvents> {
   getPermissionStatus(): Promise<{
-    isEnabled: boolean
-    prompt?: { title: string; message: string }
+    isGranted: boolean
   }>
-  requestPermission(): Promise<void>
+  requestPermissions(): Promise<void>
+  startService(): Promise<void>
+  stopService(): Promise<void>
   blockApps(): Promise<void>
   unblockApps(): Promise<void>
 }
