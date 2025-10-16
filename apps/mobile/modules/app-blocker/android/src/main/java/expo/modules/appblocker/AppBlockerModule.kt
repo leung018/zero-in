@@ -1,7 +1,11 @@
 package expo.modules.appblocker
 
+import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Process
+import android.provider.Settings
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -11,59 +15,81 @@ class AppBlockerModule : Module() {
 
         View(AppPickerView::class) {}
 
-        AsyncFunction("getPermissionStatus") {
+        AsyncFunction("getPermissionStatus") { ->
             val context = appContext.reactContext ?: throw Exception("No context")
-            val isEnabled = BlockingService.isServiceEnabled(context)
-            if (isEnabled) {
-                return@AsyncFunction mapOf("isEnabled" to true)
-            } else {
-                return@AsyncFunction mapOf(
-                    "isEnabled" to false,
-                    "prompt" to mapOf(
-                        "title" to "Enable Accessibility Service",
-                        "message" to "To block apps, you need to enable the accessibility service for Zero In. Please enable it in the next screen."
-                    )
-                )
+            val isGranted = hasOverlayPermission(context) && hasUsageStatsPermission(context)
+            return@AsyncFunction mapOf("isGranted" to isGranted)
+        }
+
+        AsyncFunction("requestPermissions") {
+            val context = appContext.reactContext ?: throw Exception("No context")
+            if (!hasOverlayPermission(context)) {
+                requestOverlayPermission(context)
+            } else if (!hasUsageStatsPermission(context)) {
+                requestUsageStatsPermission(context)
             }
         }
 
-        AsyncFunction("requestPermission") {
+        AsyncFunction("startService") {
             val context = appContext.reactContext ?: throw Exception("No context")
-            val intent = Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
+            val intent = Intent(context, BlockingService::class.java)
+            context.startService(intent)
+        }
+
+        AsyncFunction("stopService") {
+            val context = appContext.reactContext ?: throw Exception("No context")
+            val intent = Intent(context, BlockingService::class.java)
+            context.stopService(intent)
         }
 
         AsyncFunction("blockApps") {
             val context = appContext.reactContext ?: throw Exception("No context")
-
-            if (!BlockingService.isServiceEnabled(context)) {
-                throw Exception("Accessibility service not enabled. Please enable it in Settings.")
-            }
-
-            val prefs =
-                context.getSharedPreferences(BlockingService.PREFS_NAME, Context.MODE_PRIVATE)
-            prefs.edit().apply {
-                putBoolean(BlockingService.KEY_IS_BLOCKING, true)
-                apply()
-            }
-
-            val intent = Intent(BlockingService.ACTION_RELOAD_PREFERENCES)
-            context.sendBroadcast(intent)
+            updateBlocking(context, true)
         }
 
         AsyncFunction("unblockApps") {
             val context = appContext.reactContext ?: throw Exception("No context")
-
-            val prefs =
-                context.getSharedPreferences(BlockingService.PREFS_NAME, Context.MODE_PRIVATE)
-            prefs.edit().apply {
-                putBoolean(BlockingService.KEY_IS_BLOCKING, false)
-                apply()
-            }
-
-            val intent = Intent(BlockingService.ACTION_RELOAD_PREFERENCES)
-            context.sendBroadcast(intent)
+            updateBlocking(context, false)
         }
+    }
+
+    private fun hasOverlayPermission(context: Context): Boolean {
+        return Settings.canDrawOverlays(context)
+    }
+
+    private fun hasUsageStatsPermission(context: Context): Boolean {
+        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        val mode = appOps.checkOpNoThrow(
+            AppOpsManager.OPSTR_GET_USAGE_STATS,
+            Process.myUid(),
+            context.packageName
+        )
+        return mode == AppOpsManager.MODE_ALLOWED
+    }
+
+    private fun requestOverlayPermission(context: Context) {
+        val intent = Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            Uri.parse("package:" + context.packageName)
+        )
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
+
+    private fun requestUsageStatsPermission(context: Context) {
+        val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
+
+    private fun updateBlocking(context: Context, shouldBlock: Boolean) {
+        val prefs = context.getSharedPreferences(BlockingService.PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().apply {
+            putBoolean(BlockingService.KEY_IS_BLOCKING, shouldBlock)
+            apply()
+        }
+
+        val intent = Intent(BlockingService.ACTION_RELOAD_PREFERENCES)
+        context.sendBroadcast(intent)
     }
 }
