@@ -74,6 +74,7 @@ class BlockingService : AccessibilityService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(preferencesReceiver, filter, RECEIVER_NOT_EXPORTED)
         } else {
+            @Suppress("UnspecifiedRegisterReceiverFlag")
             registerReceiver(preferencesReceiver, filter)
         }
     }
