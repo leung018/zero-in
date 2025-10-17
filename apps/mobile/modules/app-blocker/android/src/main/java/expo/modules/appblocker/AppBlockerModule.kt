@@ -32,6 +32,10 @@ class AppBlockerModule : Module() {
         }
 
         AsyncFunction("blockApps") {
+            val context = appContext.reactContext ?: throw Exception("No context")
+            if (!hasOverlayPermission(context) || !hasUsageStatsPermission(context)) {
+                throw Exception("Please enable the required permissions first")
+            }
             startService()
         }
 
