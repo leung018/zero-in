@@ -3,9 +3,9 @@ package expo.modules.appblocker
 import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Process
 import android.provider.Settings
+import androidx.core.net.toUri
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -70,7 +70,7 @@ class AppBlockerModule : Module() {
     private fun requestOverlayPermission(context: Context) {
         val intent = Intent(
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            Uri.parse("package:" + context.packageName)
+            ("package:" + context.packageName).toUri()
         )
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
