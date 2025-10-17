@@ -83,7 +83,7 @@ export default function main() {
   const now = new Date()
   browser.alarms.create('immediate', { when: now.getTime() })
   browser.alarms.create('recurring', {
-    periodInMinutes: 1,
+    periodInMinutes: 0.5, // Set to 30 seconds can help to keep the service worker alive. I think some bugs or performance issue appear when service worker don't keep alive.
     when: getStartOfNextMinute(now).getTime()
   })
   browser.alarms.clear() // Remove old alarm in previous version, if any
