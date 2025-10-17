@@ -8,7 +8,7 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 TAG_NAME="staging"
 TARGET_DIR="zero-in"
-ZIP_FILE="zero-in-${TAG_NAME}-chrome.zip"
+ZIP_FILE="zero-in-chrome.zip"
 URL="https://github.com/leung018/zero-in/releases/download/${TAG_NAME}/${ZIP_FILE}"
 
 
