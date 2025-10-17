@@ -248,26 +248,4 @@ class BlockingService : Service() {
         blockedApps = prefs.getStringSet(KEY_BLOCKED_APPS, emptySet()) ?: emptySet()
         isBlocking = prefs.getBoolean(KEY_IS_BLOCKING, false)
     }
-
-    /**
-     * Updates the list of blocked apps
-     * Called from the module when user changes selection
-     */
-    fun updateBlockedApps(apps: Set<String>, shouldBlock: Boolean) {
-        blockedApps = apps
-        isBlocking = shouldBlock
-
-        // Save to storage
-        val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-        prefs.edit().apply {
-            putStringSet(KEY_BLOCKED_APPS, apps)
-            putBoolean(KEY_IS_BLOCKING, shouldBlock)
-            apply()
-        }
-
-        // If not blocking, hide overlay
-        if (!shouldBlock) {
-            hideBlockingOverlay()
-        }
-    }
 }
