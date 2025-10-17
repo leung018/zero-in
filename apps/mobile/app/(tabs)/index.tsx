@@ -6,15 +6,11 @@ export default function HomeScreen() {
   useEffect(() => {
     const checkService = async () => {
       const status = await AppBlockerModule.getPermissionStatus()
-      if (!status.isEnabled && status.prompt) {
-        Alert.alert(
-          status.prompt.title,
-          status.prompt.message,
-          [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Enable', onPress: () => AppBlockerModule.requestPermission() }
-          ]
-        )
+      if (!status.isGranted) {
+        Alert.alert('Permission Required', 'Please enable the required permissions', [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Enable', onPress: () => AppBlockerModule.requestPermissions() }
+        ])
       }
     }
     checkService()
@@ -56,6 +52,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginVertical: 10,
+    marginVertical: 10
   }
 })
