@@ -7,8 +7,6 @@ declare class AppBlockerModule extends NativeModule<AppBlockerModuleEvents> {
     isGranted: boolean
   }>
   requestPermissions(): Promise<void>
-  startService(): Promise<void>
-  stopService(): Promise<void>
   blockApps(): Promise<void>
   unblockApps(): Promise<void>
 }

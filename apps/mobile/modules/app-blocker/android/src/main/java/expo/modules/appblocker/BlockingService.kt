@@ -2,10 +2,8 @@ package expo.modules.appblocker
 
 import android.app.Service
 import android.app.usage.UsageStatsManager
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Handler
@@ -23,15 +21,13 @@ class BlockingService : Service() {
     private lateinit var windowManager: WindowManager
     private var overlayView: FrameLayout? = null
     private var blockedApps: Set<String> = emptySet()
-    private var isBlocking = false
-
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var usageStatsManager: UsageStatsManager
 
     private val pollingRunnable = object : Runnable {
         override fun run() {
             val foregroundApp = getForegroundApp()
-            if (isBlocking && foregroundApp != null && blockedApps.contains(foregroundApp)) {
+            if (foregroundApp != null && blockedApps.contains(foregroundApp)) {
                 showBlockingOverlay(foregroundApp)
             } else {
                 hideBlockingOverlay()
@@ -40,18 +36,9 @@ class BlockingService : Service() {
         }
     }
 
-    private val preferencesReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == ACTION_RELOAD_PREFERENCES) {
-                loadBlockedApps()
-            }
-        }
-    }
-
     companion object {
         const val PREFS_NAME = "app_blocker_prefs"
         const val KEY_BLOCKED_APPS = "blocked_apps"
-        const val KEY_IS_BLOCKING = "is_blocking"
         const val ACTION_RELOAD_PREFERENCES = "expo.modules.appblocker.RELOAD_PREFERENCES"
     }
 
@@ -64,17 +51,10 @@ class BlockingService : Service() {
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
         loadBlockedApps()
-
-        val filter = IntentFilter(ACTION_RELOAD_PREFERENCES)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(preferencesReceiver, filter, RECEIVER_NOT_EXPORTED)
-        } else {
-            @Suppress("UnspecifiedRegisterReceiverFlag")
-            registerReceiver(preferencesReceiver, filter)
-        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        loadBlockedApps()
         handler.post(pollingRunnable)
         return START_STICKY
     }
@@ -82,7 +62,6 @@ class BlockingService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(pollingRunnable)
-        unregisterReceiver(preferencesReceiver)
         hideBlockingOverlay()
     }
 
@@ -246,6 +225,5 @@ class BlockingService : Service() {
     private fun loadBlockedApps() {
         val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
         blockedApps = prefs.getStringSet(KEY_BLOCKED_APPS, emptySet()) ?: emptySet()
-        isBlocking = prefs.getBoolean(KEY_IS_BLOCKING, false)
     }
 }
