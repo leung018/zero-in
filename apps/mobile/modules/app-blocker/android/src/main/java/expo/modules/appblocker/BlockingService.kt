@@ -1,6 +1,9 @@
 package expo.modules.appblocker
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
+import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
@@ -9,11 +12,13 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.app.NotificationCompat
 import androidx.core.graphics.toColorInt
 
 class BlockingService : Service() {
@@ -26,13 +31,23 @@ class BlockingService : Service() {
 
     private val pollingRunnable = object : Runnable {
         override fun run() {
+            val label = "BlockingService pollingRunnable"
+            Log.i(label, "running")
             val foregroundApp = getForegroundApp()
-            if (foregroundApp != null && blockedApps.contains(foregroundApp)) {
+            Log.i(label, "foreground app: $foregroundApp")
+            if (foregroundApp == null) {
+                handler.postDelayed(this, 500)
+                return
+            }
+
+            if (blockedApps.contains(foregroundApp)) {
+                Log.i(label, "blocking app: $foregroundApp")
                 showBlockingOverlay(foregroundApp)
             } else {
+                Log.i(label, "not blocking app")
                 hideBlockingOverlay()
             }
-            handler.postDelayed(this, 500) // Poll every 500ms
+            handler.postDelayed(this, 500)
         }
     }
 
@@ -40,6 +55,7 @@ class BlockingService : Service() {
         const val PREFS_NAME = "app_blocker_prefs"
         const val KEY_BLOCKED_APPS = "blocked_apps"
         const val ACTION_RELOAD_PREFERENCES = "expo.modules.appblocker.RELOAD_PREFERENCES"
+        const val NOTIFICATION_CHANNEL_ID = "app_blocker_channel"
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -51,9 +67,18 @@ class BlockingService : Service() {
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
         loadBlockedApps()
+        createNotificationChannel()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setContentTitle("App Blocker Active")
+            .setContentText("Monitoring app usage to keep you focused.")
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .build()
+
+        startForeground(1, notification)
+
         loadBlockedApps()
         handler.post(pollingRunnable)
         return START_STICKY
@@ -65,21 +90,40 @@ class BlockingService : Service() {
         hideBlockingOverlay()
     }
 
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                "App Blocker",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
+    }
+
     private fun getForegroundApp(): String? {
         val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as?
-                android.app.usage.UsageStatsManager ?: return null
+                UsageStatsManager ?: return null
 
-        val currentTime = System.currentTimeMillis()
+        val time = System.currentTimeMillis()
+        val events = usageStatsManager.queryEvents(time - 1000 * 10, time)
+        val event = UsageEvents.Event()
+        var lastApp: String? = null
 
-        // Query usage stats for last 1 second
-        val stats = usageStatsManager.queryUsageStats(
-            android.app.usage.UsageStatsManager.INTERVAL_DAILY,
-            currentTime - 1000,
-            currentTime
-        )
-
-        // Find most recently used app
-        return stats?.maxByOrNull { it.lastTimeUsed }?.packageName
+        while (events.hasNextEvent()) {
+            events.getNextEvent(event)
+            val eventType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                UsageEvents.Event.ACTIVITY_RESUMED
+            } else {
+                @Suppress("DEPRECATION")
+                UsageEvents.Event.MOVE_TO_FOREGROUND
+            }
+            if (event.eventType == eventType) {
+                lastApp = event.packageName
+            }
+        }
+        return lastApp
     }
 
     /**
