@@ -25,31 +25,18 @@ class AppBlockerModule : Module() {
             val context = appContext.reactContext ?: throw Exception("No context")
             if (!hasOverlayPermission(context)) {
                 requestOverlayPermission(context)
-            } else if (!hasUsageStatsPermission(context)) {
+            }
+            if (!hasUsageStatsPermission(context)) {
                 requestUsageStatsPermission(context)
             }
         }
 
-        AsyncFunction("startService") {
-            val context = appContext.reactContext ?: throw Exception("No context")
-            val intent = Intent(context, BlockingService::class.java)
-            context.startService(intent)
-        }
-
-        AsyncFunction("stopService") {
-            val context = appContext.reactContext ?: throw Exception("No context")
-            val intent = Intent(context, BlockingService::class.java)
-            context.stopService(intent)
-        }
-
         AsyncFunction("blockApps") {
-            val context = appContext.reactContext ?: throw Exception("No context")
-            updateBlocking(context, true)
+            startService()
         }
 
         AsyncFunction("unblockApps") {
-            val context = appContext.reactContext ?: throw Exception("No context")
-            updateBlocking(context, false)
+            stopService()
         }
     }
 
@@ -82,14 +69,15 @@ class AppBlockerModule : Module() {
         context.startActivity(intent)
     }
 
-    private fun updateBlocking(context: Context, shouldBlock: Boolean) {
-        val prefs = context.getSharedPreferences(BlockingService.PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().apply {
-            putBoolean(BlockingService.KEY_IS_BLOCKING, shouldBlock)
-            apply()
-        }
+    private fun startService() {
+        val context = appContext.reactContext ?: throw Exception("No context")
+        val intent = Intent(context, BlockingService::class.java)
+        context.startService(intent)
+    }
 
-        val intent = Intent(BlockingService.ACTION_RELOAD_PREFERENCES)
-        context.sendBroadcast(intent)
+    private fun stopService() {
+        val context = appContext.reactContext ?: throw Exception("No context")
+        val intent = Intent(context, BlockingService::class.java)
+        context.stopService(intent)
     }
 }
