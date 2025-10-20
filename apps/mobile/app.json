@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.zeroin"
+      "bundleIdentifier": "com.anonymous.zeroin",
+      "entitlements": {
+        "com.apple.developer.family-controls": true
+      }
     },
     "android": {
       "adaptiveIcon": {

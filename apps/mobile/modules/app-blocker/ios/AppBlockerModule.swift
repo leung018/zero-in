@@ -1,48 +1,59 @@
 import ExpoModulesCore
+import FamilyControls
+import ManagedSettings
 
 public class AppBlockerModule: Module {
-  // Each module class must implement the definition function. The definition consists of components
-  // that describes the module's functionality and behavior.
-  // See https://docs.expo.dev/modules/module-api for more details about available components.
   public func definition() -> ModuleDefinition {
-    // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-    // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-    // The module will be accessible from `requireNativeModule('AppBlocker')` in JavaScript.
     Name("AppBlocker")
 
-    // Defines constant property on the module.
-    Constant("PI") {
-      Double.pi
-    }
-
-    // Defines event names that the module can send to JavaScript.
-    Events("onChange")
-
-    // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
-    Function("hello") {
-      return "Hello world! 👋"
-    }
-
-    // Defines a JavaScript function that always returns a Promise and whose native code
-    // is by default dispatched on the different thread than the JavaScript runtime runs on.
-    AsyncFunction("setValueAsync") { (value: String) in
-      // Send an event to JavaScript.
-      self.sendEvent("onChange", [
-        "value": value
-      ])
-    }
-
-    // Enables the module to be used as a native view. Definition components that are accepted as part of the
-    // view definition: Prop, Events.
-    View(AppBlockerView.self) {
-      // Defines a setter for the `url` prop.
-      Prop("url") { (view: AppBlockerView, url: URL) in
-        if view.webView.url != url {
-          view.webView.load(URLRequest(url: url))
-        }
+    AsyncFunction("getPermissionStatus") { (promise: Promise) in
+      if #available(iOS 15.0, *) {
+        let ac = AuthorizationCenter.shared
+        promise.resolve(["isGranted": ac.authorizationStatus == .approved])
+      } else {
+        promise.reject("UNSUPPORTED_OS_VERSION", "FamilyControls is not available on this OS version.")
       }
-
-      Events("onLoad")
     }
+
+    AsyncFunction("requestPermissions") { (promise: Promise) in
+      if #available(iOS 16.0, *) {
+        Task {
+          do {
+            try await AuthorizationCenter.shared.requestAuthorization(for: .individual)
+            promise.resolve(nil)
+          } catch {
+            promise.reject(error)
+          }
+        }
+      } else {
+        promise.reject("UNSUPPORTED_OS_VERSION", "FamilyControls is not available on this OS version.")
+      }
+    }
+
+    AsyncFunction("blockApps") { (promise: Promise) in
+        if #available(iOS 15.0, *) {
+            if let selection = SelectionStore.shared.selection {
+                let store = ManagedSettingsStore()
+                store.shield.applications = selection.applicationTokens
+                store.shield.webDomains = selection.webDomainTokens
+            }
+            promise.resolve(nil)
+        } else {
+            promise.reject("UNSUPPORTED_OS_VERSION", "FamilyControls is not available on this OS version.")
+        }
+    }
+
+    AsyncFunction("unblockApps") { (promise: Promise) in
+        if #available(iOS 15.0, *) {
+            let store = ManagedSettingsStore()
+            store.shield.applications = nil
+            store.shield.webDomains = nil
+            promise.resolve(nil)
+        } else {
+            promise.reject("UNSUPPORTED_OS_VERSION", "FamilyControls is not available on this OS version.")
+        }
+    }
+
+    View(AppPickerView.self) {}
   }
 }
