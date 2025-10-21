@@ -34,6 +34,7 @@ public class AppBlockerModule: Module {
         if #available(iOS 15.0, *) {
             if let selection = SelectionStore.shared.selection {
                 let store = ManagedSettingsStore()
+                store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(selection.categoryTokens)
                 store.shield.applications = selection.applicationTokens
                 store.shield.webDomains = selection.webDomainTokens
             }
@@ -46,6 +47,7 @@ public class AppBlockerModule: Module {
     AsyncFunction("unblockApps") { (promise: Promise) in
         if #available(iOS 15.0, *) {
             let store = ManagedSettingsStore()
+            store.shield.applicationCategories = nil
             store.shield.applications = nil
             store.shield.webDomains = nil
             promise.resolve(nil)
