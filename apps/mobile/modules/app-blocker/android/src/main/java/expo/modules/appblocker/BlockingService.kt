@@ -102,9 +102,6 @@ class BlockingService : Service() {
     }
 
     private fun getForegroundApp(): String? {
-        val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as?
-                UsageStatsManager ?: return null
-
         val time = System.currentTimeMillis()
         val events = usageStatsManager.queryEvents(time - 1000 * 10, time)
         val event = UsageEvents.Event()
