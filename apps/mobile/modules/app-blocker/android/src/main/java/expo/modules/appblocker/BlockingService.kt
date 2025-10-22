@@ -54,7 +54,6 @@ class BlockingService : Service() {
     companion object {
         const val PREFS_NAME = "app_blocker_prefs"
         const val KEY_BLOCKED_APPS = "blocked_apps"
-        const val ACTION_RELOAD_PREFERENCES = "expo.modules.appblocker.RELOAD_PREFERENCES"
         const val NOTIFICATION_CHANNEL_ID = "app_blocker_channel"
     }
 
