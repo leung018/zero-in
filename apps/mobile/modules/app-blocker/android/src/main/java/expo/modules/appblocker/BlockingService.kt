@@ -31,20 +31,15 @@ class BlockingService : Service() {
 
     private val pollingRunnable = object : Runnable {
         override fun run() {
-            val label = "BlockingService pollingRunnable"
-            Log.i(label, "running")
             val foregroundApp = getForegroundApp()
-            Log.i(label, "foreground app: $foregroundApp")
             if (foregroundApp == null) {
                 handler.postDelayed(this, 500)
                 return
             }
 
             if (blockedApps.contains(foregroundApp)) {
-                Log.i(label, "blocking app: $foregroundApp")
                 showBlockingOverlay(foregroundApp)
             } else {
-                Log.i(label, "not blocking app")
                 hideBlockingOverlay()
             }
             handler.postDelayed(this, 500)
