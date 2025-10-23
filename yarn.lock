@@ -4018,6 +4018,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-firebase/auth@npm:^23.4.1":
+  version: 23.4.1
+  resolution: "@react-native-firebase/auth@npm:23.4.1"
+  dependencies:
+    plist: "npm:^3.1.0"
+  peerDependencies:
+    "@react-native-firebase/app": 23.4.1
+    expo: ">=47.0.0"
+  peerDependenciesMeta:
+    expo:
+      optional: true
+  checksum: 10c0/1172806d07e1129112685482b9763f97c4ee7ecdf8eafc675dee6aa61aac784d406530f82b989463d63933cd4c270db2f980d3d1b72527839970208f6f180839
+  languageName: node
+  linkType: hard
+
 "@react-native/assets-registry@npm:0.81.4":
   version: 0.81.4
   resolution: "@react-native/assets-registry@npm:0.81.4"
@@ -5613,6 +5628,7 @@ __metadata:
   dependencies:
     "@expo/vector-icons": "npm:^15.0.2"
     "@react-native-firebase/app": "npm:^23.4.1"
+    "@react-native-firebase/auth": "npm:^23.4.1"
     "@react-navigation/bottom-tabs": "npm:^7.4.0"
     "@react-navigation/elements": "npm:^2.6.3"
     "@react-navigation/native": "npm:^7.1.8"
@@ -15081,7 +15097,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"plist@npm:^3.0.5":
+"plist@npm:^3.0.5, plist@npm:^3.1.0":
   version: 3.1.0
   resolution: "plist@npm:3.1.0"
   dependencies:
