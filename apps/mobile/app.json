@@ -10,7 +10,8 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.zeroin",
+      "bundleIdentifier": "dev.zeroin.mobile",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "entitlements": {
         "com.apple.developer.family-controls": true
       }
