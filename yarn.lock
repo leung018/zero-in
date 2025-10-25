@@ -4060,6 +4060,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-firebase/firestore@npm:^23.4.1":
+  version: 23.4.1
+  resolution: "@react-native-firebase/firestore@npm:23.4.1"
+  dependencies:
+    react-native-url-polyfill: "npm:2.0.0"
+  peerDependencies:
+    "@react-native-firebase/app": 23.4.1
+  checksum: 10c0/76ef2dc6705b7c6a3018eef468e9b887559728e8163495fbd5a578213cd5cd10263157d6c626be19f3cbcbb351951697ed48d4d11b2ebf1fb3fa9167b1e1e020
+  languageName: node
+  linkType: hard
+
 "@react-native/assets-registry@npm:0.81.4":
   version: 0.81.4
   resolution: "@react-native/assets-registry@npm:0.81.4"
@@ -5660,6 +5671,7 @@ __metadata:
     "@expo/vector-icons": "npm:^15.0.2"
     "@react-native-firebase/app": "npm:^23.4.1"
     "@react-native-firebase/auth": "npm:^23.4.1"
+    "@react-native-firebase/firestore": "npm:^23.4.1"
     "@react-navigation/bottom-tabs": "npm:^7.4.0"
     "@react-navigation/elements": "npm:^2.6.3"
     "@react-navigation/native": "npm:^7.1.8"
@@ -15806,6 +15818,17 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/a35d4b82b9ab5ef13913c54ab6751a5cad5430de3e6cd66335cd3bf4dac92cd9d0c5b8b9a021e151724a9a6f6ca7864e2653c9930af7a9379e5a37b45bce6a0c
+  languageName: node
+  linkType: hard
+
+"react-native-url-polyfill@npm:2.0.0":
+  version: 2.0.0
+  resolution: "react-native-url-polyfill@npm:2.0.0"
+  dependencies:
+    whatwg-url-without-unicode: "npm:8.0.0-3"
+  peerDependencies:
+    react-native: "*"
+  checksum: 10c0/a48e6978f5a2c9e225bb93cc5f9985a8ac0fe7d8122105bcd88ef8d8420a3b33a67ce5d2bda2b606bf5fa94af9f6d04efce354580b60900e7c967fd2ebdc42cf
   languageName: node
   linkType: hard
 
