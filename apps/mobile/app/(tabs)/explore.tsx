@@ -4,6 +4,7 @@
 
 // App.tsx
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
+import { makeRedirectUri } from 'expo-auth-session'
 import * as Google from 'expo-auth-session/providers/google'
 import * as WebBrowser from 'expo-web-browser'
 import React, { useEffect, useState } from 'react'
@@ -17,8 +18,12 @@ export default function TabTwoScreen() {
 
   // Configure Google Auth
   const [request, response, promptAsync] = Google.useAuthRequest({
+    webClientId: '54527256719-mcqf4pfmc1blo0eroiolda0irv02ouue.apps.googleusercontent.com',
     androidClientId: '54527256719-mcqf4pfmc1blo0eroiolda0irv02ouue.apps.googleusercontent.com',
-    iosClientId: '54527256719-4ov34mkbih4l9nsu6j9eb45tinegaq5g.apps.googleusercontent.com'
+    iosClientId: '54527256719-4ov34mkbih4l9nsu6j9eb45tinegaq5g.apps.googleusercontent.com',
+    redirectUri: makeRedirectUri({
+      scheme: 'dev.zeroin.mobile'
+    })
   })
 
   // Listen to Firebase auth state
