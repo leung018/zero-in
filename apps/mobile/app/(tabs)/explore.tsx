@@ -4,13 +4,14 @@
 
 // App.tsx
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
-import { makeRedirectUri } from 'expo-auth-session'
 import * as Google from 'expo-auth-session/providers/google'
 import * as WebBrowser from 'expo-web-browser'
 import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 WebBrowser.maybeCompleteAuthSession()
+
+const redirectUri = 'https://zeroin.dev/auth/callback'
 
 export default function TabTwoScreen() {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null)
@@ -20,9 +21,7 @@ export default function TabTwoScreen() {
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: '54527256719-54aq7co9o2s8aeeg4gm9ll6riku8469p.apps.googleusercontent.com',
     iosClientId: '54527256719-4ov34mkbih4l9nsu6j9eb45tinegaq5g.apps.googleusercontent.com',
-    redirectUri: makeRedirectUri({
-      scheme: 'dev.zeroin.mobile'
-    })
+    redirectUri
   })
 
   // Listen to Firebase auth state
