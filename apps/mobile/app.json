@@ -2,6 +2,7 @@
   "expo": {
     "name": "Zero In",
     "slug": "zero-in",
+    "scheme": "dev.zeroin.mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
