@@ -19,19 +19,22 @@ export default function TabTwoScreen() {
 
   // Configure Google Auth
   const [request, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: '54527256719-54aq7co9o2s8aeeg4gm9ll6riku8469p.apps.googleusercontent.com',
-    iosClientId: '54527256719-4ov34mkbih4l9nsu6j9eb45tinegaq5g.apps.googleusercontent.com',
-    redirectUri
+    clientId: '54527256719-mcqf4pfmc1blo0eroiolda0irv02ouue.apps.googleusercontent.com',
+    redirectUri,
+    scopes: ['openid', 'profile', 'email']
   })
 
   // Listen to Firebase auth state
   useEffect(() => {
+    if (request) {
+      console.log('Authorization URL:', request.url) // 👀 check this
+    }
     const unsubscribe = auth().onAuthStateChanged((firebaseUser) => {
       setUser(firebaseUser)
       setLoading(false)
     })
     return unsubscribe
-  }, [])
+  }, [request])
 
   // Handle Google Sign-In response
   useEffect(() => {
