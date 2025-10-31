@@ -15,7 +15,8 @@
       "entitlements": {
         "com.apple.developer.family-controls": true
       },
-      "associatedDomains": ["zeroin.dev"]
+      "associatedDomains": ["zeroin.dev"],
+      "appleTeamId": "YCDM23LPV6"
     },
     "android": {
       "adaptiveIcon": {
