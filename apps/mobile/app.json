@@ -14,7 +14,8 @@
       "googleServicesFile": "./GoogleService-Info.plist",
       "entitlements": {
         "com.apple.developer.family-controls": true
-      }
+      },
+      "appleTeamId": "YCDM23LPV6"
     },
     "android": {
       "adaptiveIcon": {
