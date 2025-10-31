@@ -21,7 +21,7 @@ export default function TabTwoScreen() {
   const [request, response, promptAsync] = Google.useAuthRequest({
     clientId: '54527256719-mcqf4pfmc1blo0eroiolda0irv02ouue.apps.googleusercontent.com',
     redirectUri,
-    scopes: ['openid', 'profile', 'email']
+    responseType: 'id_token'
   })
 
   // Listen to Firebase auth state
@@ -46,7 +46,6 @@ export default function TabTwoScreen() {
 
   const signInWithFirebase = async (idToken: string) => {
     try {
-      setLoading(true)
       // Create Firebase credential from Google token
       const credential = auth.GoogleAuthProvider.credential(idToken)
 
@@ -57,9 +56,12 @@ export default function TabTwoScreen() {
     } catch (error) {
       Alert.alert('Error', String(error))
       console.error(error)
-    } finally {
-      setLoading(false)
     }
+  }
+
+  const handleSignIn = async () => {
+    setLoading(true)
+    return promptAsync()
   }
 
   const handleSignOut = async () => {
@@ -106,7 +108,7 @@ export default function TabTwoScreen() {
         <TouchableOpacity
           style={styles.googleBtn}
           disabled={!request}
-          onPress={() => promptAsync()}
+          onPress={() => handleSignIn()}
         >
           <View style={styles.googleLogo}>
             <Text style={styles.logoText}>G</Text>
