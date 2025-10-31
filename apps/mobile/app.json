@@ -14,7 +14,8 @@
       "googleServicesFile": "./GoogleService-Info.plist",
       "entitlements": {
         "com.apple.developer.family-controls": true
-      }
+      },
+      "associatedDomains": ["zeroin.dev"]
     },
     "android": {
       "adaptiveIcon": {
