@@ -5559,7 +5559,7 @@ __metadata:
     eslint-config-expo: "npm:~10.0.0"
     expo: "npm:~54.0.12"
     expo-constants: "npm:~18.0.10"
-    expo-font: "npm:~14.0.8"
+    expo-font: "npm:~14.0.9"
     expo-haptics: "npm:~15.0.7"
     expo-image: "npm:~3.0.8"
     expo-linking: "npm:~8.0.8"
@@ -9169,6 +9169,19 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/1238c23436431f283687bc465e9ce99702db3fc99e00bd3ebe0391090d5378a4c186fd6f9c124f3e00874dc5259c6304cf16bc0e8842674e590d7d46016dd5dc
+  languageName: node
+  linkType: hard
+
+"expo-font@npm:~14.0.9":
+  version: 14.0.9
+  resolution: "expo-font@npm:14.0.9"
+  dependencies:
+    fontfaceobserver: "npm:^2.1.0"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/7336a6094705c46379d4bb93f34a3b6c8d5fca871b34d62db94739b204639f3eeb6b1f5db4b4209e28a34348360075ccf557fe28ca996182469685427e570a9d
   languageName: node
   linkType: hard
 
