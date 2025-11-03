@@ -13,7 +13,7 @@ import ContentTemplate from '@/pages/components/ContentTemplate.vue'
 
       <div class="d-flex gap-3 mt-1">
         <a
-          href="https://instagram.com/zero.in.app"
+          href="https://instagram.com/zeroin.dev"
           target="_blank"
           rel="noopener"
           class="text-decoration-none"
@@ -29,7 +29,7 @@ import ContentTemplate from '@/pages/components/ContentTemplate.vue'
           <IMdiFacebook class="me-2 social-icon" />
         </a>
         <a
-          href="https://x.com/zero_in_app"
+          href="https://x.com/zeroin_app"
           target="_blank"
           rel="noopener"
           class="text-decoration-none"
@@ -44,7 +44,7 @@ import ContentTemplate from '@/pages/components/ContentTemplate.vue'
         >
           <IMdiGithub class="me-2 social-icon" />
         </a>
-        <a href="mailto:zero.in.app@outlook.com" class="text-decoration-none">
+        <a href="mailto:zeroin.dev@outlook.com" class="text-decoration-none">
           <IMdiEmail class="me-2 social-icon" />
         </a>
       </div>
