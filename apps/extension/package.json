@@ -51,7 +51,7 @@
     "typescript-eslint": "^8.46.2",
     "unplugin-icons": "^22.2.0",
     "unplugin-vue-components": "^28.8.0",
-    "vitest": "^3.2.4",
+    "vitest": "^4.0.6",
     "vue-eslint-parser": "^10.2.0",
     "vue-tsc": "^2.2.10",
     "wxt": "^0.20.7"
