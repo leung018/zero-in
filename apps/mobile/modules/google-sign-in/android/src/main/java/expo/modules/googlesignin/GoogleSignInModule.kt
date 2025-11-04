@@ -1,6 +1,5 @@
 package expo.modules.googlesignin
 
-import android.credentials.GetCredentialException
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
@@ -38,7 +37,7 @@ class GoogleSignInModule : Module() {
         AsyncFunction("signIn") { promise: Promise ->
             val googleIdOption: GetGoogleIdOption = googleIdOptionBuilder
                 .setAutoSelectEnabled(true)
-                .setAutoSelectEnabled(true)
+                .setFilterByAuthorizedAccounts(true)
                 .build()
 
             val request: GetCredentialRequest = GetCredentialRequest.Builder()
@@ -60,6 +59,10 @@ class GoogleSignInModule : Module() {
             is GoogleIdTokenCredential -> {
                 val idToken = credential.idToken
                 promise.resolve(idToken)
+            }
+
+            else -> {
+                promise.reject("NON_TOKEN", "No ID token available", null)
             }
         }
     }
