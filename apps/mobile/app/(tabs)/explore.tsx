@@ -2,6 +2,11 @@ import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
 import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import GoogleSignInButton from '../../components/google-sign-in-button'
+import GoogleSignInModule from '../../modules/google-sign-in/src/GoogleSignInModule'
+
+GoogleSignInModule.configure({
+  webClientId: '54527256719-mcqf4pfmc1blo0eroiolda0irv02ouue.apps.googleusercontent.com'
+})
 
 export default function TabTwoScreen() {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null)
@@ -33,6 +38,15 @@ export default function TabTwoScreen() {
 
   const handleSignIn = async () => {
     setLoading(true)
+    GoogleSignInModule.signIn()
+      .then((idToken) => {
+        signInWithFirebase(idToken)
+      })
+      .catch((error) => {
+        Alert.alert('Error', String(error))
+        console.error(error)
+        setLoading(false)
+      })
   }
 
   const handleSignOut = async () => {
@@ -76,7 +90,7 @@ export default function TabTwoScreen() {
       <View style={styles.card}>
         <Text style={styles.title}>Welcome</Text>
 
-        <GoogleSignInButton />
+        <GoogleSignInButton onPress={handleSignIn} />
       </View>
     </View>
   )

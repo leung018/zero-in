@@ -2,7 +2,7 @@ import { useCallback, useRef } from 'react'
 import { Animated, Pressable } from 'react-native'
 import Svg, { ClipPath, Defs, G, Path, Rect } from 'react-native-svg'
 
-export default function GoogleSignInButton() {
+export default function GoogleSignInButton({ onPress }: { onPress: () => void }) {
   const scaleAnim = useRef(new Animated.Value(1)).current
 
   const handlePressIn = useCallback(() => {
@@ -32,6 +32,7 @@ export default function GoogleSignInButton() {
       <Pressable
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
+        onPress={onPress}
         style={({ pressed }) => [
           {
             opacity: pressed ? 0.85 : 1

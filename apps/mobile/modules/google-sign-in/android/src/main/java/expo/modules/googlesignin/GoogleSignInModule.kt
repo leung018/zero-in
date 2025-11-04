@@ -1,9 +1,11 @@
 package expo.modules.googlesignin
 
+import android.util.Log
 import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
@@ -20,7 +22,7 @@ class ConfigureOptions : Record {
 }
 
 class GoogleSignInModule : Module() {
-    private val googleIdOptionBuilder = GetGoogleIdOption.Builder()
+    private var webClientId = ""
     private lateinit var credentialManager: CredentialManager
 
     override fun definition() = ModuleDefinition {
@@ -31,39 +33,38 @@ class GoogleSignInModule : Module() {
         }
 
         Function("configure") { options: ConfigureOptions ->
-            googleIdOptionBuilder.setServerClientId(options.webClientId)
+            webClientId = options.webClientId
         }
 
         AsyncFunction("signIn") { promise: Promise ->
-            val googleIdOption: GetGoogleIdOption = googleIdOptionBuilder
-                .setAutoSelectEnabled(true)
-                .setFilterByAuthorizedAccounts(true)
-                .build()
+            val option = GetSignInWithGoogleOption.Builder(webClientId).build()
 
             val request: GetCredentialRequest = GetCredentialRequest.Builder()
-                .addCredentialOption(googleIdOption)
+                .addCredentialOption(option)
                 .build()
 
-            CoroutineScope(Dispatchers.Main).launch {
-                val result = credentialManager.getCredential(
-                    request = request,
-                    context = appContext.currentActivity!!
-                )
-                handleSignIn(result, promise)
+            CoroutineScope(Dispatchers.Default).launch {
+                try {
+                    val result = credentialManager.getCredential(
+                        request = request,
+                        context = appContext.currentActivity!!
+                    )
+                    handleSignIn(result, promise)
+                } catch (ex: Exception) {
+                    Log.e("GoogleSignInModule", ex.stackTraceToString())
+                    promise.reject("UNKNOWN_ERROR", ex.message, null)
+                }
             }
         }
     }
 
     private fun handleSignIn(result: GetCredentialResponse, promise: Promise) {
-        when (val credential = result.credential) {
-            is GoogleIdTokenCredential -> {
-                val idToken = credential.idToken
-                promise.resolve(idToken)
-            }
-
-            else -> {
-                promise.reject("NON_TOKEN", "No ID token available", null)
-            }
+        val credential = result.credential
+        if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+            val googleIdToken = GoogleIdTokenCredential
+                .createFrom(credential.data).idToken
+            return promise.resolve(googleIdToken)
         }
+        promise.reject("NON_TOKEN", "No ID token available", null)
     }
 }
