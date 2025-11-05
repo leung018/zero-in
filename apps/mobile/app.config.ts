@@ -55,7 +55,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           buildReactNativeFromSource: true // Fix similar error as described in https://github.com/expo/expo/issues/39607
         }
       }
-    ]
+    ],
+    ['./plugins/withGIDClientID.ts']
   ],
   experiments: {
     typedRoutes: true,
