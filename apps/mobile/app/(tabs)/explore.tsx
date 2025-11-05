@@ -1,4 +1,11 @@
-import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
+import {
+  FirebaseAuthTypes,
+  getAuth,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signInWithCredential,
+  signOut
+} from '@react-native-firebase/auth'
 import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import GoogleSignInButton from '../../components/google-sign-in-button'
@@ -14,7 +21,7 @@ export default function TabTwoScreen() {
 
   // Listen to Firebase auth state
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged((firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(getAuth(), (firebaseUser) => {
       setUser(firebaseUser)
       setLoading(false)
     })
@@ -24,10 +31,10 @@ export default function TabTwoScreen() {
   const signInWithFirebase = async (idToken: string) => {
     try {
       // Create Firebase credential from Google token
-      const credential = auth.GoogleAuthProvider.credential(idToken)
+      const credential = GoogleAuthProvider.credential(idToken)
 
       // Sign in to Firebase
-      const userCredential = await auth().signInWithCredential(credential)
+      await signInWithCredential(getAuth(), credential)
 
       Alert.alert('Success', 'Signed in successfully!')
     } catch (error) {
@@ -51,7 +58,7 @@ export default function TabTwoScreen() {
 
   const handleSignOut = async () => {
     try {
-      await auth().signOut()
+      await signOut(getAuth())
       Alert.alert('Signed Out', 'You have been signed out successfully')
     } catch (error) {
       Alert.alert('Error', String(error))
