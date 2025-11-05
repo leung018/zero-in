@@ -7,7 +7,8 @@ public class GoogleSignInModule: Module {
     public func definition() -> ModuleDefinition {
         Name("MyGoogleSignIn")
 
-        Function("configure") {}
+        Function("configure") { (options: ConfigureOptions) in
+        }
 
         AsyncFunction("signIn") { (promise: Promise) in
             guard
@@ -53,4 +54,7 @@ public class GoogleSignInModule: Module {
             }
         }
     }
+}
+
+struct ConfigureOptions: Record {
 }
