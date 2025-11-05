@@ -52,7 +52,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         ios: {
           useFrameworks: 'static',
-          buildReactNativeFromSource: true
+          buildReactNativeFromSource: true // Fix similar error as described in https://github.com/expo/expo/issues/39607
         }
       }
     ]
