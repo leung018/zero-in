@@ -1,4 +1,5 @@
 import { ConfigContext, ExpoConfig } from 'expo/config'
+import 'tsx/cjs'
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
