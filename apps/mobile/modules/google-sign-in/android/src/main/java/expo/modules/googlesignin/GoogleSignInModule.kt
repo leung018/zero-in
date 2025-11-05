@@ -26,7 +26,7 @@ class GoogleSignInModule : Module() {
     private lateinit var credentialManager: CredentialManager
 
     override fun definition() = ModuleDefinition {
-        Name("GoogleSignIn")
+        Name("MyGoogleSignIn")
 
         OnCreate {
             credentialManager = CredentialManager.create(appContext.reactContext!!)

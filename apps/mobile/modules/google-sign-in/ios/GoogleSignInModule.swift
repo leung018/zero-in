@@ -5,7 +5,7 @@ public class GoogleSignInModule: Module {
   private var webClientId: String?
   
   public func definition() -> ModuleDefinition {
-    Name("GoogleSignIn")
+    Name("MyGoogleSignIn")
     
     Function("configure") { (options: ConfigureOptions) in
       

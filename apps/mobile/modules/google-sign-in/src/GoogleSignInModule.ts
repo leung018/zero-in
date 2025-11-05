@@ -11,4 +11,4 @@ declare class GoogleSignInModule extends NativeModule {
 }
 
 // This call loads the native module object from the JSI.
-export default requireNativeModule<GoogleSignInModule>('GoogleSignIn')
+export default requireNativeModule<GoogleSignInModule>('MyGoogleSignIn')
