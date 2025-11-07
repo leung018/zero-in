@@ -1,5 +1,5 @@
 import { FirebaseAuthTypes, getAuth, onAuthStateChanged } from '@react-native-firebase/auth'
-import { doc, getDoc, getFirestore, onSnapshot, setDoc } from '@react-native-firebase/firestore'
+import { doc, getDoc, getFirestore, onSnapshot } from '@react-native-firebase/firestore'
 import { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
@@ -19,7 +19,6 @@ export default function FirestoreExperimentScreen() {
       getTimeDataFromFirestore(user.uid).then((endAt) => {
         setEndAt(endAt)
       })
-      setSampleDataToFirestore(user.uid)
     }
   }, [user])
 
@@ -53,10 +52,6 @@ export default function FirestoreExperimentScreen() {
 async function getTimeDataFromFirestore(userId: string): Promise<string> {
   const result = await getDoc(doc(getFirestore(), 'users', userId, 'application', 'timerState'))
   return result.data()!.endAt ?? 'No Data'
-}
-
-async function setSampleDataToFirestore(userId: string): Promise<void> {
-  await setDoc(doc(getFirestore(), 'users', userId, 'testing', 'sampleData'), { hello: 'world' })
 }
 
 const styles = StyleSheet.create({
