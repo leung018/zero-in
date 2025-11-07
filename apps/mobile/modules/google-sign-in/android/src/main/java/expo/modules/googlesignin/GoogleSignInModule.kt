@@ -1,5 +1,6 @@
 package expo.modules.googlesignin
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.credentials.CredentialManager
@@ -49,6 +50,7 @@ class GoogleSignInModule : Module() {
         }
     }
 
+    @SuppressLint("DiscouragedApi")
     private fun getWebClientIdFromResources(context: Context): String {
         val resId = context.applicationContext.resources.getIdentifier(
             "default_web_client_id",
