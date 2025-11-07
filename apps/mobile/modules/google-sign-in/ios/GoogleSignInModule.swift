@@ -7,9 +7,6 @@ public class GoogleSignInModule: Module {
     public func definition() -> ModuleDefinition {
         Name("MyGoogleSignIn")
 
-        Function("configure") { (options: ConfigureOptions) in
-        }
-
         AsyncFunction("signIn") { (promise: Promise) in
             guard
                 let windowScene = UIApplication.shared.connectedScenes.first
@@ -54,7 +51,4 @@ public class GoogleSignInModule: Module {
             }
         }
     }
-}
-
-struct ConfigureOptions: Record {
 }

@@ -1,5 +1,7 @@
 package expo.modules.googlesignin
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
@@ -9,17 +11,10 @@ import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
-import expo.modules.kotlin.records.Record
-import expo.modules.kotlin.records.Field
 import expo.modules.kotlin.Promise
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
-class ConfigureOptions : Record {
-    @Field
-    val webClientId: String = ""
-}
 
 class GoogleSignInModule : Module() {
     private var webClientId = ""
@@ -30,10 +25,7 @@ class GoogleSignInModule : Module() {
 
         OnCreate {
             credentialManager = CredentialManager.create(appContext.reactContext!!)
-        }
-
-        Function("configure") { options: ConfigureOptions ->
-            webClientId = options.webClientId
+            webClientId = getWebClientIdFromResources(appContext.reactContext!!)
         }
 
         AsyncFunction("signIn") { promise: Promise ->
@@ -56,6 +48,16 @@ class GoogleSignInModule : Module() {
                 }
             }
         }
+    }
+
+    @SuppressLint("DiscouragedApi")
+    private fun getWebClientIdFromResources(context: Context): String {
+        val resId = context.applicationContext.resources.getIdentifier(
+            "default_web_client_id",
+            "string",
+            context.applicationContext.packageName
+        )
+        return if (resId != 0) context.getString(resId) else throw Exception("Cannot get webClientId")
     }
 
     private fun handleSignIn(result: GetCredentialResponse, promise: Promise) {
