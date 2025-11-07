@@ -11,10 +11,6 @@ import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } fr
 import GoogleSignInButton from '../../components/google-sign-in-button'
 import GoogleSignInModule from '../../modules/google-sign-in/src/GoogleSignInModule'
 
-GoogleSignInModule.configure({
-  webClientId: '54527256719-mcqf4pfmc1blo0eroiolda0irv02ouue.apps.googleusercontent.com'
-})
-
 export default function TabTwoScreen() {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null)
   const [loading, setLoading] = useState(true)

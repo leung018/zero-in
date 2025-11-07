@@ -1,12 +1,5 @@
 import { NativeModule, requireNativeModule } from 'expo'
-
-type ConfigureOptions = {
-  webClientId: string
-}
-
 declare class GoogleSignInModule extends NativeModule {
-  configure(options: ConfigureOptions): void
-
   signIn(): Promise<string>
 }
 
