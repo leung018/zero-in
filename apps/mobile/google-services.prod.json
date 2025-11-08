@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "550134889923",
+    "project_id": "zero-in-prod",
+    "storage_bucket": "zero-in-prod.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:550134889923:android:0f89d35573e83e25901176",
+        "android_client_info": {
+          "package_name": "dev.zeroin.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "550134889923-f4jgidokb7evj1i9smq0k5ha49quh9ti.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_XGFmCExmRushz9Q85jyYp1ygaiIkf0I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "550134889923-f4jgidokb7evj1i9smq0k5ha49quh9ti.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "550134889923-bec7ncol6p0fj3s5po8rvk82gcqob4n8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "dev.zeroin.mobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
