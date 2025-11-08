@@ -5,6 +5,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Zero In',
   slug: 'zero-in',
+  extra: {
+    eas: {
+      projectId: '81a3022e-b587-48a1-9a15-5519aea38362'
+    }
+  },
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
