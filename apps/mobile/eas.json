@@ -12,9 +12,6 @@
         "GOOGLE_SERVICES_PLIST": "GoogleService-Info.plist"
       }
     },
-    "preview": {
-      "distribution": "internal"
-    },
     "production": {
       "autoIncrement": true,
       "env": {
