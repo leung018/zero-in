@@ -6,13 +6,21 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "GOOGLE_SERVICES_JSON": "google-services.json",
+        "GOOGLE_SERVICES_PLIST": "GoogleService-Info.plist"
+      }
     },
     "preview": {
       "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "GOOGLE_SERVICES_JSON": "google-services.prod.json",
+        "GOOGLE_SERVICES_PLIST": "GoogleService-Info.prod.plist"
+      }
     }
   },
   "submit": {
