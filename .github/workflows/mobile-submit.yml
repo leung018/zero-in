@@ -1,8 +1,7 @@
 name: Mobile Submit
 
 on:
-    push:
-        branches: [main]
+    pull_request:
         paths:
             - "apps/mobile/**"
             - "packages/shared/**"
