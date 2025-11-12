@@ -23,6 +23,5 @@ jobs:
                   cache: "yarn"
                   cache-dependency-path: yarn.lock
             - run: yarn install --immutable
-            - run: yarn cng
             - name: Build and Submit Android
               run: yarn build:android --non-interactive --auto-submit
