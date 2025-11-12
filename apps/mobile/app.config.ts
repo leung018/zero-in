@@ -5,6 +5,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Zero In',
   slug: 'zero-in',
+  extra: {
+    eas: {
+      projectId: '81a3022e-b587-48a1-9a15-5519aea38362'
+    }
+  },
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
@@ -14,7 +19,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'dev.zeroin.mobile',
-    googleServicesFile: './GoogleService-Info.plist',
+    googleServicesFile: process.env.GOOGLE_SERVICES_PLIST || 'GoogleService-Info.plist',
     entitlements: {
       'com.apple.developer.family-controls': true
     },
@@ -30,7 +35,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: 'dev.zeroin.mobile',
-    googleServicesFile: './google-services.json'
+    googleServicesFile: process.env.GOOGLE_SERVICES_JSON || 'google-services.json'
   },
   plugins: [
     'expo-router',
