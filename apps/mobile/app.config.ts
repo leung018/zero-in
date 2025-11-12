@@ -1,6 +1,5 @@
 import { ConfigContext, ExpoConfig } from 'expo/config'
 import 'tsx/cjs'
-import { getGoogleServicesJsonPath, getGoogleServicesPlistPath } from './config'
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -20,7 +19,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'dev.zeroin.mobile',
-    googleServicesFile: getGoogleServicesPlistPath(),
+    googleServicesFile: process.env.GOOGLE_SERVICES_PLIST || './GoogleService-Info.plist',
     entitlements: {
       'com.apple.developer.family-controls': true
     },
@@ -36,7 +35,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: 'dev.zeroin.mobile',
-    googleServicesFile: getGoogleServicesJsonPath()
+    googleServicesFile: process.env.GOOGLE_SERVICES_JSON || './google-services.json'
   },
   plugins: [
     'expo-router',
