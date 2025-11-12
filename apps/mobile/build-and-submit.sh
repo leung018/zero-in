@@ -11,6 +11,8 @@ for arg in "$@"; do
   esac
 done
 
+yarn install --immutable
+
 # TODO: I don't test below now because I don't want waste the quota of eas build for remote build.
 # For local build, I don't want to wait for build time.
 # So test below next time when I really need it.
