@@ -19,7 +19,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'dev.zeroin.mobile',
-    googleServicesFile: process.env.GOOGLE_SERVICES_PLIST || './GoogleService-Info.plist',
+    googleServicesFile: process.env.GOOGLE_SERVICES_PLIST || 'GoogleService-Info.plist',
     entitlements: {
       'com.apple.developer.family-controls': true
     },
@@ -35,7 +35,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: 'dev.zeroin.mobile',
-    googleServicesFile: process.env.GOOGLE_SERVICES_JSON || './google-services.json'
+    googleServicesFile: process.env.GOOGLE_SERVICES_JSON || 'google-services.json'
   },
   plugins: [
     'expo-router',
