@@ -8,10 +8,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "lint": "expo lint",
-    "cng": "expo prebuild --clean",
-    "build:android": "eas build --platform android --profile production",
-    "build:ios": "eas build --platform ios --profile production",
-    "submit:android": "eas submit --platform android"
+    "cng": "expo prebuild --clean"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
