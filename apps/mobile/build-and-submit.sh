@@ -17,6 +17,8 @@ yarn install --immutable
 # For local build, I don't want to wait for build time.
 # So test below next time when I really need it.
 
+# TODO: Add ios
+
 if [ "$LOCAL_BUILD" = true ]; then
   echo "🚧 Running local build with fixed output..."
 
