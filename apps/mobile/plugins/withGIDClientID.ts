@@ -4,7 +4,10 @@ import path from 'path'
 
 const withGIDClientID: ConfigPlugin = (config) => {
   return withInfoPlist(config, (config) => {
-    const plistPath = path.resolve(config.modRequest.projectRoot, 'GoogleService-Info.plist')
+    const plistPath = path.resolve(
+      config.modRequest.projectRoot,
+      config.ios?.googleServicesFile || 'GoogleService-Info.plist'
+    )
 
     if (fs.existsSync(plistPath)) {
       const plistContent = fs.readFileSync(plistPath, 'utf8')
