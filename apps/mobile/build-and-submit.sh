@@ -1,5 +1,12 @@
 set -e
 
+# Only allow execution on main branch
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$CURRENT_BRANCH" != "main" ]]; then
+  echo "❌ Script can only be run on the 'main' branch (current: $CURRENT_BRANCH)"
+  exit 1
+fi
+
 # Default config
 LOCAL_BUILD=false
 OUTPUT_AAB="zero-in.aab"
