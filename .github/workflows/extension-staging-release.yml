@@ -6,6 +6,7 @@ on:
     paths:
       - 'apps/extension/**'
       - 'packages/shared/**'
+      - '.github/workflows/extension-staging-release.yml'
 defaults:
   run:
     working-directory: apps/extension
