@@ -58,17 +58,17 @@ if [ "$LOCAL_BUILD" = true ]; then
   echo "🚧 Running local build with fixed output..."
 
   echo "🛠 Building $PLATFORM app..."
-  eas build --platform "$PLATFORM" --profile production --local --output "$OUTPUT_FILE" --non-interactive
+  eas build --platform "$PLATFORM" --profile production --local --output "$OUTPUT_FILE"
 
   echo "🚀 Submitting $PLATFORM local build to store..."
-  eas submit --platform "$PLATFORM" --path "$OUTPUT_FILE" --non-interactive
+  eas submit --platform "$PLATFORM" --path "$OUTPUT_FILE"
 
   echo "✅ Local build & submit complete: $OUTPUT_FILE"
 else
   echo "☁️ Running cloud build with auto-submit..."
 
   echo "🛠 Building & submitting $PLATFORM app..."
-  eas build --platform "$PLATFORM" --profile production --auto-submit --non-interactive
+  eas build --platform "$PLATFORM" --profile production --auto-submit
 
   echo "✅ Cloud build & submit complete"
 fi
