@@ -1,4 +1,4 @@
-set -e
+set -euo pipefail
 
 # Only allow execution on main branch
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -9,14 +9,44 @@ fi
 
 # Default config
 LOCAL_BUILD=false
-OUTPUT_AAB="zero-in.aab"
+PLATFORM=""
+OUTPUT_FILE=""
 
 # Parse arguments
 for arg in "$@"; do
   case $arg in
-    --local) LOCAL_BUILD=true ;;
+    --local) 
+      LOCAL_BUILD=true 
+      ;;
+    --platform=*)
+      PLATFORM="${arg#*=}"
+      ;;
+    *)
+      echo "❌ Unknown argument: $arg"
+      echo "Usage: $0 --platform=<android|ios> [--local]"
+      exit 1
+      ;;
   esac
 done
+
+# Validate platform argument
+if [[ -z "$PLATFORM" ]]; then
+  echo "❌ Platform is required"
+  echo "Usage: $0 --platform=<android|ios> [--local]"
+  exit 1
+fi
+
+if [[ "$PLATFORM" != "android" && "$PLATFORM" != "ios" ]]; then
+  echo "❌ Invalid platform: $PLATFORM (must be 'android' or 'ios')"
+  exit 1
+fi
+
+# Set output file based on platform
+if [[ "$PLATFORM" == "android" ]]; then
+  OUTPUT_FILE="zero-in.aab"
+else
+  OUTPUT_FILE="zero-in.ipa"
+fi
 
 yarn install --immutable
 
@@ -24,23 +54,21 @@ yarn install --immutable
 # For local build, I don't want to wait for build time.
 # So test below next time when I really need it.
 
-# TODO: Add ios
-
 if [ "$LOCAL_BUILD" = true ]; then
   echo "🚧 Running local build with fixed output..."
 
-  echo "🛠 Building Android app..."
-  eas build --platform android --profile production --local --output "$OUTPUT_AAB" --non-interactive
+  echo "🛠 Building $PLATFORM app..."
+  eas build --platform "$PLATFORM" --profile production --local --output "$OUTPUT_FILE" --non-interactive
 
-  echo "🚀 Submitting Android local build to store..."
-  eas submit --platform android --path "$OUTPUT_AAB" --non-interactive
+  echo "🚀 Submitting $PLATFORM local build to store..."
+  eas submit --platform "$PLATFORM" --path "$OUTPUT_FILE" --non-interactive
 
-  echo "✅ Local build & submit complete: $OUTPUT_AAB"
+  echo "✅ Local build & submit complete: $OUTPUT_FILE"
 else
   echo "☁️ Running cloud build with auto-submit..."
 
-  echo "🛠 Building & submitting Android app..."
-  eas build --platform android --profile production --auto-submit --non-interactive
+  echo "🛠 Building & submitting $PLATFORM app..."
+  eas build --platform "$PLATFORM" --profile production --auto-submit --non-interactive
 
   echo "✅ Cloud build & submit complete"
 fi
