@@ -23,7 +23,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     entitlements: {
       'com.apple.developer.family-controls': true
     },
-    appleTeamId: 'YCDM23LPV6'
+    appleTeamId: 'YCDM23LPV6',
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false
+    }
   },
   android: {
     adaptiveIcon: {
