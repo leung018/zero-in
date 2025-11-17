@@ -15,25 +15,27 @@ const SignInScreen = () => {
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.title}>Welcome to Zero In</Text>
-            <Text style={styles.subtitle}>Sign in to get started</Text>
+            <Text style={styles.subtitle}>Sign in to unlock your full potential</Text>
           </View>
 
           {/* Info Card */}
           <View style={styles.infoCard}>
-            <View style={styles.iconContainer}>
-              <Text style={styles.icon}>✨</Text>
+            <View style={styles.infoTitleRow}>
+              <View style={styles.iconContainer}>
+                <Text style={styles.icon}>⭐</Text>
+              </View>
+              <Text style={styles.infoTitle}>Limited Time Offer</Text>
             </View>
             <Text style={styles.infoText}>
-              <Text style={styles.bold}>Sign in</Text> to unlock{' '}
+              Sign in to unlock{' '}
               <Text
                 style={styles.link}
                 onPress={() => handleLinkPress('https://zeroin.dev/premium')}
               >
                 premium features
               </Text>
-              ! Enjoy a <Text style={styles.bold}>free trial</Text> during this{' '}
-              <Text style={styles.bold}>limited-time promotion</Text>, though it may end at any
-              time.
+              ! Enjoy a <Text style={styles.bold}>free trial</Text> during this promotion
+              <Text style={styles.muted}> (may end at any time)</Text>.
             </Text>
           </View>
 
@@ -45,7 +47,7 @@ const SignInScreen = () => {
           {/* Terms and Privacy */}
           <View style={styles.footer}>
             <Text style={styles.termsText}>
-              By signing in, you agree to the{' '}
+              By signing in, you agree to our{' '}
               <Text
                 style={styles.footerLink}
                 onPress={() => handleLinkPress('https://zeroin.dev/tos')}
@@ -59,7 +61,6 @@ const SignInScreen = () => {
               >
                 Privacy Policy
               </Text>
-              .
             </Text>
           </View>
         </View>
@@ -71,70 +72,88 @@ const SignInScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa'
+    backgroundColor: '#f5f7fa'
   },
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    paddingVertical: 40
+    paddingVertical: 40,
+    paddingHorizontal: 24
   },
   content: {
-    paddingHorizontal: 24,
-    maxWidth: 500,
+    maxWidth: 440,
     width: '100%',
     alignSelf: 'center'
   },
   header: {
-    marginBottom: 32,
+    marginBottom: 40,
     alignItems: 'center'
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: '700',
-    color: '#1f1f1f',
-    marginBottom: 8,
-    textAlign: 'center'
+    color: '#1a1a1a',
+    marginBottom: 12,
+    textAlign: 'center',
+    letterSpacing: -0.5
   },
   subtitle: {
     fontSize: 16,
-    color: '#5f6368',
-    textAlign: 'center'
+    color: '#64748b',
+    textAlign: 'center',
+    lineHeight: 24
   },
   infoCard: {
     backgroundColor: '#ffffff',
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: 20,
+    padding: 24,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 4
     },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 4,
     borderWidth: 1,
-    borderColor: '#e8eaed'
+    borderColor: '#e2e8f0',
+    marginBottom: 32
+  },
+  infoTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12
   },
   iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#e6f7ff',
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#fff7ed',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16
+    marginRight: 12
   },
   icon: {
-    fontSize: 24
+    fontSize: 20
+  },
+  infoTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1a1a1a',
+    flex: 1
   },
   infoText: {
     fontSize: 15,
-    lineHeight: 22,
-    color: '#364f6b'
+    lineHeight: 24,
+    color: '#475569'
   },
   bold: {
     fontWeight: '600',
-    color: '#1f1f1f'
+    color: '#1a1a1a'
+  },
+  muted: {
+    fontSize: 14,
+    color: '#94a3b8'
   },
   link: {
     color: '#1a73e8',
@@ -142,22 +161,21 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline'
   },
   buttonContainer: {
-    marginTop: 32,
     marginBottom: 24,
-    width: '100%'
+    alignItems: 'center'
   },
   footer: {
-    marginTop: 24,
     paddingHorizontal: 8
   },
   termsText: {
     fontSize: 13,
     lineHeight: 20,
-    color: '#5f6368',
+    color: '#64748b',
     textAlign: 'center'
   },
   footerLink: {
     color: '#1a73e8',
+    fontWeight: '500',
     textDecorationLine: 'underline'
   }
 })
