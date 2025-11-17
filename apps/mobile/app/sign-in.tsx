@@ -1,8 +1,20 @@
+import { getAuth, GoogleAuthProvider, signInWithCredential } from '@react-native-firebase/auth'
 import { Link } from 'expo-router'
 import React from 'react'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import GoogleSignInButton from '../components/google-sign-in-button'
+import GoogleSignInModule from '../modules/google-sign-in'
+
+const handleGoogleSignIn = async () => {
+  try {
+    const idToken = await GoogleSignInModule.signIn()
+    await signInWithCredential(getAuth(), GoogleAuthProvider.credential(idToken))
+  } catch (error) {
+    console.error(error)
+    Alert.alert('Sign-In Error', 'An error occurred during sign-in. Please try again.')
+  }
+}
 
 const SignInScreen = () => {
   return (
@@ -35,7 +47,7 @@ const SignInScreen = () => {
 
           {/* Google Sign-In Button */}
           <View style={styles.buttonContainer}>
-            <GoogleSignInButton onPress={() => {}} />
+            <GoogleSignInButton onPress={handleGoogleSignIn} />
           </View>
 
           {/* Terms and Privacy */}

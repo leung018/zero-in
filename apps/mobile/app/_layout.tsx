@@ -1,3 +1,4 @@
+import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth'
 import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
@@ -7,21 +8,16 @@ SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
-    const prepareApp = async () => {
-      try {
-        // TODO: Check if user is logged in
-      } catch (e) {
-        console.warn(e)
-      } finally {
-        setIsReady(true)
-        await SplashScreen.hideAsync()
-      }
-    }
+    const unsubscribe = onAuthStateChanged(getAuth(), async (user) => {
+      setIsAuthenticated(user != null)
+      setIsReady(true)
+      await SplashScreen.hideAsync()
+    })
 
-    prepareApp()
+    return unsubscribe
   }, [])
 
   if (!isReady) {
@@ -31,10 +27,10 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Protected guard={isLoggedIn}>
+        <Stack.Protected guard={isAuthenticated}>
           <Stack.Screen name="index" />
         </Stack.Protected>
-        <Stack.Protected guard={!isLoggedIn}>
+        <Stack.Protected guard={!isAuthenticated}>
           <Stack.Screen name="sign-in" />
         </Stack.Protected>
       </Stack>
