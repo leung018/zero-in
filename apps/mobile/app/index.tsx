@@ -1,6 +1,16 @@
+import { getAuth, signOut } from '@react-native-firebase/auth'
 import React from 'react'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+
+const handleSignOut = async () => {
+  try {
+    await signOut(getAuth())
+  } catch (error) {
+    console.error('Error signing out:', error)
+    Alert.alert('Sign-Out Error', 'An error occurred during sign-out. Please try again.')
+  }
+}
 
 export default function HomeScreen() {
   return (
@@ -13,6 +23,10 @@ export default function HomeScreen() {
             You&apos;re successfully logged in and can access all premium features.
           </Text>
         </View>
+
+        <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
+          <Text style={styles.signOutText}>Sign Out</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   )
@@ -37,7 +51,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1f1f1f'
   },
-  logoutButton: {
+  signOutButton: {
     backgroundColor: '#fff',
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -45,7 +59,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e8eaed'
   },
-  logoutText: {
+  signOutText: {
     color: '#dc3545',
     fontWeight: '600',
     fontSize: 14
