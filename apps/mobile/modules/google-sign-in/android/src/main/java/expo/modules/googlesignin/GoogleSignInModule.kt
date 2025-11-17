@@ -35,7 +35,7 @@ class GoogleSignInModule : Module() {
                 .addCredentialOption(option)
                 .build()
 
-            CoroutineScope(Dispatchers.Default).launch {
+            CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val result = credentialManager.getCredential(
                         request = request,
