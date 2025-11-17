@@ -1,13 +1,10 @@
+import { Link } from 'expo-router'
 import React from 'react'
-import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import GoogleSignInButton from '../components/google-sign-in-button'
 
 const SignInScreen = () => {
-  const handleLinkPress = (url: string) => {
-    Linking.openURL(url)
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -28,12 +25,9 @@ const SignInScreen = () => {
             </View>
             <Text style={styles.infoText}>
               Sign in to unlock{' '}
-              <Text
-                style={styles.link}
-                onPress={() => handleLinkPress('https://zeroin.dev/premium')}
-              >
+              <Link href="https://zeroin.dev/premium" style={styles.link}>
                 premium features
-              </Text>
+              </Link>
               ! Enjoy a <Text style={styles.bold}>free trial</Text> during this promotion
               <Text style={styles.muted}> (may end at any time)</Text>.
             </Text>
@@ -48,19 +42,13 @@ const SignInScreen = () => {
           <View style={styles.footer}>
             <Text style={styles.termsText}>
               By signing in, you agree to our{' '}
-              <Text
-                style={styles.footerLink}
-                onPress={() => handleLinkPress('https://zeroin.dev/tos')}
-              >
+              <Link href="https://zeroin.dev/tos" style={styles.footerLink}>
                 Terms of Service
-              </Text>{' '}
+              </Link>{' '}
               and{' '}
-              <Text
-                style={styles.footerLink}
-                onPress={() => handleLinkPress('https://zeroin.dev/privacy')}
-              >
+              <Link href="https://zeroin.dev/privacy" style={styles.footerLink}>
                 Privacy Policy
-              </Text>
+              </Link>
             </Text>
           </View>
         </View>
