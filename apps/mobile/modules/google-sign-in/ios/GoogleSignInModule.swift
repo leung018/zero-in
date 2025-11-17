@@ -16,8 +16,8 @@ public class GoogleSignInModule: Module {
             else {
                 promise.reject(
                     Exception(
-                        name: "NoViewController",
-                        description: "Cannot find root view controller"
+                        name: "NO_VIEW_CONTROLLER",
+                        description: "Cannot find a window scene or root view controller"
                     )
                 )
                 return
@@ -28,7 +28,7 @@ public class GoogleSignInModule: Module {
                 if let error = error {
                     promise.reject(
                         Exception(
-                            name: "SignInError",
+                            name: "UNKNOWN_ERROR",
                             description: error.localizedDescription
                         )
                     )
@@ -40,8 +40,8 @@ public class GoogleSignInModule: Module {
                 else {
                     promise.reject(
                         Exception(
-                            name: "SignInError",
-                            description: "Failed to get ID token"
+                            name: "NON_TOKEN",
+                            description: "No ID token available"
                         )
                     )
                     return
