@@ -16,8 +16,9 @@ public class GoogleSignInModule: Module {
             else {
                 promise.reject(
                     Exception(
-                        name: "NO_VIEW_CONTROLLER",
-                        description: "Cannot find a window scene or root view controller"
+                        name: "NoViewControllerError",
+                        description: "Cannot find a window scene or root view controller",
+                        code: "NO_VIEW_CONTROLLER"
                     )
                 )
                 return
@@ -25,14 +26,24 @@ public class GoogleSignInModule: Module {
 
             GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController)
             { signInResult, error in
-                if let error = error {
-                    promise.reject(
-                        Exception(
-                            name: "UNKNOWN_ERROR",
-                            description: error.localizedDescription
+                if let error = error as NSError? {
+                    if error.domain == GIDSignInError.errorDomain && error.code == GIDSignInError.Code.canceled.rawValue {
+                        promise.reject(Exception(
+                            name: "SignInError",
+                            description: "User cancelled sign in",
+                            code: "USER_CANCELLED",
+                        ))
+                        return
+                    } else {
+                        promise.reject(
+                            Exception(
+                                name: "SignInError",
+                                description: error.localizedDescription,
+                                code: "UNKNOWN_ERROR"
+                            )
                         )
-                    )
-                    return
+                        return
+                    }
                 }
 
                 guard let result = signInResult,
@@ -40,8 +51,9 @@ public class GoogleSignInModule: Module {
                 else {
                     promise.reject(
                         Exception(
-                            name: "NON_TOKEN",
-                            description: "No ID token available"
+                            name: "SignInError",
+                            description: "No ID token available",
+                            code: "NON_TOKEN",
                         )
                     )
                     return
