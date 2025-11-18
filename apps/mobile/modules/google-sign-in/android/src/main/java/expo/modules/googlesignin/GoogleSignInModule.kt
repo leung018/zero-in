@@ -44,7 +44,7 @@ class GoogleSignInModule : Module() {
                     handleSignIn(result, promise)
                 } catch (ex: Exception) {
                     Log.e("GoogleSignInModule", ex.stackTraceToString())
-                    promise.reject("UNKNOWN_ERROR", ex.message, null)
+                    promise.reject("UNKNOWN_ERROR", ex.message, ex)
                 }
             }
         }
