@@ -7,6 +7,13 @@ if [[ "$CURRENT_BRANCH" != "main" ]]; then
   exit 1
 fi
 
+# Exit if there are uncommitted changes (including untracked files)
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo "❌ Working directory has uncommitted changes. Please commit or stash them before running this script."
+  git status --porcelain
+  exit 1
+fi
+
 # Default config
 LOCAL_BUILD=false
 PLATFORM=""
