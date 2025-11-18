@@ -10,7 +10,8 @@ const handleGoogleSignIn = async () => {
   try {
     const idToken = await GoogleSignInModule.signIn()
     await signInWithCredential(getAuth(), GoogleAuthProvider.credential(idToken))
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.code === 'USER_CANCELLED') return
     console.error(error)
     Alert.alert('Sign-In Error', 'An error occurred during sign-in. Please try again.')
   }
