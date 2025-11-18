@@ -1,6 +1,7 @@
 import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth'
 import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
+import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
@@ -34,6 +35,7 @@ export default function RootLayout() {
           <Stack.Screen name="sign-in" />
         </Stack.Protected>
       </Stack>
+      <StatusBar style="auto" />
     </SafeAreaProvider>
   )
 }
