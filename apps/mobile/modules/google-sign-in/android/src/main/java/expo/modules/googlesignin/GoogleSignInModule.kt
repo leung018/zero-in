@@ -7,6 +7,7 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
+import androidx.credentials.exceptions.GetCredentialCancellationException
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import expo.modules.kotlin.modules.Module
@@ -42,6 +43,8 @@ class GoogleSignInModule : Module() {
                         context = appContext.currentActivity!!
                     )
                     handleSignIn(result, promise)
+                } catch (_: GetCredentialCancellationException) {
+                    promise.reject("USER_CANCELLED", "User cancelled sign in", null)
                 } catch (ex: Exception) {
                     Log.e("GoogleSignInModule", ex.stackTraceToString())
                     promise.reject("UNKNOWN_ERROR", ex.message, ex)
