@@ -1,24 +1,39 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
+import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth'
 import { Stack } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
-import 'react-native-reanimated'
+import * as SplashScreen from 'expo-splash-screen'
+import { useEffect, useState } from 'react'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
-import { useColorScheme } from '@/hooks/use-color-scheme'
-
-export const unstable_settings = {
-  anchor: '(tabs)'
-}
+SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme()
+  const [isReady, setIsReady] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(getAuth(), async (user) => {
+      setIsAuthenticated(user != null)
+      setIsReady(true)
+      await SplashScreen.hideAsync()
+    })
+
+    return unsubscribe
+  }, [])
+
+  if (!isReady) {
+    return null
+  }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+    <SafeAreaProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Protected guard={isAuthenticated}>
+          <Stack.Screen name="index" />
+        </Stack.Protected>
+        <Stack.Protected guard={!isAuthenticated}>
+          <Stack.Screen name="sign-in" />
+        </Stack.Protected>
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    </SafeAreaProvider>
   )
 }
