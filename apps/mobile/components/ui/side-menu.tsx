@@ -1,7 +1,16 @@
 import { Ionicons } from '@expo/vector-icons'
 import { getAuth, signOut } from '@react-native-firebase/auth'
 import React, { useEffect, useRef } from 'react'
-import { Animated, BackHandler, Easing, Pressable, StyleSheet, Text, View } from 'react-native'
+import {
+  Alert,
+  Animated,
+  BackHandler,
+  Easing,
+  Pressable,
+  StyleSheet,
+  Text,
+  View
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 type SideMenuProps = {
@@ -43,6 +52,7 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
       onClose()
     } catch (error) {
       console.error('Error signing out:', error)
+      Alert.alert('Sign-Out Error', 'An error occurred during sign-out. Please try again.')
     }
   }
 
