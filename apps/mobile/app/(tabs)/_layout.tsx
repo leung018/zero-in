@@ -44,9 +44,9 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="more"
+          name="menu"
           options={{
-            title: 'More',
+            title: 'Menu',
             tabBarIcon: ({ color, size }) => <Ionicons name="menu" size={size} color={color} />,
             tabBarButton: (props) => {
               const { children, style, accessibilityLabel, testID } = props as any
