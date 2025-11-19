@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { Tabs } from 'expo-router'
 import React, { useState } from 'react'
 import { TouchableOpacity, View } from 'react-native'
-import { SideMenu } from '../../components/ui/side-menu'
+import { SideMenu } from '../../components/side-menu'
 
 export default function TabLayout() {
   const [menuVisible, setMenuVisible] = useState(false)
