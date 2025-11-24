@@ -16,6 +16,9 @@
     "firestore": {
       "port": 8080
     },
+    "functions": {
+      "port": 5001
+    },
     "ui": {
       "enabled": false
     },
@@ -25,5 +28,12 @@
     "database": "(default)",
     "location": "asia-east1",
     "rules": "firestore.rules"
-  }
+  },
+  "functions": [
+    {
+      "codebase": "default",
+      "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log", "*.local"],
+      "source": "functions"
+    }
+  ]
 }
