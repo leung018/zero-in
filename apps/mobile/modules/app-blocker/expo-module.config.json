@@ -1,7 +1,14 @@
 {
   "platforms": ["apple", "android", "web"],
   "apple": {
-    "modules": ["AppBlockerModule"]
+    "modules": ["AppBlockerModule"],
+    "appExtensions": [
+      {
+        "targetName": "NotificationServiceExtension",
+        "bundleIdentifier": "$(PRODUCT_BUNDLE_IDENTIFIER).notificationservice",
+        "extensionPointIdentifier": "com.apple.usernotifications.service"
+      }
+    ]
   },
   "android": {
     "modules": ["expo.modules.appblocker.AppBlockerModule"]

@@ -5,19 +5,6 @@ import AppBlockerModule, { AppPickerView } from '../../modules/app-blocker'
 
 import * as Notifications from 'expo-notifications'
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => {
-    console.log('Handling notification to block apps')
-    await AppBlockerModule.blockApps()
-    return {
-      shouldPlaySound: false,
-      shouldSetBadge: false,
-      shouldShowBanner: true,
-      shouldShowList: true
-    }
-  }
-})
-
 export default function BlockingScreen() {
   useEffect(() => {
     const checkService = async () => {
@@ -49,16 +36,7 @@ export default function BlockingScreen() {
 
 const handleBlockApps = async () => {
   console.log('Scheduling notification to block apps...')
-  return Notifications.scheduleNotificationAsync({
-    content: {
-      title: 'Look at that notification',
-      body: "I'm so proud of myself!"
-    },
-    trigger: {
-      type: Notifications.SchedulableTriggerInputTypes.DATE,
-      date: new Date(Date.now() + 5000)
-    }
-  })
+  return AppBlockerModule.blockApps()
 }
 
 const styles = StyleSheet.create({

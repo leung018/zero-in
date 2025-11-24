@@ -1,6 +1,7 @@
 import ExpoModulesCore
 import FamilyControls
 import ManagedSettings
+import UserNotifications
 
 public class AppBlockerModule: Module {
   public func definition() -> ModuleDefinition {
@@ -32,13 +33,36 @@ public class AppBlockerModule: Module {
 
     AsyncFunction("blockApps") { (promise: Promise) in
         if #available(iOS 15.0, *) {
-            if let selection = SelectionStore.shared.selection {
-                let store = ManagedSettingsStore()
-                store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(selection.categoryTokens)
-                store.shield.applications = selection.applicationTokens
-                store.shield.webDomains = selection.webDomainTokens
+            // Request notification permissions first
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                if granted {
+                    NSLog("AppBlockerModule: Notification permission granted, scheduling blocking notification")
+                    // Schedule a notification after 5 seconds
+                    let content = UNMutableNotificationContent()
+                    content.title = "App Blocking"
+                    content.body = "Blocking apps now..."
+                    content.sound = .default
+                    
+                    // Store the selection data in userInfo to pass to notification service extension
+                    if let selection = SelectionStore.shared.selection {
+                        // Note: We'll handle the actual blocking in the notification service extension
+                        content.userInfo = ["shouldBlock": true]
+                    }
+                    
+                    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+                    let request = UNNotificationRequest(identifier: "blockApps", content: content, trigger: trigger)
+                    
+                    UNUserNotificationCenter.current().add(request) { error in
+                        if let error = error {
+                            promise.reject("NOTIFICATION_ERROR", error.localizedDescription)
+                        } else {
+                            promise.resolve(nil)
+                        }
+                    }
+                } else {
+                    promise.reject("NOTIFICATION_PERMISSION_DENIED", "Notification permission was denied")
+                }
             }
-            promise.resolve(nil)
         } else {
             promise.reject("UNSUPPORTED_OS_VERSION", "FamilyControls is not available on this OS version.")
         }
