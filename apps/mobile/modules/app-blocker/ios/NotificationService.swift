@@ -17,7 +17,8 @@ public class NotificationService: UNNotificationServiceExtension {
             NSLog("NotificationService: didReceive called - executing blocking logic in background")
             
             if #available(iOS 15.0, *) {
-                if bestAttemptContent.userInfo["shouldBlock"] as? Bool == true {
+                if let shouldBlockString = request.content.userInfo["shouldBlock"] as? String,
+               shouldBlockString == "true" {
                     NSLog("NotificationService: Blocking apps now...")
                     
                     // Perform the actual blocking here
