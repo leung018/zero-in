@@ -15,6 +15,8 @@
   },
   "scripts": {
     "build-hosting": "vite build",
-    "test-firestore": "firebase emulators:exec --only firestore 'vitest run --root .'"
+    "test-firestore": "firebase emulators:exec --only firestore 'vitest run --root .'",
+    "emulators": "firebase emulators:start",
+    "emulators:functions": "firebase emulators:start --only functions"
   }
 }
