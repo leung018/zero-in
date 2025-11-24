@@ -4281,9 +4281,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-firebase/app@npm:^23.4.1":
-  version: 23.4.1
-  resolution: "@react-native-firebase/app@npm:23.4.1"
+"@react-native-firebase/app@npm:^23.5.0":
+  version: 23.5.0
+  resolution: "@react-native-firebase/app@npm:23.5.0"
   dependencies:
     firebase: "npm:12.4.0"
   peerDependencies:
@@ -4293,7 +4293,7 @@ __metadata:
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10c0/24201babe26ad1ec9179887a898492fa268d93461493b87e2e2a4adb0c68482d1957b4326f71a1023d40457821d911f297234272f07206f24c803c115734f0c9
+  checksum: 10c0/9f9fc5198a5f1db1074d2c7e292e473a1f2c2dd71bd4e652ef00f6a1a9442a6aae8c1db22e1270b41f410600c5a9056506f7acc78256f0b2ea81d90454281d8c
   languageName: node
   linkType: hard
 
@@ -4320,6 +4320,15 @@ __metadata:
   peerDependencies:
     "@react-native-firebase/app": 23.4.1
   checksum: 10c0/76ef2dc6705b7c6a3018eef468e9b887559728e8163495fbd5a578213cd5cd10263157d6c626be19f3cbcbb351951697ed48d4d11b2ebf1fb3fa9167b1e1e020
+  languageName: node
+  linkType: hard
+
+"@react-native-firebase/functions@npm:^23.5.0":
+  version: 23.5.0
+  resolution: "@react-native-firebase/functions@npm:23.5.0"
+  peerDependencies:
+    "@react-native-firebase/app": 23.5.0
+  checksum: 10c0/76d5ad17617eff40d61b4b118aca9badd9e39bba26c952fbc7155d98a6cc09ec08a21c04d0c8ec9bcf0d953ac080964122155dcf717b41512ddbcaab7d395ccc
   languageName: node
   linkType: hard
 
@@ -6066,9 +6075,10 @@ __metadata:
   resolution: "@zero-in/mobile@workspace:apps/mobile"
   dependencies:
     "@expo/vector-icons": "npm:^15.0.3"
-    "@react-native-firebase/app": "npm:^23.4.1"
+    "@react-native-firebase/app": "npm:^23.5.0"
     "@react-native-firebase/auth": "npm:^23.4.1"
     "@react-native-firebase/firestore": "npm:^23.4.1"
+    "@react-native-firebase/functions": "npm:^23.5.0"
     "@react-navigation/bottom-tabs": "npm:^7.4.0"
     "@react-navigation/elements": "npm:^2.6.3"
     "@react-navigation/native": "npm:^7.1.8"
