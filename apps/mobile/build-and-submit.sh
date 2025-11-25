@@ -56,6 +56,7 @@ else
 fi
 
 yarn install --immutable
+yarn cng
 
 # TODO: I don't test below now because I don't want waste the quota of eas build for remote build.
 # For local build, I don't want to wait for build time.
