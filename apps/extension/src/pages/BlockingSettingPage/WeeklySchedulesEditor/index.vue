@@ -98,10 +98,7 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
         data-test="target-focus-sessions-input"
         v-model.number="newTargetFocusSessions"
       />
-      <small>
-        Setting a target will deactivate that schedule for the rest of that day after the target is
-        met.
-      </small>
+      <small>This schedule deactivates for the rest of that day once the target is met.</small>
     </b-form-group>
     <b-button
       variant="primary"
