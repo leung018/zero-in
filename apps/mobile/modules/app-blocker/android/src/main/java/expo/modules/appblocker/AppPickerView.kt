@@ -124,8 +124,41 @@ class AppListAdapter(
         fun bind(app: AppInfo, isSelected: Boolean) {
             checkedTextView.text = app.appName
             checkedTextView.isChecked = isSelected
-            checkedTextView.setCompoundDrawablesWithIntrinsicBounds(app.icon, null, null, null)
+
+            // Ensure a fixed icon size by scaling the drawable to 32dp
+            val density = context.resources.displayMetrics.density
+            val targetSize = (32 * density).toInt()
+
+            val drawable = app.icon
+            val fixedDrawable = try {
+                val bitmap = android.graphics.drawable.BitmapDrawable(context.resources, drawableToBitmap(drawable))
+                val scaledBitmap = android.graphics.Bitmap.createScaledBitmap(bitmap.bitmap, targetSize, targetSize, true)
+                android.graphics.drawable.BitmapDrawable(context.resources, scaledBitmap).apply {
+                    setBounds(0, 0, targetSize, targetSize)
+                }
+            } catch (_: Exception) {
+                // Fallback: use original drawable with explicit bounds
+                drawable.apply { setBounds(0, 0, targetSize, targetSize) }
+            }
+
+            // Use setCompoundDrawables (non-intrinsic) to respect bounds
+            checkedTextView.setCompoundDrawables(fixedDrawable, null, null, null)
             checkedTextView.compoundDrawablePadding = 32
+        }
+
+        private fun drawableToBitmap(drawable: android.graphics.drawable.Drawable): android.graphics.Bitmap {
+            return when (drawable) {
+                is android.graphics.drawable.BitmapDrawable -> drawable.bitmap
+                else -> {
+                    val width = if (drawable.intrinsicWidth > 0) drawable.intrinsicWidth else 1
+                    val height = if (drawable.intrinsicHeight > 0) drawable.intrinsicHeight else 1
+                    val bitmap = android.graphics.Bitmap.createBitmap(width, height, android.graphics.Bitmap.Config.ARGB_8888)
+                    val canvas = android.graphics.Canvas(bitmap)
+                    drawable.setBounds(0, 0, canvas.width, canvas.height)
+                    drawable.draw(canvas)
+                    bitmap
+                }
+            }
         }
     }
 }
