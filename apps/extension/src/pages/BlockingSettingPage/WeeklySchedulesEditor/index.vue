@@ -114,7 +114,7 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
   </b-form>
   <LoadingWrapper :isLoading="isLoading">
     <div class="mt-4" data-test="saved-schedules-section" v-if="showSaved">
-      <h3>Saved</h3>
+      <h3>Active</h3>
       <SchedulesList :weeklySchedules="weeklySchedules" @remove="handleRemove" />
     </div>
   </LoadingWrapper>
