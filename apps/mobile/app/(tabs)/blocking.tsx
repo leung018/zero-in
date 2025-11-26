@@ -1,4 +1,6 @@
+// App selection happens in a separate screen
 import DateTimePicker from '@react-native-community/datetimepicker'
+import { useRouter } from 'expo-router'
 import React, { useState } from 'react'
 import {
   Alert,
@@ -23,6 +25,9 @@ interface Schedule {
 }
 
 export default function BlockingScreen() {
+  const router = useRouter()
+  // App Picker handled in separate screen
+
   // Timer-Based state
   const [pauseDuringBreaks, setPauseDuringBreaks] = useState(false)
   const [pauseWhenNotRunning, setPauseWhenNotRunning] = useState(false)
@@ -117,6 +122,29 @@ export default function BlockingScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Blocked Apps Section */}
+        <View style={styles.card}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.cardTitle}>📱 Blocked Apps</Text>
+            <View style={styles.divider} />
+          </View>
+
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>
+              Select which apps to block during focus sessions. Your selections are saved
+              automatically.
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.secondaryButton}
+            onPress={() => router.push('/select-apps')}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.secondaryButtonText}>Select Blocked Apps</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* Timer-Based Section */}
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
@@ -707,5 +735,17 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '700'
+  },
+  appPickerContainer: {
+    height: 400,
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: '#e5e7eb',
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#ffffff'
+  },
+  appPicker: {
+    flex: 1
   }
 })
