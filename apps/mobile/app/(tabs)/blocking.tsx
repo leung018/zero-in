@@ -187,7 +187,7 @@ export default function BlockingScreen() {
                 value={startTime}
                 mode="time"
                 is24Hour={true}
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                display="default"
                 onChange={handleStartTimeChange}
               />
             )}
@@ -207,7 +207,7 @@ export default function BlockingScreen() {
                 value={endTime}
                 mode="time"
                 is24Hour={true}
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                display="default"
                 onChange={handleEndTimeChange}
               />
             )}
