@@ -262,7 +262,7 @@ export default function BlockingScreen() {
             />
             <View style={styles.hintBox}>
               <Text style={styles.hintText}>
-                💡 Schedule deactivates for that day once target is reached
+                💡 This schedule deactivates for the rest of that day once the target is met.
               </Text>
             </View>
           </View>
