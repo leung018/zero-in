@@ -74,7 +74,7 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
 <template>
   <p>
     <small>
-      Set the schedules for blocking access to the listed domains. If not set, blocking remains
+      Set the schedules for blocking access to the configured domains. If not set, blocking remains
       active 24/7 (unless paused by settings above).
     </small>
   </p>
