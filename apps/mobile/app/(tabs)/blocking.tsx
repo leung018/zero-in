@@ -116,7 +116,7 @@ export default function BlockingScreen() {
           <Text style={styles.cardTitle}>Schedules</Text>
           <Text style={styles.helperText}>
             Set the schedules for blocking access to the configured apps. If not set, blocking
-            remains active at all times (unless paused by Timer Integration).
+            remains active 24/7 (unless paused by settings above).
           </Text>
 
           {/* Weekdays Selector */}
