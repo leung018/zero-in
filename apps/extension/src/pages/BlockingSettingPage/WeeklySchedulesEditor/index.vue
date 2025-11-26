@@ -79,7 +79,7 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
     </small>
   </p>
   <b-form @submit.prevent>
-    <b-form-group label="Repeat Schedule On:">
+    <b-form-group label="Repeat On:">
       <WeekdaysSelector class="d-flex flex-wrap" v-model="newWeekdaySet" />
     </b-form-group>
 
