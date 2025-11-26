@@ -1,6 +1,8 @@
+import DateTimePicker from '@react-native-community/datetimepicker'
 import React, { useState } from 'react'
 import {
   Alert,
+  Platform,
   ScrollView,
   StyleSheet,
   Switch,
@@ -28,10 +30,18 @@ export default function BlockingScreen() {
   // Schedules state
   const [schedules, setSchedules] = useState<Schedule[]>([])
   const [selectedWeekdays, setSelectedWeekdays] = useState<Set<string>>(new Set())
-  const [startTime, setStartTime] = useState('00:00')
-  const [endTime, setEndTime] = useState('00:00')
+  const [startTime, setStartTime] = useState(new Date())
+  const [endTime, setEndTime] = useState(new Date())
+  const [showStartPicker, setShowStartPicker] = useState(false)
+  const [showEndPicker, setShowEndPicker] = useState(false)
   const [targetSessions, setTargetSessions] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  const formatTime = (date: Date): string => {
+    const hours = date.getHours().toString().padStart(2, '0')
+    const minutes = date.getMinutes().toString().padStart(2, '0')
+    return `${hours}:${minutes}`
+  }
 
   const handleSaveTimerBased = () => {
     Alert.alert('Success', 'Timer-based settings saved!')
@@ -47,20 +57,38 @@ export default function BlockingScreen() {
     setSelectedWeekdays(newSet)
   }
 
+  const handleStartTimeChange = (_event: any, selectedDate?: Date) => {
+    setShowStartPicker(Platform.OS === 'ios')
+    if (selectedDate) {
+      setStartTime(selectedDate)
+    }
+  }
+
+  const handleEndTimeChange = (_event: any, selectedDate?: Date) => {
+    setShowEndPicker(Platform.OS === 'ios')
+    if (selectedDate) {
+      setEndTime(selectedDate)
+    }
+  }
+
   const handleAddSchedule = () => {
     if (selectedWeekdays.size === 0) {
       setErrorMessage('Please select weekdays')
       return
     }
-    if (startTime >= endTime) {
+
+    const startTimeStr = formatTime(startTime)
+    const endTimeStr = formatTime(endTime)
+
+    if (startTimeStr >= endTimeStr) {
       setErrorMessage('Start time must be before end time')
       return
     }
 
     const newSchedule: Schedule = {
       weekdays: Array.from(selectedWeekdays),
-      startTime,
-      endTime,
+      startTime: startTimeStr,
+      endTime: endTimeStr,
       targetSessions
     }
 
@@ -68,8 +96,8 @@ export default function BlockingScreen() {
 
     // Reset form
     setSelectedWeekdays(new Set())
-    setStartTime('00:00')
-    setEndTime('00:00')
+    setStartTime(new Date())
+    setEndTime(new Date())
     setTargetSessions('')
     setErrorMessage(null)
 
@@ -148,23 +176,41 @@ export default function BlockingScreen() {
           {/* Start Time */}
           <View style={styles.formGroup}>
             <Text style={styles.label}>Start Time:</Text>
-            <TextInput
-              style={styles.timeInput}
-              value={startTime}
-              placeholder="HH:MM"
-              onChangeText={setStartTime}
-            />
+            <TouchableOpacity
+              style={styles.timePickerButton}
+              onPress={() => setShowStartPicker(true)}
+            >
+              <Text style={styles.timePickerText}>{formatTime(startTime)}</Text>
+            </TouchableOpacity>
+            {showStartPicker && (
+              <DateTimePicker
+                value={startTime}
+                mode="time"
+                is24Hour={true}
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                onChange={handleStartTimeChange}
+              />
+            )}
           </View>
 
           {/* End Time */}
           <View style={styles.formGroup}>
             <Text style={styles.label}>End Time:</Text>
-            <TextInput
-              style={styles.timeInput}
-              value={endTime}
-              placeholder="HH:MM"
-              onChangeText={setEndTime}
-            />
+            <TouchableOpacity
+              style={styles.timePickerButton}
+              onPress={() => setShowEndPicker(true)}
+            >
+              <Text style={styles.timePickerText}>{formatTime(endTime)}</Text>
+            </TouchableOpacity>
+            {showEndPicker && (
+              <DateTimePicker
+                value={endTime}
+                mode="time"
+                is24Hour={true}
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                onChange={handleEndTimeChange}
+              />
+            )}
           </View>
 
           {/* Target Focus Sessions */}
@@ -341,16 +387,19 @@ const styles = StyleSheet.create({
     color: '#1f1f1f',
     backgroundColor: '#ffffff'
   },
-  timeInput: {
+  timePickerButton: {
     borderWidth: 1,
     borderColor: '#d1d5db',
     borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    fontSize: 15,
-    color: '#1f1f1f',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     backgroundColor: '#ffffff',
     width: 120
+  },
+  timePickerText: {
+    fontSize: 16,
+    color: '#1f1f1f',
+    fontWeight: '500'
   },
   errorText: {
     color: '#dc3545',
