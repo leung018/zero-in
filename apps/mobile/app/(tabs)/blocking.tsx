@@ -36,6 +36,7 @@ export default function BlockingScreen() {
   const [showEndPicker, setShowEndPicker] = useState(false)
   const [targetSessions, setTargetSessions] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [showScheduleForm, setShowScheduleForm] = useState(false)
 
   const formatTime = (date: Date): string => {
     const hours = date.getHours().toString().padStart(2, '0')
@@ -100,8 +101,13 @@ export default function BlockingScreen() {
     setEndTime(new Date())
     setTargetSessions('')
     setErrorMessage(null)
+    setShowScheduleForm(false)
 
     Alert.alert('Success', 'Schedule added successfully!')
+  }
+
+  const handleCancelAddSchedule = () => {
+    setShowScheduleForm(false)
   }
 
   const handleRemoveSchedule = (indexToRemove: number) => {
@@ -169,120 +175,143 @@ export default function BlockingScreen() {
             </Text>
           </View>
 
-          {/* Weekdays Selector */}
-          <View style={styles.formSection}>
-            <Text style={styles.sectionLabel}>Repeat On</Text>
-            <View style={styles.weekdaysGrid}>
-              {WEEKDAYS.map((weekday) => (
-                <TouchableOpacity
-                  key={weekday}
-                  style={[
-                    styles.weekdayChip,
-                    selectedWeekdays.has(weekday) && styles.weekdayChipSelected
-                  ]}
-                  onPress={() => toggleWeekday(weekday)}
-                  activeOpacity={0.7}
-                >
-                  <Text
-                    style={[
-                      styles.weekdayChipText,
-                      selectedWeekdays.has(weekday) && styles.weekdayChipTextSelected
-                    ]}
-                  >
-                    {weekday}
+          {!showScheduleForm ? (
+            // Show button to add schedule
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={() => setShowScheduleForm(true)}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.secondaryButtonText}>+ Add Schedule</Text>
+            </TouchableOpacity>
+          ) : (
+            // Show schedule form
+            <>
+              {/* Weekdays Selector */}
+              <View style={styles.formSection}>
+                <Text style={styles.sectionLabel}>Repeat On</Text>
+                <View style={styles.weekdaysGrid}>
+                  {WEEKDAYS.map((weekday) => (
+                    <TouchableOpacity
+                      key={weekday}
+                      style={[
+                        styles.weekdayChip,
+                        selectedWeekdays.has(weekday) && styles.weekdayChipSelected
+                      ]}
+                      onPress={() => toggleWeekday(weekday)}
+                      activeOpacity={0.7}
+                    >
+                      <Text
+                        style={[
+                          styles.weekdayChipText,
+                          selectedWeekdays.has(weekday) && styles.weekdayChipTextSelected
+                        ]}
+                      >
+                        {weekday}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+
+              {/* Time Range */}
+              <View style={styles.formSection}>
+                <Text style={styles.sectionLabel}>Time Range</Text>
+                <View style={styles.timeRangeContainer}>
+                  <View style={styles.timePickerWrapper}>
+                    <Text style={styles.timeLabel}>From</Text>
+                    <TouchableOpacity
+                      style={styles.timePickerButton}
+                      onPress={() => setShowStartPicker(true)}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={styles.timePickerText}>{formatTime(startTime)}</Text>
+                      <Text style={styles.timePickerIcon}>🕐</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.timeRangeDivider}>
+                    <Text style={styles.timeRangeArrow}>→</Text>
+                  </View>
+
+                  <View style={styles.timePickerWrapper}>
+                    <Text style={styles.timeLabel}>To</Text>
+                    <TouchableOpacity
+                      style={styles.timePickerButton}
+                      onPress={() => setShowEndPicker(true)}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={styles.timePickerText}>{formatTime(endTime)}</Text>
+                      <Text style={styles.timePickerIcon}>🕐</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                {showStartPicker && (
+                  <DateTimePicker
+                    value={startTime}
+                    mode="time"
+                    is24Hour={true}
+                    display="default"
+                    onChange={handleStartTimeChange}
+                  />
+                )}
+                {showEndPicker && (
+                  <DateTimePicker
+                    value={endTime}
+                    mode="time"
+                    is24Hour={true}
+                    display="default"
+                    onChange={handleEndTimeChange}
+                  />
+                )}
+              </View>
+
+              {/* Target Sessions */}
+              <View style={styles.formSection}>
+                <Text style={styles.sectionLabel}>Target Focus Sessions (Optional)</Text>
+                <TextInput
+                  style={styles.input}
+                  value={targetSessions}
+                  onChangeText={setTargetSessions}
+                  placeholder="e.g., 8"
+                  placeholderTextColor="#9ca3af"
+                  keyboardType="numeric"
+                />
+                <View style={styles.hintBox}>
+                  <Text style={styles.hintText}>
+                    💡 This schedule deactivates for the rest of that day once the target is met.
                   </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
+                </View>
+              </View>
 
-          {/* Time Range */}
-          <View style={styles.formSection}>
-            <Text style={styles.sectionLabel}>Time Range</Text>
-            <View style={styles.timeRangeContainer}>
-              <View style={styles.timePickerWrapper}>
-                <Text style={styles.timeLabel}>From</Text>
+              {/* Error Message */}
+              {errorMessage && (
+                <View style={styles.errorBox}>
+                  <Text style={styles.errorIcon}>⚠️</Text>
+                  <Text style={styles.errorText}>{errorMessage}</Text>
+                </View>
+              )}
+
+              {/* Action Buttons */}
+              <View style={styles.buttonRow}>
                 <TouchableOpacity
-                  style={styles.timePickerButton}
-                  onPress={() => setShowStartPicker(true)}
-                  activeOpacity={0.7}
+                  style={styles.cancelButton}
+                  onPress={handleCancelAddSchedule}
+                  activeOpacity={0.8}
                 >
-                  <Text style={styles.timePickerText}>{formatTime(startTime)}</Text>
-                  <Text style={styles.timePickerIcon}>🕐</Text>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
                 </TouchableOpacity>
-              </View>
-
-              <View style={styles.timeRangeDivider}>
-                <Text style={styles.timeRangeArrow}>→</Text>
-              </View>
-
-              <View style={styles.timePickerWrapper}>
-                <Text style={styles.timeLabel}>To</Text>
                 <TouchableOpacity
-                  style={styles.timePickerButton}
-                  onPress={() => setShowEndPicker(true)}
-                  activeOpacity={0.7}
+                  style={styles.addButton}
+                  onPress={handleAddSchedule}
+                  activeOpacity={0.8}
                 >
-                  <Text style={styles.timePickerText}>{formatTime(endTime)}</Text>
-                  <Text style={styles.timePickerIcon}>🕐</Text>
+                  <Text style={styles.addButtonText}>Add</Text>
                 </TouchableOpacity>
               </View>
-            </View>
-
-            {showStartPicker && (
-              <DateTimePicker
-                value={startTime}
-                mode="time"
-                is24Hour={true}
-                display="default"
-                onChange={handleStartTimeChange}
-              />
-            )}
-            {showEndPicker && (
-              <DateTimePicker
-                value={endTime}
-                mode="time"
-                is24Hour={true}
-                display="default"
-                onChange={handleEndTimeChange}
-              />
-            )}
-          </View>
-
-          {/* Target Sessions */}
-          <View style={styles.formSection}>
-            <Text style={styles.sectionLabel}>Target Focus Sessions (Optional)</Text>
-            <TextInput
-              style={styles.input}
-              value={targetSessions}
-              onChangeText={setTargetSessions}
-              placeholder="e.g., 8"
-              placeholderTextColor="#9ca3af"
-              keyboardType="numeric"
-            />
-            <View style={styles.hintBox}>
-              <Text style={styles.hintText}>
-                💡 This schedule deactivates for the rest of that day once the target is met.
-              </Text>
-            </View>
-          </View>
-
-          {/* Error Message */}
-          {errorMessage && (
-            <View style={styles.errorBox}>
-              <Text style={styles.errorIcon}>⚠️</Text>
-              <Text style={styles.errorText}>{errorMessage}</Text>
-            </View>
+            </>
           )}
-
-          {/* Add Button */}
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={handleAddSchedule}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.primaryButtonText}>Add</Text>
-          </TouchableOpacity>
 
           {/* Saved Schedules */}
           {schedules.length > 0 && (
@@ -622,5 +651,61 @@ const styles = StyleSheet.create({
   },
   deleteButtonText: {
     fontSize: 18
+  },
+  secondaryButton: {
+    backgroundColor: '#e1f5fe',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#1a73e8',
+    marginTop: 16
+  },
+  secondaryButtonText: {
+    color: '#1a73e8',
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 0.5
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: '#f3f4f6',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#d1d5db',
+    marginRight: 8
+  },
+  cancelButtonText: {
+    color: '#111827',
+    fontSize: 16,
+    fontWeight: '600'
+  },
+  addButton: {
+    flex: 1,
+    backgroundColor: '#1a73e8',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+    shadowColor: '#1a73e8',
+    shadowOffset: {
+      width: 0,
+      height: 4
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4
+  },
+  addButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '700'
   }
 })
