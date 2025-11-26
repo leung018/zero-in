@@ -79,7 +79,7 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
     </small>
   </p>
   <b-form @submit.prevent>
-    <b-form-group label="Repeat Schedule On:">
+    <b-form-group label="Repeat On:">
       <WeekdaysSelector class="d-flex flex-wrap" v-model="newWeekdaySet" />
     </b-form-group>
 
@@ -98,10 +98,7 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
         data-test="target-focus-sessions-input"
         v-model.number="newTargetFocusSessions"
       />
-      <small>
-        Setting a target will deactivate that schedule for the rest of that day after the target is
-        met.
-      </small>
+      <small>This schedule deactivates for the rest of that day once the target is met.</small>
     </b-form-group>
     <b-button
       variant="primary"
@@ -117,7 +114,7 @@ const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
   </b-form>
   <LoadingWrapper :isLoading="isLoading">
     <div class="mt-4" data-test="saved-schedules-section" v-if="showSaved">
-      <h3>Saved</h3>
+      <h3>Active</h3>
       <SchedulesList :weeklySchedules="weeklySchedules" @remove="handleRemove" />
     </div>
   </LoadingWrapper>
