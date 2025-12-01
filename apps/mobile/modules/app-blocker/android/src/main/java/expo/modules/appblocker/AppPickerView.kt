@@ -2,12 +2,14 @@ package expo.modules.appblocker
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import expo.modules.kotlin.AppContext
+import expo.modules.kotlin.viewevent.EventDispatcher
 import expo.modules.kotlin.views.ExpoView
 
 class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context, appContext) {
@@ -18,9 +20,9 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
     }
     private val adapter: AppListAdapter
     private var selectedApps: List<String> = emptyList()
+    private val onAppsLoaded by EventDispatcher()
 
     init {
-
         adapter = AppListAdapter(context) { selectedPackages ->
             saveSelectedPackages(selectedPackages)
         }
@@ -34,7 +36,7 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
             )
         )
 
-        // Load installed apps
+        // Load installed apps in background thread
         loadInstalledApps()
     }
 
@@ -44,19 +46,36 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
     }
 
     private fun loadInstalledApps() {
-        val pm = context.packageManager
-        val apps = pm.getInstalledApplications(PackageManager.GET_META_DATA)
-            .filter { pm.getLaunchIntentForPackage(it.packageName) != null }
-            .map { app ->
-                AppInfo(
-                    packageName = app.packageName,
-                    appName = app.loadLabel(pm).toString(),
-                    icon = app.loadIcon(pm)
-                )
-            }
-            .sortedBy { it.appName }
+        // Load apps in background thread to avoid blocking UI
+        Thread {
+            try {
+                val pm = context.packageManager
+                val apps = pm.getInstalledApplications(PackageManager.GET_META_DATA)
+                    .filter { pm.getLaunchIntentForPackage(it.packageName) != null }
+                    .map { app ->
+                        AppInfo(
+                            packageName = app.packageName,
+                            appName = app.loadLabel(pm).toString(),
+                            icon = app.loadIcon(pm)
+                        )
+                    }
+                    .sortedBy { it.appName }
 
-        adapter.setApps(apps)
+                // Update UI on main thread
+                post {
+                    adapter.setApps(apps)
+
+                    // Emit event to JS that apps are loaded
+                    try {
+                        onAppsLoaded(emptyMap())
+                    } catch (e: Exception) {
+                        Log.e("AppPickerView", "Failed to emit onAppsLoaded event", e)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("AppPickerView", "Failed to load apps", e)
+            }
+        }.start()
     }
 
     private fun saveSelectedPackages(selectedPackages: List<String>) {

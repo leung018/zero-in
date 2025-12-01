@@ -1,11 +1,13 @@
 import { AppPickerView } from '@/modules/app-blocker'
 import { Stack, useRouter } from 'expo-router'
-import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useState } from 'react'
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function SelectAppsScreen() {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
+
   return (
     <SafeAreaView style={styles.container}>
       <Stack.Screen
@@ -15,11 +17,22 @@ export default function SelectAppsScreen() {
         }}
       />
       <View style={styles.content}>
-        <View style={styles.appPickerContainer}>
-          <AppPickerView style={styles.appPicker} />
+        {isLoading && (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#1a73e8" />
+            <Text style={styles.loadingText}>Loading apps...</Text>
+          </View>
+        )}
+        <View style={[styles.appPickerContainer, isLoading && styles.hidden]}>
+          <AppPickerView
+            style={styles.appPicker}
+            onAppsLoaded={() => {
+              setIsLoading(false)
+            }}
+          />
         </View>
         <TouchableOpacity
-          style={styles.primaryButton}
+          style={[styles.primaryButton, isLoading && styles.hidden]}
           onPress={() => router.back()}
           activeOpacity={0.8}
         >
@@ -38,6 +51,20 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 16
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#6b7280',
+    fontWeight: '600'
+  },
+  hidden: {
+    display: 'none'
   },
   appPickerContainer: {
     flex: 1,
