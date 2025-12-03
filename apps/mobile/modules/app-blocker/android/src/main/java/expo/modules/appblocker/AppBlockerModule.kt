@@ -13,7 +13,9 @@ class AppBlockerModule : Module() {
     override fun definition() = ModuleDefinition {
         Name("AppBlocker")
 
-        View(AppPickerView::class) {}
+        View(AppPickerView::class) {
+            Events("onAppsLoaded")
+        }
 
         AsyncFunction("getPermissionStatus") { ->
             val context = appContext.reactContext ?: throw Exception("No context")
