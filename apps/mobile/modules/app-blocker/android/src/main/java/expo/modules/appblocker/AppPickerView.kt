@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import expo.modules.kotlin.AppContext
 import expo.modules.kotlin.viewevent.EventDispatcher
 import expo.modules.kotlin.views.ExpoView
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.scale
+import androidx.core.graphics.createBitmap
 
 class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context, appContext) {
 
@@ -141,9 +144,9 @@ class AppListAdapter(
 
             val drawable = app.icon
             val fixedDrawable = try {
-                val bitmap = android.graphics.drawable.BitmapDrawable(context.resources, drawableToBitmap(drawable))
-                val scaledBitmap = android.graphics.Bitmap.createScaledBitmap(bitmap.bitmap, targetSize, targetSize, true)
-                android.graphics.drawable.BitmapDrawable(context.resources, scaledBitmap).apply {
+                val bitmap = drawableToBitmap(drawable).toDrawable(context.resources)
+                val scaledBitmap = bitmap.bitmap.scale(targetSize, targetSize)
+                scaledBitmap.toDrawable(context.resources).apply {
                     setBounds(0, 0, targetSize, targetSize)
                 }
             } catch (_: Exception) {
@@ -162,7 +165,7 @@ class AppListAdapter(
                 else -> {
                     val width = if (drawable.intrinsicWidth > 0) drawable.intrinsicWidth else 1
                     val height = if (drawable.intrinsicHeight > 0) drawable.intrinsicHeight else 1
-                    val bitmap = android.graphics.Bitmap.createBitmap(width, height, android.graphics.Bitmap.Config.ARGB_8888)
+                    val bitmap = createBitmap(width, height)
                     val canvas = android.graphics.Canvas(bitmap)
                     drawable.setBounds(0, 0, canvas.width, canvas.height)
                     drawable.draw(canvas)
