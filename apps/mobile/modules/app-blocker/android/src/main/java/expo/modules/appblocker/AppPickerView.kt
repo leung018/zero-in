@@ -13,7 +13,7 @@ import expo.modules.kotlin.viewevent.EventDispatcher
 import expo.modules.kotlin.views.ExpoView
 
 class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context, appContext) {
-    
+
     private val recyclerView: RecyclerView = RecyclerView(context).apply {
         layoutManager = LinearLayoutManager(context)
     }
@@ -35,7 +35,6 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
             )
         )
 
-        // Load installed apps in background thread
         loadInstalledApps()
     }
 
@@ -63,13 +62,7 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
                 // Update UI on main thread
                 post {
                     adapter.setApps(apps)
-
-                    // Emit event to JS that apps are loaded
-                    try {
-                        onAppsLoaded(emptyMap())
-                    } catch (e: Exception) {
-                        Log.e("AppPickerView", "Failed to emit onAppsLoaded event", e)
-                    }
+                    onAppsLoaded(emptyMap())
                 }
             } catch (e: Exception) {
                 Log.e("AppPickerView", "Failed to load apps", e)
