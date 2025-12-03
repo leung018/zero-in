@@ -130,7 +130,7 @@ class AppListAdapter(
         init {
             itemView.setOnClickListener {
                 checkedTextView.toggle()
-                val app = apps[adapterPosition]
+                val app = apps[bindingAdapterPosition]
                 if (checkedTextView.isChecked) {
                     selectedPackages.add(app.packageName)
                 } else {
