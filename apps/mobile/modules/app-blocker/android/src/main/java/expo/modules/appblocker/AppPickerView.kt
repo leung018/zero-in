@@ -13,8 +13,7 @@ import expo.modules.kotlin.viewevent.EventDispatcher
 import expo.modules.kotlin.views.ExpoView
 
 class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context, appContext) {
-
-    // Create RecyclerView for app list
+    
     private val recyclerView: RecyclerView = RecyclerView(context).apply {
         layoutManager = LinearLayoutManager(context)
     }
@@ -107,7 +106,6 @@ class AppListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        // Create view holder (simplified)
         val view = LayoutInflater.from(context).inflate(
             android.R.layout.simple_list_item_multiple_choice,
             parent,
