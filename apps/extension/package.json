@@ -29,12 +29,12 @@
     "vue": "^3.5.25"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.39.1",
     "@iconify-json/ic": "^1.2.4",
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/prime": "^1.2.4",
-    "@playwright/test": "^1.56.1",
+    "@playwright/test": "^1.57.0",
     "@tsconfig/node20": "^20.1.8",
     "@vitejs/plugin-vue": "^6.0.2",
     "@vitest/coverage-v8": "^4.0.13",
