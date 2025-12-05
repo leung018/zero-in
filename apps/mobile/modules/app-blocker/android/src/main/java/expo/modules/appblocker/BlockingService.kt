@@ -27,7 +27,7 @@ class BlockingService : Service() {
     private var blockedApps: Set<String> = emptySet()
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var usageStatsManager: UsageStatsManager
-    private lateinit var repository: BlockedAppsPreferences
+    private lateinit var preferences: BlockedAppsPreferences
 
     private val pollingRunnable = object : Runnable {
         override fun run() {
@@ -58,7 +58,7 @@ class BlockingService : Service() {
         super.onCreate()
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-        repository = BlockedAppsPreferences(this)
+        preferences = BlockedAppsPreferences(this)
         loadBlockedApps()
         createNotificationChannel()
     }
@@ -254,6 +254,6 @@ class BlockingService : Service() {
     }
 
     private fun loadBlockedApps() {
-        blockedApps = repository.loadBlockedApps()
+        blockedApps = preferences.loadBlockedApps()
     }
 }
