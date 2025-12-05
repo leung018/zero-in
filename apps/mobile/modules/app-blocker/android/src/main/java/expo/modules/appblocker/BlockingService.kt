@@ -109,9 +109,6 @@ class BlockingService : Service() {
         return lastApp
     }
 
-    /**
-     * Shows a full-screen overlay that blocks the app
-     */
     private fun showBlockingOverlay(packageName: String) {
         // Don't show if already showing
         if (overlayView != null) return
@@ -154,9 +151,6 @@ class BlockingService : Service() {
         }
     }
 
-    /**
-     * Creates the UI shown when an app is blocked
-     */
     private fun createBlockingUI(packageName: String): FrameLayout {
         val container = FrameLayout(this).apply {
             layoutParams = FrameLayout.LayoutParams(
@@ -233,9 +227,6 @@ class BlockingService : Service() {
         return container
     }
 
-    /**
-     * Hides the blocking overlay
-     */
     private fun hideBlockingOverlay() {
         overlayView?.let { view ->
             try {
