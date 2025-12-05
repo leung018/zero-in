@@ -22,7 +22,6 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
         layoutManager = LinearLayoutManager(context)
     }
     private val adapter: AppListAdapter
-    private var selectedApps: Set<String> = emptySet()
     private val onAppsLoaded by EventDispatcher()
     private val preferences = BlockedAppsPreferences(context)
 
@@ -43,11 +42,6 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
         loadInstalledApps()
     }
 
-    fun setSelectedApps(apps: Set<String>) {
-        selectedApps = apps
-        adapter.setSelectedApps(apps)
-    }
-
     private fun loadInstalledApps() {
         // Load apps in background thread to avoid blocking UI
         Thread {
@@ -66,8 +60,7 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
 
                 // Update UI on main thread
                 post {
-                    adapter.setApps(apps)
-                    setSelectedApps(preferences.loadBlockedApps())
+                    adapter.loadInitialData(apps, preferences.loadBlockedApps())
                     onAppsLoaded(emptyMap())
                 }
             } catch (e: Exception) {
@@ -86,15 +79,10 @@ class AppListAdapter(
     private val selectedPackages = mutableSetOf<String>()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setApps(newApps: List<AppInfo>) {
+    fun loadInitialData(newApps: List<AppInfo>, selectedApps: Set<String>) {
         apps = newApps
-        notifyDataSetChanged()
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun setSelectedApps(packages: Set<String>) {
         selectedPackages.clear()
-        selectedPackages.addAll(packages)
+        selectedPackages.addAll(selectedApps)
         notifyDataSetChanged()
     }
 
