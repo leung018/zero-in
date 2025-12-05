@@ -1,5 +1,6 @@
 package expo.modules.appblocker
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
@@ -84,11 +85,13 @@ class AppListAdapter(
     private var apps: List<AppInfo> = emptyList()
     private val selectedPackages = mutableSetOf<String>()
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setApps(newApps: List<AppInfo>) {
         apps = newApps
         notifyDataSetChanged()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setSelectedApps(packages: Set<String>) {
         selectedPackages.clear()
         selectedPackages.addAll(packages)
