@@ -1,19 +1,20 @@
 package expo.modules.appblocker
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.scale
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import expo.modules.kotlin.AppContext
 import expo.modules.kotlin.viewevent.EventDispatcher
 import expo.modules.kotlin.views.ExpoView
-import androidx.core.graphics.drawable.toDrawable
-import androidx.core.graphics.scale
-import androidx.core.graphics.createBitmap
 
 class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context, appContext) {
 
@@ -21,12 +22,12 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
         layoutManager = LinearLayoutManager(context)
     }
     private val adapter: AppListAdapter
-    private var selectedApps: List<String> = emptyList()
     private val onAppsLoaded by EventDispatcher()
+    private val preferences = BlockedAppsPreferences(context)
 
     init {
         adapter = AppListAdapter(context) { selectedPackages ->
-            saveSelectedPackages(selectedPackages)
+            preferences.saveBlockedApps(selectedPackages)
         }
 
         recyclerView.adapter = adapter
@@ -39,11 +40,6 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
         )
 
         loadInstalledApps()
-    }
-
-    fun setSelectedApps(apps: List<String>) {
-        selectedApps = apps
-        adapter.setSelectedApps(apps)
     }
 
     private fun loadInstalledApps() {
@@ -64,7 +60,7 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
 
                 // Update UI on main thread
                 post {
-                    adapter.setApps(apps)
+                    adapter.loadInitialData(apps, preferences.loadBlockedApps())
                     onAppsLoaded(emptyMap())
                 }
             } catch (e: Exception) {
@@ -72,32 +68,21 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
             }
         }.start()
     }
-
-    private fun saveSelectedPackages(selectedPackages: List<String>) {
-        val prefs = context.getSharedPreferences(BlockingService.PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().apply {
-            putStringSet(BlockingService.KEY_BLOCKED_APPS, selectedPackages.toSet())
-            apply()
-        }
-    }
 }
 
 class AppListAdapter(
     private val context: Context,
-    private val onSelectionChanged: (List<String>) -> Unit
+    private val onSelectionChanged: (Set<String>) -> Unit
 ) : RecyclerView.Adapter<AppListAdapter.ViewHolder>() {
 
     private var apps: List<AppInfo> = emptyList()
     private val selectedPackages = mutableSetOf<String>()
 
-    fun setApps(newApps: List<AppInfo>) {
+    @SuppressLint("NotifyDataSetChanged")
+    fun loadInitialData(newApps: List<AppInfo>, selectedApps: Set<String>) {
         apps = newApps
-        notifyDataSetChanged()
-    }
-
-    fun setSelectedApps(packages: List<String>) {
         selectedPackages.clear()
-        selectedPackages.addAll(packages)
+        selectedPackages.addAll(selectedApps)
         notifyDataSetChanged()
     }
 
@@ -130,7 +115,7 @@ class AppListAdapter(
                 } else {
                     selectedPackages.remove(app.packageName)
                 }
-                onSelectionChanged(selectedPackages.toList())
+                onSelectionChanged(selectedPackages)
             }
         }
 

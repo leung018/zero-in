@@ -27,6 +27,7 @@ class BlockingService : Service() {
     private var blockedApps: Set<String> = emptySet()
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var usageStatsManager: UsageStatsManager
+    private lateinit var preferences: BlockedAppsPreferences
 
     private val pollingRunnable = object : Runnable {
         override fun run() {
@@ -46,8 +47,6 @@ class BlockingService : Service() {
     }
 
     companion object {
-        const val PREFS_NAME = "app_blocker_prefs"
-        const val KEY_BLOCKED_APPS = "blocked_apps"
         const val NOTIFICATION_CHANNEL_ID = "app_blocker_channel"
     }
 
@@ -59,6 +58,7 @@ class BlockingService : Service() {
         super.onCreate()
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+        preferences = BlockedAppsPreferences(this)
         loadBlockedApps()
         createNotificationChannel()
     }
@@ -253,11 +253,7 @@ class BlockingService : Service() {
         }
     }
 
-    /**
-     * Loads blocked apps list from SharedPreferences
-     */
     private fun loadBlockedApps() {
-        val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-        blockedApps = prefs.getStringSet(KEY_BLOCKED_APPS, emptySet()) ?: emptySet()
+        blockedApps = preferences.loadBlockedApps()
     }
 }
