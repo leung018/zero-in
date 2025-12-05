@@ -8,10 +8,11 @@ import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
-import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.provider.Settings
+import android.util.Log
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.Button
@@ -115,6 +116,12 @@ class BlockingService : Service() {
         // Don't show if already showing
         if (overlayView != null) return
 
+        // Check if we have overlay permission
+        if (!Settings.canDrawOverlays(this)) {
+            Log.e("BlockingService", "Cannot show overlay - permission not granted")
+            return
+        }
+
         // Create overlay view
         overlayView = FrameLayout(this).apply {
             setBackgroundColor("#F5F5F5".toColorInt())
@@ -125,16 +132,10 @@ class BlockingService : Service() {
         overlayView?.addView(contentView)
 
         // Set up window parameters for overlay
-        val windowType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        } else {
-            @Suppress("DEPRECATION")
-            WindowManager.LayoutParams.TYPE_PHONE
-        }
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
-            windowType,
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
                     WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
@@ -147,8 +148,9 @@ class BlockingService : Service() {
         try {
             windowManager.addView(overlayView, params)
         } catch (e: Exception) {
-            // Handle permission issues
-            e.printStackTrace()
+            // Handle permission issues or bad token exceptions
+            Log.e("BlockingService", "Failed to add overlay view", e)
+            overlayView = null
         }
     }
 
