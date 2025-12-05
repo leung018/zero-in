@@ -13,9 +13,9 @@ class BlockedAppsPreferences(context: Context) {
         private const val KEY_BLOCKED_APPS = "blocked_apps"
     }
 
-    fun saveBlockedApps(packageNames: List<String>) {
+    fun saveBlockedApps(packageNames: Set<String>) {
         prefs.edit().apply {
-            putStringSet(KEY_BLOCKED_APPS, packageNames.toSet())
+            putStringSet(KEY_BLOCKED_APPS, packageNames)
             apply()
         }
     }

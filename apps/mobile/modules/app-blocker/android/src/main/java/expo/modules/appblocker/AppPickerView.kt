@@ -21,7 +21,7 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
         layoutManager = LinearLayoutManager(context)
     }
     private val adapter: AppListAdapter
-    private var selectedApps: List<String> = emptyList()
+    private var selectedApps: Set<String> = emptySet()
     private val onAppsLoaded by EventDispatcher()
     private val preferences = BlockedAppsPreferences(context)
 
@@ -42,7 +42,7 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
         loadInstalledApps()
     }
 
-    fun setSelectedApps(apps: List<String>) {
+    fun setSelectedApps(apps: Set<String>) {
         selectedApps = apps
         adapter.setSelectedApps(apps)
     }
@@ -66,6 +66,7 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
                 // Update UI on main thread
                 post {
                     adapter.setApps(apps)
+                    setSelectedApps(preferences.loadBlockedApps())
                     onAppsLoaded(emptyMap())
                 }
             } catch (e: Exception) {
@@ -77,7 +78,7 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
 
 class AppListAdapter(
     private val context: Context,
-    private val onSelectionChanged: (List<String>) -> Unit
+    private val onSelectionChanged: (Set<String>) -> Unit
 ) : RecyclerView.Adapter<AppListAdapter.ViewHolder>() {
 
     private var apps: List<AppInfo> = emptyList()
@@ -88,7 +89,7 @@ class AppListAdapter(
         notifyDataSetChanged()
     }
 
-    fun setSelectedApps(packages: List<String>) {
+    fun setSelectedApps(packages: Set<String>) {
         selectedPackages.clear()
         selectedPackages.addAll(packages)
         notifyDataSetChanged()
@@ -123,7 +124,7 @@ class AppListAdapter(
                 } else {
                     selectedPackages.remove(app.packageName)
                 }
-                onSelectionChanged(selectedPackages.toList())
+                onSelectionChanged(selectedPackages)
             }
         }
 
