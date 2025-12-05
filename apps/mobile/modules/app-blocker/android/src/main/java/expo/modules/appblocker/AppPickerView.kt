@@ -6,14 +6,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.scale
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import expo.modules.kotlin.AppContext
 import expo.modules.kotlin.viewevent.EventDispatcher
 import expo.modules.kotlin.views.ExpoView
-import androidx.core.graphics.drawable.toDrawable
-import androidx.core.graphics.scale
-import androidx.core.graphics.createBitmap
 
 class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context, appContext) {
 
@@ -23,10 +23,11 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
     private val adapter: AppListAdapter
     private var selectedApps: List<String> = emptyList()
     private val onAppsLoaded by EventDispatcher()
+    private val preferences = BlockedAppsPreferences(context)
 
     init {
         adapter = AppListAdapter(context) { selectedPackages ->
-            saveSelectedPackages(selectedPackages)
+            preferences.saveBlockedApps(selectedPackages)
         }
 
         recyclerView.adapter = adapter
@@ -71,14 +72,6 @@ class AppPickerView(context: Context, appContext: AppContext) : ExpoView(context
                 Log.e("AppPickerView", "Failed to load apps", e)
             }
         }.start()
-    }
-
-    private fun saveSelectedPackages(selectedPackages: List<String>) {
-        val prefs = context.getSharedPreferences(BlockingService.PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().apply {
-            putStringSet(BlockingService.KEY_BLOCKED_APPS, selectedPackages.toSet())
-            apply()
-        }
     }
 }
 
