@@ -8,10 +8,11 @@ import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
-import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.provider.Settings
+import android.util.Log
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.Button
@@ -84,15 +85,13 @@ class BlockingService : Service() {
     }
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                "App Blocker",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
-        }
+        val channel = NotificationChannel(
+            NOTIFICATION_CHANNEL_ID,
+            "App Blocker",
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(channel)
     }
 
     private fun getForegroundApp(): String? {
@@ -103,25 +102,22 @@ class BlockingService : Service() {
 
         while (events.hasNextEvent()) {
             events.getNextEvent(event)
-            val eventType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                UsageEvents.Event.ACTIVITY_RESUMED
-            } else {
-                @Suppress("DEPRECATION")
-                UsageEvents.Event.MOVE_TO_FOREGROUND
-            }
-            if (event.eventType == eventType) {
+            if (event.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
                 lastApp = event.packageName
             }
         }
         return lastApp
     }
 
-    /**
-     * Shows a full-screen overlay that blocks the app
-     */
     private fun showBlockingOverlay(packageName: String) {
         // Don't show if already showing
         if (overlayView != null) return
+
+        // Check if we have overlay permission
+        if (!Settings.canDrawOverlays(this)) {
+            Log.e("BlockingService", "Cannot show overlay - permission not granted")
+            return
+        }
 
         // Create overlay view
         overlayView = FrameLayout(this).apply {
@@ -133,16 +129,10 @@ class BlockingService : Service() {
         overlayView?.addView(contentView)
 
         // Set up window parameters for overlay
-        val windowType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        } else {
-            @Suppress("DEPRECATION")
-            WindowManager.LayoutParams.TYPE_PHONE
-        }
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
-            windowType,
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
                     WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or
@@ -155,14 +145,12 @@ class BlockingService : Service() {
         try {
             windowManager.addView(overlayView, params)
         } catch (e: Exception) {
-            // Handle permission issues
-            e.printStackTrace()
+            // Handle permission issues or bad token exceptions
+            Log.e("BlockingService", "Failed to add overlay view", e)
+            overlayView = null
         }
     }
 
-    /**
-     * Creates the UI shown when an app is blocked
-     */
     private fun createBlockingUI(packageName: String): FrameLayout {
         val container = FrameLayout(this).apply {
             layoutParams = FrameLayout.LayoutParams(
@@ -239,9 +227,6 @@ class BlockingService : Service() {
         return container
     }
 
-    /**
-     * Hides the blocking overlay
-     */
     private fun hideBlockingOverlay() {
         overlayView?.let { view ->
             try {
