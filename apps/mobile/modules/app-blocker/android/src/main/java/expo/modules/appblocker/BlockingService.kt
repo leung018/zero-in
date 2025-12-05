@@ -84,15 +84,13 @@ class BlockingService : Service() {
     }
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                "App Blocker",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
-        }
+        val channel = NotificationChannel(
+            NOTIFICATION_CHANNEL_ID,
+            "App Blocker",
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(channel)
     }
 
     private fun getForegroundApp(): String? {
@@ -103,13 +101,7 @@ class BlockingService : Service() {
 
         while (events.hasNextEvent()) {
             events.getNextEvent(event)
-            val eventType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                UsageEvents.Event.ACTIVITY_RESUMED
-            } else {
-                @Suppress("DEPRECATION")
-                UsageEvents.Event.MOVE_TO_FOREGROUND
-            }
-            if (event.eventType == eventType) {
+            if (event.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
                 lastApp = event.packageName
             }
         }
