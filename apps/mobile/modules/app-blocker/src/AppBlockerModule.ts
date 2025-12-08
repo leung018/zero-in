@@ -1,6 +1,6 @@
 import { NativeModule, requireNativeModule } from 'expo'
 
-declare class AppBlockerModule extends NativeModule<{}> {
+declare class AppBlockerModule extends NativeModule {
   getPermissionStatus(): Promise<{
     isGranted: boolean
   }>
