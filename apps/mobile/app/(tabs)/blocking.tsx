@@ -728,19 +728,6 @@ const styles = StyleSheet.create({
     color: '#111827',
     marginRight: 8
   },
-  savedBadge: {
-    backgroundColor: '#1a73e8',
-    borderRadius: 12,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    minWidth: 28,
-    alignItems: 'center'
-  },
-  savedBadgeText: {
-    color: '#ffffff',
-    fontSize: 13,
-    fontWeight: '700'
-  },
   scheduleCard: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -846,17 +833,5 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '700'
-  },
-  appPickerContainer: {
-    height: 400,
-    marginBottom: 16,
-    borderWidth: 2,
-    borderColor: '#e5e7eb',
-    borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: '#ffffff'
-  },
-  appPicker: {
-    flex: 1
   }
 })
