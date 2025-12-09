@@ -1,9 +1,10 @@
 // App selection happens in a separate screen
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { useFocusEffect, useRouter } from 'expo-router'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   Alert,
+  AppState,
   Platform,
   ScrollView,
   StyleSheet,
@@ -51,28 +52,39 @@ export default function BlockingScreen() {
   const [permissionStatus, setPermissionStatus] = useState<PermissionStatus>(
     new PermissionStatus({})
   )
+  const appState = useRef(AppState.currentState)
+
+  const checkPermission = useCallback(async () => {
+    try {
+      const status = await appBlocker.getPermissionStatus()
+      setPermissionStatus(status)
+    } catch (error) {
+      console.error('Failed to check permission status:', error)
+    }
+  }, [])
 
   useFocusEffect(
     useCallback(() => {
-      const checkPermission = async () => {
-        try {
-          const status = await appBlocker.getPermissionStatus()
-          setPermissionStatus(status)
-        } catch (error) {
-          console.error('Failed to check permission:', error)
-        }
-      }
       checkPermission()
-    }, [])
+    }, [checkPermission])
   )
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+        checkPermission()
+      }
+      appState.current = nextAppState
+    })
+
+    return () => {
+      subscription.remove()
+    }
+  }, [checkPermission])
 
   const handleRequestPermission = async (permissionType: string) => {
     try {
       await appBlocker.requestPermission(permissionType)
-
-      // Re-check all permissions after request
-      const status = await appBlocker.getPermissionStatus()
-      setPermissionStatus(status)
     } catch (error) {
       console.error(`Failed to request ${permissionType} permission:`, error)
       Alert.alert('Error', `Failed to request ${getPermissionLabel(permissionType)} permission`)
