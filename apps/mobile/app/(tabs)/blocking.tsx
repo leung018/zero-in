@@ -1,7 +1,7 @@
 // App selection happens in a separate screen
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { useRouter } from 'expo-router'
-import React, { useState } from 'react'
+import { useFocusEffect, useRouter } from 'expo-router'
+import React, { useCallback, useState } from 'react'
 import {
   Alert,
   Platform,
@@ -14,8 +14,27 @@ import {
   View
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import appBlocker, { PermissionStatus } from '../../modules/app-blocker/src/AppBlockerModule'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+const getPermissionLabel = (permissionType: string): string => {
+  const labels: Record<string, string> = {
+    familyControls: 'Family Controls',
+    overlay: 'Appear on Top',
+    usageStats: 'Usage Access'
+  }
+  return labels[permissionType] || permissionType
+}
+
+const getPermissionDescription = (permissionType: string): string => {
+  const descriptions: Record<string, string> = {
+    familyControls: 'Allow Zero In to block apps during focus sessions using iOS Family Controls.',
+    overlay: 'Allow Zero In to appear on top of other apps to show blocking screens.',
+    usageStats: 'Allow Zero In to detect which apps are active for blocking.'
+  }
+  return descriptions[permissionType] || 'This permission is required for app blocking.'
+}
 
 interface Schedule {
   weekdays: string[]
@@ -27,6 +46,38 @@ interface Schedule {
 export default function BlockingScreen() {
   const router = useRouter()
   // App Picker handled in separate screen
+
+  // Permission Logic
+  const [permissionStatus, setPermissionStatus] = useState<PermissionStatus>(
+    new PermissionStatus({})
+  )
+
+  useFocusEffect(
+    useCallback(() => {
+      const checkPermission = async () => {
+        try {
+          const status = await appBlocker.getPermissionStatus()
+          setPermissionStatus(status)
+        } catch (error) {
+          console.error('Failed to check permission:', error)
+        }
+      }
+      checkPermission()
+    }, [])
+  )
+
+  const handleRequestPermission = async (permissionType: string) => {
+    try {
+      await appBlocker.requestPermission(permissionType)
+
+      // Re-check all permissions after request
+      const status = await appBlocker.getPermissionStatus()
+      setPermissionStatus(status)
+    } catch (error) {
+      console.error(`Failed to request ${permissionType} permission:`, error)
+      Alert.alert('Error', `Failed to request ${getPermissionLabel(permissionType)} permission`)
+    }
+  }
 
   // Timer-Based state
   const [pauseDuringBreaks, setPauseDuringBreaks] = useState(false)
@@ -122,6 +173,25 @@ export default function BlockingScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Permission Warnings Section */}
+        {permissionStatus.getMissingPermissions().map((permissionType) => (
+          <TouchableOpacity
+            key={permissionType}
+            style={styles.permissionBanner}
+            onPress={() => handleRequestPermission(permissionType)}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.permissionIcon}>⚠️</Text>
+            <View style={styles.permissionTextContainer}>
+              <Text style={styles.permissionTitle}>
+                {getPermissionLabel(permissionType)} Required
+              </Text>
+              <Text style={styles.permissionDesc}>{getPermissionDescription(permissionType)}</Text>
+            </View>
+            <Text style={styles.arrowIcon}>→</Text>
+          </TouchableOpacity>
+        ))}
+
         {/* Blocked Apps Section */}
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
@@ -388,6 +458,47 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 16,
     paddingBottom: 32
+  },
+  permissionBanner: {
+    backgroundColor: '#fee2e2',
+    borderWidth: 1,
+    borderColor: '#fca5a5',
+    borderRadius: 20,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    shadowColor: '#fee2e2',
+    shadowOffset: {
+      width: 0,
+      height: 4
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 3
+  },
+  permissionTextContainer: {
+    flex: 1,
+    paddingHorizontal: 12
+  },
+  permissionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#991b1b',
+    marginBottom: 2
+  },
+  permissionDesc: {
+    fontSize: 13,
+    color: '#b91c1c',
+    lineHeight: 18
+  },
+  permissionIcon: {
+    fontSize: 24
+  },
+  arrowIcon: {
+    fontSize: 20,
+    color: '#991b1b',
+    fontWeight: '700'
   },
   card: {
     backgroundColor: '#ffffff',

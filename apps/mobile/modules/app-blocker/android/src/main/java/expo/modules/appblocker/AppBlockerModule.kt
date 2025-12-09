@@ -17,19 +17,19 @@ class AppBlockerModule : Module() {
             Events("onAppsLoaded")
         }
 
-        AsyncFunction("getPermissionStatus") { ->
+        AsyncFunction("getPermissionDetails") { ->
             val context = appContext.reactContext ?: throw Exception("No context")
-            val isGranted = hasOverlayPermission(context) && hasUsageStatsPermission(context)
-            return@AsyncFunction mapOf("isGranted" to isGranted)
+            return@AsyncFunction mapOf(
+                "overlay" to hasOverlayPermission(context),
+                "usageStats" to hasUsageStatsPermission(context)
+            )
         }
 
-        AsyncFunction("requestPermissions") {
+        AsyncFunction("requestPermission") { permissionType: String ->
             val context = appContext.reactContext ?: throw Exception("No context")
-            if (!hasOverlayPermission(context)) {
-                requestOverlayPermission(context)
-            }
-            if (!hasUsageStatsPermission(context)) {
-                requestUsageStatsPermission(context)
+            when (permissionType) {
+                "overlay" -> requestOverlayPermission(context)
+                "usageStats" -> requestUsageStatsPermission(context)
             }
         }
 

@@ -6,16 +6,17 @@ public class AppBlockerModule: Module {
   public func definition() -> ModuleDefinition {
     Name("AppBlocker")
 
-    AsyncFunction("getPermissionStatus") { (promise: Promise) in
+    AsyncFunction("getPermissionDetails") { (promise: Promise) in
       if #available(iOS 15.0, *) {
         let ac = AuthorizationCenter.shared
-        promise.resolve(["isGranted": ac.authorizationStatus == .approved])
+        let isGranted = ac.authorizationStatus == .approved
+        promise.resolve(["familyControls": isGranted])
       } else {
         promise.reject("UNSUPPORTED_OS_VERSION", "FamilyControls is not available on this OS version.")
       }
     }
 
-    AsyncFunction("requestPermissions") { (promise: Promise) in
+    AsyncFunction("requestPermission") { (permissionType: String, promise: Promise) in
       if #available(iOS 16.0, *) {
         Task {
           do {
