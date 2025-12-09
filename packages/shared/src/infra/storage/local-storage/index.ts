@@ -2,10 +2,6 @@ import { StorageInterface } from '../interface'
 import { FakeLocalStorage, LocalStorage } from './local-storage'
 
 export class LocalStorageWrapper implements StorageInterface {
-  static create() {
-    return new LocalStorageWrapper(browser.storage.local)
-  }
-
   static createFake() {
     return new LocalStorageWrapper(new FakeLocalStorage())
   }
