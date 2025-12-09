@@ -30,7 +30,7 @@ const getPermissionLabel = (permissionType: string): string => {
 
 const getPermissionDescription = (permissionType: string): string => {
   const descriptions: Record<string, string> = {
-    familyControls: 'Allow Zero In to block apps during focus sessions using iOS Family Controls.',
+    familyControls: 'Allow Zero In to block apps using iOS Family Controls.',
     overlay: 'Allow Zero In to appear on top of other apps to show blocking screens.',
     usageStats: 'Allow Zero In to detect which apps are active for blocking.'
   }
@@ -213,8 +213,7 @@ export default function BlockingScreen() {
 
           <View style={styles.infoBox}>
             <Text style={styles.infoText}>
-              Select which apps to block during focus sessions. Your selections are saved
-              automatically.
+              Select which apps to block. Your selections are saved automatically.
             </Text>
           </View>
 
