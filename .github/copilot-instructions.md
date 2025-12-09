@@ -152,6 +152,8 @@ cd apps/extension && yarn firebase-emulators
 
 8. **Environment Variables**: Use `import.meta.env.VITE_*` for Firebase config overrides (see `config.ts`)
 
+9. **Comments**: Avoid comments when code is self-explanatory through clear naming. Only add comments for non-obvious business logic, complex algorithms, or important context that cannot be expressed through code structure alone
+
 ## Key Files Reference
 
 - `apps/extension/src/service-workers/listener.ts`: Main orchestrator (timer, blocking, notifications)
