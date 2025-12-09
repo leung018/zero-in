@@ -87,7 +87,6 @@ export default function BlockingScreen() {
       await appBlocker.requestPermission(permissionType)
     } catch (error) {
       console.error(`Failed to request ${permissionType} permission:`, error)
-      Alert.alert('Error', `Failed to request ${getPermissionLabel(permissionType)} permission`)
     }
   }
 
