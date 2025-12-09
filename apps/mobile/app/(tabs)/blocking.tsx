@@ -14,7 +14,7 @@ import {
   View
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import appBlocker, { PermissionStatus } from '../../modules/app-blocker/src/AppBlockerModule'
+import { appBlocker, PermissionStatus } from '../../modules/app-blocker/src/AppBlockerModule'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 

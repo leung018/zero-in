@@ -21,7 +21,6 @@ export class PermissionStatus {
       .map(([type, _]) => type)
   }
 
-  // Factory method to create from native response
   static fromNativeResponse(details: PermissionDetails): PermissionStatus {
     return new PermissionStatus(details)
   }
@@ -52,6 +51,3 @@ export const appBlocker = {
     return nativeModule.unblockApps()
   }
 }
-
-// Default export is the wrapper, not the raw native module
-export default appBlocker
