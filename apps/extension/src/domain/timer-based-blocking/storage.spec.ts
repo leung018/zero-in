@@ -1,6 +1,6 @@
+import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { TimerBasedBlockingRules } from '.'
-import { LocalStorageWrapper } from '../../infra/storage/local-storage'
 import { TimerBasedBlockingRulesSchemas } from './schema'
 import { TimerBasedBlockingRulesStorageService } from './storage'
 import { runTimerBasedBlockingRulesStorageServiceTests } from './storage-shared-spec'

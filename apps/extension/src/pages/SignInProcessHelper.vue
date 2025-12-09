@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ImportRecord, ImportStatus } from '@/domain/import/record'
+import { StorageInterface } from '@zero-in/shared/infra/storage/interface'
 import { ref } from 'vue'
 import { ImportRecordStorageService } from '../domain/import/record/storage'
 import { ImportService } from '../domain/import/service'
 import { SettingsExistenceService } from '../domain/import/settings-existence'
-import { StorageInterface } from '../infra/storage/interface'
 
 const { localStorage, remoteStorage, importRecordStorageService } = defineProps<{
   localStorage: StorageInterface

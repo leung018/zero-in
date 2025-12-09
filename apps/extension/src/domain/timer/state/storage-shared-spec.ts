@@ -1,5 +1,5 @@
+import { ObservableStorage } from '@zero-in/shared/infra/storage/interface'
 import { expect, it } from 'vitest'
-import { ObservableStorage } from '../../../infra/storage/interface'
 import { Duration } from '../duration'
 import { TimerStage } from '../stage'
 import { TimerInternalState } from './internal'

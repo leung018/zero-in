@@ -1,8 +1,8 @@
+import { StorageInterface } from '@zero-in/shared/infra/storage/interface'
+import { StorageKey } from '@zero-in/shared/infra/storage/key'
+import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
+import { StorageManager } from '@zero-in/shared/infra/storage/manager'
 import { FirestoreStorageWrapper } from '../../../infra/storage/firestore'
-import { StorageInterface } from '../../../infra/storage/interface'
-import { StorageKey } from '../../../infra/storage/key'
-import { LocalStorageWrapper } from '../../../infra/storage/local-storage'
-import { StorageManager } from '../../../infra/storage/manager'
 import { ImportRecord, newEmptyImportRecord } from './index'
 
 export class ImportRecordStorageService {

@@ -1,5 +1,5 @@
+import { FakeObservableStorage } from '@zero-in/shared/infra/storage/fake'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { FakeObservableStorage } from '../../../infra/storage/fake'
 import { Duration } from '../duration'
 import { TimerStage } from '../stage'
 import { TimerInternalState } from './internal'

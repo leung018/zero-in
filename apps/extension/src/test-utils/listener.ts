@@ -1,7 +1,8 @@
+import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
+import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
 import config from '../config'
 import { BrowsingRulesStorageService } from '../domain/browsing-rules/storage'
 import { NotificationSettingStorageService } from '../domain/notification-setting/storage'
-import { WeeklySchedulesStorageService } from '../domain/schedules/storage'
 import { FocusTimer } from '../domain/timer'
 import { TimerBasedBlockingRulesStorageService } from '../domain/timer-based-blocking/storage'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
@@ -12,7 +13,6 @@ import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeBrowsingControlService } from '../infra/browsing-control'
 import { FakeCommunicationManager } from '../infra/communication'
 import { DesktopNotificationService } from '../infra/desktop-notification'
-import { LocalStorageWrapper } from '../infra/storage/local-storage'
 import { BackgroundListener } from '../service-workers/listener'
 
 export async function setUpListener({

@@ -1,4 +1,4 @@
-import { SubscriptionManager } from '@/utils/subscription'
+import { SubscriptionManager } from '@zero-in/shared/utils/subscription'
 import { ObservableStorage, Unsubscribe } from './interface'
 import { LocalStorageWrapper } from './local-storage'
 

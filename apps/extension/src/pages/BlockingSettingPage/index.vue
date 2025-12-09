@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { BrowsingRulesStorageService } from '@/domain/browsing-rules/storage'
-import { WeeklySchedulesStorageService } from '@/domain/schedules/storage'
+import { newWeeklySchedulesStorageService } from '@/domain/schedules/storage'
 import { TimerBasedBlockingRulesStorageService } from '@/domain/timer-based-blocking/storage'
 import { UpdateSuccessNotifierService } from '@/infra/browser/update-success-notifier'
 import type { ClientPort } from '@/service-workers/listener'
@@ -34,7 +34,7 @@ const { port } = defineProps<{
     <BCard class="mb-4 shadow-sm">
       <h2 class="mb-3 mt-1">Schedules</h2>
       <WeeklySchedulesEditor
-        :weeklySchedulesStorageService="WeeklySchedulesStorageService.create()"
+        :weeklySchedulesStorageService="newWeeklySchedulesStorageService()"
         :port="port"
       />
     </BCard>

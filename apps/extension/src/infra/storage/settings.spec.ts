@@ -1,6 +1,6 @@
+import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
 import { describe, expect, it } from 'vitest'
-import { newSettingStorageServicesMap } from './key'
-import { LocalStorageWrapper } from './local-storage'
+import { newSettingStorageServicesMap } from './settings'
 
 describe('newSettingStorageServicesMap', () => {
   it('should initialize the services correctly', async () => {

@@ -1,6 +1,6 @@
+import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { FocusSessionRecord, newFocusSessionRecord } from '.'
-import { LocalStorageWrapper } from '../../../infra/storage/local-storage'
 import { FocusSessionRecordsSchemas } from './schema'
 import { FocusSessionRecordsStorageService } from './storage'
 import { runFocusSessionRecordsStorageServiceTests } from './storage-shared-spec'

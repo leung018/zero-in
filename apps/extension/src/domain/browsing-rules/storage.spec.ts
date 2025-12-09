@@ -1,5 +1,5 @@
+import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
 import { beforeEach, describe } from 'vitest'
-import { LocalStorageWrapper } from '../../infra/storage/local-storage'
 import { runBrowsingRulesStorageServiceTests } from './storage-shared-spec'
 
 describe('BrowsingRulesStorageService', () => {

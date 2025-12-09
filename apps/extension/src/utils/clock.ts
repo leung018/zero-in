@@ -1,4 +1,4 @@
-import { SubscriptionManager } from './subscription'
+import { SubscriptionManager } from '@zero-in/shared/utils/subscription'
 
 export class FakeClock {
   private elapsedTime: number = 0

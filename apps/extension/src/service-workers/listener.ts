@@ -1,8 +1,10 @@
+import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
+import { SubscriptionManager } from '@zero-in/shared/utils/subscription'
 import config from '../config'
 import { BrowsingControlTogglingService } from '../domain/browsing-control-toggling'
 import { BrowsingRulesStorageService } from '../domain/browsing-rules/storage'
 import { NotificationSettingStorageService } from '../domain/notification-setting/storage'
-import { WeeklySchedulesStorageService } from '../domain/schedules/storage'
+import { newWeeklySchedulesStorageService } from '../domain/schedules/storage'
 import { FocusTimer } from '../domain/timer'
 import { TimerBasedBlockingRulesStorageService } from '../domain/timer-based-blocking/storage'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
@@ -26,7 +28,6 @@ import { type CommunicationManager, type Port } from '../infra/communication'
 import { DesktopNotificationService } from '../infra/desktop-notification'
 import { MultipleActionService } from '../infra/multiple-actions'
 import { retryUntilSuccess } from '../utils/retry'
-import { SubscriptionManager } from '../utils/subscription'
 import { newTimerConfig, WorkRequestName, type WorkRequest } from './request'
 import { WorkResponseName, type WorkResponse } from './response'
 
@@ -65,7 +66,7 @@ export class BackgroundListener {
       closeTabsService: new BrowserCloseTabsService(config.getReminderPageUrl()),
       browsingControlService: new BrowserBrowsingControlService(),
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
-      weeklySchedulesStorageService: WeeklySchedulesStorageService.create(),
+      weeklySchedulesStorageService: newWeeklySchedulesStorageService(),
       timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService.create(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
       timer: FocusTimer.create()

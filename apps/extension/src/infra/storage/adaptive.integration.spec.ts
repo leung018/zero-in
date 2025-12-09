@@ -1,8 +1,8 @@
+import { FakeObservableStorage } from '@zero-in/shared/infra/storage/fake'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { signInAndGetFirestoreStorage } from '../../test-utils/firestore'
 import { FirebaseServices } from '../firebase/services'
 import { AdaptiveStorageProvider } from './adaptive'
-import { FakeObservableStorage } from './fake'
 
 describe('AdaptiveStorageProvider', async () => {
   const TEST_KEY = 'testKey'

@@ -1,6 +1,6 @@
 import { Time } from '@zero-in/shared/domain/time/index'
+import { StorageInterface } from '@zero-in/shared/infra/storage/interface'
 import { expect, it } from 'vitest'
-import { StorageInterface } from '../../infra/storage/interface'
 import { DailyResetTimeStorageService } from './storage'
 
 export function runDailyResetTimeStorageServiceTests(storage: StorageInterface) {
