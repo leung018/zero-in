@@ -1,5 +1,11 @@
 import { NativeModule, requireNativeModule } from 'expo'
 
+export enum PermissionType {
+  FamilyControls = 'familyControls',
+  Overlay = 'overlay',
+  UsageStats = 'usageStats'
+}
+
 export interface PermissionDetails {
   [key: string]: boolean
 }
@@ -11,14 +17,14 @@ export class PermissionStatus {
     return Object.values(this.details).every((granted) => granted === true)
   }
 
-  hasPermission(type: string): boolean {
+  hasPermission(type: PermissionType): boolean {
     return this.details[type] === true
   }
 
-  getMissingPermissions(): string[] {
+  getMissingPermissions(): PermissionType[] {
     return Object.entries(this.details)
       .filter(([_, granted]) => !granted)
-      .map(([type, _]) => type)
+      .map(([type, _]) => type as PermissionType)
   }
 
   static fromNativeResponse(details: PermissionDetails): PermissionStatus {
@@ -28,7 +34,7 @@ export class PermissionStatus {
 
 declare class AppBlockerModule extends NativeModule {
   getPermissionDetails(): Promise<PermissionDetails>
-  requestPermission(permissionType: string): Promise<void>
+  requestPermission(permissionType: PermissionType): Promise<void>
   blockApps(): Promise<void>
   unblockApps(): Promise<void>
 }
@@ -41,7 +47,7 @@ export const appBlocker = {
     const response = await nativeModule.getPermissionDetails()
     return PermissionStatus.fromNativeResponse(response)
   },
-  requestPermission(permissionType: string): Promise<void> {
+  requestPermission(permissionType: PermissionType): Promise<void> {
     return nativeModule.requestPermission(permissionType)
   },
   blockApps(): Promise<void> {

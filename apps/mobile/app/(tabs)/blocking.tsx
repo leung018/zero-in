@@ -15,24 +15,29 @@ import {
   View
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { appBlocker, PermissionStatus } from '../../modules/app-blocker/src/AppBlockerModule'
+import {
+  appBlocker,
+  PermissionStatus,
+  PermissionType
+} from '../../modules/app-blocker/src/AppBlockerModule'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-const getPermissionLabel = (permissionType: string): string => {
-  const labels: Record<string, string> = {
-    familyControls: 'Family Controls',
-    overlay: 'Appear on Top',
-    usageStats: 'Usage Access'
+const getPermissionLabel = (permissionType: PermissionType): string => {
+  const labels: Record<PermissionType, string> = {
+    [PermissionType.FamilyControls]: 'Family Controls',
+    [PermissionType.Overlay]: 'Appear on Top',
+    [PermissionType.UsageStats]: 'Usage Access'
   }
   return labels[permissionType] || permissionType
 }
 
-const getPermissionDescription = (permissionType: string): string => {
-  const descriptions: Record<string, string> = {
-    familyControls: 'Allow Zero In to block apps using iOS Family Controls.',
-    overlay: 'Allow Zero In to appear on top of other apps to show blocking screens.',
-    usageStats: 'Allow Zero In to detect which apps are active for blocking.'
+const getPermissionDescription = (permissionType: PermissionType): string => {
+  const descriptions: Record<PermissionType, string> = {
+    [PermissionType.FamilyControls]: 'Allow Zero In to block apps using iOS Family Controls.',
+    [PermissionType.Overlay]:
+      'Allow Zero In to appear on top of other apps to show blocking screens.',
+    [PermissionType.UsageStats]: 'Allow Zero In to detect which apps are active for blocking.'
   }
   return descriptions[permissionType] || 'This permission is required for app blocking.'
 }
@@ -82,7 +87,7 @@ export default function BlockingScreen() {
     }
   }, [checkPermission])
 
-  const handleRequestPermission = async (permissionType: string) => {
+  const handleRequestPermission = async (permissionType: PermissionType) => {
     try {
       await appBlocker.requestPermission(permissionType)
     } catch (error) {
