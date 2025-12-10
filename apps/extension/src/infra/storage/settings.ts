@@ -1,29 +1,13 @@
+import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
+import { StorageInterface, StorageService } from '@zero-in/shared/infra/storage/interface'
+import { SettingsStorageKey } from '@zero-in/shared/infra/storage/key'
 import { BrowsingRulesStorageService } from '../../domain/browsing-rules/storage'
 import { DailyResetTimeStorageService } from '../../domain/daily-reset-time/storage'
 import { NotificationSettingStorageService } from '../../domain/notification-setting/storage'
-import { WeeklySchedulesStorageService } from '../../domain/schedules/storage'
 import { TimerBasedBlockingRulesStorageService } from '../../domain/timer-based-blocking/storage'
 import { TimerConfigStorageService } from '../../domain/timer/config/storage'
 import { FocusSessionRecordsStorageService } from '../../domain/timer/record/storage'
 import { TimerStateStorageService } from '../../domain/timer/state/storage'
-import { StorageInterface, StorageService } from './interface'
-
-/**
- * All storage types that for user settings should be listed here.
- * If users switches from local storage to cloud storage, they can choose to import these settings.
- */
-export enum SettingsStorageKey {
-  TimerConfig = 'timerConfig',
-  WeeklySchedules = 'weeklySchedules',
-  FocusSessionRecords = 'focusSessionRecords',
-  BrowsingRules = 'browsingRules',
-  DailyResetTime = 'dailyCutoffTime',
-  NotificationSetting = 'notificationSetting',
-  TimerBasedBlockingRules = 'blockingTimerIntegration',
-  TimerState = 'timerState'
-}
-
-export type StorageKey = `${SettingsStorageKey}` | 'featureFlags' | 'importRecord'
 
 type StorageServicesMap = {
   [key in SettingsStorageKey]: StorageService<any>

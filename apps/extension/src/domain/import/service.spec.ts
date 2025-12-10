@@ -1,5 +1,5 @@
+import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
 import { describe, expect, it } from 'vitest'
-import { LocalStorageWrapper } from '../../infra/storage/local-storage'
 import { TimerConfig } from '../timer/config'
 import { TimerConfigStorageService } from '../timer/config/storage'
 import { Duration } from '../timer/duration'

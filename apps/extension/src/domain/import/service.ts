@@ -1,6 +1,7 @@
-import { StorageInterface, StorageService } from '../../infra/storage/interface'
-import { SettingsStorageKey, newSettingStorageServicesMap } from '../../infra/storage/key'
-import { LocalStorageWrapper } from '../../infra/storage/local-storage'
+import { StorageInterface, StorageService } from '@zero-in/shared/infra/storage/interface'
+import { SettingsStorageKey } from '@zero-in/shared/infra/storage/key'
+import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
+import { newSettingStorageServicesMap } from '../../infra/storage/settings'
 
 export class ImportService {
   private localStorageServicesMap: ReturnType<typeof newSettingStorageServicesMap>

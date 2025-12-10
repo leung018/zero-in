@@ -1,5 +1,5 @@
+import { FakeObservableStorage } from '@zero-in/shared/infra/storage/fake'
 import { beforeEach, describe } from 'vitest'
-import { FakeObservableStorage } from '../../../infra/storage/fake'
 import { runTimerConfigStorageServiceTests } from './storage-shared-spec'
 
 describe('TimerConfigStorageService', () => {

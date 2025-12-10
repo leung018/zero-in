@@ -1,10 +1,10 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
+import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
 import { describe, expect, it } from 'vitest'
 import { ImportStatus, newEmptyImportRecord } from '../domain/import/record/index'
 import { ImportRecordStorageService } from '../domain/import/record/storage'
 import { newTestNotificationSetting, NotificationSetting } from '../domain/notification-setting'
 import { NotificationSettingStorageService } from '../domain/notification-setting/storage'
-import { LocalStorageWrapper } from '../infra/storage/local-storage'
 import { dataTestSelector } from '../test-utils/selector'
 import SignInProcessHelper from './SignInProcessHelper.vue'
 

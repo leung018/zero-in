@@ -1,6 +1,7 @@
-import { StorageInterface } from './storage/interface'
-import { StorageKey } from './storage/key'
-import { LocalStorageWrapper } from './storage/local-storage'
+import { StorageInterface } from '@zero-in/shared/infra/storage/interface'
+import { StorageKey } from '@zero-in/shared/infra/storage/key'
+import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
+import { newLocalStorage } from './storage/local-storage'
 
 export enum FeatureFlag {
   PLACE_HOLDER = 'place-holder',
@@ -25,7 +26,7 @@ export class FeatureFlagsService {
   }
 
   private static create(): FeatureFlagsService {
-    return new FeatureFlagsService(LocalStorageWrapper.create())
+    return new FeatureFlagsService(newLocalStorage())
   }
 
   private constructor(storage: StorageInterface) {

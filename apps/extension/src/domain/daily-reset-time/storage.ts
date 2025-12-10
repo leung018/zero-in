@@ -4,11 +4,11 @@ import {
   serializeTime,
   type SerializedTime
 } from '@zero-in/shared/domain/time/serialize'
+import { StorageInterface, StorageService } from '@zero-in/shared/infra/storage/interface'
+import { StorageKey } from '@zero-in/shared/infra/storage/key'
+import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
+import { StorageManager } from '@zero-in/shared/infra/storage/manager'
 import { AdaptiveStorageProvider } from '../../infra/storage/adaptive'
-import { StorageInterface, StorageService } from '../../infra/storage/interface'
-import { StorageKey } from '../../infra/storage/key'
-import { LocalStorageWrapper } from '../../infra/storage/local-storage'
-import { StorageManager } from '../../infra/storage/manager'
 
 export class DailyResetTimeStorageService implements StorageService<Time> {
   static readonly STORAGE_KEY: StorageKey = 'dailyCutoffTime'

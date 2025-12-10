@@ -1,4 +1,5 @@
 import config from '@/config'
+import { ObservableStorage } from '@zero-in/shared/infra/storage/interface'
 import { initializeApp } from 'firebase/app'
 import {
   browserLocalPersistence,
@@ -21,7 +22,6 @@ import {
   onSnapshot,
   setDoc
 } from 'firebase/firestore'
-import { ObservableStorage } from '../storage/interface'
 import { LocalStorageUserIdCache } from './local-storage-cache'
 
 const app = initializeApp(config.getFirebaseConfig())

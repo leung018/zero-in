@@ -3,7 +3,7 @@ import config from '@/config'
 import { ImportRecordStorageService } from '../../domain/import/record/storage'
 import { FirebaseServices } from '../../infra/firebase/services'
 import { FirestoreStorageWrapper } from '../../infra/storage/firestore'
-import { LocalStorageWrapper } from '../../infra/storage/local-storage'
+import { newLocalStorage } from '../../infra/storage/local-storage'
 import SignInProcessHelper from '../../pages/SignInProcessHelper.vue'
 
 // Require manual testing
@@ -136,7 +136,7 @@ const onHelperProcessComplete = async () => {
   <SignInProcessHelper
     ref="signInProcessHelperRef"
     v-show="showProcessHelper"
-    :localStorage="LocalStorageWrapper.create()"
+    :localStorage="newLocalStorage()"
     :remoteStorage="FirestoreStorageWrapper.create()"
     :importRecordStorageService="ImportRecordStorageService.create()"
     @onHelperProcessComplete="onHelperProcessComplete"

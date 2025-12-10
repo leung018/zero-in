@@ -1,6 +1,6 @@
-import { StorageInterface } from '../../infra/storage/interface'
-import { SettingsStorageKey } from '../../infra/storage/key'
-import { LocalStorageWrapper } from '../../infra/storage/local-storage'
+import { StorageInterface } from '@zero-in/shared/infra/storage/interface'
+import { SettingsStorageKey } from '@zero-in/shared/infra/storage/key'
+import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
 
 /**
  * Service to check if user has set any settings in storage.

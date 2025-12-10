@@ -1,4 +1,5 @@
-import { LocalStorageWrapper } from '../storage/local-storage'
+import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
+import { newLocalStorage } from '../storage/local-storage'
 
 export class LocalStorageUserIdCache {
   private static KEY = 'authenticatedUserId'
@@ -6,7 +7,7 @@ export class LocalStorageUserIdCache {
 
   static get localStorageWrapper() {
     if (!this._localStorageWrapper) {
-      this._localStorageWrapper = LocalStorageWrapper.create()
+      this._localStorageWrapper = newLocalStorage()
     }
     return this._localStorageWrapper
   }
