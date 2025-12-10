@@ -1,4 +1,5 @@
 import { BootstrapVueNextResolver } from 'bootstrap-vue-next'
+import path from 'path'
 import IconsResolve from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
 import Components from 'unplugin-vue-components/vite'
@@ -39,6 +40,11 @@ export default defineConfig({
     ]
   },
   vite: () => ({
+    resolve: {
+      alias: {
+        '@zero-in/shared': path.resolve(__dirname, '../../packages/shared/src')
+      }
+    },
     plugins: [
       Icons({
         compiler: 'vue3',
