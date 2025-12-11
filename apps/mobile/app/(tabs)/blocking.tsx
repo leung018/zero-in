@@ -1,5 +1,5 @@
 // App selection happens in a separate screen
-import { SchedulesCard } from '@/components/blocking/SchedulesCard'
+import { WeeklySchedulesEditor } from '@/components/blocking/WeeklySchedulesEditor'
 import {
   appBlocker,
   PermissionStatus,
@@ -181,7 +181,7 @@ export default function BlockingScreen() {
         </View>
 
         {/* Schedules Section */}
-        <SchedulesCard />
+        <WeeklySchedulesEditor />
       </ScrollView>
     </SafeAreaView>
   )

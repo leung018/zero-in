@@ -17,7 +17,7 @@ interface Schedule {
   targetSessions: string
 }
 
-export function SchedulesCard() {
+export function WeeklySchedulesEditor() {
   // Schedules state
   const [schedules, setSchedules] = useState<Schedule[]>([])
   const [selectedWeekdays, setSelectedWeekdays] = useState<Set<string>>(new Set())
