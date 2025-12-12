@@ -1,4 +1,4 @@
-import { render, RenderAPI } from '@testing-library/react-native'
+import { render, RenderAPI, waitFor, within } from '@testing-library/react-native'
 import { Weekday, WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { Time } from '@zero-in/shared/domain/time'
@@ -22,17 +22,19 @@ describe('WeeklySchedulesEditor', () => {
       ]
     })
 
-    assertSchedulesDisplayed(wrapper, [
-      {
-        displayedWeekdays: 'Mon, Tue',
-        displayedTime: '07:00 - 09:01',
-        displayedTargetFocusSessions: 1
-      },
-      {
-        displayedWeekdays: 'Wed',
-        displayedTime: '06:02 - 08:04'
-      }
-    ])
+    await waitFor(() => {
+      assertSchedulesDisplayed(wrapper, [
+        {
+          displayedWeekdays: 'Mon, Tue',
+          displayedTime: '07:00 - 09:01',
+          displayedTargetFocusSessions: 1
+        },
+        {
+          displayedWeekdays: 'Wed',
+          displayedTime: '06:02 - 08:04'
+        }
+      ])
+    })
   })
 })
 
@@ -68,21 +70,26 @@ function assertSchedulesDisplayed(
 
   for (let i = 0; i < expected.length; i++) {
     const { displayedWeekdays, displayedTime, displayedTargetFocusSessions } = expected[i]
+    const scheduleElement = weeklySchedules[i]
+    const scheduleWithin = within(scheduleElement)
 
     // Check weekdays
-    expect(weeklySchedules[i].textContent).toContain(displayedWeekdays)
+    scheduleWithin.getByText(displayedWeekdays)
 
     // Check time
-    expect(weeklySchedules[i].textContent).toContain(displayedTime)
+    scheduleWithin.getByText(displayedTime, { exact: false })
 
     // Check displayed target focus sessions
     if (displayedTargetFocusSessions) {
-      const badge = wrapper.queryByTestId('target-focus-sessions')
+      const badge = scheduleWithin.getByTestId('target-focus-sessions')
       expect(badge).toBeTruthy()
-      const badgeValue = badge.textContent?.match(/\d+/)?.[0]
+      const badgeText = badge.children.join('') || ''
+      const badgeValue = badgeText.match(/\d+/)?.[0]
       expect(badgeValue).toBe(displayedTargetFocusSessions.toString())
     } else {
-      expect(wrapper.queryByTestId('target-focus-sessions')).toBeNull()
+      // For schedules without target focus sessions, verify no badge exists in this schedule
+      const badge = scheduleWithin.queryByTestId('target-focus-sessions')
+      expect(badge).toBeNull()
     }
   }
 }

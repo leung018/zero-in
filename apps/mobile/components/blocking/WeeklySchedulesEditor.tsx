@@ -1,6 +1,9 @@
 import DateTimePicker from '@react-native-community/datetimepicker'
+import { Weekday, WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
-import React, { useState } from 'react'
+import { Time } from '@zero-in/shared/domain/time'
+import { capitalized } from '@zero-in/shared/utils/format'
+import React, { useEffect, useState } from 'react'
 import { Alert, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -11,11 +14,12 @@ const formatTime = (date: Date): string => {
   return `${hours}:${minutes}`
 }
 
-interface Schedule {
-  weekdays: string[]
-  startTime: string
-  endTime: string
-  targetSessions: string
+const formatWeekday = (weekday: Weekday): string => {
+  return capitalized(Weekday[weekday])
+}
+
+const formatWeekdays = (weekdaySet: ReadonlySet<Weekday>): string => {
+  return Array.from(weekdaySet).map(formatWeekday).join(', ')
 }
 
 export function WeeklySchedulesEditor({
@@ -24,7 +28,7 @@ export function WeeklySchedulesEditor({
   weeklySchedulesStorageService: WeeklySchedulesStorageService
 }) {
   // Schedules state
-  const [schedules, setSchedules] = useState<Schedule[]>([])
+  const [weeklySchedules, setWeeklySchedules] = useState<WeeklySchedule[]>([])
   const [selectedWeekdays, setSelectedWeekdays] = useState<Set<string>>(new Set())
   const [startTime, setStartTime] = useState(new Date())
   const [endTime, setEndTime] = useState(new Date())
@@ -33,6 +37,15 @@ export function WeeklySchedulesEditor({
   const [targetSessions, setTargetSessions] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [showScheduleForm, setShowScheduleForm] = useState(false)
+
+  // Load schedules from storage on mount
+  useEffect(() => {
+    weeklySchedulesStorageService.get().then((schedules) => {
+      if (schedules) {
+        setWeeklySchedules(schedules)
+      }
+    })
+  }, [weeklySchedulesStorageService])
 
   const toggleWeekday = (weekday: string) => {
     const newSet = new Set(selectedWeekdays)
@@ -64,22 +77,34 @@ export function WeeklySchedulesEditor({
       return
     }
 
-    const startTimeStr = formatTime(startTime)
-    const endTimeStr = formatTime(endTime)
+    // Convert selected weekdays (strings) to Weekday enum
+    const weekdaySet = new Set<Weekday>()
+    for (const weekdayStr of selectedWeekdays) {
+      const weekdayIndex = WEEKDAYS.indexOf(weekdayStr)
+      if (weekdayIndex !== -1) {
+        weekdaySet.add(weekdayIndex as Weekday)
+      }
+    }
 
-    if (startTimeStr >= endTimeStr) {
+    const startTimeObj = new Time(startTime.getHours(), startTime.getMinutes())
+    const endTimeObj = new Time(endTime.getHours(), endTime.getMinutes())
+
+    if (!startTimeObj.isBefore(endTimeObj)) {
       setErrorMessage('Start time must be before end time')
       return
     }
 
-    const newSchedule: Schedule = {
-      weekdays: Array.from(selectedWeekdays),
-      startTime: startTimeStr,
-      endTime: endTimeStr,
-      targetSessions
-    }
+    const targetFocusSessions = targetSessions ? parseInt(targetSessions, 10) : undefined
 
-    setSchedules([...schedules, newSchedule])
+    const newSchedule = new WeeklySchedule({
+      weekdaySet,
+      startTime: startTimeObj,
+      endTime: endTimeObj,
+      targetFocusSessions:
+        targetFocusSessions && targetFocusSessions > 0 ? targetFocusSessions : null
+    })
+
+    setWeeklySchedules([...weeklySchedules, newSchedule])
 
     // Reset form
     setSelectedWeekdays(new Set())
@@ -97,7 +122,7 @@ export function WeeklySchedulesEditor({
   }
 
   const handleRemoveSchedule = (indexToRemove: number) => {
-    setSchedules(schedules.filter((_, i) => i !== indexToRemove))
+    setWeeklySchedules(weeklySchedules.filter((_, i) => i !== indexToRemove))
   }
 
   return (
@@ -253,23 +278,23 @@ export function WeeklySchedulesEditor({
       )}
 
       {/* Saved Schedules */}
-      {schedules.length > 0 && (
+      {weeklySchedules.length > 0 && (
         <View style={styles.savedSection}>
           <View style={styles.savedHeader}>
             <Text style={styles.savedTitle}>Active</Text>
           </View>
 
-          {schedules.map((schedule, index) => (
-            <View key={index} style={styles.scheduleCard} data-testid="weekly-schedule">
+          {weeklySchedules.map((schedule, index) => (
+            <View key={index} style={styles.scheduleCard} testID="weekly-schedule">
               <View style={styles.scheduleContent}>
-                <Text style={styles.scheduleWeekdays}>{schedule.weekdays.join(', ')}</Text>
+                <Text style={styles.scheduleWeekdays}>{formatWeekdays(schedule.weekdaySet)}</Text>
                 <Text style={styles.scheduleTime}>
-                  {schedule.startTime} - {schedule.endTime}
+                  {schedule.startTime.toHhMmString()} - {schedule.endTime.toHhMmString()}
                 </Text>
-                {schedule.targetSessions && (
+                {schedule.targetFocusSessions && (
                   <View style={styles.targetBadge}>
-                    <Text style={styles.targetBadgeText} data-testid="target-focus-sessions">
-                      🎯 Target sessions: {schedule.targetSessions}
+                    <Text style={styles.targetBadgeText} testID="target-focus-sessions">
+                      🎯 Target sessions: {schedule.targetFocusSessions}
                     </Text>
                   </View>
                 )}
