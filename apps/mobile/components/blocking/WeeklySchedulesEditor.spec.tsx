@@ -22,19 +22,17 @@ describe('WeeklySchedulesEditor', () => {
       ]
     })
 
-    await waitFor(() => {
-      assertSchedulesDisplayed(wrapper, [
-        {
-          displayedWeekdays: 'Mon, Tue',
-          displayedTime: '07:00 - 09:01',
-          displayedTargetFocusSessions: 1
-        },
-        {
-          displayedWeekdays: 'Wed',
-          displayedTime: '06:02 - 08:04'
-        }
-      ])
-    })
+    await assertSchedulesDisplayed(wrapper, [
+      {
+        displayedWeekdays: 'Mon, Tue',
+        displayedTime: '07:00 - 09:01',
+        displayedTargetFocusSessions: 1
+      },
+      {
+        displayedWeekdays: 'Wed',
+        displayedTime: '06:02 - 08:04'
+      }
+    ])
   })
 })
 
@@ -57,7 +55,7 @@ async function renderWeeklySchedulesEditor({
   return { wrapper }
 }
 
-function assertSchedulesDisplayed(
+async function assertSchedulesDisplayed(
   wrapper: RenderAPI,
   expected: {
     displayedWeekdays: string
@@ -65,30 +63,32 @@ function assertSchedulesDisplayed(
     displayedTargetFocusSessions?: number
   }[]
 ) {
-  const weeklySchedules = wrapper.getAllByTestId('weekly-schedule')
-  expect(weeklySchedules).toHaveLength(expected.length)
+  await waitFor(() => {
+    const weeklySchedules = wrapper.getAllByTestId('weekly-schedule')
+    expect(weeklySchedules).toHaveLength(expected.length)
 
-  for (let i = 0; i < expected.length; i++) {
-    const { displayedWeekdays, displayedTime, displayedTargetFocusSessions } = expected[i]
-    const scheduleElement = weeklySchedules[i]
-    const scheduleWithin = within(scheduleElement)
+    for (let i = 0; i < expected.length; i++) {
+      const { displayedWeekdays, displayedTime, displayedTargetFocusSessions } = expected[i]
+      const scheduleElement = weeklySchedules[i]
+      const scheduleWithin = within(scheduleElement)
 
-    // Check weekdays
-    scheduleWithin.getByText(displayedWeekdays)
+      // Check weekdays
+      scheduleWithin.getByText(displayedWeekdays)
 
-    // Check time
-    scheduleWithin.getByText(displayedTime)
+      // Check time
+      scheduleWithin.getByText(displayedTime)
 
-    // Check displayed target focus sessions
-    if (displayedTargetFocusSessions) {
-      const badge = scheduleWithin.getByTestId('target-focus-sessions')
-      const badgeText = getTextContent(badge)
-      const badgeValue = badgeText.match(/\d+/)?.[0]
-      expect(badgeValue).toBe(displayedTargetFocusSessions.toString())
-    } else {
-      expect(scheduleWithin.queryByTestId('target-focus-sessions')).toBeNull()
+      // Check displayed target focus sessions
+      if (displayedTargetFocusSessions) {
+        const badge = scheduleWithin.getByTestId('target-focus-sessions')
+        const badgeText = getTextContent(badge)
+        const badgeValue = badgeText.match(/\d+/)?.[0]
+        expect(badgeValue).toBe(displayedTargetFocusSessions.toString())
+      } else {
+        expect(scheduleWithin.queryByTestId('target-focus-sessions')).toBeNull()
+      }
     }
-  }
+  })
 }
 
 function getTextContent(element: any): string {
