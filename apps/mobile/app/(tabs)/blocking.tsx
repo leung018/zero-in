@@ -18,6 +18,7 @@ import {
   View
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { newWeeklySchedulesStorageService } from '../../domain/schedules/storage'
 
 const getPermissionLabel = (permissionType: PermissionType): string => {
   const labels: Record<PermissionType, string> = {
@@ -181,7 +182,7 @@ export default function BlockingScreen() {
         </View>
 
         {/* Schedules Section */}
-        <WeeklySchedulesEditor />
+        <WeeklySchedulesEditor weeklySchedulesStorageService={newWeeklySchedulesStorageService()} />
       </ScrollView>
     </SafeAreaView>
   )
