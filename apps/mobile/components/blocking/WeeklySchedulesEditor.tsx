@@ -1,4 +1,5 @@
 import DateTimePicker from '@react-native-community/datetimepicker'
+import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import React, { useState } from 'react'
 import { Alert, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
@@ -17,7 +18,11 @@ interface Schedule {
   targetSessions: string
 }
 
-export function WeeklySchedulesEditor() {
+export function WeeklySchedulesEditor({
+  weeklySchedulesStorageService
+}: {
+  weeklySchedulesStorageService: WeeklySchedulesStorageService
+}) {
   // Schedules state
   const [schedules, setSchedules] = useState<Schedule[]>([])
   const [selectedWeekdays, setSelectedWeekdays] = useState<Set<string>>(new Set())
@@ -255,7 +260,7 @@ export function WeeklySchedulesEditor() {
           </View>
 
           {schedules.map((schedule, index) => (
-            <View key={index} style={styles.scheduleCard}>
+            <View key={index} style={styles.scheduleCard} data-testid="weekly-schedule">
               <View style={styles.scheduleContent}>
                 <Text style={styles.scheduleWeekdays}>{schedule.weekdays.join(', ')}</Text>
                 <Text style={styles.scheduleTime}>
@@ -263,7 +268,7 @@ export function WeeklySchedulesEditor() {
                 </Text>
                 {schedule.targetSessions && (
                   <View style={styles.targetBadge}>
-                    <Text style={styles.targetBadgeText}>
+                    <Text style={styles.targetBadgeText} data-testid="target-focus-sessions">
                       🎯 Target sessions: {schedule.targetSessions}
                     </Text>
                   </View>
