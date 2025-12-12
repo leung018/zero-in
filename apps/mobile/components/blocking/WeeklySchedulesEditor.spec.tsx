@@ -77,7 +77,7 @@ function assertSchedulesDisplayed(
     scheduleWithin.getByText(displayedWeekdays)
 
     // Check time
-    scheduleWithin.getByText(displayedTime, { exact: false })
+    scheduleWithin.getByText(displayedTime)
 
     // Check displayed target focus sessions
     if (displayedTargetFocusSessions) {
