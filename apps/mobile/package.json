@@ -9,7 +9,8 @@
     "ios": "expo run:ios",
     "lint": "expo lint",
     "cng": "expo prebuild --clean",
-    "test:unit": "jest"
+    "test:unit": "jest",
+    "test:unit:watch": "jest --watch"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
