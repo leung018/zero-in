@@ -82,14 +82,24 @@ function assertSchedulesDisplayed(
     // Check displayed target focus sessions
     if (displayedTargetFocusSessions) {
       const badge = scheduleWithin.getByTestId('target-focus-sessions')
-      expect(badge).toBeTruthy()
-      const badgeText = badge.children.join('') || ''
+      const badgeText = getTextContent(badge)
       const badgeValue = badgeText.match(/\d+/)?.[0]
       expect(badgeValue).toBe(displayedTargetFocusSessions.toString())
     } else {
-      // For schedules without target focus sessions, verify no badge exists in this schedule
-      const badge = scheduleWithin.queryByTestId('target-focus-sessions')
-      expect(badge).toBeNull()
+      expect(scheduleWithin.queryByTestId('target-focus-sessions')).toBeNull()
     }
   }
+}
+
+function getTextContent(element: any): string {
+  // Extract all text content from React Native element and its children
+  if (typeof element?.children === 'string') {
+    return element.children
+  }
+  if (Array.isArray(element?.children)) {
+    return element.children
+      .map((child: any) => (typeof child === 'string' ? child : getTextContent(child)))
+      .join('')
+  }
+  return ''
 }
