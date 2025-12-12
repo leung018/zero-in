@@ -315,6 +315,7 @@ export function WeeklySchedulesEditor({
                 )}
               </View>
               <TouchableOpacity
+                testID={`remove-schedule-with-index-${index}`}
                 style={styles.deleteButton}
                 onPress={() => handleRemoveSchedule(index)}
                 activeOpacity={0.7}

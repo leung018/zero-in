@@ -77,6 +77,41 @@ describe('WeeklySchedulesEditor', () => {
 
     expect(await weeklySchedulesStorageService.get()).toEqual([weeklySchedule, extraWeeklySchedule])
   })
+
+  it('should able to remove added schedule', async () => {
+    const originalSchedule = new WeeklySchedule({
+      weekdaySet: new Set([Weekday.MON]),
+      startTime: new Time(10, 0),
+      endTime: new Time(12, 0)
+    })
+    const { wrapper, weeklySchedulesStorageService } = await renderWeeklySchedulesEditor({
+      weeklySchedules: [
+        originalSchedule,
+        new WeeklySchedule({
+          weekdaySet: new Set([Weekday.TUE]),
+          startTime: new Time(10, 0),
+          endTime: new Time(12, 0)
+        })
+      ]
+    })
+
+    // Wait for schedules to be loaded and rendered
+    await waitFor(() => {
+      expect(wrapper.getAllByTestId('weekly-schedule')).toHaveLength(2)
+    })
+
+    const removeButton = wrapper.getByTestId('remove-schedule-with-index-1')
+    fireEvent.press(removeButton)
+
+    await assertSchedulesDisplayed(wrapper, [
+      {
+        displayedWeekdays: 'Mon',
+        displayedTime: '10:00 - 12:00'
+      }
+    ])
+
+    expect(await weeklySchedulesStorageService.get()).toEqual([originalSchedule])
+  })
 })
 
 async function renderWeeklySchedulesEditor({
