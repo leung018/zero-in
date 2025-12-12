@@ -71,7 +71,7 @@ export function WeeklySchedulesEditor({
     }
   }
 
-  const handleAddSchedule = () => {
+  const handleAddSchedule = async () => {
     if (selectedWeekdays.size === 0) {
       setErrorMessage('Please select at least one weekday')
       return
@@ -104,7 +104,8 @@ export function WeeklySchedulesEditor({
         targetFocusSessions && targetFocusSessions > 0 ? targetFocusSessions : null
     })
 
-    setWeeklySchedules([...weeklySchedules, newSchedule])
+    const newWeeklySchedules = [...weeklySchedules, newSchedule]
+    await updateWeeklySchedules(newWeeklySchedules)
 
     // Reset form
     setSelectedWeekdays(new Set())
@@ -121,8 +122,14 @@ export function WeeklySchedulesEditor({
     setShowScheduleForm(false)
   }
 
-  const handleRemoveSchedule = (indexToRemove: number) => {
-    setWeeklySchedules(weeklySchedules.filter((_, i) => i !== indexToRemove))
+  const handleRemoveSchedule = async (indexToRemove: number) => {
+    const newWeeklySchedules = weeklySchedules.filter((_, i) => i !== indexToRemove)
+    await updateWeeklySchedules(newWeeklySchedules)
+  }
+
+  const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
+    await weeklySchedulesStorageService.save(newWeeklySchedules)
+    setWeeklySchedules(newWeeklySchedules)
   }
 
   return (
@@ -142,6 +149,7 @@ export function WeeklySchedulesEditor({
       {!showScheduleForm ? (
         // Show button to add schedule
         <TouchableOpacity
+          testID="show-add-schedule-button"
           style={styles.secondaryButton}
           onPress={() => setShowScheduleForm(true)}
           activeOpacity={0.8}
@@ -157,6 +165,7 @@ export function WeeklySchedulesEditor({
             <View style={styles.weekdaysGrid}>
               {WEEKDAYS.map((weekday) => (
                 <TouchableOpacity
+                  testID={`check-weekday-${weekday.toLowerCase()}`}
                   key={weekday}
                   style={[
                     styles.weekdayChip,
@@ -185,6 +194,7 @@ export function WeeklySchedulesEditor({
               <View style={styles.timePickerWrapper}>
                 <Text style={styles.timeLabel}>From</Text>
                 <TouchableOpacity
+                  testID="start-time-button"
                   style={styles.timePickerButton}
                   onPress={() => setShowStartPicker(true)}
                   activeOpacity={0.7}
@@ -201,6 +211,7 @@ export function WeeklySchedulesEditor({
               <View style={styles.timePickerWrapper}>
                 <Text style={styles.timeLabel}>To</Text>
                 <TouchableOpacity
+                  testID="end-time-button"
                   style={styles.timePickerButton}
                   onPress={() => setShowEndPicker(true)}
                   activeOpacity={0.7}
@@ -213,6 +224,7 @@ export function WeeklySchedulesEditor({
 
             {showStartPicker && (
               <DateTimePicker
+                testID="start-time-picker"
                 value={startTime}
                 mode="time"
                 is24Hour={true}
@@ -222,6 +234,7 @@ export function WeeklySchedulesEditor({
             )}
             {showEndPicker && (
               <DateTimePicker
+                testID="end-time-picker"
                 value={endTime}
                 mode="time"
                 is24Hour={true}
@@ -235,6 +248,7 @@ export function WeeklySchedulesEditor({
           <View style={styles.formSection}>
             <Text style={styles.sectionLabel}>Target Focus Sessions (Optional)</Text>
             <TextInput
+              testID="target-focus-sessions-input"
               style={styles.input}
               value={targetSessions}
               onChangeText={setTargetSessions}
@@ -267,6 +281,7 @@ export function WeeklySchedulesEditor({
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
+              testID="add-schedule-button"
               style={styles.addButton}
               onPress={handleAddSchedule}
               activeOpacity={0.8}
