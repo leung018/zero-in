@@ -1,5 +1,7 @@
 import { ObservableStorage, Unsubscribe } from '@zero-in/shared/infra/storage/interface'
-import { FirebaseServices } from '../firebase/services'
+import { FirebaseServices } from '../services'
+
+// TODO: Eliminate the duplication with extension version of this one.
 
 export class FirestoreAppStorageWrapper implements ObservableStorage {
   static create(): FirestoreAppStorageWrapper {

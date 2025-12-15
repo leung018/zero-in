@@ -3,8 +3,15 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
+      "@zero-in/shared/*": ["../../packages/shared/src/*"],
       "@/*": ["./*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "../../packages/shared"
+  ]
 }

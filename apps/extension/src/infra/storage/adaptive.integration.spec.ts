@@ -1,6 +1,6 @@
 import { FakeObservableStorage } from '@zero-in/shared/infra/storage/fake'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { signInAndGetFirestoreStorage } from '../../test-utils/firestore'
+import { signInAndGetFirestoreAppStorage } from '../../test-utils/firestore'
 import { FirebaseServices } from '../firebase/services'
 import { AdaptiveStorageProvider } from './adaptive'
 
@@ -11,11 +11,11 @@ describe('AdaptiveStorageProvider', async () => {
   }
 
   beforeEach(async () => {
-    ;(await signInAndGetFirestoreStorage()).delete(TEST_KEY)
+    ;(await signInAndGetFirestoreAppStorage()).delete(TEST_KEY)
   })
 
   it('should use firebaseStorage if user is authenticated', async () => {
-    const firestoreStorage = await signInAndGetFirestoreStorage()
+    const firestoreStorage = await signInAndGetFirestoreAppStorage()
 
     const provider = new AdaptiveStorageProvider(FakeObservableStorage.create())
 
@@ -42,7 +42,7 @@ describe('AdaptiveStorageProvider', async () => {
   })
 
   it('should able to subscribe and unsubscribe changes for firestore', async () => {
-    const firestoreStorage = await signInAndGetFirestoreStorage()
+    const firestoreStorage = await signInAndGetFirestoreAppStorage()
     const provider = new AdaptiveStorageProvider(FakeObservableStorage.create())
 
     const receivedData: any[] = []

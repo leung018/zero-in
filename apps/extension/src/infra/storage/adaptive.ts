@@ -1,9 +1,10 @@
+import { FirestoreAppStorage } from '@zero-in/shared/infra/storage/firebase/firestore/app-storage'
 import {
   ObservableStorage,
   StorageInterface,
   Unsubscribe
 } from '@zero-in/shared/infra/storage/interface'
-import { FirebaseServices, FirestoreStorage } from '../firebase/services'
+import { FirebaseServices } from '../firebase/services'
 import { newLocalStorage } from './local-storage'
 
 export class AdaptiveStorageProvider implements ObservableStorage {
@@ -25,7 +26,7 @@ export class AdaptiveStorageProvider implements ObservableStorage {
 
   async onChange(key: string, callback: (data: any) => void): Promise<Unsubscribe> {
     const storage = await this.getStorage()
-    if (storage instanceof FirestoreStorage) {
+    if (storage instanceof FirestoreAppStorage) {
       return storage.onChange(key, callback)
     }
     return Promise.resolve(() => {})
@@ -33,7 +34,7 @@ export class AdaptiveStorageProvider implements ObservableStorage {
 
   private async getStorage() {
     if (await FirebaseServices.isAuthenticated()) {
-      return FirebaseServices.getFirestoreStorage()
+      return FirebaseServices.getFirestoreAppStorage()
     } else {
       return this.unauthenticatedStorage
     }

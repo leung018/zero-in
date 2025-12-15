@@ -1,5 +1,5 @@
 import config from '@/config'
-import { ObservableStorage } from '@zero-in/shared/infra/storage/interface'
+import { FirestoreAppStorage } from '@zero-in/shared/infra/storage/firebase/firestore/app-storage'
 import { initializeApp } from 'firebase/app'
 import {
   browserLocalPersistence,
@@ -13,16 +13,9 @@ import {
   signOut,
   User
 } from 'firebase/auth'
-import {
-  connectFirestoreEmulator,
-  deleteDoc,
-  doc,
-  getDoc,
-  getFirestore,
-  onSnapshot,
-  setDoc
-} from 'firebase/firestore'
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore'
 import { LocalStorageUserIdCache } from './local-storage-cache'
+import { WebFirestoreAdapter } from './web-firestore-adapter'
 
 const app = initializeApp(config.getFirebaseConfig())
 
@@ -62,12 +55,12 @@ export class FirebaseServices {
     await setPersistence(auth, browserLocalPersistence)
   }
 
-  static async getFirestoreStorage(): Promise<FirestoreStorage> {
+  static async getFirestoreAppStorage(): Promise<FirestoreAppStorage> {
     const userId = await this.getCurrentUserId()
     if (!userId) {
       throw new Error('User not authenticated')
     }
-    return new FirestoreStorage(userId)
+    return new FirestoreAppStorage(userId, new WebFirestoreAdapter(db))
   }
 
   static onAuthStateChanged(callback: NextOrObserver<User>) {
@@ -97,32 +90,3 @@ FirebaseServices.onAuthStateChanged((user) => {
     LocalStorageUserIdCache.setSignOut()
   }
 })
-
-export class FirestoreStorage implements ObservableStorage {
-  constructor(public readonly userId: string) {}
-
-  async set(key: string, value: any): Promise<void> {
-    await setDoc(this.getDocRef(key), value)
-  }
-
-  async get(key: string): Promise<any> {
-    const docSnap = await getDoc(this.getDocRef(key))
-    return docSnap.data()
-  }
-
-  async delete(key: string): Promise<void> {
-    await deleteDoc(this.getDocRef(key))
-  }
-
-  async onChange(key: string, callback: (data: any) => void) {
-    return onSnapshot(this.getDocRef(key), (snapshot) => {
-      if (snapshot.exists()) {
-        callback(snapshot.data())
-      }
-    })
-  }
-
-  private getDocRef(key: string) {
-    return doc(db, 'users', this.userId, 'application', key)
-  }
-}
