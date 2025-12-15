@@ -35,6 +35,17 @@ describe('WeeklySchedulesEditor', () => {
     ])
   })
 
+  it('should hide active schedules section when no schedule', async () => {
+    const { wrapper } = await renderWeeklySchedulesEditor({
+      weeklySchedules: []
+    })
+    expect(wrapper.queryByTestId('active-schedules-section')).toBeNull()
+
+    await addWeeklySchedule(wrapper)
+
+    expect(wrapper.queryByTestId('active-schedules-section')).toBeTruthy()
+  })
+
   it('should able to add new weekly schedule', async () => {
     const { wrapper, weeklySchedulesStorageService } = await renderWeeklySchedulesEditor({
       weeklySchedules: []

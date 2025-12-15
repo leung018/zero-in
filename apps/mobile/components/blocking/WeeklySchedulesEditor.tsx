@@ -292,9 +292,9 @@ export function WeeklySchedulesEditor({
         </>
       )}
 
-      {/* Saved Schedules */}
+      {/* Active Schedules */}
       {weeklySchedules.length > 0 && (
-        <View style={styles.savedSection}>
+        <View style={styles.savedSection} testID="active-schedules-section">
           <View style={styles.savedHeader}>
             <Text style={styles.savedTitle}>Active</Text>
           </View>
