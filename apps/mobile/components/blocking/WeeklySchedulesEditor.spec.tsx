@@ -169,6 +169,27 @@ async function assertSchedulesDisplayed(
   })
 }
 
+async function setTimePickerValue(
+  wrapper: RenderAPI,
+  showButtonTestId: string,
+  pickerTestId: string,
+  time: Time
+) {
+  const timeButton = wrapper.getByTestId(showButtonTestId)
+  fireEvent.press(timeButton)
+
+  await waitFor(() => {
+    expect(wrapper.getByTestId(pickerTestId)).toBeTruthy()
+  })
+  const timePicker = wrapper.getByTestId(pickerTestId)
+  const date = new Date()
+  date.setHours(time.hour)
+  date.setMinutes(time.minute)
+  date.setSeconds(0)
+  date.setMilliseconds(0)
+  fireEvent(timePicker, 'change', { nativeEvent: { timestamp: date.getTime() } }, date)
+}
+
 async function addWeeklySchedule(
   wrapper: RenderAPI,
   weeklyScheduleInput: {
@@ -196,45 +217,10 @@ async function addWeeklySchedule(
   const { startTime, endTime } = weeklyScheduleInput
 
   // Set start time
-  // First, press the time picker button to show the picker
-  const startTimeButton = wrapper.getByTestId('start-time-button')
-  fireEvent.press(startTimeButton)
-
-  // Wait for picker to appear, then trigger the DateTimePicker onChange
-  await waitFor(() => {
-    expect(wrapper.getByTestId('start-time-picker')).toBeTruthy()
-  })
-  const startTimePicker = wrapper.getByTestId('start-time-picker')
-  const startDate = new Date()
-  startDate.setHours(startTime.hour)
-  startDate.setMinutes(startTime.minute)
-  startDate.setSeconds(0)
-  startDate.setMilliseconds(0)
-  // DateTimePicker onChange receives (event, selectedDate)
-  fireEvent(
-    startTimePicker,
-    'change',
-    { nativeEvent: { timestamp: startDate.getTime() } },
-    startDate
-  )
+  await setTimePickerValue(wrapper, 'start-time-button', 'start-time-picker', startTime)
 
   // Set end time
-  // First, press the time picker button to show the picker
-  const endTimeButton = wrapper.getByTestId('end-time-button')
-  fireEvent.press(endTimeButton)
-
-  // Wait for picker to appear, then trigger the DateTimePicker onChange
-  await waitFor(() => {
-    expect(wrapper.getByTestId('end-time-picker')).toBeTruthy()
-  })
-  const endTimePicker = wrapper.getByTestId('end-time-picker')
-  const endDate = new Date()
-  endDate.setHours(endTime.hour)
-  endDate.setMinutes(endTime.minute)
-  endDate.setSeconds(0)
-  endDate.setMilliseconds(0)
-  // DateTimePicker onChange receives (event, selectedDate)
-  fireEvent(endTimePicker, 'change', { nativeEvent: { timestamp: endDate.getTime() } }, endDate)
+  await setTimePickerValue(wrapper, 'end-time-button', 'end-time-picker', endTime)
 
   // Set target focus sessions if provided
   if (weeklyScheduleInput.targetFocusSessions) {
