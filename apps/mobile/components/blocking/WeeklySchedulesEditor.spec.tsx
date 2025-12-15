@@ -130,6 +130,15 @@ async function renderWeeklySchedulesEditor({
   const wrapper = render(
     <WeeklySchedulesEditor weeklySchedulesStorageService={weeklySchedulesStorageService} />
   )
+
+  // If schedules are provided, wait for them to be rendered
+  if (weeklySchedules.length > 0) {
+    await waitFor(() => {
+      const renderedSchedules = wrapper.getAllByTestId('weekly-schedule')
+      expect(renderedSchedules).toHaveLength(weeklySchedules.length)
+    })
+  }
+
   return { wrapper, weeklySchedulesStorageService }
 }
 
