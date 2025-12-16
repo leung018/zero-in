@@ -179,6 +179,7 @@ export function WeeklySchedulesEditor({
                       styles.weekdayChipText,
                       selectedWeekdays.has(weekday) && styles.weekdayChipTextSelected
                     ]}
+                    testID="weekday-label"
                   >
                     {weekday}
                   </Text>

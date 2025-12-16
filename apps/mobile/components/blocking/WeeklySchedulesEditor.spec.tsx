@@ -5,6 +5,22 @@ import { Time } from '@zero-in/shared/domain/time'
 import { WeeklySchedulesEditor } from './WeeklySchedulesEditor'
 
 describe('WeeklySchedulesEditor', () => {
+  it('should render weekday checkboxes properly', async () => {
+    const { wrapper } = await renderWeeklySchedulesEditor()
+
+    const showAddScheduleButton = wrapper.getByTestId('show-add-schedule-button')
+    fireEvent.press(showAddScheduleButton)
+
+    const weekdayCheckboxLabels = wrapper.getAllByTestId('weekday-label')
+    expect(weekdayCheckboxLabels).toHaveLength(7)
+    expect(getTextContent(weekdayCheckboxLabels[0])).toBe('Sun')
+    expect(getTextContent(weekdayCheckboxLabels[1])).toBe('Mon')
+    expect(getTextContent(weekdayCheckboxLabels[2])).toBe('Tue')
+    expect(getTextContent(weekdayCheckboxLabels[3])).toBe('Wed')
+    expect(getTextContent(weekdayCheckboxLabels[4])).toBe('Thu')
+    expect(getTextContent(weekdayCheckboxLabels[5])).toBe('Fri')
+    expect(getTextContent(weekdayCheckboxLabels[6])).toBe('Sat')
+  })
   it('should render weekly schedules', async () => {
     const { wrapper } = await renderWeeklySchedulesEditor({
       weeklySchedules: [
@@ -134,8 +150,8 @@ async function renderWeeklySchedulesEditor({
     })
   ]
 }: {
-  weeklySchedules: WeeklySchedule[]
-}) {
+  weeklySchedules?: WeeklySchedule[]
+} = {}) {
   const weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake()
   await weeklySchedulesStorageService.save(weeklySchedules)
   const wrapper = render(
