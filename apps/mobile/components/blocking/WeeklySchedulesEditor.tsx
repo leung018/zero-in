@@ -268,7 +268,9 @@ export function WeeklySchedulesEditor({
           {errorMessage && (
             <View style={styles.errorBox}>
               <Text style={styles.errorIcon}>⚠️</Text>
-              <Text style={styles.errorText}>{errorMessage}</Text>
+              <Text style={styles.errorText} testID="error-message">
+                {errorMessage}
+              </Text>
             </View>
           )}
 
