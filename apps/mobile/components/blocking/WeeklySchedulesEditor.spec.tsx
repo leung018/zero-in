@@ -152,7 +152,7 @@ describe('WeeklySchedulesEditor', () => {
         startTime: new Time(10, 0),
         endTime: new Time(12, 0)
       },
-      false
+      { waitForFormHidden: false }
     )
 
     await waitFor(() => {
@@ -184,7 +184,10 @@ describe('WeeklySchedulesEditor', () => {
       startTime: new Time(10, 0),
       endTime: new Time(12, 0)
     })
-    await addWeeklySchedule(wrapper, weeklySchedule, true, false)
+    await addWeeklySchedule(wrapper, weeklySchedule, {
+      waitForFormHidden: true,
+      clickShowAddScheduleButton: false
+    })
 
     expect(await weeklySchedulesStorageService.get()).toEqual([weeklySchedule])
   })
@@ -201,7 +204,7 @@ describe('WeeklySchedulesEditor', () => {
         startTime: new Time(10, 0),
         endTime: new Time(9, 0)
       },
-      false
+      { waitForFormHidden: false }
     )
 
     expect(wrapper.getByText('Start time must be before end time')).toBeTruthy()
@@ -223,8 +226,7 @@ describe('WeeklySchedulesEditor', () => {
         startTime: new Time(10, 0),
         endTime: new Time(9, 0)
       },
-      false,
-      false
+      { waitForFormHidden: false, clickShowAddScheduleButton: false }
     )
 
     expect(wrapper.findByTestId('error-message')).toBeTruthy()
@@ -236,8 +238,7 @@ describe('WeeklySchedulesEditor', () => {
         startTime: new Time(9, 0),
         endTime: new Time(10, 0)
       },
-      true,
-      false
+      { waitForFormHidden: true, clickShowAddScheduleButton: false }
     )
 
     fireEvent.press(showAddScheduleButton)
@@ -344,9 +345,13 @@ async function addWeeklySchedule(
     endTime: new Time(12, 0),
     targetFocusSessions: null
   },
-  waitForFormHidden: boolean = true,
-  clickShowAddScheduleButton: boolean = true
+  options: {
+    waitForFormHidden?: boolean
+    clickShowAddScheduleButton?: boolean
+  } = {}
 ) {
+  const { waitForFormHidden = true, clickShowAddScheduleButton = true } = options
+
   // Show the form by pressing "Add Schedule" button
   if (clickShowAddScheduleButton) {
     const showAddScheduleButton = wrapper.getByTestId('show-add-schedule-button')
