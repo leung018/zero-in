@@ -6,7 +6,7 @@ export enum PermissionType {
   UsageStats = 'usageStats'
 }
 
-export interface PermissionDetails {
+interface PermissionDetails {
   [key: string]: boolean
 }
 

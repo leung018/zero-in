@@ -1,10 +1,6 @@
 // App selection happens in a separate screen
 import { WeeklySchedulesEditor } from '@/components/blocking/WeeklySchedulesEditor'
-import {
-  appBlocker,
-  PermissionStatus,
-  PermissionType
-} from '@/modules/app-blocker/src/AppBlockerModule'
+import { appBlocker, PermissionStatus, PermissionType } from '@/modules/app-blocker'
 import { useFocusEffect, useRouter } from 'expo-router'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
