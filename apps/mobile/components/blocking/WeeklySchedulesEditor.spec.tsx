@@ -156,9 +156,7 @@ describe('WeeklySchedulesEditor', () => {
       { waitForFormHidden: false }
     )
 
-    await waitFor(() => {
-      expect(wrapper.getByText('Please select at least one weekday')).toBeTruthy()
-    })
+    await wrapper.findByText('Please select at least one weekday')
 
     expect(await weeklySchedulesStorageService.get()).toEqual([])
   })
@@ -230,7 +228,7 @@ describe('WeeklySchedulesEditor', () => {
       { waitForFormHidden: false, clickShowAddScheduleButton: false }
     )
 
-    expect(wrapper.findByTestId('error-message')).toBeTruthy()
+    await wrapper.findByTestId('error-message')
 
     await addWeeklySchedule(
       wrapper,
@@ -321,10 +319,7 @@ async function setTimePickerValue(
   const timeButton = wrapper.getByTestId(showButtonTestId)
   fireEvent.press(timeButton)
 
-  await waitFor(() => {
-    expect(wrapper.getByTestId(pickerTestId)).toBeTruthy()
-  })
-  const timePicker = wrapper.getByTestId(pickerTestId)
+  const timePicker = await wrapper.findByTestId(pickerTestId)
   const date = new Date()
   date.setHours(time.hour)
   date.setMinutes(time.minute)
@@ -388,10 +383,8 @@ async function addWeeklySchedule(
 
   // Wait for async operations and form to reset
   if (waitForFormHidden) {
-    await waitFor(() => {
-      // Wait for the form to be hidden (show add schedule button should appear again)
-      expect(wrapper.getByTestId('show-add-schedule-button')).toBeTruthy()
-    })
+    // Wait for the form to be hidden (show add schedule button should appear again)
+    await wrapper.findByTestId('show-add-schedule-button')
   }
 }
 
