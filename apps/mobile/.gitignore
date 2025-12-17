@@ -44,3 +44,6 @@ app-example
 
 *.aab
 *.ipa
+
+# Android Studio settings backup (created by withPreserveAndroidStudioSettings plugin)
+.android-idea-backup

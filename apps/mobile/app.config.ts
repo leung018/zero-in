@@ -69,7 +69,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         }
       }
     ],
-    ['./plugins/withGIDClientID.ts']
+    ['./plugins/withGIDClientID.ts'],
+    './plugins/withPreserveAndroidStudioSettings'
   ],
   experiments: {
     typedRoutes: true,
