@@ -6,12 +6,20 @@ export enum PermissionType {
   UsageStats = 'usageStats'
 }
 
-export interface PermissionDetails {
+interface PermissionDetails {
   [key: string]: boolean
 }
 
 export class PermissionStatus {
-  constructor(public readonly details: PermissionDetails) {}
+  static fromNativeResponse(details: PermissionDetails): PermissionStatus {
+    return new PermissionStatus(details)
+  }
+
+  static empty(): PermissionStatus {
+    return new PermissionStatus({})
+  }
+
+  private constructor(public readonly details: PermissionDetails) {}
 
   get isGranted(): boolean {
     return Object.values(this.details).every((granted) => granted === true)
@@ -25,10 +33,6 @@ export class PermissionStatus {
     return Object.entries(this.details)
       .filter(([_, granted]) => !granted)
       .map(([type, _]) => type as PermissionType)
-  }
-
-  static fromNativeResponse(details: PermissionDetails): PermissionStatus {
-    return new PermissionStatus(details)
   }
 }
 

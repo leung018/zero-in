@@ -1,10 +1,7 @@
 // App selection happens in a separate screen
 import { WeeklySchedulesEditor } from '@/components/blocking/WeeklySchedulesEditor'
-import {
-  appBlocker,
-  PermissionStatus,
-  PermissionType
-} from '@/modules/app-blocker/src/AppBlockerModule'
+import { commonStyles } from '@/constants/styles'
+import { appBlocker, PermissionStatus, PermissionType } from '@/modules/app-blocker'
 import { useFocusEffect, useRouter } from 'expo-router'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -45,7 +42,7 @@ export default function BlockingScreen() {
 
   // Permission Logic
   const [permissionStatus, setPermissionStatus] = useState<PermissionStatus>(
-    new PermissionStatus({})
+    PermissionStatus.empty()
   )
   const appState = useRef(AppState.currentState)
 
@@ -116,32 +113,32 @@ export default function BlockingScreen() {
         ))}
 
         {/* Blocked Apps Section */}
-        <View style={styles.card}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.cardTitle}>📱 Blocked Apps</Text>
-            <View style={styles.divider} />
+        <View style={commonStyles.card}>
+          <View style={commonStyles.sectionHeader}>
+            <Text style={commonStyles.cardTitle}>📱 Blocked Apps</Text>
+            <View style={commonStyles.divider} />
           </View>
 
-          <View style={styles.infoBox}>
-            <Text style={styles.infoText}>
+          <View style={commonStyles.infoBox}>
+            <Text style={commonStyles.infoText}>
               Select which apps to block. Your selections are saved automatically.
             </Text>
           </View>
 
           <TouchableOpacity
-            style={styles.secondaryButton}
+            style={commonStyles.secondaryButton}
             onPress={() => router.push('/select-apps')}
             activeOpacity={0.8}
           >
-            <Text style={styles.secondaryButtonText}>Select Blocked Apps</Text>
+            <Text style={commonStyles.secondaryButtonText}>Select Blocked Apps</Text>
           </TouchableOpacity>
         </View>
 
         {/* Timer-Based Section */}
-        <View style={styles.card}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.cardTitle}>⏱️ Timer-Based</Text>
-            <View style={styles.divider} />
+        <View style={commonStyles.card}>
+          <View style={commonStyles.sectionHeader}>
+            <Text style={commonStyles.cardTitle}>⏱️ Timer-Based</Text>
+            <View style={commonStyles.divider} />
           </View>
 
           <View style={styles.settingsContainer}>
@@ -238,35 +235,6 @@ const styles = StyleSheet.create({
     color: '#991b1b',
     fontWeight: '700'
   },
-  card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5
-  },
-  sectionHeader: {
-    marginBottom: 20
-  },
-  cardTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 12
-  },
-  divider: {
-    height: 3,
-    backgroundColor: '#1a73e8',
-    borderRadius: 2,
-    width: 40
-  },
   settingsContainer: {
     marginBottom: 20
   },
@@ -310,35 +278,6 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '700',
-    letterSpacing: 0.5
-  },
-  infoBox: {
-    backgroundColor: '#eff6ff',
-    borderLeftWidth: 4,
-    borderLeftColor: '#1a73e8',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 24
-  },
-  infoText: {
-    fontSize: 13,
-    lineHeight: 18,
-    color: '#1e40af'
-  },
-  secondaryButton: {
-    backgroundColor: '#e1f5fe',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#1a73e8',
-    marginTop: 16
-  },
-  secondaryButtonText: {
-    color: '#1a73e8',
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0.5

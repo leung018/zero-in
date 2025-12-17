@@ -1,18 +1,5 @@
 import { Time } from '@zero-in/shared/domain/time/index'
-
-export enum Weekday {
-  SUN = 0,
-  MON,
-  TUE,
-  WED,
-  THU,
-  FRI,
-  SAT
-}
-
-function getWeekdayFromDate(date: Date): Weekday {
-  return date.getDay() as Weekday
-}
+import { Weekday, getWeekdayFromDate } from './weekday'
 
 export class WeeklySchedule {
   weekdaySet: ReadonlySet<Weekday>

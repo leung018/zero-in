@@ -1,7 +1,8 @@
 import { Time } from '@zero-in/shared/domain/time/index'
-import { Weekday, WeeklySchedule } from '.'
+import { WeeklySchedule } from '.'
 import { StorageInterface } from '../../infra/storage/interface'
 import { WeeklySchedulesStorageService } from './storage'
+import { Weekday } from './weekday'
 
 export function runWeeklyScheduleStorageServiceTests(storage: StorageInterface) {
   it('should return empty array if no WeeklySchedules are saved', async () => {

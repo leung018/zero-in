@@ -1,0 +1,32 @@
+name: Mobile Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'apps/mobile/**'
+      - 'packages/shared/**'
+      - '.github/workflows/mobile-ci.yml'
+defaults:
+  run:
+    working-directory: apps/mobile
+jobs:
+  mobile-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
+      - run: yarn install --immutable
+      - name: Lint
+        run: yarn lint
+      - name: Type Check
+        run: yarn type-check
+      - name: Unit Tests
+        run: yarn mobile-test-unit
+        working-directory: ${{ github.workspace }}

@@ -8,6 +8,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "lint": "expo lint",
+    "type-check": "tsc --noEmit",
     "cng": "expo prebuild --clean",
     "test:unit": "jest",
     "test:unit:watch": "jest --watch"

@@ -1,5 +1,5 @@
 import { SerializedTime } from '@zero-in/shared/domain/time/serialize'
-import { Weekday } from '.'
+import { Weekday } from './weekday'
 
 export type WeeklyScheduleSchemas = [
   {

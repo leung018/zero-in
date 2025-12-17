@@ -1,10 +1,27 @@
 import { fireEvent, render, RenderAPI, waitFor, within } from '@testing-library/react-native'
-import { Weekday, WeeklySchedule } from '@zero-in/shared/domain/schedules'
+import { WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
+import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time'
 import { WeeklySchedulesEditor } from './WeeklySchedulesEditor'
 
 describe('WeeklySchedulesEditor', () => {
+  it('should render weekday checkboxes properly', async () => {
+    const { wrapper } = await renderWeeklySchedulesEditor()
+
+    const showAddScheduleButton = wrapper.getByTestId('show-add-schedule-button')
+    fireEvent.press(showAddScheduleButton)
+
+    const weekdayCheckboxLabels = wrapper.getAllByTestId('weekday-label')
+    expect(weekdayCheckboxLabels).toHaveLength(7)
+    expect(getTextContent(weekdayCheckboxLabels[0])).toBe('Sun')
+    expect(getTextContent(weekdayCheckboxLabels[1])).toBe('Mon')
+    expect(getTextContent(weekdayCheckboxLabels[2])).toBe('Tue')
+    expect(getTextContent(weekdayCheckboxLabels[3])).toBe('Wed')
+    expect(getTextContent(weekdayCheckboxLabels[4])).toBe('Thu')
+    expect(getTextContent(weekdayCheckboxLabels[5])).toBe('Fri')
+    expect(getTextContent(weekdayCheckboxLabels[6])).toBe('Sat')
+  })
   it('should render weekly schedules', async () => {
     const { wrapper } = await renderWeeklySchedulesEditor({
       weeklySchedules: [
@@ -33,6 +50,17 @@ describe('WeeklySchedulesEditor', () => {
         displayedTime: '06:02 - 08:04'
       }
     ])
+  })
+
+  it('should hide active schedules section when no schedule', async () => {
+    const { wrapper } = await renderWeeklySchedulesEditor({
+      weeklySchedules: []
+    })
+    expect(wrapper.queryByTestId('active-schedules-section')).toBeNull()
+
+    await addWeeklySchedule(wrapper)
+
+    expect(wrapper.queryByTestId('active-schedules-section')).toBeTruthy()
   })
 
   it('should able to add new weekly schedule', async () => {
@@ -112,6 +140,110 @@ describe('WeeklySchedulesEditor', () => {
 
     expect(await weeklySchedulesStorageService.get()).toEqual([originalSchedule])
   })
+
+  it('should prevent add weekly schedule when weekdaySet is not selected', async () => {
+    const { wrapper, weeklySchedulesStorageService } = await renderWeeklySchedulesEditor({
+      weeklySchedules: []
+    })
+
+    await addWeeklySchedule(
+      wrapper,
+      {
+        weekdaySet: new Set(),
+        startTime: new Time(10, 0),
+        endTime: new Time(12, 0)
+      },
+      { waitForFormHidden: false }
+    )
+
+    await wrapper.findByText('Please select at least one weekday')
+
+    expect(await weeklySchedulesStorageService.get()).toEqual([])
+  })
+
+  it('should able to uncheck weekday', async () => {
+    const { wrapper, weeklySchedulesStorageService } = await renderWeeklySchedulesEditor({
+      weeklySchedules: []
+    })
+
+    // Show the form
+    const showAddScheduleButton = wrapper.getByTestId('show-add-schedule-button')
+    fireEvent.press(showAddScheduleButton)
+
+    // Check Sunday
+    const sundayCheckbox = wrapper.getByTestId('check-weekday-sun')
+    fireEvent.press(sundayCheckbox)
+
+    // Uncheck Sunday
+    fireEvent.press(sundayCheckbox)
+
+    // Add schedule with only Monday selected
+    const weeklySchedule = new WeeklySchedule({
+      weekdaySet: new Set([Weekday.MON]),
+      startTime: new Time(10, 0),
+      endTime: new Time(12, 0)
+    })
+    await addWeeklySchedule(wrapper, weeklySchedule, {
+      waitForFormHidden: true,
+      clickShowAddScheduleButton: false
+    })
+
+    expect(await weeklySchedulesStorageService.get()).toEqual([weeklySchedule])
+  })
+
+  it('should display error message if start time is not before end time', async () => {
+    const { wrapper, weeklySchedulesStorageService } = await renderWeeklySchedulesEditor({
+      weeklySchedules: []
+    })
+
+    await addWeeklySchedule(
+      wrapper,
+      {
+        weekdaySet: new Set([Weekday.MON]),
+        startTime: new Time(10, 0),
+        endTime: new Time(9, 0)
+      },
+      { waitForFormHidden: false }
+    )
+
+    expect(wrapper.getByText('Start time must be before end time')).toBeTruthy()
+    expect(await weeklySchedulesStorageService.get()).toEqual([])
+  })
+
+  it('should error message display and hide properly', async () => {
+    const { wrapper } = await renderWeeklySchedulesEditor()
+
+    const showAddScheduleButton = wrapper.getByTestId('show-add-schedule-button')
+    fireEvent.press(showAddScheduleButton)
+
+    expect(wrapper.queryByTestId('error-message')).toBeNull()
+
+    await addWeeklySchedule(
+      wrapper,
+      {
+        weekdaySet: new Set([Weekday.MON]),
+        startTime: new Time(10, 0),
+        endTime: new Time(9, 0)
+      },
+      { waitForFormHidden: false, clickShowAddScheduleButton: false }
+    )
+
+    await wrapper.findByTestId('error-message')
+
+    await addWeeklySchedule(
+      wrapper,
+      {
+        weekdaySet: new Set([Weekday.TUE]),
+        startTime: new Time(9, 0),
+        endTime: new Time(10, 0)
+      },
+      { waitForFormHidden: true, clickShowAddScheduleButton: false }
+    )
+
+    fireEvent.press(showAddScheduleButton)
+
+    expect(wrapper.queryByTestId('error-message')).toBeNull()
+  })
 })
 
 async function renderWeeklySchedulesEditor({
@@ -123,13 +255,22 @@ async function renderWeeklySchedulesEditor({
     })
   ]
 }: {
-  weeklySchedules: WeeklySchedule[]
-}) {
+  weeklySchedules?: WeeklySchedule[]
+} = {}) {
   const weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake()
   await weeklySchedulesStorageService.save(weeklySchedules)
   const wrapper = render(
     <WeeklySchedulesEditor weeklySchedulesStorageService={weeklySchedulesStorageService} />
   )
+
+  // If schedules are provided, wait for them to be rendered
+  if (weeklySchedules.length > 0) {
+    await waitFor(() => {
+      const renderedSchedules = wrapper.getAllByTestId('weekly-schedule')
+      expect(renderedSchedules).toHaveLength(weeklySchedules.length)
+    })
+  }
+
   return { wrapper, weeklySchedulesStorageService }
 }
 
@@ -169,6 +310,24 @@ async function assertSchedulesDisplayed(
   })
 }
 
+async function setTimePickerValue(
+  wrapper: RenderAPI,
+  showButtonTestId: string,
+  pickerTestId: string,
+  time: Time
+) {
+  const timeButton = wrapper.getByTestId(showButtonTestId)
+  fireEvent.press(timeButton)
+
+  const timePicker = await wrapper.findByTestId(pickerTestId)
+  const date = new Date()
+  date.setHours(time.hour)
+  date.setMinutes(time.minute)
+  date.setSeconds(0)
+  date.setMilliseconds(0)
+  fireEvent(timePicker, 'change', { nativeEvent: { timestamp: date.getTime() } }, date)
+}
+
 async function addWeeklySchedule(
   wrapper: RenderAPI,
   weeklyScheduleInput: {
@@ -181,11 +340,19 @@ async function addWeeklySchedule(
     startTime: new Time(10, 0),
     endTime: new Time(12, 0),
     targetFocusSessions: null
-  }
+  },
+  options: {
+    waitForFormHidden?: boolean
+    clickShowAddScheduleButton?: boolean
+  } = {}
 ) {
+  const { waitForFormHidden = true, clickShowAddScheduleButton = true } = options
+
   // Show the form by pressing "Add Schedule" button
-  const showAddScheduleButton = wrapper.getByTestId('show-add-schedule-button')
-  fireEvent.press(showAddScheduleButton)
+  if (clickShowAddScheduleButton) {
+    const showAddScheduleButton = wrapper.getByTestId('show-add-schedule-button')
+    fireEvent.press(showAddScheduleButton)
+  }
 
   // Select weekdays
   for (const weekday of weeklyScheduleInput.weekdaySet) {
@@ -196,45 +363,10 @@ async function addWeeklySchedule(
   const { startTime, endTime } = weeklyScheduleInput
 
   // Set start time
-  // First, press the time picker button to show the picker
-  const startTimeButton = wrapper.getByTestId('start-time-button')
-  fireEvent.press(startTimeButton)
-
-  // Wait for picker to appear, then trigger the DateTimePicker onChange
-  await waitFor(() => {
-    expect(wrapper.getByTestId('start-time-picker')).toBeTruthy()
-  })
-  const startTimePicker = wrapper.getByTestId('start-time-picker')
-  const startDate = new Date()
-  startDate.setHours(startTime.hour)
-  startDate.setMinutes(startTime.minute)
-  startDate.setSeconds(0)
-  startDate.setMilliseconds(0)
-  // DateTimePicker onChange receives (event, selectedDate)
-  fireEvent(
-    startTimePicker,
-    'change',
-    { nativeEvent: { timestamp: startDate.getTime() } },
-    startDate
-  )
+  await setTimePickerValue(wrapper, 'start-time-button', 'start-time-picker', startTime)
 
   // Set end time
-  // First, press the time picker button to show the picker
-  const endTimeButton = wrapper.getByTestId('end-time-button')
-  fireEvent.press(endTimeButton)
-
-  // Wait for picker to appear, then trigger the DateTimePicker onChange
-  await waitFor(() => {
-    expect(wrapper.getByTestId('end-time-picker')).toBeTruthy()
-  })
-  const endTimePicker = wrapper.getByTestId('end-time-picker')
-  const endDate = new Date()
-  endDate.setHours(endTime.hour)
-  endDate.setMinutes(endTime.minute)
-  endDate.setSeconds(0)
-  endDate.setMilliseconds(0)
-  // DateTimePicker onChange receives (event, selectedDate)
-  fireEvent(endTimePicker, 'change', { nativeEvent: { timestamp: endDate.getTime() } }, endDate)
+  await setTimePickerValue(wrapper, 'end-time-button', 'end-time-picker', endTime)
 
   // Set target focus sessions if provided
   if (weeklyScheduleInput.targetFocusSessions) {
@@ -250,10 +382,10 @@ async function addWeeklySchedule(
   fireEvent.press(addButton)
 
   // Wait for async operations and form to reset
-  await waitFor(() => {
+  if (waitForFormHidden) {
     // Wait for the form to be hidden (show add schedule button should appear again)
-    expect(wrapper.getByTestId('show-add-schedule-button')).toBeTruthy()
-  })
+    await wrapper.findByTestId('show-add-schedule-button')
+  }
 }
 
 function getTextContent(element: any): string {

@@ -1,12 +1,12 @@
+import { commonStyles } from '@/constants/styles'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { Weekday, WeeklySchedule } from '@zero-in/shared/domain/schedules'
+import { WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
+import { Weekday, WEEKDAYS } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time'
 import { capitalized } from '@zero-in/shared/utils/format'
 import React, { useEffect, useState } from 'react'
-import { Alert, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+import { Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 const formatTime = (date: Date): string => {
   const hours = date.getHours().toString().padStart(2, '0')
@@ -29,7 +29,7 @@ export function WeeklySchedulesEditor({
 }) {
   // Schedules state
   const [weeklySchedules, setWeeklySchedules] = useState<WeeklySchedule[]>([])
-  const [selectedWeekdays, setSelectedWeekdays] = useState<Set<string>>(new Set())
+  const [selectedWeekdays, setSelectedWeekdays] = useState<Set<Weekday>>(new Set())
   const [startTime, setStartTime] = useState(new Date())
   const [endTime, setEndTime] = useState(new Date())
   const [showStartPicker, setShowStartPicker] = useState(false)
@@ -47,7 +47,7 @@ export function WeeklySchedulesEditor({
     })
   }, [weeklySchedulesStorageService])
 
-  const toggleWeekday = (weekday: string) => {
+  const toggleWeekday = (weekday: Weekday) => {
     const newSet = new Set(selectedWeekdays)
     if (newSet.has(weekday)) {
       newSet.delete(weekday)
@@ -97,7 +97,7 @@ export function WeeklySchedulesEditor({
     const targetFocusSessions = targetSessions ? parseInt(targetSessions, 10) : undefined
 
     const newSchedule = new WeeklySchedule({
-      weekdaySet,
+      weekdaySet: selectedWeekdays,
       startTime: startTimeObj,
       endTime: endTimeObj,
       targetFocusSessions:
@@ -114,8 +114,6 @@ export function WeeklySchedulesEditor({
     setTargetSessions('')
     setErrorMessage(null)
     setShowScheduleForm(false)
-
-    Alert.alert('Success', 'Schedule added successfully!')
   }
 
   const handleCancelAddSchedule = () => {
@@ -133,14 +131,14 @@ export function WeeklySchedulesEditor({
   }
 
   return (
-    <View style={styles.card}>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.cardTitle}>📅 Schedules</Text>
-        <View style={styles.divider} />
+    <View style={commonStyles.card}>
+      <View style={commonStyles.sectionHeader}>
+        <Text style={commonStyles.cardTitle}>📅 Schedules</Text>
+        <View style={commonStyles.divider} />
       </View>
 
-      <View style={styles.infoBox}>
-        <Text style={styles.infoText}>
+      <View style={commonStyles.infoBox}>
+        <Text style={commonStyles.infoText}>
           Configure when blocking is active. Without schedules, blocking runs 24/7 (unless paused by
           settings above).
         </Text>
@@ -150,11 +148,11 @@ export function WeeklySchedulesEditor({
         // Show button to add schedule
         <TouchableOpacity
           testID="show-add-schedule-button"
-          style={styles.secondaryButton}
+          style={commonStyles.secondaryButton}
           onPress={() => setShowScheduleForm(true)}
           activeOpacity={0.8}
         >
-          <Text style={styles.secondaryButtonText}>+ Add Schedule</Text>
+          <Text style={commonStyles.secondaryButtonText}>+ Add Schedule</Text>
         </TouchableOpacity>
       ) : (
         // Show schedule form
@@ -165,7 +163,7 @@ export function WeeklySchedulesEditor({
             <View style={styles.weekdaysGrid}>
               {WEEKDAYS.map((weekday) => (
                 <TouchableOpacity
-                  testID={`check-weekday-${weekday.toLowerCase()}`}
+                  testID={`check-weekday-${Weekday[weekday].toLowerCase()}`}
                   key={weekday}
                   style={[
                     styles.weekdayChip,
@@ -179,8 +177,9 @@ export function WeeklySchedulesEditor({
                       styles.weekdayChipText,
                       selectedWeekdays.has(weekday) && styles.weekdayChipTextSelected
                     ]}
+                    testID="weekday-label"
                   >
-                    {weekday}
+                    {capitalized(Weekday[weekday])}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -267,7 +266,9 @@ export function WeeklySchedulesEditor({
           {errorMessage && (
             <View style={styles.errorBox}>
               <Text style={styles.errorIcon}>⚠️</Text>
-              <Text style={styles.errorText}>{errorMessage}</Text>
+              <Text style={styles.errorText} testID="error-message">
+                {errorMessage}
+              </Text>
             </View>
           )}
 
@@ -292,9 +293,9 @@ export function WeeklySchedulesEditor({
         </>
       )}
 
-      {/* Saved Schedules */}
+      {/* Active Schedules */}
       {weeklySchedules.length > 0 && (
-        <View style={styles.savedSection}>
+        <View style={styles.savedSection} testID="active-schedules-section">
           <View style={styles.savedHeader}>
             <Text style={styles.savedTitle}>Active</Text>
           </View>
@@ -331,48 +332,6 @@ export function WeeklySchedulesEditor({
 }
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5
-  },
-  sectionHeader: {
-    marginBottom: 20
-  },
-  cardTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 12
-  },
-  divider: {
-    height: 3,
-    backgroundColor: '#1a73e8',
-    borderRadius: 2,
-    width: 40
-  },
-  infoBox: {
-    backgroundColor: '#eff6ff',
-    borderLeftWidth: 4,
-    borderLeftColor: '#1a73e8',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 24
-  },
-  infoText: {
-    fontSize: 13,
-    lineHeight: 18,
-    color: '#1e40af'
-  },
   formSection: {
     marginBottom: 24
   },
@@ -561,22 +520,6 @@ const styles = StyleSheet.create({
   },
   deleteButtonText: {
     fontSize: 18
-  },
-  secondaryButton: {
-    backgroundColor: '#e1f5fe',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#1a73e8',
-    marginTop: 16
-  },
-  secondaryButtonText: {
-    color: '#1a73e8',
-    fontSize: 16,
-    fontWeight: '700',
-    letterSpacing: 0.5
   },
   buttonRow: {
     flexDirection: 'row',
