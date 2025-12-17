@@ -1,3 +1,4 @@
+import { commonStyles } from '@/constants/styles'
 import { getAuth, signOut } from '@react-native-firebase/auth'
 import React from 'react'
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -17,8 +18,8 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Welcome Card */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>🎉 Welcome!</Text>
+        <View style={commonStyles.card}>
+          <Text style={commonStyles.cardTitle}>🎉 Welcome!</Text>
           <Text style={styles.cardText}>
             You&apos;re successfully logged in and can access all premium features.
           </Text>
@@ -63,28 +64,6 @@ const styles = StyleSheet.create({
     color: '#dc3545',
     fontWeight: '600',
     fontSize: 14
-  },
-  card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: '#e8eaed'
-  },
-  cardTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1f1f1f',
-    marginBottom: 12
   },
   cardText: {
     fontSize: 15,

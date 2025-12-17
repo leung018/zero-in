@@ -6,6 +6,7 @@ import { Time } from '@zero-in/shared/domain/time'
 import { capitalized } from '@zero-in/shared/utils/format'
 import React, { useEffect, useState } from 'react'
 import { Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { commonStyles } from '@/constants/styles'
 
 const formatTime = (date: Date): string => {
   const hours = date.getHours().toString().padStart(2, '0')
@@ -130,14 +131,14 @@ export function WeeklySchedulesEditor({
   }
 
   return (
-    <View style={styles.card}>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.cardTitle}>📅 Schedules</Text>
-        <View style={styles.divider} />
+    <View style={commonStyles.card}>
+      <View style={commonStyles.sectionHeader}>
+        <Text style={commonStyles.cardTitle}>📅 Schedules</Text>
+        <View style={commonStyles.divider} />
       </View>
 
-      <View style={styles.infoBox}>
-        <Text style={styles.infoText}>
+      <View style={commonStyles.infoBox}>
+        <Text style={commonStyles.infoText}>
           Configure when blocking is active. Without schedules, blocking runs 24/7 (unless paused by
           settings above).
         </Text>
@@ -147,11 +148,11 @@ export function WeeklySchedulesEditor({
         // Show button to add schedule
         <TouchableOpacity
           testID="show-add-schedule-button"
-          style={styles.secondaryButton}
+          style={commonStyles.secondaryButton}
           onPress={() => setShowScheduleForm(true)}
           activeOpacity={0.8}
         >
-          <Text style={styles.secondaryButtonText}>+ Add Schedule</Text>
+          <Text style={commonStyles.secondaryButtonText}>+ Add Schedule</Text>
         </TouchableOpacity>
       ) : (
         // Show schedule form
@@ -331,48 +332,6 @@ export function WeeklySchedulesEditor({
 }
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5
-  },
-  sectionHeader: {
-    marginBottom: 20
-  },
-  cardTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 12
-  },
-  divider: {
-    height: 3,
-    backgroundColor: '#1a73e8',
-    borderRadius: 2,
-    width: 40
-  },
-  infoBox: {
-    backgroundColor: '#eff6ff',
-    borderLeftWidth: 4,
-    borderLeftColor: '#1a73e8',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 24
-  },
-  infoText: {
-    fontSize: 13,
-    lineHeight: 18,
-    color: '#1e40af'
-  },
   formSection: {
     marginBottom: 24
   },
@@ -561,22 +520,6 @@ const styles = StyleSheet.create({
   },
   deleteButtonText: {
     fontSize: 18
-  },
-  secondaryButton: {
-    backgroundColor: '#e1f5fe',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#1a73e8',
-    marginTop: 16
-  },
-  secondaryButtonText: {
-    color: '#1a73e8',
-    fontSize: 16,
-    fontWeight: '700',
-    letterSpacing: 0.5
   },
   buttonRow: {
     flexDirection: 'row',
