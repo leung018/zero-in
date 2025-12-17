@@ -1,13 +1,11 @@
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
-import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
+import { Weekday, WEEKDAYS } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time'
 import { capitalized } from '@zero-in/shared/utils/format'
 import React, { useEffect, useState } from 'react'
 import { Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 const formatTime = (date: Date): string => {
   const hours = date.getHours().toString().padStart(2, '0')
@@ -30,7 +28,7 @@ export function WeeklySchedulesEditor({
 }) {
   // Schedules state
   const [weeklySchedules, setWeeklySchedules] = useState<WeeklySchedule[]>([])
-  const [selectedWeekdays, setSelectedWeekdays] = useState<Set<string>>(new Set())
+  const [selectedWeekdays, setSelectedWeekdays] = useState<Set<Weekday>>(new Set())
   const [startTime, setStartTime] = useState(new Date())
   const [endTime, setEndTime] = useState(new Date())
   const [showStartPicker, setShowStartPicker] = useState(false)
@@ -48,7 +46,7 @@ export function WeeklySchedulesEditor({
     })
   }, [weeklySchedulesStorageService])
 
-  const toggleWeekday = (weekday: string) => {
+  const toggleWeekday = (weekday: Weekday) => {
     const newSet = new Set(selectedWeekdays)
     if (newSet.has(weekday)) {
       newSet.delete(weekday)
@@ -98,7 +96,7 @@ export function WeeklySchedulesEditor({
     const targetFocusSessions = targetSessions ? parseInt(targetSessions, 10) : undefined
 
     const newSchedule = new WeeklySchedule({
-      weekdaySet,
+      weekdaySet: selectedWeekdays,
       startTime: startTimeObj,
       endTime: endTimeObj,
       targetFocusSessions:
@@ -164,7 +162,7 @@ export function WeeklySchedulesEditor({
             <View style={styles.weekdaysGrid}>
               {WEEKDAYS.map((weekday) => (
                 <TouchableOpacity
-                  testID={`check-weekday-${weekday.toLowerCase()}`}
+                  testID={`check-weekday-${Weekday[weekday].toLowerCase()}`}
                   key={weekday}
                   style={[
                     styles.weekdayChip,
@@ -180,7 +178,7 @@ export function WeeklySchedulesEditor({
                     ]}
                     testID="weekday-label"
                   >
-                    {weekday}
+                    {capitalized(Weekday[weekday])}
                   </Text>
                 </TouchableOpacity>
               ))}

@@ -11,3 +11,7 @@ export enum Weekday {
 export function getWeekdayFromDate(date: Date): Weekday {
   return date.getDay() as Weekday
 }
+
+export const WEEKDAYS: ReadonlyArray<Weekday> = Object.values(Weekday).filter(
+  (v) => typeof v === 'number'
+) as Weekday[]
