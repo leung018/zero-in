@@ -41,7 +41,7 @@ export default function BlockingScreen() {
 
   // Permission Logic
   const [permissionStatus, setPermissionStatus] = useState<PermissionStatus>(
-    new PermissionStatus({})
+    PermissionStatus.empty()
   )
   const appState = useRef(AppState.currentState)
 
