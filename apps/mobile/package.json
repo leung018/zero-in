@@ -9,7 +9,7 @@
     "ios": "expo run:ios",
     "lint": "expo lint",
     "type-check": "tsc --noEmit",
-    "cng": "expo prebuild --clean",
+    "cng": "node ./scripts/prebuild-with-settings.js",
     "test:unit": "jest",
     "test:unit:watch": "jest --watch"
   },
