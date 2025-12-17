@@ -4,7 +4,7 @@ import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/
 import { Time } from '@zero-in/shared/domain/time'
 import { capitalized } from '@zero-in/shared/utils/format'
 import React, { useEffect, useState } from 'react'
-import { Alert, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -114,8 +114,6 @@ export function WeeklySchedulesEditor({
     setTargetSessions('')
     setErrorMessage(null)
     setShowScheduleForm(false)
-
-    Alert.alert('Success', 'Schedule added successfully!')
   }
 
   const handleCancelAddSchedule = () => {
