@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import LoadingWrapper from '@/pages/components/LoadingWrapper.vue'
 import type { ClientPort } from '@/service-workers/listener'
-import { Weekday, WeeklySchedule } from '@zero-in/shared/domain/schedules'
+import { WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import type { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
+import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time/index'
 import { computed, ref } from 'vue'
 import { WorkRequestName } from '../../../service-workers/request'

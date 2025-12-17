@@ -1,10 +1,11 @@
 import { Time } from '@zero-in/shared/domain/time/index'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { Weekday, WeeklySchedule } from '.'
+import { WeeklySchedule } from '.'
 import { LocalStorageWrapper } from '../../infra/storage/local-storage'
 import { WeeklyScheduleSchemas } from './schema'
 import { WeeklySchedulesStorageService } from './storage'
 import { runWeeklyScheduleStorageServiceTests } from './storage-shared-spec'
+import { Weekday } from './weekday'
 
 describe('WeeklyScheduleStorageService', () => {
   let storage = LocalStorageWrapper.createFake()

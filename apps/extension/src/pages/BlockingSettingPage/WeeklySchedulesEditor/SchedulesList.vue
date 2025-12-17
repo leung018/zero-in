@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Weekday, WeeklySchedule } from '@zero-in/shared/domain/schedules'
+import { WeeklySchedule } from '@zero-in/shared/domain/schedules'
+import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time/index'
 import { capitalized } from '@zero-in/shared/utils/format'
 

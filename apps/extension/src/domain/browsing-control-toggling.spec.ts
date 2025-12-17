@@ -1,5 +1,6 @@
-import { Weekday, WeeklySchedule } from '@zero-in/shared/domain/schedules'
+import { WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
+import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time/index'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { FakeBrowsingControlService } from '../infra/browsing-control'

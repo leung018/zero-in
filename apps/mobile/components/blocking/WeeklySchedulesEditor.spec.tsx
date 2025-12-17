@@ -1,6 +1,7 @@
 import { fireEvent, render, RenderAPI, waitFor, within } from '@testing-library/react-native'
-import { Weekday, WeeklySchedule } from '@zero-in/shared/domain/schedules'
+import { WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
+import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time'
 import { WeeklySchedulesEditor } from './WeeklySchedulesEditor'
 

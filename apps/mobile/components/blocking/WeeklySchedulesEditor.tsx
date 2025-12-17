@@ -1,6 +1,7 @@
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { Weekday, WeeklySchedule } from '@zero-in/shared/domain/schedules'
+import { WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
+import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time'
 import { capitalized } from '@zero-in/shared/utils/format'
 import React, { useEffect, useState } from 'react'
