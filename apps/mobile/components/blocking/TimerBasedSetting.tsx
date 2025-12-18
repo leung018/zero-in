@@ -18,7 +18,7 @@ export function TimerBasedSetting({
     })
   }, [timerBasedBlockingRulesStorageService])
 
-  const handleSaveTimerBased = async () => {
+  const handleSave = async () => {
     await timerBasedBlockingRulesStorageService.save({
       pauseBlockingDuringBreaks: pauseDuringBreaks,
       pauseBlockingWhenTimerNotRunning: pauseWhenNotRunning
@@ -69,7 +69,7 @@ export function TimerBasedSetting({
       <TouchableOpacity
         testID="save-timer-integration-button"
         style={styles.primaryButton}
-        onPress={handleSaveTimerBased}
+        onPress={handleSave}
       >
         <Text style={styles.primaryButtonText}>Save</Text>
       </TouchableOpacity>
