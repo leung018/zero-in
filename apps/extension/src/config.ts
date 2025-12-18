@@ -1,5 +1,5 @@
+import config from '@zero-in/shared/config'
 import type { NotificationSetting } from './domain/notification-setting'
-import type { TimerBasedBlockingRules } from './domain/timer-based-blocking'
 import { TimerConfig } from './domain/timer/config'
 import { Duration } from './domain/timer/duration'
 import type { BadgeColor } from './infra/badge'
@@ -36,13 +36,6 @@ const getDefaultNotificationSetting = () => {
     sound: true
   }
   return notificationSetting
-}
-
-const getDefaultTimerBasedBlockingRules = (): TimerBasedBlockingRules => {
-  return {
-    pauseBlockingDuringBreaks: true,
-    pauseBlockingWhenTimerNotRunning: false
-  }
 }
 
 const getFocusSessionRecordHouseKeepDays = () => 10
@@ -88,7 +81,7 @@ export default {
   getBadgeColorConfig,
   getReminderPageUrl,
   getDefaultNotificationSetting,
-  getDefaultTimerBasedBlockingRules,
+  getDefaultTimerBasedBlockingRules: config.getDefaultTimerBasedBlockingRules,
   getSignInPageUrl,
   getOptionsPageUrl,
   getAuthUrl,

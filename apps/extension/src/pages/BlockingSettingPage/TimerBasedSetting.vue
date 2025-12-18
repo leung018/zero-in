@@ -3,8 +3,8 @@ import type { ActionService } from '@/infra/action'
 import LoadingWrapper from '@/pages/components/LoadingWrapper.vue'
 import type { ClientPort } from '@/service-workers/listener'
 import { WorkRequestName } from '@/service-workers/request'
+import type { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
 import { ref } from 'vue'
-import type { TimerBasedBlockingRulesStorageService } from '../../domain/timer-based-blocking/storage'
 
 const { timerBasedBlockingRulesStorageService, updateSuccessNotifierService, port } = defineProps<{
   timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService

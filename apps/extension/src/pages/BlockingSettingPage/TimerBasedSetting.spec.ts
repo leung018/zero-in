@@ -1,11 +1,11 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
-import config from '../../config'
-import { BrowsingRules } from '../../domain/browsing-rules'
 import {
   newTestTimerBasedBlockingRules,
   type TimerBasedBlockingRules
-} from '../../domain/timer-based-blocking'
+} from '@zero-in/shared/domain/timer-based-blocking/index'
+import { describe, expect, it } from 'vitest'
+import config from '../../config'
+import { BrowsingRules } from '../../domain/browsing-rules'
 import { TimerStage } from '../../domain/timer/stage'
 import { TimerInternalState } from '../../domain/timer/state/internal'
 import { FakeActionService } from '../../infra/action'
