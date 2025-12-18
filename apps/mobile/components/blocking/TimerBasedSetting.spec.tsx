@@ -65,10 +65,8 @@ async function renderTimerBasedSetting({
     />
   )
 
-  await waitFor(() => {
-    const switchElement = wrapper.getByTestId('pause-blocking-during-breaks')
-    expect(switchElement).toBeTruthy()
-  })
+  // Wait for the component to be rendered
+  await wrapper.findByTestId('pause-blocking-during-breaks')
 
   return { wrapper, timerBasedBlockingRulesStorageService }
 }
