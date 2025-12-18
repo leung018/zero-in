@@ -1,7 +1,8 @@
 import { commonStyles } from '@/constants/styles'
 import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
 import React, { useEffect, useState } from 'react'
-import { Alert, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
+import { showUpdateSuccessNotification } from '../../infra/update-success'
 
 export function TimerBasedSetting({
   timerBasedBlockingRulesStorageService
@@ -24,7 +25,7 @@ export function TimerBasedSetting({
       pauseBlockingWhenTimerNotRunning: pauseWhenNotRunning
     })
 
-    Alert.alert('Success', 'Timer-based settings saved!')
+    showUpdateSuccessNotification()
   }
 
   return (
