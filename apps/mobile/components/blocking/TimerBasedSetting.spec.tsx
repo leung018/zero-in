@@ -16,8 +16,8 @@ describe('TimerBasedSetting', () => {
       }
     })
 
-    expect(wrapper1.getByTestId('pause-blocking-during-breaks').props.value).toBe(false)
-    expect(wrapper1.getByTestId('pause-blocking-when-timer-not-running').props.value).toBe(true)
+    assertCheckboxValue(wrapper1, 'pause-blocking-during-breaks', false)
+    assertCheckboxValue(wrapper1, 'pause-blocking-when-timer-not-running', true)
 
     const { wrapper: wrapper2 } = await renderTimerBasedSetting({
       timerBasedBlockingRules: {
@@ -26,8 +26,8 @@ describe('TimerBasedSetting', () => {
       }
     })
 
-    expect(wrapper2.getByTestId('pause-blocking-during-breaks').props.value).toBe(true)
-    expect(wrapper2.getByTestId('pause-blocking-when-timer-not-running').props.value).toBe(false)
+    assertCheckboxValue(wrapper2, 'pause-blocking-during-breaks', true)
+    assertCheckboxValue(wrapper2, 'pause-blocking-when-timer-not-running', false)
   })
 
   it('should persist setting after clicking save', async () => {
@@ -94,4 +94,8 @@ function saveTimerBasedBlockingRules(
 
   const saveButton = wrapper.getByTestId('save-timer-integration-button')
   fireEvent.press(saveButton)
+}
+
+function assertCheckboxValue(wrapper: RenderAPI, testId: string, value: boolean) {
+  expect(wrapper.getByTestId(testId).props.value).toBe(value)
 }
