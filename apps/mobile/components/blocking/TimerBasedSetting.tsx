@@ -1,12 +1,29 @@
 import { commonStyles } from '@/constants/styles'
-import React, { useState } from 'react'
+import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
+import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 
-export function TimerBasedSetting() {
+export function TimerBasedSetting({
+  timerBasedBlockingRulesStorageService
+}: {
+  timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
+}) {
   const [pauseDuringBreaks, setPauseDuringBreaks] = useState(false)
   const [pauseWhenNotRunning, setPauseWhenNotRunning] = useState(false)
 
-  const handleSaveTimerBased = () => {
+  useEffect(() => {
+    timerBasedBlockingRulesStorageService.get().then((rules) => {
+      setPauseDuringBreaks(rules.pauseBlockingDuringBreaks)
+      setPauseWhenNotRunning(rules.pauseBlockingWhenTimerNotRunning)
+    })
+  }, [timerBasedBlockingRulesStorageService])
+
+  const handleSaveTimerBased = async () => {
+    await timerBasedBlockingRulesStorageService.save({
+      pauseBlockingDuringBreaks: pauseDuringBreaks,
+      pauseBlockingWhenTimerNotRunning: pauseWhenNotRunning
+    })
+
     Alert.alert('Success', 'Timer-based settings saved!')
   }
 
@@ -24,6 +41,7 @@ export function TimerBasedSetting() {
             <Text style={styles.settingDescription}>Stop blocking during breaks</Text>
           </View>
           <Switch
+            testID="pause-blocking-during-breaks"
             value={pauseDuringBreaks}
             onValueChange={setPauseDuringBreaks}
             trackColor={{ false: '#e5e7eb', true: '#bfdbfe' }}
@@ -38,6 +56,7 @@ export function TimerBasedSetting() {
             <Text style={styles.settingDescription}>Stop blocking when timer is not running</Text>
           </View>
           <Switch
+            testID="pause-blocking-when-timer-not-running"
             value={pauseWhenNotRunning}
             onValueChange={setPauseWhenNotRunning}
             trackColor={{ false: '#e5e7eb', true: '#bfdbfe' }}
@@ -47,7 +66,11 @@ export function TimerBasedSetting() {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.primaryButton} onPress={handleSaveTimerBased}>
+      <TouchableOpacity
+        testID="save-timer-integration-button"
+        style={styles.primaryButton}
+        onPress={handleSaveTimerBased}
+      >
         <Text style={styles.primaryButtonText}>Save</Text>
       </TouchableOpacity>
     </View>

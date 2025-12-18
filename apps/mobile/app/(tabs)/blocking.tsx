@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { AppState, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { newWeeklySchedulesStorageService } from '../../domain/schedules/storage'
+import { newTimerBasedBlockingRulesStorageService } from '../../domain/timer-based-blocking/storage'
 
 const getPermissionLabel = (permissionType: PermissionType): string => {
   const labels: Record<PermissionType, string> = {
@@ -119,7 +120,9 @@ export default function BlockingScreen() {
         </View>
 
         {/* Timer-Based Section */}
-        <TimerBasedSetting />
+        <TimerBasedSetting
+          timerBasedBlockingRulesStorageService={newTimerBasedBlockingRulesStorageService()}
+        />
 
         {/* Schedules Section */}
         <WeeklySchedulesEditor weeklySchedulesStorageService={newWeeklySchedulesStorageService()} />
