@@ -1,7 +1,7 @@
+import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
+import { runTimerBasedBlockingRulesStorageServiceTests } from '@zero-in/shared/domain/timer-based-blocking/storage-shared-spec'
 import { beforeEach, describe } from 'vitest'
 import { signInAndGetFirestoreAppStorage } from '../../test-utils/firestore'
-import { TimerBasedBlockingRulesStorageService } from './storage'
-import { runTimerBasedBlockingRulesStorageServiceTests } from './storage-shared-spec'
 
 describe('TimerBasedBlockingRulesStorageService', async () => {
   const firestoreStorage = await signInAndGetFirestoreAppStorage()

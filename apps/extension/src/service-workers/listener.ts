@@ -1,4 +1,5 @@
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
+import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
 import { SubscriptionManager } from '@zero-in/shared/utils/subscription'
 import config from '../config'
 import { BrowsingControlTogglingService } from '../domain/browsing-control-toggling'
@@ -6,7 +7,7 @@ import { BrowsingRulesStorageService } from '../domain/browsing-rules/storage'
 import { NotificationSettingStorageService } from '../domain/notification-setting/storage'
 import { newWeeklySchedulesStorageService } from '../domain/schedules/storage'
 import { FocusTimer } from '../domain/timer'
-import { TimerBasedBlockingRulesStorageService } from '../domain/timer-based-blocking/storage'
+import { newTimerBasedBlockingRulesStorageService } from '../domain/timer-based-blocking/storage'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { newFocusSessionRecord } from '../domain/timer/record'
 import { FocusSessionRecordHousekeeper } from '../domain/timer/record/house-keep'
@@ -67,7 +68,7 @@ export class BackgroundListener {
       browsingControlService: new BrowserBrowsingControlService(),
       browsingRulesStorageService: BrowsingRulesStorageService.create(),
       weeklySchedulesStorageService: newWeeklySchedulesStorageService(),
-      timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService.create(),
+      timerBasedBlockingRulesStorageService: newTimerBasedBlockingRulesStorageService(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
       timer: FocusTimer.create()
     })

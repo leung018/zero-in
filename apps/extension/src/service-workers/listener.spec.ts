@@ -1,4 +1,5 @@
 import { flushPromises } from '@vue/test-utils'
+import { newTestTimerBasedBlockingRules } from '@zero-in/shared/domain/timer-based-blocking/index'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import config from '../config'
 import { BrowsingRules } from '../domain/browsing-rules'
@@ -6,7 +7,6 @@ import {
   newTestNotificationSetting,
   type NotificationSetting
 } from '../domain/notification-setting'
-import { newTestTimerBasedBlockingRules } from '../domain/timer-based-blocking'
 import { TimerConfig } from '../domain/timer/config'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { Duration } from '../domain/timer/duration'
