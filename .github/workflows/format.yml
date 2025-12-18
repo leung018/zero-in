@@ -1,6 +1,9 @@
 name: Format Check
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -8,14 +11,23 @@ on:
 jobs:
   check-format:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TURBO_TELEMETRY_DISABLED: "1"
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
-          cache: 'yarn'
-          cache-dependency-path: yarn.lock
-      - run: yarn install --immutable
-      - name: Run Formatter Check
+          node-version: 22.x
+          cache: yarn
+          cache-dependency-path: |
+            yarn.lock
+            apps/*/package.json
+            packages/*/package.json
+      - name: Enable Corepack
+        run: corepack enable
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Run formatter check
         run: yarn format-check

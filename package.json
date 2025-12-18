@@ -10,13 +10,20 @@
   "scripts": {
     "format": "prettier --write .",
     "format-check": "prettier --check .",
+    "lint-staged": "lint-staged",
+    "postinstall": "simple-git-hooks",
     "extension-test-unit": "turbo run test:unit --filter=@zero-in/extension...",
     "mobile-test-unit": "turbo run test:unit --filter=@zero-in/mobile..."
   },
   "devDependencies": {
+    "lint-staged": "^15.2.11",
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.3.0",
+    "simple-git-hooks": "^2.11.1",
     "turbo": "^2.6.1"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "yarn lint-staged"
   },
   "packageManager": "yarn@4.10.3"
 }

@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json.schemastore.org/lintstagedrc",
+  "*.{js,jsx,ts,tsx,vue,css,scss,md,mdx,json,yml,yaml}": "yarn prettier --cache --write --ignore-unknown"
+}
+
