@@ -19,6 +19,11 @@ Please visit the [Zero In website](https://zeroin.dev) for more details and inst
 yarn
 ```
 
+### Formatting & git hooks
+
+- Run `yarn format` to apply Prettier (see `.prettierrc.json` for options) and `yarn format-check` before pushing.
+- A pre-commit hook runs `lint-staged` to format staged files; it is installed via `simple-git-hooks` on `yarn install`. If you need to reinstall the hooks, run `yarn simple-git-hooks`.
+
 ### Compile and Hot-Reload for Development
 
 ```sh

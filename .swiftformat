@@ -1,0 +1,55 @@
+# SwiftFormat Configuration
+# See https://github.com/nicklockwood/SwiftFormat for options
+
+# Indent using 2 spaces (to match your Prettier config)
+--indent 2
+
+# Use trailing commas where applicable
+--commas always
+
+# Remove semicolons
+--semicolons never
+
+# Use void for empty return types
+--voidtype void
+
+# Sort imports alphabetically
+--importgrouping alpha
+
+# Use explicit self only where required
+--self remove
+
+# Maximum line width (matching Prettier's 100)
+--maxwidth 100
+
+# Header comment (optional - can be customized or removed)
+--header strip
+
+# Enable all rules by default
+--enable blankLinesBetweenImports
+--enable consecutiveSpaces
+--enable duplicateImports
+--enable emptyBraces
+--enable redundantBreak
+--enable redundantExtensionACL
+--enable redundantFileprivate
+--enable redundantGet
+--enable redundantInit
+--enable redundantLet
+--enable redundantLetError
+--enable redundantNilInit
+--enable redundantObjc
+--enable redundantParens
+--enable redundantPattern
+--enable redundantRawValues
+--enable redundantReturn
+--enable redundantSelf
+--enable redundantType
+--enable redundantVoidReturnType
+--enable sortImports
+--enable strongifiedSelf
+--enable trailingCommas
+--enable unusedArguments
+--enable void
+--enable wrapArguments
+--enable wrapAttributes

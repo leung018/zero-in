@@ -8,15 +8,28 @@
     "packages/*"
   ],
   "scripts": {
-    "format": "prettier --write .",
-    "format-check": "prettier --check .",
+    "format": "yarn format:ts && yarn format:kotlin && yarn format:swift",
+    "format:ts": "prettier --ignore-path .gitignore --ignore-path apps/mobile/.gitignore --write \"**/*.{js,jsx,ts,tsx,vue,css,scss,md,mdx,json,yml,yaml}\"",
+    "format:kotlin": "ktlint --format 'apps/mobile/**/*.kt' 'apps/mobile/**/*.kts' || true",
+    "format:swift": "swiftformat apps/mobile --swiftversion 5.9 --exclude '**/node_modules,**/ios/Pods'",
+    "format-check": "yarn format-check:ts && yarn format-check:kotlin && yarn format-check:swift",
+    "format-check:ts": "prettier --ignore-path .gitignore --ignore-path apps/mobile/.gitignore --check \"**/*.{js,jsx,ts,tsx,vue,css,scss,md,mdx,json,yml,yaml}\"",
+    "format-check:kotlin": "ktlint 'apps/mobile/**/*.kt' 'apps/mobile/**/*.kts'",
+    "format-check:swift": "swiftformat apps/mobile --swiftversion 5.9 --exclude '**/node_modules,**/ios/Pods' --lint",
+    "lint-staged": "lint-staged",
+    "postinstall": "simple-git-hooks",
     "extension-test-unit": "turbo run test:unit --filter=@zero-in/extension...",
     "mobile-test-unit": "turbo run test:unit --filter=@zero-in/mobile..."
   },
   "devDependencies": {
+    "lint-staged": "^16.2.7",
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.3.0",
+    "simple-git-hooks": "^2.13.1",
     "turbo": "^2.6.1"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "yarn lint-staged"
   },
   "packageManager": "yarn@4.10.3"
 }
