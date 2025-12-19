@@ -1,6 +1,6 @@
 import ExpoModulesCore
-import SwiftUI
 import FamilyControls
+import SwiftUI
 
 class AppPickerView: ExpoView {
   private var hostingController: UIHostingController<FamilyPickerView>?
@@ -20,7 +20,7 @@ class AppPickerView: ExpoView {
     if superview != nil {
       if #available(iOS 15.0, *) {
         let picker = FamilyPickerView(onSelectionChange: { selection in
-            SelectionStore.shared.selection = selection
+          SelectionStore.shared.selection = selection
         })
         hostingController = UIHostingController(rootView: picker)
         if let hostView = hostingController?.view {
@@ -35,13 +35,13 @@ class AppPickerView: ExpoView {
 
 @available(iOS 15.0, *)
 struct FamilyPickerView: View {
-    @State private var selection = FamilyActivitySelection()
-    var onSelectionChange: (FamilyActivitySelection) -> Void
+  @State private var selection = FamilyActivitySelection()
+  var onSelectionChange: (FamilyActivitySelection) -> Void
 
-    var body: some View {
-        FamilyActivityPicker(selection: $selection)
-            .onChange(of: selection) { newSelection in
-                onSelectionChange(newSelection)
-            }
-    }
+  var body: some View {
+    FamilyActivityPicker(selection: $selection)
+      .onChange(of: selection) { newSelection in
+        onSelectionChange(newSelection)
+      }
+  }
 }

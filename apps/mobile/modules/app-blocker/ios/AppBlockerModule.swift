@@ -12,11 +12,14 @@ public class AppBlockerModule: Module {
         let isGranted = ac.authorizationStatus == .approved
         promise.resolve(["familyControls": isGranted])
       } else {
-        promise.reject("UNSUPPORTED_OS_VERSION", "FamilyControls is not available on this OS version.")
+        promise.reject(
+          "UNSUPPORTED_OS_VERSION",
+          "FamilyControls is not available on this OS version."
+        )
       }
     }
 
-    AsyncFunction("requestPermission") { (permissionType: String, promise: Promise) in
+    AsyncFunction("requestPermission") { (_: String, promise: Promise) in
       if #available(iOS 16.0, *) {
         Task {
           do {
@@ -27,34 +30,44 @@ public class AppBlockerModule: Module {
           }
         }
       } else {
-        promise.reject("UNSUPPORTED_OS_VERSION", "FamilyControls is not available on this OS version.")
+        promise.reject(
+          "UNSUPPORTED_OS_VERSION",
+          "FamilyControls is not available on this OS version."
+        )
       }
     }
 
     AsyncFunction("blockApps") { (promise: Promise) in
-        if #available(iOS 15.0, *) {
-            if let selection = SelectionStore.shared.selection {
-                let store = ManagedSettingsStore()
-                store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(selection.categoryTokens)
-                store.shield.applications = selection.applicationTokens
-                store.shield.webDomains = selection.webDomainTokens
-            }
-            promise.resolve(nil)
-        } else {
-            promise.reject("UNSUPPORTED_OS_VERSION", "FamilyControls is not available on this OS version.")
+      if #available(iOS 15.0, *) {
+        if let selection = SelectionStore.shared.selection {
+          let store = ManagedSettingsStore()
+          store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy
+            .specific(selection.categoryTokens)
+          store.shield.applications = selection.applicationTokens
+          store.shield.webDomains = selection.webDomainTokens
         }
+        promise.resolve(nil)
+      } else {
+        promise.reject(
+          "UNSUPPORTED_OS_VERSION",
+          "FamilyControls is not available on this OS version."
+        )
+      }
     }
 
     AsyncFunction("unblockApps") { (promise: Promise) in
-        if #available(iOS 15.0, *) {
-            let store = ManagedSettingsStore()
-            store.shield.applicationCategories = nil
-            store.shield.applications = nil
-            store.shield.webDomains = nil
-            promise.resolve(nil)
-        } else {
-            promise.reject("UNSUPPORTED_OS_VERSION", "FamilyControls is not available on this OS version.")
-        }
+      if #available(iOS 15.0, *) {
+        let store = ManagedSettingsStore()
+        store.shield.applicationCategories = nil
+        store.shield.applications = nil
+        store.shield.webDomains = nil
+        promise.resolve(nil)
+      } else {
+        promise.reject(
+          "UNSUPPORTED_OS_VERSION",
+          "FamilyControls is not available on this OS version."
+        )
+      }
     }
 
     View(AppPickerView.self) {}
