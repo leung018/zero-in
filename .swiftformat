@@ -46,7 +46,7 @@
 --enable redundantSelf
 --enable redundantType
 --enable redundantVoidReturnType
---enable sortedImports
+--enable sortImports
 --enable strongifiedSelf
 --enable trailingCommas
 --enable unusedArguments
