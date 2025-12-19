@@ -1,5 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/lintstagedrc",
-  "*.{js,jsx,ts,tsx,vue,css,scss,md,mdx,json,yml,yaml}": "yarn prettier --cache --write --ignore-unknown"
+  "*.{js,jsx,ts,tsx,vue,css,scss,md,mdx,json,yml,yaml}": "yarn prettier --cache --write --ignore-unknown",
+  "*.{kt,kts}": "ktlint --format",
+  "*.swift": "swiftformat --swiftversion 5.9 --exclude '**/node_modules,**/ios/Pods'"
 }
+
 

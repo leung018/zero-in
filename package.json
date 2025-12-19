@@ -8,8 +8,14 @@
     "packages/*"
   ],
   "scripts": {
-    "format": "prettier --ignore-path .gitignore --ignore-path apps/mobile/.gitignore --write \"**/*.{js,jsx,ts,tsx,vue,css,scss,md,mdx,json,yml,yaml}\"",
-    "format-check": "prettier --ignore-path .gitignore --ignore-path apps/mobile/.gitignore --check \"**/*.{js,jsx,ts,tsx,vue,css,scss,md,mdx,json,yml,yaml}\"",
+    "format": "yarn format:ts && yarn format:kotlin && yarn format:swift",
+    "format:ts": "prettier --ignore-path .gitignore --ignore-path apps/mobile/.gitignore --write \"**/*.{js,jsx,ts,tsx,vue,css,scss,md,mdx,json,yml,yaml}\"",
+    "format:kotlin": "ktlint --format 'apps/mobile/**/*.kt' 'apps/mobile/**/*.kts' || true",
+    "format:swift": "swiftformat apps/mobile --swiftversion 5.9 --exclude '**/node_modules,**/ios/Pods'",
+    "format-check": "yarn format-check:ts && yarn format-check:kotlin && yarn format-check:swift",
+    "format-check:ts": "prettier --ignore-path .gitignore --ignore-path apps/mobile/.gitignore --check \"**/*.{js,jsx,ts,tsx,vue,css,scss,md,mdx,json,yml,yaml}\"",
+    "format-check:kotlin": "ktlint 'apps/mobile/**/*.kt' 'apps/mobile/**/*.kts'",
+    "format-check:swift": "swiftformat apps/mobile --swiftversion 5.9 --exclude '**/node_modules,**/ios/Pods' --lint",
     "lint-staged": "lint-staged",
     "postinstall": "simple-git-hooks",
     "extension-test-unit": "turbo run test:unit --filter=@zero-in/extension...",
