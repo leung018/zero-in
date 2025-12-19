@@ -8,8 +8,8 @@
     "packages/*"
   ],
   "scripts": {
-    "format": "prettier --write .",
-    "format-check": "prettier --check .",
+    "format": "prettier --ignore-path .gitignore --ignore-path apps/mobile/.gitignore --write \"**/*.{js,jsx,ts,tsx,vue,css,scss,md,mdx,json,yml,yaml}\"",
+    "format-check": "prettier --ignore-path .gitignore --ignore-path apps/mobile/.gitignore --check \"**/*.{js,jsx,ts,tsx,vue,css,scss,md,mdx,json,yml,yaml}\"",
     "lint-staged": "lint-staged",
     "postinstall": "simple-git-hooks",
     "extension-test-unit": "turbo run test:unit --filter=@zero-in/extension...",
