@@ -6042,7 +6042,7 @@ __metadata:
     "@wxt-dev/module-vue": "npm:^1.0.3"
     "@zero-in/shared": "workspace:*"
     bootstrap: "npm:^5.3.8"
-    bootstrap-vue-next: "npm:^0.40.8"
+    bootstrap-vue-next: "npm:^0.42.0"
     eslint: "npm:^9.39.1"
     eslint-config-prettier: "npm:^10.1.8"
     eslint-plugin-playwright: "npm:^2.3.0"
@@ -7129,9 +7129,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bootstrap-vue-next@npm:^0.40.8":
-  version: 0.40.8
-  resolution: "bootstrap-vue-next@npm:0.40.8"
+"bootstrap-vue-next@npm:^0.42.0":
+  version: 0.42.0
+  resolution: "bootstrap-vue-next@npm:0.42.0"
   peerDependencies:
     "@floating-ui/vue": "*"
     "@vueuse/core": "*"
@@ -7144,7 +7144,7 @@ __metadata:
       optional: true
     vue-router:
       optional: true
-  checksum: 10c0/8dfe5a77508aa6fc0d4cab649c91a50fa6cb6b8885f7f93ea241f4680f82ffb6b33f408e7fe9ef3a9ced42852ee55b1d17844cdeceaf5c6bb26997fbc940d14d
+  checksum: 10c0/584e77c3543b20a4e5fd9b951e268d47001da79d8a17b6471ddb882304485d9beb365f4f46c6f5ce5da22c7980237244e9834eb0b1249ea6b1cd81218a738601
   languageName: node
   linkType: hard
 

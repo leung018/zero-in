@@ -24,7 +24,7 @@
     "@popperjs/core": "^2.11.8",
     "@zero-in/shared": "workspace:*",
     "bootstrap": "^5.3.8",
-    "bootstrap-vue-next": "^0.40.8",
+    "bootstrap-vue-next": "^0.42.0",
     "firebase": "^12.6.0",
     "vue": "^3.5.25"
   },
