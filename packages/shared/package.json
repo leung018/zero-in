@@ -6,7 +6,7 @@
     "./*": "./src/*.ts"
   },
   "devDependencies": {
-    "vitest": "^4.0.13"
+    "vitest": "^4.0.16"
   },
   "scripts": {
     "test:unit": "vitest run",
