@@ -23,6 +23,8 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: yarn.lock
       - run: yarn install --immutable
+      - name: Expo Doctor
+        run: yarn expo-doctor
       - name: Lint
         run: yarn lint
       - name: Type Check
