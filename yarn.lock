@@ -5901,6 +5901,7 @@ __metadata:
     expo: "npm:~54.0.30"
     expo-build-properties: "npm:~1.0.10"
     expo-constants: "npm:~18.0.12"
+    expo-doctor: "npm:^1.17.14"
     expo-font: "npm:~14.0.10"
     expo-haptics: "npm:~15.0.8"
     expo-image: "npm:~3.0.11"
@@ -9676,6 +9677,15 @@ __metadata:
     expo: "*"
     react-native: "*"
   checksum: 10c0/9dab3f1d685b17c25ae4179823162b763a7edeea8b976f96f25e37fabbfbc190f05cd774431664e5145196f3982e34303ebf5a1f5a82a1409218ae93187f710f
+  languageName: node
+  linkType: hard
+
+"expo-doctor@npm:^1.17.14":
+  version: 1.17.14
+  resolution: "expo-doctor@npm:1.17.14"
+  bin:
+    expo-doctor: build/index.js
+  checksum: 10c0/f7fb8a6c1efce2a032babad493d875c7af3d396beb7f805b18d90bdf693e82a16f7c3aacccd6e91114869f4d6a899ea979062bf8e6375f0c4bf66056548efe11
   languageName: node
   linkType: hard
 
