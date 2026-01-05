@@ -69,7 +69,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         }
       }
     ],
-    ['./plugins/withGIDClientID.ts']
+    ['./plugins/withGIDClientID.ts'],
+    '@react-native-community/datetimepicker',
+    'expo-font',
+    'expo-web-browser'
   ],
   experiments: {
     typedRoutes: true,
