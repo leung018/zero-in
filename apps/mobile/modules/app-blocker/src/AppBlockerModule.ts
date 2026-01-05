@@ -41,6 +41,8 @@ declare class AppBlockerModule extends NativeModule {
   requestPermission(permissionType: PermissionType): Promise<void>
   blockApps(): Promise<void>
   unblockApps(): Promise<void>
+  setSchedule(startTime: number, endTime: number): Promise<void>
+  clearSchedule(): Promise<void>
 }
 
 const nativeModule = requireNativeModule<AppBlockerModule>('AppBlocker')
@@ -59,5 +61,11 @@ export const appBlocker = {
   },
   unblockApps(): Promise<void> {
     return nativeModule.unblockApps()
+  },
+  setSchedule(start: Date, end: Date): Promise<void> {
+    return nativeModule.setSchedule(start.getTime(), end.getTime())
+  },
+  clearSchedule(): Promise<void> {
+    return nativeModule.clearSchedule()
   }
 }
