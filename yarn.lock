@@ -5945,6 +5945,7 @@ __metadata:
     "@testing-library/react-native": "npm:^13.3.3"
     "@types/jest": "npm:29.5.14"
     "@types/react": "npm:~19.1.10"
+    create-target: "npm:^2.0.1"
     eslint: "npm:^9.39.1"
     eslint-config-expo: "npm:~10.0.0"
     expo: "npm:~54.0.30"
@@ -8084,6 +8085,15 @@ __metadata:
   version: 1.1.1
   resolution: "create-require@npm:1.1.1"
   checksum: 10c0/157cbc59b2430ae9a90034a5f3a1b398b6738bf510f713edc4d4e45e169bc514d3d99dd34d8d01ca7ae7830b5b8b537e46ae8f3c8f932371b0875c0151d7ec91
+  languageName: node
+  linkType: hard
+
+"create-target@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "create-target@npm:2.0.1"
+  bin:
+    create-target: build/index.js
+  checksum: 10c0/f232abcd0089b132163cd866317fe30f58ee87c3fc16779b376eadb613a5203243dc44ff32fdb027cc76a3b3ba18a82ebf8431101763c2ed1910ea6e21583629
   languageName: node
   linkType: hard
 
