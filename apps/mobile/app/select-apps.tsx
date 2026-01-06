@@ -1,8 +1,14 @@
-import { AppPickerView } from '@/modules/app-blocker'
+import { appBlocker, AppPickerView } from '@/modules/app-blocker'
 import { Stack, useRouter } from 'expo-router'
 import React, { useState } from 'react'
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+
+function getDateAfter(ms: number) {
+  const date = new Date()
+  date.setMilliseconds(date.getMilliseconds() + ms)
+  return date
+}
 
 export default function SelectAppsScreen() {
   const router = useRouter()
@@ -28,7 +34,9 @@ export default function SelectAppsScreen() {
         </View>
         <TouchableOpacity
           style={styles.primaryButton}
-          onPress={() => router.back()}
+          onPress={() => {
+            appBlocker.setSchedule(new Date(), getDateAfter(15 * 60 * 1000)) // I found that ios need Minimum 15 minutes...
+          }}
           activeOpacity={0.8}
         >
           <Text style={styles.primaryButtonText}>Done</Text>
