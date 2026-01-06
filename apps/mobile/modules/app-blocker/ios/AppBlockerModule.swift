@@ -145,6 +145,8 @@ public class AppBlockerModule: Module {
       }
     }
 
-    View(AppPickerView.self) {}
+    View(AppPickerView.self) {
+      Events("onAppsLoaded")
+    }
   }
 }
