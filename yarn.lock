@@ -1240,6 +1240,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bacons/apple-targets@npm:^3.0.6":
+  version: 3.0.6
+  resolution: "@bacons/apple-targets@npm:3.0.6"
+  dependencies:
+    "@bacons/xcode": "npm:1.0.0-alpha.27"
+    "@react-native/normalize-colors": "npm:^0.79.2"
+    debug: "npm:^4.3.4"
+    glob: "npm:^10.4.2"
+  checksum: 10c0/4a9ee42665712235341bd9d26c3ebbdfcd07f85063cf3daa04b0e7c5dd5d1c4e838687675bb113c04843b99ab422ca87315e8ab9b3717d5e4d304faffb2a168f
+  languageName: node
+  linkType: hard
+
+"@bacons/xcode@npm:1.0.0-alpha.27":
+  version: 1.0.0-alpha.27
+  resolution: "@bacons/xcode@npm:1.0.0-alpha.27"
+  dependencies:
+    "@expo/plist": "npm:^0.0.18"
+    debug: "npm:^4.3.4"
+    uuid: "npm:^8.3.2"
+  checksum: 10c0/e8114f9388eec507473baa61289e1312d0789129d14d3ac9051b26544105ddd2b03da8b7e82d8f0a8ce7cb3283a07d9fa6f8d6f07a7d07ba603ace1bc7151548
+  languageName: node
+  linkType: hard
+
 "@bcoe/v8-coverage@npm:^0.2.3":
   version: 0.2.3
   resolution: "@bcoe/v8-coverage@npm:0.2.3"
@@ -2040,6 +2063,17 @@ __metadata:
     ora: "npm:^3.4.0"
     resolve-workspace-root: "npm:^2.0.0"
   checksum: 10c0/f822b49f4b6c6b8e4d95b7d136a515131f85b145fe6bc15eef42ef2c2890474b5bba913d03c098c614373be2e5e85afa24ea3ca237dfd0ec077bdd4b6c5248cc
+  languageName: node
+  linkType: hard
+
+"@expo/plist@npm:^0.0.18":
+  version: 0.0.18
+  resolution: "@expo/plist@npm:0.0.18"
+  dependencies:
+    "@xmldom/xmldom": "npm:~0.7.0"
+    base64-js: "npm:^1.2.3"
+    xmlbuilder: "npm:^14.0.0"
+  checksum: 10c0/e0e7ff2cee292bad5306ca441a7fd43c22938f2071e33d02db148992a9c564129703b5aad3037e9988ed8ff246fd023411054c9f3b473150f7094ae7f0b3bbe1
   languageName: node
   linkType: hard
 
@@ -4535,6 +4569,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native/normalize-colors@npm:^0.79.2":
+  version: 0.79.7
+  resolution: "@react-native/normalize-colors@npm:0.79.7"
+  checksum: 10c0/717fe5813d2776903c2b20d613040f99bbe8e0073b8f195700d39246f0d14c8508371475118a809340bb91aee1696f9a2dabd4598b8b46ad32e5d44bbedbaca1
+  languageName: node
+  linkType: hard
+
 "@react-native/virtualized-lists@npm:0.81.5":
   version: 0.81.5
   resolution: "@react-native/virtualized-lists@npm:0.81.5"
@@ -5830,6 +5871,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xmldom/xmldom@npm:~0.7.0":
+  version: 0.7.13
+  resolution: "@xmldom/xmldom@npm:0.7.13"
+  checksum: 10c0/cb02e4e8d986acf18578a5f25d1bce5e18d08718f40d8a0cdd922a4c112c8e00daf94de4e43f9556ed147c696b135f2ab81fa9a2a8a0416f60af15d156b60e40
+  languageName: node
+  linkType: hard
+
 "@zero-in/extension@workspace:apps/extension":
   version: 0.0.0-use.local
   resolution: "@zero-in/extension@workspace:apps/extension"
@@ -5885,6 +5933,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@zero-in/mobile@workspace:apps/mobile"
   dependencies:
+    "@bacons/apple-targets": "npm:^3.0.6"
     "@expo/vector-icons": "npm:^15.0.3"
     "@react-native-community/datetimepicker": "npm:8.4.4"
     "@react-native-firebase/app": "npm:^23.5.0"
@@ -20757,6 +20806,13 @@ __metadata:
     sax: "npm:>=0.6.0"
     xmlbuilder: "npm:~11.0.0"
   checksum: 10c0/e98a84e9c172c556ee2c5afa0fc7161b46919e8b53ab20de140eedea19903ed82f7cd5b1576fb345c84f0a18da1982ddf65908129b58fc3d7cbc658ae232108f
+  languageName: node
+  linkType: hard
+
+"xmlbuilder@npm:^14.0.0":
+  version: 14.0.0
+  resolution: "xmlbuilder@npm:14.0.0"
+  checksum: 10c0/3a99d1642b0a25a24f24bc5a32f37d299886e01e004654e34d13877e7648956f000708568456fedb7423e1dc2fbfe6520298699a3fbabc681d989be4a41c1509
   languageName: node
   linkType: hard
 
