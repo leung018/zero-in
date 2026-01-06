@@ -1,48 +1,33 @@
-
 import DeviceActivity
+import FamilyControls
+import ManagedSettings
 
-// Optionally override any of the functions below.
-// Make sure that your class name matches the NSExtensionPrincipalClass in your Info.plist.
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   override func intervalDidStart(for activity: DeviceActivityName) {
     super.intervalDidStart(for: activity)
-
-    // Handle the start of the interval.
+    applyShields()
   }
 
   override func intervalDidEnd(for activity: DeviceActivityName) {
     super.intervalDidEnd(for: activity)
-
-    // Handle the end of the interval.
+    removeShields()
   }
 
-  override func eventDidReachThreshold(
-    _ event: DeviceActivityEvent.Name,
-    activity: DeviceActivityName
-  ) {
-    super.eventDidReachThreshold(event, activity: activity)
-
-    // Handle the event reaching its threshold.
+  private func applyShields() {
+    // Read from the shared App Group storage
+    if let selection = SelectionStore.shared.selection {
+      let store = ManagedSettingsStore()
+      store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy
+        .specific(selection.categoryTokens)
+      store.shield.applications = selection.applicationTokens
+      store.shield.webDomains = selection.webDomainTokens
+    }
   }
 
-  override func intervalWillStartWarning(for activity: DeviceActivityName) {
-    super.intervalWillStartWarning(for: activity)
-
-    // Handle the warning before the interval starts.
-  }
-
-  override func intervalWillEndWarning(for activity: DeviceActivityName) {
-    super.intervalWillEndWarning(for: activity)
-
-    // Handle the warning before the interval ends.
-  }
-
-  override func eventWillReachThresholdWarning(
-    _ event: DeviceActivityEvent.Name,
-    activity: DeviceActivityName
-  ) {
-    super.eventWillReachThresholdWarning(event, activity: activity)
-
-    // Handle the warning before the event reaches its threshold.
+  private func removeShields() {
+    let store = ManagedSettingsStore()
+    store.shield.applicationCategories = nil
+    store.shield.applications = nil
+    store.shield.webDomains = nil
   }
 }
