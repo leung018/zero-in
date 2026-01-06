@@ -72,7 +72,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ['./plugins/withGIDClientID.ts'],
     '@react-native-community/datetimepicker',
     'expo-font',
-    'expo-web-browser'
+    'expo-web-browser',
+    '@bacons/apple-targets'
   ],
   experiments: {
     typedRoutes: true,
