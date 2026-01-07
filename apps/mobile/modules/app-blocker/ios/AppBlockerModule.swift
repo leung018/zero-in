@@ -77,30 +77,62 @@ public class AppBlockerModule: Module {
         let end = Date(timeIntervalSince1970: endTime / 1000.0)
 
         let center = DeviceActivityCenter()
-        let activityName = DeviceActivityName("zero-in-active-schedule")
 
-        // Stop any existing schedule
-        center.stopMonitoring([activityName])
+        // Clean up old schedules
+        center.stopMonitoring([
+          .zeroInScheduleStart,
+          .zeroInScheduleEnd,
+        ])
 
-        // Create new schedule
+        // Create new schedules (Two-Schedule Trick)
+        // 1. Start Schedule: Triggers "applyShields" at start time
+        // 2. End Schedule: Triggers "removeShields" at end time
+        // Both must be >= 15 minutes. We use roughly 15m + buffer to be safe, but 15m is min.
+        // Even if the actual block is 5 mins, we set Start Schedule [start, start+15]
+        // and End Schedule [end, end+15].
+        // At 'end', End Schedule starts -> triggers removeShields.
+
         let calendar = Calendar.current
-        let schedule = DeviceActivitySchedule(
+        let fifteenMins = TimeInterval(15 * 60)
+
+        // Use constants directly or ActivityName(rawValue:) if needed but we have extension now.
+        // center.startMonitoring takes a DeviceActivityName.
+        // We can just pass the name if we want, but better to use the constant to create the
+        // schedule?
+        // Ah, startMonitoring takes (activityName, during: schedule).
+
+        let scheduleStart = DeviceActivitySchedule(
           intervalStart: calendar.dateComponents(
             [.era, .year, .month, .day, .hour, .minute, .second],
             from: start
           ),
           intervalEnd: calendar.dateComponents(
             [.era, .year, .month, .day, .hour, .minute, .second],
+            from: start.addingTimeInterval(fifteenMins)
+          ),
+          repeats: false
+        )
+
+        let scheduleEnd = DeviceActivitySchedule(
+          intervalStart: calendar.dateComponents(
+            [.era, .year, .month, .day, .hour, .minute, .second],
             from: end
+          ),
+          intervalEnd: calendar.dateComponents(
+            [.era, .year, .month, .day, .hour, .minute, .second],
+            from: end.addingTimeInterval(fifteenMins)
           ),
           repeats: false
         )
 
         do {
-          try center.startMonitoring(activityName, during: schedule)
+          try center.startMonitoring(.zeroInScheduleStart, during: scheduleStart)
+          try center.startMonitoring(.zeroInScheduleEnd, during: scheduleEnd)
 
-          // Apply shields immediately if schedule starts now or in the past
-          if start <= Date() {
+          // Apply shields immediately if we are currently within the blocking window
+          // This handles cases where we set the schedule after 'start' has already passed.
+          let now = Date()
+          if start <= now, now < end {
             if let selection = SelectionStore.shared.selection {
               let store = ManagedSettingsStore()
               store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy
@@ -125,10 +157,12 @@ public class AppBlockerModule: Module {
     AsyncFunction("clearSchedule") { (promise: Promise) in
       if #available(iOS 16.0, *) {
         let center = DeviceActivityCenter()
-        let activityName = DeviceActivityName("zero-in-active-schedule")
 
-        // Stop monitoring
-        center.stopMonitoring([activityName])
+        // Stop monitoring all potential schedules
+        center.stopMonitoring([
+          .zeroInScheduleStart,
+          .zeroInScheduleEnd,
+        ])
 
         // Remove shields
         let store = ManagedSettingsStore()

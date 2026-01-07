@@ -35,7 +35,7 @@ export default function SelectAppsScreen() {
         <TouchableOpacity
           style={styles.primaryButton}
           onPress={() => {
-            appBlocker.setSchedule(new Date(), getDateAfter(15 * 60 * 1000)) // I found that ios need Minimum 15 minutes...
+            appBlocker.setSchedule(new Date(), getDateAfter(10 * 1000))
           }}
           activeOpacity={0.8}
         >

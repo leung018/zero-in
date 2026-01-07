@@ -5,12 +5,21 @@ import ManagedSettings
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   override func intervalDidStart(for activity: DeviceActivityName) {
     super.intervalDidStart(for: activity)
-    applyShields()
+
+    // "start" schedule triggers blocking
+    if activity == .zeroInScheduleStart {
+      applyShields()
+    }
+
+    // "end" schedule triggers unblocking
+    if activity == .zeroInScheduleEnd {
+      removeShields()
+    }
   }
 
   override func intervalDidEnd(for activity: DeviceActivityName) {
     super.intervalDidEnd(for: activity)
-    removeShields()
+    // Do nothing. Unblocking is handled by the start of the "end" schedule.
   }
 
   private func applyShields() {
