@@ -5,301 +5,133 @@
 Zero In is a focus productivity tool with three platforms:
 
 - **Browser Extension** (Chrome/Edge): Timer + website blocker using WXT framework (Vue 3, TypeScript)
-- **Mobile App** (iOS/Android): React Native with Expo, native app blocking via Screen Time API
+- **Mobile App** (iOS/Android): React Native with Expo, native app blocking via Screen Time API (iOS) and UsageStats/Overlays (Android)
 - **Firebase Backend**: Firestore for user data sync, Firebase Auth
 
 This is a Yarn 4 monorepo with workspaces (`apps/*`, `packages/*`).
 
 ## Architecture Patterns
 
-### Domain-Driven Design (Extension)
+### Domain-Driven Design (Global)
 
-The extension follows DDD with clear separation:
+The project follows DDD principles across all packages:
 
-- **Domain Logic** (`apps/extension/src/domain/`): Pure business logic, framework-agnostic
-  - Domain services use dependency injection via constructor
-  - All dependencies are injected, never imported directly
-  - Domain classes should have a `static createFake()` method for testing
-  - Example: `BrowsingRules` class validates/manages blocked domains
-  - Example: `FocusTimer` orchestrates timer state transitions
+- **Domain Logic** (`src/domain/`): Pure business logic, framework-agnostic.
+  - Dependencies injected via constructor.
+  - `static createFake()` methods are MANDATORY for testing.
+  - NO platform-specific imports (e.g., no `chrome.*`, no `react-native`).
+- **Infrastructure** (`src/infra/`): Platform adapters.
+  - format: `*Service` interface + `*Impl` or platform-specific implementation.
+  - `createFake()` methods for test isolation.
+- **Entry Points/UI**:
+  - Extension: `apps/extension/src/entrypoints/`
+  - Mobile: `apps/mobile/app/`
 
-- **Infrastructure** (`apps/extension/src/infra/`): Platform adapters for browser APIs
-  - Each service has an interface + implementation pattern
-  - Example: `BrowsingControlService` interface with `BrowserBrowsingControlService` (prod) and `FakeBrowsingControlService` (test)
-  - Storage abstraction: `StorageService<T>` interface for all persistence
-  - All storage services implement `StorageService<T>` with `get(): Promise<T | null>` and `save(data: T): Promise<void>`
-  - Storage services should have `static create()` for production and `static createFake()` for testing
+### Shared Package (`@zero-in/shared`)
 
-- **Entry Points** (`apps/extension/src/entrypoints/`): WXT-managed UI pages
-  - `popup/`, `options/`, `blocked.html`, `offscreen-*` (Firebase auth, sound playback)
-  - Background service worker: `service-workers/index.ts` wires up the `BackgroundListener`
+Located in `packages/shared/`, this package MUST be used for all logic shared between Extension and Mobile.
 
-### Shared Package Structure
+- **`domain/`**:
+  - `schedules/`: Scheduling logic (schema, serialization, validation).
+  - `time/`: `Time` class and helpers.
+  - `timer-based-blocking/`: Timer logic.
+- **`infra/`**:
+  - `storage/`: Shared storage interfaces and Firebase implementations (`FirestoreAppStorage`).
+- **`utils/`**: Shared helpers.
 
-`@zero-in/shared` contains cross-platform code meant for reuse across extension and mobile:
+### Mobile App Structure (`apps/mobile`)
 
-- `domain/time/`: `Time` class for HH:MM operations
-- `utils/format`: Number formatting helpers
-- Import via `@zero-in/shared/domain/...` or `@zero-in/shared/utils/...`
+Expo-based React Native app:
 
-**Important**: Domain logic that could benefit both platforms should be moved to `@zero-in/shared`. This includes:
-
-- Pure business logic (validation, state management, calculations)
-- Domain models and entities that aren't platform-specific
-- Shared utilities and helpers
-
-When moving domain logic from extension to shared, ensure it remains framework-agnostic and has no browser/mobile-specific dependencies.
-
-### Mobile App Structure
-
-Expo app with file-based routing (`app/` directory):
-
-- `app/(tabs)/`: Tab navigation screens
-- `app/sign-in.tsx`: Auth entry point
-- Native modules in `modules/`: `app-blocker/` (Screen Time API), `google-sign-in/`
-- Uses React Native Firebase (`@react-native-firebase/*`)
+- **Routing**: File-based routing in `app/`.
+- **Modules**: Custom native modules in `modules/`.
+  - `modules/app-blocker`: Native implementation of app blocking (ScreenTime API / Android Native).
+- **Domain/Infra**:
+  - Uses `@zero-in/shared` for core logic.
+  - `apps/mobile/domain/`: Mobile-specific domain logic not yet shared.
+  - `apps/mobile/infra/`: Mobile-specific adapters (e.g., `ReactNativeFirestoreAdapter`).
 
 ## Code Style & Conventions
 
 ### TypeScript
 
-- Use strict mode (enabled in tsconfig.json)
-- Prefer explicit types over `any` (though `any` is allowed per ESLint config)
-- Use path aliases: `@zero-in/shared/*` for shared package, `@/*` for extension src
-- All async operations must be properly awaited
-- Storage operations are always async - never assume synchronous storage
+- **Strict Mode**: Enabled.
+- **Explicit Types**: Prefer explicit types.
+- **Async/Await**: properly await all promises.
+- **Imports**:
+  - Extension: `@/*` -> `apps/extension/src/*`
+  - Shared: `@zero-in/shared/*` -> `packages/shared/src/*`
+  - Mobile: Relative imports or configured aliases.
 
-### Dependency Injection Pattern
+### Dependency Injection (Strict)
 
-Domain services should follow this pattern:
+All Domain Services MUST follow this pattern:
 
 ```typescript
 export class MyService {
-  private dependency1: Dependency1
-  private dependency2: Dependency2
+  constructor(private deps: { dep1: Dep1; dep2: Dep2 }) {}
 
-  static createFake({
-    dependency1 = new FakeDependency1(),
-    dependency2 = new FakeDependency2()
-  } = {}) {
-    return new MyService({ dependency1, dependency2 })
-  }
-
-  constructor({
-    dependency1,
-    dependency2
-  }: {
-    dependency1: Dependency1
-    dependency2: Dependency2
-  }) {
-    this.dependency1 = dependency1
-    this.dependency2 = dependency2
+  static createFake(overrides = {}) {
+    return new MyService({
+      dep1: new FakeDep1(),
+      dep2: new FakeDep2(),
+      ...overrides
+    })
   }
 }
 ```
 
 ### Storage Service Pattern
 
-All storage services should implement `StorageService<T>`:
+All storage services implement `StorageService<T>`:
 
 ```typescript
-export class XStorageService implements StorageService<X> {
-  static readonly STORAGE_KEY: StorageKey = 'x'
-
-  static create(): XStorageService {
-    return new XStorageService(AdaptiveStorageProvider.create())
-  }
-
-  static createFake(): XStorageService {
-    return new XStorageService(LocalStorageWrapper.createFake())
-  }
-
-  private storageManager: StorageManager<SerializedX>
-
-  constructor(storage: StorageInterface) {
-    this.storageManager = StorageManager.create({
-      storage,
-      key: XStorageService.STORAGE_KEY,
-      migrators: []
-    })
-  }
-
-  async save(data: X): Promise<void> {
-    return this.storageManager.set(serializeX(data))
-  }
-
-  async get(): Promise<X | null> {
-    const result = await this.storageManager.get()
-    return result ? deserializeX(result) : null
-  }
+export interface StorageService<T> {
+  get(): Promise<T | null>
+  save(data: T): Promise<void>
 }
 ```
 
-### Comments
-
-- Avoid comments when code is self-explanatory through clear naming
-- Only add comments for non-obvious business logic, complex algorithms, or important context that cannot be expressed through code structure alone
-
-### Vue Components
-
-- Use `bootstrap-vue-next` with auto-import via `unplugin-vue-components`
-- Use `unplugin-icons` with `@iconify-json/*` collections, auto-imports as Vue components
-- Single-word component names are allowed (ESLint rule disabled)
-
-### WXT Entry Points
-
-- Pages must be in `entrypoints/<name>/index.html` or `.ts` files recognized by WXT's convention-based routing
-- Background service worker logic goes in `service-workers/`
+Implementations must handle serialization/deserialization internally.
 
 ## Testing Strategy
 
-### Unit Tests (`.spec.ts`)
+### Unit Tests
 
-- Use `Fake*Service` implementations for isolation
-- Run via `yarn test:unit` (Vitest with jsdom)
-- Use fake timers (`vi.useFakeTimers()`) when testing time-dependent logic
-- Always inject fake dependencies, never use real browser APIs in domain tests
-- Example: `browsing-control-toggling.spec.ts` uses fake timers
+- **Location**: `*.spec.ts` alongside source files.
+- **Tool**: Vitest.
+- **Mocks**: STRICTLY use `createFake()` implementations. NO MOCKING LIBRARIES (jest.mock, etc) for domain logic.
+- **Timers**: Use `vi.useFakeTimers()` for time-dependent tests.
 
-### Integration Tests (`.integration.spec.ts`)
+### Integration Tests
 
-- Run against Firebase emulators (auto-started via `yarn test:integration`)
-- Separate Vitest project in `vitest.config.ts` with `VITE_USE_FIREBASE_EMULATOR=true`
+- **Location**: `*.integration.spec.ts`.
+- **Environment**: Firebase Emulators.
+- **Command**: `yarn test:integration` (in extension).
 
-### E2E Tests (`e2e/*.spec.ts`)
+### E2E Tests (Extension)
 
-- Playwright with custom fixtures loading built extension from `./dist/chrome-mv3`
-- Must build first: `yarn build:ci` then `yarn test:e2e`
-- Uses `data-test` attributes for selectors (not IDs/classes)
-- Runs against Firebase emulators
+- **Command**: `yarn build-and-e2e` (builds CI version then runs tests).
+- **Note**: Always ensure the extension is built via `build:ci` (which sets emulator flags) before running `test:e2e`. The `build-and-e2e` script handles this safety.
 
 ## File Organization
 
-### Extension Structure
+### Extension (`apps/extension/src`)
 
-```
-apps/extension/src/
-├── domain/           # Pure business logic, framework-agnostic
-├── infra/            # Platform adapters (browser APIs, storage)
-├── entrypoints/      # WXT-managed UI pages
-├── service-workers/  # Background service worker logic
-├── pages/            # Vue components
-├── utils/            # Extension-specific utilities
-└── config.ts         # Configuration (defaults + env overrides)
-```
+- `domain/`: Business logic.
+- `infra/`: Browser APIs (Storage, Alarms, Tabs).
+- `entrypoints/`: UI (Popup, Options, Content Scripts).
+- `service-workers/`: Background processes.
 
-### Naming Conventions
+### Mobile (`apps/mobile`)
 
-- Domain services: `*Service` (e.g., `BrowsingControlTogglingService`)
-- Storage services: `*StorageService` (e.g., `BrowsingRulesStorageService`)
-- Fake implementations: `Fake*Service` (e.g., `FakeBrowsingControlService`)
-- Domain models: PascalCase (e.g., `BrowsingRules`, `FocusTimer`)
-- Test files: `*.spec.ts` for unit tests, `*.integration.spec.ts` for integration tests
+- `app/`: Expo Router pages.
+- `modules/`: Native modules (Kotlin/Swift).
+- `domain/`: Mobile-specific domain.
+- `infra/`: React Native implementations of shared interfaces.
 
-## Configuration
+## Critical Instructions
 
-### Environment Variables
-
-- Use `import.meta.env.VITE_*` for Firebase config overrides (see `config.ts`)
-- Set `VITE_USE_FIREBASE_EMULATOR=true` for local/CI testing
-
-### Firebase
-
-- Config in `apps/extension/src/config.ts` (defaults + env overrides)
-- Emulator setup: `apps/firebase/firebase.json`
-- Security rules: `apps/firebase/firestore.rules` (user-scoped: `/users/{uid}`)
-
-### Extension Manifest
-
-- Generated via `wxt.config.ts` (MV3, permissions: storage, alarms, notifications, tabs)
-
-## Common Patterns
-
-### Timer Architecture
-
-- `FocusTimer` in domain, `BackgroundListener` orchestrates via alarms/badges in service worker
-- Timer state managed through `TimerStateStorageService`
-
-### Cross-Extension Data Transfer
-
-- Use `chrome.runtime.sendMessage` with external listeners (see README section)
-
-### Bootstrap Vue Next
-
-- UI components use `bootstrap-vue-next` with auto-import via `unplugin-vue-components`
-
-## Critical Workflows
-
-### Running Tests
-
-```bash
-# Extension unit tests (from monorepo root)
-yarn extension-test-unit
-
-# Integration tests (auto-starts emulators)
-cd apps/extension && yarn test:integration
-
-# E2E tests
-cd apps/extension && yarn build:ci && yarn test:e2e
-```
-
-### Development Servers
-
-```bash
-# Extension hot-reload
-cd apps/extension && yarn dev
-
-# Mobile app
-cd apps/mobile && yarn start
-
-# Firebase emulators (for local testing)
-cd apps/extension && yarn firebase-emulators
-```
-
-### Building & Releasing
-
-**Extension:**
-
-- CI build: `yarn build:ci` (sets `VITE_USE_FIREBASE_EMULATOR=true`)
-- Release: `node release.js <version>` from main branch (creates `extension-<version>` tag)
-
-**Mobile:**
-
-- `./build-and-submit.sh --platform=ios|android [--local]`
-- Requires main branch, auto-submits to stores
-
-## Common Pitfalls to Avoid
-
-- **Don't** run e2e tests without building first (`yarn build:ci`)
-- **Don't** forget to set `VITE_USE_FIREBASE_EMULATOR=true` for local/CI testing
-- **Don't** use real storage APIs in domain layer tests (inject `FakeStorage*`)
-- **Don't** create releases from non-main branches (enforced in scripts)
-- **Don't** assume synchronous storage (all `StorageService` methods are async)
-- **Don't** import browser APIs directly in domain layer (use dependency injection)
-- **Don't** forget to provide `createFake()` methods for domain services
-- **Don't** use IDs or classes for E2E test selectors (use `data-test` attributes)
-
-## Key Files Reference
-
-- `apps/extension/src/service-workers/listener.ts`: Main orchestrator (timer, blocking, notifications)
-- `apps/extension/src/domain/browsing-control-toggling.ts`: Schedule/timer-based blocking logic
-- `apps/extension/wxt.config.ts`: Build config, manifest generation
-- `apps/extension/vitest.config.ts`: Test project separation (unit/integration)
-- `packages/shared/src/domain/time/`: Cross-platform time utilities
-- `apps/firebase/firestore.rules`: Backend security (uid-based access)
-
-## When Adding New Features
-
-1. **Domain Logic**: Add to `apps/extension/src/domain/` with dependency injection
-2. **Storage**: Create `*StorageService` implementing `StorageService<T>` with `create()` and `createFake()`
-3. **Infrastructure**: Add interface + implementation in `apps/extension/src/infra/`
-4. **Tests**: Write unit tests with fake dependencies, integration tests for Firebase interactions
-5. **Shared Code**: If logic could benefit mobile app, move to `packages/shared/src/domain/`
-6. **UI**: Add Vue components in `entrypoints/` or `pages/` as appropriate
-
-## Monorepo Structure
-
-- Use Yarn 4 workspaces
-- Workspace packages: `apps/*`, `packages/*`
-- Shared package: `@zero-in/shared` for cross-platform code
-- Run commands from monorepo root or specific workspace directory
+1.  **Shared Logic**: Logic should be moved to `@zero-in/shared` **only if** it is used (or expected to be used) by both Extension and Mobile. Platform-specific domain logic can stay in its respective package.
+2.  **No Direct Native Calls in Domain**: Domain code must never call `chrome.*` or `Module.*` directly. Wrap in an Interface in `domain/` and implement in `infra/`.
+3.  **Native Modules**: Changes to `modules/` require rebuilding the native app.
