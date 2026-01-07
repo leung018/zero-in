@@ -28,7 +28,7 @@ export default function SelectAppsScreen() {
           <AppPickerView
             style={styles.appPicker}
             onAppsLoaded={() => {
-              setIsLoading(false)
+              router.back()
             }}
           />
         </View>
