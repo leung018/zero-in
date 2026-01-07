@@ -1,8 +1,9 @@
-# Zero In - Cursor Rules
+# Zero In - AI Coding Agent Instructions
 
 ## Project Overview
 
 Zero In is a focus productivity tool with three platforms:
+
 - **Browser Extension** (Chrome/Edge): Timer + website blocker using WXT framework (Vue 3, TypeScript)
 - **Mobile App** (iOS/Android): React Native with Expo, native app blocking via Screen Time API
 - **Firebase Backend**: Firestore for user data sync, Firebase Auth
@@ -42,6 +43,7 @@ The extension follows DDD with clear separation:
 - Import via `@zero-in/shared/domain/...` or `@zero-in/shared/utils/...`
 
 **Important**: Domain logic that could benefit both platforms should be moved to `@zero-in/shared`. This includes:
+
 - Pure business logic (validation, state management, calculations)
 - Domain models and entities that aren't platform-specific
 - Shared utilities and helpers
@@ -51,6 +53,7 @@ When moving domain logic from extension to shared, ensure it remains framework-a
 ### Mobile App Structure
 
 Expo app with file-based routing (`app/` directory):
+
 - `app/(tabs)/`: Tab navigation screens
 - `app/sign-in.tsx`: Auth entry point
 - Native modules in `modules/`: `app-blocker/` (Screen Time API), `google-sign-in/`
@@ -256,10 +259,12 @@ cd apps/extension && yarn firebase-emulators
 ### Building & Releasing
 
 **Extension:**
+
 - CI build: `yarn build:ci` (sets `VITE_USE_FIREBASE_EMULATOR=true`)
 - Release: `node release.js <version>` from main branch (creates `extension-<version>` tag)
 
 **Mobile:**
+
 - `./build-and-submit.sh --platform=ios|android [--local]`
 - Requires main branch, auto-submits to stores
 
