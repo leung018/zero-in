@@ -95,12 +95,6 @@ public class AppBlockerModule: Module {
         let calendar = Calendar.current
         let fifteenMins = TimeInterval(15 * 60)
 
-        // Use constants directly or ActivityName(rawValue:) if needed but we have extension now.
-        // center.startMonitoring takes a DeviceActivityName.
-        // We can just pass the name if we want, but better to use the constant to create the
-        // schedule?
-        // Ah, startMonitoring takes (activityName, during: schedule).
-
         let scheduleStart = DeviceActivitySchedule(
           intervalStart: calendar.dateComponents(
             [.era, .year, .month, .day, .hour, .minute, .second],
