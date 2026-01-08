@@ -1,9 +1,10 @@
 import { WeeklySchedulesStorageService } from '../../../packages/shared/src/domain/schedules/storage'
-import { findActiveOrNextScheduleSpan, ScheduleSpan } from './schedules/schedule-span'
+import { AppBlocker, FakeAppBlocker } from '../infra/app-blocker'
+import { findActiveOrNextScheduleSpan } from './schedules/schedule-span'
 
 export class AppBlockTogglingService {
   private weeklySchedulesStorageService: WeeklySchedulesStorageService
-  private appBlocker: FakeAppBlocker
+  private appBlocker: AppBlocker
 
   static createFake({
     weeklySchedulesStorageService,
@@ -35,19 +36,7 @@ export class AppBlockTogglingService {
       currentDate
     )
     if (scheduleSpan) {
-      this.appBlocker.scheduleBlock(scheduleSpan)
+      return this.appBlocker.setSchedule(scheduleSpan)
     }
-  }
-}
-
-export class FakeAppBlocker {
-  private activeScheduleSpan: ScheduleSpan | null = null
-
-  scheduleBlock(scheduleSpan: ScheduleSpan) {
-    this.activeScheduleSpan = scheduleSpan
-  }
-
-  getBlockingScheduleSpan(): ScheduleSpan | null {
-    return this.activeScheduleSpan
   }
 }

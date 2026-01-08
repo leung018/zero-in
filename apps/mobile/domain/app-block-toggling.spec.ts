@@ -1,8 +1,9 @@
+import { FakeAppBlocker } from '@/infra/app-blocker'
 import { WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time'
-import { AppBlockTogglingService, FakeAppBlocker } from './app-block-toggling'
+import { AppBlockTogglingService } from './app-block-toggling'
 
 describe('AppBlockTogglingService', () => {
   it('should activate app block for next scheduled time', async () => {
