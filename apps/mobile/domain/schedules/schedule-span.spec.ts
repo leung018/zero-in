@@ -52,7 +52,7 @@ describe('findActiveOrNextScheduleSpan', () => {
       endTime: new Time(14, 0)
     })
     // 10:00-12:00 and 11:00-14:00 should become 10:00-14:00
-    const result = findActiveOrNextScheduleSpan([s1, s2], mondayNoon)
+    const result = findActiveOrNextScheduleSpan([s2, s1], mondayNoon)
     expect(result).toEqual({
       start: new Date('2026-01-05T10:00:00'),
       end: new Date('2026-01-05T14:00:00')
@@ -93,12 +93,10 @@ describe('findActiveOrNextScheduleSpan', () => {
 
   it('should find schedule later in the week', () => {
     const s1 = new WeeklySchedule({
-      weekdaySet: new Set([Weekday.FRI]), // Friday
+      weekdaySet: new Set([Weekday.FRI]),
       startTime: new Time(10, 0),
       endTime: new Time(12, 0)
     })
-    // Monday 2026-01-05
-    // Friday is 01-09 (within 7 days)
     const result = findActiveOrNextScheduleSpan([s1], mondayNoon)
     expect(result).toEqual({
       start: new Date('2026-01-09T10:00:00'),
