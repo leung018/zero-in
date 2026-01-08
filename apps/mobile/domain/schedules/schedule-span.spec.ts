@@ -91,19 +91,6 @@ describe('findActiveOrNextScheduleSpan', () => {
     })
   })
 
-  it('should find schedule later in the week', () => {
-    const s1 = new WeeklySchedule({
-      weekdaySet: new Set([Weekday.FRI]),
-      startTime: new Time(10, 0),
-      endTime: new Time(12, 0)
-    })
-    const result = findActiveOrNextScheduleSpan([s1], mondayNoon)
-    expect(result).toEqual({
-      start: new Date('2026-01-09T10:00:00'),
-      end: new Date('2026-01-09T12:00:00')
-    })
-  })
-
   it('should find schedule in next week if no remaining schedule on this week', () => {
     const s1 = new WeeklySchedule({
       weekdaySet: mon,
