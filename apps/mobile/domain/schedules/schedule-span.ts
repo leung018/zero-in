@@ -25,31 +25,7 @@ export function findActiveOrNextScheduleSpan(
 ): ScheduleSpan | null {
   if (schedules.length === 0) return null
 
-  const spans: ScheduleSpan[] = []
-
-  // Generate occurrences for a window: Yesterday, Today, and the next 7 days.
-  // This ensures we capture any schedule that might be active now or coming up soon.
-  for (let i = -1; i <= 7; i++) {
-    const day = new Date(now)
-    day.setDate(now.getDate() + i)
-    day.setHours(0, 0, 0, 0)
-
-    const weekday = getWeekdayFromDate(day)
-
-    for (const schedule of schedules) {
-      if (schedule.weekdaySet.has(weekday)) {
-        const start = new Date(day)
-        start.setHours(schedule.startTime.hour, schedule.startTime.minute, 0, 0)
-
-        const end = new Date(day)
-        end.setHours(schedule.endTime.hour, schedule.endTime.minute, 0, 0)
-
-        spans.push({ start, end })
-      }
-    }
-  }
-
-  if (spans.length === 0) return null
+  const spans = getScheduleSpansWithin7Days(schedules, now)
 
   // Sort by start time for merging
   spans.sort((a, b) => a.start.getTime() - b.start.getTime())
@@ -81,4 +57,33 @@ export function findActiveOrNextScheduleSpan(
   }
 
   return null
+}
+
+function getScheduleSpansWithin7Days(
+  schedules: readonly WeeklySchedule[],
+  now: Date = new Date()
+): ScheduleSpan[] {
+  const spans: ScheduleSpan[] = []
+
+  for (let i = 0; i <= 7; i++) {
+    const day = new Date(now)
+    day.setDate(now.getDate() + i)
+    day.setHours(0, 0, 0, 0)
+
+    const weekday = getWeekdayFromDate(day)
+
+    for (const schedule of schedules) {
+      if (schedule.weekdaySet.has(weekday)) {
+        const start = new Date(day)
+        start.setHours(schedule.startTime.hour, schedule.startTime.minute, 0, 0)
+
+        const end = new Date(day)
+        end.setHours(schedule.endTime.hour, schedule.endTime.minute, 0, 0)
+
+        spans.push({ start, end })
+      }
+    }
+  }
+
+  return spans
 }
