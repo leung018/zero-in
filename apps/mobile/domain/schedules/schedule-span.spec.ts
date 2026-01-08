@@ -33,7 +33,13 @@ describe('findActiveOrNextScheduleSpan', () => {
       startTime: new Time(14, 0),
       endTime: new Time(18, 0)
     })
-    const result = findActiveOrNextScheduleSpan([s1], mondayNoon)
+    const s2 = new WeeklySchedule({
+      weekdaySet: tue,
+      startTime: new Time(10, 0),
+      endTime: new Time(14, 0)
+    })
+
+    const result = findActiveOrNextScheduleSpan([s2, s1], mondayNoon)
     expect(result).toEqual({
       start: new Date('2026-01-05T14:00:00'),
       end: new Date('2026-01-05T18:00:00')
