@@ -1,8 +1,14 @@
-import { AppPickerView } from '@/modules/app-blocker'
+import { appBlocker, AppPickerView } from '@/modules/app-blocker'
 import { Stack, useRouter } from 'expo-router'
 import React, { useState } from 'react'
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+
+function getDateAfter(ms: number) {
+  const date = new Date()
+  date.setMilliseconds(date.getMilliseconds() + ms)
+  return date
+}
 
 export default function SelectAppsScreen() {
   const router = useRouter()
@@ -17,27 +23,36 @@ export default function SelectAppsScreen() {
         }}
       />
       <View style={styles.content}>
-        {isLoading && (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#1a73e8" />
-            <Text style={styles.loadingText}>Loading apps...</Text>
-          </View>
-        )}
-        <View style={[styles.appPickerContainer, isLoading && styles.hidden]}>
+        {/* TODO: May need fix the UI about the view and loading screen being shown at the same time on android */}
+        <View style={styles.appPickerContainer}>
           <AppPickerView
             style={styles.appPicker}
             onAppsLoaded={() => {
-              setIsLoading(false)
+              router.back()
             }}
           />
         </View>
         <TouchableOpacity
-          style={[styles.primaryButton, isLoading && styles.hidden]}
-          onPress={() => router.back()}
+          style={styles.primaryButton}
+          onPress={() => {
+            appBlocker.setSchedule(new Date(), getDateAfter(10 * 1000))
+          }}
           activeOpacity={0.8}
         >
           <Text style={styles.primaryButtonText}>Done</Text>
         </TouchableOpacity>
+        {isLoading && (
+          <View
+            style={[
+              styles.loadingContainer,
+              StyleSheet.absoluteFill,
+              { backgroundColor: '#f3f4f6', zIndex: 10 }
+            ]}
+          >
+            <ActivityIndicator size="large" color="#1a73e8" />
+            <Text style={styles.loadingText}>Loading apps...</Text>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   )
@@ -62,9 +77,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#6b7280',
     fontWeight: '600'
-  },
-  hidden: {
-    display: 'none'
   },
   appPickerContainer: {
     flex: 1,

@@ -3,6 +3,7 @@ import FamilyControls
 import SwiftUI
 
 class AppPickerView: ExpoView {
+  let onAppsLoaded = EventDispatcher()
   private var hostingController: UIHostingController<FamilyPickerView>?
 
   required init(appContext: AppContext? = nil) {
@@ -25,6 +26,7 @@ class AppPickerView: ExpoView {
         hostingController = UIHostingController(rootView: picker)
         if let hostView = hostingController?.view {
           addSubview(hostView)
+          onAppsLoaded([:])
         }
       } else {
         print("FamilyControls is not available on this OS version.")
@@ -35,7 +37,13 @@ class AppPickerView: ExpoView {
 
 @available(iOS 15.0, *)
 struct FamilyPickerView: View {
-  @State private var selection = FamilyActivitySelection()
+  @State private var selection: FamilyActivitySelection
+
+  init(onSelectionChange: @escaping (FamilyActivitySelection) -> Void) {
+    self.onSelectionChange = onSelectionChange
+    _selection = State(initialValue: SelectionStore.shared.selection ?? FamilyActivitySelection())
+  }
+
   var onSelectionChange: (FamilyActivitySelection) -> Void
 
   var body: some View {

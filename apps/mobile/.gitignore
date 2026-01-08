@@ -44,3 +44,6 @@ app-example
 
 *.aab
 *.ipa
+
+# @bacons/apple-targets
+generated.entitlements

@@ -21,7 +21,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundleIdentifier: 'dev.zeroin.mobile',
     googleServicesFile: process.env.GOOGLE_SERVICES_PLIST || 'GoogleService-Info.plist',
     entitlements: {
-      'com.apple.developer.family-controls': true
+      'com.apple.developer.family-controls': true,
+      'com.apple.security.application-groups': ['group.dev.zeroin.mobile']
     },
     appleTeamId: 'YCDM23LPV6',
     infoPlist: {
@@ -72,7 +73,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ['./plugins/withGIDClientID.ts'],
     '@react-native-community/datetimepicker',
     'expo-font',
-    'expo-web-browser'
+    'expo-web-browser',
+    '@bacons/apple-targets'
   ],
   experiments: {
     typedRoutes: true,
