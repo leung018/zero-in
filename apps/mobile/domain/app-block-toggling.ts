@@ -39,6 +39,6 @@ export class AppBlockTogglingService {
       return Promise.all([this.appBlocker.unblockApps(), this.appBlocker.setSchedule(scheduleSpan)])
     }
 
-    return this.appBlocker.blockApps()
+    return Promise.all([this.appBlocker.clearSchedule(), this.appBlocker.blockApps()])
   }
 }

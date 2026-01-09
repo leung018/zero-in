@@ -6,7 +6,7 @@ import { Time } from '@zero-in/shared/domain/time'
 import { AppBlockTogglingService } from './app-block-toggling'
 
 describe('AppBlockTogglingService', () => {
-  it('should activate app block for next scheduled time', async () => {
+  it('should set app blocking schedule only if weekly schedule is set', async () => {
     const weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake()
     const appBlocker = new FakeAppBlocker()
     const service = AppBlockTogglingService.createFake({
@@ -28,6 +28,12 @@ describe('AppBlockTogglingService', () => {
       start: new Date('2026-01-05T09:00:00'),
       end: new Date('2026-01-05T17:00:00')
     })
+
+    // After removing schedule, it should also cleared the blockingScheduleSpan
+    await weeklySchedulesStorageService.save([])
+    await service.run()
+
+    expect(appBlocker.getBlockingScheduleSpan()).toBeNull()
   })
 
   it('should always block app only if no schedule is set', async () => {
