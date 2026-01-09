@@ -4,12 +4,6 @@ import React, { useState } from 'react'
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-function getDateAfter(ms: number) {
-  const date = new Date()
-  date.setMilliseconds(date.getMilliseconds() + ms)
-  return date
-}
-
 export default function SelectAppsScreen() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
