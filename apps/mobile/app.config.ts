@@ -74,7 +74,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     '@react-native-community/datetimepicker',
     'expo-font',
     'expo-web-browser',
-    '@bacons/apple-targets'
+    '@bacons/apple-targets',
+    'expo-background-task'
   ],
   experiments: {
     typedRoutes: true,
