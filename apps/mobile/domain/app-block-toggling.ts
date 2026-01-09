@@ -24,7 +24,7 @@ export class AppBlockTogglingService {
     appBlocker
   }: {
     weeklySchedulesStorageService: WeeklySchedulesStorageService
-    appBlocker: FakeAppBlocker
+    appBlocker: AppBlocker
   }) {
     this.weeklySchedulesStorageService = weeklySchedulesStorageService
     this.appBlocker = appBlocker
