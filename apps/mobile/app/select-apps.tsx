@@ -1,4 +1,4 @@
-import { appBlocker, AppPickerView } from '@/modules/app-blocker'
+import { AppPickerView } from '@/modules/app-blocker'
 import { Stack, useRouter } from 'expo-router'
 import React, { useState } from 'react'
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -28,14 +28,14 @@ export default function SelectAppsScreen() {
           <AppPickerView
             style={styles.appPicker}
             onAppsLoaded={() => {
-              router.back()
+              setIsLoading(false)
             }}
           />
         </View>
         <TouchableOpacity
           style={styles.primaryButton}
           onPress={() => {
-            appBlocker.setSchedule(new Date(), getDateAfter(10 * 1000))
+            router.back()
           }}
           activeOpacity={0.8}
         >
