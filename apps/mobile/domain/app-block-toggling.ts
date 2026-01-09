@@ -36,9 +36,9 @@ export class AppBlockTogglingService {
       currentDate
     )
     if (scheduleSpan) {
-      return this.appBlocker.setSchedule(scheduleSpan)
-    } else {
-      return this.appBlocker.blockApps()
+      return Promise.all([this.appBlocker.unblockApps(), this.appBlocker.setSchedule(scheduleSpan)])
     }
+
+    return this.appBlocker.blockApps()
   }
 }

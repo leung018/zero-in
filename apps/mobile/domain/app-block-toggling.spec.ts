@@ -22,7 +22,7 @@ describe('AppBlockTogglingService', () => {
       })
     ])
 
-    await service.run(new Date('2026-01-05T08:00:00'))
+    await service.run(new Date('2026-01-05T08:00:00')) // 2026-01-05 is Monday
 
     expect(appBlocker.getBlockingScheduleSpan()).toEqual({
       start: new Date('2026-01-05T09:00:00'),
@@ -30,7 +30,7 @@ describe('AppBlockTogglingService', () => {
     })
   })
 
-  it('should always block app when no schedule is set', async () => {
+  it('should always block app only if no schedule is set', async () => {
     const weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake()
     const appBlocker = new FakeAppBlocker()
     const service = AppBlockTogglingService.createFake({
@@ -42,5 +42,19 @@ describe('AppBlockTogglingService', () => {
 
     expect(appBlocker.getBlockingScheduleSpan()).toBeNull()
     expect(appBlocker.getIsAppBlocked()).toBe(true)
+
+    // After setting a non current schedule, it should unblock app
+    await weeklySchedulesStorageService.save([
+      new WeeklySchedule({
+        weekdaySet: new Set([Weekday.MON]),
+        startTime: new Time(9, 0),
+        endTime: new Time(17, 0)
+      })
+    ])
+
+    await service.run(new Date('2026-01-05T08:00:00')) // 2026-01-05 is Monday
+
+    expect(appBlocker.getBlockingScheduleSpan()).not.toBeNull()
+    expect(appBlocker.getIsAppBlocked()).toBe(false)
   })
 })
