@@ -1,4 +1,5 @@
 import { NativeModule, requireNativeModule } from 'expo'
+import { ScheduleSpan } from '../../../domain/schedules/schedule-span'
 
 export enum PermissionType {
   FamilyControls = 'familyControls',
@@ -53,18 +54,23 @@ export const appBlocker = {
     const response = await nativeModule.getPermissionDetails()
     return PermissionStatus.fromNativeResponse(response)
   },
+
   requestPermission(permissionType: PermissionType): Promise<void> {
     return nativeModule.requestPermission(permissionType)
   },
+
   blockApps(): Promise<void> {
     return nativeModule.blockApps()
   },
+
   unblockApps(): Promise<void> {
     return nativeModule.unblockApps()
   },
-  setSchedule(start: Date, end: Date): Promise<void> {
-    return nativeModule.setSchedule(start.getTime(), end.getTime())
+
+  setSchedule(scheduleSpan: ScheduleSpan): Promise<void> {
+    return nativeModule.setSchedule(scheduleSpan.start.getTime(), scheduleSpan.end.getTime())
   },
+
   clearSchedule(): Promise<void> {
     return nativeModule.clearSchedule()
   }
