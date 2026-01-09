@@ -29,4 +29,18 @@ describe('AppBlockTogglingService', () => {
       end: new Date('2026-01-05T17:00:00')
     })
   })
+
+  it('should always block app when no schedule is set', async () => {
+    const weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake()
+    const appBlocker = new FakeAppBlocker()
+    const service = AppBlockTogglingService.createFake({
+      weeklySchedulesStorageService,
+      appBlocker
+    })
+
+    await service.run()
+
+    expect(appBlocker.getBlockingScheduleSpan()).toBeNull()
+    expect(appBlocker.getIsAppBlocked()).toBe(true)
+  })
 })

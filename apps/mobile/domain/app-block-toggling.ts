@@ -37,6 +37,8 @@ export class AppBlockTogglingService {
     )
     if (scheduleSpan) {
       return this.appBlocker.setSchedule(scheduleSpan)
+    } else {
+      return this.appBlocker.blockApps()
     }
   }
 }
