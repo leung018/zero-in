@@ -5942,6 +5942,7 @@ __metadata:
     eslint: "npm:^9.39.1"
     eslint-config-expo: "npm:~10.0.0"
     expo: "npm:~54.0.31"
+    expo-background-task: "npm:~1.0.10"
     expo-build-properties: "npm:~1.0.10"
     expo-constants: "npm:~18.0.13"
     expo-doctor: "npm:^1.17.14"
@@ -9687,6 +9688,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-background-task@npm:~1.0.10":
+  version: 1.0.10
+  resolution: "expo-background-task@npm:1.0.10"
+  dependencies:
+    expo-task-manager: "npm:~14.0.9"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/f787ecb55489f414c0a08c944e846d8dbe4f2a88652e04e22caa35da72fdfdf3f73f1a863c715f20abfb3a62f81885dc5bc6a4c50619f2718500d9d374d6a559
+  languageName: node
+  linkType: hard
+
 "expo-build-properties@npm:~1.0.10":
   version: 1.0.10
   resolution: "expo-build-properties@npm:1.0.10"
@@ -9936,6 +9948,18 @@ __metadata:
     react-native-web:
       optional: true
   checksum: 10c0/316882a2fd55c63d46d1c05b15b13764c001c10cd283ae96b7e2dce735a31f21c984fd5a4c01b6bb5fe8588c4acd27709c7b31a57fcd45b6b9b0dac1be9e86c6
+  languageName: node
+  linkType: hard
+
+"expo-task-manager@npm:~14.0.9":
+  version: 14.0.9
+  resolution: "expo-task-manager@npm:14.0.9"
+  dependencies:
+    unimodules-app-loader: "npm:~6.0.8"
+  peerDependencies:
+    expo: "*"
+    react-native: "*"
+  checksum: 10c0/e56cd92702a05400af8505c5de1bb538fe4fd564ca3f5bb3b5930e20c2e62397ad592ed337d51a43b3e6e81cb47660672f399d23410bcf11e29680621a1f414e
   languageName: node
   linkType: hard
 
@@ -19438,6 +19462,13 @@ __metadata:
   version: 2.2.0
   resolution: "unicode-property-aliases-ecmascript@npm:2.2.0"
   checksum: 10c0/b338529831c988ac696f2bdbcd4579d1c5cc844b24eda7269973c457fa81989bdb49a366af37a448eb1a60f1dae89559ea2a5854db2797e972a0162eee0778c6
+  languageName: node
+  linkType: hard
+
+"unimodules-app-loader@npm:~6.0.8":
+  version: 6.0.8
+  resolution: "unimodules-app-loader@npm:6.0.8"
+  checksum: 10c0/7354c2d741917ed60daf2d6b2a4309d56f6f0f97b9de9f753b09e962e0654649dc7367a2063166caabdc5786aeb70b98b70507e929113062cea3c896776d45f7
   languageName: node
   linkType: hard
 
