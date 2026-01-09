@@ -32,7 +32,7 @@ export class AppBlockTogglingService {
 
   async run(currentDate: Date = new Date()) {
     const scheduleSpan = findActiveOrNextScheduleSpan(
-      await this.weeklySchedulesStorageService.get(),
+      await this.weeklySchedulesStorageService.get(), // TODO: Exclude schedules that completed target focus sessions
       currentDate
     )
     if (scheduleSpan) {
