@@ -19,7 +19,7 @@ export class AppBlockTogglingService {
     })
   }
 
-  private constructor({
+  constructor({
     weeklySchedulesStorageService,
     appBlocker
   }: {
