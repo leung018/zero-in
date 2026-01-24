@@ -1,3 +1,4 @@
+import { triggerAppBlockTogglingSync } from '@/infra/background-tasks'
 import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth'
 import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
@@ -12,6 +13,11 @@ export default function RootLayout() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
+    // Sync blocking schedules on app startup
+    triggerAppBlockTogglingSync().catch((err) => {
+      console.error('[RootLayout] Initial sync failed:', err)
+    })
+
     const unsubscribe = onAuthStateChanged(getAuth(), async (user) => {
       setIsAuthenticated(user != null)
       setIsReady(true)
