@@ -22,12 +22,13 @@ describe('AppBlockTogglingService', () => {
       })
     ])
 
-    await service.run(new Date('2026-01-05T08:00:00')) // 2026-01-05 is Monday
+    const blockingScheduleSpan = await service.run(new Date('2026-01-05T08:00:00')) // 2026-01-05 is Monday
 
     expect(appBlocker.getBlockingScheduleSpan()).toEqual({
       start: new Date('2026-01-05T09:00:00'),
       end: new Date('2026-01-05T17:00:00')
     })
+    expect(blockingScheduleSpan).toEqual(appBlocker.getBlockingScheduleSpan())
 
     // After removing schedule, it should also cleared the blockingScheduleSpan
     await weeklySchedulesStorageService.save([])
