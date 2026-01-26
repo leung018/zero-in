@@ -1,6 +1,7 @@
 import * as BackgroundTask from 'expo-background-task'
 import * as TaskManager from 'expo-task-manager'
 import { newAppBlockTogglingService } from '../factories'
+import { cancelScheduledTask, scheduleTaskAtScheduleEnd } from './notification-scheduler'
 
 export const APP_BLOCK_TOGGLING_TASK = 'APP_BLOCK_TOGGLING_TASK'
 
@@ -10,8 +11,17 @@ export const APP_BLOCK_TOGGLING_TASK = 'APP_BLOCK_TOGGLING_TASK'
  */
 TaskManager.defineTask(APP_BLOCK_TOGGLING_TASK, async () => {
   try {
+    // Cancel any existing scheduled notification since periodic task is running
+    await cancelScheduledTask()
+
     const service = newAppBlockTogglingService()
-    await service.run()
+    const scheduleSpan = await service.run()
+
+    // Schedule next task at scheduleEnd if schedule exists
+    if (scheduleSpan) {
+      await scheduleTaskAtScheduleEnd(scheduleSpan.end)
+    }
+
     return BackgroundTask.BackgroundTaskResult.Success
   } catch (error) {
     console.error('[BackgroundTask] AppBlockTogglingTask failed:', error)
@@ -46,7 +56,15 @@ export async function triggerAppBlockTogglingSync() {
   // 1. Ensure the periodic background task is registered
   await registerAppBlockTogglingTask()
 
-  // 2. Run the logic immediately
+  // 2. Cancel any existing scheduled notification
+  await cancelScheduledTask()
+
+  // 3. Run the logic immediately
   const service = newAppBlockTogglingService()
-  await service.run()
+  const scheduleSpan = await service.run()
+
+  // 4. Schedule next task at scheduleEnd if schedule exists
+  if (scheduleSpan) {
+    await scheduleTaskAtScheduleEnd(scheduleSpan.end)
+  }
 }
