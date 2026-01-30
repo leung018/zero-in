@@ -23,13 +23,13 @@ Change from silent to visible notification:
 // Schedule visible notification at the specified time
 await Notifications.scheduleNotificationAsync({
   content: {
-    title: 'Focus Session Ending',
-    body: 'Tap to update your app blocking schedule',
+    title: 'Click here to activate your next app blocking schedule',
     data: {
       identifier: APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID,
       triggerSource: 'schedule-end'
     }
-  },
+  }
+})
 ```
 
 ### 2. Change listener to handle taps in [\_layout.tsx](apps/mobile/app/_layout.tsx#L29-L37)
