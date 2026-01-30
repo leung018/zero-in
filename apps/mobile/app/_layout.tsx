@@ -25,12 +25,12 @@ export default function RootLayout() {
       console.error('[RootLayout] Initial sync failed:', err)
     })
 
-    // Listen for notifications that trigger app blocking service
-    const notificationListener = Notifications.addNotificationReceivedListener(
-      async (notification) => {
-        const triggerSource = notification.request.content.data?.triggerSource
+    // Listen for notification taps that trigger app blocking service
+    const notificationResponseListener = Notifications.addNotificationResponseReceivedListener(
+      async (response) => {
+        const triggerSource = response.notification.request.content.data?.triggerSource
         if (triggerSource === 'schedule-end') {
-          console.log('[RootLayout] Notification received, triggering sync')
+          console.log('[RootLayout] Notification tapped, triggering sync')
           await triggerAppBlockTogglingSync()
         }
       }
@@ -44,7 +44,7 @@ export default function RootLayout() {
 
     return () => {
       unsubscribe()
-      notificationListener.remove()
+      notificationResponseListener.remove()
     }
   }, [])
 

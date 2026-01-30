@@ -17,11 +17,11 @@ export async function scheduleTaskAtScheduleEnd(scheduleEndDate: Date): Promise<
     // Cancel any existing scheduled notification first
     await cancelScheduledTask()
 
-    // Schedule silent notification at the specified time
+    // Schedule visible notification at the specified time
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: '', // Silent notification
-        body: '',
+        title: 'Next Schedule Ready',
+        body: 'Tap to prepare your next blocking schedule',
         data: {
           identifier: APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID,
           triggerSource: 'schedule-end'
