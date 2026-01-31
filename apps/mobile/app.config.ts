@@ -26,7 +26,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     appleTeamId: 'YCDM23LPV6',
     infoPlist: {
-      ITSAppUsesNonExemptEncryption: false
+      ITSAppUsesNonExemptEncryption: false,
+      UIBackgroundModes: ['process']
     }
   },
   android: {
