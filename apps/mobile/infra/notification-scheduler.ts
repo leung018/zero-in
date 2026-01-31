@@ -12,16 +12,16 @@ const APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID = 'app-block-toggling-schedule-end'
  *
  * @param scheduleEndDate - The date when the notification should fire (typically scheduleSpan.end)
  */
-export async function scheduleTaskAtScheduleEnd(scheduleEndDate: Date): Promise<void> {
+export async function scheduleNotificationAtScheduleEnd(scheduleEndDate: Date): Promise<void> {
   try {
     // Cancel any existing scheduled notification first
-    await cancelScheduledTask()
+    await cancelScheduledNotification()
 
     // Schedule visible notification at the specified time
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: 'Next Schedule Ready',
-        body: 'Tap to prepare your next blocking schedule',
+        title: 'Blocking Schedule Ended',
+        body: 'Tap to let your app load your next blocking schedule',
         data: {
           identifier: APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID,
           triggerSource: 'schedule-end'
@@ -33,9 +33,9 @@ export async function scheduleTaskAtScheduleEnd(scheduleEndDate: Date): Promise<
       }
     })
 
-    console.log('[NotificationScheduler] Scheduled task at', scheduleEndDate.toISOString())
+    console.log('[NotificationScheduler] Scheduled notification at', scheduleEndDate.toISOString())
   } catch (error) {
-    console.error('[NotificationScheduler] Failed to schedule task:', error)
+    console.error('[NotificationScheduler] Failed to schedule notification:', error)
   }
 }
 
@@ -43,7 +43,7 @@ export async function scheduleTaskAtScheduleEnd(scheduleEndDate: Date): Promise<
  * Cancels any scheduled notifications for app blocking schedule end.
  * Uses getAllScheduledNotificationsAsync to find notifications by identifier.
  */
-export async function cancelScheduledTask(): Promise<void> {
+export async function cancelScheduledNotification(): Promise<void> {
   try {
     const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync()
 
@@ -51,11 +51,14 @@ export async function cancelScheduledTask(): Promise<void> {
       const identifier = notification.content.data?.identifier
       if (identifier === APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID) {
         await Notifications.cancelScheduledNotificationAsync(notification.identifier)
-        console.log('[NotificationScheduler] Cancelled scheduled task:', notification.identifier)
+        console.log(
+          '[NotificationScheduler] Cancelled scheduled notification:',
+          notification.identifier
+        )
       }
     }
   } catch (error) {
-    console.error('[NotificationScheduler] Failed to cancel scheduled task:', error)
+    console.error('[NotificationScheduler] Failed to cancel scheduled notification:', error)
   }
 }
 
