@@ -1,4 +1,5 @@
 import { commonStyles } from '@/constants/styles'
+import { triggerAppBlockTogglingSync } from '@/infra/background-tasks'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
@@ -128,6 +129,9 @@ export function WeeklySchedulesEditor({
   const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
     await weeklySchedulesStorageService.save(newWeeklySchedules)
     setWeeklySchedules(newWeeklySchedules)
+    triggerAppBlockTogglingSync().catch((err) => {
+      console.error('[WeeklySchedulesEditor] Sync failed:', err)
+    })
   }
 
   return (
