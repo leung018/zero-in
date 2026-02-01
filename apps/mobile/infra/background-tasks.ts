@@ -6,7 +6,7 @@ import {
   scheduleNotificationAtScheduleEnd
 } from './notification-scheduler'
 
-export const APP_BLOCK_TOGGLING_TASK = 'APP_BLOCK_TOGGLING_TASK'
+const APP_BLOCK_TOGGLING_TASK = 'APP_BLOCK_TOGGLING_TASK'
 
 /**
  * Define the background task.
@@ -35,7 +35,7 @@ TaskManager.defineTask(APP_BLOCK_TOGGLING_TASK, async () => {
 /**
  * Registers the background task to run periodically.
  */
-export async function registerAppBlockTogglingTask() {
+async function registerAppBlockTogglingTask() {
   try {
     const status = await BackgroundTask.getStatusAsync()
     if (status !== BackgroundTask.BackgroundTaskStatus.Available) {
