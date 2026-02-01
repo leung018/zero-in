@@ -6011,7 +6011,7 @@ __metadata:
     expo-haptics: "npm:~15.0.8"
     expo-image: "npm:~3.0.11"
     expo-linking: "npm:~8.0.11"
-    expo-router: "npm:~6.0.21"
+    expo-router: "npm:~6.0.22"
     expo-splash-screen: "npm:~31.0.13"
     expo-status-bar: "npm:~3.0.9"
     expo-symbols: "npm:~1.0.8"
@@ -9880,9 +9880,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-router@npm:~6.0.21":
-  version: 6.0.21
-  resolution: "expo-router@npm:6.0.21"
+"expo-router@npm:~6.0.22":
+  version: 6.0.23
+  resolution: "expo-router@npm:6.0.23"
   dependencies:
     "@expo/metro-runtime": "npm:^6.1.2"
     "@expo/schema-utils": "npm:^0.1.8"
@@ -9912,7 +9912,7 @@ __metadata:
     "@react-navigation/drawer": ^7.5.0
     "@testing-library/react-native": ">= 12.0.0"
     expo: "*"
-    expo-constants: ^18.0.12
+    expo-constants: ^18.0.13
     expo-linking: ^8.0.11
     react: "*"
     react-dom: "*"
@@ -9922,7 +9922,7 @@ __metadata:
     react-native-safe-area-context: ">= 5.4.0"
     react-native-screens: "*"
     react-native-web: "*"
-    react-server-dom-webpack: ~19.0.3 || ~19.1.4 || ~19.2.3
+    react-server-dom-webpack: ~19.0.4 || ~19.1.5 || ~19.2.4
   peerDependenciesMeta:
     "@react-navigation/drawer":
       optional: true
@@ -9938,7 +9938,7 @@ __metadata:
       optional: true
     react-server-dom-webpack:
       optional: true
-  checksum: 10c0/ae39edf1d5c841be46d3dcc8598e46773cbdd2f5a0b6a0c0711dbd0ed852121ada010363270b75a664563e7c74e16dbbd650e4ee7faec8e6e229fd189e99e3b0
+  checksum: 10c0/d49d6df9d42b3d5813fd534afeb6e08009cc3ed9261f7355d05fdf5e564c10a4ab9080e6f659e3fa61ffe6ad5517da9abbe685da4c60c383241231875585a6ec
   languageName: node
   linkType: hard
 
