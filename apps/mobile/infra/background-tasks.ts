@@ -14,6 +14,8 @@ const APP_BLOCK_TOGGLING_TASK = 'APP_BLOCK_TOGGLING_TASK'
  */
 TaskManager.defineTask(APP_BLOCK_TOGGLING_TASK, async () => {
   try {
+    console.debug('[BackgroundTask] Running AppBlockTogglingTask')
+
     // Cancel any existing scheduled notification since periodic task is running
     await cancelScheduledNotification()
 
@@ -56,6 +58,8 @@ async function registerAppBlockTogglingTask() {
  * Use this in UI triggers (like "Done" buttons or schedule updates).
  */
 export async function triggerAppBlockTogglingSync() {
+  console.debug('[BackgroundTask] Triggering App Block Toggling Sync')
+
   // 1. Ensure the periodic background task is registered
   await registerAppBlockTogglingTask()
 
