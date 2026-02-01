@@ -1,4 +1,4 @@
-import { triggerAppBlockTogglingSync } from '@/infra/background-tasks'
+import { triggerAppBlockToggling } from '@/infra/background-tasks'
 import { AppPickerView } from '@/modules/app-blocker'
 import { Stack, useRouter } from 'expo-router'
 import React, { useState } from 'react'
@@ -30,7 +30,7 @@ export default function SelectAppsScreen() {
         <TouchableOpacity
           style={styles.primaryButton}
           onPress={async () => {
-            await triggerAppBlockTogglingSync()
+            await triggerAppBlockToggling()
             router.back()
           }}
           activeOpacity={0.8}

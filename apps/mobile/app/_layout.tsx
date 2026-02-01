@@ -1,4 +1,4 @@
-import { triggerAppBlockTogglingSync } from '@/infra/background-tasks'
+import { triggerAppBlockToggling } from '@/infra/background-tasks'
 import { requestNotificationPermissions } from '@/infra/notification-scheduler'
 import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth'
 import * as Notifications from 'expo-notifications'
@@ -21,7 +21,7 @@ export default function RootLayout() {
     })
 
     // Sync blocking schedules on app startup
-    triggerAppBlockTogglingSync().catch((err) => {
+    triggerAppBlockToggling().catch((err) => {
       console.error('[RootLayout] Initial sync failed:', err)
     })
 
@@ -31,7 +31,7 @@ export default function RootLayout() {
         const triggerSource = response.notification.request.content.data?.triggerSource
         if (triggerSource === 'schedule-end') {
           console.log('[RootLayout] Notification tapped, triggering sync')
-          await triggerAppBlockTogglingSync()
+          await triggerAppBlockToggling()
         }
       }
     )
