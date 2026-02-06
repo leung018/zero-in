@@ -1,4 +1,63 @@
+import * as BackgroundTask from 'expo-background-task'
 import * as Notifications from 'expo-notifications'
+import * as TaskManager from 'expo-task-manager'
+import { newAppBlockTogglingService } from '../../factories'
+
+/**
+ * Executes a run of app block toggling immediately and ensures the background task is registered.
+ */
+export async function triggerAppBlockToggling() {
+  console.debug('[BackgroundTask] Triggering App Block Toggling Sync')
+
+  await registerAppBlockTogglingTask()
+
+  await triggerAppBlockTogglingImpl()
+}
+
+const APP_BLOCK_TOGGLING_TASK = 'APP_BLOCK_TOGGLING_TASK'
+
+TaskManager.defineTask(APP_BLOCK_TOGGLING_TASK, async () => {
+  try {
+    console.debug('[BackgroundTask] Running AppBlockTogglingTask')
+
+    await triggerAppBlockTogglingImpl()
+
+    return BackgroundTask.BackgroundTaskResult.Success
+  } catch (error) {
+    console.error('[BackgroundTask] AppBlockTogglingTask failed:', error)
+    return BackgroundTask.BackgroundTaskResult.Failed
+  }
+})
+
+/**
+ * Registers the background task to run periodically.
+ */
+async function registerAppBlockTogglingTask() {
+  try {
+    const status = await BackgroundTask.getStatusAsync()
+    if (status !== BackgroundTask.BackgroundTaskStatus.Available) {
+      console.warn('[BackgroundTask] Background tasks are not available on this device.')
+      return
+    }
+
+    await BackgroundTask.registerTaskAsync(APP_BLOCK_TOGGLING_TASK, {
+      minimumInterval: 15 // minutes
+    })
+  } catch (error) {
+    console.error('[BackgroundTask] Failed to register task:', error)
+  }
+}
+
+async function triggerAppBlockTogglingImpl() {
+  await cancelScheduledNotification()
+
+  const service = newAppBlockTogglingService()
+  const scheduleSpan = await service.run()
+
+  if (scheduleSpan) {
+    await scheduleNotificationAtScheduleEnd(scheduleSpan.end)
+  }
+}
 
 /**
  * Identifier used to track the scheduled notification for app blocking schedule end.
@@ -12,7 +71,7 @@ const APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID = 'app-block-toggling-schedule-end'
  *
  * @param scheduleEndDate - The date when the notification should fire (typically scheduleSpan.end)
  */
-export async function scheduleNotificationAtScheduleEnd(scheduleEndDate: Date): Promise<void> {
+async function scheduleNotificationAtScheduleEnd(scheduleEndDate: Date): Promise<void> {
   try {
     // Cancel any existing scheduled notification first
     await cancelScheduledNotification()
@@ -43,7 +102,7 @@ export async function scheduleNotificationAtScheduleEnd(scheduleEndDate: Date): 
  * Cancels any scheduled notifications for app blocking schedule end.
  * Uses getAllScheduledNotificationsAsync to find notifications by identifier.
  */
-export async function cancelScheduledNotification(): Promise<void> {
+async function cancelScheduledNotification(): Promise<void> {
   try {
     const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync()
 
@@ -59,33 +118,5 @@ export async function cancelScheduledNotification(): Promise<void> {
     }
   } catch (error) {
     console.error('[NotificationScheduler] Failed to cancel scheduled notification:', error)
-  }
-}
-
-/**
- * Requests notification permissions from the user.
- * Should be called at app startup.
- *
- * @returns true if permissions were granted, false otherwise
- */
-export async function requestNotificationPermissions(): Promise<boolean> {
-  try {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync()
-    let finalStatus = existingStatus
-
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync()
-      finalStatus = status
-    }
-
-    if (finalStatus !== 'granted') {
-      console.warn('[NotificationScheduler] Notification permissions not granted')
-      return false
-    }
-
-    return true
-  } catch (error) {
-    console.error('[NotificationScheduler] Failed to request permissions:', error)
-    return false
   }
 }

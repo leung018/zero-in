@@ -1,4 +1,4 @@
-import { FakeAppBlocker } from '@/infra/app-blocker'
+import { FakeAppBlocker } from '@/infra/app-block/interface'
 import { WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { Weekday } from '@zero-in/shared/domain/schedules/weekday'

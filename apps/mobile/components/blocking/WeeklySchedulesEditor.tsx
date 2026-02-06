@@ -1,5 +1,5 @@
 import { commonStyles } from '@/constants/styles'
-import { triggerAppBlockToggling } from '@/infra/background-tasks'
+import { triggerAppBlockToggling } from '@/infra/app-block/toggling-runner'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'

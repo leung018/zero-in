@@ -1,4 +1,4 @@
-import { triggerAppBlockToggling } from '@/infra/background-tasks'
+import { triggerAppBlockToggling } from '@/infra/app-block/toggling-runner'
 import { AppPickerView } from '@/modules/app-blocker'
 import { Stack, useRouter } from 'expo-router'
 import React, { useState } from 'react'

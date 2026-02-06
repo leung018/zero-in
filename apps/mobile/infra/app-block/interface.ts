@@ -1,4 +1,4 @@
-import { ScheduleSpan } from '../domain/schedules/schedule-span'
+import { ScheduleSpan } from '../../domain/schedules/schedule-span'
 
 export interface AppBlocker {
   setSchedule(scheduleSpan: ScheduleSpan): Promise<void>

@@ -1,5 +1,5 @@
 import { WeeklySchedulesStorageService } from '../../../packages/shared/src/domain/schedules/storage'
-import { AppBlocker, FakeAppBlocker } from '../infra/app-blocker'
+import { AppBlocker, FakeAppBlocker } from '../infra/app-block/interface'
 import { findActiveOrNextScheduleSpan } from './schedules/schedule-span'
 
 export class AppBlockTogglingService {
