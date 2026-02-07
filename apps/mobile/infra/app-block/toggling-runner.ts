@@ -82,8 +82,7 @@ async function scheduleNotificationAtScheduleEnd(scheduleEndDate: Date): Promise
         title: 'Blocking Schedule Ended',
         body: 'Tap to let your app load your next blocking schedule',
         data: {
-          identifier: APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID,
-          triggerSource: 'schedule-end'
+          identifier: APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID
         }
       },
       trigger: {
@@ -95,6 +94,16 @@ async function scheduleNotificationAtScheduleEnd(scheduleEndDate: Date): Promise
     console.log('[NotificationScheduler] Scheduled notification at', scheduleEndDate.toISOString())
   } catch (error) {
     console.error('[NotificationScheduler] Failed to schedule notification:', error)
+  }
+}
+
+export async function onScheduleEndNotificationTapped(
+  response: Notifications.NotificationResponse
+) {
+  const identifier = response.notification.request.identifier
+  if (identifier === APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID) {
+    console.log('[NotificationScheduler] Schedule end notification tapped, triggering sync')
+    await triggerAppBlockToggling()
   }
 }
 

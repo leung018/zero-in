@@ -1,5 +1,8 @@
 import { requestNotificationPermissions } from '@/infra/app-block/notification-scheduler'
-import { triggerAppBlockToggling } from '@/infra/app-block/toggling-runner'
+import {
+  onScheduleEndNotificationTapped,
+  triggerAppBlockToggling
+} from '@/infra/app-block/toggling-runner'
 import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth'
 import * as Notifications from 'expo-notifications'
 import { Stack } from 'expo-router'
@@ -27,12 +30,8 @@ export default function RootLayout() {
 
     // Listen for notification taps that trigger app blocking service
     const notificationResponseListener = Notifications.addNotificationResponseReceivedListener(
-      async (response) => {
-        const triggerSource = response.notification.request.content.data?.triggerSource
-        if (triggerSource === 'schedule-end') {
-          console.log('[RootLayout] Notification tapped, triggering sync')
-          await triggerAppBlockToggling()
-        }
+      (response) => {
+        onScheduleEndNotificationTapped(response)
       }
     )
 
