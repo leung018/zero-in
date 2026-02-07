@@ -1,5 +1,4 @@
 import { commonStyles } from '@/constants/styles'
-import { triggerAppBlockToggling } from '@/infra/app-block/toggling-runner'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
@@ -24,9 +23,11 @@ const formatWeekdays = (weekdaySet: ReadonlySet<Weekday>): string => {
 }
 
 export function WeeklySchedulesEditor({
-  weeklySchedulesStorageService
+  weeklySchedulesStorageService,
+  triggerAppBlockToggling
 }: {
   weeklySchedulesStorageService: WeeklySchedulesStorageService
+  triggerAppBlockToggling: () => Promise<void>
 }) {
   // Schedules state
   const [weeklySchedules, setWeeklySchedules] = useState<WeeklySchedule[]>([])
@@ -129,9 +130,7 @@ export function WeeklySchedulesEditor({
   const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
     await weeklySchedulesStorageService.save(newWeeklySchedules)
     setWeeklySchedules(newWeeklySchedules)
-    triggerAppBlockToggling().catch((err) => {
-      console.error('[WeeklySchedulesEditor] Sync failed:', err)
-    })
+    triggerAppBlockToggling()
   }
 
   return (

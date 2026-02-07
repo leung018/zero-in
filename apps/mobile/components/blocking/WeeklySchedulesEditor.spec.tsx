@@ -260,7 +260,10 @@ async function renderWeeklySchedulesEditor({
   const weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake()
   await weeklySchedulesStorageService.save(weeklySchedules)
   const wrapper = render(
-    <WeeklySchedulesEditor weeklySchedulesStorageService={weeklySchedulesStorageService} />
+    <WeeklySchedulesEditor
+      weeklySchedulesStorageService={weeklySchedulesStorageService}
+      triggerAppBlockToggling={async () => {}}
+    />
   )
 
   // If schedules are provided, wait for them to be rendered
