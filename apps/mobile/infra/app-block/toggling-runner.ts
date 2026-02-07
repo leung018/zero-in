@@ -103,7 +103,7 @@ export async function scheduleNotificationAtScheduleEnd(scheduleEndDate: Date): 
 export async function onScheduleEndNotificationTapped(
   response: Notifications.NotificationResponse
 ) {
-  const identifier = response.notification.request.identifier
+  const identifier = response.notification.request.content.data?.identifier
   if (identifier === APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID) {
     log.debug('Schedule end notification tapped, triggering sync')
     await triggerAppBlockToggling()
