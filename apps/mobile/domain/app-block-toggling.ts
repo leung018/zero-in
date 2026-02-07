@@ -1,5 +1,5 @@
 import { WeeklySchedulesStorageService } from '../../../packages/shared/src/domain/schedules/storage'
-import { AppBlocker, FakeAppBlocker } from '../infra/app-blocker'
+import { AppBlocker, FakeAppBlocker } from '../infra/app-block/interface'
 import { findActiveOrNextScheduleSpan } from './schedules/schedule-span'
 
 export class AppBlockTogglingService {
@@ -36,9 +36,11 @@ export class AppBlockTogglingService {
       currentDate
     )
     if (scheduleSpan) {
-      return Promise.all([this.appBlocker.unblockApps(), this.appBlocker.setSchedule(scheduleSpan)])
+      await Promise.all([this.appBlocker.unblockApps(), this.appBlocker.setSchedule(scheduleSpan)])
+    } else {
+      await Promise.all([this.appBlocker.clearSchedule(), this.appBlocker.blockApps()])
     }
 
-    return Promise.all([this.appBlocker.clearSchedule(), this.appBlocker.blockApps()])
+    return scheduleSpan
   }
 }

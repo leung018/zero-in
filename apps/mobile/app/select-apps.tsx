@@ -1,14 +1,9 @@
+import { triggerAppBlockToggling } from '@/infra/app-block/toggling-runner'
 import { AppPickerView } from '@/modules/app-blocker'
 import { Stack, useRouter } from 'expo-router'
 import React, { useState } from 'react'
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-
-function getDateAfter(ms: number) {
-  const date = new Date()
-  date.setMilliseconds(date.getMilliseconds() + ms)
-  return date
-}
 
 export default function SelectAppsScreen() {
   const router = useRouter()
@@ -34,7 +29,8 @@ export default function SelectAppsScreen() {
         </View>
         <TouchableOpacity
           style={styles.primaryButton}
-          onPress={() => {
+          onPress={async () => {
+            await triggerAppBlockToggling()
             router.back()
           }}
           activeOpacity={0.8}

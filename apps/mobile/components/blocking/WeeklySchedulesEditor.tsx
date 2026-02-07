@@ -23,9 +23,11 @@ const formatWeekdays = (weekdaySet: ReadonlySet<Weekday>): string => {
 }
 
 export function WeeklySchedulesEditor({
-  weeklySchedulesStorageService
+  weeklySchedulesStorageService,
+  triggerAppBlockToggling
 }: {
   weeklySchedulesStorageService: WeeklySchedulesStorageService
+  triggerAppBlockToggling: () => Promise<void>
 }) {
   // Schedules state
   const [weeklySchedules, setWeeklySchedules] = useState<WeeklySchedule[]>([])
@@ -128,6 +130,7 @@ export function WeeklySchedulesEditor({
   const updateWeeklySchedules = async (newWeeklySchedules: WeeklySchedule[]) => {
     await weeklySchedulesStorageService.save(newWeeklySchedules)
     setWeeklySchedules(newWeeklySchedules)
+    triggerAppBlockToggling()
   }
 
   return (

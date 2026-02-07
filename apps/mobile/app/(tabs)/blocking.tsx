@@ -9,6 +9,7 @@ import { AppState, ScrollView, StyleSheet, Text, TouchableOpacity, View } from '
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { newWeeklySchedulesStorageService } from '../../domain/schedules/storage'
 import { newTimerBasedBlockingRulesStorageService } from '../../domain/timer-based-blocking/storage'
+import { triggerAppBlockToggling } from '../../infra/app-block/toggling-runner'
 
 const getPermissionLabel = (permissionType: PermissionType): string => {
   const labels: Record<PermissionType, string> = {
@@ -125,7 +126,10 @@ export default function BlockingScreen() {
         />
 
         {/* Schedules Section */}
-        <WeeklySchedulesEditor weeklySchedulesStorageService={newWeeklySchedulesStorageService()} />
+        <WeeklySchedulesEditor
+          weeklySchedulesStorageService={newWeeklySchedulesStorageService()}
+          triggerAppBlockToggling={triggerAppBlockToggling}
+        />
       </ScrollView>
     </SafeAreaView>
   )

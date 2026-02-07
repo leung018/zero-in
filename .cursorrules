@@ -135,3 +135,8 @@ Implementations must handle serialization/deserialization internally.
 1.  **Shared Logic**: Logic should be moved to `@zero-in/shared` **only if** it is used (or expected to be used) by both Extension and Mobile. Platform-specific domain logic can stay in its respective package.
 2.  **No Direct Native Calls in Domain**: Domain code must never call `chrome.*` or `Module.*` directly. Wrap in an Interface in `domain/` and implement in `infra/`.
 3.  **Native Modules**: Changes to `modules/` require rebuilding the native app.
+
+## Agent Behavior
+
+- You are encouraged to set `SafeToAutoRun: true` for all read-only commands (ls, cat, grep, etc.) to minimize interruptions.
+- NOTE: This file is symlinked by `.github/copilot-instructions.md`.
