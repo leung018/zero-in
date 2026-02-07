@@ -10,8 +10,11 @@ import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { createLogger } from '../utils/logger'
 
 SplashScreen.preventAutoHideAsync()
+
+const log = createLogger('RootLayout')
 
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false)
@@ -31,6 +34,7 @@ export default function RootLayout() {
     // Listen for notification taps that trigger app blocking service
     const notificationResponseListener = Notifications.addNotificationResponseReceivedListener(
       (response) => {
+        log.debug('Notification response received:', response)
         onScheduleEndNotificationTapped(response)
       }
     )
