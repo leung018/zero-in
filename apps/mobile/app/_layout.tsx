@@ -23,12 +23,12 @@ export default function RootLayout() {
   useEffect(() => {
     // Request notification permissions on startup
     requestNotificationPermissions().catch((err) => {
-      console.error('[RootLayout] Failed to request notification permissions:', err)
+      log.error('Failed to request notification permissions:', err)
     })
 
     // Sync blocking schedules on app startup
     triggerAppBlockToggling().catch((err) => {
-      console.error('[RootLayout] Initial sync failed:', err)
+      log.error('Initial sync failed:', err)
     })
 
     // Listen for notification taps that trigger app blocking service
