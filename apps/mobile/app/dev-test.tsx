@@ -1,6 +1,9 @@
 import { commonStyles } from '@/constants/styles'
 import { ScheduleSpan } from '@/domain/schedules/schedule-span'
-import { APP_BLOCK_TOGGLING_TASK } from '@/infra/app-block/toggling-runner'
+import {
+  APP_BLOCK_TOGGLING_TASK,
+  scheduleNotificationAtScheduleEnd
+} from '@/infra/app-block/toggling-runner'
 import { appBlocker } from '@/modules/app-blocker'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import * as BackgroundTask from 'expo-background-task'
@@ -13,6 +16,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View
 } from 'react-native'
@@ -23,6 +27,7 @@ function DevTestContent() {
   const [endDate, setEndDate] = useState<Date>(new Date(Date.now() + 60 * 60 * 1000)) // 1 hour from now
   const [showStartPicker, setShowStartPicker] = useState(false)
   const [showEndPicker, setShowEndPicker] = useState(false)
+  const [notificationDelaySeconds, setNotificationDelaySeconds] = useState<string>('3')
 
   const formatDateTime = (date: Date): string => {
     return date.toLocaleString('en-US', {
@@ -112,6 +117,22 @@ function DevTestContent() {
     }
   }
 
+  const handleScheduleNotification = async () => {
+    const delayMs = parseInt(notificationDelaySeconds, 10) * 1000
+    if (isNaN(delayMs) || delayMs <= 0) {
+      Alert.alert('Invalid Input', 'Please enter a valid number of seconds')
+      return
+    }
+    try {
+      const notificationDate = new Date(Date.now() + delayMs)
+      await scheduleNotificationAtScheduleEnd(notificationDate)
+      Alert.alert('Success', `Notification scheduled for ${notificationDelaySeconds}s later`)
+    } catch (error) {
+      console.error('Failed to schedule notification:', error)
+      Alert.alert('Error', `Failed to schedule notification: ${error}`)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Stack.Screen
@@ -121,6 +142,31 @@ function DevTestContent() {
         }}
       />
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+        {/* Notification Trigger Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Notification Trigger</Text>
+
+          <View style={styles.inputSection}>
+            <Text style={styles.label}>Delay (seconds)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="3"
+              value={notificationDelaySeconds}
+              onChangeText={setNotificationDelaySeconds}
+              keyboardType="numeric"
+            />
+          </View>
+
+          <TouchableOpacity
+            style={commonStyles.secondaryButton}
+            onPress={handleScheduleNotification}
+          >
+            <Text style={commonStyles.secondaryButtonText}>
+              Schedule at {notificationDelaySeconds}s Later
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         {/* Schedule Configuration Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Schedule Configuration</Text>
@@ -254,5 +300,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#1f1f1f',
     fontWeight: '500'
+  },
+  inputSection: {
+    marginBottom: 16
+  },
+  input: {
+    backgroundColor: '#f8f9fa',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e8eaed',
+    fontSize: 16,
+    color: '#1f1f1f'
   }
 })

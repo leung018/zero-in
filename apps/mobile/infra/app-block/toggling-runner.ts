@@ -74,7 +74,7 @@ const APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID = 'app-block-toggling-schedule-end'
  *
  * @param scheduleEndDate - The date when the notification should fire (typically scheduleSpan.end)
  */
-async function scheduleNotificationAtScheduleEnd(scheduleEndDate: Date): Promise<void> {
+export async function scheduleNotificationAtScheduleEnd(scheduleEndDate: Date): Promise<void> {
   try {
     // Cancel any existing scheduled notification first
     await cancelScheduledNotification()
