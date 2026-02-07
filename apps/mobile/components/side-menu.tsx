@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons'
 import { getAuth, signOut } from '@react-native-firebase/auth'
+import { useRouter } from 'expo-router'
 import React, { useEffect, useRef } from 'react'
 import {
   Alert,
@@ -19,6 +20,7 @@ type SideMenuProps = {
 }
 
 export function SideMenu({ visible, onClose }: SideMenuProps) {
+  const router = useRouter()
   const slide = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
@@ -72,6 +74,19 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
           </View>
 
           <View style={styles.divider} />
+
+          {__DEV__ && (
+            <Pressable
+              style={styles.item}
+              onPress={() => {
+                router.push('/dev-test' as any)
+                onClose()
+              }}
+            >
+              <Ionicons name="flask-outline" size={20} color="#1a73e8" />
+              <Text style={styles.itemText}>Dev Test</Text>
+            </Pressable>
+          )}
 
           {/* Actions */}
           <Pressable style={styles.item} onPress={handleSignOut}>
@@ -127,6 +142,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     paddingVertical: 12
+  },
+  itemText: {
+    color: '#1a73e8',
+    fontWeight: '600',
+    fontSize: 16
   },
   itemDanger: {
     color: '#dc3545',

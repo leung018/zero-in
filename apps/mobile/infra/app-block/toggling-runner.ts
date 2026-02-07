@@ -17,7 +17,7 @@ export async function triggerAppBlockToggling() {
   await triggerAppBlockTogglingImpl()
 }
 
-const APP_BLOCK_TOGGLING_TASK = 'APP_BLOCK_TOGGLING_TASK'
+export const APP_BLOCK_TOGGLING_TASK = 'APP_BLOCK_TOGGLING_TASK'
 
 TaskManager.defineTask(APP_BLOCK_TOGGLING_TASK, async () => {
   try {
