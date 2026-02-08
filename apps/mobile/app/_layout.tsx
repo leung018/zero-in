@@ -1,4 +1,3 @@
-import { requestNotificationPermissions } from '@/infra/app-block/notification-scheduler'
 import {
   onScheduleEndNotificationTapped,
   triggerAppBlockToggling
@@ -68,4 +67,34 @@ export default function RootLayout() {
       <StatusBar style="auto" />
     </SafeAreaProvider>
   )
+}
+
+// TODO: Think better way to organize request permissions related logic.
+
+/**
+ * Requests notification permissions from the user.
+ * Should be called at app startup.
+ *
+ * @returns true if permissions were granted, false otherwise
+ */
+async function requestNotificationPermissions(): Promise<boolean> {
+  try {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync()
+    let finalStatus = existingStatus
+
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync()
+      finalStatus = status
+    }
+
+    if (finalStatus !== 'granted') {
+      log.warn('Notification permissions not granted')
+      return false
+    }
+
+    return true
+  } catch (error) {
+    log.error('Failed to request notification permissions:', error)
+    return false
+  }
 }
