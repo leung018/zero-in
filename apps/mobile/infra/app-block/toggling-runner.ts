@@ -52,7 +52,7 @@ async function registerAppBlockTogglingTask() {
 }
 
 async function triggerAppBlockTogglingImpl() {
-  await cancelScheduledNotification()
+  await cancelNotification()
 
   const service = newAppBlockTogglingService()
   const scheduleSpan = await service.run()
@@ -77,7 +77,7 @@ const APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID = 'app-block-toggling-schedule-end'
 export async function scheduleNotificationAtScheduleEnd(scheduleEndDate: Date): Promise<void> {
   try {
     // Cancel any existing scheduled notification first
-    await cancelScheduledNotification()
+    await cancelNotification()
 
     // Schedule visible notification at the specified time
     await Notifications.scheduleNotificationAsync({
@@ -111,18 +111,29 @@ export async function onScheduleEndNotificationTapped(
 }
 
 /**
- * Cancels any scheduled notifications for app blocking schedule end.
- * Uses getAllScheduledNotificationsAsync to find notifications by identifier.
+ * Cancels all scheduled notifications and the current notification with target identifier.
+ * - Removes all pending scheduled notifications matching APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID
+ * - Removes the delivered notification with APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID identifier
  */
-async function cancelScheduledNotification(): Promise<void> {
+async function cancelNotification(): Promise<void> {
   try {
+    // Cancel scheduled notifications with target identifier
     const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync()
-
     for (const notification of scheduledNotifications) {
       const identifier = notification.content.data?.identifier
       if (identifier === APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID) {
         await Notifications.cancelScheduledNotificationAsync(notification.identifier)
         log.debug('Cancelled scheduled notification:', notification.identifier)
+      }
+    }
+
+    // Cancel delivered/current notification with target identifier
+    const deliveredNotifications = await Notifications.getPresentedNotificationsAsync()
+    for (const notification of deliveredNotifications) {
+      const identifier = notification.request.content.data?.identifier
+      if (identifier === APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID) {
+        await Notifications.dismissNotificationAsync(notification.request.identifier)
+        log.debug('Dismissed delivered notification:', notification.request.identifier)
       }
     }
   } catch (error) {
