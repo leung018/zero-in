@@ -1,4 +1,3 @@
-import { requestNotificationPermissions } from '@/infra/app-block/notification-scheduler'
 import {
   onScheduleEndNotificationTapped,
   triggerAppBlockToggling
@@ -10,8 +9,11 @@ import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { createLogger } from '../utils/logger'
 
 SplashScreen.preventAutoHideAsync()
+
+const log = createLogger('RootLayout')
 
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false)
@@ -20,17 +22,18 @@ export default function RootLayout() {
   useEffect(() => {
     // Request notification permissions on startup
     requestNotificationPermissions().catch((err) => {
-      console.error('[RootLayout] Failed to request notification permissions:', err)
+      log.error('Failed to request notification permissions:', err)
     })
 
     // Sync blocking schedules on app startup
     triggerAppBlockToggling().catch((err) => {
-      console.error('[RootLayout] Initial sync failed:', err)
+      log.error('Initial sync failed:', err)
     })
 
     // Listen for notification taps that trigger app blocking service
     const notificationResponseListener = Notifications.addNotificationResponseReceivedListener(
       (response) => {
+        log.debug('Notification response received:', response)
         onScheduleEndNotificationTapped(response)
       }
     )
@@ -64,4 +67,34 @@ export default function RootLayout() {
       <StatusBar style="auto" />
     </SafeAreaProvider>
   )
+}
+
+// TODO: Think better way to organize request permissions related logic.
+
+/**
+ * Requests notification permissions from the user.
+ * Should be called at app startup.
+ *
+ * @returns true if permissions were granted, false otherwise
+ */
+async function requestNotificationPermissions(): Promise<boolean> {
+  try {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync()
+    let finalStatus = existingStatus
+
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync()
+      finalStatus = status
+    }
+
+    if (finalStatus !== 'granted') {
+      log.warn('Notification permissions not granted')
+      return false
+    }
+
+    return true
+  } catch (error) {
+    log.error('Failed to request notification permissions:', error)
+    return false
+  }
 }
