@@ -93,7 +93,7 @@ function DevTestContent() {
     }
   }
 
-  const handleTriggerBackgroundTask = async () => {
+  const handleTriggerAppBlockTogglingTask = async () => {
     try {
       await BackgroundTask.triggerTaskWorkerForTestingAsync()
       Alert.alert('Success', `Background task (${APP_BLOCK_TOGGLING_TASK}) triggered successfully`)
@@ -142,9 +142,10 @@ function DevTestContent() {
         }}
       />
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
-        {/* Notification Trigger Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Notification Trigger</Text>
+          <Text style={styles.sectionTitle}>Toggling Runner</Text>
+
+          <Text style={styles.subSectionTitle}>scheduleNotificationAtScheduleEnd</Text>
 
           <View style={styles.inputSection}>
             <Text style={styles.label}>Delay (seconds)</Text>
@@ -165,11 +166,25 @@ function DevTestContent() {
               Schedule at {notificationDelaySeconds}s Later
             </Text>
           </TouchableOpacity>
+
+          <View style={styles.divider} />
+
+          <Text style={styles.subSectionTitle}>Trigger APP_BLOCK_TOGGLING_TASK</Text>
+          <TouchableOpacity
+            style={commonStyles.secondaryButton}
+            onPress={handleTriggerAppBlockTogglingTask}
+          >
+            <Text style={commonStyles.secondaryButtonText}>Trigger Background Task</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Schedule Configuration Section */}
+        {/* App Blocking & Scheduling Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Schedule Configuration</Text>
+          <Text style={styles.sectionTitle}>
+            setSchedule / clearSchedule / blockApps / unblockApps
+          </Text>
+
+          <Text style={styles.subSectionTitle}>setSchedule</Text>
 
           <View style={styles.dateTimeSection}>
             <Text style={styles.label}>Start Time</Text>
@@ -205,14 +220,13 @@ function DevTestContent() {
             <Text style={commonStyles.secondaryButtonText}>Set Schedule</Text>
           </TouchableOpacity>
 
+          <Text style={styles.subSectionTitle}>clearSchedule</Text>
+
           <TouchableOpacity style={commonStyles.secondaryButton} onPress={handleClearSchedule}>
             <Text style={commonStyles.secondaryButtonText}>Clear Schedule</Text>
           </TouchableOpacity>
-        </View>
 
-        {/* App Blocking Actions Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>App Blocking Actions</Text>
+          <Text style={styles.subSectionTitle}>blockApps / unblockApps</Text>
 
           <TouchableOpacity style={commonStyles.secondaryButton} onPress={handleBlockApps}>
             <Text style={commonStyles.secondaryButtonText}>Block Apps</Text>
@@ -220,18 +234,6 @@ function DevTestContent() {
 
           <TouchableOpacity style={commonStyles.secondaryButton} onPress={handleUnblockApps}>
             <Text style={commonStyles.secondaryButtonText}>Unblock Apps</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Background Task Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Background Task</Text>
-
-          <TouchableOpacity
-            style={commonStyles.secondaryButton}
-            onPress={handleTriggerBackgroundTask}
-          >
-            <Text style={commonStyles.secondaryButtonText}>Trigger Background Task</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -312,5 +314,17 @@ const styles = StyleSheet.create({
     borderColor: '#e8eaed',
     fontSize: 16,
     color: '#1f1f1f'
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#e8eaed',
+    marginVertical: 20
+  },
+  subSectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1a73e8',
+    marginBottom: 12,
+    marginTop: 12
   }
 })
