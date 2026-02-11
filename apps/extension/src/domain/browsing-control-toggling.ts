@@ -1,11 +1,11 @@
 import type { WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
+import { FocusSessionRecordsStorageService } from '@zero-in/shared/domain/timer/record/storage'
 import { FakeBrowsingControlService, type BrowsingControlService } from '../infra/browsing-control'
 import { isSameDay } from '../utils/date'
 import { BrowsingRulesStorageService } from './browsing-rules/storage'
 import { Duration } from './timer/duration'
-import { FocusSessionRecordsStorageService } from './timer/record/storage'
 import { TimerStage } from './timer/stage'
 
 interface TimerInfoGetter {

@@ -1,5 +1,8 @@
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
+import { FocusSessionRecordHousekeeper } from '@zero-in/shared/domain/timer/record/house-keep'
+import { newFocusSessionRecord } from '@zero-in/shared/domain/timer/record/index'
+import { FocusSessionRecordsStorageService } from '@zero-in/shared/domain/timer/record/storage'
 import { SubscriptionManager } from '@zero-in/shared/utils/subscription'
 import config from '../config'
 import { BrowsingControlTogglingService } from '../domain/browsing-control-toggling'
@@ -9,9 +12,7 @@ import { newWeeklySchedulesStorageService } from '../domain/schedules/storage'
 import { FocusTimer } from '../domain/timer'
 import { newTimerBasedBlockingRulesStorageService } from '../domain/timer-based-blocking/storage'
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
-import { newFocusSessionRecord } from '../domain/timer/record'
-import { FocusSessionRecordHousekeeper } from '../domain/timer/record/house-keep'
-import { FocusSessionRecordsStorageService } from '../domain/timer/record/storage'
+import { newFocusSessionRecordsStorageService } from '../domain/timer/record/storage'
 import { TimerStage } from '../domain/timer/stage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage-display-label'
 import type { TimerExternalState } from '../domain/timer/state/external'
@@ -63,7 +64,7 @@ export class BackgroundListener {
       badgeDisplayService: new BrowserBadgeDisplayService(),
       timerStateStorageService: TimerStateStorageService.create(),
       timerConfigStorageService: TimerConfigStorageService.create(),
-      focusSessionRecordsStorageService: FocusSessionRecordsStorageService.create(),
+      focusSessionRecordsStorageService: newFocusSessionRecordsStorageService(),
       closeTabsService: new BrowserCloseTabsService(config.getReminderPageUrl()),
       browsingControlService: new BrowserBrowsingControlService(),
       browsingRulesStorageService: BrowsingRulesStorageService.create(),

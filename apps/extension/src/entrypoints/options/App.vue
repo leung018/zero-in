@@ -3,7 +3,6 @@ import config from '@/config'
 import { DailyResetTimeStorageService } from '@/domain/daily-reset-time/storage'
 import { NotificationSettingStorageService } from '@/domain/notification-setting/storage'
 import { TimerConfigStorageService } from '@/domain/timer/config/storage'
-import { FocusSessionRecordsStorageService } from '@/domain/timer/record/storage'
 import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import { UpdateSuccessNotifierService } from '@/infra/browser/update-success-notifier'
 import { FirebaseServices } from '@/infra/firebase/services'
@@ -14,6 +13,7 @@ import NotificationPage from '@/pages/NotificationPage.vue'
 import StatisticsPage from '@/pages/StatisticsPage.vue'
 import TimerSettingPage from '@/pages/TimerSettingPage.vue'
 import { onMounted, ref } from 'vue'
+import { newFocusSessionRecordsStorageService } from '../../domain/timer/record/storage'
 
 const port = new BrowserCommunicationManager().clientConnect()
 const updateSuccessNotifierService = new UpdateSuccessNotifierService()
@@ -129,7 +129,7 @@ const rightTabs = [PATH.FEEDBACK, PATH.ABOUT]
       v-show="currentPath === PATH.STATISTICS"
       :dailyResetTimeStorageService="DailyResetTimeStorageService.create()"
       :updateSuccessNotifierService="updateSuccessNotifierService"
-      :focusSessionRecordsStorageService="FocusSessionRecordsStorageService.create()"
+      :focusSessionRecordsStorageService="newFocusSessionRecordsStorageService()"
     />
 
     <TimerSettingPage
