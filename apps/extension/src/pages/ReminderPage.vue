@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { ClientPort } from '@/service-workers/listener'
-import { getMostRecentDate } from '@/utils/date'
 import { Time } from '@zero-in/shared/domain/time/index'
 import type { FocusSessionRecordsStorageService } from '@zero-in/shared/domain/timer/record/storage'
+import { getMostRecentDate } from '@zero-in/shared/utils/date'
 import { computed, ref } from 'vue'
 import type { DailyResetTimeStorageService } from '../domain/daily-reset-time/storage'
 import { TimerStage } from '../domain/timer/stage'

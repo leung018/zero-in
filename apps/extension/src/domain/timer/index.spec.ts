@@ -1,6 +1,6 @@
+import { getDateAfter } from '@zero-in/shared/utils/date'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { FocusTimer } from '.'
-import { getDateAfter } from '../../utils/date'
 import { TimerConfig } from './config'
 import { Duration } from './duration'
 import { TimerStage } from './stage'
