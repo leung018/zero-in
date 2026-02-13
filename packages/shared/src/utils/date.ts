@@ -1,5 +1,5 @@
 import type { Time } from '@zero-in/shared/domain/time/index'
-import { Duration } from '../domain/timer/duration'
+import { Duration } from '../../../../apps/extension/src/domain/timer/duration'
 
 export function getMostRecentDate(time: Time, currentDate = new Date()): Date {
   const newDate = new Date(currentDate)

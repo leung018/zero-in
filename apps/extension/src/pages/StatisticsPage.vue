@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { UpdateSuccessNotifierService } from '@/infra/browser/update-success-notifier'
-import { getMostRecentDate } from '@/utils/date'
 import { Time } from '@zero-in/shared/domain/time/index'
 import type { FocusSessionRecordsStorageService } from '@zero-in/shared/domain/timer/record/storage'
+import { getMostRecentDate } from '@zero-in/shared/utils/date'
 import { ref } from 'vue'
 import { DailyResetTimeStorageService } from '../domain/daily-reset-time/storage'
 import ContentTemplate from './components/ContentTemplate.vue'

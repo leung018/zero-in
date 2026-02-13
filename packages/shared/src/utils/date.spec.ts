@@ -1,6 +1,6 @@
 import { Time } from '@zero-in/shared/domain/time/index'
 import { describe, expect, it } from 'vitest'
-import { Duration } from '../domain/timer/duration'
+import { Duration } from '../../../../apps/extension/src/domain/timer/duration'
 import { getDateAfter, getMostRecentDate, getStartOfNextMinute, isSameDay } from './date'
 
 describe('getMostRecentDate', () => {
