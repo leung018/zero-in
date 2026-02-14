@@ -1,6 +1,6 @@
+import { Duration } from '@zero-in/shared/domain/timer/duration'
 import { describe, expect, it } from 'vitest'
 import { TimerConfig } from '.'
-import { Duration } from '../duration'
 
 describe('TimerConfig', () => {
   it('should reject duration less than 1 second', () => {

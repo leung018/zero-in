@@ -1,8 +1,8 @@
+import { Duration } from '@zero-in/shared/domain/timer/duration'
 import { ObservableStorage } from '@zero-in/shared/infra/storage/interface'
 import { expect, it } from 'vitest'
 import { TimerConfig } from '.'
 import config from '../../../config'
-import { Duration } from '../duration'
 import { TimerConfigStorageService } from './storage'
 
 export function runTimerConfigStorageServiceTests(storage: ObservableStorage) {

@@ -4,15 +4,15 @@ import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time/index'
 import type { TimerBasedBlockingRules } from '@zero-in/shared/domain/timer-based-blocking/index'
 import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
+import { Duration } from '@zero-in/shared/domain/timer/duration'
 import { newFocusSessionRecord } from '@zero-in/shared/domain/timer/record/index'
 import { FocusSessionRecordsStorageService } from '@zero-in/shared/domain/timer/record/storage'
+import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { FakeBrowsingControlService } from '../infra/browsing-control'
 import { BrowsingControlTogglingService } from './browsing-control-toggling'
 import { BrowsingRules } from './browsing-rules'
 import { BrowsingRulesStorageService } from './browsing-rules/storage'
-import { Duration } from './timer/duration'
-import { TimerStage } from './timer/stage'
 
 describe('BrowsingControlTogglingService', () => {
   const browsingRules = new BrowsingRules({ blockedDomains: ['example.com', 'facebook.com'] })

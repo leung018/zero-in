@@ -1,6 +1,6 @@
+import { Duration } from '@zero-in/shared/domain/timer/duration'
+import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { dateDiff, getDateAfter } from '@zero-in/shared/utils/date'
-import { Duration } from '../duration'
-import { TimerStage } from '../stage'
 import type { TimerExternalState } from './external'
 
 export class TimerInternalState {

@@ -3,10 +3,10 @@ import {
   newTestTimerBasedBlockingRules,
   type TimerBasedBlockingRules
 } from '@zero-in/shared/domain/timer-based-blocking/index'
+import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { describe, expect, it } from 'vitest'
 import config from '../../config'
 import { BrowsingRules } from '../../domain/browsing-rules'
-import { TimerStage } from '../../domain/timer/stage'
 import { TimerInternalState } from '../../domain/timer/state/internal'
 import { FakeActionService } from '../../infra/action'
 import { assertSelectorCheckboxValue } from '../../test-utils/assert'

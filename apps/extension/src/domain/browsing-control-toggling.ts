@@ -4,11 +4,11 @@ import {
   TimerInfoGetter
 } from '@zero-in/shared/domain/should-activate-blocking'
 import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
+import { Duration } from '@zero-in/shared/domain/timer/duration'
 import { FocusSessionRecordsStorageService } from '@zero-in/shared/domain/timer/record/storage'
+import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { FakeBrowsingControlService, type BrowsingControlService } from '../infra/browsing-control'
 import { BrowsingRulesStorageService } from './browsing-rules/storage'
-import { Duration } from './timer/duration'
-import { TimerStage } from './timer/stage'
 
 export class BrowsingControlTogglingService {
   private browsingControlService: BrowsingControlService

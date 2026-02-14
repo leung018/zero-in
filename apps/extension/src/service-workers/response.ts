@@ -1,4 +1,4 @@
-import type { TimerStage } from '../domain/timer/stage'
+import type { TimerStage } from '@zero-in/shared/domain/timer/stage'
 
 export enum WorkResponseName {
   TIMER_STATE,
