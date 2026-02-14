@@ -6,7 +6,16 @@ import { Time } from '@zero-in/shared/domain/time'
 import { AppBlockTogglingService } from './app-block-toggling'
 
 describe('AppBlockTogglingService', () => {
+  beforeEach(() => {
+    jest.useFakeTimers()
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
   it('should set app blocking schedule only if weekly schedule is set', async () => {
+    jest.setSystemTime(new Date('2026-01-05T08:00:00')) // 2026-01-05 is Monday
     const { weeklySchedulesStorageService, appBlocker, togglingService } =
       await runAppBlockToggling({
         weeklySchedules: [
@@ -15,8 +24,7 @@ describe('AppBlockTogglingService', () => {
             startTime: new Time(9, 0),
             endTime: new Time(17, 0)
           })
-        ],
-        currentDate: new Date('2026-01-05T08:00:00') // 2026-01-05 is Monday
+        ]
       })
 
     expect(appBlocker.getBlockingScheduleSpan()).toEqual({
@@ -49,22 +57,22 @@ describe('AppBlockTogglingService', () => {
       })
     ])
 
-    await togglingService.run(new Date('2026-01-05T08:00:00')) // 2026-01-05 is Monday
+    jest.setSystemTime(new Date('2026-01-05T08:00:00')) // 2026-01-05 is Monday
+    await togglingService.run()
 
     expect(appBlocker.getBlockingScheduleSpan()).not.toBeNull()
     expect(appBlocker.getIsAppBlocked()).toBe(false)
   })
 })
 
-export async function runAppBlockToggling({
+async function runAppBlockToggling({
   weeklySchedules = [
     new WeeklySchedule({
       weekdaySet: new Set([Weekday.MON]),
       startTime: new Time(9, 0),
       endTime: new Time(17, 0)
     })
-  ],
-  currentDate = new Date('2026-01-05T08:00:00')
+  ]
 } = {}) {
   const weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake()
   const appBlocker = new FakeAppBlocker()
@@ -74,7 +82,7 @@ export async function runAppBlockToggling({
   })
 
   await weeklySchedulesStorageService.save(weeklySchedules)
-  const blockingScheduleSpan = await togglingService.run(currentDate)
+  const blockingScheduleSpan = await togglingService.run()
 
   expect(blockingScheduleSpan).toEqual(appBlocker.getBlockingScheduleSpan())
 
