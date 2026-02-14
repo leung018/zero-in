@@ -17,6 +17,10 @@ export interface TimerInfoGetter {
 }
 
 export class ShouldActivateBlockingTeller {
+  /**
+   * TESTING NOTE: The logic in this class is covered by test of BrowsingControlTogglerService, so no unit test for it.
+   */
+
   private weeklySchedulesStorageService: WeeklySchedulesStorageService
   private focusSessionRecordsStorageService: FocusSessionRecordsStorageService
   private timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
