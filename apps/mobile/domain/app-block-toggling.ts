@@ -30,10 +30,9 @@ export class AppBlockTogglingService {
     this.appBlocker = appBlocker
   }
 
-  async run(currentDate: Date = new Date()) {
+  async run() {
     const scheduleSpan = findActiveOrNextScheduleSpan(
-      await this.weeklySchedulesStorageService.get(), // TODO: Exclude schedules that completed target focus sessions
-      currentDate
+      await this.weeklySchedulesStorageService.get() // TODO: Exclude schedules that completed target focus sessions
     )
     if (scheduleSpan) {
       await Promise.all([this.appBlocker.unblockApps(), this.appBlocker.setSchedule(scheduleSpan)])
