@@ -3,6 +3,7 @@ import { WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time'
+import { newFocusSessionRecord } from '../../../packages/shared/src/domain/timer/record'
 import { AppBlockTogglingService } from './app-block-toggling'
 
 describe('AppBlockTogglingService', () => {
@@ -72,7 +73,8 @@ async function runAppBlockToggling({
       startTime: new Time(9, 0),
       endTime: new Time(17, 0)
     })
-  ]
+  ],
+  focusSessionRecords = [newFocusSessionRecord()]
 } = {}) {
   const weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake()
   const appBlocker = new FakeAppBlocker()
