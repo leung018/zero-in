@@ -1,7 +1,7 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
+import { Duration } from '@zero-in/shared/domain/timer/duration'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { TimerConfig } from '../domain/timer/config'
-import { Duration } from '../domain/timer/duration'
 import { FakeCommunicationManager } from '../infra/communication'
 import { setUpListener } from '../test-utils/listener'
 import { dataTestSelector } from '../test-utils/selector'

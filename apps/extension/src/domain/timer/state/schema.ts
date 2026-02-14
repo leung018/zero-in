@@ -1,4 +1,4 @@
-import type { TimerStage } from '../stage'
+import type { TimerStage } from '@zero-in/shared/domain/timer/stage'
 
 export type TimerStateSchemas = [
   {

@@ -1,5 +1,5 @@
+import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { getNumberWithOrdinal } from '@zero-in/shared/utils/format'
-import { TimerStage } from './stage'
 
 // Tests of it is covered by component test of FocusTimerPage.spec.ts
 

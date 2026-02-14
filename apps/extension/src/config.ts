@@ -1,7 +1,7 @@
 import config from '@zero-in/shared/config'
+import { Duration } from '@zero-in/shared/domain/timer/duration'
 import type { NotificationSetting } from './domain/notification-setting'
 import { TimerConfig } from './domain/timer/config'
-import { Duration } from './domain/timer/duration'
 import type { BadgeColor } from './infra/badge'
 
 const getBlockedTemplateUrl = () => {

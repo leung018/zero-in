@@ -1,7 +1,7 @@
+import { Duration } from '@zero-in/shared/domain/timer/duration'
+import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { ObservableStorage } from '@zero-in/shared/infra/storage/interface'
 import { expect, it } from 'vitest'
-import { Duration } from '../duration'
-import { TimerStage } from '../stage'
 import { TimerInternalState } from './internal'
 import { TimerStateStorageService } from './storage'
 

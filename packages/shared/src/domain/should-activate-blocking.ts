@@ -1,10 +1,10 @@
-import { Duration } from '../../../../apps/extension/src/domain/timer/duration'
-import { TimerStage } from '../../../../apps/extension/src/domain/timer/stage'
 import { isSameDay } from '../utils/date'
 import { WeeklySchedule } from './schedules'
 import { WeeklySchedulesStorageService } from './schedules/storage'
 import { TimerBasedBlockingRulesStorageService } from './timer-based-blocking/storage'
+import { Duration } from './timer/duration'
 import { FocusSessionRecordsStorageService } from './timer/record/storage'
+import { TimerStage } from './timer/stage'
 
 export interface TimerInfoGetter {
   getTimerInfo(): {

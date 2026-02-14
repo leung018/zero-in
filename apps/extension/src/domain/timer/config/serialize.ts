@@ -1,5 +1,5 @@
+import { Duration } from '@zero-in/shared/domain/timer/duration'
 import { TimerConfig } from '.'
-import { Duration } from '../duration'
 
 export type SerializedTimerConfig = {
   focusDurationSeconds: number

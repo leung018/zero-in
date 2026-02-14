@@ -1,5 +1,5 @@
-import { Duration } from '../duration'
-import { TimerStage } from '../stage'
+import { Duration } from '@zero-in/shared/domain/timer/duration'
+import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 
 export type TimerExternalState = {
   remaining: Duration
