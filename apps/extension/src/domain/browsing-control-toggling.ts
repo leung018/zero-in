@@ -1,3 +1,4 @@
+import { isScheduleCompleteTarget } from '@zero-in/shared/domain/is-schedule-complete-target'
 import { WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
@@ -107,18 +108,14 @@ export class BrowsingControlTogglingService {
     inputSchedules: ReadonlyArray<WeeklySchedule>
   ): Promise<boolean> {
     const now = new Date()
-    const schedules = inputSchedules.filter((schedule) => schedule.isContain(now))
 
-    const focusSessionRecords = await this.focusSessionRecordsStorageService.get()
+    const schedules = inputSchedules.filter((schedule) => schedule.isContain(now))
+    const focusSessionRecords = (await this.focusSessionRecordsStorageService.get()).filter(
+      (record) => isSameDay(record.completedAt, now)
+    )
 
     for (const schedule of schedules) {
-      if (!schedule.targetFocusSessions) {
-        return true
-      }
-      const completedSessions = focusSessionRecords.filter(
-        (record) => isSameDay(record.completedAt, now) && schedule.isContain(record.completedAt)
-      )
-      if (completedSessions.length < schedule.targetFocusSessions) {
+      if (!isScheduleCompleteTarget(schedule, focusSessionRecords)) {
         return true
       }
     }
