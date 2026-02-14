@@ -1,11 +1,11 @@
 import { isScheduleCompleteTarget } from '@zero-in/shared/domain/is-schedule-complete-target'
 import { WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
+import { getWeekdayFromDate } from '@zero-in/shared/domain/schedules/weekday'
 import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
 import { Duration } from '@zero-in/shared/domain/timer/duration'
 import { FocusSessionRecordsStorageService } from '@zero-in/shared/domain/timer/record/storage'
 import { TimerStage } from '@zero-in/shared/domain/timer/stage'
-import { isSameDay } from '@zero-in/shared/utils/date'
 import { FakeBrowsingControlService, type BrowsingControlService } from '../infra/browsing-control'
 import { BrowsingRulesStorageService } from './browsing-rules/storage'
 
@@ -110,12 +110,10 @@ export class BrowsingControlTogglingService {
     const now = new Date()
 
     const schedules = inputSchedules.filter((schedule) => schedule.isContain(now))
-    const focusSessionRecords = (await this.focusSessionRecordsStorageService.get()).filter(
-      (record) => isSameDay(record.completedAt, now)
-    )
+    const focusSessionRecords = await this.focusSessionRecordsStorageService.get()
 
     for (const schedule of schedules) {
-      if (!isScheduleCompleteTarget(schedule, focusSessionRecords)) {
+      if (!isScheduleCompleteTarget(schedule, focusSessionRecords, getWeekdayFromDate(now))) {
         return true
       }
     }
