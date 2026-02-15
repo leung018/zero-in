@@ -1,5 +1,6 @@
 import { AppBlockTogglingService } from './domain/app-block-toggling'
 import { newWeeklySchedulesStorageService } from './domain/schedules/storage'
+import { newFocusSessionRecordsStorageService } from './domain/timer/record/storage'
 import { appBlocker } from './modules/app-blocker'
 
 /**
@@ -13,6 +14,7 @@ import { appBlocker } from './modules/app-blocker'
 export function newAppBlockTogglingService() {
   return new AppBlockTogglingService({
     weeklySchedulesStorageService: newWeeklySchedulesStorageService(),
+    focusSessionRecordsStorageService: newFocusSessionRecordsStorageService(),
     appBlocker
   })
 }
