@@ -1,3 +1,4 @@
+import { TimerInfoGetter } from '@zero-in/shared/domain/blocking-toggling'
 import { isScheduleCompleteTarget } from '@zero-in/shared/domain/is-schedule-complete-target'
 import { WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
@@ -8,16 +9,6 @@ import { FocusSessionRecordsStorageService } from '@zero-in/shared/domain/timer/
 import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { FakeBrowsingControlService, type BrowsingControlService } from '../infra/browsing-control'
 import { BrowsingRulesStorageService } from './browsing-rules/storage'
-
-interface TimerInfoGetter {
-  getTimerInfo(): {
-    timerStage: TimerStage
-    isRunning: boolean
-    remaining: Duration
-    longBreak: Duration
-    shortBreak: Duration
-  }
-}
 
 export class BrowsingControlTogglingService {
   private browsingControlService: BrowsingControlService
