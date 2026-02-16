@@ -1,6 +1,37 @@
 import { Time } from '@zero-in/shared/domain/time/index'
 import { Weekday, getWeekdayFromDate } from './weekday'
 
+/**
+ * A date-specific schedule instance with absolute start/end times.
+ * Represents a single occurrence of a weekly schedule on a specific date.
+ */
+export class ScheduleInstance {
+  readonly start: Date
+  readonly end: Date
+  readonly targetFocusSessions: number | null
+
+  constructor({
+    start,
+    end,
+    targetFocusSessions = null
+  }: {
+    start: Date
+    end: Date
+    targetFocusSessions?: number | null
+  }) {
+    this.start = start
+    this.end = end
+    this.targetFocusSessions = targetFocusSessions
+  }
+
+  isContain(timestamp: Date): boolean {
+    return timestamp >= this.start && timestamp < this.end
+  }
+}
+
+/**
+ * A repeating weekly schedule template.
+ */
 export class WeeklySchedule {
   weekdaySet: ReadonlySet<Weekday>
   readonly startTime: Time
@@ -51,6 +82,29 @@ export class WeeklySchedule {
       return true
     }
     return this.startTime.isBefore(currentTime) && currentTime.isBefore(this.endTime)
+  }
+
+  /**
+   * Creates a date-specific instance for a given date if the weekday matches.
+   * Returns null if the date's weekday is not in this schedule's weekdaySet.
+   */
+  createInstanceForDate(date: Date): ScheduleInstance | null {
+    const weekday = getWeekdayFromDate(date)
+    if (!this.weekdaySet.has(weekday)) {
+      return null
+    }
+
+    const start = new Date(date)
+    start.setHours(this.startTime.hour, this.startTime.minute, 0, 0)
+
+    const end = new Date(date)
+    end.setHours(this.endTime.hour, this.endTime.minute, 0, 0)
+
+    return new ScheduleInstance({
+      start,
+      end,
+      targetFocusSessions: this.targetFocusSessions
+    })
   }
 }
 

@@ -1,24 +1,17 @@
-import { WeeklySchedule } from './schedules'
-import { getWeekdayFromDate, Weekday } from './schedules/weekday'
+import { ScheduleInstance } from './schedules'
 import { FocusSessionRecord } from './timer/record'
 
-// TODO: Add test for this function
-export function isScheduleCompleteTarget(
-  schedule: WeeklySchedule,
-  focusSessionRecords: ReadonlyArray<FocusSessionRecord>,
-  weekday: Weekday
+export function isScheduleInstanceCompleteTarget(
+  instance: ScheduleInstance,
+  focusSessionRecords: ReadonlyArray<FocusSessionRecord>
 ): boolean {
-  if (!schedule.targetFocusSessions) {
-    return false
-  }
-  if (!schedule.weekdaySet.has(weekday)) {
+  if (!instance.targetFocusSessions) {
     return false
   }
 
-  const completedSessions = focusSessionRecords.filter(
-    (record) =>
-      schedule.isContain(record.completedAt) && getWeekdayFromDate(record.completedAt) === weekday
+  const completedSessions = focusSessionRecords.filter((record) =>
+    instance.isContain(record.completedAt)
   )
 
-  return completedSessions.length >= schedule.targetFocusSessions
+  return completedSessions.length >= instance.targetFocusSessions
 }
