@@ -4,6 +4,7 @@
 
 - Be extremely concise and sacrifice grammar for the sake of concision
 - Following TDD when adding new features, ONE test → ONE implementation → repeat
+- Avoid comments if code or function names are self-explanatory. Comment only for non-obvious logic.
 
 ## Project Overview
 
