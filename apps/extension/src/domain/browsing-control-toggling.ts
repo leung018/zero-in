@@ -1,8 +1,7 @@
 import { TimerInfoGetter } from '@zero-in/shared/domain/blocking-toggling'
-import { isScheduleCompleteTarget } from '@zero-in/shared/domain/is-schedule-complete-target'
-import { WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
+import { isScheduleInstanceCompleteTarget } from '@zero-in/shared/domain/is-schedule-complete-target'
+import { ScheduleInstance, WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
-import { getWeekdayFromDate } from '@zero-in/shared/domain/schedules/weekday'
 import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
 import { Duration } from '@zero-in/shared/domain/timer/duration'
 import { FocusSessionRecordsStorageService } from '@zero-in/shared/domain/timer/record/storage'
@@ -99,12 +98,23 @@ export class BrowsingControlTogglingService {
     inputSchedules: ReadonlyArray<WeeklySchedule>
   ): Promise<boolean> {
     const now = new Date()
+    const todayInstances: ScheduleInstance[] = []
 
-    const schedules = inputSchedules.filter((schedule) => schedule.isContain(now))
+    for (const schedule of inputSchedules) {
+      const instance = schedule.createInstanceForDate(now)
+      if (instance) {
+        todayInstances.push(instance)
+      }
+    }
+
+    if (todayInstances.length === 0) {
+      return false
+    }
+
     const focusSessionRecords = await this.focusSessionRecordsStorageService.get()
 
-    for (const schedule of schedules) {
-      if (!isScheduleCompleteTarget(schedule, focusSessionRecords, getWeekdayFromDate(now))) {
+    for (const instance of todayInstances) {
+      if (!isScheduleInstanceCompleteTarget(instance, focusSessionRecords)) {
         return true
       }
     }
