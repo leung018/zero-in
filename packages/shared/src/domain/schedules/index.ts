@@ -85,10 +85,10 @@ export class WeeklySchedule {
   }
 
   /**
-   * Creates a date-specific instance for a given date if the weekday matches.
+   * Gets the date-specific schedule instance for a given date if the weekday matches.
    * Returns null if the date's weekday is not in this schedule's weekdaySet.
    */
-  createInstanceForDate(date: Date): ScheduleInstance | null {
+  getInstanceForDate(date: Date): ScheduleInstance | null {
     const weekday = getWeekdayFromDate(date)
     if (!this.weekdaySet.has(weekday)) {
       return null

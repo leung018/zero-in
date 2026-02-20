@@ -98,22 +98,18 @@ export class BrowsingControlTogglingService {
     inputSchedules: ReadonlyArray<WeeklySchedule>
   ): Promise<boolean> {
     const now = new Date()
-    const todayInstances: ScheduleInstance[] = []
+    const currentInstances: ScheduleInstance[] = []
 
     for (const schedule of inputSchedules) {
-      const instance = schedule.createInstanceForDate(now)
+      const instance = schedule.getInstanceForDate(now)
       if (instance && instance.isContain(now)) {
-        todayInstances.push(instance)
+        currentInstances.push(instance)
       }
-    }
-
-    if (todayInstances.length === 0) {
-      return false
     }
 
     const focusSessionRecords = await this.focusSessionRecordsStorageService.get()
 
-    for (const instance of todayInstances) {
+    for (const instance of currentInstances) {
       if (!isScheduleInstanceCompleteTarget(instance, focusSessionRecords)) {
         return true
       }
