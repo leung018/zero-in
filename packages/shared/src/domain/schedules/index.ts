@@ -73,15 +73,11 @@ export class WeeklySchedule {
    * e.g. If the schedule ends at 5:00 PM and the date's time is exactly 5:00 PM, it will return false.
    */
   isContain(date: Date): boolean {
-    const weekday = getWeekdayFromDate(date)
-    if (!this.weekdaySet.has(weekday)) {
+    const scheduleInstance = this.getInstanceForDate(date)
+    if (!scheduleInstance) {
       return false
     }
-    const currentTime = Time.fromDate(date)
-    if (timesAreEqual(currentTime, this.startTime)) {
-      return true
-    }
-    return this.startTime.isBefore(currentTime) && currentTime.isBefore(this.endTime)
+    return scheduleInstance.isContain(date)
   }
 
   /**
@@ -106,8 +102,4 @@ export class WeeklySchedule {
       targetFocusSessions: this.targetFocusSessions
     })
   }
-}
-
-function timesAreEqual(time1: Time, time2: Time): boolean {
-  return time1.hour === time2.hour && time1.minute === time2.minute
 }
