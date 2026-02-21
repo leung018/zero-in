@@ -102,7 +102,7 @@ export class BrowsingControlTogglingService {
 
     for (const schedule of inputSchedules) {
       const instance = schedule.getInstanceForDate(now)
-      if (instance && instance.isContain(now)) {
+      if (instance) {
         currentInstances.push(instance)
       }
     }
