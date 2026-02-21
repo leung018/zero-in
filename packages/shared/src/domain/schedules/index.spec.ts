@@ -4,6 +4,8 @@ import { WeeklySchedule } from '.'
 import { Weekday } from './weekday'
 
 describe('WeeklySchedules', () => {
+  // Note: Tests cases of getInstanceForDate is covered by other tests that use it, so don't have tests for it here.
+
   it('should reject empty weekday set', () => {
     expect(
       () =>

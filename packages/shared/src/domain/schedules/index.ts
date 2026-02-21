@@ -77,12 +77,12 @@ export class WeeklySchedule {
     if (!scheduleInstance) {
       return false
     }
-    return scheduleInstance.isContain(date)
+    return true
   }
 
   /**
-   * Gets the date-specific schedule instance for a given date if the weekday matches.
-   * Returns null if the date's weekday is not in this schedule's weekdaySet.
+   * Returns a ScheduleInstance for the given date if this schedule applies on that date.
+   * Returns null if the data is not within the schedule (either because the weekday doesn't match or the time is outside the start/end time).
    */
   getInstanceForDate(date: Date): ScheduleInstance | null {
     const weekday = getWeekdayFromDate(date)
@@ -96,10 +96,16 @@ export class WeeklySchedule {
     const end = new Date(date)
     end.setHours(this.endTime.hour, this.endTime.minute, 0, 0)
 
-    return new ScheduleInstance({
+    const instance = new ScheduleInstance({
       start,
       end,
       targetFocusSessions: this.targetFocusSessions
     })
+
+    if (!instance.isContain(date)) {
+      return null
+    }
+
+    return instance
   }
 }
