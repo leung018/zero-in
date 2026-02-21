@@ -6608,6 +6608,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@zero-in/shared@workspace:packages/shared"
   dependencies:
+    "@vitest/coverage-v8": "npm:^4.0.18"
     vitest: "npm:^4.0.18"
   languageName: unknown
   linkType: soft
