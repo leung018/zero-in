@@ -11,6 +11,7 @@
   },
   "scripts": {
     "test:unit": "vitest run",
-    "test:unit:watch": "vitest run --watch"
+    "test:unit:watch": "vitest run --watch",
+    "test:unit:coverage": "vitest run --coverage"
   }
 }
