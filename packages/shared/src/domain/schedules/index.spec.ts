@@ -4,7 +4,7 @@ import { WeeklySchedule } from '.'
 import { Weekday } from './weekday'
 
 describe('WeeklySchedules', () => {
-  // Note: Tests cases of getInstanceForDate is covered by other tests that use it, so don't have tests for it here.
+  // Note: Tests cases of getInstanceForDate and ScheduleInstance.isContain are covered by other tests that use it indirectly, so don't have tests for them here.
 
   it('should reject empty weekday set', () => {
     expect(
