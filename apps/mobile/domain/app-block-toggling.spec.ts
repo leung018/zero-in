@@ -3,7 +3,10 @@ import { WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time'
-import { newFocusSessionRecord } from '../../../packages/shared/src/domain/timer/record'
+import {
+  FocusSessionRecord,
+  newFocusSessionRecord
+} from '../../../packages/shared/src/domain/timer/record'
 import { FocusSessionRecordsStorageService } from '../../../packages/shared/src/domain/timer/record/storage'
 import { AppBlockTogglingService } from './app-block-toggling'
 
@@ -41,8 +44,17 @@ describe('AppBlockTogglingService', () => {
     expect(appBlocker.getBlockingScheduleSpan()).toBeNull()
   })
 
-  it.skip('should only consider schedules that have not completed target focus sessions', async () => {
+  it('should only consider schedules that have not completed target focus sessions', async () => {
     jest.setSystemTime(new Date('2026-01-05T12:00:00')) // 2026-01-05 is Monday
+    const focusSessionRecords: FocusSessionRecord[] = [
+      newFocusSessionRecord({
+        completedAt: new Date('2026-01-04T10:00:00')
+      }),
+      newFocusSessionRecord({
+        completedAt: new Date('2026-01-05T10:00:00')
+      })
+    ]
+
     const { appBlocker, focusSessionRecordsStorageService, togglingService } =
       await runAppBlockToggling({
         weeklySchedules: [
@@ -53,14 +65,7 @@ describe('AppBlockTogglingService', () => {
             targetFocusSessions: 2
           })
         ],
-        focusSessionRecords: [
-          newFocusSessionRecord({
-            completedAt: new Date('2026-01-04T10:00:00')
-          }),
-          newFocusSessionRecord({
-            completedAt: new Date('2026-01-05T10:00:00')
-          })
-        ]
+        focusSessionRecords
       })
 
     expect(appBlocker.getBlockingScheduleSpan()).toEqual({
@@ -69,11 +74,12 @@ describe('AppBlockTogglingService', () => {
     })
 
     // After adding another completed focus session within Monday schedule, it should consider the schedule as completed
-    await focusSessionRecordsStorageService.save([
+    focusSessionRecords.push(
       newFocusSessionRecord({
         completedAt: new Date('2026-01-05T11:00:00')
       })
-    ])
+    )
+    await focusSessionRecordsStorageService.save(focusSessionRecords)
 
     await togglingService.run()
 
