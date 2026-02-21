@@ -1,6 +1,7 @@
 import { WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time'
+import { newFocusSessionRecord } from '@zero-in/shared/domain/timer/record'
 import { findActiveOrNextScheduleSpan } from './schedule-span'
 
 describe('findActiveOrNextScheduleSpan', () => {
@@ -126,6 +127,35 @@ describe('findActiveOrNextScheduleSpan', () => {
     const result = findActiveOrNextScheduleSpan([s1, s2], mondayNoon)
     expect(result).toEqual({
       start: new Date('2026-01-05T15:00:00'),
+      end: new Date('2026-01-05T16:00:00')
+    })
+  })
+
+  it('should exclude schedule instances whose targetFocusSessions have been completed', () => {
+    const s1 = new WeeklySchedule({
+      weekdaySet: mon,
+      startTime: new Time(10, 0),
+      endTime: new Time(12, 0),
+      targetFocusSessions: 2
+    })
+    const s2 = new WeeklySchedule({
+      weekdaySet: mon,
+      startTime: new Time(14, 0),
+      endTime: new Time(16, 0),
+      targetFocusSessions: 2
+    })
+
+    // s1 has completed target (2 sessions in its time window)
+    const records = [
+      newFocusSessionRecord({ completedAt: new Date('2026-01-05T10:30:00') }),
+      newFocusSessionRecord({ completedAt: new Date('2026-01-05T11:00:00') })
+    ]
+
+    // Test at 11:00 when s1 is still active but completed
+    const result = findActiveOrNextScheduleSpan([s1, s2], new Date('2026-01-05T11:00:00'), records)
+    // Should skip s1 (completed) and return s2
+    expect(result).toEqual({
+      start: new Date('2026-01-05T14:00:00'),
       end: new Date('2026-01-05T16:00:00')
     })
   })
