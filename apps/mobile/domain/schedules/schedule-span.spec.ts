@@ -12,7 +12,7 @@ describe('findActiveOrNextScheduleSpan', () => {
   const mondayNoon = new Date('2026-01-05T12:00:00')
 
   it('should return null if no schedules', () => {
-    expect(findActiveOrNextScheduleSpan([], mondayNoon)).toBeNull()
+    expect(findActiveOrNextScheduleSpan({ schedules: [], now: mondayNoon })).toBeNull()
   })
 
   it('should find current schedule if it exists', () => {
@@ -21,7 +21,7 @@ describe('findActiveOrNextScheduleSpan', () => {
       startTime: new Time(10, 0),
       endTime: new Time(14, 0)
     })
-    const result = findActiveOrNextScheduleSpan([s1], mondayNoon)
+    const result = findActiveOrNextScheduleSpan({ schedules: [s1], now: mondayNoon })
     expect(result).toEqual({
       start: new Date('2026-01-05T10:00:00'),
       end: new Date('2026-01-05T14:00:00')
@@ -40,7 +40,7 @@ describe('findActiveOrNextScheduleSpan', () => {
       endTime: new Time(14, 0)
     })
 
-    const result = findActiveOrNextScheduleSpan([s2, s1], mondayNoon)
+    const result = findActiveOrNextScheduleSpan({ schedules: [s2, s1], now: mondayNoon })
     expect(result).toEqual({
       start: new Date('2026-01-05T14:00:00'),
       end: new Date('2026-01-05T18:00:00')
@@ -59,7 +59,7 @@ describe('findActiveOrNextScheduleSpan', () => {
       endTime: new Time(14, 0)
     })
     // 10:00-12:00 and 11:00-14:00 should become 10:00-14:00
-    const result = findActiveOrNextScheduleSpan([s2, s1], mondayNoon)
+    const result = findActiveOrNextScheduleSpan({ schedules: [s2, s1], now: mondayNoon })
     expect(result).toEqual({
       start: new Date('2026-01-05T10:00:00'),
       end: new Date('2026-01-05T14:00:00')
@@ -78,7 +78,7 @@ describe('findActiveOrNextScheduleSpan', () => {
       endTime: new Time(14, 0)
     })
     // 10:00-12:00 and 12:00-14:00 should become 10:00-14:00
-    const result = findActiveOrNextScheduleSpan([s1, s2], mondayNoon)
+    const result = findActiveOrNextScheduleSpan({ schedules: [s1, s2], now: mondayNoon })
     expect(result).toEqual({
       start: new Date('2026-01-05T10:00:00'),
       end: new Date('2026-01-05T14:00:00')
@@ -91,7 +91,7 @@ describe('findActiveOrNextScheduleSpan', () => {
       startTime: new Time(10, 0),
       endTime: new Time(12, 0)
     })
-    const result = findActiveOrNextScheduleSpan([s1], mondayNoon)
+    const result = findActiveOrNextScheduleSpan({ schedules: [s1], now: mondayNoon })
     expect(result).toEqual({
       start: new Date('2026-01-06T10:00:00'),
       end: new Date('2026-01-06T12:00:00')
@@ -104,7 +104,7 @@ describe('findActiveOrNextScheduleSpan', () => {
       startTime: new Time(9, 0),
       endTime: new Time(12, 0)
     })
-    const result = findActiveOrNextScheduleSpan([s1], mondayNoon)
+    const result = findActiveOrNextScheduleSpan({ schedules: [s1], now: mondayNoon })
     expect(result).toEqual({
       start: new Date('2026-01-12T09:00:00'),
       end: new Date('2026-01-12T12:00:00')
@@ -124,7 +124,7 @@ describe('findActiveOrNextScheduleSpan', () => {
     })
 
     // now is 12:00. s1 is past, s2 is next.
-    const result = findActiveOrNextScheduleSpan([s1, s2], mondayNoon)
+    const result = findActiveOrNextScheduleSpan({ schedules: [s1, s2], now: mondayNoon })
     expect(result).toEqual({
       start: new Date('2026-01-05T15:00:00'),
       end: new Date('2026-01-05T16:00:00')
@@ -152,7 +152,11 @@ describe('findActiveOrNextScheduleSpan', () => {
     ]
 
     // Test at 11:00 when s1 is still active but completed
-    const result = findActiveOrNextScheduleSpan([s1, s2], new Date('2026-01-05T11:00:00'), records)
+    const result = findActiveOrNextScheduleSpan({
+      schedules: [s1, s2],
+      now: new Date('2026-01-05T11:00:00'),
+      focusSessionRecords: records
+    })
     // Should skip s1 (completed) and return s2
     expect(result).toEqual({
       start: new Date('2026-01-05T14:00:00'),
