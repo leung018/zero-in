@@ -106,6 +106,7 @@ Implementations must handle serialization/deserialization internally.
 
 - **Location**: `*.spec.ts` alongside source files.
 - **Tool**: Vitest.
+- **Execution**: Run tests via terminal commands/scripts (e.g., `yarn test:unit`, `yarn test:integration`), NOT via VS Code Test Runner.
 - **Mocks**: STRICTLY use `createFake()` implementations. NO MOCKING LIBRARIES (jest.mock, etc) for domain logic.
 - **Timers**: Use `vi.useFakeTimers()` for time-dependent tests.
 
