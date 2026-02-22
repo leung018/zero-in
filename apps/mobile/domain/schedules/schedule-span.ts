@@ -23,11 +23,15 @@ export type ScheduleSpan = {
  * @param focusSessionRecords - Focus session records to check completion status
  * @returns The start and end time of the found span, or null if no schedule exists in the search window.
  */
-export function findActiveOrNextScheduleSpan(
-  schedules: readonly WeeklySchedule[],
-  now: Date = new Date(),
-  focusSessionRecords: readonly FocusSessionRecord[] = []
-): ScheduleSpan | null {
+export function findActiveOrNextScheduleSpan({
+  schedules,
+  now = new Date(),
+  focusSessionRecords = []
+}: {
+  schedules: readonly WeeklySchedule[]
+  now?: Date
+  focusSessionRecords?: readonly FocusSessionRecord[]
+}): ScheduleSpan | null {
   if (schedules.length === 0) return null
 
   const instances = getScheduleInstancesWithin7Days(schedules, now)
