@@ -151,7 +151,7 @@ describe('AppBlockTogglingService', () => {
       timerInfo: newTimerInfo({
         timerStage: TimerStage.FOCUS,
         isRunning: false,
-        remainingSeconds: 25 * 60
+        remaining: new Duration({ minutes: 25 })
       })
     })
 
@@ -176,7 +176,7 @@ describe('AppBlockTogglingService', () => {
       timerInfo: newTimerInfo({
         timerStage: TimerStage.FOCUS,
         isRunning: true,
-        remainingSeconds: 25 * 60
+        remaining: new Duration({ minutes: 25 })
       })
     })
 
@@ -204,8 +204,8 @@ describe('AppBlockTogglingService', () => {
         timerInfo: newTimerInfo({
           timerStage: TimerStage.SHORT_BREAK,
           isRunning: true,
-          remainingSeconds: 5 * 60,
-          shortBreakSeconds: 5 * 60
+          remaining: new Duration({ minutes: 5 }),
+          shortBreak: new Duration({ minutes: 5 })
         })
       })
 
@@ -232,8 +232,8 @@ describe('AppBlockTogglingService', () => {
         timerInfo: newTimerInfo({
           timerStage: TimerStage.SHORT_BREAK,
           isRunning: false,
-          remainingSeconds: 5 * 60 - 1,
-          shortBreakSeconds: 5 * 60
+          remaining: new Duration({ minutes: 4, seconds: 59 }),
+          shortBreak: new Duration({ minutes: 5 })
         })
       })
 
@@ -247,22 +247,22 @@ type TimerInfo = ReturnType<TimerInfoGetter['getTimerInfo']>
 function newTimerInfo({
   timerStage = TimerStage.FOCUS,
   isRunning = false,
-  remainingSeconds = 99,
-  longBreakSeconds = 999,
-  shortBreakSeconds = 499
+  remaining = new Duration({ minutes: 20 }),
+  longBreak = new Duration({ minutes: 10 }),
+  shortBreak = new Duration({ minutes: 5 })
 }: {
   timerStage?: TimerStage
   isRunning?: boolean
-  remainingSeconds?: number
-  longBreakSeconds?: number
-  shortBreakSeconds?: number
+  remaining?: Duration
+  longBreak?: Duration
+  shortBreak?: Duration
 } = {}): TimerInfo {
   return {
     timerStage,
     isRunning,
-    remaining: new Duration({ seconds: remainingSeconds }),
-    longBreak: new Duration({ seconds: longBreakSeconds }),
-    shortBreak: new Duration({ seconds: shortBreakSeconds })
+    remaining,
+    longBreak,
+    shortBreak
   }
 }
 
