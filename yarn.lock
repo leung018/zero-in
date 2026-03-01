@@ -4633,18 +4633,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-firebase/auth@npm:^23.7.0":
-  version: 23.7.0
-  resolution: "@react-native-firebase/auth@npm:23.7.0"
+"@react-native-firebase/auth@npm:^23.8.6":
+  version: 23.8.6
+  resolution: "@react-native-firebase/auth@npm:23.8.6"
   dependencies:
     plist: "npm:^3.1.0"
   peerDependencies:
-    "@react-native-firebase/app": 23.7.0
+    "@react-native-firebase/app": 23.8.6
     expo: ">=47.0.0"
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10c0/7db754b0f3fe993c6bdfb5ef4a3dec85f0bc5553653eaaffd01f412dfb01327fd7a87ada3a2bd74829bae340a19a090718b6f0241c710c1290365d7c16f394fc
+  checksum: 10c0/f037049b0279840eb567077fea60ef5a19d5178fff942b3ef0a38607edfa0cd136a35184045312fe0ae8b4a764a57d2d8b9b89f2604ba42fa3ebf367248c93c1
   languageName: node
   linkType: hard
 
@@ -6213,7 +6213,7 @@ __metadata:
     "@expo/vector-icons": "npm:^15.0.3"
     "@react-native-community/datetimepicker": "npm:8.4.4"
     "@react-native-firebase/app": "npm:^23.5.0"
-    "@react-native-firebase/auth": "npm:^23.7.0"
+    "@react-native-firebase/auth": "npm:^23.8.6"
     "@react-native-firebase/firestore": "npm:^23.5.0"
     "@react-navigation/bottom-tabs": "npm:^7.4.0"
     "@react-navigation/elements": "npm:^2.8.3"
