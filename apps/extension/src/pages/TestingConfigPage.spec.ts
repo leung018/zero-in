@@ -1,7 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
+import { Duration } from '@zero-in/shared/domain/timer/duration'
 import { describe, expect, it } from 'vitest'
 import { TimerConfig } from '../domain/timer/config'
-import { Duration } from '../domain/timer/duration'
 import { assertSelectorInputValue } from '../test-utils/assert'
 import { setUpListener } from '../test-utils/listener'
 import { dataTestSelector } from '../test-utils/selector'

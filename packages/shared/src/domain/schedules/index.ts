@@ -1,6 +1,37 @@
 import { Time } from '@zero-in/shared/domain/time/index'
 import { Weekday, getWeekdayFromDate } from './weekday'
 
+/**
+ * A date-specific schedule instance with absolute start/end times.
+ * Represents a single occurrence of a weekly schedule on a specific date.
+ */
+export class ScheduleInstance {
+  readonly start: Date
+  readonly end: Date
+  readonly targetFocusSessions: number | null
+
+  constructor({
+    start,
+    end,
+    targetFocusSessions = null
+  }: {
+    start: Date
+    end: Date
+    targetFocusSessions?: number | null
+  }) {
+    this.start = start
+    this.end = end
+    this.targetFocusSessions = targetFocusSessions
+  }
+
+  isContain(timestamp: Date): boolean {
+    return timestamp >= this.start && timestamp < this.end
+  }
+}
+
+/**
+ * A repeating weekly schedule template.
+ */
 export class WeeklySchedule {
   weekdaySet: ReadonlySet<Weekday>
   readonly startTime: Time
@@ -42,18 +73,39 @@ export class WeeklySchedule {
    * e.g. If the schedule ends at 5:00 PM and the date's time is exactly 5:00 PM, it will return false.
    */
   isContain(date: Date): boolean {
-    const weekday = getWeekdayFromDate(date)
-    if (!this.weekdaySet.has(weekday)) {
+    const scheduleInstance = this.getInstanceForDate(date)
+    if (!scheduleInstance) {
       return false
     }
-    const currentTime = Time.fromDate(date)
-    if (timesAreEqual(currentTime, this.startTime)) {
-      return true
-    }
-    return this.startTime.isBefore(currentTime) && currentTime.isBefore(this.endTime)
+    return true
   }
-}
 
-function timesAreEqual(time1: Time, time2: Time): boolean {
-  return time1.hour === time2.hour && time1.minute === time2.minute
+  /**
+   * Returns a ScheduleInstance for the given date if this schedule applies on that date.
+   * Returns null if the data is not within the schedule (either because the weekday doesn't match or the time is outside the start/end time).
+   */
+  getInstanceForDate(date: Date): ScheduleInstance | null {
+    const weekday = getWeekdayFromDate(date)
+    if (!this.weekdaySet.has(weekday)) {
+      return null
+    }
+
+    const start = new Date(date)
+    start.setHours(this.startTime.hour, this.startTime.minute, 0, 0)
+
+    const end = new Date(date)
+    end.setHours(this.endTime.hour, this.endTime.minute, 0, 0)
+
+    const instance = new ScheduleInstance({
+      start,
+      end,
+      targetFocusSessions: this.targetFocusSessions
+    })
+
+    if (!instance.isContain(date)) {
+      return null
+    }
+
+    return instance
+  }
 }

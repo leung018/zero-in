@@ -1,8 +1,8 @@
+import { Duration } from '@zero-in/shared/domain/timer/duration'
+import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import config from '../../config'
 import { PeriodicTaskScheduler } from '../../infra/scheduler'
 import { TimerConfig } from './config'
-import { Duration } from './duration'
-import { TimerStage } from './stage'
 import type { TimerExternalState } from './state/external'
 import { TimerInternalState } from './state/internal'
 

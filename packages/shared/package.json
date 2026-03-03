@@ -6,10 +6,12 @@
     "./*": "./src/*.ts"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.18",
     "vitest": "^4.0.18"
   },
   "scripts": {
     "test:unit": "vitest run",
-    "test:unit:watch": "vitest run --watch"
+    "test:unit:watch": "vitest run --watch",
+    "test:unit:coverage": "vitest run --coverage"
   }
 }

@@ -1,4 +1,4 @@
-import { Duration } from '../duration'
+import { Duration } from '@zero-in/shared/domain/timer/duration'
 
 export class TimerConfig {
   static newTestInstance({

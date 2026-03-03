@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ClientPort } from '@/service-workers/listener'
+import { Duration } from '@zero-in/shared/domain/timer/duration'
+import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { formatNumber } from '@zero-in/shared/utils/format'
 import { computed, ref } from 'vue'
-import { Duration } from '../domain/timer/duration'
-import { TimerStage } from '../domain/timer/stage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage-display-label'
 import { WorkRequestName } from '../service-workers/request'
 import { WorkResponseName } from '../service-workers/response'

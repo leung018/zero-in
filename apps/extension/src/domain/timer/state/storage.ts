@@ -1,3 +1,4 @@
+import { Duration } from '@zero-in/shared/domain/timer/duration'
 import { FakeObservableStorage } from '@zero-in/shared/infra/storage/fake'
 import {
   ObservableStorage,
@@ -7,9 +8,8 @@ import {
 import { StorageKey } from '@zero-in/shared/infra/storage/key'
 import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
 import { StorageManager } from '@zero-in/shared/infra/storage/manager'
+import { getDateAfter } from '@zero-in/shared/utils/date'
 import { AdaptiveStorageProvider } from '../../../infra/storage/adaptive'
-import { getDateAfter } from '../../../utils/date'
-import { Duration } from '../duration'
 import { TimerInternalState } from './internal'
 import { type TimerStateSchemas } from './schema'
 import { deserializeTimerState, serializeTimerState } from './serialize'

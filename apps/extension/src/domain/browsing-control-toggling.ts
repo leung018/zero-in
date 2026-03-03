@@ -1,22 +1,13 @@
-import type { WeeklySchedule } from '@zero-in/shared/domain/schedules'
+import { TimerInfoGetter } from '@zero-in/shared/domain/blocking-toggling'
+import { isScheduleInstanceCompleteTarget } from '@zero-in/shared/domain/is-schedule-complete-target'
+import { ScheduleInstance, WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
+import { Duration } from '@zero-in/shared/domain/timer/duration'
+import { FocusSessionRecordsStorageService } from '@zero-in/shared/domain/timer/record/storage'
+import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { FakeBrowsingControlService, type BrowsingControlService } from '../infra/browsing-control'
-import { isSameDay } from '../utils/date'
 import { BrowsingRulesStorageService } from './browsing-rules/storage'
-import { Duration } from './timer/duration'
-import { FocusSessionRecordsStorageService } from './timer/record/storage'
-import { TimerStage } from './timer/stage'
-
-interface TimerInfoGetter {
-  getTimerInfo(): {
-    timerStage: TimerStage
-    isRunning: boolean
-    remaining: Duration
-    longBreak: Duration
-    shortBreak: Duration
-  }
-}
 
 export class BrowsingControlTogglingService {
   private browsingControlService: BrowsingControlService
@@ -70,20 +61,20 @@ export class BrowsingControlTogglingService {
     this.browsingControlService = browsingControlService
     this.browsingRulesStorageService = browsingRulesStorageService
     this.weeklySchedulesStorageService = weeklySchedulesStorageService
-    this.timerBasedBlockingRulesStorageService = timerBasedBlockingRulesStorageService
     this.focusSessionRecordsStorageService = focusSessionRecordsStorageService
+    this.timerBasedBlockingRulesStorageService = timerBasedBlockingRulesStorageService
     this.timerInfoGetter = timerInfoGetter
   }
 
   async run(): Promise<void> {
-    if (await this.shouldActivateBrowsingRules()) {
+    if (await this.shouldActivateBlocking()) {
       const browsingRules = await this.browsingRulesStorageService.get()
       return this.browsingControlService.setAndActivateNewRules(browsingRules)
     }
     return this.browsingControlService.deactivateExistingRules()
   }
 
-  private async shouldActivateBrowsingRules(): Promise<boolean> {
+  async shouldActivateBlocking(): Promise<boolean> {
     const timerBasedBlockingRules = await this.timerBasedBlockingRulesStorageService.get()
 
     if (timerBasedBlockingRules.pauseBlockingWhenTimerNotRunning && !this.isRunning()) {
@@ -107,18 +98,19 @@ export class BrowsingControlTogglingService {
     inputSchedules: ReadonlyArray<WeeklySchedule>
   ): Promise<boolean> {
     const now = new Date()
-    const schedules = inputSchedules.filter((schedule) => schedule.isContain(now))
+    const currentInstances: ScheduleInstance[] = []
+
+    for (const schedule of inputSchedules) {
+      const instance = schedule.getInstanceForDate(now)
+      if (instance) {
+        currentInstances.push(instance)
+      }
+    }
 
     const focusSessionRecords = await this.focusSessionRecordsStorageService.get()
 
-    for (const schedule of schedules) {
-      if (!schedule.targetFocusSessions) {
-        return true
-      }
-      const completedSessions = focusSessionRecords.filter(
-        (record) => isSameDay(record.completedAt, now) && schedule.isContain(record.completedAt)
-      )
-      if (completedSessions.length < schedule.targetFocusSessions) {
+    for (const instance of currentInstances) {
+      if (!isScheduleInstanceCompleteTarget(instance, focusSessionRecords)) {
         return true
       }
     }

@@ -1,5 +1,11 @@
 # Zero In - AI Coding Agent Instructions
 
+## Top Instructions
+
+- Be extremely concise and sacrifice grammar for the sake of concision
+- Following TDD when adding new features, ONE test → ONE implementation → repeat
+- Avoid comments if code or function names are self-explanatory. Comment only for non-obvious logic.
+
 ## Project Overview
 
 Zero In is a focus productivity tool with three platforms:
@@ -100,6 +106,7 @@ Implementations must handle serialization/deserialization internally.
 
 - **Location**: `*.spec.ts` alongside source files.
 - **Tool**: Vitest.
+- **Execution**: Run tests via terminal commands/scripts (e.g., `yarn test:unit`, `yarn test:integration`), NOT via VS Code Test Runner.
 - **Mocks**: STRICTLY use `createFake()` implementations. NO MOCKING LIBRARIES (jest.mock, etc) for domain logic.
 - **Timers**: Use `vi.useFakeTimers()` for time-dependent tests.
 
@@ -130,7 +137,7 @@ Implementations must handle serialization/deserialization internally.
 - `domain/`: Mobile-specific domain.
 - `infra/`: React Native implementations of shared interfaces.
 
-## Critical Instructions
+## Special Notes
 
 1.  **Shared Logic**: Logic should be moved to `@zero-in/shared` **only if** it is used (or expected to be used) by both Extension and Mobile. Platform-specific domain logic can stay in its respective package.
 2.  **No Direct Native Calls in Domain**: Domain code must never call `chrome.*` or `Module.*` directly. Wrap in an Interface in `domain/` and implement in `infra/`.

@@ -1,5 +1,5 @@
+import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { describe, expect, it } from 'vitest'
-import { TimerStage } from '../stage'
 import { TimerInternalState } from './internal'
 
 describe('TimerInternalState.equalsIgnoringId', () => {
