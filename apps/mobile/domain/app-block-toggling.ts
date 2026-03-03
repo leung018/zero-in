@@ -54,7 +54,5 @@ export class AppBlockTogglingService {
         this.appBlocker.enableAlwaysBlock()
       ])
     }
-
-    return scheduleSpan
   }
 }
