@@ -59,19 +59,19 @@ export const appBlocker = {
     return nativeModule.requestPermission(permissionType)
   },
 
-  blockApps(): Promise<void> {
+  enableAlwaysBlock(): Promise<void> {
     return nativeModule.blockApps()
   },
 
-  unblockApps(): Promise<void> {
+  disableAlwaysBlock(): Promise<void> {
     return nativeModule.unblockApps()
   },
 
-  setSchedule(scheduleSpan: ScheduleSpan): Promise<void> {
+  setBlockingSchedule(scheduleSpan: ScheduleSpan): Promise<void> {
     return nativeModule.setSchedule(scheduleSpan.start.getTime(), scheduleSpan.end.getTime())
   },
 
-  clearSchedule(): Promise<void> {
+  clearBlockingSchedule(): Promise<void> {
     return nativeModule.clearSchedule()
   }
 }

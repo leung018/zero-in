@@ -96,7 +96,7 @@ describe('AppBlockTogglingService', () => {
       })
 
     expect(appBlocker.getBlockingScheduleSpan()).toBeNull()
-    expect(appBlocker.getIsAppBlocked()).toBe(true)
+    expect(appBlocker.isAlwaysBlockActivated()).toBe(true)
 
     // After setting a non current schedule, it should unblock app
     await weeklySchedulesStorageService.save([
@@ -111,7 +111,7 @@ describe('AppBlockTogglingService', () => {
     await togglingService.run()
 
     expect(appBlocker.getBlockingScheduleSpan()).not.toBeNull()
-    expect(appBlocker.getIsAppBlocked()).toBe(false)
+    expect(appBlocker.isAlwaysBlockActivated()).toBe(false)
   })
 })
 

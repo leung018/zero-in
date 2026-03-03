@@ -42,7 +42,7 @@ function DevTestContent() {
 
   const handleBlockApps = async () => {
     try {
-      await appBlocker.blockApps()
+      await appBlocker.enableAlwaysBlock()
       Alert.alert('Success', 'Apps blocked successfully')
     } catch (error) {
       console.error('Failed to block apps:', error)
@@ -52,7 +52,7 @@ function DevTestContent() {
 
   const handleUnblockApps = async () => {
     try {
-      await appBlocker.unblockApps()
+      await appBlocker.disableAlwaysBlock()
       Alert.alert('Success', 'Apps unblocked successfully')
     } catch (error) {
       console.error('Failed to unblock apps:', error)
@@ -62,7 +62,7 @@ function DevTestContent() {
 
   const handleClearSchedule = async () => {
     try {
-      await appBlocker.clearSchedule()
+      await appBlocker.clearBlockingSchedule()
       Alert.alert('Success', 'Schedule cleared successfully')
     } catch (error) {
       console.error('Failed to clear schedule:', error)
@@ -82,7 +82,7 @@ function DevTestContent() {
         start: startDate,
         end: endDate
       }
-      await appBlocker.setSchedule(scheduleSpan)
+      await appBlocker.setBlockingSchedule(scheduleSpan)
       Alert.alert(
         'Success',
         `Schedule set:\nStart: ${formatDateTime(startDate)}\nEnd: ${formatDateTime(endDate)}`

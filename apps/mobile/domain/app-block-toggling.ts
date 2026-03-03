@@ -44,9 +44,15 @@ export class AppBlockTogglingService {
       focusSessionRecords: await this.focusSessionRecordsStorageService.get()
     })
     if (scheduleSpan) {
-      await Promise.all([this.appBlocker.unblockApps(), this.appBlocker.setSchedule(scheduleSpan)])
+      await Promise.all([
+        this.appBlocker.disableAlwaysBlock(),
+        this.appBlocker.setBlockingSchedule(scheduleSpan)
+      ])
     } else {
-      await Promise.all([this.appBlocker.clearSchedule(), this.appBlocker.blockApps()])
+      await Promise.all([
+        this.appBlocker.clearBlockingSchedule(),
+        this.appBlocker.enableAlwaysBlock()
+      ])
     }
 
     return scheduleSpan
