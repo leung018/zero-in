@@ -1,21 +1,21 @@
 import { ScheduleSpan } from '../../domain/schedules/schedule-span'
 
 export interface AppBlocker {
-  setSchedule(scheduleSpan: ScheduleSpan): Promise<void>
-  clearSchedule(): Promise<void>
-  blockApps(): Promise<void>
-  unblockApps(): Promise<void>
+  setBlockingSchedule(scheduleSpan: ScheduleSpan): Promise<void>
+  clearBlockingSchedule(): Promise<void>
+  enableAlwaysBlock(): Promise<void>
+  disableAlwaysBlock(): Promise<void>
 }
 
 export class FakeAppBlocker implements AppBlocker {
   private activeScheduleSpan: ScheduleSpan | null = null
-  private isAppBlocked: boolean = false
+  private _isAlwaysBlockActivated: boolean = false
 
-  async setSchedule(scheduleSpan: ScheduleSpan): Promise<void> {
+  async setBlockingSchedule(scheduleSpan: ScheduleSpan): Promise<void> {
     this.activeScheduleSpan = scheduleSpan
   }
 
-  async clearSchedule(): Promise<void> {
+  async clearBlockingSchedule(): Promise<void> {
     this.activeScheduleSpan = null
   }
 
@@ -23,15 +23,15 @@ export class FakeAppBlocker implements AppBlocker {
     return this.activeScheduleSpan
   }
 
-  async blockApps() {
-    this.isAppBlocked = true
+  async enableAlwaysBlock() {
+    this._isAlwaysBlockActivated = true
   }
 
-  async unblockApps() {
-    this.isAppBlocked = false
+  async disableAlwaysBlock() {
+    this._isAlwaysBlockActivated = false
   }
 
-  getIsAppBlocked(): boolean {
-    return this.isAppBlocked
+  isAlwaysBlockActivated(): boolean {
+    return this._isAlwaysBlockActivated
   }
 }
