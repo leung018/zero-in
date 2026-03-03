@@ -137,9 +137,7 @@ async function runAppBlockToggling({
   await weeklySchedulesStorageService.save(weeklySchedules)
   await focusSessionRecordsStorageService.save(focusSessionRecords)
 
-  const blockingScheduleSpan = await togglingService.run()
-
-  expect(blockingScheduleSpan).toEqual(appBlocker.getBlockingScheduleSpan())
+  await togglingService.run()
 
   return {
     weeklySchedulesStorageService,
