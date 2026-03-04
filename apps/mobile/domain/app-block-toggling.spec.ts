@@ -131,6 +131,32 @@ describe('AppBlockTogglingService', () => {
       expect(appBlocker.isAlwaysBlockActivated()).toBe(false)
     })
   })
+
+  describe('when pauseBlockingDuringBreaks is false and pauseBlockingWhenTimerNotRunning is true', () => {
+    it('should disable all blocking when timer is not running', async () => {
+      jest.setSystemTime(new Date('2026-01-05T10:00:00')) // 2026-01-05 is Monday
+      const { appBlocker } = await runAppBlockToggling({
+        timerBasedBlockingRules: newTestTimerBasedBlockingRules({
+          pauseBlockingDuringBreaks: false,
+          pauseBlockingWhenTimerNotRunning: true
+        }),
+        weeklySchedules: [
+          new WeeklySchedule({
+            weekdaySet: new Set([Weekday.MON]),
+            startTime: new Time(9, 0),
+            endTime: new Time(17, 0)
+          })
+        ],
+        timerInfo: newTimerInfo({
+          timerStage: TimerStage.FOCUS,
+          isRunning: false
+        })
+      })
+
+      expect(appBlocker.getBlockingScheduleSpan()).toBeNull()
+      expect(appBlocker.isAlwaysBlockActivated()).toBe(false)
+    })
+  })
 })
 
 type TimerInfo = ReturnType<TimerInfoGetter['getTimerInfo']>
