@@ -2,7 +2,7 @@ import { TimerInfoGetter } from '../../../packages/shared/src/domain/blocking-to
 import { WeeklySchedulesStorageService } from '../../../packages/shared/src/domain/schedules/storage'
 import { TimerBasedBlockingRulesStorageService } from '../../../packages/shared/src/domain/timer-based-blocking/storage'
 import { FocusSessionRecordsStorageService } from '../../../packages/shared/src/domain/timer/record/storage'
-import { AppBlocker, FakeAppBlocker } from '../infra/app-block/interface'
+import { AppBlocker } from '../infra/app-block/interface'
 import { findActiveOrNextScheduleSpan } from './schedules/schedule-span'
 
 export class AppBlockTogglingService {
@@ -11,28 +11,6 @@ export class AppBlockTogglingService {
   private appBlocker: AppBlocker
   private timerInfoGetter: TimerInfoGetter
   private timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
-
-  static createFake({
-    weeklySchedulesStorageService,
-    focusSessionRecordsStorageService,
-    appBlocker,
-    timerInfoGetter,
-    timerBasedBlockingRulesStorageService
-  }: {
-    weeklySchedulesStorageService: WeeklySchedulesStorageService
-    focusSessionRecordsStorageService: FocusSessionRecordsStorageService
-    appBlocker: FakeAppBlocker
-    timerInfoGetter: TimerInfoGetter
-    timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
-  }): AppBlockTogglingService {
-    return new AppBlockTogglingService({
-      weeklySchedulesStorageService,
-      focusSessionRecordsStorageService,
-      appBlocker,
-      timerInfoGetter,
-      timerBasedBlockingRulesStorageService
-    })
-  }
 
   constructor({
     weeklySchedulesStorageService,
