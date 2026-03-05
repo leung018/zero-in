@@ -2,6 +2,7 @@ import { TimerInfoGetter } from '../../../packages/shared/src/domain/blocking-to
 import { WeeklySchedulesStorageService } from '../../../packages/shared/src/domain/schedules/storage'
 import { TimerBasedBlockingRulesStorageService } from '../../../packages/shared/src/domain/timer-based-blocking/storage'
 import { FocusSessionRecordsStorageService } from '../../../packages/shared/src/domain/timer/record/storage'
+import { getDateAfter } from '../../../packages/shared/src/utils/date'
 import { AppBlocker } from '../infra/app-block/interface'
 import { findActiveOrNextScheduleSpan } from './schedules/schedule-span'
 
@@ -36,21 +37,32 @@ export class AppBlockTogglingService {
     const timerBasedBlockingRules = await this.timerBasedBlockingRulesStorageService.get()
     const timerInfo = this.timerInfoGetter.getTimerInfo()
 
+    const scheduleSpan = findActiveOrNextScheduleSpan({
+      schedules: await this.weeklySchedulesStorageService.get(),
+      focusSessionRecords: await this.focusSessionRecordsStorageService.get()
+    })
+
     if (
       !timerBasedBlockingRules.pauseBlockingDuringBreaks &&
-      timerBasedBlockingRules.pauseBlockingWhenTimerNotRunning &&
-      !timerInfo.isRunning
+      timerBasedBlockingRules.pauseBlockingWhenTimerNotRunning
     ) {
+      if (timerInfo.isRunning && scheduleSpan) {
+        return Promise.all([
+          this.appBlocker.setBlockingSchedule({
+            start: new Date(),
+            end: getDateAfter({ duration: timerInfo.remaining })
+          }),
+          this.appBlocker.disableAlwaysBlock()
+        ])
+      }
+      // TODO: Think of case without schedule span
+
       return Promise.all([
         this.appBlocker.clearBlockingSchedule(),
         this.appBlocker.disableAlwaysBlock()
       ])
     }
 
-    const scheduleSpan = findActiveOrNextScheduleSpan({
-      schedules: await this.weeklySchedulesStorageService.get(),
-      focusSessionRecords: await this.focusSessionRecordsStorageService.get()
-    })
     if (scheduleSpan) {
       await Promise.all([
         this.appBlocker.disableAlwaysBlock(),
