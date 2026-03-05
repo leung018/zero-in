@@ -197,7 +197,7 @@ async function runAppBlockToggling({
   const focusSessionRecordsStorageService = FocusSessionRecordsStorageService.createFake()
   const timerBasedBlockingRulesStorageService = TimerBasedBlockingRulesStorageService.createFake()
   const appBlocker = new FakeAppBlocker()
-  const togglingService = AppBlockTogglingService.createFake({
+  const togglingService = new AppBlockTogglingService({
     weeklySchedulesStorageService,
     focusSessionRecordsStorageService,
     appBlocker,
