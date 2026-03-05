@@ -5,6 +5,7 @@ import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time'
 import { TimerInfoGetter } from '../../../packages/shared/src/domain/blocking-toggling'
 import { newTestTimerBasedBlockingRules } from '../../../packages/shared/src/domain/timer-based-blocking'
+import { TimerBasedBlockingRulesStorageService } from '../../../packages/shared/src/domain/timer-based-blocking/storage'
 import { Duration } from '../../../packages/shared/src/domain/timer/duration'
 import {
   FocusSessionRecord,
@@ -194,15 +195,21 @@ async function runAppBlockToggling({
 } = {}) {
   const weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake()
   const focusSessionRecordsStorageService = FocusSessionRecordsStorageService.createFake()
+  const timerBasedBlockingRulesStorageService = TimerBasedBlockingRulesStorageService.createFake()
   const appBlocker = new FakeAppBlocker()
   const togglingService = AppBlockTogglingService.createFake({
     weeklySchedulesStorageService,
     focusSessionRecordsStorageService,
-    appBlocker
+    appBlocker,
+    timerInfoGetter: {
+      getTimerInfo: () => timerInfo
+    },
+    timerBasedBlockingRulesStorageService
   })
 
   await weeklySchedulesStorageService.save(weeklySchedules)
   await focusSessionRecordsStorageService.save(focusSessionRecords)
+  await timerBasedBlockingRulesStorageService.save(timerBasedBlockingRules)
 
   await togglingService.run()
 

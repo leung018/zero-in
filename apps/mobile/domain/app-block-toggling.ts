@@ -1,4 +1,6 @@
+import { TimerInfoGetter } from '../../../packages/shared/src/domain/blocking-toggling'
 import { WeeklySchedulesStorageService } from '../../../packages/shared/src/domain/schedules/storage'
+import { TimerBasedBlockingRulesStorageService } from '../../../packages/shared/src/domain/timer-based-blocking/storage'
 import { FocusSessionRecordsStorageService } from '../../../packages/shared/src/domain/timer/record/storage'
 import { AppBlocker, FakeAppBlocker } from '../infra/app-block/interface'
 import { findActiveOrNextScheduleSpan } from './schedules/schedule-span'
@@ -7,38 +9,66 @@ export class AppBlockTogglingService {
   private weeklySchedulesStorageService: WeeklySchedulesStorageService
   private focusSessionRecordsStorageService: FocusSessionRecordsStorageService
   private appBlocker: AppBlocker
+  private timerInfoGetter: TimerInfoGetter
+  private timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
 
   static createFake({
     weeklySchedulesStorageService,
     focusSessionRecordsStorageService,
-    appBlocker
+    appBlocker,
+    timerInfoGetter,
+    timerBasedBlockingRulesStorageService
   }: {
     weeklySchedulesStorageService: WeeklySchedulesStorageService
     focusSessionRecordsStorageService: FocusSessionRecordsStorageService
     appBlocker: FakeAppBlocker
+    timerInfoGetter: TimerInfoGetter
+    timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
   }): AppBlockTogglingService {
     return new AppBlockTogglingService({
       weeklySchedulesStorageService,
       focusSessionRecordsStorageService,
-      appBlocker
+      appBlocker,
+      timerInfoGetter,
+      timerBasedBlockingRulesStorageService
     })
   }
 
   constructor({
     weeklySchedulesStorageService,
     focusSessionRecordsStorageService,
-    appBlocker
+    appBlocker,
+    timerInfoGetter,
+    timerBasedBlockingRulesStorageService
   }: {
     weeklySchedulesStorageService: WeeklySchedulesStorageService
     focusSessionRecordsStorageService: FocusSessionRecordsStorageService
     appBlocker: AppBlocker
+    timerInfoGetter: TimerInfoGetter
+    timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
   }) {
     this.weeklySchedulesStorageService = weeklySchedulesStorageService
     this.focusSessionRecordsStorageService = focusSessionRecordsStorageService
     this.appBlocker = appBlocker
+    this.timerInfoGetter = timerInfoGetter
+    this.timerBasedBlockingRulesStorageService = timerBasedBlockingRulesStorageService
   }
 
   async run() {
+    const timerBasedBlockingRules = await this.timerBasedBlockingRulesStorageService.get()
+    const timerInfo = this.timerInfoGetter.getTimerInfo()
+
+    if (
+      !timerBasedBlockingRules.pauseBlockingDuringBreaks &&
+      timerBasedBlockingRules.pauseBlockingWhenTimerNotRunning &&
+      !timerInfo.isRunning
+    ) {
+      return Promise.all([
+        this.appBlocker.clearBlockingSchedule(),
+        this.appBlocker.disableAlwaysBlock()
+      ])
+    }
+
     const scheduleSpan = findActiveOrNextScheduleSpan({
       schedules: await this.weeklySchedulesStorageService.get(),
       focusSessionRecords: await this.focusSessionRecordsStorageService.get()
