@@ -157,6 +157,35 @@ describe('AppBlockTogglingService', () => {
       expect(appBlocker.getBlockingScheduleSpan()).toBeNull()
       expect(appBlocker.isAlwaysBlockActivated()).toBe(false)
     })
+
+    it('should set blocking schedule from now to session end when timer is running', async () => {
+      jest.setSystemTime(new Date('2026-01-05T10:00:00')) // 2026-01-05 is Monday
+
+      const { appBlocker } = await runAppBlockToggling({
+        timerBasedBlockingRules: newTestTimerBasedBlockingRules({
+          pauseBlockingDuringBreaks: false,
+          pauseBlockingWhenTimerNotRunning: true
+        }),
+        weeklySchedules: [
+          new WeeklySchedule({
+            weekdaySet: new Set([Weekday.MON]),
+            startTime: new Time(9, 0),
+            endTime: new Time(17, 0)
+          })
+        ],
+        timerInfo: newTimerInfo({
+          isRunning: true,
+          timerStage: TimerStage.LONG_BREAK,
+          remaining: new Duration({ minutes: 25 })
+        })
+      })
+
+      expect(appBlocker.getBlockingScheduleSpan()).toEqual({
+        start: new Date('2026-01-05T10:00:00'),
+        end: new Date('2026-01-05T10:25:00')
+      })
+      expect(appBlocker.isAlwaysBlockActivated()).toBe(false)
+    })
   })
 })
 
