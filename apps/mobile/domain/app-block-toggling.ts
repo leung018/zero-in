@@ -6,11 +6,15 @@ import { getDateAfter } from '../../../packages/shared/src/utils/date'
 import { AppBlocker } from '../infra/app-block/interface'
 import { findActiveOrNextScheduleSpan, ScheduleSpan } from './schedules/schedule-span'
 
+interface AsyncTimerInfoGetter {
+  getTimerInfo: () => Promise<ReturnType<TimerInfoGetter['getTimerInfo']>>
+}
+
 export class AppBlockTogglingService {
   private weeklySchedulesStorageService: WeeklySchedulesStorageService
   private focusSessionRecordsStorageService: FocusSessionRecordsStorageService
   private appBlockerWrapper: AppBlockerWrapper
-  private timerInfoGetter: TimerInfoGetter
+  private timerInfoGetter: AsyncTimerInfoGetter
   private timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
 
   constructor({
@@ -23,7 +27,7 @@ export class AppBlockTogglingService {
     weeklySchedulesStorageService: WeeklySchedulesStorageService
     focusSessionRecordsStorageService: FocusSessionRecordsStorageService
     appBlocker: AppBlocker
-    timerInfoGetter: TimerInfoGetter
+    timerInfoGetter: AsyncTimerInfoGetter
     timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
   }) {
     this.weeklySchedulesStorageService = weeklySchedulesStorageService
@@ -35,7 +39,7 @@ export class AppBlockTogglingService {
 
   async run() {
     const timerBasedBlockingRules = await this.timerBasedBlockingRulesStorageService.get()
-    const timerInfo = this.timerInfoGetter.getTimerInfo()
+    const timerInfo = await this.timerInfoGetter.getTimerInfo()
 
     const scheduleSpan = findActiveOrNextScheduleSpan({
       schedules: await this.weeklySchedulesStorageService.get(),
