@@ -4,6 +4,8 @@ import { FocusSessionRecordHousekeeper } from '@zero-in/shared/domain/timer/reco
 import { newFocusSessionRecord } from '@zero-in/shared/domain/timer/record/index'
 import { FocusSessionRecordsStorageService } from '@zero-in/shared/domain/timer/record/storage'
 import { TimerStage } from '@zero-in/shared/domain/timer/stage'
+import type { TimerExternalState } from '@zero-in/shared/domain/timer/state/external'
+import { TimerStateStorageService } from '@zero-in/shared/domain/timer/state/storage'
 import { SubscriptionManager } from '@zero-in/shared/utils/subscription'
 import config from '../config'
 import { BrowsingControlTogglingService } from '../domain/browsing-control-toggling'
@@ -15,8 +17,7 @@ import { newTimerBasedBlockingRulesStorageService } from '../domain/timer-based-
 import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { newFocusSessionRecordsStorageService } from '../domain/timer/record/storage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage-display-label'
-import type { TimerExternalState } from '../domain/timer/state/external'
-import { TimerStateStorageService } from '../domain/timer/state/storage'
+import { newTimerStateStorageService } from '../domain/timer/state/storage'
 import { type ActionService } from '../infra/action'
 import { type BadgeColor, type BadgeDisplayService } from '../infra/badge'
 import { BrowserBadgeDisplayService } from '../infra/browser/badge'
@@ -62,7 +63,7 @@ export class BackgroundListener {
       soundService: new BrowserSoundService(),
       notificationSettingStorageService: NotificationSettingStorageService.create(),
       badgeDisplayService: new BrowserBadgeDisplayService(),
-      timerStateStorageService: TimerStateStorageService.create(),
+      timerStateStorageService: newTimerStateStorageService(),
       timerConfigStorageService: TimerConfigStorageService.create(),
       focusSessionRecordsStorageService: newFocusSessionRecordsStorageService(),
       closeTabsService: new BrowserCloseTabsService(config.getReminderPageUrl()),
