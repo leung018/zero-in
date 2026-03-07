@@ -186,6 +186,22 @@ describe('AppBlockTogglingService', () => {
       })
       expect(appBlocker.isAlwaysBlockActivated()).toBe(false)
     })
+
+    it('should enable always block when timer is running and no schedule span', async () => {
+      const { appBlocker } = await runAppBlockToggling({
+        timerBasedBlockingRules: newTestTimerBasedBlockingRules({
+          pauseBlockingDuringBreaks: false,
+          pauseBlockingWhenTimerNotRunning: true
+        }),
+        weeklySchedules: [],
+        timerInfo: newTimerInfo({
+          isRunning: true
+        })
+      })
+
+      expect(appBlocker.getBlockingScheduleSpan()).toBeNull()
+      expect(appBlocker.isAlwaysBlockActivated()).toBe(true)
+    })
   })
 })
 
