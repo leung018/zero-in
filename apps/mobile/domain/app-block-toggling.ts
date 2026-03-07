@@ -62,7 +62,6 @@ export class AppBlockTogglingService {
           ])
         }
       }
-      // TODO: Think of case without schedule span
 
       return Promise.all([
         this.appBlocker.clearBlockingSchedule(),
