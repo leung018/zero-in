@@ -1,4 +1,4 @@
-import { FakeAppBlocker } from '@/infra/app-block/interface'
+import { BlockingState, FakeAppBlocker } from '@/infra/app-block/interface'
 import { WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
@@ -42,16 +42,18 @@ describe('AppBlockTogglingService', () => {
           })
         })
 
-      expect(appBlocker.getBlockingScheduleSpan()).toEqual({
-        start: new Date('2026-01-05T09:00:00'),
-        end: new Date('2026-01-05T17:00:00')
-      })
+      expect(appBlocker.getBlockingState()).toEqual(
+        newScheduledBlockingState({
+          start: new Date('2026-01-05T09:00:00'),
+          end: new Date('2026-01-05T17:00:00')
+        })
+      )
 
-      // After removing schedule, it should also cleared the blockingScheduleSpan
+      // After removing schedule, it should enable always block
       await weeklySchedulesStorageService.save([])
       await togglingService.run()
 
-      expect(appBlocker.getBlockingScheduleSpan()).toBeNull()
+      expect(appBlocker.getBlockingState()).toEqual({ kind: 'always' })
     })
 
     it('should only consider schedules that have not completed target focus sessions', async () => {
@@ -82,10 +84,12 @@ describe('AppBlockTogglingService', () => {
           })
         })
 
-      expect(appBlocker.getBlockingScheduleSpan()).toEqual({
-        start: new Date('2026-01-05T09:00:00'),
-        end: new Date('2026-01-05T17:00:00')
-      })
+      expect(appBlocker.getBlockingState()).toEqual(
+        newScheduledBlockingState({
+          start: new Date('2026-01-05T09:00:00'),
+          end: new Date('2026-01-05T17:00:00')
+        })
+      )
 
       // After adding another completed focus session within Monday schedule, it should consider the schedule as completed
       focusSessionRecords.push(
@@ -97,10 +101,12 @@ describe('AppBlockTogglingService', () => {
 
       await togglingService.run()
 
-      expect(appBlocker.getBlockingScheduleSpan()).toEqual({
-        start: new Date('2026-01-06T09:00:00'),
-        end: new Date('2026-01-06T17:00:00')
-      })
+      expect(appBlocker.getBlockingState()).toEqual(
+        newScheduledBlockingState({
+          start: new Date('2026-01-06T09:00:00'),
+          end: new Date('2026-01-06T17:00:00')
+        })
+      )
     })
 
     it('should always block app only if no schedule is set', async () => {
@@ -113,8 +119,7 @@ describe('AppBlockTogglingService', () => {
           })
         })
 
-      expect(appBlocker.getBlockingScheduleSpan()).toBeNull()
-      expect(appBlocker.isAlwaysBlockActivated()).toBe(true)
+      expect(appBlocker.getBlockingState()).toEqual({ kind: 'always' })
 
       // After setting a non current schedule, it should unblock app
       await weeklySchedulesStorageService.save([
@@ -128,8 +133,7 @@ describe('AppBlockTogglingService', () => {
       jest.setSystemTime(new Date('2026-01-05T08:00:00')) // 2026-01-05 is Monday
       await togglingService.run()
 
-      expect(appBlocker.getBlockingScheduleSpan()).not.toBeNull()
-      expect(appBlocker.isAlwaysBlockActivated()).toBe(false)
+      expect(appBlocker.getBlockingState().kind).toEqual('scheduled')
     })
   })
 
@@ -154,8 +158,7 @@ describe('AppBlockTogglingService', () => {
         })
       })
 
-      expect(appBlocker.getBlockingScheduleSpan()).toBeNull()
-      expect(appBlocker.isAlwaysBlockActivated()).toBe(false)
+      expect(appBlocker.getBlockingState()).toEqual({ kind: 'none' })
     })
 
     it('should set blocking schedule from now to session end when timer is running', async () => {
@@ -179,11 +182,12 @@ describe('AppBlockTogglingService', () => {
         })
       })
 
-      expect(appBlocker.getBlockingScheduleSpan()).toEqual({
-        start: new Date('2026-01-05T10:00:00'),
-        end: new Date('2026-01-05T10:25:00')
-      })
-      expect(appBlocker.isAlwaysBlockActivated()).toBe(false)
+      expect(appBlocker.getBlockingState()).toEqual(
+        newScheduledBlockingState({
+          start: new Date('2026-01-05T10:00:00'),
+          end: new Date('2026-01-05T10:25:00')
+        })
+      )
     })
 
     it('should enable always block when timer is running and no schedule span', async () => {
@@ -198,8 +202,7 @@ describe('AppBlockTogglingService', () => {
         })
       })
 
-      expect(appBlocker.getBlockingScheduleSpan()).toBeNull()
-      expect(appBlocker.isAlwaysBlockActivated()).toBe(true)
+      expect(appBlocker.getBlockingState()).toEqual({ kind: 'always' })
     })
   })
 })
@@ -262,5 +265,15 @@ async function runAppBlockToggling({
     appBlocker,
     togglingService,
     focusSessionRecordsStorageService
+  }
+}
+
+function newScheduledBlockingState({ start, end }: { start: Date; end: Date }): BlockingState {
+  return {
+    kind: 'scheduled',
+    scheduleSpan: {
+      start,
+      end
+    }
   }
 }
