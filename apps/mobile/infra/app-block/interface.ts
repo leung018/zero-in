@@ -1,5 +1,10 @@
 import { ScheduleSpan } from '../../domain/schedules/schedule-span'
 
+export type BlockingState =
+  | { kind: 'none' }
+  | { kind: 'always' }
+  | { kind: 'scheduled'; scheduleSpan: ScheduleSpan }
+
 export interface AppBlocker {
   setBlockingSchedule(scheduleSpan: ScheduleSpan): Promise<void>
   clearBlockingSchedule(): Promise<void>
@@ -9,7 +14,7 @@ export interface AppBlocker {
 
 export class FakeAppBlocker implements AppBlocker {
   private activeScheduleSpan: ScheduleSpan | null = null
-  private _isAlwaysBlockActivated: boolean = false
+  private isAlwaysBlockActivated: boolean = false
 
   async setBlockingSchedule(scheduleSpan: ScheduleSpan): Promise<void> {
     this.activeScheduleSpan = scheduleSpan
@@ -19,19 +24,21 @@ export class FakeAppBlocker implements AppBlocker {
     this.activeScheduleSpan = null
   }
 
-  getBlockingScheduleSpan(): ScheduleSpan | null {
-    return this.activeScheduleSpan
-  }
-
   async enableAlwaysBlock() {
-    this._isAlwaysBlockActivated = true
+    this.isAlwaysBlockActivated = true
   }
 
   async disableAlwaysBlock() {
-    this._isAlwaysBlockActivated = false
+    this.isAlwaysBlockActivated = false
   }
 
-  isAlwaysBlockActivated(): boolean {
-    return this._isAlwaysBlockActivated
+  getBlockingState(): BlockingState {
+    if (this.isAlwaysBlockActivated) {
+      return { kind: 'always' }
+    }
+    if (this.activeScheduleSpan) {
+      return { kind: 'scheduled', scheduleSpan: this.activeScheduleSpan }
+    }
+    return { kind: 'none' }
   }
 }
