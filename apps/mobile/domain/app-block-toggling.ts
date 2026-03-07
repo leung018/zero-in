@@ -46,14 +46,21 @@ export class AppBlockTogglingService {
       !timerBasedBlockingRules.pauseBlockingDuringBreaks &&
       timerBasedBlockingRules.pauseBlockingWhenTimerNotRunning
     ) {
-      if (timerInfo.isRunning && scheduleSpan) {
-        return Promise.all([
-          this.appBlocker.setBlockingSchedule({
-            start: new Date(),
-            end: getDateAfter({ duration: timerInfo.remaining })
-          }),
-          this.appBlocker.disableAlwaysBlock()
-        ])
+      if (timerInfo.isRunning) {
+        if (scheduleSpan) {
+          return Promise.all([
+            this.appBlocker.setBlockingSchedule({
+              start: new Date(),
+              end: getDateAfter({ duration: timerInfo.remaining })
+            }),
+            this.appBlocker.disableAlwaysBlock()
+          ])
+        } else {
+          return Promise.all([
+            this.appBlocker.clearBlockingSchedule(),
+            this.appBlocker.enableAlwaysBlock()
+          ])
+        }
       }
       // TODO: Think of case without schedule span
 
