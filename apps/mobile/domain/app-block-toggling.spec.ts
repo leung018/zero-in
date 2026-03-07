@@ -175,7 +175,6 @@ describe('AppBlockTogglingService', () => {
         ],
         timerInfo: newTimerInfo({
           isRunning: true,
-          timerStage: TimerStage.LONG_BREAK,
           remaining: new Duration({ minutes: 25 })
         })
       })
