@@ -246,7 +246,7 @@ async function runAppBlockToggling({
     focusSessionRecordsStorageService,
     appBlocker,
     timerInfoGetter: {
-      getTimerInfo: () => timerInfo
+      getTimerInfo: () => Promise.resolve(timerInfo)
     },
     timerBasedBlockingRulesStorageService
   })
