@@ -9,7 +9,7 @@ import { findActiveOrNextScheduleSpan, ScheduleSpan } from './schedules/schedule
 export class AppBlockTogglingService {
   private weeklySchedulesStorageService: WeeklySchedulesStorageService
   private focusSessionRecordsStorageService: FocusSessionRecordsStorageService
-  private appBlocker: AppBlocker
+  private appBlockerWrapper: AppBlockerWrapper
   private timerInfoGetter: TimerInfoGetter
   private timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
 
@@ -28,7 +28,7 @@ export class AppBlockTogglingService {
   }) {
     this.weeklySchedulesStorageService = weeklySchedulesStorageService
     this.focusSessionRecordsStorageService = focusSessionRecordsStorageService
-    this.appBlocker = appBlocker
+    this.appBlockerWrapper = new AppBlockerWrapper(appBlocker)
     this.timerInfoGetter = timerInfoGetter
     this.timerBasedBlockingRulesStorageService = timerBasedBlockingRulesStorageService
   }
@@ -48,33 +48,40 @@ export class AppBlockTogglingService {
     ) {
       if (timerInfo.isRunning) {
         if (scheduleSpan) {
-          return this.setBlockingSchedule({
+          return this.appBlockerWrapper.setBlockingSchedule({
             start: new Date(),
             end: getDateAfter({ duration: timerInfo.remaining })
           })
         }
-        return this.enableAlwaysBlock()
+        return this.appBlockerWrapper.enableAlwaysBlock()
       }
-      return this.disableAllBlocking()
+      return this.appBlockerWrapper.disableAllBlocking()
     }
 
     if (scheduleSpan) {
-      return this.setBlockingSchedule(scheduleSpan)
+      return this.appBlockerWrapper.setBlockingSchedule(scheduleSpan)
     }
-    return this.enableAlwaysBlock()
+    return this.appBlockerWrapper.enableAlwaysBlock()
   }
+}
 
-  private async setBlockingSchedule(scheduleSpan: ScheduleSpan) {
+class AppBlockerWrapper {
+  // Be careful about sequences of calls to the app blocker in this class.
+  // Unit testing may not cover issues arising from improper sequences of calls.
+
+  constructor(private appBlocker: AppBlocker) {}
+
+  async setBlockingSchedule(scheduleSpan: ScheduleSpan) {
     await this.appBlocker.disableAlwaysBlock()
     await this.appBlocker.setBlockingSchedule(scheduleSpan)
   }
 
-  private async enableAlwaysBlock() {
+  async enableAlwaysBlock() {
     await this.appBlocker.clearBlockingSchedule()
     await this.appBlocker.enableAlwaysBlock()
   }
 
-  private async disableAllBlocking() {
+  async disableAllBlocking() {
     await this.appBlocker.clearBlockingSchedule()
     await this.appBlocker.disableAlwaysBlock()
   }
