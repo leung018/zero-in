@@ -38,12 +38,17 @@ export class AppBlockTogglingService {
   }
 
   async run() {
-    const timerBasedBlockingRules = await this.timerBasedBlockingRulesStorageService.get()
-    const timerInfo = await this.timerInfoGetter.getTimerInfo()
+    const [timerBasedBlockingRules, timerInfo, weeklySchedules, focusSessionRecords] =
+      await Promise.all([
+        this.timerBasedBlockingRulesStorageService.get(),
+        this.timerInfoGetter.getTimerInfo(),
+        this.weeklySchedulesStorageService.get(),
+        this.focusSessionRecordsStorageService.get()
+      ])
 
     const scheduleSpan = findActiveOrNextScheduleSpan({
-      schedules: await this.weeklySchedulesStorageService.get(),
-      focusSessionRecords: await this.focusSessionRecordsStorageService.get()
+      schedules: weeklySchedules,
+      focusSessionRecords: focusSessionRecords
     })
 
     if (
