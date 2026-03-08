@@ -15,6 +15,7 @@
     "test:unit:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@zero-in/shared": "workspace:*",
     "@expo/vector-icons": "^15.0.3",
     "@react-native-community/datetimepicker": "8.4.4",
     "@react-native-firebase/app": "^23.5.0",
