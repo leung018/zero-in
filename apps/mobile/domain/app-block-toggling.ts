@@ -67,6 +67,18 @@ export class AppBlockTogglingService {
       return this.appBlockerWrapper.disableAllBlocking()
     }
 
+    if (
+      timerBasedBlockingRules.pauseBlockingDuringBreaks &&
+      !timerBasedBlockingRules.pauseBlockingWhenTimerNotRunning
+    ) {
+      if (scheduleSpan) {
+        return this.appBlockerWrapper.setBlockingSchedule({
+          start: getDateAfter({ duration: timerInfo.remaining }),
+          end: scheduleSpan.end
+        })
+      }
+    }
+
     if (scheduleSpan) {
       return this.appBlockerWrapper.setBlockingSchedule(scheduleSpan)
     }

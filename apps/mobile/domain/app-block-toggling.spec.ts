@@ -205,6 +205,40 @@ describe('AppBlockTogglingService', () => {
       expect(appBlocker.getBlockingState()).toEqual({ kind: 'always' })
     })
   })
+
+  describe('when pauseBlockingDuringBreaks is true and pauseBlockingWhenTimerNotRunning is false', () => {
+    it.each([TimerStage.LONG_BREAK, TimerStage.SHORT_BREAK])(
+      'should set blocking schedule from break end to weekly schedule end when timer is running in break (%s)',
+      async (breakStage) => {
+        jest.setSystemTime(new Date('2026-01-05T10:00:00')) // 2026-01-05 is Monday
+        const { appBlocker } = await runAppBlockToggling({
+          timerBasedBlockingRules: newTestTimerBasedBlockingRules({
+            pauseBlockingDuringBreaks: true,
+            pauseBlockingWhenTimerNotRunning: false
+          }),
+          weeklySchedules: [
+            new WeeklySchedule({
+              weekdaySet: new Set([Weekday.MON]),
+              startTime: new Time(9, 0),
+              endTime: new Time(17, 0)
+            })
+          ],
+          timerInfo: newTimerInfo({
+            timerStage: breakStage,
+            isRunning: true,
+            remaining: new Duration({ minutes: 5 })
+          })
+        })
+
+        expect(appBlocker.getBlockingState()).toEqual(
+          newScheduledBlockingState({
+            start: new Date('2026-01-05T10:05:00'),
+            end: new Date('2026-01-05T17:00:00')
+          })
+        )
+      }
+    )
+  })
 })
 
 type TimerInfo = ReturnType<TimerInfoGetter['getTimerInfo']>
