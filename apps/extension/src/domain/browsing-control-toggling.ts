@@ -1,4 +1,4 @@
-import { TimerInfoGetter } from '@zero-in/shared/domain/blocking-toggling'
+import { isInBreak, TimerInfoGetter } from '@zero-in/shared/domain/blocking-toggling'
 import { isScheduleInstanceCompleteTarget } from '@zero-in/shared/domain/is-schedule-complete-target'
 import { ScheduleInstance, WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
@@ -81,7 +81,10 @@ export class BrowsingControlTogglingService {
       return false
     }
 
-    if (timerBasedBlockingRules.pauseBlockingDuringBreaks && this.isInBreak()) {
+    if (
+      timerBasedBlockingRules.pauseBlockingDuringBreaks &&
+      isInBreak(this.timerInfoGetter.getTimerInfo())
+    ) {
       return false
     }
 
@@ -116,31 +119,6 @@ export class BrowsingControlTogglingService {
     }
 
     return false
-  }
-
-  private isInBreak(): boolean {
-    const timerInfo = this.timerInfoGetter.getTimerInfo()
-    if (timerInfo.timerStage === TimerStage.FOCUS) {
-      return false
-    }
-    if (timerInfo.isRunning) {
-      return true
-    }
-
-    // If user hasn't pressed the start of the timer even the stage is break, still is not in break yet.
-    if (
-      timerInfo.timerStage === TimerStage.SHORT_BREAK &&
-      timerInfo.shortBreak.totalMilliseconds <= timerInfo.remaining.totalMilliseconds
-    ) {
-      return false
-    }
-    if (
-      timerInfo.timerStage === TimerStage.LONG_BREAK &&
-      timerInfo.longBreak.totalMilliseconds <= timerInfo.remaining.totalMilliseconds
-    ) {
-      return false
-    }
-    return true
   }
 
   private isRunning(): boolean {
