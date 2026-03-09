@@ -1,4 +1,4 @@
-import { TimerInfoGetter } from '../../../packages/shared/src/domain/blocking-toggling'
+import { isInBreak, TimerInfoGetter } from '../../../packages/shared/src/domain/blocking-toggling'
 import { WeeklySchedulesStorageService } from '../../../packages/shared/src/domain/schedules/storage'
 import { TimerBasedBlockingRulesStorageService } from '../../../packages/shared/src/domain/timer-based-blocking/storage'
 import { FocusSessionRecordsStorageService } from '../../../packages/shared/src/domain/timer/record/storage'
@@ -71,11 +71,14 @@ export class AppBlockTogglingService {
       timerBasedBlockingRules.pauseBlockingDuringBreaks &&
       !timerBasedBlockingRules.pauseBlockingWhenTimerNotRunning
     ) {
-      if (scheduleSpan) {
-        return this.appBlockerWrapper.setBlockingSchedule({
-          start: getDateAfter({ duration: timerInfo.remaining }),
-          end: scheduleSpan.end
-        })
+      if (isInBreak(timerInfo)) {
+        if (scheduleSpan && timerInfo.isRunning) {
+          return this.appBlockerWrapper.setBlockingSchedule({
+            start: getDateAfter({ duration: timerInfo.remaining }),
+            end: scheduleSpan.end
+          })
+        }
+        return this.appBlockerWrapper.disableAllBlocking()
       }
     }
 
