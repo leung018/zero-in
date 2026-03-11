@@ -296,6 +296,60 @@ describe('AppBlockTogglingService', () => {
       }
     )
   })
+
+  describe('when both pauseBlockingDuringBreaks and pauseBlockingWhenTimerNotRunning are true', () => {
+    it('should disable blocking when timer is not running in focus', async () => {
+      jest.setSystemTime(new Date('2026-01-05T10:00:00')) // 2026-01-05 is Monday
+      const { appBlocker } = await runAppBlockToggling({
+        timerBasedBlockingRules: newTestTimerBasedBlockingRules({
+          pauseBlockingDuringBreaks: true,
+          pauseBlockingWhenTimerNotRunning: true
+        }),
+        weeklySchedules: [
+          new WeeklySchedule({
+            weekdaySet: new Set([Weekday.MON]),
+            startTime: new Time(9, 0),
+            endTime: new Time(17, 0)
+          })
+        ],
+        timerInfo: newTimerInfo({
+          timerStage: TimerStage.FOCUS,
+          isRunning: false
+        })
+      })
+
+      expect(appBlocker.getBlockingState()).toEqual({ kind: 'none' })
+    })
+
+    it('should set blocking schedule from now to session end when timer is running in focus', async () => {
+      jest.setSystemTime(new Date('2026-01-05T10:00:00')) // 2026-01-05 is Monday
+      const { appBlocker } = await runAppBlockToggling({
+        timerBasedBlockingRules: newTestTimerBasedBlockingRules({
+          pauseBlockingDuringBreaks: true,
+          pauseBlockingWhenTimerNotRunning: true
+        }),
+        weeklySchedules: [
+          new WeeklySchedule({
+            weekdaySet: new Set([Weekday.MON]),
+            startTime: new Time(9, 0),
+            endTime: new Time(17, 0)
+          })
+        ],
+        timerInfo: newTimerInfo({
+          timerStage: TimerStage.FOCUS,
+          isRunning: true,
+          remaining: new Duration({ minutes: 25 })
+        })
+      })
+
+      expect(appBlocker.getBlockingState()).toEqual(
+        newScheduledBlockingState({
+          start: new Date('2026-01-05T10:00:00'),
+          end: new Date('2026-01-05T10:25:00')
+        })
+      )
+    })
+  })
 })
 
 type TimerInfo = ReturnType<TimerInfoGetter['getTimerInfo']>
