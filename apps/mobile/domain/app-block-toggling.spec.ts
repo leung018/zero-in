@@ -349,6 +349,24 @@ describe('AppBlockTogglingService', () => {
         })
       )
     })
+
+    it.each([TimerStage.SHORT_BREAK, TimerStage.LONG_BREAK])(
+      'should disable blocking when timer is running in break',
+      async (timerStage) => {
+        const { appBlocker } = await runAppBlockToggling({
+          timerBasedBlockingRules: newTestTimerBasedBlockingRules({
+            pauseBlockingDuringBreaks: true,
+            pauseBlockingWhenTimerNotRunning: true
+          }),
+          weeklySchedules: [],
+          timerInfo: newTimerInfo({
+            timerStage,
+            isRunning: true
+          })
+        })
+        expect(appBlocker.getBlockingState()).toEqual({ kind: 'none' })
+      }
+    )
   })
 })
 

@@ -1,3 +1,4 @@
+import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { isInBreak, TimerInfoGetter } from '../../../packages/shared/src/domain/blocking-toggling'
 import { WeeklySchedulesStorageService } from '../../../packages/shared/src/domain/schedules/storage'
 import { TimerBasedBlockingRulesStorageService } from '../../../packages/shared/src/domain/timer-based-blocking/storage'
@@ -86,8 +87,7 @@ export class AppBlockTogglingService {
       timerBasedBlockingRules.pauseBlockingDuringBreaks &&
       timerBasedBlockingRules.pauseBlockingWhenTimerNotRunning
     ) {
-      // TODO: Cases when in break
-      if (timerInfo.isRunning) {
+      if (timerInfo.isRunning && timerInfo.timerStage === TimerStage.FOCUS) {
         return this.appBlockerWrapper.setBlockingSchedule({
           start: new Date(),
           end: getDateAfter({ duration: timerInfo.remaining })
