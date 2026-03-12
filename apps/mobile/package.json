@@ -15,7 +15,6 @@
     "test:unit:coverage": "jest --coverage"
   },
   "dependencies": {
-    "@zero-in/shared": "workspace:*",
     "@expo/vector-icons": "^15.0.3",
     "@react-native-community/datetimepicker": "8.4.4",
     "@react-native-firebase/app": "^23.5.0",
@@ -24,6 +23,7 @@
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.8.3",
     "@react-navigation/native": "^7.1.8",
+    "@zero-in/shared": "workspace:*",
     "expo": "~54.0.33",
     "expo-background-task": "~1.0.10",
     "expo-build-properties": "~1.0.10",
