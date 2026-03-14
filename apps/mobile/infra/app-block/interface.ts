@@ -1,37 +1,44 @@
-import { ScheduleSpan } from '../../domain/schedules/schedule-span'
+import { ScheduleSpan } from '@zero-in/shared/domain/schedules'
+
+export type BlockingState =
+  | { kind: 'none' }
+  | { kind: 'always' }
+  | { kind: 'scheduled'; scheduleSpan: ScheduleSpan }
 
 export interface AppBlocker {
-  setSchedule(scheduleSpan: ScheduleSpan): Promise<void>
-  clearSchedule(): Promise<void>
-  blockApps(): Promise<void>
-  unblockApps(): Promise<void>
+  setBlockingSchedule(scheduleSpan: ScheduleSpan): Promise<void>
+  clearBlockingSchedule(): Promise<void>
+  enableAlwaysBlock(): Promise<void>
+  disableAlwaysBlock(): Promise<void>
 }
 
 export class FakeAppBlocker implements AppBlocker {
   private activeScheduleSpan: ScheduleSpan | null = null
-  private isAppBlocked: boolean = false
+  private isAlwaysBlockActivated: boolean = false
 
-  async setSchedule(scheduleSpan: ScheduleSpan): Promise<void> {
+  async setBlockingSchedule(scheduleSpan: ScheduleSpan): Promise<void> {
     this.activeScheduleSpan = scheduleSpan
   }
 
-  async clearSchedule(): Promise<void> {
+  async clearBlockingSchedule(): Promise<void> {
     this.activeScheduleSpan = null
   }
 
-  getBlockingScheduleSpan(): ScheduleSpan | null {
-    return this.activeScheduleSpan
+  async enableAlwaysBlock() {
+    this.isAlwaysBlockActivated = true
   }
 
-  async blockApps() {
-    this.isAppBlocked = true
+  async disableAlwaysBlock() {
+    this.isAlwaysBlockActivated = false
   }
 
-  async unblockApps() {
-    this.isAppBlocked = false
-  }
-
-  getIsAppBlocked(): boolean {
-    return this.isAppBlocked
+  getBlockingState(): BlockingState {
+    if (this.isAlwaysBlockActivated) {
+      return { kind: 'always' }
+    }
+    if (this.activeScheduleSpan) {
+      return { kind: 'scheduled', scheduleSpan: this.activeScheduleSpan }
+    }
+    return { kind: 'none' }
   }
 }
