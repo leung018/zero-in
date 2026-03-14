@@ -3,7 +3,7 @@ import { isInBreak, TimerInfoGetter } from '../../../packages/shared/src/domain/
 import { WeeklySchedulesStorageService } from '../../../packages/shared/src/domain/schedules/storage'
 import { TimerBasedBlockingRulesStorageService } from '../../../packages/shared/src/domain/timer-based-blocking/storage'
 import { FocusSessionRecordsStorageService } from '../../../packages/shared/src/domain/timer/record/storage'
-import { getDateAfter } from '../../../packages/shared/src/utils/date'
+import { getDateAfter, maxDate } from '../../../packages/shared/src/utils/date'
 import { AppBlocker } from '../infra/app-block/interface'
 import { findActiveOrNextScheduleSpan, ScheduleSpan } from './schedules/schedule-span'
 
@@ -75,7 +75,7 @@ export class AppBlockTogglingService {
       if (isInBreak(timerInfo)) {
         if (scheduleSpan && timerInfo.isRunning) {
           return this.appBlockerWrapper.setBlockingSchedule({
-            start: getDateAfter({ duration: timerInfo.remaining }),
+            start: maxDate(getDateAfter({ duration: timerInfo.remaining }), scheduleSpan.start),
             end: scheduleSpan.end
           })
         }
