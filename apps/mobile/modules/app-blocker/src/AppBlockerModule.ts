@@ -1,5 +1,5 @@
+import { ScheduleSpan } from '@zero-in/shared/domain/schedules'
 import { NativeModule, requireNativeModule } from 'expo'
-import { ScheduleSpan } from '../../../domain/schedules/schedule-span'
 
 export enum PermissionType {
   FamilyControls = 'familyControls',

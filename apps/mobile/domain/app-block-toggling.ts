@@ -1,3 +1,4 @@
+import { ScheduleSpan } from '@zero-in/shared/domain/schedules'
 import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { isInBreak, TimerInfoGetter } from '../../../packages/shared/src/domain/blocking-toggling'
 import { WeeklySchedulesStorageService } from '../../../packages/shared/src/domain/schedules/storage'
@@ -5,7 +6,7 @@ import { TimerBasedBlockingRulesStorageService } from '../../../packages/shared/
 import { FocusSessionRecordsStorageService } from '../../../packages/shared/src/domain/timer/record/storage'
 import { getDateAfter, maxDate } from '../../../packages/shared/src/utils/date'
 import { AppBlocker } from '../infra/app-block/interface'
-import { findActiveOrNextScheduleSpan, ScheduleSpan } from './schedules/schedule-span'
+import { findActiveOrNextScheduleSpan } from './schedules/schedule-span'
 
 interface AsyncTimerInfoGetter {
   getTimerInfo: () => Promise<ReturnType<TimerInfoGetter['getTimerInfo']>>
@@ -58,10 +59,12 @@ export class AppBlockTogglingService {
     ) {
       if (timerInfo.isRunning) {
         if (scheduleSpan) {
-          return this.appBlockerWrapper.setBlockingSchedule({
-            start: new Date(),
-            end: getDateAfter({ duration: timerInfo.remaining })
-          })
+          return this.appBlockerWrapper.setBlockingSchedule(
+            new ScheduleSpan({
+              start: new Date(),
+              end: getDateAfter({ duration: timerInfo.remaining })
+            })
+          )
         }
         return this.appBlockerWrapper.enableAlwaysBlock()
       }
@@ -74,10 +77,12 @@ export class AppBlockTogglingService {
     ) {
       if (isInBreak(timerInfo)) {
         if (scheduleSpan && timerInfo.isRunning) {
-          return this.appBlockerWrapper.setBlockingSchedule({
-            start: maxDate(getDateAfter({ duration: timerInfo.remaining }), scheduleSpan.start),
-            end: scheduleSpan.end
-          })
+          return this.appBlockerWrapper.setBlockingSchedule(
+            new ScheduleSpan({
+              start: maxDate(getDateAfter({ duration: timerInfo.remaining }), scheduleSpan.start),
+              end: scheduleSpan.end
+            })
+          )
         }
         return this.appBlockerWrapper.disableAllBlocking()
       }
@@ -88,10 +93,12 @@ export class AppBlockTogglingService {
       timerBasedBlockingRules.pauseBlockingWhenTimerNotRunning
     ) {
       if (timerInfo.isRunning && timerInfo.timerStage === TimerStage.FOCUS) {
-        return this.appBlockerWrapper.setBlockingSchedule({
-          start: new Date(),
-          end: getDateAfter({ duration: timerInfo.remaining })
-        })
+        return this.appBlockerWrapper.setBlockingSchedule(
+          new ScheduleSpan({
+            start: new Date(),
+            end: getDateAfter({ duration: timerInfo.remaining })
+          })
+        )
       }
 
       return this.appBlockerWrapper.disableAllBlocking()

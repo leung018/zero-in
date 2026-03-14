@@ -1,11 +1,11 @@
 import { commonStyles } from '@/constants/styles'
-import { ScheduleSpan } from '@/domain/schedules/schedule-span'
 import {
   APP_BLOCK_TOGGLING_TASK,
   scheduleNotificationAtScheduleEnd
 } from '@/infra/app-block/toggling-runner'
 import { appBlocker } from '@/modules/app-blocker'
 import DateTimePicker from '@react-native-community/datetimepicker'
+import { ScheduleSpan } from '@zero-in/shared/domain/schedules'
 import * as BackgroundTask from 'expo-background-task'
 import { Stack } from 'expo-router'
 import React, { useState } from 'react'
@@ -78,10 +78,10 @@ function DevTestContent() {
     }
 
     try {
-      const scheduleSpan: ScheduleSpan = {
+      const scheduleSpan = new ScheduleSpan({
         start: startDate,
         end: endDate
-      }
+      })
       await appBlocker.setBlockingSchedule(scheduleSpan)
       Alert.alert(
         'Success',

@@ -1,13 +1,26 @@
 import { Time } from '@zero-in/shared/domain/time/index'
 import { Weekday, getWeekdayFromDate } from './weekday'
 
+export class ScheduleSpan {
+  readonly start: Date
+  readonly end: Date
+
+  constructor({ start, end }: { start: Date; end: Date }) {
+    this.start = start
+    this.end = end
+  }
+
+  isContain(timestamp: Date): boolean {
+    return timestamp >= this.start && timestamp < this.end
+  }
+}
+
 /**
  * A date-specific schedule instance with absolute start/end times.
  * Represents a single occurrence of a weekly schedule on a specific date.
  */
 export class ScheduleInstance {
-  readonly start: Date
-  readonly end: Date
+  readonly scheduleSpan: ScheduleSpan
   readonly targetFocusSessions: number | null
 
   constructor({
@@ -19,13 +32,20 @@ export class ScheduleInstance {
     end: Date
     targetFocusSessions?: number | null
   }) {
-    this.start = start
-    this.end = end
+    this.scheduleSpan = new ScheduleSpan({ start, end })
     this.targetFocusSessions = targetFocusSessions
   }
 
+  get start(): Date {
+    return this.scheduleSpan.start
+  }
+
+  get end(): Date {
+    return this.scheduleSpan.end
+  }
+
   isContain(timestamp: Date): boolean {
-    return timestamp >= this.start && timestamp < this.end
+    return this.scheduleSpan.isContain(timestamp)
   }
 }
 

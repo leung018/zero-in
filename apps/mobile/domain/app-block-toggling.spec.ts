@@ -1,5 +1,5 @@
 import { BlockingState, FakeAppBlocker } from '@/infra/app-block/interface'
-import { WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
+import { ScheduleSpan, WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time'
@@ -510,9 +510,6 @@ async function runAppBlockToggling({
 function newScheduledBlockingState({ start, end }: { start: Date; end: Date }): BlockingState {
   return {
     kind: 'scheduled',
-    scheduleSpan: {
-      start,
-      end
-    }
+    scheduleSpan: new ScheduleSpan({ start, end })
   }
 }

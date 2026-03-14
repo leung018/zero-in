@@ -1,12 +1,7 @@
 import { isScheduleInstanceCompleteTarget } from '@zero-in/shared/domain/is-schedule-complete-target'
-import { ScheduleInstance, WeeklySchedule } from '@zero-in/shared/domain/schedules'
+import { ScheduleInstance, ScheduleSpan, WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import { getWeekdayFromDate } from '@zero-in/shared/domain/schedules/weekday'
 import { FocusSessionRecord } from '../../../../packages/shared/src/domain/timer/record'
-
-export type ScheduleSpan = {
-  start: Date
-  end: Date
-}
 
 /**
  * Finds the longest current or next schedule block.
@@ -44,37 +39,38 @@ export function findActiveOrNextScheduleSpan({
   // Sort by start time for merging
   activeInstances.sort((a, b) => a.start.getTime() - b.start.getTime())
 
+  if (activeInstances.length === 0) {
+    return null
+  }
+
   // Merge overlapping or adjacent instances
-  let merged: ScheduleSpan | null = activeInstances[0]
+  let merged: ScheduleSpan = new ScheduleSpan({
+    start: activeInstances[0].start,
+    end: activeInstances[0].end
+  })
 
   for (let i = 1; i < activeInstances.length; i++) {
     const next = activeInstances[i]
     // If next starts before or exactly when current ends, they overlap or are adjacent
     if (next.start.getTime() <= merged.end.getTime()) {
       if (next.end.getTime() > merged.end.getTime()) {
-        merged = {
+        merged = new ScheduleSpan({
           start: merged.start,
           end: next.end
-        }
+        })
       }
     } else {
       // Check if current merged instance covers or is after 'now'
       if (merged.end.getTime() > now.getTime()) {
-        return {
-          start: merged.start,
-          end: merged.end
-        }
+        return merged
       }
-      merged = next
+      merged = new ScheduleSpan({ start: next.start, end: next.end })
     }
   }
 
   // Return the final merged instance if it covers or is after 'now'
-  if (merged && merged.end.getTime() > now.getTime()) {
-    return {
-      start: merged.start,
-      end: merged.end
-    }
+  if (merged.end.getTime() > now.getTime()) {
+    return merged
   }
 
   return null

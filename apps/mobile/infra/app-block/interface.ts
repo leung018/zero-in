@@ -1,4 +1,4 @@
-import { ScheduleSpan } from '../../domain/schedules/schedule-span'
+import { ScheduleSpan } from '@zero-in/shared/domain/schedules'
 
 export type BlockingState =
   | { kind: 'none' }
