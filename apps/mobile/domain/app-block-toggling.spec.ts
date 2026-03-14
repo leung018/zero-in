@@ -368,6 +368,29 @@ describe('AppBlockTogglingService', () => {
       }
     )
   })
+
+  it('should run return schedule span of scheduledBlockingState if any', async () => {
+    jest.setSystemTime(new Date('2026-01-05T10:00:00')) // 2026-01-05 is Monday
+    const { togglingService } = await runAppBlockToggling({
+      weeklySchedules: [
+        new WeeklySchedule({
+          weekdaySet: new Set([Weekday.MON]),
+          startTime: new Time(9, 0),
+          endTime: new Time(17, 0)
+        })
+      ],
+      timerBasedBlockingRules: newTestTimerBasedBlockingRules({
+        pauseBlockingDuringBreaks: false,
+        pauseBlockingWhenTimerNotRunning: false
+      })
+    })
+    const result = await togglingService.run()
+
+    expect(result).toEqual({
+      start: new Date('2026-01-05T09:00:00'),
+      end: new Date('2026-01-05T17:00:00')
+    })
+  })
 })
 
 type TimerInfo = ReturnType<TimerInfoGetter['getTimerInfo']>

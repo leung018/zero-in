@@ -113,6 +113,7 @@ class AppBlockerWrapper {
   async setBlockingSchedule(scheduleSpan: ScheduleSpan) {
     await this.appBlocker.disableAlwaysBlock()
     await this.appBlocker.setBlockingSchedule(scheduleSpan)
+    return scheduleSpan
   }
 
   async enableAlwaysBlock() {
