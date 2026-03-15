@@ -53,6 +53,8 @@ export class AppBlockTogglingService {
       focusSessionRecords: focusSessionRecords
     })
 
+    // TODO: Refactor below
+
     if (
       !timerBasedBlockingRules.pauseBlockingDuringBreaks &&
       timerBasedBlockingRules.pauseBlockingWhenTimerNotRunning
