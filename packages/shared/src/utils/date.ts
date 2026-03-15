@@ -48,6 +48,5 @@ export function dateDiff(start: Date, end: Date): Duration {
 
 export function maxDate(first: Date, ...dates: Array<Date>): Date {
   const all = [first, ...dates]
-  const valid = all.filter((d): d is Date => d instanceof Date)
-  return new Date(Math.max(...valid.map((d) => d.getTime())))
+  return new Date(Math.max(...all.map((d) => d.getTime())))
 }
