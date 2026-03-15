@@ -1,7 +1,7 @@
 import { Time } from '@zero-in/shared/domain/time/index'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test as it } from 'vitest'
 import { Duration } from '../domain/timer/duration'
-import { getDateAfter, getMostRecentDate, getStartOfNextMinute, isSameDay } from './date'
+import { getDateAfter, getMostRecentDate, getStartOfNextMinute, isSameDay, maxDate } from './date'
 
 describe('getMostRecentDate', () => {
   it('should return today time if already passed', () => {
@@ -68,5 +68,23 @@ describe('getDateAfter', () => {
         duration: new Duration({ minutes: 1 })
       })
     ).toEqual(new Date('2021-01-01T12:01:00'))
+  })
+})
+
+describe('maxDate', () => {
+  it('returns the latest date among provided dates', () => {
+    const d1 = new Date(2020, 0, 1)
+    const d2 = new Date(2021, 0, 1)
+    const d3 = new Date(2019, 11, 31)
+
+    const result = maxDate(d1, d2, d3)
+    expect(result.getTime()).toBe(d2.getTime())
+  })
+
+  it('returns a new Date instance (does not return the same reference)', () => {
+    const d = new Date()
+    const result = maxDate(d)
+    expect(result).not.toBe(d)
+    expect(result.getTime()).toBe(d.getTime())
   })
 })

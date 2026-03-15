@@ -45,3 +45,8 @@ export function dateDiff(start: Date, end: Date): Duration {
     milliseconds: end.getTime() - start.getTime()
   })
 }
+
+export function maxDate(first: Date, ...dates: Array<Date>): Date {
+  const all = [first, ...dates]
+  return new Date(Math.max(...all.map((d) => d.getTime())))
+}

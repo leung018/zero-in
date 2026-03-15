@@ -6568,6 +6568,7 @@ __metadata:
     "@testing-library/react-native": "npm:^13.3.3"
     "@types/jest": "npm:29.5.14"
     "@types/react": "npm:~19.1.10"
+    "@zero-in/shared": "workspace:*"
     create-target: "npm:^2.0.1"
     eslint: "npm:^9.39.1"
     eslint-config-expo: "npm:~10.0.0"
