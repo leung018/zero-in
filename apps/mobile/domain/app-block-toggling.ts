@@ -57,18 +57,21 @@ export class AppBlockTogglingService {
       !timerBasedBlockingRules.pauseBlockingDuringBreaks &&
       timerBasedBlockingRules.pauseBlockingWhenTimerNotRunning
     ) {
-      if (timerInfo.isRunning) {
-        if (scheduleSpan) {
-          if (scheduleSpan.isContain(new Date()))
-            return this.appBlockerWrapper.setBlockingSchedule(
-              new ScheduleSpan({
-                start: new Date(),
-                end: getDateAfter({ duration: timerInfo.remaining })
-              })
-            )
-          return this.appBlockerWrapper.disableAllBlocking()
-        }
+      if (!timerInfo.isRunning) {
+        return this.appBlockerWrapper.disableAllBlocking()
+      }
+
+      if (!scheduleSpan) {
         return this.appBlockerWrapper.enableAlwaysBlock()
+      }
+
+      if (scheduleSpan.isContain(new Date())) {
+        return this.appBlockerWrapper.setBlockingSchedule(
+          new ScheduleSpan({
+            start: new Date(),
+            end: getDateAfter({ duration: timerInfo.remaining })
+          })
+        )
       }
       return this.appBlockerWrapper.disableAllBlocking()
     }
