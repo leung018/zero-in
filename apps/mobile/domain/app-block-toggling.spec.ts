@@ -348,6 +348,21 @@ describe('AppBlockTogglingService', () => {
         )
       }
     )
+
+    it('should enable always block when timer is not in break and no schedule span', async () => {
+      const { appBlocker } = await runAppBlockToggling({
+        timerBasedBlockingRules: newTestTimerBasedBlockingRules({
+          pauseBlockingDuringBreaks: true,
+          pauseBlockingWhenTimerNotRunning: false
+        }),
+        weeklySchedules: [],
+        timerInfo: newTimerInfo({
+          timerStage: TimerStage.FOCUS
+        })
+      })
+
+      expect(appBlocker.getBlockingState()).toEqual({ kind: 'always' })
+    })
   })
 
   describe('when both pauseBlockingDuringBreaks and pauseBlockingWhenTimerNotRunning are true', () => {
