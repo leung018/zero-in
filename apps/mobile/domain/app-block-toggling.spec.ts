@@ -313,7 +313,7 @@ describe('AppBlockTogglingService', () => {
     )
 
     it.each([true, false])(
-      'should set blocking schedule according to weekly schedule end when timer is not in break and timer isRunning is %s',
+      'should set blocking schedule according to weekly schedule when timer is not in break no matter timer is running or not',
       async (isRunning) => {
         jest.setSystemTime(new Date('2026-01-05T10:00:00')) // 2026-01-05 is Monday
         const { appBlocker } = await runAppBlockToggling({
@@ -343,7 +343,7 @@ describe('AppBlockTogglingService', () => {
       }
     )
 
-    it('should enable always block when timer is not in break and no schedule span', async () => {
+    it('should enable always block when timer is not in break and no weeklySchedules', async () => {
       const { appBlocker } = await runAppBlockToggling({
         timerBasedBlockingRules: newTestTimerBasedBlockingRules({
           pauseBlockingDuringBreaks: true,
