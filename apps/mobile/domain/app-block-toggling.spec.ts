@@ -170,11 +170,11 @@ describe('AppBlockTogglingService', () => {
             startTime: new Time(9, 0),
             endTime: new Time(17, 0)
           })
-        ] as WeeklySchedule[]
+        ]
       },
       {
         name: 'should set blocking schedule from now to session end when timer is running AND no weeklySchedule is set',
-        weeklySchedules: [] as WeeklySchedule[]
+        weeklySchedules: []
       }
     ])('$name', async ({ weeklySchedules }) => {
       jest.setSystemTime(new Date('2026-01-05T10:00:00')) // 2026-01-05 is Monday
