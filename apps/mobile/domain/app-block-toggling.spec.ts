@@ -399,20 +399,29 @@ describe('AppBlockTogglingService', () => {
       expect(appBlocker.getBlockingState()).toEqual({ kind: 'none' })
     })
 
-    it('should set blocking schedule from now to session end when timer is running in focus', async () => {
-      jest.setSystemTime(new Date('2026-01-05T10:00:00')) // 2026-01-05 is Monday
-      const { appBlocker } = await runAppBlockToggling({
-        timerBasedBlockingRules: newTestTimerBasedBlockingRules({
-          pauseBlockingDuringBreaks: true,
-          pauseBlockingWhenTimerNotRunning: true
-        }),
+    it.each([
+      {
+        name: 'should set blocking schedule from now to session end when timer is running in focus AND within weeklySchedule',
         weeklySchedules: [
           new WeeklySchedule({
             weekdaySet: new Set([Weekday.MON]),
             startTime: new Time(9, 0),
             endTime: new Time(17, 0)
           })
-        ],
+        ]
+      },
+      {
+        name: 'should disable blocking when timer is running in focus AND no weeklySchedules',
+        weeklySchedules: []
+      }
+    ])('$name', async ({ weeklySchedules }) => {
+      jest.setSystemTime(new Date('2026-01-05T10:00:00')) // 2026-01-05 is Monday
+      const { appBlocker } = await runAppBlockToggling({
+        timerBasedBlockingRules: newTestTimerBasedBlockingRules({
+          pauseBlockingDuringBreaks: true,
+          pauseBlockingWhenTimerNotRunning: true
+        }),
+        weeklySchedules,
         timerInfo: newTimerInfo({
           timerStage: TimerStage.FOCUS,
           isRunning: true,
