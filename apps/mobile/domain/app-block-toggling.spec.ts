@@ -357,6 +357,22 @@ describe('AppBlockTogglingService', () => {
 
       expect(appBlocker.getBlockingState()).toEqual({ kind: 'always' })
     })
+
+    it('should disable blocking when timer is in break and no weeklySchedules', async () => {
+      const { appBlocker } = await runAppBlockToggling({
+        timerBasedBlockingRules: newTestTimerBasedBlockingRules({
+          pauseBlockingDuringBreaks: true,
+          pauseBlockingWhenTimerNotRunning: false
+        }),
+        weeklySchedules: [],
+        timerInfo: newTimerInfo({
+          timerStage: TimerStage.SHORT_BREAK,
+          isRunning: true
+        })
+      })
+
+      expect(appBlocker.getBlockingState()).toEqual({ kind: 'none' })
+    })
   })
 
   describe('when both pauseBlockingDuringBreaks and pauseBlockingWhenTimerNotRunning are true', () => {
