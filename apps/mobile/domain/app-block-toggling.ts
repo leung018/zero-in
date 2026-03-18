@@ -63,11 +63,7 @@ export class AppBlockTogglingService {
         return this.appBlockerWrapper.disableAllBlocking()
       }
 
-      if (!scheduleSpan) {
-        return this.appBlockerWrapper.enableAlwaysBlock()
-      }
-
-      if (scheduleSpan.isContain(new Date())) {
+      if (!scheduleSpan || scheduleSpan.isContain(new Date())) {
         return this.appBlockerWrapper.setBlockingSchedule(
           new ScheduleSpan({
             start: new Date(),
