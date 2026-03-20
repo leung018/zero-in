@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import TestingConfigPage from '@/pages/TestingConfigPage.vue'
-import { newTimerConfigStorageService } from '../../domain/timer/config/storage-factory'
+import { newTimerConfigStorageService } from '../../domain/timer/config/storage'
 </script>
 
 <template>

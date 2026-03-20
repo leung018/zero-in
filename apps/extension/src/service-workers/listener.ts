@@ -15,7 +15,7 @@ import { NotificationSettingStorageService } from '../domain/notification-settin
 import { newWeeklySchedulesStorageService } from '../domain/schedules/storage'
 import { FocusTimer } from '../domain/timer'
 import { newTimerBasedBlockingRulesStorageService } from '../domain/timer-based-blocking/storage'
-import { newTimerConfigStorageService } from '../domain/timer/config/storage-factory'
+import { newTimerConfigStorageService } from '../domain/timer/config/storage'
 import { newFocusSessionRecordsStorageService } from '../domain/timer/record/storage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage-display-label'
 import { newTimerStateStorageService } from '../domain/timer/state/storage'

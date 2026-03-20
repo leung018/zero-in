@@ -12,7 +12,7 @@ import NotificationPage from '@/pages/NotificationPage.vue'
 import StatisticsPage from '@/pages/StatisticsPage.vue'
 import TimerSettingPage from '@/pages/TimerSettingPage.vue'
 import { onMounted, ref } from 'vue'
-import { newTimerConfigStorageService } from '../../domain/timer/config/storage-factory'
+import { newTimerConfigStorageService } from '../../domain/timer/config/storage'
 import { newFocusSessionRecordsStorageService } from '../../domain/timer/record/storage'
 
 const port = new BrowserCommunicationManager().clientConnect()
