@@ -1,5 +1,7 @@
 import { flushPromises } from '@vue/test-utils'
 import { newTestTimerBasedBlockingRules } from '@zero-in/shared/domain/timer-based-blocking/index'
+import { TimerConfig } from '@zero-in/shared/domain/timer/config/index'
+import { TimerConfigStorageService } from '@zero-in/shared/domain/timer/config/storage'
 import { Duration } from '@zero-in/shared/domain/timer/duration'
 import type { FocusSessionRecord } from '@zero-in/shared/domain/timer/record/index'
 import { TimerStage } from '@zero-in/shared/domain/timer/stage'
@@ -13,8 +15,6 @@ import {
   newTestNotificationSetting,
   type NotificationSetting
 } from '../domain/notification-setting'
-import { TimerConfig } from '../domain/timer/config'
-import { TimerConfigStorageService } from '../domain/timer/config/storage'
 import { type Badge, type BadgeColor } from '../infra/badge'
 import { setUpListener } from '../test-utils/listener'
 import { BackgroundListener, type ClientPort } from './listener'

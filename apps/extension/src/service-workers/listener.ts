@@ -1,5 +1,6 @@
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
+import { TimerConfigStorageService } from '@zero-in/shared/domain/timer/config/storage'
 import { FocusSessionRecordHousekeeper } from '@zero-in/shared/domain/timer/record/house-keep'
 import { newFocusSessionRecord } from '@zero-in/shared/domain/timer/record/index'
 import { FocusSessionRecordsStorageService } from '@zero-in/shared/domain/timer/record/storage'
@@ -14,7 +15,7 @@ import { NotificationSettingStorageService } from '../domain/notification-settin
 import { newWeeklySchedulesStorageService } from '../domain/schedules/storage'
 import { FocusTimer } from '../domain/timer'
 import { newTimerBasedBlockingRulesStorageService } from '../domain/timer-based-blocking/storage'
-import { TimerConfigStorageService } from '../domain/timer/config/storage'
+import { newTimerConfigStorageService } from '../domain/timer/config/storage-factory'
 import { newFocusSessionRecordsStorageService } from '../domain/timer/record/storage'
 import { StageDisplayLabelHelper } from '../domain/timer/stage-display-label'
 import { newTimerStateStorageService } from '../domain/timer/state/storage'
@@ -64,7 +65,7 @@ export class BackgroundListener {
       notificationSettingStorageService: NotificationSettingStorageService.create(),
       badgeDisplayService: new BrowserBadgeDisplayService(),
       timerStateStorageService: newTimerStateStorageService(),
-      timerConfigStorageService: TimerConfigStorageService.create(),
+      timerConfigStorageService: newTimerConfigStorageService(),
       focusSessionRecordsStorageService: newFocusSessionRecordsStorageService(),
       closeTabsService: new BrowserCloseTabsService(config.getReminderPageUrl()),
       browsingControlService: new BrowserBrowsingControlService(),

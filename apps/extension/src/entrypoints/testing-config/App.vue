@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { TimerConfigStorageService } from '@/domain/timer/config/storage'
 import { BrowserCommunicationManager } from '@/infra/browser/communication'
 import TestingConfigPage from '@/pages/TestingConfigPage.vue'
+import { newTimerConfigStorageService } from '../../domain/timer/config/storage-factory'
 </script>
 
 <template>
   <TestingConfigPage
-    :timerConfigStorageService="TimerConfigStorageService.create()"
+    :timerConfigStorageService="newTimerConfigStorageService()"
     :port="new BrowserCommunicationManager().clientConnect()"
   />
 </template>

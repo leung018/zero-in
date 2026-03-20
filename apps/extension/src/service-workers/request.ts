@@ -1,9 +1,9 @@
-import { TimerConfig } from '../domain/timer/config'
+import { TimerConfig } from '@zero-in/shared/domain/timer/config/index'
 import {
   deserializeTimerConfig,
   SerializedTimerConfig,
   serializeTimerConfig
-} from '../domain/timer/config/serialize'
+} from '@zero-in/shared/domain/timer/config/serialize'
 
 export enum WorkRequestName {
   TOGGLE_BROWSING_RULES,

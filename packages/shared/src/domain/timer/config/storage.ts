@@ -1,3 +1,4 @@
+import config from '@zero-in/shared/config'
 import { FakeObservableStorage } from '@zero-in/shared/infra/storage/fake'
 import {
   ObservableStorage,
@@ -8,8 +9,6 @@ import { StorageKey } from '@zero-in/shared/infra/storage/key'
 import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
 import { StorageManager } from '@zero-in/shared/infra/storage/manager'
 import type { TimerConfig } from '.'
-import config from '../../../config'
-import { AdaptiveStorageProvider } from '../../../infra/storage/adaptive'
 import {
   deserializeTimerConfig,
   serializeTimerConfig,
@@ -18,10 +17,6 @@ import {
 
 export class TimerConfigStorageService implements StorageService<TimerConfig> {
   static readonly STORAGE_KEY: StorageKey = 'timerConfig'
-
-  static create() {
-    return new TimerConfigStorageService(AdaptiveStorageProvider.create())
-  }
 
   static createFake() {
     return new TimerConfigStorageService(LocalStorageWrapper.createFake())

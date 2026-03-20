@@ -1,7 +1,7 @@
+import { TimerConfig } from '@zero-in/shared/domain/timer/config/index'
+import { TimerConfigStorageService } from '@zero-in/shared/domain/timer/config/storage'
 import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
 import { describe, expect, it } from 'vitest'
-import { TimerConfig } from '../timer/config'
-import { TimerConfigStorageService } from '../timer/config/storage'
 import { SettingsExistenceService } from './settings-existence'
 
 describe('SettingsExistenceService', () => {
