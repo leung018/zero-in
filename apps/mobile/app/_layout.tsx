@@ -45,16 +45,16 @@ export default function RootLayout() {
       return triggerAppBlockToggling()
     })
 
-    const unsubscribe = onAuthStateChanged(getAuth(), async (user) => {
+    const unsubscribeAuth = onAuthStateChanged(getAuth(), async (user) => {
       setIsAuthenticated(user != null)
       setIsReady(true)
       await SplashScreen.hideAsync()
     })
 
     return () => {
-      unsubscribe()
+      unsubscribeAuth()
       notificationResponseListener.remove()
-      timerStateStorageService.unsubscribeAll() // TODO: May be not unsubscribeAll
+      timerStateStorageService.unsubscribeAll() // it only unsubscribes the listeners registered in this instance, which is fine
     }
   }, [])
 
