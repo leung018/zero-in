@@ -1,7 +1,5 @@
 import config from '@zero-in/shared/config'
-import { Duration } from '@zero-in/shared/domain/timer/duration'
 import type { NotificationSetting } from './domain/notification-setting'
-import { TimerConfig } from './domain/timer/config'
 import type { BadgeColor } from './infra/badge'
 
 const getBlockedTemplateUrl = () => {
@@ -18,15 +16,6 @@ const getSignInPageUrl = () => {
 
 const getOptionsPageUrl = () => {
   return browser.runtime.getURL('/options.html')
-}
-
-const getDefaultTimerConfig = () => {
-  return new TimerConfig({
-    focusDuration: new Duration({ minutes: 26 }),
-    shortBreakDuration: new Duration({ minutes: 5 }),
-    longBreakDuration: new Duration({ minutes: 19 }),
-    focusSessionsPerCycle: 4
-  })
 }
 
 const getDefaultNotificationSetting = () => {
@@ -75,7 +64,7 @@ const getFirebaseConfig = () => ({
 })
 
 export default {
-  getDefaultTimerConfig,
+  getDefaultTimerConfig: config.getDefaultTimerConfig,
   getFocusSessionRecordHouseKeepDays,
   getBlockedTemplateUrl,
   getBadgeColorConfig,

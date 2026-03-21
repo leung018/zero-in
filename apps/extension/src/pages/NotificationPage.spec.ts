@@ -1,11 +1,11 @@
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
+import { TimerConfig } from '@zero-in/shared/domain/timer/config/index'
 import { Duration } from '@zero-in/shared/domain/timer/duration'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   newTestNotificationSetting,
   type NotificationSetting
 } from '../domain/notification-setting'
-import { TimerConfig } from '../domain/timer/config'
 import { FakeActionService } from '../infra/action'
 import { WorkRequestName } from '../service-workers/request'
 import { assertSelectorCheckboxValue } from '../test-utils/assert'

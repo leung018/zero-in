@@ -1,7 +1,7 @@
+import { TimerConfigStorageService } from '@zero-in/shared/domain/timer/config/storage'
+import { runTimerConfigStorageServiceTests } from '@zero-in/shared/domain/timer/config/storage-shared-spec'
 import { beforeEach, describe } from 'vitest'
 import { signInAndGetFirestoreAppStorage } from '../../../test-utils/firestore'
-import { TimerConfigStorageService } from './storage'
-import { runTimerConfigStorageServiceTests } from './storage-shared-spec'
 
 describe('TimerConfigStorageService', async () => {
   const firestoreStorage = await signInAndGetFirestoreAppStorage()

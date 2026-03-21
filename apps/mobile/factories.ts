@@ -1,9 +1,10 @@
-import { Duration } from '../../packages/shared/src/domain/timer/duration'
 import { TimerStage } from '../../packages/shared/src/domain/timer/stage'
 import { AppBlockTogglingService } from './domain/app-block-toggling'
 import { newWeeklySchedulesStorageService } from './domain/schedules/storage'
 import { newTimerBasedBlockingRulesStorageService } from './domain/timer-based-blocking/storage'
+import { newTimerConfigStorageService } from './domain/timer/config/storage'
 import { newFocusSessionRecordsStorageService } from './domain/timer/record/storage'
+import { newTimerStateStorageService } from './domain/timer/state/storage'
 import { appBlocker } from './modules/app-blocker'
 
 /**
@@ -15,19 +16,25 @@ import { appBlocker } from './modules/app-blocker'
  */
 
 export function newAppBlockTogglingService() {
+  const timerStateStorageService = newTimerStateStorageService()
+  const timerConfigStorageService = newTimerConfigStorageService()
+
   return new AppBlockTogglingService({
     weeklySchedulesStorageService: newWeeklySchedulesStorageService(),
     focusSessionRecordsStorageService: newFocusSessionRecordsStorageService(),
     timerBasedBlockingRulesStorageService: newTimerBasedBlockingRulesStorageService(),
     timerInfoGetter: {
+      // Below is workaround when mobile app don't have its own timer
       getTimerInfo: async () => {
-        // TODO: Implement real timer info retrieval logic
+        const timerState = await timerStateStorageService.get()
+        const timerConfig = await timerConfigStorageService.get()
+
         return {
-          timerStage: TimerStage.FOCUS,
-          isRunning: false,
-          remaining: new Duration({}),
-          longBreak: new Duration({}),
-          shortBreak: new Duration({})
+          timerStage: timerState?.stage || TimerStage.FOCUS,
+          isRunning: timerState?.isRunning() ?? false,
+          remaining: timerState?.remaining() ?? timerConfig.focusDuration,
+          longBreak: timerConfig.longBreakDuration,
+          shortBreak: timerConfig.shortBreakDuration
         }
       }
     },

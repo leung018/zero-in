@@ -1,0 +1,65 @@
+import config from '@zero-in/shared/config'
+import { FakeObservableStorage } from '@zero-in/shared/infra/storage/fake'
+import {
+  ObservableStorage,
+  StorageInterface,
+  StorageService
+} from '@zero-in/shared/infra/storage/interface'
+import { StorageKey } from '@zero-in/shared/infra/storage/key'
+import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
+import { StorageManager } from '@zero-in/shared/infra/storage/manager'
+import type { TimerConfig } from '.'
+import {
+  deserializeTimerConfig,
+  serializeTimerConfig,
+  type SerializedTimerConfig
+} from './serialize'
+
+export class TimerConfigStorageService implements StorageService<TimerConfig> {
+  static readonly STORAGE_KEY: StorageKey = 'timerConfig'
+
+  static createFake() {
+    return new TimerConfigStorageService(LocalStorageWrapper.createFake())
+  }
+
+  static createObservableFake() {
+    return new TimerConfigStorageService(FakeObservableStorage.create())
+  }
+
+  private storageManager: StorageManager<SerializedTimerConfig>
+
+  private unsubscribes: (() => void)[] = []
+
+  constructor(storage: ObservableStorage | StorageInterface) {
+    this.storageManager = StorageManager.create({
+      storage,
+      key: TimerConfigStorageService.STORAGE_KEY,
+      migrators: []
+    })
+  }
+
+  async get(): Promise<TimerConfig> {
+    const result = await this.storageManager.get()
+    if (result) {
+      return deserializeTimerConfig(result)
+    }
+
+    return config.getDefaultTimerConfig()
+  }
+
+  async save(timerConfig: TimerConfig) {
+    return this.storageManager.set(serializeTimerConfig(timerConfig))
+  }
+
+  async onChange(callback: (config: TimerConfig) => void) {
+    const unsubscribe = await this.storageManager.onChange((data) => {
+      callback(deserializeTimerConfig(data))
+    })
+    this.unsubscribes.push(unsubscribe)
+  }
+
+  unsubscribeAll() {
+    this.unsubscribes.forEach((unsubscribe) => unsubscribe())
+    this.unsubscribes = []
+  }
+}

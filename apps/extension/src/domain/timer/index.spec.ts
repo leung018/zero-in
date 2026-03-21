@@ -1,3 +1,4 @@
+import { TimerConfig } from '@zero-in/shared/domain/timer/config/index'
 import { Duration } from '@zero-in/shared/domain/timer/duration'
 import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { type TimerExternalState } from '@zero-in/shared/domain/timer/state/external'
@@ -5,7 +6,6 @@ import { TimerInternalState } from '@zero-in/shared/domain/timer/state/internal'
 import { getDateAfter } from '@zero-in/shared/utils/date'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { FocusTimer } from '.'
-import { TimerConfig } from './config'
 
 describe('FocusTimer', () => {
   beforeEach(() => {
