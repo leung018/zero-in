@@ -15,7 +15,7 @@ const handleSignOut = async () => {
 
 export default function HomeScreen() {
   return (
-    <SafeAreaView style={styles.container} edges={['left', 'right']}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Welcome Card */}
         <View style={commonStyles.card}>
