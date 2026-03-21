@@ -2,12 +2,16 @@ import { Ionicons } from '@expo/vector-icons'
 import { Tabs } from 'expo-router'
 import React, { useState } from 'react'
 import { TouchableOpacity, View } from 'react-native'
+import { BlockingSyncBanner } from '../../components/blocking/BlockingSyncBanner'
 import { SideMenu } from '../../components/side-menu'
+import { triggerAppBlockToggling } from '../../infra/app-block/toggling-runner'
 
 export default function TabLayout() {
   const [menuVisible, setMenuVisible] = useState(false)
   return (
     <View style={{ flex: 1 }}>
+      <BlockingSyncBanner triggerAppBlockToggling={triggerAppBlockToggling} />
+
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: '#007AFF',

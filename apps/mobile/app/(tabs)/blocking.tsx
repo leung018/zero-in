@@ -77,7 +77,7 @@ export default function BlockingScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['left', 'right']}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Permission Warnings Section */}
         {permissionStatus.getMissingPermissions().map((permissionType) => (
