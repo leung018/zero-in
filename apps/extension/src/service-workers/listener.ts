@@ -194,16 +194,19 @@ export class BackgroundListener {
       this.timer.setInternalState(backupInternalState)
     }
 
-    this.timer.setOnStageCompleted(({ lastStage, lastSessionStartTime }) => {
+    this.timer.setOnStageCompleted(async ({ lastStage, lastSessionStartTime }) => {
       this.timerStateStorageService.save(this.timer.getInternalState())
+
+      if (lastStage === TimerStage.FOCUS) {
+        // Run updateFocusSessionRecords before notifications and rule toggling
+        // so those actions see the new session record. This ordering is
+        // hard to assert in unit tests.
+        await this.updateFocusSessionRecords(lastSessionStartTime)
+      }
 
       this.triggerNotification()
       this.badgeDisplayService.clearBadge()
       this.toggleBrowsingRules()
-
-      if (lastStage === TimerStage.FOCUS) {
-        this.updateFocusSessionRecords(lastSessionStartTime)
-      }
     })
 
     // Use setOnTimerStart instead of putting these actions under START_TIMER to avoid duplication.
