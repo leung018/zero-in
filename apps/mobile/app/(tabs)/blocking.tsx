@@ -123,6 +123,7 @@ export default function BlockingScreen() {
         {/* Timer-Based Section */}
         <TimerBasedSetting
           timerBasedBlockingRulesStorageService={newTimerBasedBlockingRulesStorageService()}
+          triggerAppBlockToggling={triggerAppBlockToggling}
         />
 
         {/* Schedules Section */}
