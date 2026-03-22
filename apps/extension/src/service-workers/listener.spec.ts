@@ -196,6 +196,7 @@ describe('BackgroundListener', () => {
 
     await clientPort.send({ name: WorkRequestName.START_TIMER })
     vi.advanceTimersByTime(1000)
+    await flushPromises()
 
     expect(badgeDisplayService.getDisplayedBadge()).toBeNull()
   })
