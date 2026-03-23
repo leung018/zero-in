@@ -78,6 +78,7 @@ class BlockingService : Service() {
     startForeground(1, notification)
 
     loadBlockedApps()
+    handler.removeCallbacks(pollingRunnable)
     handler.post(pollingRunnable)
     return START_STICKY
   }
