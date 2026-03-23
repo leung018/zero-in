@@ -5,9 +5,11 @@ import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 import { showUpdateSuccessNotification } from '../../infra/update-success'
 
 export function TimerBasedSetting({
-  timerBasedBlockingRulesStorageService
+  timerBasedBlockingRulesStorageService,
+  triggerAppBlockToggling
 }: {
   timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
+  triggerAppBlockToggling: () => Promise<void>
 }) {
   const [pauseDuringBreaks, setPauseDuringBreaks] = useState(false)
   const [pauseWhenNotRunning, setPauseWhenNotRunning] = useState(false)
@@ -26,6 +28,7 @@ export function TimerBasedSetting({
     })
 
     showUpdateSuccessNotification()
+    await triggerAppBlockToggling()
   }
 
   return (

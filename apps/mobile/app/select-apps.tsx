@@ -27,6 +27,14 @@ export default function SelectAppsScreen() {
             }}
           />
         </View>
+        {/* TODO: May make app blocking toggling is triggered whenever user change the selected apps */}
+        <View style={styles.noticeBox}>
+          <Text style={styles.noticeTitle}>Apply immediately</Text>
+          <Text style={styles.noticeText}>
+            Tap Done to apply your app blocking changes right now. If you leave without tapping
+            Done, changes may still sync later but might not take effect immediately.
+          </Text>
+        </View>
         <TouchableOpacity
           style={styles.primaryButton}
           onPress={async () => {
@@ -35,7 +43,7 @@ export default function SelectAppsScreen() {
           }}
           activeOpacity={0.8}
         >
-          <Text style={styles.primaryButtonText}>Done</Text>
+          <Text style={styles.primaryButtonText}>Done - Apply Now</Text>
         </TouchableOpacity>
         {isLoading && (
           <View
@@ -84,6 +92,27 @@ const styles = StyleSheet.create({
   },
   appPicker: {
     flex: 1
+  },
+  noticeBox: {
+    marginTop: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    backgroundColor: '#eff6ff',
+    borderWidth: 1,
+    borderColor: '#bfdbfe',
+    borderRadius: 10
+  },
+  noticeTitle: {
+    color: '#1d4ed8',
+    fontSize: 14,
+    fontWeight: '700'
+  },
+  noticeText: {
+    marginTop: 4,
+    color: '#1e3a8a',
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: '500'
   },
   primaryButton: {
     backgroundColor: '#1a73e8',

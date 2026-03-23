@@ -31,12 +31,13 @@ describe('TimerBasedSetting', () => {
   })
 
   it('should persist setting after clicking save', async () => {
-    const { wrapper, timerBasedBlockingRulesStorageService } = await renderTimerBasedSetting({
-      timerBasedBlockingRules: newTestTimerBasedBlockingRules({
-        pauseBlockingDuringBreaks: false,
-        pauseBlockingWhenTimerNotRunning: true
+    const { wrapper, timerBasedBlockingRulesStorageService, triggerAppBlockToggling } =
+      await renderTimerBasedSetting({
+        timerBasedBlockingRules: newTestTimerBasedBlockingRules({
+          pauseBlockingDuringBreaks: false,
+          pauseBlockingWhenTimerNotRunning: true
+        })
       })
-    })
 
     const expectedRules: TimerBasedBlockingRules = newTestTimerBasedBlockingRules({
       pauseBlockingDuringBreaks: true,
@@ -47,6 +48,7 @@ describe('TimerBasedSetting', () => {
 
     await waitFor(async () => {
       expect(await timerBasedBlockingRulesStorageService.get()).toEqual(expectedRules)
+      expect(triggerAppBlockToggling).toHaveBeenCalled()
     })
   })
 })
@@ -59,16 +61,19 @@ async function renderTimerBasedSetting({
   const timerBasedBlockingRulesStorageService = TimerBasedBlockingRulesStorageService.createFake()
   await timerBasedBlockingRulesStorageService.save(timerBasedBlockingRules)
 
+  const triggerAppBlockToggling = jest.fn(async () => {})
+
   const wrapper: RenderAPI = render(
     <TimerBasedSetting
       timerBasedBlockingRulesStorageService={timerBasedBlockingRulesStorageService}
+      triggerAppBlockToggling={triggerAppBlockToggling}
     />
   )
 
   // Wait for the component to be rendered
   await wrapper.findByTestId('pause-blocking-during-breaks')
 
-  return { wrapper, timerBasedBlockingRulesStorageService }
+  return { wrapper, timerBasedBlockingRulesStorageService, triggerAppBlockToggling }
 }
 
 function saveTimerBasedBlockingRules(
