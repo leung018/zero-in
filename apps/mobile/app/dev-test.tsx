@@ -4,7 +4,7 @@ import {
   scheduleNotificationAtScheduleEnd
 } from '@/infra/app-block/toggling-runner'
 import { appBlocker } from '@/modules/app-blocker'
-import DateTimePicker from '@react-native-community/datetimepicker'
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker'
 import { ScheduleSpan } from '@zero-in/shared/domain/schedules'
 import * as BackgroundTask from 'expo-background-task'
 import { Stack } from 'expo-router'
@@ -22,23 +22,108 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+const formatDateTime = (date: Date): string => {
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  })
+}
+
+function DateTimeField({
+  label,
+  value,
+  onChange
+}: {
+  label: string
+  value: Date
+  onChange: (date: Date) => void
+}) {
+  const [showIosPicker, setShowIosPicker] = useState(false)
+  const [androidPickerMode, setAndroidPickerMode] = useState<'date' | 'time' | null>(null)
+  const [androidPickerDraftDate, setAndroidPickerDraftDate] = useState<Date>(value)
+
+  const openPicker = () => {
+    if (Platform.OS === 'ios') {
+      setShowIosPicker(true)
+      return
+    }
+
+    setAndroidPickerDraftDate(value)
+    setAndroidPickerMode('date')
+  }
+
+  const handlePickerChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    if (event.type === 'dismissed') {
+      setShowIosPicker(false)
+      setAndroidPickerMode(null)
+      return
+    }
+
+    if (!selectedDate) {
+      return
+    }
+
+    if (Platform.OS === 'ios') {
+      onChange(selectedDate)
+      return
+    }
+
+    if (androidPickerMode === 'date') {
+      const nextDraft = new Date(selectedDate)
+      nextDraft.setHours(
+        androidPickerDraftDate.getHours(),
+        androidPickerDraftDate.getMinutes(),
+        0,
+        0
+      )
+      setAndroidPickerDraftDate(nextDraft)
+      setAndroidPickerMode('time')
+      return
+    }
+
+    const finalDate = new Date(androidPickerDraftDate)
+    finalDate.setHours(selectedDate.getHours(), selectedDate.getMinutes(), 0, 0)
+    onChange(finalDate)
+    setAndroidPickerMode(null)
+  }
+
+  return (
+    <View style={styles.dateTimeSection}>
+      <Text style={styles.label}>{label}</Text>
+      <Pressable style={styles.dateTimeButton} onPress={openPicker}>
+        <Text style={styles.dateTimeText}>{formatDateTime(value)}</Text>
+      </Pressable>
+
+      {Platform.OS === 'ios' && showIosPicker && (
+        <DateTimePicker
+          value={value}
+          mode="datetime"
+          display="default"
+          onChange={handlePickerChange}
+        />
+      )}
+
+      {Platform.OS === 'android' && androidPickerMode && (
+        <DateTimePicker
+          value={androidPickerDraftDate}
+          mode={androidPickerMode}
+          display="default"
+          is24Hour={true}
+          onChange={handlePickerChange}
+        />
+      )}
+    </View>
+  )
+}
+
 function DevTestContent() {
   const [startDate, setStartDate] = useState<Date>(new Date())
   const [endDate, setEndDate] = useState<Date>(new Date(Date.now() + 60 * 60 * 1000)) // 1 hour from now
-  const [showStartPicker, setShowStartPicker] = useState(false)
-  const [showEndPicker, setShowEndPicker] = useState(false)
   const [notificationDelaySeconds, setNotificationDelaySeconds] = useState<string>('3')
-
-  const formatDateTime = (date: Date): string => {
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    })
-  }
 
   const handleBlockApps = async () => {
     try {
@@ -100,20 +185,6 @@ function DevTestContent() {
     } catch (error) {
       console.error('Failed to trigger background task:', error)
       Alert.alert('Error', `Failed to trigger background task: ${error}`)
-    }
-  }
-
-  const onStartDateChange = (event: any, selectedDate?: Date) => {
-    setShowStartPicker(Platform.OS === 'ios')
-    if (selectedDate) {
-      setStartDate(selectedDate)
-    }
-  }
-
-  const onEndDateChange = (event: any, selectedDate?: Date) => {
-    setShowEndPicker(Platform.OS === 'ios')
-    if (selectedDate) {
-      setEndDate(selectedDate)
     }
   }
 
@@ -186,35 +257,9 @@ function DevTestContent() {
 
           <Text style={styles.subSectionTitle}>setSchedule</Text>
 
-          <View style={styles.dateTimeSection}>
-            <Text style={styles.label}>Start Time</Text>
-            <Pressable style={styles.dateTimeButton} onPress={() => setShowStartPicker(true)}>
-              <Text style={styles.dateTimeText}>{formatDateTime(startDate)}</Text>
-            </Pressable>
-            {showStartPicker && (
-              <DateTimePicker
-                value={startDate}
-                mode="datetime"
-                display="default"
-                onChange={onStartDateChange}
-              />
-            )}
-          </View>
+          <DateTimeField label="Start Time" value={startDate} onChange={setStartDate} />
 
-          <View style={styles.dateTimeSection}>
-            <Text style={styles.label}>End Time</Text>
-            <Pressable style={styles.dateTimeButton} onPress={() => setShowEndPicker(true)}>
-              <Text style={styles.dateTimeText}>{formatDateTime(endDate)}</Text>
-            </Pressable>
-            {showEndPicker && (
-              <DateTimePicker
-                value={endDate}
-                mode="datetime"
-                display="default"
-                onChange={onEndDateChange}
-              />
-            )}
-          </View>
+          <DateTimeField label="End Time" value={endDate} onChange={setEndDate} />
 
           <TouchableOpacity style={commonStyles.secondaryButton} onPress={handleSetSchedule}>
             <Text style={commonStyles.secondaryButtonText}>Set Schedule</Text>
