@@ -34,26 +34,27 @@ class AppBlockerModule : Module() {
       AsyncFunction("requestPermission") { permissionType: String ->
         val context = appContext.reactContext ?: throw Exception("No context")
         when (permissionType) {
-          "overlay" -> requestOverlayPermission(context)
-          "usageStats" -> requestUsageStatsPermission(context)
+          "overlay" -> context.requestOverlayPermission()
+          "usageStats" -> context.requestUsageStatsPermission()
         }
       }
 
       AsyncFunction("blockApps") {
         val context = appContext.reactContext ?: throw Exception("No context")
-        if (!hasOverlayPermission(context) || !hasUsageStatsPermission(context)) {
+        if (!context.hasOverlayPermission() || !context.hasUsageStatsPermission()) {
           throw Exception("Please enable the required permissions first")
         }
-        startService()
+        context.startBlockingService()
       }
 
       AsyncFunction("unblockApps") {
-        stopService()
+        val context = appContext.reactContext ?: throw Exception("No context")
+        context.stopBlockingService()
       }
 
       AsyncFunction("setSchedule") { startTime: Double, endTime: Double ->
         val context = appContext.reactContext ?: throw Exception("No context")
-        if (!hasOverlayPermission(context) || !hasUsageStatsPermission(context)) {
+        if (!context.hasOverlayPermission() || !context.hasUsageStatsPermission()) {
           throw Exception("Please enable the required permissions first")
         }
 
@@ -84,50 +85,9 @@ class AppBlockerModule : Module() {
         val context = appContext.reactContext ?: throw Exception("No context")
         cancelScheduleWorkers(context)
         preferences(context).clearScheduleWindow()
-        stopService()
+        context.stopBlockingService()
       }
     }
-
-  private fun hasOverlayPermission(context: Context): Boolean = Settings.canDrawOverlays(context)
-
-  private fun hasUsageStatsPermission(context: Context): Boolean {
-    val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-    val mode =
-      appOps.checkOpNoThrow(
-        AppOpsManager.OPSTR_GET_USAGE_STATS,
-        Process.myUid(),
-        context.packageName,
-      )
-    return mode == AppOpsManager.MODE_ALLOWED
-  }
-
-  private fun requestOverlayPermission(context: Context) {
-    val intent =
-      Intent(
-        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-        ("package:" + context.packageName).toUri(),
-      )
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    context.startActivity(intent)
-  }
-
-  private fun requestUsageStatsPermission(context: Context) {
-    val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    context.startActivity(intent)
-  }
-
-  private fun startService() {
-    val context = appContext.reactContext ?: throw Exception("No context")
-    val intent = Intent(context, BlockingService::class.java)
-    context.startService(intent)
-  }
-
-  private fun stopService() {
-    val context = appContext.reactContext ?: throw Exception("No context")
-    val intent = Intent(context, BlockingService::class.java)
-    context.stopService(intent)
-  }
 
   private fun preferences(context: Context): BlockedAppsPreferences =
     BlockedAppsPreferences(context.applicationContext)
