@@ -1,11 +1,38 @@
+import { triggerAppBlockToggling } from '@/infra/app-block/toggling-runner'
 import { Ionicons } from '@expo/vector-icons'
 import { Tabs } from 'expo-router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { TouchableOpacity, View } from 'react-native'
 import { SideMenu } from '../../components/side-menu'
+import { newTimerStateStorageService } from '../../domain/timer/state/storage'
+import { createLogger } from '../../utils/logger'
+
+const log = createLogger('TabLayout')
 
 export default function TabLayout() {
   const [menuVisible, setMenuVisible] = useState(false)
+
+  useEffect(() => {
+    // Sync blocking schedules on app startup
+    triggerAppBlockToggling().catch((err) => {
+      log.error('Initial sync failed:', err)
+    })
+
+    // Listen for timerState change from remote
+    const timerStateStorageService = newTimerStateStorageService()
+    timerStateStorageService
+      .onChange(() => {
+        return triggerAppBlockToggling()
+      })
+      .catch((err) => {
+        log.error('Failed to subscribe to timer state:', err)
+      })
+
+    return () => {
+      timerStateStorageService.unsubscribeAll()
+    }
+  }, [])
+
   return (
     <View style={{ flex: 1 }}>
       <Tabs
