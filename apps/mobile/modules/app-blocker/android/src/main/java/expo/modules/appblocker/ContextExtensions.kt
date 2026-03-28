@@ -32,7 +32,7 @@ fun Context.requestOverlayPermission() {
 }
 
 fun Context.requestUsageStatsPermission() {
-  val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+  val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS, "package:$packageName".toUri())
   intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
   startActivity(intent)
 }
