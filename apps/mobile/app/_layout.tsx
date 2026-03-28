@@ -1,7 +1,4 @@
-import {
-  onScheduleEndNotificationTapped,
-  triggerAppBlockToggling
-} from '@/infra/app-block/toggling-runner'
+import { onScheduleEndNotificationTapped } from '@/infra/app-block/toggling-runner'
 import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth'
 import * as Notifications from 'expo-notifications'
 import { Stack } from 'expo-router'
@@ -9,7 +6,6 @@ import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { newTimerStateStorageService } from '../domain/timer/state/storage'
 import { createLogger } from '../utils/logger'
 
 SplashScreen.preventAutoHideAsync()
@@ -26,11 +22,6 @@ export default function RootLayout() {
       log.error('Failed to request notification permissions:', err)
     })
 
-    // Sync blocking schedules on app startup
-    triggerAppBlockToggling().catch((err) => {
-      log.error('Initial sync failed:', err)
-    })
-
     // Listen for notification taps that trigger app blocking service
     const notificationResponseListener = Notifications.addNotificationResponseReceivedListener(
       (response) => {
@@ -38,12 +29,6 @@ export default function RootLayout() {
         onScheduleEndNotificationTapped(response)
       }
     )
-
-    // Listen for timerState change from remote
-    const timerStateStorageService = newTimerStateStorageService()
-    timerStateStorageService.onChange(() => {
-      return triggerAppBlockToggling()
-    })
 
     const unsubscribeAuth = onAuthStateChanged(getAuth(), async (user) => {
       setIsAuthenticated(user != null)
@@ -54,7 +39,6 @@ export default function RootLayout() {
     return () => {
       unsubscribeAuth()
       notificationResponseListener.remove()
-      timerStateStorageService.unsubscribeAll() // it only unsubscribes the listeners registered in this instance, which is fine
     }
   }, [])
 
