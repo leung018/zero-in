@@ -64,9 +64,10 @@ describe('WeeklySchedulesEditor', () => {
   })
 
   it('should able to add new weekly schedule', async () => {
-    const { wrapper, weeklySchedulesStorageService } = await renderWeeklySchedulesEditor({
-      weeklySchedules: []
-    })
+    const { wrapper, weeklySchedulesStorageService, triggerAppBlockToggling } =
+      await renderWeeklySchedulesEditor({
+        weeklySchedules: []
+      })
     const weeklySchedule = new WeeklySchedule({
       weekdaySet: new Set([Weekday.THU, Weekday.FRI]),
       startTime: new Time(10, 0),
@@ -82,6 +83,7 @@ describe('WeeklySchedulesEditor', () => {
     ])
 
     expect(await weeklySchedulesStorageService.get()).toEqual([weeklySchedule])
+    expect(triggerAppBlockToggling).toHaveBeenCalledTimes(1)
 
     const extraWeeklySchedule = new WeeklySchedule({
       weekdaySet: new Set([Weekday.SAT]),
@@ -104,6 +106,7 @@ describe('WeeklySchedulesEditor', () => {
     ])
 
     expect(await weeklySchedulesStorageService.get()).toEqual([weeklySchedule, extraWeeklySchedule])
+    expect(triggerAppBlockToggling).toHaveBeenCalledTimes(2)
   })
 
   it('should able to remove added schedule', async () => {
@@ -112,16 +115,17 @@ describe('WeeklySchedulesEditor', () => {
       startTime: new Time(10, 0),
       endTime: new Time(12, 0)
     })
-    const { wrapper, weeklySchedulesStorageService } = await renderWeeklySchedulesEditor({
-      weeklySchedules: [
-        originalSchedule,
-        new WeeklySchedule({
-          weekdaySet: new Set([Weekday.TUE]),
-          startTime: new Time(10, 0),
-          endTime: new Time(12, 0)
-        })
-      ]
-    })
+    const { wrapper, weeklySchedulesStorageService, triggerAppBlockToggling } =
+      await renderWeeklySchedulesEditor({
+        weeklySchedules: [
+          originalSchedule,
+          new WeeklySchedule({
+            weekdaySet: new Set([Weekday.TUE]),
+            startTime: new Time(10, 0),
+            endTime: new Time(12, 0)
+          })
+        ]
+      })
 
     // Wait for schedules to be loaded and rendered
     await waitFor(() => {
@@ -139,6 +143,7 @@ describe('WeeklySchedulesEditor', () => {
     ])
 
     expect(await weeklySchedulesStorageService.get()).toEqual([originalSchedule])
+    expect(triggerAppBlockToggling).toHaveBeenCalled()
   })
 
   it('should prevent add weekly schedule when weekdaySet is not selected', async () => {
@@ -259,10 +264,12 @@ async function renderWeeklySchedulesEditor({
 } = {}) {
   const weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake()
   await weeklySchedulesStorageService.save(weeklySchedules)
+  const triggerAppBlockToggling = jest.fn(async () => {})
+
   const wrapper = render(
     <WeeklySchedulesEditor
       weeklySchedulesStorageService={weeklySchedulesStorageService}
-      triggerAppBlockToggling={async () => {}}
+      triggerAppBlockToggling={triggerAppBlockToggling}
     />
   )
 
@@ -274,7 +281,7 @@ async function renderWeeklySchedulesEditor({
     })
   }
 
-  return { wrapper, weeklySchedulesStorageService }
+  return { wrapper, weeklySchedulesStorageService, triggerAppBlockToggling }
 }
 
 async function assertSchedulesDisplayed(
