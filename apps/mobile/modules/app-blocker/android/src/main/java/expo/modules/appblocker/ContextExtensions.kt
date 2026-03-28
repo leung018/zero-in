@@ -24,7 +24,7 @@ fun Context.requestOverlayPermission() {
   val intent =
     Intent(
       Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-      androidx.core.net.toUri("package:$packageName"),
+      android.net.Uri.parse("package:$packageName"),
     )
   intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
   startActivity(intent)

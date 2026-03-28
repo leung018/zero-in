@@ -1,11 +1,6 @@
 package expo.modules.appblocker
 
-import android.app.AppOpsManager
 import android.content.Context
-import android.content.Intent
-import android.os.Process
-import android.provider.Settings
-import androidx.core.net.toUri
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -26,8 +21,8 @@ class AppBlockerModule : Module() {
         val context =
           appContext.reactContext ?: throw Exception("No context")
         return@AsyncFunction mapOf(
-          "overlay" to hasOverlayPermission(context),
-          "usageStats" to hasUsageStatsPermission(context),
+          "overlay" to context.hasOverlayPermission(),
+          "usageStats" to context.hasUsageStatsPermission(),
         )
       }
 
@@ -77,7 +72,7 @@ class AppBlockerModule : Module() {
         )
 
         if (now in startTimeMillis until endTimeMillis) {
-          startService()
+          context.startBlockingService()
         }
       }
 
