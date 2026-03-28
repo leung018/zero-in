@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Process
 import android.provider.Settings
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 
 fun Context.hasOverlayPermission(): Boolean = Settings.canDrawOverlays(this)
 
@@ -24,7 +25,7 @@ fun Context.requestOverlayPermission() {
   val intent =
     Intent(
       Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-      android.net.Uri.parse("package:$packageName"),
+      "package:$packageName".toUri(),
     )
   intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
   startActivity(intent)
