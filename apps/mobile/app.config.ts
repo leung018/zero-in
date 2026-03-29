@@ -1,9 +1,11 @@
 import { ConfigContext, ExpoConfig } from 'expo/config'
 import 'tsx/cjs'
 
+const IS_DEV = process.env.APP_VARIANT === 'development'
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: 'Zero In',
+  name: IS_DEV ? 'Zero In (Dev)' : 'Zero In',
   slug: 'zero-in',
   extra: {
     eas: {
@@ -13,16 +15,18 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
-  scheme: 'mobile',
+  scheme: IS_DEV ? 'mobile-dev' : 'mobile',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
   ios: {
     supportsTablet: true,
-    bundleIdentifier: 'dev.zeroin.mobile',
+    bundleIdentifier: IS_DEV ? 'dev.zeroin.mobile.dev' : 'dev.zeroin.mobile',
     googleServicesFile: process.env.GOOGLE_SERVICES_PLIST || 'GoogleService-Info.plist',
     entitlements: {
       'com.apple.developer.family-controls': true,
-      'com.apple.security.application-groups': ['group.dev.zeroin.mobile']
+      'com.apple.security.application-groups': [
+        IS_DEV ? 'group.dev.zeroin.mobile.dev' : 'group.dev.zeroin.mobile'
+      ]
     },
     appleTeamId: 'YCDM23LPV6',
     infoPlist: {
@@ -39,7 +43,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
-    package: 'dev.zeroin.mobile',
+    package: IS_DEV ? 'dev.zeroin.mobile.dev' : 'dev.zeroin.mobile',
     googleServicesFile: process.env.GOOGLE_SERVICES_JSON || 'google-services.json'
   },
   plugins: [
