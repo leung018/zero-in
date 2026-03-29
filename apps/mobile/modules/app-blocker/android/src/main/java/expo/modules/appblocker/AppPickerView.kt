@@ -47,6 +47,20 @@ class AppPickerView(
     loadInstalledApps()
   }
 
+  private val measureAndLayout =
+    Runnable {
+      measure(
+        View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+        View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),
+      )
+      layout(left, top, right, bottom)
+    }
+
+  override fun requestLayout() {
+    super.requestLayout()
+    post(measureAndLayout)
+  }
+
   private fun loadInstalledApps() {
     // Load apps in background thread to avoid blocking UI
     Thread {
