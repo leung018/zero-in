@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:54527256719:android:752fb16f218e6a21d628fa",
+        "mobilesdk_app_id": "1:54527256719:android:602357bd1328c16cd628fa",
         "android_client_info": {
-          "package_name": "dev.zeroin.mobile"
+          "package_name": "dev.zeroin.mobile.dev"
         }
       },
       "oauth_client": [
