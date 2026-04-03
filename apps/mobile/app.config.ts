@@ -88,7 +88,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-font',
     'expo-web-browser',
     '@bacons/apple-targets',
-    'expo-background-task'
+    'expo-background-task',
+    'expo-image'
   ],
   experiments: {
     typedRoutes: true,
