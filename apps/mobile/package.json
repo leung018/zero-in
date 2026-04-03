@@ -9,7 +9,7 @@
     "ios": "APP_VARIANT=development expo run:ios",
     "lint": "expo lint",
     "type-check": "tsc --noEmit",
-    "cng:": "APP_VARIANT=development expo prebuild --clean",
+    "cng": "APP_VARIANT=development expo prebuild --clean",
     "cng:prod": "APP_VARIANT=production expo prebuild --clean",
     "test:unit": "jest",
     "test:unit:watch": "jest --watch",
