@@ -19,14 +19,22 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
   ios: {
+    // iOS uses the same bundle identifier for both dev and prod because I'm an Android
+    // user and don't need a separate app for development on iOS.
+    // When I tried to create a separate bundle identifier for development (like Android),
+    // I ran into the following error when running the app:
+    //
+    // ERROR Failed to request familyControls permission: [Error: Family Controls authorization is available for only one application at a time.]
+    //
+    // TODO: Create a separate bundle identifier for iOS development (like Android) in the future if needed.
+    //       When doing so, note that only the bundle identifier with Family Controls capability
+    //       was created on the Apple Developer Console — other configurations may also need to be set up.
     supportsTablet: true,
-    bundleIdentifier: IS_DEV ? 'dev.zeroin.mobile.dev' : 'dev.zeroin.mobile',
+    bundleIdentifier: 'dev.zeroin.mobile',
     googleServicesFile: process.env.GOOGLE_SERVICES_PLIST || 'GoogleService-Info.plist',
     entitlements: {
       'com.apple.developer.family-controls': true,
-      'com.apple.security.application-groups': [
-        IS_DEV ? 'group.dev.zeroin.mobile.dev' : 'group.dev.zeroin.mobile'
-      ]
+      'com.apple.security.application-groups': ['group.dev.zeroin.mobile']
     },
     appleTeamId: 'YCDM23LPV6',
     infoPlist: {
