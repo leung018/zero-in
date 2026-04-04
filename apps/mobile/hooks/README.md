@@ -1,0 +1,3 @@
+## Notes
+
+I removed non using files related to color theme and other ui components in commit 8bb89f. If want to use those files, please check the commit history and restore them.
