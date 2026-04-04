@@ -7022,7 +7022,7 @@ __metadata:
     eslint: "npm:^9.39.1"
     eslint-config-expo: "npm:~10.0.0"
     expo: "npm:~54.0.33"
-    expo-background-task: "npm:~1.0.10"
+    expo-background-task: "npm:~55.0.12"
     expo-build-properties: "npm:~1.0.10"
     expo-constants: "npm:~18.0.13"
     expo-doctor: "npm:^1.17.14"
@@ -11061,14 +11061,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-background-task@npm:~1.0.10":
-  version: 1.0.10
-  resolution: "expo-background-task@npm:1.0.10"
+"expo-background-task@npm:~55.0.12":
+  version: 55.0.12
+  resolution: "expo-background-task@npm:55.0.12"
   dependencies:
-    expo-task-manager: "npm:~14.0.9"
+    expo-task-manager: "npm:~55.0.12"
   peerDependencies:
     expo: "*"
-  checksum: 10c0/f787ecb55489f414c0a08c944e846d8dbe4f2a88652e04e22caa35da72fdfdf3f73f1a863c715f20abfb3a62f81885dc5bc6a4c50619f2718500d9d374d6a559
+  checksum: 10c0/162ff479bc3f0bce4782dd146db740a7b84e66e17c7e4c945db70bab53c7551e794fa5291fad684ec89cbe26b9204784612a78cb8be120918ff34bd0ba5e3bf3
   languageName: node
   linkType: hard
 
@@ -11343,15 +11343,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-task-manager@npm:~14.0.9":
-  version: 14.0.9
-  resolution: "expo-task-manager@npm:14.0.9"
+"expo-task-manager@npm:~55.0.12":
+  version: 55.0.12
+  resolution: "expo-task-manager@npm:55.0.12"
   dependencies:
-    unimodules-app-loader: "npm:~6.0.8"
+    unimodules-app-loader: "npm:~55.0.4"
   peerDependencies:
     expo: "*"
     react-native: "*"
-  checksum: 10c0/e56cd92702a05400af8505c5de1bb538fe4fd564ca3f5bb3b5930e20c2e62397ad592ed337d51a43b3e6e81cb47660672f399d23410bcf11e29680621a1f414e
+  checksum: 10c0/6a0d3bcd8f952c737e6bcec56f0213e3cef2648104e11cc945ebd23099e393b392b145a51dd68c9d20cbcc8bbc44dd647ef702d786f8d758a5928df8e4cb7e14
   languageName: node
   linkType: hard
 
@@ -21210,10 +21210,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unimodules-app-loader@npm:~6.0.8":
-  version: 6.0.8
-  resolution: "unimodules-app-loader@npm:6.0.8"
-  checksum: 10c0/7354c2d741917ed60daf2d6b2a4309d56f6f0f97b9de9f753b09e962e0654649dc7367a2063166caabdc5786aeb70b98b70507e929113062cea3c896776d45f7
+"unimodules-app-loader@npm:~55.0.4":
+  version: 55.0.4
+  resolution: "unimodules-app-loader@npm:55.0.4"
+  checksum: 10c0/0125b9586048fd9f27e5df725e898f319b3abb0908c9525a3cf815d44454a1f425eddd3e946518fa1eed3a0f66fbf50fbe8356fa1c1818e6d8171902c86afd64
   languageName: node
   linkType: hard
 

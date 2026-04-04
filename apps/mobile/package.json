@@ -26,7 +26,7 @@
     "@react-navigation/native": "^7.1.8",
     "@zero-in/shared": "workspace:*",
     "expo": "~54.0.33",
-    "expo-background-task": "~1.0.10",
+    "expo-background-task": "~55.0.12",
     "expo-build-properties": "~1.0.10",
     "expo-constants": "~18.0.13",
     "expo-font": "~14.0.11",
