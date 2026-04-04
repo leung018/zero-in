@@ -17,7 +17,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   icon: './assets/images/icon.png',
   scheme: IS_DEV ? 'mobile-dev' : 'mobile',
   userInterfaceStyle: 'automatic',
-  newArchEnabled: true,
   ios: {
     // iOS uses the same bundle identifier for both dev and prod because I'm an Android
     // user and don't need a separate app for development on iOS.
@@ -49,7 +48,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundImage: './assets/images/android-icon-background.png',
       monochromeImage: './assets/images/android-icon-monochrome.png'
     },
-    edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: IS_DEV ? 'dev.zeroin.mobile.dev' : 'dev.zeroin.mobile',
     googleServicesFile: process.env.GOOGLE_SERVICES_JSON || 'google-services.json'
@@ -88,7 +86,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-font',
     'expo-web-browser',
     '@bacons/apple-targets',
-    'expo-background-task'
+    'expo-background-task',
+    'expo-image'
   ],
   experiments: {
     typedRoutes: true,
