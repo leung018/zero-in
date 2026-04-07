@@ -30,6 +30,10 @@ jobs:
       - name: Unit Tests
         run: yarn extension-test-unit
         working-directory: ${{ github.workspace }}
+      - uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '21'
       - name: Integration Tests
         run: yarn test:integration
       - name: Build
