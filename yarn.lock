@@ -4760,9 +4760,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-firebase/app@npm:^23.8.8":
-  version: 23.8.8
-  resolution: "@react-native-firebase/app@npm:23.8.8"
+"@react-native-firebase/app@npm:^24.0.0":
+  version: 24.0.0
+  resolution: "@react-native-firebase/app@npm:24.0.0"
   dependencies:
     firebase: "npm:12.10.0"
   peerDependencies:
@@ -4772,33 +4772,33 @@ __metadata:
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10c0/04ab6e192f6bdd4743dc08cdef8614a8e537d5581fa6b966def4398d9567693657382f844341ac221d42fc89d12c16effdad160aaee36aa7a38bda03afa35607
+  checksum: 10c0/7019b99bda3f9b033bc6e619b8b37206a900ae64c662837971f31356a291b4e8eeb4f9e5a41dba70b33627425824d43620ec44a194daab01368b5932b3b9f7ae
   languageName: node
   linkType: hard
 
-"@react-native-firebase/auth@npm:^23.8.8":
-  version: 23.8.8
-  resolution: "@react-native-firebase/auth@npm:23.8.8"
+"@react-native-firebase/auth@npm:^24.0.0":
+  version: 24.0.0
+  resolution: "@react-native-firebase/auth@npm:24.0.0"
   dependencies:
     plist: "npm:^3.1.0"
   peerDependencies:
-    "@react-native-firebase/app": 23.8.8
+    "@react-native-firebase/app": 24.0.0
     expo: ">=47.0.0"
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10c0/b9348db32ad99f2380222964ae7ac3c9dbc99baf41bf237eb602d501bd94c53ab908a8e9b64399045307018bcbc2b4a84602599bcef38c76ab83dff2254a574d
+  checksum: 10c0/54cfec1facf0c8ae5a93ca334495c3ccad3e6952966df42d238f2bde6499c21a94ad95bb111fbbe3c48d54228a4176701da767be100cbad6d84f5542d48ab74f
   languageName: node
   linkType: hard
 
-"@react-native-firebase/firestore@npm:^23.8.8":
-  version: 23.8.8
-  resolution: "@react-native-firebase/firestore@npm:23.8.8"
+"@react-native-firebase/firestore@npm:^24.0.0":
+  version: 24.0.0
+  resolution: "@react-native-firebase/firestore@npm:24.0.0"
   dependencies:
     react-native-url-polyfill: "npm:3.0.0"
   peerDependencies:
-    "@react-native-firebase/app": 23.8.8
-  checksum: 10c0/f26cdb65652162c1790583e0b6256b0a6d936514e70b28cf611158716c4db61f8005008746a14edbe86105c0c15ba36afa6ad10cf5de242709a60ae26fa3ebf0
+    "@react-native-firebase/app": 24.0.0
+  checksum: 10c0/72c0605a7385664ed523064db36210ab91ea7b5548c06af541c941ceed9d9f6c98159868af171e64bf2b2e602ac410a5753535206ead6ac607f073434330260c
   languageName: node
   linkType: hard
 
@@ -6561,9 +6561,9 @@ __metadata:
     "@bacons/apple-targets": "npm:^3.0.6"
     "@expo/vector-icons": "npm:^15.0.3"
     "@react-native-community/datetimepicker": "npm:8.6.0"
-    "@react-native-firebase/app": "npm:^23.8.8"
-    "@react-native-firebase/auth": "npm:^23.8.8"
-    "@react-native-firebase/firestore": "npm:^23.8.8"
+    "@react-native-firebase/app": "npm:^24.0.0"
+    "@react-native-firebase/auth": "npm:^24.0.0"
+    "@react-native-firebase/firestore": "npm:^24.0.0"
     "@react-navigation/bottom-tabs": "npm:^7.4.0"
     "@react-navigation/elements": "npm:^2.8.3"
     "@react-navigation/native": "npm:^7.1.8"
@@ -6580,7 +6580,7 @@ __metadata:
     expo-constants: "npm:~55.0.11"
     expo-doctor: "npm:^1.17.14"
     expo-font: "npm:~55.0.6"
-    expo-haptics: "npm:~55.0.11"
+    expo-haptics: "npm:~55.0.12"
     expo-image: "npm:~55.0.8"
     expo-linking: "npm:~55.0.11"
     expo-notifications: "npm:~55.0.16"
@@ -10454,12 +10454,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-haptics@npm:~55.0.11":
-  version: 55.0.11
-  resolution: "expo-haptics@npm:55.0.11"
+"expo-haptics@npm:~55.0.12":
+  version: 55.0.12
+  resolution: "expo-haptics@npm:55.0.12"
   peerDependencies:
     expo: "*"
-  checksum: 10c0/6342c330e17633a6bac6909ba5b403e4e155a94b9a353b16f213e41c407d1141f3ad188167316bbf235bee2ef5d24149bdab2842ce6da77cac069da189c732ea
+  checksum: 10c0/e74c3135c0a3e850cba4c4fdb704737eb7c2a42033dd1b3d770fb4d68ba80ffec0dd8db28bbff852fd9031680c0449915f21c91ff8dcd71d0c6742763bb2dc2e
   languageName: node
   linkType: hard
 

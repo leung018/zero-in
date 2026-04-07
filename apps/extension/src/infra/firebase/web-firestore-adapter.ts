@@ -6,7 +6,6 @@ import {
 import {
   deleteDoc,
   doc,
-  DocumentReference,
   DocumentSnapshot,
   Firestore,
   getDoc,
@@ -17,11 +16,8 @@ import {
 export class WebFirestoreAdapter implements FirestoreAdapter {
   constructor(private readonly firestore: Firestore) {}
 
-  doc(...segments: string[]) {
-    return (doc as (firestore: Firestore, ...pathSegments: string[]) => DocumentReference)(
-      this.firestore,
-      ...segments
-    )
+  doc(path: string, ...pathSegments: string[]) {
+    return doc(this.firestore, path, ...pathSegments)
   }
 
   async getDoc(docRef: FirestoreDocumentReference) {
@@ -33,18 +29,18 @@ export class WebFirestoreAdapter implements FirestoreAdapter {
   }
 
   async setDoc(docRef: FirestoreDocumentReference, data: any): Promise<void> {
-    await setDoc(docRef as DocumentReference, data)
+    await setDoc(docRef, data)
   }
 
   async deleteDoc(docRef: FirestoreDocumentReference): Promise<void> {
-    await deleteDoc(docRef as DocumentReference)
+    await deleteDoc(docRef)
   }
 
   onSnapshot(
     docRef: FirestoreDocumentReference,
     callback: (snapshot: FirestoreDocumentSnapshot) => void
   ): () => void {
-    return onSnapshot(docRef as DocumentReference, (snapshot: DocumentSnapshot) => {
+    return onSnapshot(docRef, (snapshot: DocumentSnapshot) => {
       callback({
         exists: () => snapshot.exists(),
         data: () => snapshot.data()

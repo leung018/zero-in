@@ -4,7 +4,7 @@
  * (@react-native-firebase/firestore)
  */
 export interface FirestoreAdapter {
-  doc(...segments: string[]): FirestoreDocumentReference
+  doc(path: string, ...pathSegments: string[]): FirestoreDocumentReference
 
   getDoc(docRef: FirestoreDocumentReference): Promise<FirestoreDocumentSnapshot>
 
@@ -20,7 +20,7 @@ export interface FirestoreAdapter {
 
 type Unsubscribe = () => void
 
-export type FirestoreDocumentReference = any
+export type FirestoreDocumentReference = any // TODO: Use stricter type if possible
 
 export interface FirestoreDocumentSnapshot {
   exists(): boolean

@@ -1,7 +1,7 @@
 import {
   deleteDoc,
   doc,
-  FirebaseFirestoreTypes,
+  Firestore,
   getDoc,
   onSnapshot,
   setDoc
@@ -13,15 +13,10 @@ import {
 } from '@zero-in/shared/infra/storage/firebase/firestore/adapter'
 
 export class ReactNativeFirestoreAdapter implements FirestoreAdapter {
-  constructor(private readonly firestore: FirebaseFirestoreTypes.Module) {}
+  constructor(private readonly firestore: Firestore) {}
 
-  doc(...segments: string[]) {
-    return (
-      doc as (
-        firestore: FirebaseFirestoreTypes.Module,
-        ...pathSegments: string[]
-      ) => FirebaseFirestoreTypes.DocumentReference
-    )(this.firestore, ...segments)
+  doc(path: string, ...pathSegments: string[]) {
+    return doc(this.firestore, path, ...pathSegments)
   }
 
   async getDoc(docRef: FirestoreDocumentReference) {
@@ -33,25 +28,22 @@ export class ReactNativeFirestoreAdapter implements FirestoreAdapter {
   }
 
   async setDoc(docRef: FirestoreDocumentReference, data: any): Promise<void> {
-    await setDoc(docRef as FirebaseFirestoreTypes.DocumentReference, data)
+    await setDoc(docRef, data)
   }
 
   async deleteDoc(docRef: FirestoreDocumentReference): Promise<void> {
-    await deleteDoc(docRef as FirebaseFirestoreTypes.DocumentReference)
+    await deleteDoc(docRef)
   }
 
   onSnapshot(
     docRef: FirestoreDocumentReference,
     callback: (snapshot: FirestoreDocumentSnapshot) => void
   ): () => void {
-    return onSnapshot(
-      docRef as FirebaseFirestoreTypes.DocumentReference,
-      (snapshot: FirebaseFirestoreTypes.DocumentSnapshot) => {
-        callback({
-          exists: () => snapshot.exists(),
-          data: () => snapshot.data()
-        })
-      }
-    )
+    return onSnapshot(docRef, (snapshot: FirestoreDocumentSnapshot) => {
+      callback({
+        exists: () => snapshot.exists(),
+        data: () => snapshot.data()
+      })
+    })
   }
 }
