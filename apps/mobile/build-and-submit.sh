@@ -80,3 +80,5 @@ else
 
   echo "✅ Cloud build & submit complete"
 fi
+
+echo "Remember to run yarn cng to restore the development environment after the build process."
