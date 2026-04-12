@@ -4,7 +4,8 @@ import { NativeModule, requireNativeModule } from 'expo'
 export enum PermissionType {
   FamilyControls = 'familyControls',
   Overlay = 'overlay',
-  UsageStats = 'usageStats'
+  UsageStats = 'usageStats',
+  ExactAlarm = 'exactAlarm'
 }
 
 interface PermissionDetails {
