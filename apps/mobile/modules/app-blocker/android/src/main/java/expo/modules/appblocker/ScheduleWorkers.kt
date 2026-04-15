@@ -81,21 +81,20 @@ internal fun scheduleAlarms(
   val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
   val now = System.currentTimeMillis()
 
+  val updateFlags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+
   if (startTimeMillis > now) {
     alarmManager.setExactAndAllowWhileIdle(
       AlarmManager.RTC_WAKEUP,
       startTimeMillis,
-      startPendingIntent(
-        context,
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-      ),
+      startPendingIntent(context, updateFlags)!!,
     )
   }
 
   alarmManager.setExactAndAllowWhileIdle(
     AlarmManager.RTC_WAKEUP,
     endTimeMillis,
-    endPendingIntent(context, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE),
+    endPendingIntent(context, updateFlags)!!,
   )
 }
 
