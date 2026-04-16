@@ -104,7 +104,7 @@ class BlockingService : Service() {
   private fun getForegroundApp(): String? {
     val now = System.currentTimeMillis()
     return usageStatsManager
-      .queryUsageStats(UsageStatsManager.INTERVAL_BEST, now - 24 * 60 * 60 * 1000, now)
+      .queryUsageStats(UsageStatsManager.INTERVAL_BEST, now - 60 * 60 * 1000, now)
       .maxByOrNull { it.lastTimeUsed }
       ?.packageName
   }
