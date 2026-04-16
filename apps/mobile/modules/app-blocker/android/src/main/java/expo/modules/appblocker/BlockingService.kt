@@ -30,10 +30,12 @@ class BlockingService : Service() {
 
   private val pollingRunnable =
     object : Runnable {
+      private val interval = 1000L
+
       override fun run() {
         val foregroundApp = getForegroundApp()
         if (foregroundApp == null) {
-          handler.postDelayed(this, 500)
+          handler.postDelayed(this, interval)
           return
         }
 
@@ -42,7 +44,7 @@ class BlockingService : Service() {
         } else {
           hideBlockingOverlay()
         }
-        handler.postDelayed(this, 500)
+        handler.postDelayed(this, interval)
       }
     }
 
