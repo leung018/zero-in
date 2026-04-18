@@ -55,15 +55,12 @@ else
   OUTPUT_FILE="zero-in.ipa"
 fi
 
-yarn install --immutable
-yarn cng:prod
-
-# TODO: I don't test below now because I don't want waste the quota of eas build for remote build.
-# For local build, I don't want to wait for build time.
-# So test below next time when I really need it.
-
 if [ "$LOCAL_BUILD" = true ]; then
+  # TODO: This if branch need to be tested.
   echo "🚧 Running local build with fixed output..."
+
+  yarn install --immutable
+  yarn cng:prod
 
   echo "🛠 Building $PLATFORM app..."
   eas build --platform "$PLATFORM" --profile production --local --output "$OUTPUT_FILE"
@@ -72,6 +69,7 @@ if [ "$LOCAL_BUILD" = true ]; then
   eas submit --platform "$PLATFORM" --path "$OUTPUT_FILE"
 
   echo "✅ Local build & submit complete: $OUTPUT_FILE"
+  echo "Remember to run yarn cng to restore the development environment after the build process."
 else
   echo "☁️ Running cloud build with auto-submit..."
 
@@ -80,5 +78,3 @@ else
 
   echo "✅ Cloud build & submit complete"
 fi
-
-echo "Remember to run yarn cng to restore the development environment after the build process."
