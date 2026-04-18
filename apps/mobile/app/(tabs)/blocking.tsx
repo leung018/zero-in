@@ -15,7 +15,8 @@ const getPermissionLabel = (permissionType: PermissionType): string => {
   const labels: Record<PermissionType, string> = {
     [PermissionType.FamilyControls]: 'Family Controls',
     [PermissionType.Overlay]: 'Appear on Top',
-    [PermissionType.UsageStats]: 'Usage Access'
+    [PermissionType.UsageStats]: 'Usage Access',
+    [PermissionType.ExactAlarm]: 'Exact Alarms'
   }
   return labels[permissionType] || permissionType
 }
@@ -25,7 +26,9 @@ const getPermissionDescription = (permissionType: PermissionType): string => {
     [PermissionType.FamilyControls]: 'Allow Zero In to block apps using iOS Family Controls.',
     [PermissionType.Overlay]:
       'Allow Zero In to appear on top of other apps to show blocking screens.',
-    [PermissionType.UsageStats]: 'Allow Zero In to detect which apps are active for blocking.'
+    [PermissionType.UsageStats]: 'Allow Zero In to detect which apps are active for blocking.',
+    [PermissionType.ExactAlarm]:
+      'Allow Zero In to trigger scheduled blocking at the exact configured time.'
   }
   return descriptions[permissionType] || 'This permission is required for app blocking.'
 }
