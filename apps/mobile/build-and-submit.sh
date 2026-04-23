@@ -59,6 +59,8 @@ if [ "$LOCAL_BUILD" = true ]; then
   # TODO: This if branch need to be tested.
   echo "🚧 Running local build with fixed output..."
 
+  export EAS_BUILD_GIT_COMMIT_HASH="$(git rev-parse HEAD)"
+
   yarn install --immutable
   yarn cng:prod
 
