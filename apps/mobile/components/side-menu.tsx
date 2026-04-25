@@ -47,7 +47,8 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
   const translateX = slide.interpolate({ inputRange: [0, 1], outputRange: [240, 0] })
   const backdropOpacity = slide.interpolate({ inputRange: [0, 1], outputRange: [0, 0.4] })
 
-  const commitHash = (Constants.expoConfig?.extra?.commitHash as string | undefined)?.slice(0, 7)
+  const rawHash = Constants.expoConfig?.extra?.commitHash
+  const commitHash = typeof rawHash === 'string' ? rawHash.slice(0, 7) : undefined
 
   if (!visible) return null
 
