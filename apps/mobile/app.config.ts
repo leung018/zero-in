@@ -10,7 +10,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   extra: {
     eas: {
       projectId: '81a3022e-b587-48a1-9a15-5519aea38362'
-    }
+    },
+    commitHash: process.env.EAS_BUILD_GIT_COMMIT_HASH ?? null
   },
   version: '1.0.0',
   orientation: 'portrait',

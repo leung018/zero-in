@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons'
 import { getAuth, signOut } from '@react-native-firebase/auth'
+import Constants from 'expo-constants'
 import { useRouter } from 'expo-router'
 import React, { useEffect, useRef } from 'react'
 import {
@@ -45,6 +46,9 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
 
   const translateX = slide.interpolate({ inputRange: [0, 1], outputRange: [240, 0] })
   const backdropOpacity = slide.interpolate({ inputRange: [0, 1], outputRange: [0, 0.4] })
+
+  const rawHash = Constants.expoConfig?.extra?.commitHash
+  const buildInfo = typeof rawHash === 'string' ? rawHash.slice(0, 7) : 'Local Development'
 
   if (!visible) return null
 
@@ -95,6 +99,8 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
           </Pressable>
 
           {/* Future items can be added here and navigate with expo-router */}
+
+          {buildInfo && <Text style={styles.buildInfo}>Build: {buildInfo}</Text>}
         </Animated.View>
       </SafeAreaView>
     </View>
@@ -152,6 +158,11 @@ const styles = StyleSheet.create({
     color: '#dc3545',
     fontWeight: '600',
     fontSize: 16
+  },
+  buildInfo: {
+    marginTop: 'auto',
+    color: '#9aa0a6',
+    fontSize: 12
   }
 })
 
