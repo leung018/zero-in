@@ -48,7 +48,7 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
   const backdropOpacity = slide.interpolate({ inputRange: [0, 1], outputRange: [0, 0.4] })
 
   const rawHash = Constants.expoConfig?.extra?.commitHash
-  const commitHash = typeof rawHash === 'string' ? rawHash.slice(0, 7) : undefined
+  const buildInfo = typeof rawHash === 'string' ? rawHash.slice(0, 7) : 'Local Development'
 
   if (!visible) return null
 
@@ -100,7 +100,7 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
 
           {/* Future items can be added here and navigate with expo-router */}
 
-          {commitHash && <Text style={styles.buildInfo}>Build: {commitHash}</Text>}
+          {buildInfo && <Text style={styles.buildInfo}>Build: {buildInfo}</Text>}
         </Animated.View>
       </SafeAreaView>
     </View>
