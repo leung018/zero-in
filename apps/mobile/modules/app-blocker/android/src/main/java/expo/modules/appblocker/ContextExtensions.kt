@@ -48,7 +48,7 @@ fun Context.hasExactAlarmPermission(): Boolean {
 fun Context.requestExactAlarmPermission() {
   if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
   val intent =
-    Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+    Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, "package:$packageName".toUri()).apply {
       addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
   startActivity(intent)
