@@ -6515,7 +6515,7 @@ __metadata:
     bootstrap-vue-next: "npm:^0.42.0"
     eslint: "npm:^9.39.1"
     eslint-config-prettier: "npm:^10.1.8"
-    eslint-plugin-playwright: "npm:^2.8.0"
+    eslint-plugin-playwright: "npm:^2.10.2"
     eslint-plugin-vue: "npm:^10.7.0"
     firebase: "npm:^12.11.0"
     firebase-tools: "npm:^15.13.0"
@@ -9961,14 +9961,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-playwright@npm:^2.8.0":
-  version: 2.8.0
-  resolution: "eslint-plugin-playwright@npm:2.8.0"
+"eslint-plugin-playwright@npm:^2.10.2":
+  version: 2.10.2
+  resolution: "eslint-plugin-playwright@npm:2.10.2"
   dependencies:
     globals: "npm:^17.3.0"
   peerDependencies:
     eslint: ">=8.40.0"
-  checksum: 10c0/64767f7a963fd78be5ab4dfb261a9b658e9b9835badf47825a70d1608fcfa420a53ca8a9ce874f830cf2bc10823e232b11ad9dc5b2ea5124193f805fa06bfc6b
+  checksum: 10c0/cede6b74aa8c242d058f42da7bfdc29db5119a4184b05d8735ced16a89a0968ca36de217ee7d927cdc6687ef3d32bff3f3f8211e7c62256ca274cb4d3b4e478d
   languageName: node
   linkType: hard
 
