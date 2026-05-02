@@ -6680,7 +6680,7 @@ __metadata:
     "@types/jest": "npm:29.5.14"
     "@types/react": "npm:~19.2.10"
     "@zero-in/shared": "workspace:*"
-    create-target: "npm:^2.0.1"
+    create-target: "npm:^3.0.4"
     eslint: "npm:^9.39.1"
     eslint-config-expo: "npm:~55.0.0"
     expo: "npm:~55.0.19"
@@ -8852,12 +8852,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"create-target@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "create-target@npm:2.0.1"
+"create-target@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "create-target@npm:3.0.4"
   bin:
     create-target: build/index.js
-  checksum: 10c0/f232abcd0089b132163cd866317fe30f58ee87c3fc16779b376eadb613a5203243dc44ff32fdb027cc76a3b3ba18a82ebf8431101763c2ed1910ea6e21583629
+  checksum: 10c0/5b11de3925029c66709e7ab2865bfa5685a775d56fab280bfb67b14d0bcc025a1fb60733350f0a49b62e948dc6cdabd6cd76acf12d93b99780d29e392e84827b
   languageName: node
   linkType: hard
 
