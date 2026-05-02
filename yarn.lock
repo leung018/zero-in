@@ -51,13 +51,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@antfu/utils@npm:^9.2.0":
-  version: 9.3.0
-  resolution: "@antfu/utils@npm:9.3.0"
-  checksum: 10c0/69135a94c8cc8f48b19d6e81ec53b6997f306fd8688d759e298fa9216779b76e86f5947d7917eccf10d6d000516d5efd3120bf23cbe0c770c9454a36e8a18a3f
-  languageName: node
-  linkType: hard
-
 "@apidevtools/json-schema-ref-parser@npm:^9.0.3":
   version: 9.1.2
   resolution: "@apidevtools/json-schema-ref-parser@npm:9.1.2"
@@ -3465,19 +3458,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iconify/utils@npm:^3.0.2":
-  version: 3.0.2
-  resolution: "@iconify/utils@npm:3.0.2"
+"@iconify/utils@npm:^3.1.0":
+  version: 3.1.1
+  resolution: "@iconify/utils@npm:3.1.1"
   dependencies:
     "@antfu/install-pkg": "npm:^1.1.0"
-    "@antfu/utils": "npm:^9.2.0"
     "@iconify/types": "npm:^2.0.0"
-    debug: "npm:^4.4.1"
-    globals: "npm:^15.15.0"
-    kolorist: "npm:^1.8.0"
-    local-pkg: "npm:^1.1.1"
-    mlly: "npm:^1.7.4"
-  checksum: 10c0/ac9f9362b0d0143dd9861bcc64a0699f607f4f9df902aab3875b06832a89dd6a0e8ba2e1c43e927073a84661bf2882f1c79b5a3159a3cee53570d080b535c12c
+    mlly: "npm:^1.8.2"
+  checksum: 10c0/c6e294477e69993ff83511063693e3c11ccf90d3306ff871fc2d4e834b9a8803635c9777b68825ca83b1d8363a9d981a57e61353153ef6f9882f24e19726b0ce
   languageName: node
   linkType: hard
 
@@ -6645,7 +6633,7 @@ __metadata:
     bootstrap-vue-next: "npm:^0.45.0"
     eslint: "npm:^9.39.1"
     eslint-config-prettier: "npm:^10.1.8"
-    eslint-plugin-playwright: "npm:^2.8.0"
+    eslint-plugin-playwright: "npm:^2.10.2"
     eslint-plugin-vue: "npm:^10.7.0"
     firebase: "npm:^12.11.0"
     firebase-tools: "npm:^15.13.0"
@@ -6653,7 +6641,7 @@ __metadata:
     jsdom: "npm:^27.2.0"
     typescript: "npm:^5.9.3"
     typescript-eslint: "npm:^8.56.1"
-    unplugin-icons: "npm:^22.5.0"
+    unplugin-icons: "npm:^23.0.1"
     unplugin-vue-components: "npm:^30.0.0"
     vitest: "npm:^4.1.0"
     vue: "npm:^3.5.25"
@@ -10116,14 +10104,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-playwright@npm:^2.8.0":
-  version: 2.8.0
-  resolution: "eslint-plugin-playwright@npm:2.8.0"
+"eslint-plugin-playwright@npm:^2.10.2":
+  version: 2.10.2
+  resolution: "eslint-plugin-playwright@npm:2.10.2"
   dependencies:
     globals: "npm:^17.3.0"
   peerDependencies:
     eslint: ">=8.40.0"
-  checksum: 10c0/64767f7a963fd78be5ab4dfb261a9b658e9b9835badf47825a70d1608fcfa420a53ca8a9ce874f830cf2bc10823e232b11ad9dc5b2ea5124193f805fa06bfc6b
+  checksum: 10c0/cede6b74aa8c242d058f42da7bfdc29db5119a4184b05d8735ced16a89a0968ca36de217ee7d927cdc6687ef3d32bff3f3f8211e7c62256ca274cb4d3b4e478d
   languageName: node
   linkType: hard
 
@@ -11947,13 +11935,6 @@ __metadata:
   version: 14.0.0
   resolution: "globals@npm:14.0.0"
   checksum: 10c0/b96ff42620c9231ad468d4c58ff42afee7777ee1c963013ff8aabe095a451d0ceeb8dcd8ef4cbd64d2538cef45f787a78ba3a9574f4a634438963e334471302d
-  languageName: node
-  linkType: hard
-
-"globals@npm:^15.15.0":
-  version: 15.15.0
-  resolution: "globals@npm:15.15.0"
-  checksum: 10c0/f9ae80996392ca71316495a39bec88ac43ae3525a438b5626cd9d5ce9d5500d0a98a266409605f8cd7241c7acf57c354a48111ea02a767ba4f374b806d6861fe
   languageName: node
   linkType: hard
 
@@ -14298,13 +14279,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kolorist@npm:^1.8.0":
-  version: 1.8.0
-  resolution: "kolorist@npm:1.8.0"
-  checksum: 10c0/73075db44a692bf6c34a649f3b4b3aea4993b84f6b754cbf7a8577e7c7db44c0bad87752bd23b0ce533f49de2244ce2ce03b7b1b667a85ae170a94782cc50f9b
-  languageName: node
-  linkType: hard
-
 "kuler@npm:^2.0.0":
   version: 2.0.0
   resolution: "kuler@npm:2.0.0"
@@ -14604,7 +14578,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"local-pkg@npm:^1.1.1, local-pkg@npm:^1.1.2":
+"local-pkg@npm:^1.1.2":
   version: 1.1.2
   resolution: "local-pkg@npm:1.1.2"
   dependencies:
@@ -15568,7 +15542,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mlly@npm:^1.8.1":
+"mlly@npm:^1.8.1, mlly@npm:^1.8.2":
   version: 1.8.2
   resolution: "mlly@npm:1.8.2"
   dependencies:
@@ -20407,22 +20381,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin-icons@npm:^22.5.0":
-  version: 22.5.0
-  resolution: "unplugin-icons@npm:22.5.0"
+"unplugin-icons@npm:^23.0.1":
+  version: 23.0.1
+  resolution: "unplugin-icons@npm:23.0.1"
   dependencies:
     "@antfu/install-pkg": "npm:^1.1.0"
-    "@iconify/utils": "npm:^3.0.2"
-    debug: "npm:^4.4.3"
+    "@iconify/utils": "npm:^3.1.0"
     local-pkg: "npm:^1.1.2"
-    unplugin: "npm:^2.3.10"
+    obug: "npm:^2.1.1"
+    unplugin: "npm:^2.3.11"
   peerDependencies:
     "@svgr/core": ">=7.0.0"
     "@svgx/core": ^1.0.1
-    "@vue/compiler-sfc": ^3.0.2 || ^2.7.0
+    "@vue/compiler-sfc": ^3.0.2
     svelte: ^3.0.0 || ^4.0.0 || ^5.0.0
-    vue-template-compiler: ^2.6.12
-    vue-template-es2015-compiler: ^1.9.0
   peerDependenciesMeta:
     "@svgr/core":
       optional: true
@@ -20432,11 +20404,7 @@ __metadata:
       optional: true
     svelte:
       optional: true
-    vue-template-compiler:
-      optional: true
-    vue-template-es2015-compiler:
-      optional: true
-  checksum: 10c0/94347b1ba2727370b3cd273b5d721a76cd2ce22350455c1744284d1ac5679586ded7197836246c3d45af7da54d11e75f62564be7450d50ecccc693c5a0fc27cb
+  checksum: 10c0/a4e39f973370989349e9cf8e9b5596ad0bf83e03e2cc79d196a5e063d9ba71bbdd3a7bc24b43be4378c9977e9247275fef3508e93a3023e0d82563ece6e97530
   languageName: node
   linkType: hard
 
@@ -20475,7 +20443,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin@npm:^2.3.10":
+"unplugin@npm:^2.3.10, unplugin@npm:^2.3.11":
   version: 2.3.11
   resolution: "unplugin@npm:2.3.11"
   dependencies:
