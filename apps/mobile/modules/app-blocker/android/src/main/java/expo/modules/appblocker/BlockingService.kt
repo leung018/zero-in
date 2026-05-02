@@ -74,6 +74,8 @@ class BlockingService : Service() {
         .setContentTitle("App Blocker Active")
         .setContentText("Monitoring app usage to keep you focused.")
         .setSmallIcon(android.R.drawable.ic_dialog_info)
+        .setOngoing(true)
+        .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
         .build()
 
     startForeground(1, notification)
