@@ -3,6 +3,7 @@ package expo.modules.appblocker
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
@@ -27,6 +28,7 @@ class BlockingService : Service() {
   private val handler = Handler(Looper.getMainLooper())
   private lateinit var usageStatsManager: UsageStatsManager
   private lateinit var preferences: BlockedAppsPreferences
+  private var lastForegroundApp: String? = null
 
   private val pollingRunnable =
     object : Runnable {
@@ -105,10 +107,15 @@ class BlockingService : Service() {
 
   private fun getForegroundApp(): String? {
     val now = System.currentTimeMillis()
-    return usageStatsManager
-      .queryUsageStats(UsageStatsManager.INTERVAL_BEST, now - 60 * 60 * 1000, now)
-      .maxByOrNull { it.lastTimeUsed }
-      ?.packageName
+    val events = usageStatsManager.queryEvents(now - 60 * 1000, now)
+    val event = UsageEvents.Event()
+    while (events.hasNextEvent()) {
+      events.getNextEvent(event)
+      if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
+        lastForegroundApp = event.packageName
+      }
+    }
+    return lastForegroundApp
   }
 
   private fun showBlockingOverlay(packageName: String) {
