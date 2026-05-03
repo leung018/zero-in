@@ -3,6 +3,7 @@ package expo.modules.appblocker
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
@@ -104,7 +105,22 @@ class BlockingService : Service() {
   }
 
   private fun getForegroundApp(): String? {
+    var foregroundApp: String? = null
+
+    // Primary: real-time foreground events (no aggregation lag).
     val now = System.currentTimeMillis()
+    val events = usageStatsManager.queryEvents(now - 60 * 1000, now)
+    val event = UsageEvents.Event()
+    while (events.hasNextEvent()) {
+      events.getNextEvent(event)
+      if (event.eventType != UsageEvents.Event.ACTIVITY_RESUMED) continue
+      foregroundApp = event.packageName
+    }
+    if (foregroundApp != null) {
+      return foregroundApp
+    }
+
+    // Fallback: laggy but always present (e.g. cold start / post-doze with no recent events).
     return usageStatsManager
       .queryUsageStats(UsageStatsManager.INTERVAL_BEST, now - 60 * 60 * 1000, now)
       .maxByOrNull { it.lastTimeUsed }
