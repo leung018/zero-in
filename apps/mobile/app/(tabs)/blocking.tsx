@@ -16,7 +16,8 @@ const getPermissionLabel = (permissionType: PermissionType): string => {
     [PermissionType.FamilyControls]: 'Family Controls',
     [PermissionType.Overlay]: 'Appear on Top',
     [PermissionType.UsageStats]: 'Usage Access',
-    [PermissionType.ExactAlarm]: 'Exact Alarms'
+    [PermissionType.ExactAlarm]: 'Exact Alarms',
+    [PermissionType.IgnoreBatteryOptimizations]: 'Unrestricted Battery Usage'
   }
   return labels[permissionType] || permissionType
 }
@@ -28,10 +29,15 @@ const getPermissionDescription = (permissionType: PermissionType): string => {
       'Allow Zero In to appear on top of other apps to show blocking screens.',
     [PermissionType.UsageStats]: 'Allow Zero In to detect which apps are active for blocking.',
     [PermissionType.ExactAlarm]:
-      'Allow Zero In to trigger scheduled blocking at the exact configured time.'
+      'Allow Zero In to trigger scheduled blocking at the exact configured time.',
+    [PermissionType.IgnoreBatteryOptimizations]:
+      'Recommended: lets Zero In load the next blocking schedule reliably in the background.'
   }
   return descriptions[permissionType] || 'This permission is required for app blocking.'
 }
+
+const isRecommendedPermission = (permissionType: PermissionType): boolean =>
+  permissionType === PermissionType.IgnoreBatteryOptimizations
 
 export default function BlockingScreen() {
   const router = useRouter()
@@ -83,23 +89,28 @@ export default function BlockingScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Permission Warnings Section */}
-        {permissionStatus.getMissingPermissions().map((permissionType) => (
-          <TouchableOpacity
-            key={permissionType}
-            style={styles.permissionBanner}
-            onPress={() => handleRequestPermission(permissionType)}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.permissionIcon}>⚠️</Text>
-            <View style={styles.permissionTextContainer}>
-              <Text style={styles.permissionTitle}>
-                {getPermissionLabel(permissionType)} Required
-              </Text>
-              <Text style={styles.permissionDesc}>{getPermissionDescription(permissionType)}</Text>
-            </View>
-            <Text style={styles.arrowIcon}>→</Text>
-          </TouchableOpacity>
-        ))}
+        {permissionStatus.getMissingPermissions().map((permissionType) => {
+          const recommended = isRecommendedPermission(permissionType)
+          return (
+            <TouchableOpacity
+              key={permissionType}
+              style={recommended ? styles.recommendedBanner : styles.permissionBanner}
+              onPress={() => handleRequestPermission(permissionType)}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.permissionIcon}>{recommended ? '💡' : '⚠️'}</Text>
+              <View style={styles.permissionTextContainer}>
+                <Text style={recommended ? styles.recommendedTitle : styles.permissionTitle}>
+                  {getPermissionLabel(permissionType)} {recommended ? 'Recommended' : 'Required'}
+                </Text>
+                <Text style={recommended ? styles.recommendedDesc : styles.permissionDesc}>
+                  {getPermissionDescription(permissionType)}
+                </Text>
+              </View>
+              <Text style={recommended ? styles.recommendedArrow : styles.arrowIcon}>→</Text>
+            </TouchableOpacity>
+          )
+        })}
 
         {/* Blocked Apps Section */}
         <View style={commonStyles.card}>
@@ -187,6 +198,40 @@ const styles = StyleSheet.create({
   arrowIcon: {
     fontSize: 20,
     color: '#991b1b',
+    fontWeight: '700'
+  },
+  recommendedBanner: {
+    backgroundColor: '#fef3c7',
+    borderWidth: 1,
+    borderColor: '#fcd34d',
+    borderRadius: 20,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    shadowColor: '#fef3c7',
+    shadowOffset: {
+      width: 0,
+      height: 4
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 3
+  },
+  recommendedTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#92400e',
+    marginBottom: 2
+  },
+  recommendedDesc: {
+    fontSize: 13,
+    color: '#b45309',
+    lineHeight: 18
+  },
+  recommendedArrow: {
+    fontSize: 20,
+    color: '#92400e',
     fontWeight: '700'
   }
 })

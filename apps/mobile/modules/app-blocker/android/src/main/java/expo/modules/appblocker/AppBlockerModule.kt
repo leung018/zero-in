@@ -20,6 +20,7 @@ class AppBlockerModule : Module() {
           "overlay" to context.hasOverlayPermission(),
           "usageStats" to context.hasUsageStatsPermission(),
           "exactAlarm" to context.hasExactAlarmPermission(),
+          "ignoreBatteryOptimizations" to context.hasIgnoreBatteryOptimizationsPermission(),
         )
       }
 
@@ -29,6 +30,7 @@ class AppBlockerModule : Module() {
           "overlay" -> context.requestOverlayPermission()
           "usageStats" -> context.requestUsageStatsPermission()
           "exactAlarm" -> context.requestExactAlarmPermission()
+          "ignoreBatteryOptimizations" -> context.requestIgnoreBatteryOptimizationsPermission()
         }
       }
 

@@ -5,6 +5,7 @@ import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.PowerManager
 import android.os.Process
 import android.provider.Settings
 import androidx.core.content.ContextCompat
@@ -49,6 +50,24 @@ fun Context.requestExactAlarmPermission() {
   if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
   val intent =
     Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, "package:$packageName".toUri()).apply {
+      addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+  startActivity(intent)
+}
+
+fun Context.hasIgnoreBatteryOptimizationsPermission(): Boolean {
+  if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true
+  val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+  return powerManager.isIgnoringBatteryOptimizations(packageName)
+}
+
+fun Context.requestIgnoreBatteryOptimizationsPermission() {
+  if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
+  val intent =
+    Intent(
+      Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+      "package:$packageName".toUri(),
+    ).apply {
       addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
   startActivity(intent)
