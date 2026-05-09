@@ -31,5 +31,8 @@
   "simple-git-hooks": {
     "pre-commit": "yarn lint-staged"
   },
+  "resolutions": {
+    "expo-constants": "55.0.16"
+  },
   "packageManager": "yarn@4.10.3"
 }
