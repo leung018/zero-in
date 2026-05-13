@@ -1,8 +1,5 @@
 import { commonStyles } from '@/constants/styles'
-import {
-  APP_BLOCK_TOGGLING_TASK,
-  scheduleNotificationAtScheduleEnd
-} from '@/infra/app-block/toggling-runner'
+import { scheduleNotificationAtScheduleEnd } from '@/infra/app-block/toggling-runner'
 import { appBlocker } from '@/modules/app-blocker'
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker'
 import { ScheduleSpan } from '@zero-in/shared/domain/schedules'
@@ -181,7 +178,6 @@ function DevTestContent() {
   const handleTriggerAppBlockTogglingTask = async () => {
     try {
       await BackgroundTask.triggerTaskWorkerForTestingAsync()
-      Alert.alert('Success', `Background task (${APP_BLOCK_TOGGLING_TASK}) triggered successfully`)
     } catch (error) {
       console.error('Failed to trigger background task:', error)
       Alert.alert('Error', `Failed to trigger background task: ${error}`)
