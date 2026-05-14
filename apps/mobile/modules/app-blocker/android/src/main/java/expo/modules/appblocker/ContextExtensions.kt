@@ -56,13 +56,11 @@ fun Context.requestExactAlarmPermission() {
 }
 
 fun Context.hasIgnoreBatteryOptimizationsPermission(): Boolean {
-  if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true
   val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
   return powerManager.isIgnoringBatteryOptimizations(packageName)
 }
 
 fun Context.requestIgnoreBatteryOptimizationsPermission() {
-  if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
   val intent =
     Intent(
       Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
