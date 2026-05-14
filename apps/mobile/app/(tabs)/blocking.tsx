@@ -5,7 +5,7 @@ import { commonStyles } from '@/constants/styles'
 import { appBlocker, PermissionStatus, PermissionType } from '@/modules/app-blocker'
 import { useFocusEffect, useRouter } from 'expo-router'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { AppState, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, AppState, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { newWeeklySchedulesStorageService } from '../../domain/schedules/storage'
 import { newTimerBasedBlockingRulesStorageService } from '../../domain/timer-based-blocking/storage'
@@ -77,12 +77,27 @@ export default function BlockingScreen() {
     }
   }, [checkPermission])
 
-  const handleRequestPermission = async (permissionType: PermissionType) => {
+  const requestPermission = async (permissionType: PermissionType) => {
     try {
       await appBlocker.requestPermission(permissionType)
     } catch (error) {
       console.error(`Failed to request ${permissionType} permission:`, error)
     }
+  }
+
+  const handleRequestPermission = async (permissionType: PermissionType) => {
+    if (permissionType === PermissionType.IgnoreBatteryOptimizations) {
+      Alert.alert(
+        'Unrestricted Battery Usage',
+        "On the next screen:\n\n  1. Tap 'App battery usage'\n  2. Choose 'Unrestricted'\n\nLabels may differ on your device (e.g. Samsung, Sony). Look for a battery option that removes background restrictions.",
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Open Settings', onPress: () => requestPermission(permissionType) }
+        ]
+      )
+      return
+    }
+    await requestPermission(permissionType)
   }
 
   return (
