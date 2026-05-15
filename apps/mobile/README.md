@@ -48,3 +48,25 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Force-running the background task (Android)
+
+`expo-background-task` (WorkManager) only runs the registered JS task when the app is **backgrounded**. To trigger it manually for testing:
+
+```bash
+# 1. background app
+adb shell input keyevent KEYCODE_HOME
+
+# 2. get current job id (replace u0a533 with your dev build UID if different)
+JOB_ID=$(adb shell dumpsys jobscheduler | grep -oE "u0a533/[0-9]+" | head -1 | cut -d/ -f2)
+
+# 3. force run
+adb shell cmd jobscheduler run -f -u 0 -n androidx.work.systemjobscheduler dev.zeroin.mobile.dev $JOB_ID
+```
+
+Notes:
+
+- UID (`u0a533`) may change on reinstall — re-check via `adb shell dumpsys jobscheduler | grep dev.zeroin.mobile`.
+- For prod build use package `dev.zeroin.mobile` and its corresponding UID.
+- JS `console.*` output appears in the **Metro terminal**, not `adb logcat`.
+- Native confirmation: look for `BackgroundTaskScheduler: Task successfully finished` in `adb logcat`.

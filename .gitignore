@@ -90,3 +90,5 @@ lib-cov
 # Rules specific to the 'extension' app
 /apps/extension/staging/*
 !/apps/extension/staging/update.sh
+
+.claude/worktrees/
