@@ -5,7 +5,8 @@ export enum PermissionType {
   FamilyControls = 'familyControls',
   Overlay = 'overlay',
   UsageStats = 'usageStats',
-  ExactAlarm = 'exactAlarm'
+  ExactAlarm = 'exactAlarm',
+  IgnoreBatteryOptimizations = 'ignoreBatteryOptimizations'
 }
 
 interface PermissionDetails {
