@@ -19,11 +19,16 @@ export async function triggerAppBlockToggling() {
 
 export const APP_BLOCK_TOGGLING_TASK = 'APP_BLOCK_TOGGLING_TASK'
 
+const BACKGROUND_TASK_TIMEOUT_MS = 25_000
+
 TaskManager.defineTask(APP_BLOCK_TOGGLING_TASK, async () => {
   try {
     log.debug('Running AppBlockTogglingTask')
 
-    await triggerAppBlockTogglingImpl()
+    const timeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Background task timed out')), BACKGROUND_TASK_TIMEOUT_MS)
+    )
+    await Promise.race([triggerAppBlockTogglingImpl(), timeout])
 
     return BackgroundTask.BackgroundTaskResult.Success
   } catch (error) {
