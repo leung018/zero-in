@@ -21,7 +21,7 @@ const app = initializeApp(config.getFirebaseConfig())
 
 const auth = getAuth(app)
 
-const db = getFirestore(app)
+export const db = getFirestore(app)
 
 if (import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
   connectAuthEmulator(auth, 'http://localhost:9099')
@@ -67,7 +67,7 @@ export class FirebaseServices {
     return onAuthStateChanged(auth, callback)
   }
 
-  private static async getCurrentUserId(): Promise<string | null> {
+  static async getCurrentUserId(): Promise<string | null> {
     return new Promise((resolve) => {
       return LocalStorageUserIdCache.get().then(({ userId, isCacheSet }) => {
         if (!isCacheSet) {

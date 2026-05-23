@@ -32,6 +32,7 @@ export default defineConfig({
     },
     options_page: 'options.html',
     permissions: ['storage', 'alarms', 'notifications', 'tabs', 'contextMenus', 'offscreen'],
+    host_permissions: ['https://exp.host/*'],
     web_accessible_resources: [
       {
         resources: ['blocked.html'], // Making blocked template accessible can solve the problem of clicking the blocked domain from the google search results triggering ERR_BLOCKED_BY_CLIENT.

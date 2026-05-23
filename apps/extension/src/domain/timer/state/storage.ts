@@ -1,6 +1,6 @@
 import { TimerStateStorageService } from '@zero-in/shared/domain/timer/state/storage'
-import { AdaptiveStorageProvider } from '../../../infra/storage/adaptive'
+import { PushNotifyingStorageProvider } from '../../../infra/storage/push-notifying'
 
 export function newTimerStateStorageService(): TimerStateStorageService {
-  return new TimerStateStorageService(AdaptiveStorageProvider.create())
+  return new TimerStateStorageService(PushNotifyingStorageProvider.create())
 }
