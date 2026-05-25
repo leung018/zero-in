@@ -1252,26 +1252,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bacons/apple-targets@npm:^3.0.6":
-  version: 3.0.6
-  resolution: "@bacons/apple-targets@npm:3.0.6"
+"@bacons/apple-targets@npm:^4.0.7":
+  version: 4.0.7
+  resolution: "@bacons/apple-targets@npm:4.0.7"
   dependencies:
-    "@bacons/xcode": "npm:1.0.0-alpha.27"
+    "@bacons/xcode": "npm:1.0.0-alpha.32"
     "@react-native/normalize-colors": "npm:^0.79.2"
     debug: "npm:^4.3.4"
     glob: "npm:^10.4.2"
-  checksum: 10c0/4a9ee42665712235341bd9d26c3ebbdfcd07f85063cf3daa04b0e7c5dd5d1c4e838687675bb113c04843b99ab422ca87315e8ab9b3717d5e4d304faffb2a168f
+  peerDependencies:
+    expo: ">=52"
+  checksum: 10c0/463f609f384ad0b64a7a96a2df72433c681931fb3079c9baa3ecfab3003ba4c180f180448b382862393a9a5a265ee0374e5f172c2eef0e54212e9ad2dcb13c20
   languageName: node
   linkType: hard
 
-"@bacons/xcode@npm:1.0.0-alpha.27":
-  version: 1.0.0-alpha.27
-  resolution: "@bacons/xcode@npm:1.0.0-alpha.27"
+"@bacons/xcode@npm:1.0.0-alpha.32":
+  version: 1.0.0-alpha.32
+  resolution: "@bacons/xcode@npm:1.0.0-alpha.32"
   dependencies:
     "@expo/plist": "npm:^0.0.18"
     debug: "npm:^4.3.4"
     uuid: "npm:^8.3.2"
-  checksum: 10c0/e8114f9388eec507473baa61289e1312d0789129d14d3ac9051b26544105ddd2b03da8b7e82d8f0a8ce7cb3283a07d9fa6f8d6f07a7d07ba603ace1bc7151548
+  checksum: 10c0/59101963a6d0d0a746d5a668ff784e83782a4edd75c2593feda8361ca2518a9b3fb06930750f0bcbba56183081a6070120d0e1a81b60c33fe64ac8764703b956
   languageName: node
   linkType: hard
 
@@ -6969,7 +6971,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@zero-in/mobile@workspace:apps/mobile"
   dependencies:
-    "@bacons/apple-targets": "npm:^3.0.6"
+    "@bacons/apple-targets": "npm:^4.0.7"
     "@expo/vector-icons": "npm:^15.0.3"
     "@react-native-community/datetimepicker": "npm:9.1.0"
     "@react-native-firebase/app": "npm:^24.0.0"
