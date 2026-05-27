@@ -1,7 +1,7 @@
 import { triggerAppBlockToggling } from '@/infra/app-block/toggling-runner'
 import { Ionicons } from '@expo/vector-icons'
 import { Tabs } from 'expo-router'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AppState, TouchableOpacity, View } from 'react-native'
 import { SideMenu } from '../../components/side-menu'
 import { newTimerStateStorageService } from '../../domain/timer/state/storage'

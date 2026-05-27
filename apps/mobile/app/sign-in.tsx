@@ -1,6 +1,5 @@
 import { getAuth, GoogleAuthProvider, signInWithCredential } from '@react-native-firebase/auth'
 import { Link } from 'expo-router'
-import React from 'react'
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import GoogleSignInButton from '../components/google-sign-in-button'

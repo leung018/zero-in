@@ -1,6 +1,5 @@
 import { commonStyles } from '@/constants/styles'
 import { getAuth, signOut } from '@react-native-firebase/auth'
-import React from 'react'
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 

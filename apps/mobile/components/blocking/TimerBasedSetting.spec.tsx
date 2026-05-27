@@ -4,7 +4,6 @@ import {
   type TimerBasedBlockingRules
 } from '@zero-in/shared/domain/timer-based-blocking'
 import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
-import React from 'react'
 import { TimerBasedSetting } from './TimerBasedSetting'
 
 describe('TimerBasedSetting', () => {

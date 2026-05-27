@@ -4,7 +4,7 @@ import { WeeklySchedulesEditor } from '@/components/blocking/WeeklySchedulesEdit
 import { commonStyles } from '@/constants/styles'
 import { appBlocker, PermissionStatus, PermissionType } from '@/modules/app-blocker'
 import { useFocusEffect, useRouter } from 'expo-router'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, AppState, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { newWeeklySchedulesStorageService } from '../../domain/schedules/storage'

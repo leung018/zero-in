@@ -5,7 +5,7 @@ import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/
 import { Weekday, WEEKDAYS } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time'
 import { capitalized } from '@zero-in/shared/utils/format'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 const formatTime = (date: Date): string => {

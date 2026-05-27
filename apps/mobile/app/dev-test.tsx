@@ -5,7 +5,7 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import { ScheduleSpan } from '@zero-in/shared/domain/schedules'
 import * as BackgroundTask from 'expo-background-task'
 import { Stack } from 'expo-router'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
   Alert,
   Platform,

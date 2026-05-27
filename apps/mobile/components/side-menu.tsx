@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { getAuth, signOut } from '@react-native-firebase/auth'
 import Constants from 'expo-constants'
 import { useRouter } from 'expo-router'
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import {
   Alert,
   Animated,
