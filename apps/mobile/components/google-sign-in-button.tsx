@@ -1,9 +1,9 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Animated, Pressable } from 'react-native'
 import Svg, { ClipPath, Defs, G, Path, Rect } from 'react-native-svg'
 
 export default function GoogleSignInButton({ onPress }: { onPress: () => void }) {
-  const scaleAnim = useRef(new Animated.Value(1)).current
+  const scaleAnim = useMemo(() => new Animated.Value(1), [])
 
   const handlePressIn = useCallback(() => {
     Animated.spring(scaleAnim, {
