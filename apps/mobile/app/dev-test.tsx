@@ -5,7 +5,7 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import { ScheduleSpan } from '@zero-in/shared/domain/schedules'
 import * as BackgroundTask from 'expo-background-task'
 import { Stack } from 'expo-router'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
   Alert,
   Platform,
@@ -119,7 +119,7 @@ function DateTimeField({
 
 function DevTestContent() {
   const [startDate, setStartDate] = useState<Date>(new Date())
-  const [endDate, setEndDate] = useState<Date>(new Date(Date.now() + 60 * 60 * 1000)) // 1 hour from now
+  const [endDate, setEndDate] = useState<Date>(() => new Date(Date.now() + 60 * 60 * 1000)) // 1 hour from now
   const [notificationDelaySeconds, setNotificationDelaySeconds] = useState<string>('3')
 
   const handleBlockApps = async () => {

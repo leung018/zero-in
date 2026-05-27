@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { getAuth, signOut } from '@react-native-firebase/auth'
 import Constants from 'expo-constants'
 import { useRouter } from 'expo-router'
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useMemo } from 'react'
 import {
   Alert,
   Animated,
@@ -22,7 +22,7 @@ type SideMenuProps = {
 
 export function SideMenu({ visible, onClose }: SideMenuProps) {
   const router = useRouter()
-  const slide = useRef(new Animated.Value(0)).current
+  const slide = useMemo(() => new Animated.Value(0), [])
 
   useEffect(() => {
     Animated.timing(slide, {
@@ -109,7 +109,7 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
 
 const styles = StyleSheet.create({
   backdrop: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: '#000'
   },
   panelContainer: {

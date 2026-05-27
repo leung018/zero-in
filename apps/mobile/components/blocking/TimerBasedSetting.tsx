@@ -1,6 +1,6 @@
 import { commonStyles } from '@/constants/styles'
 import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 import { showUpdateSuccessNotification } from '../../infra/update-success'
 
