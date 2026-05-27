@@ -109,7 +109,7 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
 
 const styles = StyleSheet.create({
   backdrop: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: '#000'
   },
   panelContainer: {
