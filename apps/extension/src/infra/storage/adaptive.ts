@@ -1,4 +1,4 @@
-import { FirestoreAppStorage } from '@zero-in/shared/infra/storage/firebase/firestore/app-storage'
+import { FirestoreStorage } from '@zero-in/shared/infra/storage/firebase/firestore/app-storage'
 import {
   ObservableStorage,
   StorageInterface,
@@ -26,7 +26,7 @@ export class AdaptiveStorageProvider implements ObservableStorage {
 
   async onChange(key: string, callback: (data: any) => void): Promise<Unsubscribe> {
     const storage = await this.getStorage()
-    if (storage instanceof FirestoreAppStorage) {
+    if (storage instanceof FirestoreStorage) {
       return storage.onChange(key, callback)
     }
     return Promise.resolve(() => {})

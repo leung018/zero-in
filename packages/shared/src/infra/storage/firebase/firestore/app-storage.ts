@@ -6,10 +6,21 @@ import { FirestoreAdapter, FirestoreDocumentReference } from './adapter'
  *
  * Platform-specific adapters should be provided via the constructor.
  */
-export class FirestoreAppStorage implements ObservableStorage {
-  constructor(
+export class FirestoreStorage implements ObservableStorage {
+  static createAppStorage({
+    userId,
+    adapter
+  }: {
+    userId: string
+    adapter: FirestoreAdapter
+  }): FirestoreStorage {
+    return new FirestoreStorage(userId, adapter, 'application')
+  }
+
+  private constructor(
     private readonly userId: string,
-    private readonly adapter: FirestoreAdapter
+    private readonly adapter: FirestoreAdapter,
+    private readonly collection: string
   ) {}
 
   async set(key: string, value: any): Promise<void> {
@@ -38,6 +49,6 @@ export class FirestoreAppStorage implements ObservableStorage {
   }
 
   private getDocRef(key: string): FirestoreDocumentReference {
-    return this.adapter.doc('users', this.userId, 'application', key)
+    return this.adapter.doc('users', this.userId, this.collection, key)
   }
 }

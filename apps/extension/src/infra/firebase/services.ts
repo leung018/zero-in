@@ -1,5 +1,5 @@
 import config from '@/config'
-import { FirestoreAppStorage } from '@zero-in/shared/infra/storage/firebase/firestore/app-storage'
+import { FirestoreStorage } from '@zero-in/shared/infra/storage/firebase/firestore/app-storage'
 import { initializeApp } from 'firebase/app'
 import {
   browserLocalPersistence,
@@ -55,12 +55,15 @@ export class FirebaseServices {
     await setPersistence(auth, browserLocalPersistence)
   }
 
-  static async getFirestoreAppStorage(): Promise<FirestoreAppStorage> {
+  static async getFirestoreAppStorage(): Promise<FirestoreStorage> {
     const userId = await this.getCurrentUserId()
     if (!userId) {
       throw new Error('User not authenticated')
     }
-    return new FirestoreAppStorage(userId, new WebFirestoreAdapter(db))
+    return FirestoreStorage.createAppStorage({
+      userId,
+      adapter: new WebFirestoreAdapter(db)
+    })
   }
 
   static onAuthStateChanged(callback: NextOrObserver<User>) {
