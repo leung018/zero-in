@@ -1,5 +1,5 @@
 import config from '@/config'
-import { FirestoreStorage } from '@zero-in/shared/infra/storage/firebase/firestore/app-storage'
+import { FirestoreStorage } from '@zero-in/shared/infra/storage/firebase/firestore/storage'
 import { initializeApp } from 'firebase/app'
 import {
   browserLocalPersistence,

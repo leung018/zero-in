@@ -1,4 +1,4 @@
-import { FirestoreStorage } from '@zero-in/shared/infra/storage/firebase/firestore/app-storage'
+import { FirestoreStorage } from '@zero-in/shared/infra/storage/firebase/firestore/storage'
 import {
   ObservableStorage,
   StorageInterface,

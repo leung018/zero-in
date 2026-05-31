@@ -1,6 +1,6 @@
 import { getAuth } from '@react-native-firebase/auth'
 import { getFirestore } from '@react-native-firebase/firestore'
-import { FirestoreStorage } from '@zero-in/shared/infra/storage/firebase/firestore/app-storage'
+import { FirestoreStorage } from '@zero-in/shared/infra/storage/firebase/firestore/storage'
 import { ReactNativeFirestoreAdapter } from './react-native-firestore-adapter'
 
 const auth = getAuth()
