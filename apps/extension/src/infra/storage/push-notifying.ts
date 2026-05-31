@@ -1,17 +1,23 @@
 import { ObservableStorage, Unsubscribe } from '@zero-in/shared/infra/storage/interface'
-import { notifyMobileSync } from '../push/expo-push'
+import { MobileSyncNotifier } from '../push/mobile-sync-notifier'
 import { AdaptiveStorageProvider } from './adaptive'
 
 export class PushNotifyingStorageProvider implements ObservableStorage {
   static create(): PushNotifyingStorageProvider {
-    return new PushNotifyingStorageProvider(AdaptiveStorageProvider.create())
+    return new PushNotifyingStorageProvider(
+      AdaptiveStorageProvider.create(),
+      MobileSyncNotifier.create()
+    )
   }
 
-  constructor(private readonly inner: ObservableStorage) {}
+  constructor(
+    private readonly inner: ObservableStorage,
+    private readonly notifier: MobileSyncNotifier
+  ) {}
 
   async set(key: string, data: any): Promise<void> {
     await this.inner.set(key, data)
-    notifyMobileSync().catch(() => {})
+    this.notifier.notify().catch(() => {})
   }
 
   get(key: string): Promise<any> {
