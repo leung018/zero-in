@@ -77,6 +77,11 @@ export default function TabLayout() {
             title: 'Statistics',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="stats-chart" size={size} color={color} />
+            ),
+            tabBarButton: ({ children, style }) => (
+              <View style={[style, { opacity: 0.4 }]} pointerEvents="none">
+                {children}
+              </View>
             )
           }}
         />
