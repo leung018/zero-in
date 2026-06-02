@@ -6921,7 +6921,7 @@ __metadata:
     expo-font: "npm:~56.0.5"
     expo-haptics: "npm:~56.0.3"
     expo-image: "npm:~56.0.9"
-    expo-linking: "npm:~56.0.12"
+    expo-linking: "npm:~56.0.13"
     expo-notifications: "npm:~56.0.14"
     expo-router: "npm:~56.2.7"
     expo-splash-screen: "npm:~56.0.10"
@@ -10852,16 +10852,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-linking@npm:~56.0.12":
-  version: 56.0.12
-  resolution: "expo-linking@npm:56.0.12"
+"expo-linking@npm:~56.0.13":
+  version: 56.0.13
+  resolution: "expo-linking@npm:56.0.13"
   dependencies:
     expo-constants: "npm:~56.0.16"
     invariant: "npm:^2.2.4"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/c94f875640f4e2624e585975b0e3729544dfa5e182b16d3e349b6197c6e8381ef44384d22aee421e8a14325782938676a7a1d7bfa2e98b5eeec99c394f2d57f3
+  checksum: 10c0/97652fb485f7235070ea85c79efb7772833276aa0163ffa6dd132cb01d9adfb05705f9f6319ec150ef3fbe7f2ea440b878ef4d55c753909e49501403278a5a8d
   languageName: node
   linkType: hard
 

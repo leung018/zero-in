@@ -32,7 +32,7 @@
     "expo-font": "~56.0.5",
     "expo-haptics": "~56.0.3",
     "expo-image": "~56.0.9",
-    "expo-linking": "~56.0.12",
+    "expo-linking": "~56.0.13",
     "expo-notifications": "~56.0.14",
     "expo-router": "~56.2.7",
     "expo-splash-screen": "~56.0.10",
