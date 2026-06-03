@@ -114,14 +114,6 @@ export async function onScheduleEndNotificationTapped(
     log.debug('Schedule end notification tapped, triggering sync')
     await triggerAppBlockToggling()
     Alert.alert('Schedule Updated', 'Your latest blocking schedule is now active.', [
-      {
-        text: 'Why?',
-        onPress: () =>
-          Alert.alert(
-            'Why did this happen?',
-            'Zero In refreshes your blocking schedule periodically in the background, but updates may be delayed by a few minutes. If your next schedule starts shortly after this one ends, it may not activate in time. Tapping this notification forces an immediate refresh so nothing is missed.'
-          )
-      },
       ...(Platform.OS === 'android'
         ? [{ text: 'Go Back', onPress: () => BackHandler.exitApp() }]
         : [{ text: 'OK' }])
