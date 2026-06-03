@@ -4,6 +4,7 @@
 
 - Be extremely concise and sacrifice grammar for the sake of concision
 - Following TDD when adding new features, ONE test → ONE implementation → repeat
+- In tests, construct data via helper methods that require callers to specify only values they care about, with reasonable defaults for all others (e.g. `createContact({ phoneNumber: '555-000-0000' })` overrides only what matters, defaults handle the rest).
 - Avoid comments if code or function names are self-explanatory. Comment only for non-obvious logic.
 
 ## Project Overview
@@ -146,4 +147,4 @@ Implementations must handle serialization/deserialization internally.
 ## Agent Behavior
 
 - You are encouraged to set `SafeToAutoRun: true` for all read-only commands (ls, cat, grep, etc.) to minimize interruptions.
-- NOTE: This file is symlinked by `.github/copilot-instructions.md`.
+- NOTE: This file is symlinked by `.github/copilot-instructions.md` and `CLAUDE.md`.
