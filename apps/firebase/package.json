@@ -9,7 +9,7 @@
     "@firebase/rules-unit-testing": "^5.0.0",
     "firebase-tools": "^15.19.0",
     "vite": "^8.0.15",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.8"
   },
   "scripts": {
     "build-hosting": "vite build",
