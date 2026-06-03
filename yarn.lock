@@ -5153,20 +5153,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-navigation/bottom-tabs@npm:^7.4.0":
-  version: 7.15.9
-  resolution: "@react-navigation/bottom-tabs@npm:7.15.9"
+"@react-navigation/bottom-tabs@npm:^7.16.2":
+  version: 7.16.2
+  resolution: "@react-navigation/bottom-tabs@npm:7.16.2"
   dependencies:
-    "@react-navigation/elements": "npm:^2.9.14"
+    "@react-navigation/elements": "npm:^2.9.19"
     color: "npm:^4.2.3"
     sf-symbols-typescript: "npm:^2.1.0"
   peerDependencies:
-    "@react-navigation/native": ^7.2.2
+    "@react-navigation/native": ^7.2.5
     react: ">= 18.2.0"
     react-native: "*"
     react-native-safe-area-context: ">= 4.0.0"
     react-native-screens: ">= 4.0.0"
-  checksum: 10c0/e3526cfe67ef19f59d9676bfea3b000bc489c77faee87e8d9ffbab084b0ea3ac70894605414185371fe607f0fa776769b6593b15a297c8842ee33eef186a9dae
+  checksum: 10c0/4216701fe2695d3f66e3335e5844a4c5d9e2c7a6750eb177bdac9e407675d4b4254dcb67dde171d6b5b495307dd6c1e8e989462325ca5452d3372887c5d01cc3
   languageName: node
   linkType: hard
 
@@ -5188,7 +5188,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-navigation/elements@npm:^2.8.3, @react-navigation/elements@npm:^2.9.14":
+"@react-navigation/elements@npm:^2.8.3":
   version: 2.9.14
   resolution: "@react-navigation/elements@npm:2.9.14"
   dependencies:
@@ -5205,6 +5205,26 @@ __metadata:
     "@react-native-masked-view/masked-view":
       optional: true
   checksum: 10c0/c2602f5be41caaad8ea81a9bdfde654d4a89d83c627a910f5d166bd8cac2700399fce805f6bf15faaf06c2bbc776325269bc0ec1fbbe917b615e17a0a5d371e1
+  languageName: node
+  linkType: hard
+
+"@react-navigation/elements@npm:^2.9.19":
+  version: 2.9.19
+  resolution: "@react-navigation/elements@npm:2.9.19"
+  dependencies:
+    color: "npm:^4.2.3"
+    use-latest-callback: "npm:^0.2.4"
+    use-sync-external-store: "npm:^1.5.0"
+  peerDependencies:
+    "@react-native-masked-view/masked-view": ">= 0.2.0"
+    "@react-navigation/native": ^7.2.5
+    react: ">= 18.2.0"
+    react-native: "*"
+    react-native-safe-area-context: ">= 4.0.0"
+  peerDependenciesMeta:
+    "@react-native-masked-view/masked-view":
+      optional: true
+  checksum: 10c0/8743a20a19de8538346f5376ab21f0fb58f843f39bee70c973c5bd5ee2d2f46ff5aa91284d287602de76c02e704fe6cf6c410aa8936121f8c8891bfe97dc35cb
   languageName: node
   linkType: hard
 
@@ -6903,7 +6923,7 @@ __metadata:
     "@react-native-firebase/auth": "npm:^24.0.0"
     "@react-native-firebase/firestore": "npm:^24.0.0"
     "@react-native/jest-preset": "npm:^0.85.3"
-    "@react-navigation/bottom-tabs": "npm:^7.4.0"
+    "@react-navigation/bottom-tabs": "npm:^7.16.2"
     "@react-navigation/elements": "npm:^2.8.3"
     "@react-navigation/native": "npm:^7.1.8"
     "@testing-library/react-native": "npm:^13.3.3"
