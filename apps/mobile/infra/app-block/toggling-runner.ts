@@ -1,6 +1,7 @@
 import * as BackgroundTask from 'expo-background-task'
 import * as Notifications from 'expo-notifications'
 import * as TaskManager from 'expo-task-manager'
+import { Alert, BackHandler, Platform } from 'react-native'
 import { newAppBlockTogglingService } from '../../factories'
 import { createLogger } from '../../utils/logger'
 
@@ -88,7 +89,7 @@ export async function scheduleNotificationAtScheduleEnd(scheduleEndDate: Date): 
     await Notifications.scheduleNotificationAsync({
       content: {
         title: 'Blocking Schedule Ended',
-        body: 'Tap to let your app load your next blocking schedule',
+        body: 'Tap to apply your next blocking schedule.',
         data: {
           identifier: APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID
         }
@@ -112,6 +113,11 @@ export async function onScheduleEndNotificationTapped(
   if (identifier === APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID) {
     log.debug('Schedule end notification tapped, triggering sync')
     await triggerAppBlockToggling()
+    Alert.alert('Schedule Updated', 'Your latest blocking schedule is now active.', [
+      ...(Platform.OS === 'android'
+        ? [{ text: 'Go Back', onPress: () => BackHandler.exitApp() }]
+        : [{ text: 'OK' }])
+    ])
   }
 }
 
