@@ -1,9 +1,9 @@
-import { PushTokenStorage } from '@zero-in/shared/infra/storage/firebase/firestore/token-storage'
+import { FirestoreStorage } from '@zero-in/shared/infra/storage/firebase/firestore/storage'
 import { FirebaseServices } from '../firebase/services'
 import { ExpoPushClient, ExpoPushClientImpl, FakeExpoPushClient } from './expo-push-client'
 
 export interface MobileSyncNotifierDeps {
-  getTokenStorage: () => Promise<PushTokenStorage | null>
+  getTokenStorage: () => Promise<FirestoreStorage | null>
   pushClient: ExpoPushClient
 }
 
@@ -32,10 +32,11 @@ export class MobileSyncNotifier {
     const storage = await this.deps.getTokenStorage()
     if (!storage) return
 
-    const tokens = await storage.listTokens()
+    const snapshots = await storage.list()
+    const tokens = snapshots.map((s) => s.id)
     if (!tokens.length) return
 
     const { deviceNotRegisteredTokens } = await this.deps.pushClient.send(tokens)
-    await Promise.all(deviceNotRegisteredTokens.map((t) => storage.unregister(t).catch(() => {})))
+    await Promise.all(deviceNotRegisteredTokens.map((t) => storage.delete(t).catch(() => {})))
   }
 }

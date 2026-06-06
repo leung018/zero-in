@@ -1,11 +1,6 @@
 import { ObservableStorage, Unsubscribe } from '../../interface'
-import { FirestoreAdapter, FirestoreDocumentReference } from './adapter'
+import { FirestoreAdapter, FirestoreDocumentReference, FirestoreDocumentSnapshot } from './adapter'
 
-/**
- * Firestore-based storage for application data.
- *
- * Platform-specific adapters should be provided via the constructor.
- */
 export class FirestoreStorage implements ObservableStorage {
   static createAppStorage({
     userId,
@@ -14,41 +9,52 @@ export class FirestoreStorage implements ObservableStorage {
     userId: string
     adapter: FirestoreAdapter
   }): FirestoreStorage {
-    return new FirestoreStorage(userId, adapter, 'application')
+    return new FirestoreStorage(adapter, ['users', userId, 'application'])
   }
 
-  private constructor(
-    private readonly userId: string,
+  static createTokenStorage({
+    userId,
+    adapter
+  }: {
+    userId: string
+    adapter: FirestoreAdapter
+  }): FirestoreStorage {
+    return new FirestoreStorage(adapter, ['users', userId, 'pushTokens'])
+  }
+
+  constructor(
     private readonly adapter: FirestoreAdapter,
-    private readonly collection: string
+    private readonly pathPrefix: string[]
   ) {}
 
   async set(key: string, value: any): Promise<void> {
-    const docRef = this.getDocRef(key)
-    await this.adapter.setDoc(docRef, value)
+    await this.adapter.setDoc(this.docRef(key), value)
   }
 
   async get(key: string): Promise<any> {
-    const docRef = this.getDocRef(key)
-    const snapshot = await this.adapter.getDoc(docRef)
+    const snapshot = await this.adapter.getDoc(this.docRef(key))
     return snapshot.data()
   }
 
   async delete(key: string): Promise<void> {
-    const docRef = this.getDocRef(key)
-    await this.adapter.deleteDoc(docRef)
+    await this.adapter.deleteDoc(this.docRef(key))
   }
 
   async onChange(key: string, callback: (data: any) => void): Promise<Unsubscribe> {
-    const docRef = this.getDocRef(key)
-    return this.adapter.onSnapshot(docRef, (snapshot) => {
+    return this.adapter.onSnapshot(this.docRef(key), (snapshot) => {
       if (snapshot.exists()) {
         callback(snapshot.data())
       }
     })
   }
 
-  private getDocRef(key: string): FirestoreDocumentReference {
-    return this.adapter.doc('users', this.userId, this.collection, key)
+  async list(): Promise<FirestoreDocumentSnapshot[]> {
+    const [first, ...rest] = this.pathPrefix
+    return this.adapter.getDocs(first, ...rest)
+  }
+
+  private docRef(key: string): FirestoreDocumentReference {
+    const [first, ...rest] = this.pathPrefix
+    return this.adapter.doc(first, ...rest, key)
   }
 }

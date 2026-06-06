@@ -17,14 +17,14 @@ async function getCurrentExpoPushToken(): Promise<string> {
 export async function registerPushToken(uid: string): Promise<void> {
   const token = await getCurrentExpoPushToken()
   const storage = await FirebaseServices.getFirestoreTokenStorage(uid)
-  await storage.register({ token, platform: Platform.OS })
+  await storage.set(token, { token, platform: Platform.OS })
 }
 
 export async function unregisterPushToken(uid: string): Promise<void> {
   try {
     const token = await getCurrentExpoPushToken()
     const storage = await FirebaseServices.getFirestoreTokenStorage(uid)
-    await storage.unregister(token)
+    await storage.delete(token)
   } catch {
     // best-effort
   }

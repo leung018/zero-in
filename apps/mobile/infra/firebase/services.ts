@@ -1,7 +1,6 @@
 import { getAuth } from '@react-native-firebase/auth'
 import { getFirestore } from '@react-native-firebase/firestore'
 import { FirestoreStorage } from '@zero-in/shared/infra/storage/firebase/firestore/storage'
-import { FirestoreTokenStorage } from '@zero-in/shared/infra/storage/firebase/firestore/token-storage'
 import { ReactNativeFirestoreAdapter } from './react-native-firestore-adapter'
 
 const auth = getAuth()
@@ -15,8 +14,8 @@ export class FirebaseServices {
     })
   }
 
-  static async getFirestoreTokenStorage(userId?: string): Promise<FirestoreTokenStorage> {
-    return FirestoreTokenStorage.create({
+  static async getFirestoreTokenStorage(userId?: string): Promise<FirestoreStorage> {
+    return FirestoreStorage.createTokenStorage({
       userId: userId ?? this.requireUserId(),
       adapter: new ReactNativeFirestoreAdapter(firestore)
     })

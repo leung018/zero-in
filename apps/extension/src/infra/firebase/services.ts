@@ -1,6 +1,5 @@
 import config from '@/config'
 import { FirestoreStorage } from '@zero-in/shared/infra/storage/firebase/firestore/storage'
-import { FirestoreTokenStorage } from '@zero-in/shared/infra/storage/firebase/firestore/token-storage'
 import { initializeApp } from 'firebase/app'
 import {
   browserLocalPersistence,
@@ -67,12 +66,12 @@ export class FirebaseServices {
     })
   }
 
-  static async getFirestoreTokenStorage(): Promise<FirestoreTokenStorage> {
+  static async getFirestoreTokenStorage(): Promise<FirestoreStorage> {
     const userId = await this.getCurrentUserId()
     if (!userId) {
       throw new Error('User not authenticated')
     }
-    return FirestoreTokenStorage.create({
+    return FirestoreStorage.createTokenStorage({
       userId,
       adapter: new WebFirestoreAdapter(db)
     })
