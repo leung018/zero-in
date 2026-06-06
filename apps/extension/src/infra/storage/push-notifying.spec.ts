@@ -1,5 +1,5 @@
+import { MobileSyncNotifier } from '@zero-in/shared/infra/push/mobile-sync-notifier'
 import { describe, expect, it } from 'vitest'
-import { MobileSyncNotifier } from '../push/mobile-sync-notifier'
 import { PushNotifyingStorageProvider } from './push-notifying'
 
 class SpyMobileSyncNotifier extends MobileSyncNotifier {
