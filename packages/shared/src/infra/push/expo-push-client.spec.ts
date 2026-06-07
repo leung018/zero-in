@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest'
 import { parseExpoPushResponse } from './expo-push-client'
 
 describe('parseExpoPushResponse', () => {
+  // Only AI generated tests for parseExpoPushResponse in this file.
+  // Note that for ExpoPushClientImpl.send, manual testing is required.
+  // But I guess may be not bad to keep these tests for parseExpoPushResponse.
   it('returns empty when all tickets are ok', () => {
     const body = { data: [{ status: 'ok' }, { status: 'ok' }] }
     const tokens = ['t1', 't2']

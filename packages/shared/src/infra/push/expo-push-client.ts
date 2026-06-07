@@ -9,6 +9,7 @@ export interface ExpoPushClient {
 }
 
 export class ExpoPushClientImpl implements ExpoPushClient {
+  // Require manual testing
   async send(tokens: string[]): Promise<ExpoPushSendResult> {
     const response = await fetch(EXPO_PUSH_URL, {
       method: 'POST',
