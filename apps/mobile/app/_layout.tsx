@@ -44,6 +44,7 @@ export default function RootLayout() {
     )
 
     const unsubscribeAuth = onAuthStateChanged(getAuth(), async (user) => {
+      // TODO: Move below logic about pushToken into separate function/class, and add unit tests for them.
       if (user) {
         prevUidRef.current = user.uid
         registerPushToken(user.uid).catch((err) => {
@@ -53,6 +54,7 @@ export default function RootLayout() {
         unregisterPushToken(prevUidRef.current).catch(() => {})
         prevUidRef.current = null
       }
+
       setIsAuthenticated(user != null)
       setIsReady(true)
       await SplashScreen.hideAsync()
