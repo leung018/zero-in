@@ -23,6 +23,14 @@ export class FakeObservableStorage implements ObservableStorage {
     this.subscriptionManager.broadcast({ key, data })
   }
 
+  async delete(key: string): Promise<void> {
+    await this.localStorage.delete(key)
+  }
+
+  async getKeys(): Promise<string[]> {
+    return this.localStorage.getKeys()
+  }
+
   async onChange(key: string, callback: (data: any) => void): Promise<Unsubscribe> {
     const subscriptionId = this.subscriptionManager.subscribe((operation) => {
       if (operation.key === key) {

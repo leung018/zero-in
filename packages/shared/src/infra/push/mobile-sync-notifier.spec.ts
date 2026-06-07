@@ -1,33 +1,12 @@
 import { describe, expect, it } from 'vitest'
+import { FakeObservableStorage } from '../storage/fake'
 import { FakeExpoPushClient } from './expo-push-client'
-import { MobileSyncNotifier, TokenStoragePort } from './mobile-sync-notifier'
+import { MobileSyncNotifier } from './mobile-sync-notifier'
 
-class FakeTokenStorage implements TokenStoragePort {
-  private entries = new Map<string, any>()
-  deleteCalls: string[] = []
-
-  static withTokens(tokens: string[]): FakeTokenStorage {
-    const s = new FakeTokenStorage()
-    tokens.forEach((t) => s.entries.set(t, { token: t }))
-    return s
-  }
-
-  async set(key: string, value: any): Promise<void> {
-    this.entries.set(key, value)
-  }
-
-  async delete(key: string): Promise<void> {
-    this.deleteCalls.push(key)
-    this.entries.delete(key)
-  }
-
-  async list(): Promise<{ id: string }[]> {
-    return [...this.entries.keys()].map((id) => ({ id }))
-  }
-
-  tokens(): string[] {
-    return [...this.entries.keys()]
-  }
+async function storageWithTokens(tokens: string[]): Promise<FakeObservableStorage> {
+  const storage = FakeObservableStorage.create()
+  await Promise.all(tokens.map((t) => storage.set(t, { token: t })))
+  return storage
 }
 
 describe('MobileSyncNotifier', () => {
@@ -47,7 +26,7 @@ describe('MobileSyncNotifier', () => {
     it('no-ops when there are no tokens to notify', async () => {
       const pushClient = new FakeExpoPushClient()
       const notifier = MobileSyncNotifier.createFake({
-        getTokenStorage: async () => FakeTokenStorage.withTokens([]),
+        getTokenStorage: async () => await storageWithTokens([]),
         pushClient
       })
 
@@ -58,7 +37,7 @@ describe('MobileSyncNotifier', () => {
 
     it('sends all tokens to the push client', async () => {
       const pushClient = new FakeExpoPushClient()
-      const storage = FakeTokenStorage.withTokens(['t1', 't2'])
+      const storage = await storageWithTokens(['t1', 't2'])
       const notifier = MobileSyncNotifier.createFake({
         getTokenStorage: async () => storage,
         pushClient
@@ -67,13 +46,13 @@ describe('MobileSyncNotifier', () => {
       await notifier.notify()
 
       expect(pushClient.sentTokensCalls).toEqual([['t1', 't2']])
-      expect(storage.deleteCalls).toEqual([])
+      expect(await storage.getKeys()).toEqual(['t1', 't2'])
     })
 
     it('unregisters tokens reported as DeviceNotRegistered', async () => {
       const pushClient = new FakeExpoPushClient()
       pushClient.deviceNotRegisteredTokens = ['t2', 't3']
-      const storage = FakeTokenStorage.withTokens(['t1', 't2', 't3'])
+      const storage = await storageWithTokens(['t1', 't2', 't3'])
       const notifier = MobileSyncNotifier.createFake({
         getTokenStorage: async () => storage,
         pushClient
@@ -81,15 +60,14 @@ describe('MobileSyncNotifier', () => {
 
       await notifier.notify()
 
-      expect(storage.deleteCalls.sort()).toEqual(['t2', 't3'])
-      expect(storage.tokens()).toEqual(['t1'])
+      expect(await storage.getKeys()).toEqual(['t1'])
     })
 
     it('rejects when the push client throws', async () => {
       const pushClient = new FakeExpoPushClient()
       pushClient.sendError = new Error('network down')
       const notifier = MobileSyncNotifier.createFake({
-        getTokenStorage: async () => FakeTokenStorage.withTokens(['t1']),
+        getTokenStorage: async () => await storageWithTokens(['t1']),
         pushClient
       })
 
@@ -99,12 +77,12 @@ describe('MobileSyncNotifier', () => {
 
   describe('register', () => {
     it('stores token in storage', async () => {
-      const storage = new FakeTokenStorage()
+      const storage = FakeObservableStorage.create()
       const notifier = MobileSyncNotifier.createFake({ getTokenStorage: async () => storage })
 
       await notifier.register('token1', 'ios')
 
-      expect(storage.tokens()).toContain('token1')
+      expect(await storage.getKeys()).toContain('token1')
     })
 
     it('no-ops when no token storage', async () => {
@@ -116,12 +94,12 @@ describe('MobileSyncNotifier', () => {
 
   describe('unregister', () => {
     it('removes token from storage', async () => {
-      const storage = FakeTokenStorage.withTokens(['token1'])
+      const storage = await storageWithTokens(['token1'])
       const notifier = MobileSyncNotifier.createFake({ getTokenStorage: async () => storage })
 
       await notifier.unregister('token1')
 
-      expect(storage.tokens()).not.toContain('token1')
+      expect(await storage.getKeys()).not.toContain('token1')
     })
 
     it('no-ops when no token storage', async () => {

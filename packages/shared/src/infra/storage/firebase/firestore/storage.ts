@@ -1,5 +1,5 @@
 import { ObservableStorage, Unsubscribe } from '../../interface'
-import { FirestoreAdapter, FirestoreDocumentReference, FirestoreDocumentSnapshot } from './adapter'
+import { FirestoreAdapter, FirestoreDocumentReference } from './adapter'
 
 export class FirestoreStorage implements ObservableStorage {
   static createAppStorage({
@@ -48,9 +48,9 @@ export class FirestoreStorage implements ObservableStorage {
     })
   }
 
-  async list(): Promise<FirestoreDocumentSnapshot[]> {
+  async getKeys(): Promise<string[]> {
     const [first, ...rest] = this.pathPrefix
-    return this.adapter.getDocs(first, ...rest)
+    return (await this.adapter.getDocs(first, ...rest)).map((s) => s.id)
   }
 
   private docRef(key: string): FirestoreDocumentReference {

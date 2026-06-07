@@ -1,6 +1,7 @@
 export interface LocalStorage {
   set<T = { [key: string]: any }>(items: Partial<T>): Promise<void>
   get<T = { [key: string]: any }>(key: NoInfer<keyof T>): Promise<T>
+  remove(key: string): Promise<void>
 }
 
 /**
@@ -17,5 +18,9 @@ export class FakeLocalStorage implements LocalStorage {
 
   async get<T = { [key: string]: any }>(key: NoInfer<keyof T>): Promise<T> {
     return { [key]: this.storage[key] } as T
+  }
+
+  async remove(key: string): Promise<void> {
+    delete this.storage[key]
   }
 }

@@ -1,13 +1,8 @@
+import { StorageInterface } from '../storage/interface'
 import { ExpoPushClient, FakeExpoPushClient } from './expo-push-client'
 
-export interface TokenStoragePort {
-  set(key: string, value: any): Promise<void>
-  delete(key: string): Promise<void>
-  list(): Promise<{ id: string }[]>
-}
-
 export interface MobileSyncNotifierDeps {
-  getTokenStorage: () => Promise<TokenStoragePort | null>
+  getTokenStorage: () => Promise<StorageInterface | null>
   pushClient?: ExpoPushClient
 }
 
@@ -38,7 +33,7 @@ export class MobileSyncNotifier {
     const storage = await this.deps.getTokenStorage()
     if (!storage || !this.deps.pushClient) return
 
-    const tokens = (await storage.list()).map((s) => s.id)
+    const tokens = await storage.getKeys()
     if (!tokens.length) return
 
     const { deviceNotRegisteredTokens } = await this.deps.pushClient.send(tokens)
