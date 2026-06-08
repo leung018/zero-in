@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { FakeObservableStorage } from './fake'
 
 describe('FakeObservableStorage', () => {
+  // TODO: Run same test suite against FirestoreStorage in integration test
+
   it('should be able to get and set data', async () => {
     const storage = FakeObservableStorage.create()
     await storage.set('test', { data: 'test_data' })
@@ -26,6 +28,22 @@ describe('FakeObservableStorage', () => {
     })
     await storage.set('test2', { data: 'test_data' })
     expect(dataList).toStrictEqual([])
+  })
+
+  it('should return keys of set items', async () => {
+    const storage = FakeObservableStorage.create()
+    await storage.set('a', 1)
+    await storage.set('b', 2)
+    expect(await storage.getKeys()).toStrictEqual(['a', 'b'])
+  })
+
+  it('should be able to delete data', async () => {
+    const storage = FakeObservableStorage.create()
+    await storage.set('a', 1)
+    await storage.set('b', 2)
+    await storage.delete('a')
+    expect(await storage.getKeys()).toStrictEqual(['b'])
+    expect(await storage.get('a')).toBeUndefined()
   })
 
   it('should able to unsubscribe from onChange', async () => {

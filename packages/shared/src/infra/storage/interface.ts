@@ -1,11 +1,11 @@
 export interface StorageInterface {
   get: (key: string) => Promise<any>
   set: (key: string, data: any) => Promise<void>
-  delete: (key: string) => Promise<void>
-  getKeys: () => Promise<string[]>
 }
 
 export interface ObservableStorage extends StorageInterface {
+  delete: (key: string) => Promise<void>
+  getKeys: () => Promise<string[]>
   onChange: (key: string, callback: (data: any) => void) => Promise<Unsubscribe>
 }
 

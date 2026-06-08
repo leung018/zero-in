@@ -7,6 +7,8 @@ export class FakeObservableStorage implements ObservableStorage {
     return new FakeObservableStorage(LocalStorageWrapper.createFake())
   }
 
+  private activeKeys: Set<string> = new Set()
+
   private constructor(private localStorage: LocalStorageWrapper) {}
 
   private subscriptionManager = new SubscriptionManager<{
@@ -15,20 +17,24 @@ export class FakeObservableStorage implements ObservableStorage {
   }>()
 
   async get(key: string): Promise<any> {
+    if (!this.activeKeys.has(key)) {
+      return undefined
+    }
     return this.localStorage.get(key)
   }
 
   async set(key: string, data: any): Promise<void> {
+    this.activeKeys.add(key)
     await this.localStorage.set(key, data)
     this.subscriptionManager.broadcast({ key, data })
   }
 
   async delete(key: string): Promise<void> {
-    await this.localStorage.delete(key)
+    this.activeKeys.delete(key)
   }
 
   async getKeys(): Promise<string[]> {
-    return this.localStorage.getKeys()
+    return Array.from(this.activeKeys)
   }
 
   async onChange(key: string, callback: (data: any) => void): Promise<Unsubscribe> {

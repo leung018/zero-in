@@ -16,12 +16,4 @@ export class LocalStorageWrapper implements StorageInterface {
   async set(key: string, data: any): Promise<void> {
     await this.localStorage.set({ [key]: data })
   }
-
-  async delete(key: string): Promise<void> {
-    await this.localStorage.remove(key)
-  }
-
-  async getKeys(): Promise<string[]> {
-    return this.localStorage.getKeys()
-  }
 }
