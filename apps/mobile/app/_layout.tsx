@@ -20,6 +20,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (lastNotificationResponse) {
       onScheduleEndNotificationTapped(lastNotificationResponse)
+      Notifications.clearLastNotificationResponse()
     }
   }, [lastNotificationResponse])
 
