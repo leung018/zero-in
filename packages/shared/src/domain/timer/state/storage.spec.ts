@@ -1,6 +1,6 @@
 import { Duration } from '@zero-in/shared/domain/timer/duration'
 import { TimerStage } from '@zero-in/shared/domain/timer/stage'
-import { FakeObservableStorage } from '@zero-in/shared/infra/storage/fake'
+import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { TimerInternalState } from './internal'
 import type { TimerStateSchemas } from './schema'
@@ -8,10 +8,10 @@ import { TimerStateStorageService } from './storage'
 import { runTimerStateStorageServiceTests } from './storage-shared-spec'
 
 describe('TimerStateStorageService', () => {
-  let storage = FakeObservableStorage.create()
+  let storage = FakeRemoteStorage.create()
 
   beforeEach(() => {
-    storage = FakeObservableStorage.create()
+    storage = FakeRemoteStorage.create()
   })
 
   beforeEach(() => {

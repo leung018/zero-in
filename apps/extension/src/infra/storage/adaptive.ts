@@ -1,13 +1,13 @@
 import { FirestoreStorage } from '@zero-in/shared/infra/storage/firebase/firestore/storage'
 import {
-  ObservableStorage,
+  RemoteStorage,
   StorageInterface,
   Unsubscribe
 } from '@zero-in/shared/infra/storage/interface'
 import { FirebaseServices } from '../firebase/services'
 import { newLocalStorage } from './local-storage'
 
-export class AdaptiveStorageProvider implements ObservableStorage {
+export class AdaptiveStorageProvider implements RemoteStorage {
   static create(storage = newLocalStorage()): AdaptiveStorageProvider {
     return new AdaptiveStorageProvider(storage)
   }

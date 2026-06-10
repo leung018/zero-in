@@ -1,7 +1,7 @@
-import { ObservableStorage, Unsubscribe } from '../../interface'
+import { RemoteStorage, Unsubscribe } from '../../interface'
 import { FirestoreAdapter, FirestoreDocumentReference } from './adapter'
 
-export class FirestoreStorage implements ObservableStorage {
+export class FirestoreStorage implements RemoteStorage {
   static createAppStorage({
     userId,
     adapter

@@ -1,8 +1,8 @@
-import { ObservableStorage } from '../storage/interface'
+import { RemoteStorage } from '../storage/interface'
 import { ExpoPushClient, FakeExpoPushClient } from './expo-push-client'
 
 export interface MobileSyncNotifierDeps {
-  getTokenStorage: () => Promise<ObservableStorage | null>
+  getTokenStorage: () => Promise<RemoteStorage | null>
   pushClient?: ExpoPushClient
 }
 

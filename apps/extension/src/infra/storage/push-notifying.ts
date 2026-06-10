@@ -1,10 +1,10 @@
 import { ExpoPushClientImpl } from '@zero-in/shared/infra/push/expo-push-client'
 import { MobileSyncNotifier } from '@zero-in/shared/infra/push/mobile-sync-notifier'
-import { ObservableStorage, Unsubscribe } from '@zero-in/shared/infra/storage/interface'
+import { RemoteStorage, Unsubscribe } from '@zero-in/shared/infra/storage/interface'
 import { FirebaseServices } from '../firebase/services'
 import { AdaptiveStorageProvider } from './adaptive'
 
-export class PushNotifyingStorageProvider implements ObservableStorage {
+export class PushNotifyingStorageProvider implements RemoteStorage {
   static create(): PushNotifyingStorageProvider {
     return new PushNotifyingStorageProvider(
       AdaptiveStorageProvider.create(),
@@ -19,7 +19,7 @@ export class PushNotifyingStorageProvider implements ObservableStorage {
   }
 
   constructor(
-    private readonly inner: ObservableStorage,
+    private readonly inner: RemoteStorage,
     private readonly notifier: MobileSyncNotifier
   ) {}
 

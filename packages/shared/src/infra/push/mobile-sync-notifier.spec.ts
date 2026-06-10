@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { FakeObservableStorage } from '../storage/fake'
+import { FakeRemoteStorage } from '../storage/fake'
 import { FakeExpoPushClient } from './expo-push-client'
 import { MobileSyncNotifier } from './mobile-sync-notifier'
 
-async function storageWithTokens(tokens: string[]): Promise<FakeObservableStorage> {
-  const storage = FakeObservableStorage.create()
+async function storageWithTokens(tokens: string[]): Promise<FakeRemoteStorage> {
+  const storage = FakeRemoteStorage.create()
   await Promise.all(tokens.map((t) => storage.set(t, { token: t })))
   return storage
 }
@@ -77,7 +77,7 @@ describe('MobileSyncNotifier', () => {
 
   describe('register', () => {
     it('stores token in storage', async () => {
-      const storage = FakeObservableStorage.create()
+      const storage = FakeRemoteStorage.create()
       const notifier = MobileSyncNotifier.createFake({ getTokenStorage: async () => storage })
 
       await notifier.register('token1', 'ios')

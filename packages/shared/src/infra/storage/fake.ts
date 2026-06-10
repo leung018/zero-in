@@ -1,10 +1,10 @@
 import { SubscriptionManager } from '@zero-in/shared/utils/subscription'
-import { ObservableStorage, Unsubscribe } from './interface'
+import { RemoteStorage, Unsubscribe } from './interface'
 import { LocalStorageWrapper } from './local-storage'
 
-export class FakeObservableStorage implements ObservableStorage {
+export class FakeRemoteStorage implements RemoteStorage {
   static create() {
-    return new FakeObservableStorage(LocalStorageWrapper.createFake())
+    return new FakeRemoteStorage(LocalStorageWrapper.createFake())
   }
 
   private activeKeys: Set<string> = new Set()

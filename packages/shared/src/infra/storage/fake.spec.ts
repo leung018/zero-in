@@ -1,17 +1,17 @@
 import { describe, expect, it } from 'vitest'
-import { FakeObservableStorage } from './fake'
+import { FakeRemoteStorage } from './fake'
 
-describe('FakeObservableStorage', () => {
+describe('FakeRemoteStorage', () => {
   // TODO: Run same test suite against FirestoreStorage in integration test
 
   it('should be able to get and set data', async () => {
-    const storage = FakeObservableStorage.create()
+    const storage = FakeRemoteStorage.create()
     await storage.set('test', { data: 'test_data' })
     expect(await storage.get('test')).toStrictEqual({ data: 'test_data' })
   })
 
   it('should be able to listen for data changes', async () => {
-    const storage = FakeObservableStorage.create()
+    const storage = FakeRemoteStorage.create()
     const dataList: any[] = []
     await storage.onChange('test', (data) => {
       dataList.push(data)
@@ -21,7 +21,7 @@ describe('FakeObservableStorage', () => {
   })
 
   it('should onChange listen to data only if match the key', async () => {
-    const storage = FakeObservableStorage.create()
+    const storage = FakeRemoteStorage.create()
     const dataList: any[] = []
     await storage.onChange('test', (data) => {
       dataList.push(data)
@@ -31,14 +31,14 @@ describe('FakeObservableStorage', () => {
   })
 
   it('should return keys of set items', async () => {
-    const storage = FakeObservableStorage.create()
+    const storage = FakeRemoteStorage.create()
     await storage.set('a', 1)
     await storage.set('b', 2)
     expect(await storage.getKeys()).toStrictEqual(['a', 'b'])
   })
 
   it('should be able to delete data', async () => {
-    const storage = FakeObservableStorage.create()
+    const storage = FakeRemoteStorage.create()
     await storage.set('a', 1)
     await storage.set('b', 2)
     await storage.delete('a')
@@ -47,7 +47,7 @@ describe('FakeObservableStorage', () => {
   })
 
   it('should able to unsubscribe from onChange', async () => {
-    const storage = FakeObservableStorage.create()
+    const storage = FakeRemoteStorage.create()
 
     const dataList1: any[] = []
     const unsubscribe1 = await storage.onChange('test', (data) => {

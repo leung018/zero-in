@@ -1,7 +1,7 @@
-import { ObservableStorage, Unsubscribe } from '@zero-in/shared/infra/storage/interface'
+import { RemoteStorage, Unsubscribe } from '@zero-in/shared/infra/storage/interface'
 import { FirebaseServices } from '../firebase/services'
 
-export class FirestoreAppStorageWrapper implements ObservableStorage {
+export class FirestoreAppStorageWrapper implements RemoteStorage {
   static create(): FirestoreAppStorageWrapper {
     return new FirestoreAppStorageWrapper()
   }

@@ -3,7 +3,7 @@ export interface StorageInterface {
   set: (key: string, data: any) => Promise<void>
 }
 
-export interface ObservableStorage extends StorageInterface {
+export interface RemoteStorage extends StorageInterface {
   delete: (key: string) => Promise<void>
   getKeys: () => Promise<string[]>
   onChange: (key: string, callback: (data: any) => void) => Promise<Unsubscribe>
