@@ -14,8 +14,13 @@ defaults:
 jobs:
   mobile-checks:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.AUTO_FIX_TOKEN || github.token }}
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -24,6 +29,29 @@ jobs:
           cache-dependency-path: yarn.lock
       - run: yarn install --immutable
       - name: Expo Doctor
+        id: expo-doctor
+        run: yarn expo-doctor
+        continue-on-error: true
+      - name: Auto-fix dependencies
+        if: steps.expo-doctor.outcome == 'failure'
+        run: |
+          yarn expo install --fix
+          yarn dedupe
+      - name: Commit and push auto-fix
+        if: steps.expo-doctor.outcome == 'failure'
+        working-directory: ${{ github.workspace }}
+        run: |
+          if git diff --quiet; then
+            echo "No dependency changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix: auto-fix expo dependencies"
+          git push origin HEAD:${{ github.head_ref }}
+      - name: Expo Doctor (after auto-fix)
+        if: steps.expo-doctor.outcome == 'failure'
         run: yarn expo-doctor
       - name: Lint
         run: yarn lint
