@@ -15,6 +15,14 @@ const log = createLogger('RootLayout')
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const lastNotificationResponse = Notifications.useLastNotificationResponse()
+
+  useEffect(() => {
+    if (lastNotificationResponse) {
+      onScheduleEndNotificationTapped(lastNotificationResponse)
+      Notifications.clearLastNotificationResponse()
+    }
+  }, [lastNotificationResponse])
 
   useEffect(() => {
     // Request notification permissions on startup
