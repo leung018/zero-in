@@ -5,7 +5,7 @@ import { triggerAppBlockToggling } from '../app-block/toggling-runner'
 
 const log = createLogger('BackgroundNotificationTask')
 
-export const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND_NOTIFICATION_TASK'
+const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND_NOTIFICATION_TASK'
 
 TaskManager.defineTask(
   BACKGROUND_NOTIFICATION_TASK,
