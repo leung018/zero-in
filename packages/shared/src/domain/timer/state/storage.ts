@@ -1,7 +1,7 @@
 import { Duration } from '@zero-in/shared/domain/timer/duration'
-import { FakeObservableStorage } from '@zero-in/shared/infra/storage/fake'
+import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import {
-  ObservableStorage,
+  RemoteStorage,
   StorageInterface,
   StorageService
 } from '@zero-in/shared/infra/storage/interface'
@@ -20,15 +20,15 @@ export class TimerStateStorageService implements StorageService<TimerInternalSta
     return new TimerStateStorageService(LocalStorageWrapper.createFake())
   }
 
-  static createObservableFake() {
-    return new TimerStateStorageService(FakeObservableStorage.create())
+  static createRemoteFake() {
+    return new TimerStateStorageService(FakeRemoteStorage.create())
   }
 
   private storageManager: StorageManager<TimerStateSchemas[5]>
 
   private unsubscribes: (() => void)[] = []
 
-  constructor(storage: ObservableStorage | StorageInterface) {
+  constructor(storage: RemoteStorage | StorageInterface) {
     this.storageManager = StorageManager.create({
       storage,
       key: TimerStateStorageService.STORAGE_KEY,

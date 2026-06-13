@@ -8,6 +8,8 @@ export interface FirestoreAdapter {
 
   getDoc(docRef: FirestoreDocumentReference): Promise<FirestoreDocumentSnapshot>
 
+  getDocs(path: string, ...pathSegments: string[]): Promise<FirestoreDocumentSnapshot[]>
+
   setDoc(docRef: FirestoreDocumentReference, data: any): Promise<void>
 
   deleteDoc(docRef: FirestoreDocumentReference): Promise<void>
@@ -23,6 +25,7 @@ type Unsubscribe = () => void
 export type FirestoreDocumentReference = any // TODO: Use stricter type if possible
 
 export interface FirestoreDocumentSnapshot {
+  id: string
   exists(): boolean
   data(): any
 }

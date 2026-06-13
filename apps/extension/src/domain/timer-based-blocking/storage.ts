@@ -1,6 +1,6 @@
 import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
-import { AdaptiveStorageProvider } from '../../infra/storage/adaptive'
+import { PushNotifyingStorageProvider } from '../../infra/storage/push-notifying'
 
 export function newTimerBasedBlockingRulesStorageService(): TimerBasedBlockingRulesStorageService {
-  return new TimerBasedBlockingRulesStorageService(AdaptiveStorageProvider.create())
+  return new TimerBasedBlockingRulesStorageService(PushNotifyingStorageProvider.create())
 }

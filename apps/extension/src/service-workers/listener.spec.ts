@@ -803,7 +803,7 @@ async function startListener({
 }
 
 /**
- * Using timerStateStorageService and timerConfigStorageService with ObservableStorage as default parameters
+ * Using timerStateStorageService and timerConfigStorageService with RemoteStorage as default parameters
  */
 async function startListenerWithTimerSync({
   timerConfig = TimerConfig.newTestInstance(),
@@ -811,7 +811,7 @@ async function startListenerWithTimerSync({
   timerBasedBlockingRules = newTestTimerBasedBlockingRules(),
   browsingRules = new BrowsingRules(),
   weeklySchedules = [],
-  timerStateStorageService = TimerStateStorageService.createObservableFake()
+  timerStateStorageService = TimerStateStorageService.createRemoteFake()
 } = {}) {
   return startListener({
     timerConfig,
@@ -820,6 +820,6 @@ async function startListenerWithTimerSync({
     browsingRules,
     weeklySchedules,
     timerStateStorageService,
-    timerConfigStorageService: TimerConfigStorageService.createObservableFake()
+    timerConfigStorageService: TimerConfigStorageService.createRemoteFake()
   })
 }

@@ -1,10 +1,12 @@
 import { onScheduleEndNotificationTapped } from '@/infra/app-block/toggling-runner'
+import { registerBackgroundNotificationTask } from '@/infra/push/background-notification-task'
+import { registerPushToken, unregisterPushToken } from '@/infra/push/expo-push-token'
 import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth'
 import * as Notifications from 'expo-notifications'
 import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { createLogger } from '../utils/logger'
 
@@ -24,11 +26,14 @@ export default function RootLayout() {
     }
   }, [lastNotificationResponse])
 
+  const prevUidRef = useRef<string | null>(null)
+
   useEffect(() => {
-    // Request notification permissions on startup
-    requestNotificationPermissions().catch((err) => {
-      log.error('Failed to request notification permissions:', err)
-    })
+    requestNotificationPermissions()
+      .then(() => registerBackgroundNotificationTask())
+      .catch((err) => {
+        log.error('Failed to set up notifications:', err)
+      })
 
     // Listen for notification taps that trigger app blocking service
     const notificationResponseListener = Notifications.addNotificationResponseReceivedListener(
@@ -39,6 +44,17 @@ export default function RootLayout() {
     )
 
     const unsubscribeAuth = onAuthStateChanged(getAuth(), async (user) => {
+      // TODO: Move below logic about pushToken into separate function/class, and add unit tests for them.
+      if (user) {
+        prevUidRef.current = user.uid
+        registerPushToken(user.uid).catch((err) => {
+          log.error('Failed to register push token:', err)
+        })
+      } else if (prevUidRef.current) {
+        unregisterPushToken(prevUidRef.current).catch(() => {})
+        prevUidRef.current = null
+      }
+
       setIsAuthenticated(user != null)
       setIsReady(true)
       await SplashScreen.hideAsync()

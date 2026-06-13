@@ -1,11 +1,13 @@
 import { SubscriptionManager } from '@zero-in/shared/utils/subscription'
-import { ObservableStorage, Unsubscribe } from './interface'
+import { RemoteStorage, Unsubscribe } from './interface'
 import { LocalStorageWrapper } from './local-storage'
 
-export class FakeObservableStorage implements ObservableStorage {
+export class FakeRemoteStorage implements RemoteStorage {
   static create() {
-    return new FakeObservableStorage(LocalStorageWrapper.createFake())
+    return new FakeRemoteStorage(LocalStorageWrapper.createFake())
   }
+
+  private activeKeys: Set<string> = new Set()
 
   private constructor(private localStorage: LocalStorageWrapper) {}
 
@@ -15,12 +17,24 @@ export class FakeObservableStorage implements ObservableStorage {
   }>()
 
   async get(key: string): Promise<any> {
+    if (!this.activeKeys.has(key)) {
+      return undefined
+    }
     return this.localStorage.get(key)
   }
 
   async set(key: string, data: any): Promise<void> {
+    this.activeKeys.add(key)
     await this.localStorage.set(key, data)
     this.subscriptionManager.broadcast({ key, data })
+  }
+
+  async delete(key: string): Promise<void> {
+    this.activeKeys.delete(key)
+  }
+
+  async getKeys(): Promise<string[]> {
+    return Array.from(this.activeKeys)
   }
 
   async onChange(key: string, callback: (data: any) => void): Promise<Unsubscribe> {

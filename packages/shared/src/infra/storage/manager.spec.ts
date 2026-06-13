@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { FakeObservableStorage } from './fake'
+import { FakeRemoteStorage } from './fake'
 import { StorageManager } from './manager'
 
 describe('StorageManager', () => {
@@ -40,7 +40,7 @@ describe('StorageManager', () => {
 
   it('should get null if no data is saved', async () => {
     const storageManager = StorageManager.createFake({
-      storage: FakeObservableStorage.create()
+      storage: FakeRemoteStorage.create()
     })
 
     expect(await storageManager.get()).toBeNull()
@@ -64,7 +64,7 @@ describe('StorageManager', () => {
   it('should able to subscribe and unsubscribe change of data', async () => {
     const storageManager = StorageManager.createFake({
       currentDataVersion: 2,
-      storage: FakeObservableStorage.create()
+      storage: FakeRemoteStorage.create()
     })
 
     const data: V2Schema = {
@@ -89,7 +89,7 @@ describe('StorageManager', () => {
   })
 
   it('should get old version and migrate to new version', async () => {
-    const fakeStorage = FakeObservableStorage.create()
+    const fakeStorage = FakeRemoteStorage.create()
 
     const storageManager = StorageManager.createFake({
       storage: fakeStorage,
@@ -138,7 +138,7 @@ describe('StorageManager', () => {
   })
 
   it('should get return original data if current data version of manager smaller than the coming data version', async () => {
-    const fakeStorage = FakeObservableStorage.create()
+    const fakeStorage = FakeRemoteStorage.create()
 
     const storageManager = StorageManager.createFake({
       storage: fakeStorage,
@@ -175,7 +175,7 @@ describe('StorageManager', () => {
   ])(
     'should not migrate if dataVersion is same as currentDataVersion',
     async ({ oldData, currentDataVersion }) => {
-      const fakeStorage = FakeObservableStorage.create()
+      const fakeStorage = FakeRemoteStorage.create()
 
       const storageManager = StorageManager.createFake({
         storage: fakeStorage,
@@ -192,7 +192,7 @@ describe('StorageManager', () => {
   )
 
   it('should migrate up to the current data version only', async () => {
-    const fakeStorage = FakeObservableStorage.create()
+    const fakeStorage = FakeRemoteStorage.create()
 
     const storageManager = StorageManager.createFake({
       storage: fakeStorage,

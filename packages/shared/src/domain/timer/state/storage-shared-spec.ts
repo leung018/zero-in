@@ -1,11 +1,11 @@
 import { Duration } from '@zero-in/shared/domain/timer/duration'
 import { TimerStage } from '@zero-in/shared/domain/timer/stage'
-import { ObservableStorage } from '@zero-in/shared/infra/storage/interface'
+import { RemoteStorage } from '@zero-in/shared/infra/storage/interface'
 import { expect, it } from 'vitest'
 import { TimerInternalState } from './internal'
 import { TimerStateStorageService } from './storage'
 
-export function runTimerStateStorageServiceTests(storage: ObservableStorage) {
+export function runTimerStateStorageServiceTests(storage: RemoteStorage) {
   it('should get null if no TimerState is saved ', async () => {
     const service = new TimerStateStorageService(storage)
     expect(await service.get()).toBeNull()
