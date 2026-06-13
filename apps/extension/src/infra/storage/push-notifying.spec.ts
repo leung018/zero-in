@@ -1,4 +1,5 @@
 import { MobileSyncNotifier } from '@zero-in/shared/infra/push/mobile-sync-notifier'
+import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { describe, expect, it } from 'vitest'
 import { PushNotifyingStorageProvider } from './push-notifying'
 
@@ -19,27 +20,9 @@ class SpyMobileSyncNotifier extends MobileSyncNotifier {
   }
 }
 
-class FakeStorage {
-  private data: Record<string, any> = {}
-
-  async get(key: string) {
-    return this.data[key] ?? null
-  }
-
-  async set(key: string, value: any) {
-    this.data[key] = value
-  }
-
-  async onChange(_key: string, _cb: (data: any) => void) {
-    void _key
-    void _cb
-    return () => {}
-  }
-}
-
 describe('PushNotifyingStorageProvider', () => {
   it('delegates set to inner and triggers the notifier', async () => {
-    const inner = new FakeStorage()
+    const inner = FakeRemoteStorage.create()
     const notifier = new SpyMobileSyncNotifier()
     const provider = new PushNotifyingStorageProvider(inner, notifier)
 
@@ -50,7 +33,7 @@ describe('PushNotifyingStorageProvider', () => {
   })
 
   it('does not reject set when the notifier rejects', async () => {
-    const inner = new FakeStorage()
+    const inner = FakeRemoteStorage.create()
     const notifier = new SpyMobileSyncNotifier()
     notifier.rejectError = new Error('network error')
     const provider = new PushNotifyingStorageProvider(inner, notifier)
@@ -59,7 +42,7 @@ describe('PushNotifyingStorageProvider', () => {
   })
 
   it('delegates get to inner', async () => {
-    const inner = new FakeStorage()
+    const inner = FakeRemoteStorage.create()
     await inner.set('weeklySchedules', { schedules: [] })
     const provider = new PushNotifyingStorageProvider(inner, new SpyMobileSyncNotifier())
 
@@ -67,7 +50,7 @@ describe('PushNotifyingStorageProvider', () => {
   })
 
   it('delegates onChange to inner', async () => {
-    const inner = new FakeStorage()
+    const inner = FakeRemoteStorage.create()
     const provider = new PushNotifyingStorageProvider(inner, new SpyMobileSyncNotifier())
 
     const unsubscribe = await provider.onChange('timerState', () => {})
