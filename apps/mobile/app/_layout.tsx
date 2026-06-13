@@ -45,6 +45,7 @@ export default function RootLayout() {
 
     const unsubscribeAuth = onAuthStateChanged(getAuth(), async (user) => {
       // TODO: Move below logic about pushToken into separate function/class, and add unit tests for them.
+      // Currently rely on manual testing first.
       if (user) {
         prevUidRef.current = user.uid
         registerPushToken(user.uid).catch((err) => {

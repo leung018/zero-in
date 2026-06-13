@@ -21,6 +21,8 @@ function createNotifier(uid: string): MobileSyncNotifier {
   })
 }
 
+// See the TODO comment in app/_layout.tsx about testing strategy for this module
+
 export async function registerPushToken(uid: string): Promise<void> {
   const token = await getCurrentExpoPushToken()
   await createNotifier(uid).register(token, Platform.OS)
