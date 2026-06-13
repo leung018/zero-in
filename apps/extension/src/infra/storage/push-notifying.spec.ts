@@ -21,14 +21,18 @@ class SpyMobileSyncNotifier extends MobileSyncNotifier {
 }
 
 describe('PushNotifyingStorageProvider', () => {
-  it('delegates set to inner and triggers the notifier', async () => {
+  // TODO: Think of the way to eliminate the need of duplication of tests
+
+  it('delegates set and get to inner and triggers the notifier', async () => {
     const inner = FakeRemoteStorage.create()
     const notifier = new SpyMobileSyncNotifier()
     const provider = new PushNotifyingStorageProvider(inner, notifier)
 
-    await provider.set('timerState', { isRunning: true })
+    expect(notifier.notifyCount).toBe(0)
 
-    expect(await inner.get('timerState')).toEqual({ isRunning: true })
+    await provider.set('timerState', { isRunning: true })
+    expect(await provider.get('timerState')).toEqual({ isRunning: true })
+
     expect(notifier.notifyCount).toBe(1)
   })
 
@@ -41,20 +45,20 @@ describe('PushNotifyingStorageProvider', () => {
     await expect(provider.set('timerState', {})).resolves.toBeUndefined()
   })
 
-  it('delegates get to inner', async () => {
-    const inner = FakeRemoteStorage.create()
-    await inner.set('weeklySchedules', { schedules: [] })
-    const provider = new PushNotifyingStorageProvider(inner, new SpyMobileSyncNotifier())
-
-    expect(await provider.get('weeklySchedules')).toEqual({ schedules: [] })
-  })
-
   it('delegates onChange to inner', async () => {
     const inner = FakeRemoteStorage.create()
     const provider = new PushNotifyingStorageProvider(inner, new SpyMobileSyncNotifier())
 
-    const unsubscribe = await provider.onChange('timerState', () => {})
+    let changeCount = 0
+    const unsubscribe = await provider.onChange('timerState', () => {
+      changeCount++
+    })
 
-    expect(typeof unsubscribe).toBe('function')
+    await provider.set('timerState', { isRunning: true })
+    expect(changeCount).toBe(1)
+
+    await unsubscribe()
+    await provider.set('timerState', { isRunning: false })
+    expect(changeCount).toBe(1)
   })
 })
