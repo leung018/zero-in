@@ -7,9 +7,9 @@ import {
 import { FirebaseServices } from '../firebase/services'
 import { newLocalStorage } from './local-storage'
 
-export class AdaptiveStorageProvider implements ObservableStorage {
-  static create(storage = newLocalStorage()): AdaptiveStorageProvider {
-    return new AdaptiveStorageProvider(storage)
+export class AdaptiveAppStorageProvider implements ObservableStorage {
+  static create(storage = newLocalStorage()): AdaptiveAppStorageProvider {
+    return new AdaptiveAppStorageProvider(storage)
   }
 
   constructor(private unauthenticatedStorage: StorageInterface) {}

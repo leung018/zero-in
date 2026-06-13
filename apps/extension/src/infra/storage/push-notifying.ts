@@ -2,12 +2,12 @@ import { ExpoPushClientImpl } from '@zero-in/shared/infra/push/expo-push-client'
 import { MobileSyncNotifier } from '@zero-in/shared/infra/push/mobile-sync-notifier'
 import { ObservableStorage, Unsubscribe } from '@zero-in/shared/infra/storage/interface'
 import { FirebaseServices } from '../firebase/services'
-import { AdaptiveStorageProvider } from './adaptive'
+import { AdaptiveAppStorageProvider } from './adaptive'
 
 export class PushNotifyingStorageProvider implements ObservableStorage {
   static create(): PushNotifyingStorageProvider {
     return new PushNotifyingStorageProvider(
-      AdaptiveStorageProvider.create(),
+      AdaptiveAppStorageProvider.create(),
       new MobileSyncNotifier({
         getTokenStorage: async () => {
           if (!(await FirebaseServices.isAuthenticated())) return null
