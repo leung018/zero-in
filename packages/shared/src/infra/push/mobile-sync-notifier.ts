@@ -1,38 +1,39 @@
+import { FakeRemoteStorage } from '../storage/fake'
 import { RemoteStorage } from '../storage/interface'
-import { ExpoPushClient, FakeExpoPushClient } from './expo-push-client'
+import { ExpoPushClient, ExpoPushClientImpl, FakeExpoPushClient } from './expo-push-client'
 
-export interface MobileSyncNotifierDeps {
-  getTokenStorage: () => Promise<RemoteStorage | null>
-  pushClient?: ExpoPushClient
+interface MobileSyncNotifierDeps {
+  getTokenStorage: () => Promise<RemoteStorage>
+  pushClient: ExpoPushClient
 }
 
 export class MobileSyncNotifier {
   static createFake(overrides: Partial<MobileSyncNotifierDeps> = {}): MobileSyncNotifier {
     return new MobileSyncNotifier({
-      getTokenStorage: async () => null,
+      getTokenStorage: async () => FakeRemoteStorage.create(),
       pushClient: new FakeExpoPushClient(),
       ...overrides
     })
+  }
+
+  static create(getTokenStorage: MobileSyncNotifierDeps['getTokenStorage']): MobileSyncNotifier {
+    return new MobileSyncNotifier({ getTokenStorage, pushClient: new ExpoPushClientImpl() })
   }
 
   constructor(private readonly deps: MobileSyncNotifierDeps) {}
 
   async register(token: string, platform: string): Promise<void> {
     const storage = await this.deps.getTokenStorage()
-    if (!storage) return
     await storage.set(token, { token, platform })
   }
 
   async unregister(token: string): Promise<void> {
     const storage = await this.deps.getTokenStorage()
-    if (!storage) return
     await storage.delete(token)
   }
 
   async notify(): Promise<void> {
     const storage = await this.deps.getTokenStorage()
-    if (!storage || !this.deps.pushClient) return
-
     const tokens = await storage.getKeys()
     if (!tokens.length) return
 

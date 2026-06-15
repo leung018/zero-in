@@ -1,4 +1,5 @@
 import { MobileSyncNotifier } from '@zero-in/shared/infra/push/mobile-sync-notifier'
+import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { describe, expect, it } from 'vitest'
 import { PushNotifyingStorageProvider } from './push-notifying'
 
@@ -8,7 +9,7 @@ class SpyMobileSyncNotifier extends MobileSyncNotifier {
 
   constructor() {
     super({
-      getTokenStorage: async () => null,
+      getTokenStorage: async () => FakeRemoteStorage.create(),
       pushClient: { send: async () => ({ deviceNotRegisteredTokens: [] }) }
     })
   }

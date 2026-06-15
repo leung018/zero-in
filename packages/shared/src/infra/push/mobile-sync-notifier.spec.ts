@@ -11,18 +11,6 @@ async function storageWithTokens(tokens: string[]): Promise<FakeRemoteStorage> {
 
 describe('MobileSyncNotifier', () => {
   describe('notify', () => {
-    it('no-ops when no token storage available (e.g. signed out)', async () => {
-      const pushClient = new FakeExpoPushClient()
-      const notifier = MobileSyncNotifier.createFake({
-        getTokenStorage: async () => null,
-        pushClient
-      })
-
-      await notifier.notify()
-
-      expect(pushClient.sentTokensCalls).toEqual([])
-    })
-
     it('no-ops when there are no tokens to notify', async () => {
       const pushClient = new FakeExpoPushClient()
       const notifier = MobileSyncNotifier.createFake({
@@ -84,12 +72,6 @@ describe('MobileSyncNotifier', () => {
 
       expect(await storage.getKeys()).toContain('token1')
     })
-
-    it('no-ops when no token storage', async () => {
-      const notifier = MobileSyncNotifier.createFake({ getTokenStorage: async () => null })
-
-      await expect(notifier.register('token1', 'ios')).resolves.toBeUndefined()
-    })
   })
 
   describe('unregister', () => {
@@ -100,12 +82,6 @@ describe('MobileSyncNotifier', () => {
       await notifier.unregister('token1')
 
       expect(await storage.getKeys()).not.toContain('token1')
-    })
-
-    it('no-ops when no token storage', async () => {
-      const notifier = MobileSyncNotifier.createFake({ getTokenStorage: async () => null })
-
-      await expect(notifier.unregister('token1')).resolves.toBeUndefined()
     })
   })
 })

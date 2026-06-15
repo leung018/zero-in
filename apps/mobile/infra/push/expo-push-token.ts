@@ -16,9 +16,7 @@ async function getCurrentExpoPushToken(): Promise<string> {
 }
 
 function createNotifier(uid: string): MobileSyncNotifier {
-  return new MobileSyncNotifier({
-    getTokenStorage: () => FirebaseServices.getFirestoreTokenStorage(uid)
-  })
+  return MobileSyncNotifier.create(async () => FirebaseServices.getFirestoreTokenStorage(uid))
 }
 
 // See the TODO comment in app/_layout.tsx about testing strategy for this module
