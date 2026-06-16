@@ -23,9 +23,9 @@ export class MobileSyncNotifier {
 
   private constructor(private readonly deps: MobileSyncNotifierDeps) {}
 
-  async register(token: string, platform: string): Promise<void> {
+  async register(token: string): Promise<void> {
     const storage = await this.deps.getTokenStorage()
-    await storage.set(token, { token, platform })
+    await storage.set(token, true)
   }
 
   async unregister(token: string): Promise<void> {

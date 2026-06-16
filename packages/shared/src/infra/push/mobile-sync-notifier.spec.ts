@@ -7,7 +7,7 @@ describe('MobileSyncNotifier', () => {
     const pushClient = new FakeExpoPushClient()
     const notifier = MobileSyncNotifier.createFake({ pushClient })
 
-    await notifier.register('t1', 'ios')
+    await notifier.register('t1')
     await notifier.unregister('t1')
     await notifier.notify()
 
@@ -18,7 +18,7 @@ describe('MobileSyncNotifier', () => {
     const pushClient = new FakeExpoPushClient()
     const notifier = MobileSyncNotifier.createFake({ pushClient })
 
-    await notifier.register('t1', 'ios')
+    await notifier.register('t1')
     await notifier.notify()
 
     expect(pushClient.sentTokensCalls).toEqual([['t1']])
@@ -29,7 +29,7 @@ describe('MobileSyncNotifier', () => {
     pushClient.sendError = new Error('network down')
     const notifier = MobileSyncNotifier.createFake({ pushClient })
 
-    await notifier.register('t1', 'ios')
+    await notifier.register('t1')
 
     await expect(notifier.notify()).rejects.toThrow('network down')
   })
@@ -39,8 +39,8 @@ describe('MobileSyncNotifier', () => {
     pushClient.deviceNotRegisteredTokens = ['t2']
     const notifier = MobileSyncNotifier.createFake({ pushClient })
 
-    await notifier.register('t1', 'ios')
-    await notifier.register('t2', 'ios')
+    await notifier.register('t1')
+    await notifier.register('t2')
     await notifier.notify()
     await notifier.notify()
 
@@ -51,8 +51,8 @@ describe('MobileSyncNotifier', () => {
     const pushClient = new FakeExpoPushClient()
     const notifier = MobileSyncNotifier.createFake({ pushClient })
 
-    await notifier.register('t1', 'ios')
-    await notifier.register('t2', 'android')
+    await notifier.register('t1')
+    await notifier.register('t2')
     await notifier.notify()
 
     expect(pushClient.sentTokensCalls).toEqual([['t1', 't2']])

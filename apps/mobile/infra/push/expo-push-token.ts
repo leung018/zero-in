@@ -1,7 +1,6 @@
 import { MobileSyncNotifier } from '@zero-in/shared/infra/push/mobile-sync-notifier'
 import Constants from 'expo-constants'
 import * as Notifications from 'expo-notifications'
-import { Platform } from 'react-native'
 import { FirebaseServices } from '../firebase/services'
 
 function getProjectId(): string {
@@ -23,7 +22,7 @@ function createNotifier(uid: string): MobileSyncNotifier {
 
 export async function registerPushToken(uid: string): Promise<void> {
   const token = await getCurrentExpoPushToken()
-  await createNotifier(uid).register(token, Platform.OS)
+  await createNotifier(uid).register(token)
 }
 
 export async function unregisterPushToken(uid: string): Promise<void> {
