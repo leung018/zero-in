@@ -25,6 +25,7 @@ export class MobileSyncNotifier {
 
   async register(token: string): Promise<void> {
     const storage = await this.deps.getTokenStorage()
+    // Using the token as the key means registering the same token twice is a no-op (overwrites the same entry).
     await storage.set(token, true)
   }
 
