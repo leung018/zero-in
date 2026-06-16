@@ -39,6 +39,6 @@ export class MobileSyncNotifier {
     if (!tokens.length) return
 
     const { deviceNotRegisteredTokens } = await this.deps.pushClient.send(tokens)
-    await Promise.all(deviceNotRegisteredTokens.map((t) => storage.delete(t).catch(() => {})))
+    await Promise.all(deviceNotRegisteredTokens.map((t) => storage.delete(t)))
   }
 }
