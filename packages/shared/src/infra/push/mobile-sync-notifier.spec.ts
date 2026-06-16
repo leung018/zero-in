@@ -1,87 +1,60 @@
 import { describe, expect, it } from 'vitest'
-import { FakeRemoteStorage } from '../storage/fake'
 import { FakeExpoPushClient } from './expo-push-client'
 import { MobileSyncNotifier } from './mobile-sync-notifier'
 
-async function storageWithTokens(tokens: string[]): Promise<FakeRemoteStorage> {
-  const storage = FakeRemoteStorage.create()
-  await Promise.all(tokens.map((t) => storage.set(t, { token: t })))
-  return storage
-}
-
 describe('MobileSyncNotifier', () => {
-  describe('notify', () => {
-    it('no-ops when there are no tokens to notify', async () => {
-      const pushClient = new FakeExpoPushClient()
-      const notifier = MobileSyncNotifier.createFake({
-        getTokenStorage: async () => await storageWithTokens([]),
-        pushClient
-      })
+  it('register then unregister then notify does not push', async () => {
+    const pushClient = new FakeExpoPushClient()
+    const notifier = MobileSyncNotifier.createFake({ pushClient })
 
-      await notifier.notify()
+    await notifier.register('t1', 'ios')
+    await notifier.unregister('t1')
+    await notifier.notify()
 
-      expect(pushClient.sentTokensCalls).toEqual([])
-    })
-
-    it('sends all tokens to the push client', async () => {
-      const pushClient = new FakeExpoPushClient()
-      const storage = await storageWithTokens(['t1', 't2'])
-      const notifier = MobileSyncNotifier.createFake({
-        getTokenStorage: async () => storage,
-        pushClient
-      })
-
-      await notifier.notify()
-
-      expect(pushClient.sentTokensCalls).toEqual([['t1', 't2']])
-      expect(await storage.getKeys()).toEqual(['t1', 't2'])
-    })
-
-    it('unregisters tokens reported as DeviceNotRegistered', async () => {
-      const pushClient = new FakeExpoPushClient()
-      pushClient.deviceNotRegisteredTokens = ['t2', 't3']
-      const storage = await storageWithTokens(['t1', 't2', 't3'])
-      const notifier = MobileSyncNotifier.createFake({
-        getTokenStorage: async () => storage,
-        pushClient
-      })
-
-      await notifier.notify()
-
-      expect(await storage.getKeys()).toEqual(['t1'])
-    })
-
-    it('rejects when the push client throws', async () => {
-      const pushClient = new FakeExpoPushClient()
-      pushClient.sendError = new Error('network down')
-      const notifier = MobileSyncNotifier.createFake({
-        getTokenStorage: async () => await storageWithTokens(['t1']),
-        pushClient
-      })
-
-      await expect(notifier.notify()).rejects.toThrow('network down')
-    })
+    expect(pushClient.sentTokensCalls).toEqual([])
   })
 
-  describe('register', () => {
-    it('stores token in storage', async () => {
-      const storage = FakeRemoteStorage.create()
-      const notifier = MobileSyncNotifier.createFake({ getTokenStorage: async () => storage })
+  it('register then notify sends token to push client', async () => {
+    const pushClient = new FakeExpoPushClient()
+    const notifier = MobileSyncNotifier.createFake({ pushClient })
 
-      await notifier.register('token1', 'ios')
+    await notifier.register('t1', 'ios')
+    await notifier.notify()
 
-      expect(await storage.getKeys()).toContain('token1')
-    })
+    expect(pushClient.sentTokensCalls).toEqual([['t1']])
   })
 
-  describe('unregister', () => {
-    it('removes token from storage', async () => {
-      const storage = await storageWithTokens(['token1'])
-      const notifier = MobileSyncNotifier.createFake({ getTokenStorage: async () => storage })
+  it('notify rejects when push client throws', async () => {
+    const pushClient = new FakeExpoPushClient()
+    pushClient.sendError = new Error('network down')
+    const notifier = MobileSyncNotifier.createFake({ pushClient })
 
-      await notifier.unregister('token1')
+    await notifier.register('t1', 'ios')
 
-      expect(await storage.getKeys()).not.toContain('token1')
-    })
+    await expect(notifier.notify()).rejects.toThrow('network down')
+  })
+
+  it('notify auto-unregisters DeviceNotRegistered tokens so they are skipped on next notify', async () => {
+    const pushClient = new FakeExpoPushClient()
+    pushClient.deviceNotRegisteredTokens = ['t2']
+    const notifier = MobileSyncNotifier.createFake({ pushClient })
+
+    await notifier.register('t1', 'ios')
+    await notifier.register('t2', 'ios')
+    await notifier.notify()
+    await notifier.notify()
+
+    expect(pushClient.sentTokensCalls).toEqual([['t1', 't2'], ['t1']])
+  })
+
+  it('notify sends all registered tokens', async () => {
+    const pushClient = new FakeExpoPushClient()
+    const notifier = MobileSyncNotifier.createFake({ pushClient })
+
+    await notifier.register('t1', 'ios')
+    await notifier.register('t2', 'android')
+    await notifier.notify()
+
+    expect(pushClient.sentTokensCalls).toEqual([['t1', 't2']])
   })
 })

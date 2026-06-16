@@ -9,8 +9,9 @@ interface MobileSyncNotifierDeps {
 
 export class MobileSyncNotifier {
   static createFake(overrides: Partial<MobileSyncNotifierDeps> = {}): MobileSyncNotifier {
+    const storage = FakeRemoteStorage.create()
     return new MobileSyncNotifier({
-      getTokenStorage: async () => FakeRemoteStorage.create(),
+      getTokenStorage: async () => storage,
       pushClient: new FakeExpoPushClient(),
       ...overrides
     })
