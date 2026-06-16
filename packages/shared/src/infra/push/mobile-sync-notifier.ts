@@ -20,7 +20,7 @@ export class MobileSyncNotifier {
     return new MobileSyncNotifier({ getTokenStorage, pushClient: new ExpoPushClientImpl() })
   }
 
-  constructor(private readonly deps: MobileSyncNotifierDeps) {}
+  private constructor(private readonly deps: MobileSyncNotifierDeps) {}
 
   async register(token: string, platform: string): Promise<void> {
     const storage = await this.deps.getTokenStorage()
