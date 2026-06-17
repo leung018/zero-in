@@ -24,6 +24,9 @@ export class FakeRemoteStorage implements RemoteStorage {
   }
 
   async set(key: string, data: any): Promise<void> {
+    if (typeof data !== 'object' || data === null || Array.isArray(data)) {
+      throw new Error("'data' must be an object.")
+    }
     this.activeKeys.add(key)
     await this.localStorage.set(key, data)
     this.subscriptionManager.broadcast({ key, data })
