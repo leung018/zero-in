@@ -4,6 +4,10 @@ import { FakeRemoteStorage } from './fake'
 describe('FakeRemoteStorage', () => {
   // TODO: Run same test suite against FirestoreStorage in integration test
 
+  // TODO: When setting data with non object value like storage.set(token, true) will fail for FirebaseStorage
+  // [Error: firebase.firestore().doc().set(*) 'data' must be an object.]
+  // Add test case to reject non-object value. Modify below test case that using non-object value.
+
   it('should be able to get and set data', async () => {
     const storage = FakeRemoteStorage.create()
     await storage.set('test', { data: 'test_data' })
