@@ -21,7 +21,7 @@ class SpyMobileSyncNotifier extends MobileSyncNotifier {
 }
 
 describe('PushNotifyingStorageProvider', () => {
-  // TODO: Think of the way to eliminate the need of duplication of tests
+  // TODO: Find a way to eliminate the duplication in these tests. They're similar to the tests for the inner class.
 
   it('delegates set and get to inner and triggers the notifier', async () => {
     const notifier = new SpyMobileSyncNotifier()
