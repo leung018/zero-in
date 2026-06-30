@@ -21,8 +21,14 @@ export function testRemoteStorageContract(createStorage: () => Promise<RemoteSto
     expect(await storage.get('test')).toStrictEqual({ data: 'test_data' })
   })
 
-  it('should reject setting a non-object value', async () => {
-    await expect(storage.set('test', true)).rejects.toThrow()
+  it.each([
+    ['boolean', true],
+    ['number', 1],
+    ['string', 'test'],
+    ['null', null],
+    ['array', ['test']]
+  ])('should reject setting a non-object value: %s', async (_, value) => {
+    await expect(storage.set('test', value)).rejects.toThrow()
   })
 
   it('should be able to listen for data changes', async () => {
