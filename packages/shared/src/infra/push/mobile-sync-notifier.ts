@@ -21,7 +21,8 @@ export class MobileSyncNotifier {
     return new MobileSyncNotifier({ getTokenStorage, pushClient: new ExpoPushClientImpl() })
   }
 
-  private constructor(private readonly deps: MobileSyncNotifierDeps) {}
+  // TODO: Make below private; refactor unit tests so they don't need to subclass this for a testable fake.
+  constructor(private readonly deps: MobileSyncNotifierDeps) {}
 
   async register(token: string): Promise<void> {
     const storage = await this.deps.getTokenStorage()
