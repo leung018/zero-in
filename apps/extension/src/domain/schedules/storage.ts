@@ -1,6 +1,6 @@
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
-import { AdaptiveStorageProvider } from '../../infra/storage/adaptive'
+import { PushNotifyingStorageProvider } from '../../infra/storage/push-notifying'
 
 export function newWeeklySchedulesStorageService(): WeeklySchedulesStorageService {
-  return new WeeklySchedulesStorageService(AdaptiveStorageProvider.create())
+  return new WeeklySchedulesStorageService(PushNotifyingStorageProvider.create())
 }

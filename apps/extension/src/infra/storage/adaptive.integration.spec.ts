@@ -1,8 +1,8 @@
-import { FakeObservableStorage } from '@zero-in/shared/infra/storage/fake'
+import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { signInAndGetFirestoreAppStorage } from '../../test-utils/firestore'
 import { FirebaseServices } from '../firebase/services'
-import { AdaptiveStorageProvider } from './adaptive'
+import { AdaptiveAppStorageProvider } from './adaptive'
 
 describe('AdaptiveStorageProvider', async () => {
   const TEST_KEY = 'testKey'
@@ -17,7 +17,7 @@ describe('AdaptiveStorageProvider', async () => {
   it('should use firebaseStorage if user is authenticated', async () => {
     const firestoreStorage = await signInAndGetFirestoreAppStorage()
 
-    const provider = new AdaptiveStorageProvider(FakeObservableStorage.create())
+    const provider = new AdaptiveAppStorageProvider(FakeRemoteStorage.create())
 
     await provider.set(TEST_KEY, testData)
     const data = await provider.get(TEST_KEY)
@@ -30,8 +30,8 @@ describe('AdaptiveStorageProvider', async () => {
   it('should use unauthenticatedStorage if user is not authenticated', async () => {
     await FirebaseServices.signOut()
 
-    const unauthenticatedStorage = FakeObservableStorage.create()
-    const provider = new AdaptiveStorageProvider(unauthenticatedStorage)
+    const unauthenticatedStorage = FakeRemoteStorage.create()
+    const provider = new AdaptiveAppStorageProvider(unauthenticatedStorage)
 
     await provider.set(TEST_KEY, testData)
     const data = await provider.get(TEST_KEY)
@@ -43,7 +43,7 @@ describe('AdaptiveStorageProvider', async () => {
 
   it('should able to subscribe and unsubscribe changes for firestore', async () => {
     const firestoreStorage = await signInAndGetFirestoreAppStorage()
-    const provider = new AdaptiveStorageProvider(FakeObservableStorage.create())
+    const provider = new AdaptiveAppStorageProvider(FakeRemoteStorage.create())
 
     const receivedData: any[] = []
     const unsubscribe = await provider.onChange(TEST_KEY, (data) => {

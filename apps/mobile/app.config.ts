@@ -39,7 +39,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     appleTeamId: 'YCDM23LPV6',
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
-      UIBackgroundModes: ['process']
+      UIBackgroundModes: ['process', 'remote-notification']
     }
   },
   android: {

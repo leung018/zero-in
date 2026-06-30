@@ -1,5 +1,5 @@
 import config from '@/config'
-import { FirestoreAppStorage } from '@zero-in/shared/infra/storage/firebase/firestore/app-storage'
+import { FirestoreStorage } from '@zero-in/shared/infra/storage/firebase/firestore/storage'
 import { initializeApp } from 'firebase/app'
 import {
   browserLocalPersistence,
@@ -21,7 +21,7 @@ const app = initializeApp(config.getFirebaseConfig())
 
 const auth = getAuth(app)
 
-const db = getFirestore(app)
+export const db = getFirestore(app)
 
 if (import.meta.env.VITE_USE_FIREBASE_EMULATOR === 'true') {
   connectAuthEmulator(auth, 'http://localhost:9099')
@@ -55,19 +55,33 @@ export class FirebaseServices {
     await setPersistence(auth, browserLocalPersistence)
   }
 
-  static async getFirestoreAppStorage(): Promise<FirestoreAppStorage> {
+  static async getFirestoreAppStorage(): Promise<FirestoreStorage> {
     const userId = await this.getCurrentUserId()
     if (!userId) {
       throw new Error('User not authenticated')
     }
-    return new FirestoreAppStorage(userId, new WebFirestoreAdapter(db))
+    return FirestoreStorage.createAppStorage({
+      userId,
+      adapter: new WebFirestoreAdapter(db)
+    })
+  }
+
+  static async getFirestoreTokenStorage(): Promise<FirestoreStorage> {
+    const userId = await this.getCurrentUserId()
+    if (!userId) {
+      throw new Error('User not authenticated')
+    }
+    return FirestoreStorage.createTokenStorage({
+      userId,
+      adapter: new WebFirestoreAdapter(db)
+    })
   }
 
   static onAuthStateChanged(callback: NextOrObserver<User>) {
     return onAuthStateChanged(auth, callback)
   }
 
-  private static async getCurrentUserId(): Promise<string | null> {
+  static async getCurrentUserId(): Promise<string | null> {
     return new Promise((resolve) => {
       return LocalStorageUserIdCache.get().then(({ userId, isCacheSet }) => {
         if (!isCacheSet) {

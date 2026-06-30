@@ -1,8 +1,10 @@
 import {
+  collection,
   deleteDoc,
   doc,
   Firestore,
   getDoc,
+  getDocs,
   onSnapshot,
   setDoc
 } from '@react-native-firebase/firestore'
@@ -21,10 +23,12 @@ export class ReactNativeFirestoreAdapter implements FirestoreAdapter {
 
   async getDoc(docRef: FirestoreDocumentReference) {
     const snapshot = await getDoc(docRef)
-    return {
-      exists: () => snapshot.exists(),
-      data: () => snapshot.data()
-    }
+    return toSnapshot(snapshot)
+  }
+
+  async getDocs(path: string, ...pathSegments: string[]): Promise<FirestoreDocumentSnapshot[]> {
+    const snapshot = await getDocs(collection(this.firestore, path, ...pathSegments))
+    return snapshot.docs.map(toSnapshot)
   }
 
   async setDoc(docRef: FirestoreDocumentReference, data: any): Promise<void> {
@@ -39,11 +43,16 @@ export class ReactNativeFirestoreAdapter implements FirestoreAdapter {
     docRef: FirestoreDocumentReference,
     callback: (snapshot: FirestoreDocumentSnapshot) => void
   ): () => void {
-    return onSnapshot(docRef, (snapshot: FirestoreDocumentSnapshot) => {
-      callback({
-        exists: () => snapshot.exists(),
-        data: () => snapshot.data()
-      })
+    return onSnapshot(docRef, (snapshot: any) => {
+      callback(toSnapshot(snapshot))
     })
+  }
+}
+
+function toSnapshot(snapshot: any): FirestoreDocumentSnapshot {
+  return {
+    id: snapshot.id,
+    exists: () => snapshot.exists(),
+    data: () => snapshot.data()
   }
 }

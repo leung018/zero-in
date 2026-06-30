@@ -3,7 +3,7 @@ import { StorageKey } from '@zero-in/shared/infra/storage/key'
 import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
 import { StorageManager } from '@zero-in/shared/infra/storage/manager'
 import { BrowsingRules } from '.'
-import { AdaptiveStorageProvider } from '../../infra/storage/adaptive'
+import { AdaptiveAppStorageProvider } from '../../infra/storage/adaptive'
 import {
   deserializeBrowsingRules,
   serializeBrowsingRules,
@@ -18,7 +18,7 @@ export class BrowsingRulesStorageService implements StorageService<BrowsingRules
   }
 
   static create(): BrowsingRulesStorageService {
-    return new BrowsingRulesStorageService(AdaptiveStorageProvider.create())
+    return new BrowsingRulesStorageService(AdaptiveAppStorageProvider.create())
   }
 
   private storageManager: StorageManager<SerializedBrowsingRules>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import config from '@/config'
+import type { StorageInterface } from '@zero-in/shared/infra/storage/interface'
 import { ImportRecordStorageService } from '../../domain/import/record/storage'
 import { FirebaseServices } from '../../infra/firebase/services'
-import { FirestoreAppStorageWrapper } from '../../infra/storage/firestore'
 import { newLocalStorage } from '../../infra/storage/local-storage'
 import SignInProcessHelper from '../../pages/SignInProcessHelper.vue'
 
@@ -10,6 +10,9 @@ import SignInProcessHelper from '../../pages/SignInProcessHelper.vue'
 
 const showProcessHelper = ref(false)
 const signInProcessHelperRef = ref<InstanceType<typeof SignInProcessHelper> | null>(null)
+
+const remoteStorage = shallowRef<StorageInterface | null>(null)
+const importRecordStorage = shallowRef<ImportRecordStorageService | null>(null)
 
 const pollAndFocusLoginPopup = () => {
   const intervalId = setInterval(() => {
@@ -34,6 +37,10 @@ const signIn = () => {
 
   FirebaseServices.onAuthStateChanged(async (auth) => {
     if (auth) {
+      const rs = await FirebaseServices.getFirestoreAppStorage()
+      remoteStorage.value = rs
+      importRecordStorage.value = new ImportRecordStorageService(rs)
+      await nextTick()
       signInProcessHelperRef.value!.triggerHelperProcess()
     }
   })
@@ -134,11 +141,12 @@ const onHelperProcessComplete = async () => {
   </div>
 
   <SignInProcessHelper
+    v-if="remoteStorage && importRecordStorage"
     ref="signInProcessHelperRef"
     v-show="showProcessHelper"
     :localStorage="newLocalStorage()"
-    :remoteStorage="FirestoreAppStorageWrapper.create()"
-    :importRecordStorageService="ImportRecordStorageService.create()"
+    :remoteStorage="remoteStorage"
+    :importRecordStorageService="importRecordStorage"
     @onHelperProcessComplete="onHelperProcessComplete"
   />
 </template>

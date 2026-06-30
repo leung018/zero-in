@@ -4,11 +4,12 @@ import {
   FirestoreDocumentSnapshot
 } from '@zero-in/shared/infra/storage/firebase/firestore/adapter'
 import {
+  collection,
   deleteDoc,
   doc,
-  DocumentSnapshot,
   Firestore,
   getDoc,
+  getDocs,
   onSnapshot,
   setDoc
 } from 'firebase/firestore'
@@ -22,10 +23,12 @@ export class WebFirestoreAdapter implements FirestoreAdapter {
 
   async getDoc(docRef: FirestoreDocumentReference) {
     const snapshot = await getDoc(docRef)
-    return {
-      exists: () => snapshot.exists(),
-      data: () => snapshot.data()
-    }
+    return toSnapshot(snapshot)
+  }
+
+  async getDocs(path: string, ...pathSegments: string[]): Promise<FirestoreDocumentSnapshot[]> {
+    const snapshot = await getDocs(collection(this.firestore, path, ...pathSegments))
+    return snapshot.docs.map(toSnapshot)
   }
 
   async setDoc(docRef: FirestoreDocumentReference, data: any): Promise<void> {
@@ -40,11 +43,22 @@ export class WebFirestoreAdapter implements FirestoreAdapter {
     docRef: FirestoreDocumentReference,
     callback: (snapshot: FirestoreDocumentSnapshot) => void
   ): () => void {
-    return onSnapshot(docRef, (snapshot: DocumentSnapshot) => {
-      callback({
-        exists: () => snapshot.exists(),
-        data: () => snapshot.data()
-      })
+    return onSnapshot(docRef, (snapshot: RawDocumentSnapshot) => {
+      callback(toSnapshot(snapshot))
     })
+  }
+}
+
+interface RawDocumentSnapshot {
+  id: string
+  exists(): boolean
+  data(): any
+}
+
+function toSnapshot(snapshot: RawDocumentSnapshot): FirestoreDocumentSnapshot {
+  return {
+    id: snapshot.id,
+    exists: () => snapshot.exists(),
+    data: () => snapshot.data()
   }
 }

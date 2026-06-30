@@ -1,5 +1,5 @@
-import { FakeObservableStorage } from './fake'
-import { ObservableStorage, StorageInterface, Unsubscribe } from './interface'
+import { FakeRemoteStorage } from './fake'
+import { RemoteStorage, StorageInterface, Unsubscribe } from './interface'
 import { StorageKey } from './key'
 
 interface Schema {
@@ -17,7 +17,7 @@ function getVersion(version: number | undefined) {
 }
 
 export class StorageManager<S> {
-  private storage: ObservableStorage | StorageInterface
+  private storage: RemoteStorage | StorageInterface
   private key: string
   private migrators: Migrators
   private currentDataVersion?: number
@@ -28,7 +28,7 @@ export class StorageManager<S> {
     migrators,
     currentDataVersion
   }: {
-    storage: ObservableStorage | StorageInterface
+    storage: RemoteStorage | StorageInterface
     key: StorageKey
     migrators: Migrators
     currentDataVersion?: number
@@ -42,7 +42,7 @@ export class StorageManager<S> {
   }
 
   static createFake<S>({
-    storage = FakeObservableStorage.create(),
+    storage = FakeRemoteStorage.create(),
     migrators = [] as Migrators,
     key = 'STORAGE_KEY',
     currentDataVersion = undefined as number | undefined
@@ -61,7 +61,7 @@ export class StorageManager<S> {
     migrators,
     currentDataVersion
   }: {
-    storage: ObservableStorage | StorageInterface
+    storage: RemoteStorage | StorageInterface
     key: string
     migrators: Migrators
     currentDataVersion?: number

@@ -8,13 +8,13 @@ import { StorageInterface, StorageService } from '@zero-in/shared/infra/storage/
 import { StorageKey } from '@zero-in/shared/infra/storage/key'
 import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
 import { StorageManager } from '@zero-in/shared/infra/storage/manager'
-import { AdaptiveStorageProvider } from '../../infra/storage/adaptive'
+import { AdaptiveAppStorageProvider } from '../../infra/storage/adaptive'
 
 export class DailyResetTimeStorageService implements StorageService<Time> {
   static readonly STORAGE_KEY: StorageKey = 'dailyCutoffTime'
 
   static create() {
-    return new DailyResetTimeStorageService(AdaptiveStorageProvider.create())
+    return new DailyResetTimeStorageService(AdaptiveAppStorageProvider.create())
   }
 
   static createFake() {

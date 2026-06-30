@@ -1,7 +1,7 @@
 import config from '@zero-in/shared/config'
-import { FakeObservableStorage } from '@zero-in/shared/infra/storage/fake'
+import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import {
-  ObservableStorage,
+  RemoteStorage,
   StorageInterface,
   StorageService
 } from '@zero-in/shared/infra/storage/interface'
@@ -22,15 +22,15 @@ export class TimerConfigStorageService implements StorageService<TimerConfig> {
     return new TimerConfigStorageService(LocalStorageWrapper.createFake())
   }
 
-  static createObservableFake() {
-    return new TimerConfigStorageService(FakeObservableStorage.create())
+  static createRemoteFake() {
+    return new TimerConfigStorageService(FakeRemoteStorage.create())
   }
 
   private storageManager: StorageManager<SerializedTimerConfig>
 
   private unsubscribes: (() => void)[] = []
 
-  constructor(storage: ObservableStorage | StorageInterface) {
+  constructor(storage: RemoteStorage | StorageInterface) {
     this.storageManager = StorageManager.create({
       storage,
       key: TimerConfigStorageService.STORAGE_KEY,

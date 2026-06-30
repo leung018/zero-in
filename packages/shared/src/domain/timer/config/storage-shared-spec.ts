@@ -1,11 +1,11 @@
 import config from '@zero-in/shared/config'
 import { Duration } from '@zero-in/shared/domain/timer/duration'
-import { ObservableStorage } from '@zero-in/shared/infra/storage/interface'
+import { RemoteStorage } from '@zero-in/shared/infra/storage/interface'
 import { expect, it } from 'vitest'
 import { TimerConfig } from '.'
 import { TimerConfigStorageService } from './storage'
 
-export function runTimerConfigStorageServiceTests(storage: ObservableStorage) {
+export function runTimerConfigStorageServiceTests(storage: RemoteStorage) {
   it('should initial value from TimerConfigStorageService same as config.getDefaultTimerConfig()', async () => {
     const service = new TimerConfigStorageService(storage)
     const timerConfig = await service.get()
