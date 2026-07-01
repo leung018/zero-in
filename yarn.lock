@@ -5691,7 +5691,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rolldown/pluginutils@npm:^1.0.0":
+"@rolldown/pluginutils@npm:^1.0.0, @rolldown/pluginutils@npm:^1.0.1":
   version: 1.0.1
   resolution: "@rolldown/pluginutils@npm:1.0.1"
   checksum: 10c0/99d9b06d90196823e4d8c841f258db7a16e5dbba5824a2962b05d907b79f1ba929d56f22dd744fd530936e568c865ee56a719dc31e57e13bc0a8eb4764a8d8dd
@@ -6582,7 +6582,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue@npm:^5.2.3 || ^6.0.0, @vitejs/plugin-vue@npm:^6.0.5":
+"@vitejs/plugin-vue@npm:^5.2.3 || ^6.0.0":
   version: 6.0.5
   resolution: "@vitejs/plugin-vue@npm:6.0.5"
   dependencies:
@@ -6591,6 +6591,18 @@ __metadata:
     vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
     vue: ^3.2.25
   checksum: 10c0/b1f7d9983751dca7ead541de7e563ef953b9eba623d5c9b3cd14eb4d77bbaa31d44ea5f1b9291354ff5da4337f52aa25cb64ab585f428e768e12b547e17582c2
+  languageName: node
+  linkType: hard
+
+"@vitejs/plugin-vue@npm:^6.0.7":
+  version: 6.0.7
+  resolution: "@vitejs/plugin-vue@npm:6.0.7"
+  dependencies:
+    "@rolldown/pluginutils": "npm:^1.0.1"
+  peerDependencies:
+    vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
+    vue: ^3.2.25
+  checksum: 10c0/16e7673ded56ce2b3ebb2a71e7e22208328da6f0f4fdd1b87e1b3622690471dbccdad82dc4cccb7330da2c783a1204a37edc1f9155567bd852be6e76c76a4b52
   languageName: node
   linkType: hard
 
@@ -6994,7 +7006,7 @@ __metadata:
     "@playwright/test": "npm:^1.57.0"
     "@popperjs/core": "npm:^2.11.8"
     "@tsconfig/node20": "npm:^20.1.8"
-    "@vitejs/plugin-vue": "npm:^6.0.5"
+    "@vitejs/plugin-vue": "npm:^6.0.7"
     "@vitest/coverage-v8": "npm:^4.1.0"
     "@vue/test-utils": "npm:^2.4.6"
     "@wxt-dev/module-vue": "npm:^1.0.3"
