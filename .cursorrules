@@ -4,7 +4,18 @@
 
 - Be extremely concise and sacrifice grammar for the sake of concision
 - Following TDD when adding new features, ONE test → ONE implementation → repeat
-- In tests, construct data via helper methods that require callers to specify only values they care about, with reasonable defaults for all others (e.g. `createContact({ phoneNumber: '555-000-0000' })` overrides only what matters, defaults handle the rest).
+- In tests, construct objects/services via helper methods that accept only the values the test cares about, with reasonable defaults for everything else. Apply this to both plain data objects and service instantiation (including `createFake()`). Example:
+  ```typescript
+  // helper
+  function createContact(overrides: Partial<Contact> = {}): Contact {
+    return new Contact({ firstName: 'Grace', lastName: 'Hopper', phoneNumber: '555-123-4567', ...overrides })
+  }
+  // test
+  it('combines first and last name', () => {
+    const contact = createContact({ firstName: 'Ada', lastName: 'Lovelace' })
+    expect(contact.fullName()).toBe('Ada Lovelace')
+  })
+  ```
 - Avoid comments if code or function names are self-explanatory. Comment only for non-obvious logic.
 
 ## Project Overview
