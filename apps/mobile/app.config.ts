@@ -5,7 +5,7 @@ const IS_DEV = process.env.APP_VARIANT === 'development'
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: IS_DEV ? 'Zero In (Dev)' : 'Zero In',
+  name: IS_DEV ? 'Zero In (Dev)' : 'Zero In Beta',
   slug: 'zero-in',
   extra: {
     eas: {
