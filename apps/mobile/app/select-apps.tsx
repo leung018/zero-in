@@ -2,7 +2,7 @@ import { triggerAppBlockToggling } from '@/infra/app-block/toggling-runner'
 import { AppPickerView } from '@/modules/app-blocker'
 import { Stack, useRouter } from 'expo-router'
 import { useState } from 'react'
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function SelectAppsScreen() {
@@ -38,7 +38,15 @@ export default function SelectAppsScreen() {
         <TouchableOpacity
           style={styles.primaryButton}
           onPress={async () => {
-            await triggerAppBlockToggling()
+            try {
+              await triggerAppBlockToggling()
+            } catch (error) {
+              console.error('Failed to apply app blocking changes:', error)
+              Alert.alert(
+                'Could not apply changes now',
+                'Your selections were saved, but blocking could not be applied immediately. Please check that required permissions are granted.'
+              )
+            }
             router.back()
           }}
           activeOpacity={0.8}
