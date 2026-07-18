@@ -1,4 +1,4 @@
-import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
+import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { TimerBasedBlockingRules } from '.'
 import { TimerBasedBlockingRulesSchemas } from './schema'
@@ -6,10 +6,10 @@ import { TimerBasedBlockingRulesStorageService } from './storage'
 import { runTimerBasedBlockingRulesStorageServiceTests } from './storage-shared-spec'
 
 describe('TimerBasedBlockingRulesStorageService', () => {
-  let storage = LocalStorageWrapper.createFake()
+  let storage = FakeRemoteStorage.create()
 
   beforeEach(() => {
-    storage = LocalStorageWrapper.createFake()
+    storage = FakeRemoteStorage.create()
   })
 
   runTimerBasedBlockingRulesStorageServiceTests(storage)
