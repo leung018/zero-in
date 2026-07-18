@@ -12,6 +12,7 @@
   "scripts": {
     "test:unit": "vitest run",
     "test:unit:watch": "vitest run --watch",
-    "test:unit:coverage": "vitest run --coverage"
+    "test:unit:coverage": "vitest run --coverage",
+    "send-test-push": "tsx scripts/send-test-push.ts"
   }
 }
