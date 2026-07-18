@@ -18,6 +18,7 @@ export class ExpoPushClientImpl implements ExpoPushClient {
         tokens.map((to) => ({
           to,
           _contentAvailable: true,
+          priority: 'high',
           data: { kind: 'app-block-sync' }
         }))
       )
