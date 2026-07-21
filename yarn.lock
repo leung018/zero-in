@@ -2213,6 +2213,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@expo/schema-utils@npm:^57.0.2":
+  version: 57.0.2
+  resolution: "@expo/schema-utils@npm:57.0.2"
+  checksum: 10c0/5438d6dd1cb58c35c1202cefd7bb44f38eb7078da08b706849154bd6d97f0a9db7a41862110e34d7e111edf50ac44ffe132b0af64ebfdcce8203eb8e5ecd51b9
+  languageName: node
+  linkType: hard
+
 "@expo/sdk-runtime-versions@npm:^1.0.0":
   version: 1.0.0
   resolution: "@expo/sdk-runtime-versions@npm:1.0.0"
@@ -6566,7 +6573,7 @@ __metadata:
     eslint-config-expo: "npm:~56.0.4"
     expo: "npm:~56.0.16"
     expo-background-task: "npm:~56.0.22"
-    expo-build-properties: "npm:~56.0.23"
+    expo-build-properties: "npm:~57.0.6"
     expo-constants: "npm:~56.0.21"
     expo-doctor: "npm:^1.17.14"
     expo-font: "npm:~56.0.7"
@@ -10484,16 +10491,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-build-properties@npm:~56.0.23":
-  version: 56.0.23
-  resolution: "expo-build-properties@npm:56.0.23"
+"expo-build-properties@npm:~57.0.6":
+  version: 57.0.6
+  resolution: "expo-build-properties@npm:57.0.6"
   dependencies:
-    "@expo/schema-utils": "npm:^56.0.2"
+    "@expo/schema-utils": "npm:^57.0.2"
     resolve-from: "npm:^5.0.0"
     semver: "npm:^7.6.0"
   peerDependencies:
     expo: "*"
-  checksum: 10c0/f4f3736badd9f384f3aca9a3b756fcb731f7299d548d0c82f2394b5eb8d2f4860b64bb56c53b6a3de7b7810c972ccbd042cdb27a33f9c6b9cc181207e2eaa7b3
+  checksum: 10c0/044f3f1735de638acea24015ae9f19e92492e38c645875a9df56ec1aee5a42ed56388b26063b60c8ecb13d6650120016a80a8007d85fbabd1122cd478cf62c45
   languageName: node
   linkType: hard
 
