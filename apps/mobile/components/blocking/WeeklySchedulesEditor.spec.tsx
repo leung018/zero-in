@@ -52,6 +52,26 @@ describe('WeeklySchedulesEditor', () => {
     ])
   })
 
+  it('should update rendered schedules when storage changes externally', async () => {
+    const { wrapper, weeklySchedulesStorageService } = await renderWeeklySchedulesEditor({
+      weeklySchedules: []
+    })
+
+    const externalSchedule = new WeeklySchedule({
+      weekdaySet: new Set([Weekday.FRI]),
+      startTime: new Time(9, 0),
+      endTime: new Time(11, 0)
+    })
+    await weeklySchedulesStorageService.save([externalSchedule])
+
+    await assertSchedulesDisplayed(wrapper, [
+      {
+        displayedWeekdays: 'Fri',
+        displayedTime: '09:00 - 11:00'
+      }
+    ])
+  })
+
   it('should hide active schedules section when no schedule', async () => {
     const { wrapper } = await renderWeeklySchedulesEditor({
       weeklySchedules: []
@@ -262,7 +282,7 @@ async function renderWeeklySchedulesEditor({
 }: {
   weeklySchedules?: WeeklySchedule[]
 } = {}) {
-  const weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake()
+  const weeklySchedulesStorageService = WeeklySchedulesStorageService.createRemoteFake()
   await weeklySchedulesStorageService.save(weeklySchedules)
   const triggerAppBlockToggling = jest.fn(async () => {})
 
@@ -272,6 +292,9 @@ async function renderWeeklySchedulesEditor({
       triggerAppBlockToggling={triggerAppBlockToggling}
     />
   )
+
+  // Wait for the initial load from storage to settle before returning
+  await wrapper.findByTestId('show-add-schedule-button')
 
   // If schedules are provided, wait for them to be rendered
   if (weeklySchedules.length > 0) {
