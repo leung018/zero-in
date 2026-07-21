@@ -42,11 +42,12 @@ export function WeeklySchedulesEditor({
 
   // Load schedules from storage on mount
   useEffect(() => {
-    weeklySchedulesStorageService.get().then((schedules) => {
-      if (schedules) {
-        setWeeklySchedules(schedules)
-      }
-    })
+    weeklySchedulesStorageService.get().then(setWeeklySchedules)
+    weeklySchedulesStorageService.onChange(setWeeklySchedules)
+
+    return () => {
+      weeklySchedulesStorageService.unsubscribeAll()
+    }
   }, [weeklySchedulesStorageService])
 
   const toggleWeekday = (weekday: Weekday) => {

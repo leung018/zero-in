@@ -1,4 +1,5 @@
 import { Time } from '@zero-in/shared/domain/time/index'
+import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { WeeklySchedule } from '.'
 import { LocalStorageWrapper } from '../../infra/storage/local-storage'
@@ -8,15 +9,16 @@ import { runWeeklyScheduleStorageServiceTests } from './storage-shared-spec'
 import { Weekday } from './weekday'
 
 describe('WeeklyScheduleStorageService', () => {
-  let storage = LocalStorageWrapper.createFake()
+  let storage = FakeRemoteStorage.create()
 
   beforeEach(() => {
-    storage = LocalStorageWrapper.createFake()
+    storage = FakeRemoteStorage.create()
   })
 
   runWeeklyScheduleStorageServiceTests(storage)
 
   it('should migrate properly', async () => {
+    const localStorage = LocalStorageWrapper.createFake()
     const data: WeeklyScheduleSchemas[0] = [
       {
         weekdays: [0, 1],
@@ -24,9 +26,9 @@ describe('WeeklyScheduleStorageService', () => {
         endTime: { hour: 12, minute: 12 }
       }
     ]
-    storage.set(WeeklySchedulesStorageService.STORAGE_KEY, data)
+    localStorage.set(WeeklySchedulesStorageService.STORAGE_KEY, data)
 
-    const service = new WeeklySchedulesStorageService(storage)
+    const service = new WeeklySchedulesStorageService(localStorage)
     const expected: WeeklySchedule[] = [
       new WeeklySchedule({
         weekdaySet: new Set([Weekday.SUN, Weekday.MON]),
