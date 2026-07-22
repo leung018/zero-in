@@ -517,6 +517,9 @@ describe('BackgroundListener', () => {
     const { browsingControlService, weeklySchedulesStorageService, listener } = await startListener(
       {
         browsingRules,
+        timerBasedBlockingRules: newTestTimerBasedBlockingRules({
+          pauseBlockingWhenTimerNotRunning: false
+        }),
         weeklySchedules: [],
         weeklySchedulesStorageService: WeeklySchedulesStorageService.createRemoteFake()
       }
