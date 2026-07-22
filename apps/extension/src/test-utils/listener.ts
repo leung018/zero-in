@@ -19,15 +19,17 @@ export async function setUpListener({
   focusSessionRecordHouseKeepDays = 30,
   timerConfig = config.getDefaultTimerConfig(),
   timerStateStorageService = TimerStateStorageService.createFake(),
-  timerConfigStorageService = TimerConfigStorageService.createFake()
+  timerConfigStorageService = TimerConfigStorageService.createFake(),
+  weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake(),
+  timerBasedBlockingRulesStorageService = TimerBasedBlockingRulesStorageService.createFake()
 } = {}) {
   const storage = LocalStorageWrapper.createFake()
 
   const params = {
     notificationSettingStorageService: new NotificationSettingStorageService(storage),
-    timerBasedBlockingRulesStorageService: new TimerBasedBlockingRulesStorageService(storage),
+    timerBasedBlockingRulesStorageService,
     browsingControlService: new FakeBrowsingControlService(),
-    weeklySchedulesStorageService: new WeeklySchedulesStorageService(storage),
+    weeklySchedulesStorageService,
     browsingRulesStorageService: new BrowsingRulesStorageService(storage),
     desktopNotificationService: DesktopNotificationService.createFake(),
     reminderTabService: new FakeActionService(),

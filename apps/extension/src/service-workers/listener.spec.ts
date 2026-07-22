@@ -1,5 +1,10 @@
 import { flushPromises } from '@vue/test-utils'
+import { WeeklySchedule } from '@zero-in/shared/domain/schedules'
+import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
+import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
+import { Time } from '@zero-in/shared/domain/time/index'
 import { newTestTimerBasedBlockingRules } from '@zero-in/shared/domain/timer-based-blocking/index'
+import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
 import { TimerConfig } from '@zero-in/shared/domain/timer/config/index'
 import { TimerConfigStorageService } from '@zero-in/shared/domain/timer/config/storage'
 import { Duration } from '@zero-in/shared/domain/timer/duration'
@@ -475,6 +480,68 @@ describe('BackgroundListener', () => {
     expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
   })
 
+  it('should toggle browsing rules when timerBasedBlockingRules storage changes', async () => {
+    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
+
+    const { browsingControlService, timerBasedBlockingRulesStorageService, listener } =
+      await startListener({
+        browsingRules,
+        timerBasedBlockingRules: newTestTimerBasedBlockingRules({
+          pauseBlockingWhenTimerNotRunning: false
+        }),
+        weeklySchedules: [],
+        timerBasedBlockingRulesStorageService:
+          TimerBasedBlockingRulesStorageService.createRemoteFake()
+      })
+
+    await listener.toggleBrowsingRules()
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+
+    await timerBasedBlockingRulesStorageService.save(
+      newTestTimerBasedBlockingRules({
+        pauseBlockingWhenTimerNotRunning: true
+      })
+    )
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+  })
+
+  it('should toggle browsing rules when weeklySchedules storage changes', async () => {
+    const browsingRules = new BrowsingRules({ blockedDomains: ['example.com'] })
+
+    vi.setSystemTime(new Date('2025-02-03T11:00:00')) // 2025-02-03 is Monday
+
+    const { browsingControlService, weeklySchedulesStorageService, listener } = await startListener(
+      {
+        browsingRules,
+        timerBasedBlockingRules: newTestTimerBasedBlockingRules({
+          pauseBlockingWhenTimerNotRunning: false
+        }),
+        weeklySchedules: [],
+        weeklySchedulesStorageService: WeeklySchedulesStorageService.createRemoteFake()
+      }
+    )
+
+    await listener.toggleBrowsingRules()
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toEqual(browsingRules)
+
+    await weeklySchedulesStorageService.save([
+      new WeeklySchedule({
+        weekdaySet: new Set([Weekday.TUE]),
+        startTime: new Time(9, 0),
+        endTime: new Time(17, 0)
+      })
+    ])
+    await flushPromises()
+
+    expect(browsingControlService.getActivatedBrowsingRules()).toBeNull()
+  })
+
   it('should desktop notification button title being shown properly', async () => {
     const { desktopNotificationService, clientPort } = await startListener({
       timerConfig: TimerConfig.newTestInstance({
@@ -778,13 +845,17 @@ async function startListener({
   browsingRules = new BrowsingRules(),
   weeklySchedules = [],
   timerStateStorageService = TimerStateStorageService.createFake(),
-  timerConfigStorageService = TimerConfigStorageService.createFake()
+  timerConfigStorageService = TimerConfigStorageService.createFake(),
+  weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake(),
+  timerBasedBlockingRulesStorageService = TimerBasedBlockingRulesStorageService.createFake()
 } = {}) {
   const context = await setUpListener({
     timerConfig,
     focusSessionRecordHouseKeepDays,
     timerStateStorageService,
-    timerConfigStorageService
+    timerConfigStorageService,
+    weeklySchedulesStorageService,
+    timerBasedBlockingRulesStorageService
   })
 
   await context.timerBasedBlockingRulesStorageService.save(timerBasedBlockingRules)
