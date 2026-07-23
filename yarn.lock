@@ -5758,12 +5758,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:~19.2.10":
-  version: 19.2.15
-  resolution: "@types/react@npm:19.2.15"
+"@types/react@npm:*, @types/react@npm:~19.2.17":
+  version: 19.2.17
+  resolution: "@types/react@npm:19.2.17"
   dependencies:
     csstype: "npm:^3.2.2"
-  checksum: 10c0/b554eab715bb14e581f0ae60e5cefe91e1a5e06c31022b543a9806cf224aa056f21e4fb46208e46eb934d86ca0b247ebc82377192a0dead303cb28b8764c6e67
+  checksum: 10c0/bc2c4af96b3e480604424de70d5ebda90c5f4b485df471858c0bc2d7d70364b606ec3c4d8579f94f01aa0c6c0591f56bcf14cba5689f5eea4b74250ccdc3a232
   languageName: node
   linkType: hard
 
@@ -6687,7 +6687,7 @@ __metadata:
     "@react-navigation/native": "npm:^7.1.8"
     "@testing-library/react-native": "npm:^13.3.3"
     "@types/jest": "npm:29.5.14"
-    "@types/react": "npm:~19.2.10"
+    "@types/react": "npm:~19.2.17"
     "@zero-in/shared": "workspace:*"
     create-target: "npm:^3.0.4"
     eslint: "npm:^9.39.1"
@@ -9821,7 +9821,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.27.1, esbuild@npm:~0.27.0":
+"esbuild@npm:^0.27.1":
   version: 0.27.7
   resolution: "esbuild@npm:0.27.7"
   dependencies:
@@ -11887,7 +11887,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-tsconfig@npm:^4.10.0, get-tsconfig@npm:^4.7.5":
+"get-tsconfig@npm:^4.10.0":
   version: 4.13.0
   resolution: "get-tsconfig@npm:4.13.0"
   dependencies:
@@ -19792,23 +19792,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:^4.21.0":
-  version: 4.21.0
-  resolution: "tsx@npm:4.21.0"
-  dependencies:
-    esbuild: "npm:~0.27.0"
-    fsevents: "npm:~2.3.3"
-    get-tsconfig: "npm:^4.7.5"
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  bin:
-    tsx: dist/cli.mjs
-  checksum: 10c0/f5072923cd8459a1f9a26df87823a2ab5754641739d69df2a20b415f61814322b751fa6be85db7c6ec73cf68ba8fac2fd1cfc76bdb0aa86ded984d84d5d2126b
-  languageName: node
-  linkType: hard
-
-"tsx@npm:^4.23.1":
+"tsx@npm:^4.21.0, tsx@npm:^4.23.1":
   version: 4.23.1
   resolution: "tsx@npm:4.23.1"
   dependencies:
