@@ -17,7 +17,7 @@ export class PushNotifyingStorageProvider implements ObservableStorage {
   static create(): PushNotifyingStorageProvider {
     return new PushNotifyingStorageProvider(
       AdaptiveAppStorageProvider.create(),
-      MobileSyncNotifier.create(FirebaseServices.getFirestoreTokenStorage)
+      MobileSyncNotifier.create(() => FirebaseServices.getFirestoreTokenStorage())
     )
   }
 
