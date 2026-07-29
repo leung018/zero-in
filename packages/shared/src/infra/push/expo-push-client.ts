@@ -24,7 +24,9 @@ export class ExpoPushClientImpl implements ExpoPushClient {
       )
     })
 
-    if (!response.ok) return { deviceNotRegisteredTokens: [] }
+    if (!response.ok) {
+      throw new Error(`Expo push send failed: ${response.status} ${await response.text()}`)
+    }
     const body = await response.json()
     return parseExpoPushResponse(body, tokens)
   }
