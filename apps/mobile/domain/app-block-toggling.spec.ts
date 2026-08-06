@@ -411,7 +411,7 @@ describe('AppBlockTogglingService', () => {
         ]
       },
       {
-        name: 'should disable blocking when timer is running in focus AND no weeklySchedules',
+        name: 'should set blocking schedule from now to session end when timer is running in focus AND no weeklySchedules',
         weeklySchedules: []
       }
     ])('$name', async ({ weeklySchedules }) => {
