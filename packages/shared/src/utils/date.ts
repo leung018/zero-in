@@ -50,3 +50,8 @@ export function maxDate(first: Date, ...dates: Array<Date>): Date {
   const all = [first, ...dates]
   return new Date(Math.max(...all.map((d) => d.getTime())))
 }
+
+export function minDate(first: Date, ...dates: Array<Date>): Date {
+  const all = [first, ...dates]
+  return new Date(Math.min(...all.map((d) => d.getTime())))
+}

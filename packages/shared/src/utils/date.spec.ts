@@ -1,7 +1,14 @@
 import { Time } from '@zero-in/shared/domain/time/index'
 import { describe, expect, test as it } from 'vitest'
 import { Duration } from '../domain/timer/duration'
-import { getDateAfter, getMostRecentDate, getStartOfNextMinute, isSameDay, maxDate } from './date'
+import {
+  getDateAfter,
+  getMostRecentDate,
+  getStartOfNextMinute,
+  isSameDay,
+  maxDate,
+  minDate
+} from './date'
 
 describe('getMostRecentDate', () => {
   it('should return today time if already passed', () => {
@@ -86,5 +93,16 @@ describe('maxDate', () => {
     const result = maxDate(d)
     expect(result).not.toBe(d)
     expect(result.getTime()).toBe(d.getTime())
+  })
+})
+
+describe('minDate', () => {
+  it('returns the earliest date among provided dates', () => {
+    const d1 = new Date(2020, 0, 1)
+    const d2 = new Date(2021, 0, 1)
+    const d3 = new Date(2019, 11, 31)
+
+    const result = minDate(d1, d2, d3)
+    expect(result.getTime()).toBe(d3.getTime())
   })
 })
