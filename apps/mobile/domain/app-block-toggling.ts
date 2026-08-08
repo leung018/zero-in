@@ -66,7 +66,7 @@ export class AppBlockTogglingService {
 
       if (!scheduleSpan || scheduleSpan.isContain(new Date())) {
         return this.appBlockerWrapper.setBlockingSchedule(
-          newSessionScheduleSpan(timerInfo.remaining, scheduleSpan)
+          clampScheduleSpanToRemaining(timerInfo.remaining, scheduleSpan)
         )
       }
       return this.appBlockerWrapper.disableAllBlocking()
@@ -96,7 +96,7 @@ export class AppBlockTogglingService {
       if (timerInfo.isRunning && timerInfo.timerStage === TimerStage.FOCUS) {
         if (!scheduleSpan || scheduleSpan.isContain(new Date())) {
           return this.appBlockerWrapper.setBlockingSchedule(
-            newSessionScheduleSpan(timerInfo.remaining, scheduleSpan)
+            clampScheduleSpanToRemaining(timerInfo.remaining, scheduleSpan)
           )
         }
       }
@@ -111,7 +111,7 @@ export class AppBlockTogglingService {
   }
 }
 
-function newSessionScheduleSpan(remaining: Duration, scheduleSpan: ScheduleSpan | null) {
+function clampScheduleSpanToRemaining(remaining: Duration, scheduleSpan: ScheduleSpan | null) {
   const start = new Date()
   const sessionEnd = getDateAfter({ from: start, duration: remaining })
   return new ScheduleSpan({
