@@ -34,9 +34,7 @@ export default function HomeScreen() {
         <View style={styles.tipBanner}>
           <Text style={styles.tipIcon}>💡</Text>
           <Text style={styles.tipText}>
-            Avoid swiping this app away from your recent apps — it needs to stay running in the
-            background to sync blocking with the extension. If it ever falls out of sync, just bring
-            it to the foreground to re-sync.
+            If this app ever falls out of sync, just bring it to the foreground to re-sync.
           </Text>
         </View>
       </ScrollView>
