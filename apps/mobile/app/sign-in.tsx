@@ -5,14 +5,28 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import GoogleSignInButton from '../components/google-sign-in-button'
 import GoogleSignInModule from '../modules/google-sign-in'
 
+const reportSignInError = (step: string, error: unknown) => {
+  console.error(`[sign-in] ${step} failed:`, error)
+  Alert.alert(
+    'Sign-In Error',
+    __DEV__ ? `${step} failed: ${error}` : 'An error occurred during sign-in. Please try again.'
+  )
+}
+
 const handleGoogleSignIn = async () => {
+  let idToken: string
   try {
-    const idToken = await GoogleSignInModule.signIn()
-    await signInWithCredential(getAuth(), GoogleAuthProvider.credential(idToken))
+    idToken = await GoogleSignInModule.signIn()
   } catch (error: any) {
     if (error?.code === 'USER_CANCELLED') return
-    console.error(error)
-    Alert.alert('Sign-In Error', 'An error occurred during sign-in. Please try again.')
+    reportSignInError('GoogleSignInModule.signIn', error)
+    return
+  }
+
+  try {
+    await signInWithCredential(getAuth(), GoogleAuthProvider.credential(idToken))
+  } catch (error) {
+    reportSignInError(`signInWithCredential (idToken length ${idToken?.length ?? 'null'})`, error)
   }
 }
 
