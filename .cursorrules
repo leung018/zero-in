@@ -17,6 +17,7 @@
   })
   ```
 - Avoid comments if code or function names are self-explanatory. Comment only for non-obvious logic.
+- Don't mix refactoring with new code in the same change. Do one, stop for review, then the other.
 
 ## Project Overview
 
