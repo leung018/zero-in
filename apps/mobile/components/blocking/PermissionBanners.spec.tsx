@@ -30,6 +30,19 @@ describe('PermissionBanners', () => {
       expect(triggerAppBlockToggling).toHaveBeenCalledTimes(1)
     })
   })
+
+  it('should not trigger app block toggling when permission status is unchanged', async () => {
+    const { foregroundApp, triggerAppBlockToggling } = await renderPermissionBanners({
+      permissionDetails: {
+        [PermissionType.Overlay]: true,
+        [PermissionType.UsageStats]: false
+      }
+    })
+
+    await foregroundApp()
+
+    expect(triggerAppBlockToggling).not.toHaveBeenCalled()
+  })
 })
 
 async function renderPermissionBanners({
