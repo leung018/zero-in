@@ -35,3 +35,8 @@ export class PermissionStatus {
       .map(([type, _]) => type as PermissionType)
   }
 }
+
+export interface AppBlockerPermissions {
+  getPermissionStatus(): Promise<PermissionStatus>
+  requestPermission(permissionType: PermissionType): Promise<void>
+}
