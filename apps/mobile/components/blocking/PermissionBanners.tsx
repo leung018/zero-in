@@ -4,7 +4,8 @@ import {
   PermissionType
 } from '@/modules/app-blocker/src/permission'
 import { useCallback, useEffect, useState } from 'react'
-import { Alert, AppState, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ForegroundNotifier } from '../../infra/foreground-notifier'
 import { createLogger } from '../../utils/logger'
 
 const log = createLogger('PermissionBanners')
@@ -37,9 +38,11 @@ const isRecommendedPermission = (permissionType: PermissionType): boolean =>
   permissionType === PermissionType.IgnoreBatteryOptimizations
 
 export function PermissionBanners({
-  appBlockerPermissions
+  appBlockerPermissions,
+  foregroundNotifier
 }: {
   appBlockerPermissions: AppBlockerPermissions
+  foregroundNotifier: ForegroundNotifier
 }) {
   const [permissionStatus, setPermissionStatus] = useState<PermissionStatus>(
     PermissionStatus.empty()
@@ -57,16 +60,14 @@ export function PermissionBanners({
   useEffect(() => {
     refreshPermissionStatus()
 
-    const subscription = AppState.addEventListener('change', (nextAppState) => {
-      if (nextAppState === 'active') {
-        refreshPermissionStatus()
-      }
+    const subscription = foregroundNotifier.onForeground(() => {
+      refreshPermissionStatus()
     })
 
     return () => {
       subscription.remove()
     }
-  }, [refreshPermissionStatus])
+  }, [foregroundNotifier, refreshPermissionStatus])
 
   const requestPermission = async (permissionType: PermissionType) => {
     try {

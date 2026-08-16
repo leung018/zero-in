@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { newWeeklySchedulesStorageService } from '../../domain/schedules/storage'
 import { newTimerBasedBlockingRulesStorageService } from '../../domain/timer-based-blocking/storage'
 import { triggerAppBlockToggling } from '../../infra/app-block/toggling-runner'
+import { appStateForegroundNotifier } from '../../infra/foreground-notifier'
 
 export default function BlockingScreen() {
   const router = useRouter()
@@ -18,7 +19,10 @@ export default function BlockingScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <PermissionBanners appBlockerPermissions={appBlocker} />
+        <PermissionBanners
+          appBlockerPermissions={appBlocker}
+          foregroundNotifier={appStateForegroundNotifier}
+        />
 
         {/* Blocked Apps Section */}
         <View style={commonStyles.card}>
