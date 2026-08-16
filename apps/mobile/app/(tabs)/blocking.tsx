@@ -22,6 +22,7 @@ export default function BlockingScreen() {
         <PermissionBanners
           appBlockerPermissions={appBlocker}
           foregroundNotifier={appStateForegroundNotifier}
+          triggerAppBlockToggling={triggerAppBlockToggling}
         />
 
         {/* Blocked Apps Section */}

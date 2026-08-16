@@ -39,10 +39,12 @@ const isRecommendedPermission = (permissionType: PermissionType): boolean =>
 
 export function PermissionBanners({
   appBlockerPermissions,
-  foregroundNotifier
+  foregroundNotifier,
+  triggerAppBlockToggling
 }: {
   appBlockerPermissions: AppBlockerPermissions
   foregroundNotifier: ForegroundNotifier
+  triggerAppBlockToggling: () => Promise<void>
 }) {
   const [permissionStatus, setPermissionStatus] = useState<PermissionStatus>(
     PermissionStatus.empty()
@@ -72,6 +74,14 @@ export function PermissionBanners({
   const requestPermission = async (permissionType: PermissionType) => {
     try {
       await appBlockerPermissions.requestPermission(permissionType)
+
+      // Permissions granted inside the app (e.g. iOS Family Controls) never bring the app back to
+      // the foreground, so apply blocking right after the request instead of waiting for that.
+      const status = await appBlockerPermissions.getPermissionStatus()
+      setPermissionStatus(status)
+      if (status.hasPermission(permissionType)) {
+        await triggerAppBlockToggling()
+      }
     } catch (error) {
       log.error(`Failed to request ${permissionType} permission:`, error)
     }
