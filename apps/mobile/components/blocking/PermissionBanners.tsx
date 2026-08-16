@@ -3,7 +3,7 @@ import {
   PermissionStatus,
   PermissionType
 } from '@/modules/app-blocker/src/permission'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { ForegroundNotifier } from '../../infra/foreground-notifier'
 import { createLogger } from '../../utils/logger'
@@ -49,15 +49,28 @@ export function PermissionBanners({
   const [permissionStatus, setPermissionStatus] = useState<PermissionStatus>(
     PermissionStatus.empty()
   )
+  const missingPermissionsRef = useRef<PermissionType[]>([])
 
   const refreshPermissionStatus = useCallback(() => {
     return appBlockerPermissions
       .getPermissionStatus()
-      .then(setPermissionStatus)
+      .then(async (status) => {
+        setPermissionStatus(status)
+
+        const newlyGranted = missingPermissionsRef.current.filter((permissionType) =>
+          status.hasPermission(permissionType)
+        )
+        missingPermissionsRef.current = status.getMissingPermissions()
+
+        if (newlyGranted.length > 0) {
+          log.debug('Applying blocking for newly granted permissions:', newlyGranted)
+          await triggerAppBlockToggling()
+        }
+      })
       .catch((error) => {
         log.error('Failed to refresh permission status:', error)
       })
-  }, [appBlockerPermissions])
+  }, [appBlockerPermissions, triggerAppBlockToggling])
 
   useEffect(() => {
     refreshPermissionStatus()
@@ -74,17 +87,13 @@ export function PermissionBanners({
   const requestPermission = async (permissionType: PermissionType) => {
     try {
       await appBlockerPermissions.requestPermission(permissionType)
-
-      // Permissions granted inside the app (e.g. iOS Family Controls) never bring the app back to
-      // the foreground, so apply blocking right after the request instead of waiting for that.
-      const status = await appBlockerPermissions.getPermissionStatus()
-      setPermissionStatus(status)
-      if (status.hasPermission(permissionType)) {
-        await triggerAppBlockToggling()
-      }
     } catch (error) {
       log.error(`Failed to request ${permissionType} permission:`, error)
     }
+
+    // Permissions granted inside the app (e.g. iOS Family Controls) never bring the app back to
+    // the foreground, so re-check right after the request instead of waiting for that.
+    await refreshPermissionStatus()
   }
 
   const handleRequestPermission = async (permissionType: PermissionType) => {

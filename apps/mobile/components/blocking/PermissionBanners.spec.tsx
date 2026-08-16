@@ -1,5 +1,5 @@
 import { FakeAppBlockerPermissions, PermissionType } from '@/modules/app-blocker/src/permission'
-import { fireEvent, render, RenderAPI, waitFor } from '@testing-library/react-native'
+import { act, fireEvent, render, RenderAPI, waitFor } from '@testing-library/react-native'
 import { FakeForegroundNotifier } from '../../infra/foreground-notifier'
 import { PermissionBanners } from './PermissionBanners'
 
@@ -11,6 +11,20 @@ describe('PermissionBanners', () => {
     })
 
     fireEvent.press(wrapper.getByTestId(`permission-banner-${PermissionType.FamilyControls}`))
+
+    await waitFor(() => {
+      expect(triggerAppBlockToggling).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  it('should trigger app block toggling when permission is granted outside the app', async () => {
+    const { appBlockerPermissions, foregroundApp, triggerAppBlockToggling } =
+      await renderPermissionBanners({
+        permissionDetails: { [PermissionType.Overlay]: false }
+      })
+
+    appBlockerPermissions.grant(PermissionType.Overlay)
+    await foregroundApp()
 
     await waitFor(() => {
       expect(triggerAppBlockToggling).toHaveBeenCalledTimes(1)
@@ -44,5 +58,11 @@ async function renderPermissionBanners({
     expect(wrapper.queryByTestId('permission-banners')).toBeTruthy()
   })
 
-  return { wrapper, appBlockerPermissions, foregroundNotifier, triggerAppBlockToggling }
+  const foregroundApp = async () => {
+    await act(async () => {
+      foregroundNotifier.simulateForeground()
+    })
+  }
+
+  return { wrapper, appBlockerPermissions, foregroundApp, triggerAppBlockToggling }
 }
