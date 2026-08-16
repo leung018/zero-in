@@ -7,6 +7,8 @@ import { createLogger } from '../../utils/logger'
 
 const log = createLogger('TogglingRunner')
 
+let lastRun: Promise<void> = Promise.resolve()
+
 /**
  * Executes a run of app block toggling immediately and ensures the background task is registered.
  */
@@ -15,7 +17,10 @@ export async function triggerAppBlockToggling() {
 
   await registerAppBlockTogglingTask()
 
-  await triggerAppBlockTogglingImpl()
+  // Runs are queued because triggers can overlap (e.g. granting a permission brings the app back to
+  // the foreground) and interleaved runs may leave duplicated scheduled notifications behind.
+  lastRun = lastRun.catch(() => {}).then(() => triggerAppBlockTogglingImpl())
+  await lastRun
 }
 
 export const APP_BLOCK_TOGGLING_TASK = 'APP_BLOCK_TOGGLING_TASK'
