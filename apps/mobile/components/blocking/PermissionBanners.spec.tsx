@@ -43,6 +43,23 @@ describe('PermissionBanners', () => {
 
     expect(triggerAppBlockToggling).not.toHaveBeenCalled()
   })
+
+  it('should only show banners of missing permissions', async () => {
+    const { wrapper, appBlockerPermissions, foregroundApp } = await renderPermissionBanners({
+      permissionDetails: {
+        [PermissionType.Overlay]: false,
+        [PermissionType.UsageStats]: true
+      }
+    })
+
+    expect(wrapper.getByTestId(`permission-banner-${PermissionType.Overlay}`)).toBeTruthy()
+    expect(wrapper.queryByTestId(`permission-banner-${PermissionType.UsageStats}`)).toBeNull()
+
+    appBlockerPermissions.grant(PermissionType.Overlay)
+    await foregroundApp()
+
+    expect(wrapper.queryByTestId(`permission-banner-${PermissionType.Overlay}`)).toBeNull()
+  })
 })
 
 async function renderPermissionBanners({
