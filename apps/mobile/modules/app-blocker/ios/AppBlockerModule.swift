@@ -48,6 +48,16 @@ public class AppBlockerModule: Module {
           do {
             try await AuthorizationCenter.shared.requestAuthorization(for: .individual)
             promise.resolve(nil)
+          } catch FamilyControlsError.authorizationConflict {
+            // Only one app on the device can hold Screen Time authorization, and this error means
+            // that slot is already taken.
+            //
+            // The holder is normally this app itself, keeping an old claim that revoking access in
+            // Settings did not release. The user still gets the dialog and the grant still works,
+            // so treat it as noise. The caller re-reads the permission status right after this
+            // call, which is what actually decides whether the permission was granted.
+            NSLog("[AppBlocker] Authorization request reported a conflict.")
+            promise.resolve(nil)
           } catch {
             promise.reject(error)
           }
