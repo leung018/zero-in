@@ -39,4 +39,5 @@ import DeviceActivity
 extension DeviceActivityName {
   static let zeroInScheduleStart = DeviceActivityName("zero-in-schedule-start")
   static let zeroInScheduleEnd = DeviceActivityName("zero-in-schedule-end")
+  static let zeroInAuthorizationProbe = DeviceActivityName("zero-in-authorization-probe")
 }
