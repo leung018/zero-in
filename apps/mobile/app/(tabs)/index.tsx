@@ -20,7 +20,8 @@ export default function HomeScreen() {
           <Text style={styles.cardText}>
             Timer control on mobile is coming soon. For now, start your focus sessions from the Zero
             In browser extension — this app will automatically sync and enforce app blocking based
-            on your timer.
+            on your timer. Make sure you sign in to the extension with the same Google account you
+            use on this app.
           </Text>
           <TouchableOpacity
             style={commonStyles.secondaryButton}
