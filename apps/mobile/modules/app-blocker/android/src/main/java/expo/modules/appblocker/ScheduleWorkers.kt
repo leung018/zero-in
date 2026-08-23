@@ -45,29 +45,44 @@ class EndBlockingReceiver : BroadcastReceiver() {
   }
 }
 
-class BootReceiver : BroadcastReceiver() {
+class RestoreBlockingReceiver : BroadcastReceiver() {
   override fun onReceive(
     context: Context,
     intent: Intent,
   ) {
-    if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
+    Log.i(TAG, "Restore triggered by ${intent.action}")
 
     val preferences = BlockedAppsPreferences(context)
-    val schedule = preferences.loadScheduleWindow() ?: return
+    val schedule = preferences.loadScheduleWindow()
+    if (schedule == null) {
+      Log.i(TAG, "No saved schedule window, nothing to restore")
+      return
+    }
 
     val now = System.currentTimeMillis()
     if (schedule.endTimeMillis <= now) {
+      Log.i(TAG, "Schedule window already ended, clearing it")
       preferences.clearScheduleWindow()
       return
     }
 
-    if (!context.hasExactAlarmPermission()) return
+    if (!context.hasExactAlarmPermission()) {
+      Log.w(TAG, "Skipping restore due to missing exact alarm permission")
+      return
+    }
 
     scheduleAlarms(context, schedule.startTimeMillis, schedule.endTimeMillis)
+    Log.i(
+      TAG,
+      "Rescheduled alarms for window ${schedule.startTimeMillis}..${schedule.endTimeMillis}",
+    )
 
     if (now in schedule.startTimeMillis until schedule.endTimeMillis) {
       if (context.hasOverlayPermission() && context.hasUsageStatsPermission()) {
         context.startBlockingService()
+        Log.i(TAG, "Restarted blocking service")
+      } else {
+        Log.w(TAG, "Skipping service restart due to missing permissions")
       }
     }
   }
