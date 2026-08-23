@@ -13,7 +13,6 @@ declare class AppBlockerModule extends NativeModule {
 
 const nativeModule = requireNativeModule<AppBlockerModule>('AppBlocker')
 
-// Thin wrapper to always return PermissionStatus and encapsulate native calls
 export const appBlocker = {
   async getPermissionStatus(): Promise<PermissionStatus> {
     const response = await nativeModule.getPermissionDetails()
