@@ -1,43 +1,6 @@
 import { ScheduleSpan } from '@zero-in/shared/domain/schedules'
 import { NativeModule, requireNativeModule } from 'expo'
-
-export enum PermissionType {
-  FamilyControls = 'familyControls',
-  Overlay = 'overlay',
-  UsageStats = 'usageStats',
-  ExactAlarm = 'exactAlarm',
-  IgnoreBatteryOptimizations = 'ignoreBatteryOptimizations'
-}
-
-interface PermissionDetails {
-  [key: string]: boolean
-}
-
-export class PermissionStatus {
-  static fromNativeResponse(details: PermissionDetails): PermissionStatus {
-    return new PermissionStatus(details)
-  }
-
-  static empty(): PermissionStatus {
-    return new PermissionStatus({})
-  }
-
-  private constructor(public readonly details: PermissionDetails) {}
-
-  get isGranted(): boolean {
-    return Object.values(this.details).every((granted) => granted === true)
-  }
-
-  hasPermission(type: PermissionType): boolean {
-    return this.details[type] === true
-  }
-
-  getMissingPermissions(): PermissionType[] {
-    return Object.entries(this.details)
-      .filter(([_, granted]) => !granted)
-      .map(([type, _]) => type as PermissionType)
-  }
-}
+import { PermissionDetails, PermissionStatus, PermissionType } from './permission'
 
 declare class AppBlockerModule extends NativeModule {
   getPermissionDetails(): Promise<PermissionDetails>
@@ -50,7 +13,6 @@ declare class AppBlockerModule extends NativeModule {
 
 const nativeModule = requireNativeModule<AppBlockerModule>('AppBlocker')
 
-// Thin wrapper to always return PermissionStatus and encapsulate native calls
 export const appBlocker = {
   async getPermissionStatus(): Promise<PermissionStatus> {
     const response = await nativeModule.getPermissionDetails()

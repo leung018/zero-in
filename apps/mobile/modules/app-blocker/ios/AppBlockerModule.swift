@@ -4,20 +4,42 @@ import FamilyControls
 import ManagedSettings
 
 public class AppBlockerModule: Module {
+  /// `AuthorizationCenter.authorizationStatus` is cached for the whole lifetime of the process: it
+  /// keeps reporting `.approved` after the user revokes Screen Time access in Settings, and neither
+  /// re-reading it nor observing its publisher picks the change up. Asking DeviceActivity to
+  /// schedule something is answered by the system daemon instead, so it reflects the current
+  /// authorization. The probe activity is stopped right away and never fires.
+  private static func isFamilyControlsAuthorized() -> Bool {
+    let center = DeviceActivityCenter()
+    let calendar = Calendar.current
+    let dateComponents: Set<Calendar.Component> = [
+      .era, .year, .month, .day, .hour, .minute, .second,
+    ]
+    let start = Date().addingTimeInterval(60 * 60)
+    let schedule = DeviceActivitySchedule(
+      intervalStart: calendar.dateComponents(dateComponents, from: start),
+      intervalEnd: calendar.dateComponents(dateComponents, from: start.addingTimeInterval(15 * 60)),
+      repeats: false
+    )
+
+    do {
+      try center.startMonitoring(.zeroInAuthorizationProbe, during: schedule)
+      center.stopMonitoring([.zeroInAuthorizationProbe])
+      return true
+    } catch DeviceActivityCenter.MonitoringError.unauthorized {
+      return false
+    } catch {
+      // Any other failure says nothing about authorization, so keep the permission as granted.
+      NSLog("[AppBlocker] Authorization probe failed for another reason: \(error)")
+      return true
+    }
+  }
+
   public func definition() -> ModuleDefinition {
     Name("AppBlocker")
 
     AsyncFunction("getPermissionDetails") { (promise: Promise) in
-      if #available(iOS 15.0, *) {
-        let ac = AuthorizationCenter.shared
-        let isGranted = ac.authorizationStatus == .approved
-        promise.resolve(["familyControls": isGranted])
-      } else {
-        promise.reject(
-          "UNSUPPORTED_OS_VERSION",
-          "FamilyControls is not available on this OS version."
-        )
-      }
+      promise.resolve(["familyControls": AppBlockerModule.isFamilyControlsAuthorized()])
     }
 
     AsyncFunction("requestPermission") { (_: String, promise: Promise) in
@@ -25,6 +47,16 @@ public class AppBlockerModule: Module {
         Task {
           do {
             try await AuthorizationCenter.shared.requestAuthorization(for: .individual)
+            promise.resolve(nil)
+          } catch FamilyControlsError.authorizationConflict {
+            // Only one app on the device can hold Screen Time authorization, and this error means
+            // that slot is already taken.
+            //
+            // The holder is normally this app itself, keeping an old claim that revoking access in
+            // Settings did not release. The user still gets the dialog and the grant still works,
+            // so treat it as noise. The caller re-reads the permission status right after this
+            // call, which is what actually decides whether the permission was granted.
+            NSLog("[AppBlocker] Authorization request reported a conflict.")
             promise.resolve(nil)
           } catch {
             promise.reject(error)
