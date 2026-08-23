@@ -1,4 +1,5 @@
-import { FakeAppBlockerPermissions, PermissionType } from '@/modules/app-blocker/src/permission'
+import { FakeAppBlockerPermissions } from '@/infra/app-block/permission'
+import { PermissionType } from '@/modules/app-blocker/src/permission'
 import { act, fireEvent, render, RenderAPI, waitFor } from '@testing-library/react-native'
 import { FakeForegroundNotifier } from '../../infra/foreground-notifier'
 import { PermissionBanners } from './PermissionBanners'

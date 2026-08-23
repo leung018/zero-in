@@ -1,8 +1,5 @@
-import {
-  AppBlockerPermissions,
-  PermissionStatus,
-  PermissionType
-} from '@/modules/app-blocker/src/permission'
+import { AppBlockerPermissions } from '@/infra/app-block/permission'
+import { PermissionStatus, PermissionType } from '@/modules/app-blocker/src/permission'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { ForegroundNotifier } from '../../infra/foreground-notifier'

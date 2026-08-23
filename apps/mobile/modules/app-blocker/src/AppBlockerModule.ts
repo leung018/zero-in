@@ -1,11 +1,6 @@
 import { ScheduleSpan } from '@zero-in/shared/domain/schedules'
 import { NativeModule, requireNativeModule } from 'expo'
-import {
-  AppBlockerPermissions,
-  PermissionDetails,
-  PermissionStatus,
-  PermissionType
-} from './permission'
+import { PermissionDetails, PermissionStatus, PermissionType } from './permission'
 
 declare class AppBlockerModule extends NativeModule {
   getPermissionDetails(): Promise<PermissionDetails>
@@ -19,7 +14,9 @@ declare class AppBlockerModule extends NativeModule {
 const nativeModule = requireNativeModule<AppBlockerModule>('AppBlocker')
 
 // Thin wrapper to always return PermissionStatus and encapsulate native calls
-export const appBlocker: AppBlockerPermissions & {
+export const appBlocker: {
+  getPermissionStatus(): Promise<PermissionStatus>
+  requestPermission(permissionType: PermissionType): Promise<void>
   enableAlwaysBlock(): Promise<void>
   disableAlwaysBlock(): Promise<void>
   setBlockingSchedule(scheduleSpan: ScheduleSpan): Promise<void>
