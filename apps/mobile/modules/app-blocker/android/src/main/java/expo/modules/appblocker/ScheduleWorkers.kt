@@ -45,7 +45,7 @@ class EndBlockingReceiver : BroadcastReceiver() {
   }
 }
 
-class BootReceiver : BroadcastReceiver() {
+class RestoreBlockingReceiver : BroadcastReceiver() {
   override fun onReceive(
     context: Context,
     intent: Intent,
