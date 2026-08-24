@@ -55,9 +55,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: [
     'expo-router',
-    // TODO: Below SPM comment and disableSPM: true are added by claude. But I don't quite understand that
-    // Verify below later
-    // SPM (default since RNFB v26) duplicate-symbol clashes with useFrameworks: 'static'.
+    // RNFB's SPM install (default since v26) only ships dynamic frameworks, which
+    // clashes (duplicate symbols) with useFrameworks: 'static' below.
     ['@react-native-firebase/app', { ios: { disableSPM: true } }],
     '@react-native-firebase/auth',
     [
