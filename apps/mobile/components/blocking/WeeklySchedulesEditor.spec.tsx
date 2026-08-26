@@ -358,7 +358,7 @@ async function setTimePickerValue(
   date.setMinutes(time.minute)
   date.setSeconds(0)
   date.setMilliseconds(0)
-  fireEvent(timePicker, 'change', { nativeEvent: { timestamp: date.getTime() } }, date)
+  fireEvent(timePicker, 'valueChange', { nativeEvent: { timestamp: date.getTime() } }, date)
 }
 
 async function addWeeklySchedule(
