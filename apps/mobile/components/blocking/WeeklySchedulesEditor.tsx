@@ -117,13 +117,17 @@ export function WeeklySchedulesEditor({
   }
 
   const handleStartTimeChange = (_event: DateTimePickerChangeEvent, selectedDate: Date) => {
-    // On Android the native dialog closes itself after selection; iOS keeps the modal open until Done
-    setShowStartPicker(Platform.OS === 'ios')
+    // Android re-opens the dialog on value change if the picker stays mounted; iOS stays open until Done
+    if (Platform.OS === 'android') {
+      setShowStartPicker(false)
+    }
     setStartTime(selectedDate)
   }
 
   const handleEndTimeChange = (_event: DateTimePickerChangeEvent, selectedDate: Date) => {
-    setShowEndPicker(Platform.OS === 'ios')
+    if (Platform.OS === 'android') {
+      setShowEndPicker(false)
+    }
     setEndTime(selectedDate)
   }
 
