@@ -1,17 +1,73 @@
 import { commonStyles } from '@/constants/styles'
-import DateTimePicker from '@react-native-community/datetimepicker'
+import DateTimePicker, { DateTimePickerChangeEvent } from '@react-native-community/datetimepicker'
 import { WeeklySchedule } from '@zero-in/shared/domain/schedules'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { Weekday, WEEKDAYS } from '@zero-in/shared/domain/schedules/weekday'
 import { Time } from '@zero-in/shared/domain/time'
 import { capitalized } from '@zero-in/shared/utils/format'
 import { useEffect, useState } from 'react'
-import { Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import {
+  Modal,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from 'react-native'
 
 const formatTime = (date: Date): string => {
   const hours = date.getHours().toString().padStart(2, '0')
   const minutes = date.getMinutes().toString().padStart(2, '0')
   return `${hours}:${minutes}`
+}
+
+function TimePicker({
+  testID,
+  value,
+  onValueChange,
+  onClose,
+  label
+}: {
+  testID: string
+  value: Date
+  onValueChange: (event: DateTimePickerChangeEvent, selectedDate: Date) => void
+  onClose: () => void
+  label: string
+}) {
+  const picker = (
+    <DateTimePicker
+      testID={testID}
+      value={value}
+      mode="time"
+      is24Hour={true}
+      display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+      onValueChange={onValueChange}
+      onDismiss={onClose}
+    />
+  )
+
+  if (Platform.OS !== 'ios') {
+    // Android renders as a native dialog on mount
+    return picker
+  }
+
+  return (
+    <Modal visible transparent animationType="slide" onRequestClose={onClose}>
+      <Pressable style={styles.modalOverlay} onPress={onClose}>
+        <Pressable style={styles.modalSheet} onPress={() => {}}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>{label}</Text>
+            <TouchableOpacity testID={`${testID}-done`} onPress={onClose} activeOpacity={0.7}>
+              <Text style={styles.modalDoneText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+          {picker}
+        </Pressable>
+      </Pressable>
+    </Modal>
+  )
 }
 
 const formatWeekday = (weekday: Weekday): string => {
@@ -60,18 +116,19 @@ export function WeeklySchedulesEditor({
     setSelectedWeekdays(newSet)
   }
 
-  const handleStartTimeChange = (_event: any, selectedDate?: Date) => {
-    setShowStartPicker(Platform.OS === 'ios')
-    if (selectedDate) {
-      setStartTime(selectedDate)
+  const handleStartTimeChange = (_event: DateTimePickerChangeEvent, selectedDate: Date) => {
+    // Android re-opens the dialog on value change if the picker stays mounted; iOS stays open until Done
+    if (Platform.OS === 'android') {
+      setShowStartPicker(false)
     }
+    setStartTime(selectedDate)
   }
 
-  const handleEndTimeChange = (_event: any, selectedDate?: Date) => {
-    setShowEndPicker(Platform.OS === 'ios')
-    if (selectedDate) {
-      setEndTime(selectedDate)
+  const handleEndTimeChange = (_event: DateTimePickerChangeEvent, selectedDate: Date) => {
+    if (Platform.OS === 'android') {
+      setShowEndPicker(false)
     }
+    setEndTime(selectedDate)
   }
 
   const handleAddSchedule = async () => {
@@ -114,12 +171,16 @@ export function WeeklySchedulesEditor({
     setSelectedWeekdays(new Set())
     setStartTime(new Date())
     setEndTime(new Date())
+    setShowStartPicker(false)
+    setShowEndPicker(false)
     setTargetSessions('')
     setErrorMessage(null)
     setShowScheduleForm(false)
   }
 
   const handleCancelAddSchedule = () => {
+    setShowStartPicker(false)
+    setShowEndPicker(false)
     setShowScheduleForm(false)
   }
 
@@ -199,7 +260,10 @@ export function WeeklySchedulesEditor({
                 <TouchableOpacity
                   testID="start-time-button"
                   style={styles.timePickerButton}
-                  onPress={() => setShowStartPicker(true)}
+                  onPress={() => {
+                    setShowEndPicker(false)
+                    setShowStartPicker(true)
+                  }}
                   activeOpacity={0.7}
                 >
                   <Text style={styles.timePickerText}>{formatTime(startTime)}</Text>
@@ -216,7 +280,10 @@ export function WeeklySchedulesEditor({
                 <TouchableOpacity
                   testID="end-time-button"
                   style={styles.timePickerButton}
-                  onPress={() => setShowEndPicker(true)}
+                  onPress={() => {
+                    setShowStartPicker(false)
+                    setShowEndPicker(true)
+                  }}
                   activeOpacity={0.7}
                 >
                   <Text style={styles.timePickerText}>{formatTime(endTime)}</Text>
@@ -226,23 +293,21 @@ export function WeeklySchedulesEditor({
             </View>
 
             {showStartPicker && (
-              <DateTimePicker
+              <TimePicker
                 testID="start-time-picker"
                 value={startTime}
-                mode="time"
-                is24Hour={true}
-                display="default"
-                onChange={handleStartTimeChange}
+                onValueChange={handleStartTimeChange}
+                onClose={() => setShowStartPicker(false)}
+                label="From"
               />
             )}
             {showEndPicker && (
-              <DateTimePicker
+              <TimePicker
                 testID="end-time-picker"
                 value={endTime}
-                mode="time"
-                is24Hour={true}
-                display="default"
-                onChange={handleEndTimeChange}
+                onValueChange={handleEndTimeChange}
+                onClose={() => setShowEndPicker(false)}
+                label="To"
               />
             )}
           </View>
@@ -524,6 +589,38 @@ const styles = StyleSheet.create({
   },
   deleteButtonText: {
     fontSize: 18
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)'
+  },
+  modalSheet: {
+    backgroundColor: '#ffffff',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 32,
+    alignItems: 'center'
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    alignSelf: 'stretch',
+    paddingHorizontal: 4,
+    marginBottom: 4
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827'
+  },
+  modalDoneText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1a73e8'
   },
   buttonRow: {
     flexDirection: 'row',
