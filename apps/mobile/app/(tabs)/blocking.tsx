@@ -25,6 +25,12 @@ export default function BlockingScreen() {
           triggerAppBlockToggling={triggerAppBlockToggling}
         />
 
+        <View style={commonStyles.infoBox}>
+          <Text style={commonStyles.infoText}>
+            If blocking isn&apos;t behaving as expected, open Zero In to sync it.
+          </Text>
+        </View>
+
         {/* Blocked Apps Section */}
         <View style={commonStyles.card}>
           <View style={commonStyles.sectionHeader}>
