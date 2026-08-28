@@ -120,7 +120,7 @@ function DateTimeField({
 function DevTestContent() {
   const [startDate, setStartDate] = useState<Date>(new Date())
   const [endDate, setEndDate] = useState<Date>(() => new Date(Date.now() + 60 * 60 * 1000)) // 1 hour from now
-  const [notificationDelaySeconds, setNotificationDelaySeconds] = useState<string>('3')
+  const [notificationDelaySeconds, setNotificationDelaySeconds] = useState<string>('5')
 
   const handleBlockApps = async () => {
     try {
@@ -218,7 +218,7 @@ function DevTestContent() {
             <Text style={styles.label}>Delay (seconds)</Text>
             <TextInput
               style={styles.input}
-              placeholder="3"
+              placeholder="5"
               value={notificationDelaySeconds}
               onChangeText={setNotificationDelaySeconds}
               keyboardType="numeric"
