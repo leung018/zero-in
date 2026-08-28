@@ -118,11 +118,17 @@ export async function onScheduleEndNotificationTapped(
   if (identifier === APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID) {
     log.debug('Schedule end notification tapped, triggering sync')
     await triggerAppBlockToggling()
-    Alert.alert('Schedule Updated', 'Your latest blocking schedule is now active.', [
-      ...(Platform.OS === 'android'
-        ? [{ text: 'Go Back', onPress: () => BackHandler.exitApp() }]
-        : [{ text: 'OK' }])
-    ])
+    Alert.alert(
+      'Schedule Updated',
+      Platform.OS === 'android'
+        ? 'Your latest blocking schedule is now active.'
+        : 'Your latest blocking schedule is now active. You can swipe up to return home.',
+      [
+        ...(Platform.OS === 'android'
+          ? [{ text: 'Go Back', onPress: () => BackHandler.exitApp() }]
+          : [{ text: 'OK' }])
+      ]
+    )
   }
 }
 
