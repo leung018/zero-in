@@ -5,7 +5,7 @@ import { WeeklySchedulesEditor } from '@/components/blocking/WeeklySchedulesEdit
 import { commonStyles } from '@/constants/styles'
 import { appBlocker } from '@/modules/app-blocker'
 import { useRouter } from 'expo-router'
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { newWeeklySchedulesStorageService } from '../../domain/schedules/storage'
 import { newTimerBasedBlockingRulesStorageService } from '../../domain/timer-based-blocking/storage'
@@ -28,6 +28,8 @@ export default function BlockingScreen() {
         <View style={commonStyles.infoBox}>
           <Text style={commonStyles.infoText}>
             If blocking isn&apos;t behaving as expected, open Zero In to sync it.
+            {Platform.OS === 'ios' &&
+              ' On iOS, avoid swiping Zero In away in the app switcher — that pauses background sync.'}
           </Text>
         </View>
 

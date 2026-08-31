@@ -18,14 +18,14 @@ export default function HomeScreen() {
             <View style={commonStyles.divider} />
           </View>
           <Text style={styles.cardText}>
-            Timer control isn&apos;t available on mobile yet. Start your focus sessions from the
-            Zero In browser extension — this app will automatically sync and enforce app blocking
-            based on your timer. Make sure you sign in to the extension with the same Google account
-            you use on this app.
+            This app can&apos;t start a timer yet. Open the Zero In browser extension and start a
+            timer there — it cycles through focus sessions and breaks, and this app will
+            automatically sync and apply your blocking settings based on that. Make sure you sign in
+            to the extension with the same Google account you use here.
           </Text>
           <TouchableOpacity
             style={commonStyles.secondaryButton}
-            onPress={() => Linking.openURL('https://zeroin.dev')}
+            onPress={() => Linking.openURL('https://zeroin.dev/#install')}
             activeOpacity={0.8}
           >
             <Text style={commonStyles.secondaryButtonText}>Get the Extension →</Text>
