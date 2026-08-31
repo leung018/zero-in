@@ -25,7 +25,7 @@ export default function HomeScreen() {
           </Text>
           <TouchableOpacity
             style={commonStyles.secondaryButton}
-            onPress={() => Linking.openURL('https://zeroin.dev')}
+            onPress={() => Linking.openURL('https://zeroin.dev/#install')}
             activeOpacity={0.8}
           >
             <Text style={commonStyles.secondaryButtonText}>Get the Extension →</Text>
