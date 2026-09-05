@@ -20,7 +20,7 @@ jobs:
     env:
       FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ZERO_IN_8211F }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v5
       - name: Use Node.js
         uses: actions/setup-node@v7
         with:

@@ -21,7 +21,7 @@ jobs:
       TAG_NAME: staging
       VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.VITE_FIREBASE_AUTH_DOMAIN }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v5
       - name: Use Node.js
         uses: actions/setup-node@v7
         with:
