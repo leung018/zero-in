@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
-          token: ${{ secrets.AUTO_FIX_TOKEN || github.token }}
+          token: ${{ secrets.GH_PAT_TOKEN || github.token }}
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
