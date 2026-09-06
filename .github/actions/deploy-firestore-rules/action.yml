@@ -1,0 +1,12 @@
+name: Deploy Firestore Rules
+inputs:
+  project-id:
+    required: true
+  token:
+    required: true
+runs:
+  using: composite
+  steps:
+    - run: yarn dlx firebase-tools deploy --only firestore:rules --project ${{ inputs.project-id }} --token ${{ inputs.token }}
+      shell: bash
+      working-directory: apps/firebase

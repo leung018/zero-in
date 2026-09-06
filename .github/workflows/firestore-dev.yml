@@ -5,6 +5,7 @@ on:
       - 'apps/firebase/firestore.**'
       - 'apps/firebase/firestore-tests/**'
       - '.github/workflows/firestore-dev.yml'
+      - '.github/actions/deploy-firestore-rules/**'
   workflow_dispatch:
 jobs:
   test-rules-and-deploy-dev-firestore:
@@ -29,4 +30,7 @@ jobs:
       - run: yarn install --immutable
       - run: yarn test-firestore
       - name: Deploy Firestore Rules
-        run: yarn dlx firebase-tools deploy --only firestore:rules --project ${{ vars.VITE_FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
+        uses: ./.github/actions/deploy-firestore-rules
+        with:
+          project-id: ${{ vars.VITE_FIREBASE_PROJECT_ID }}
+          token: ${{ secrets.FIREBASE_TOKEN }}
