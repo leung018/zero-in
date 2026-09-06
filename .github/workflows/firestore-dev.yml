@@ -33,4 +33,4 @@ jobs:
         uses: ./.github/actions/deploy-firestore-rules
         with:
           project-id: ${{ vars.VITE_FIREBASE_PROJECT_ID }}
-          token: ${{ secrets.FIREBASE_TOKEN }}
+          gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
