@@ -18,13 +18,14 @@ export default function HomeScreen() {
             <View style={commonStyles.divider} />
           </View>
           <Text style={styles.cardText}>
-            Timer control on mobile is coming soon. For now, start your focus sessions from the Zero
-            In browser extension — this app will automatically sync and enforce app blocking based
-            on your timer.
+            This app can&apos;t start a timer yet. Open the Zero In browser extension and start a
+            timer there — it cycles through focus sessions and breaks, and this app will
+            automatically sync and apply your blocking settings based on that. Make sure you sign in
+            to the extension with the same Google account you use here.
           </Text>
           <TouchableOpacity
             style={commonStyles.secondaryButton}
-            onPress={() => Linking.openURL('https://zeroin.dev')}
+            onPress={() => Linking.openURL('https://zeroin.dev/#install')}
             activeOpacity={0.8}
           >
             <Text style={commonStyles.secondaryButtonText}>Get the Extension →</Text>
@@ -34,9 +35,7 @@ export default function HomeScreen() {
         <View style={styles.tipBanner}>
           <Text style={styles.tipIcon}>💡</Text>
           <Text style={styles.tipText}>
-            Avoid swiping this app away from your recent apps — it needs to stay running in the
-            background to sync blocking with the extension. If it ever falls out of sync, just bring
-            it to the foreground to re-sync.
+            If this app ever falls out of sync, just bring it to the foreground to re-sync.
           </Text>
         </View>
       </ScrollView>

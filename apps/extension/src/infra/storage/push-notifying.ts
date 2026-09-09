@@ -17,7 +17,7 @@ export class PushNotifyingStorageProvider implements ObservableStorage {
   static create(): PushNotifyingStorageProvider {
     return new PushNotifyingStorageProvider(
       AdaptiveAppStorageProvider.create(),
-      MobileSyncNotifier.create(FirebaseServices.getFirestoreTokenStorage)
+      MobileSyncNotifier.create(() => FirebaseServices.getFirestoreTokenStorage())
     )
   }
 
@@ -32,7 +32,9 @@ export class PushNotifyingStorageProvider implements ObservableStorage {
 
   async set(key: string, data: any): Promise<void> {
     await this.inner.set(key, data)
-    this.notifier.notify().catch(() => {})
+    this.notifier.notify().catch((err) => {
+      console.error('Failed to notify after set key:', key, err)
+    })
   }
 
   get(key: string): Promise<any> {

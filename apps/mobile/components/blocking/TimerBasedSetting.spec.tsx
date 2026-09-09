@@ -29,6 +29,25 @@ describe('TimerBasedSetting', () => {
     assertCheckboxValue(wrapper2, 'pause-blocking-when-timer-not-running', false)
   })
 
+  it('should update rendered setting when storage changes externally', async () => {
+    const { wrapper, timerBasedBlockingRulesStorageService } = await renderTimerBasedSetting({
+      timerBasedBlockingRules: {
+        pauseBlockingDuringBreaks: false,
+        pauseBlockingWhenTimerNotRunning: false
+      }
+    })
+
+    await timerBasedBlockingRulesStorageService.save({
+      pauseBlockingDuringBreaks: true,
+      pauseBlockingWhenTimerNotRunning: true
+    })
+
+    await waitFor(() => {
+      assertCheckboxValue(wrapper, 'pause-blocking-during-breaks', true)
+      assertCheckboxValue(wrapper, 'pause-blocking-when-timer-not-running', true)
+    })
+  })
+
   it('should persist setting after clicking save', async () => {
     const { wrapper, timerBasedBlockingRulesStorageService, triggerAppBlockToggling } =
       await renderTimerBasedSetting({
@@ -57,7 +76,8 @@ async function renderTimerBasedSetting({
 }: {
   timerBasedBlockingRules?: TimerBasedBlockingRules
 } = {}) {
-  const timerBasedBlockingRulesStorageService = TimerBasedBlockingRulesStorageService.createFake()
+  const timerBasedBlockingRulesStorageService =
+    TimerBasedBlockingRulesStorageService.createRemoteFake()
   await timerBasedBlockingRulesStorageService.save(timerBasedBlockingRules)
 
   const triggerAppBlockToggling = jest.fn(async () => {})

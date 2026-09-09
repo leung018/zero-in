@@ -1,4 +1,5 @@
 import { commonStyles } from '@/constants/styles'
+import type { TimerBasedBlockingRules } from '@zero-in/shared/domain/timer-based-blocking'
 import { TimerBasedBlockingRulesStorageService } from '@zero-in/shared/domain/timer-based-blocking/storage'
 import { useEffect, useState } from 'react'
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
@@ -15,10 +16,17 @@ export function TimerBasedSetting({
   const [pauseWhenNotRunning, setPauseWhenNotRunning] = useState(false)
 
   useEffect(() => {
-    timerBasedBlockingRulesStorageService.get().then((rules) => {
+    const applyRules = (rules: TimerBasedBlockingRules) => {
       setPauseDuringBreaks(rules.pauseBlockingDuringBreaks)
       setPauseWhenNotRunning(rules.pauseBlockingWhenTimerNotRunning)
-    })
+    }
+
+    timerBasedBlockingRulesStorageService.get().then(applyRules)
+    timerBasedBlockingRulesStorageService.onChange(applyRules)
+
+    return () => {
+      timerBasedBlockingRulesStorageService.unsubscribeAll()
+    }
   }, [timerBasedBlockingRulesStorageService])
 
   const handleSave = async () => {

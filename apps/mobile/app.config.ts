@@ -39,7 +39,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     appleTeamId: 'YCDM23LPV6',
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
-      UIBackgroundModes: ['process', 'remote-notification']
+      UIBackgroundModes: ['remote-notification']
     }
   },
   android: {
@@ -55,7 +55,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: [
     'expo-router',
-    '@react-native-firebase/app',
+    // RNFB's SPM install (default since v26) only ships dynamic frameworks, which
+    // clashes (duplicate symbols) with useFrameworks: 'static' below.
+    ['@react-native-firebase/app', { ios: { disableSPM: true } }],
     '@react-native-firebase/auth',
     [
       'expo-splash-screen',

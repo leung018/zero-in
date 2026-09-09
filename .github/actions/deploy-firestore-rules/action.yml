@@ -1,0 +1,20 @@
+name: Deploy Firestore Rules
+inputs:
+  project-id:
+    required: true
+  gcp-sa-key:
+    description: Service account JSON key
+    required: true
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      working-directory: apps/firebase
+      env:
+        PROJECT_ID: ${{ inputs.project-id }}
+        GCP_SA_KEY: ${{ inputs.gcp-sa-key }}
+      run: |
+        trap 'rm -f "$RUNNER_TEMP/gcp-sa-key.json"' EXIT
+        echo "$GCP_SA_KEY" > "$RUNNER_TEMP/gcp-sa-key.json"
+        GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/gcp-sa-key.json" \
+          yarn dlx firebase-tools deploy --only firestore:rules --project "$PROJECT_ID"

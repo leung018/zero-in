@@ -19,23 +19,18 @@ class AppPickerView: ExpoView {
   override func didMoveToSuperview() {
     super.didMoveToSuperview()
     if superview != nil {
-      if #available(iOS 15.0, *) {
-        let picker = FamilyPickerView(onSelectionChange: { selection in
-          SelectionStore.shared.selection = selection
-        })
-        hostingController = UIHostingController(rootView: picker)
-        if let hostView = hostingController?.view {
-          addSubview(hostView)
-          onAppsLoaded([:])
-        }
-      } else {
-        print("FamilyControls is not available on this OS version.")
+      let picker = FamilyPickerView(onSelectionChange: { selection in
+        SelectionStore.shared.selection = selection
+      })
+      hostingController = UIHostingController(rootView: picker)
+      if let hostView = hostingController?.view {
+        addSubview(hostView)
+        onAppsLoaded([:])
       }
     }
   }
 }
 
-@available(iOS 15.0, *)
 struct FamilyPickerView: View {
   @State private var selection: FamilyActivitySelection
 

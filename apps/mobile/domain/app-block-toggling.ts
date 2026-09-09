@@ -3,8 +3,9 @@ import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { isInBreak, TimerInfoGetter } from '../../../packages/shared/src/domain/blocking-toggling'
 import { WeeklySchedulesStorageService } from '../../../packages/shared/src/domain/schedules/storage'
 import { TimerBasedBlockingRulesStorageService } from '../../../packages/shared/src/domain/timer-based-blocking/storage'
+import { Duration } from '../../../packages/shared/src/domain/timer/duration'
 import { FocusSessionRecordsStorageService } from '../../../packages/shared/src/domain/timer/record/storage'
-import { getDateAfter, maxDate } from '../../../packages/shared/src/utils/date'
+import { getDateAfter, maxDate, minDate } from '../../../packages/shared/src/utils/date'
 import { AppBlocker } from '../infra/app-block/interface'
 import { findActiveOrNextScheduleSpan } from './schedules/schedule-span'
 
@@ -65,10 +66,7 @@ export class AppBlockTogglingService {
 
       if (!scheduleSpan || scheduleSpan.isContain(new Date())) {
         return this.appBlockerWrapper.setBlockingSchedule(
-          new ScheduleSpan({
-            start: new Date(),
-            end: getDateAfter({ duration: timerInfo.remaining })
-          })
+          clampScheduleSpanToRemaining(timerInfo.remaining, scheduleSpan)
         )
       }
       return this.appBlockerWrapper.disableAllBlocking()
@@ -96,12 +94,11 @@ export class AppBlockTogglingService {
       timerBasedBlockingRules.pauseBlockingWhenTimerNotRunning
     ) {
       if (timerInfo.isRunning && timerInfo.timerStage === TimerStage.FOCUS) {
-        return this.appBlockerWrapper.setBlockingSchedule(
-          new ScheduleSpan({
-            start: new Date(),
-            end: getDateAfter({ duration: timerInfo.remaining })
-          })
-        )
+        if (!scheduleSpan || scheduleSpan.isContain(new Date())) {
+          return this.appBlockerWrapper.setBlockingSchedule(
+            clampScheduleSpanToRemaining(timerInfo.remaining, scheduleSpan)
+          )
+        }
       }
 
       return this.appBlockerWrapper.disableAllBlocking()
@@ -112,6 +109,15 @@ export class AppBlockTogglingService {
     }
     return this.appBlockerWrapper.enableAlwaysBlock()
   }
+}
+
+function clampScheduleSpanToRemaining(remaining: Duration, scheduleSpan: ScheduleSpan | null) {
+  const start = new Date()
+  const sessionEnd = getDateAfter({ from: start, duration: remaining })
+  return new ScheduleSpan({
+    start,
+    end: scheduleSpan ? minDate(sessionEnd, scheduleSpan.end) : sessionEnd
+  })
 }
 
 class AppBlockerWrapper {
