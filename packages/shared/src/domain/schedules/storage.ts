@@ -1,5 +1,6 @@
 import { WeeklySchedule } from '.'
-import { StorageInterface, StorageService } from '../../infra/storage/interface'
+import { FakeRemoteStorage } from '../../infra/storage/fake'
+import { RemoteStorage, StorageInterface, StorageService } from '../../infra/storage/interface'
 import { StorageKey } from '../../infra/storage/key'
 import { LocalStorageWrapper } from '../../infra/storage/local-storage'
 import { StorageManager } from '../../infra/storage/manager'
@@ -13,9 +14,15 @@ export class WeeklySchedulesStorageService implements StorageService<WeeklySched
     return new WeeklySchedulesStorageService(LocalStorageWrapper.createFake())
   }
 
+  static createRemoteFake(): WeeklySchedulesStorageService {
+    return new WeeklySchedulesStorageService(FakeRemoteStorage.create())
+  }
+
   private storageManager: StorageManager<WeeklyScheduleSchemas[2]>
 
-  constructor(storage: StorageInterface) {
+  private unsubscribes: (() => void)[] = []
+
+  constructor(storage: RemoteStorage | StorageInterface) {
     this.storageManager = StorageManager.create({
       storage,
       key: WeeklySchedulesStorageService.STORAGE_KEY,
@@ -63,5 +70,17 @@ export class WeeklySchedulesStorageService implements StorageService<WeeklySched
     }
 
     return deserializeWeeklySchedules(result)
+  }
+
+  async onChange(callback: (weeklySchedules: WeeklySchedule[]) => void): Promise<void> {
+    const unsubscribe = await this.storageManager.onChange((data) => {
+      callback(deserializeWeeklySchedules(data))
+    })
+    this.unsubscribes.push(unsubscribe)
+  }
+
+  unsubscribeAll() {
+    this.unsubscribes.forEach((unsubscribe) => unsubscribe())
+    this.unsubscribes = []
   }
 }

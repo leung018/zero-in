@@ -1,4 +1,9 @@
-import { StorageInterface, StorageService } from '@zero-in/shared/infra/storage/interface'
+import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
+import {
+  RemoteStorage,
+  StorageInterface,
+  StorageService
+} from '@zero-in/shared/infra/storage/interface'
 import { StorageKey } from '@zero-in/shared/infra/storage/key'
 import { LocalStorageWrapper } from '@zero-in/shared/infra/storage/local-storage/index'
 import { StorageManager } from '@zero-in/shared/infra/storage/manager'
@@ -16,9 +21,15 @@ export class TimerBasedBlockingRulesStorageService
     return new TimerBasedBlockingRulesStorageService(LocalStorageWrapper.createFake())
   }
 
+  static createRemoteFake() {
+    return new TimerBasedBlockingRulesStorageService(FakeRemoteStorage.create())
+  }
+
   private storageManager: StorageManager<TimerBasedBlockingRulesSchemas[1]>
 
-  constructor(storage: StorageInterface) {
+  private unsubscribes: (() => void)[] = []
+
+  constructor(storage: RemoteStorage | StorageInterface) {
     this.storageManager = StorageManager.create({
       storage,
       key: TimerBasedBlockingRulesStorageService.STORAGE_KEY,
@@ -50,5 +61,17 @@ export class TimerBasedBlockingRulesStorageService
 
   async save(setting: TimerBasedBlockingRules) {
     return this.storageManager.set(serializeTimerBasedBlockingRules(setting))
+  }
+
+  async onChange(callback: (setting: TimerBasedBlockingRules) => void): Promise<void> {
+    const unsubscribe = await this.storageManager.onChange((data) => {
+      callback(deserializeTimerBasedBlockingRules(data))
+    })
+    this.unsubscribes.push(unsubscribe)
+  }
+
+  unsubscribeAll() {
+    this.unsubscribes.forEach((unsubscribe) => unsubscribe())
+    this.unsubscribes = []
   }
 }

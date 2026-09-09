@@ -1,10 +1,11 @@
 import { Time } from '@zero-in/shared/domain/time/index'
+import { expect, it } from 'vitest'
 import { WeeklySchedule } from '.'
-import { StorageInterface } from '../../infra/storage/interface'
+import { RemoteStorage } from '../../infra/storage/interface'
 import { WeeklySchedulesStorageService } from './storage'
 import { Weekday } from './weekday'
 
-export function runWeeklyScheduleStorageServiceTests(storage: StorageInterface) {
+export function runWeeklyScheduleStorageServiceTests(storage: RemoteStorage) {
   it('should return empty array if no WeeklySchedules are saved', async () => {
     const service = new WeeklySchedulesStorageService(storage)
     expect(await service.get()).toStrictEqual([])
@@ -28,5 +29,27 @@ export function runWeeklyScheduleStorageServiceTests(storage: StorageInterface) 
 
     await service.save(weeklySchedules)
     expect(await service.get()).toStrictEqual(weeklySchedules)
+  })
+
+  it('should onChange triggered when WeeklySchedules is saved and unsubscribeAll can unsubscribe', async () => {
+    const service = new WeeklySchedulesStorageService(storage)
+    const results: WeeklySchedule[][] = []
+    await service.onChange((data) => {
+      results.push(data)
+    })
+
+    const targetSchedules = [
+      new WeeklySchedule({
+        weekdaySet: new Set([Weekday.MON]),
+        startTime: new Time(10, 0),
+        endTime: new Time(12, 0)
+      })
+    ]
+    await service.save(targetSchedules)
+    expect(results).toEqual([targetSchedules])
+
+    service.unsubscribeAll()
+    await service.save(targetSchedules)
+    expect(results).toEqual([targetSchedules])
   })
 }

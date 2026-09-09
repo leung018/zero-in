@@ -7,6 +7,8 @@ import { createLogger } from '../../utils/logger'
 
 const log = createLogger('TogglingRunner')
 
+let lastRun: Promise<void> = Promise.resolve()
+
 /**
  * Executes a run of app block toggling immediately and ensures the background task is registered.
  */
@@ -15,7 +17,10 @@ export async function triggerAppBlockToggling() {
 
   await registerAppBlockTogglingTask()
 
-  await triggerAppBlockTogglingImpl()
+  // Runs are queued because triggers can overlap (e.g. granting a permission brings the app back to
+  // the foreground) and interleaved runs may leave duplicated scheduled notifications behind.
+  lastRun = lastRun.catch(() => {}).then(() => triggerAppBlockTogglingImpl())
+  await lastRun
 }
 
 export const APP_BLOCK_TOGGLING_TASK = 'APP_BLOCK_TOGGLING_TASK'
@@ -113,11 +118,17 @@ export async function onScheduleEndNotificationTapped(
   if (identifier === APP_BLOCK_SCHEDULE_END_NOTIFICATION_ID) {
     log.debug('Schedule end notification tapped, triggering sync')
     await triggerAppBlockToggling()
-    Alert.alert('Schedule Updated', 'Your latest blocking schedule is now active.', [
-      ...(Platform.OS === 'android'
-        ? [{ text: 'Go Back', onPress: () => BackHandler.exitApp() }]
-        : [{ text: 'OK' }])
-    ])
+    Alert.alert(
+      'Schedule Updated',
+      Platform.OS === 'android'
+        ? 'Your latest blocking schedule is now active.'
+        : 'Your latest blocking schedule is now active. You can swipe up to return home.',
+      [
+        ...(Platform.OS === 'android'
+          ? [{ text: 'Go Back', onPress: () => BackHandler.exitApp() }]
+          : [{ text: 'OK' }])
+      ]
+    )
   }
 }
 

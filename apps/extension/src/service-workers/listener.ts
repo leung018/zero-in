@@ -85,6 +85,8 @@ export class BackgroundListener {
 
   private browsingControlTogglingService: BrowsingControlTogglingService
   private browsingRulesStorageService: BrowsingRulesStorageService
+  private weeklySchedulesStorageService: WeeklySchedulesStorageService
+  private timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
 
   private communicationManager: CommunicationManager
   private timer: FocusTimer
@@ -127,6 +129,8 @@ export class BackgroundListener {
       }
     })
     this.browsingRulesStorageService = params.browsingRulesStorageService
+    this.weeklySchedulesStorageService = params.weeklySchedulesStorageService
+    this.timerBasedBlockingRulesStorageService = params.timerBasedBlockingRulesStorageService
 
     this.notificationServicesContainer = new MultipleActionService([])
     this.notificationSettingStorageService = params.notificationSettingStorageService
@@ -149,8 +153,19 @@ export class BackgroundListener {
   }
 
   async start() {
-    await Promise.all([this.setUpTimer(), this.setUpNotification()])
+    await Promise.all([
+      this.setUpTimer(),
+      this.setUpNotification(),
+      this.setupBrowsingRulesSubscriptions()
+    ])
     this.setUpPortListening()
+  }
+
+  private async setupBrowsingRulesSubscriptions() {
+    return Promise.all([
+      this.weeklySchedulesStorageService.onChange(() => this.toggleBrowsingRules()),
+      this.timerBasedBlockingRulesStorageService.onChange(() => this.toggleBrowsingRules())
+    ])
   }
 
   async reload() {

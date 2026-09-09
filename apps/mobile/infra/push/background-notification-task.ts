@@ -2,6 +2,7 @@ import * as Notifications from 'expo-notifications'
 import * as TaskManager from 'expo-task-manager'
 import { createLogger } from '../../utils/logger'
 import { triggerAppBlockToggling } from '../app-block/toggling-runner'
+import { extractNotificationTaskPayload } from './notification-task-payload'
 
 const log = createLogger('BackgroundNotificationTask')
 
@@ -14,7 +15,7 @@ TaskManager.defineTask(
       log.error('Background notification task error:', error)
       return
     }
-    const payload: any = (data as any)?.notification?.data ?? (data as any)?.data
+    const payload = extractNotificationTaskPayload(data)
     if (payload?.kind === 'app-block-sync') {
       log.debug('Received app-block-sync push, triggering sync')
       await triggerAppBlockToggling()
