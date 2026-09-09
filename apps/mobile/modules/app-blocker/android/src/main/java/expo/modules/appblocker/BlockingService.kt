@@ -105,20 +105,22 @@ class BlockingService : Service() {
   }
 
   private fun getForegroundApp(): String? {
-    var foregroundApp: String? = null
-
-    // Primary: real-time foreground events (no aggregation lag).
+    // Primary: real-time foreground events (no aggregation lag). Foreground app =
+    // RESUMED without a later PAUSED. Last-RESUMED alone is fooled by a canceled
+    // home/quick-switch gesture: launcher resumes then pauses, while the app
+    // underneath never pauses, letting it escape the overlay.
     val now = System.currentTimeMillis()
-    val events = usageStatsManager.queryEvents(now - 60 * 1000, now)
+    val events = usageStatsManager.queryEvents(now - 10 * 60 * 1000, now)
     val event = UsageEvents.Event()
+    val resumedAt = mutableMapOf<String, Long>()
     while (events.hasNextEvent()) {
       events.getNextEvent(event)
-      if (event.eventType != UsageEvents.Event.ACTIVITY_RESUMED) continue
-      foregroundApp = event.packageName
+      when (event.eventType) {
+        UsageEvents.Event.ACTIVITY_RESUMED -> resumedAt[event.packageName] = event.timeStamp
+        UsageEvents.Event.ACTIVITY_PAUSED -> resumedAt.remove(event.packageName)
+      }
     }
-    if (foregroundApp != null) {
-      return foregroundApp
-    }
+    resumedAt.maxByOrNull { it.value }?.let { return it.key }
 
     // Fallback: laggy but always present (e.g. cold start / post-doze with no recent events).
     return usageStatsManager
