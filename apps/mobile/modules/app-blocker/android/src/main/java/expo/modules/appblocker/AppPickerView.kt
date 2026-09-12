@@ -2,7 +2,7 @@ package expo.modules.appblocker
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -66,10 +66,12 @@ class AppPickerView(
     Thread {
       try {
         val pm = context.packageManager
+        val launcherIntent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
         val apps =
           pm
-            .getInstalledApplications(PackageManager.GET_META_DATA)
-            .filter { pm.getLaunchIntentForPackage(it.packageName) != null }
+            .queryIntentActivities(launcherIntent, 0)
+            .map { it.activityInfo.applicationInfo }
+            .distinctBy { it.packageName }
             .map { app ->
               AppInfo(
                 packageName = app.packageName,
