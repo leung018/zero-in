@@ -7,7 +7,9 @@ import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.graphics.PixelFormat
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -79,12 +81,32 @@ class BlockingService : Service() {
         .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
         .build()
 
-    startForeground(1, notification)
+    try {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+      } else {
+        startForeground(1, notification)
+      }
+    } catch (e: Exception) {
+      // e.g. ForegroundServiceStartNotAllowedException — stop instead of crash-looping
+      // via START_STICKY restarts.
+      Log.e("BlockingService", "Cannot enter foreground, stopping", e)
+      stopSelf()
+      return START_NOT_STICKY
+    }
 
     loadBlockedApps()
     handler.removeCallbacks(pollingRunnable)
     handler.post(pollingRunnable)
     return START_STICKY
+  }
+
+  override fun onTimeout(
+    startId: Int,
+    fgsType: Int,
+  ) {
+    // Safety net if the platform ever imposes a time limit on this FGS type.
+    stopSelf()
   }
 
   override fun onDestroy() {
