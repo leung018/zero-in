@@ -6,6 +6,7 @@ import { newFocusSessionRecord } from '@zero-in/shared/domain/timer/record/index
 import { FocusSessionRecordsStorageService } from '@zero-in/shared/domain/timer/record/storage'
 import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import type { TimerExternalState } from '@zero-in/shared/domain/timer/state/external'
+import type { TimerInternalState } from '@zero-in/shared/domain/timer/state/internal'
 import { TimerStateStorageService } from '@zero-in/shared/domain/timer/state/storage'
 import { SubscriptionManager } from '@zero-in/shared/utils/subscription'
 import config from '../config'
@@ -29,6 +30,7 @@ import { BrowserNewTabService } from '../infra/browser/new-tab'
 import { BrowserSoundService } from '../infra/browser/sound'
 import type { BrowsingControlService } from '../infra/browsing-control'
 import { type CommunicationManager, type Port } from '../infra/communication'
+import { DebugLog } from '../infra/debug-log'
 import { DesktopNotificationService } from '../infra/desktop-notification'
 import { MultipleActionService } from '../infra/multiple-actions'
 import { retryUntilSuccess } from '../utils/retry'
@@ -52,9 +54,33 @@ type ListenerParams = {
   timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
   focusSessionRecordHouseKeepDays: number
   timer: FocusTimer
+  debugLog: DebugLog
 }
 
 export type ClientPort = Port<WorkRequest, WorkResponse>
+
+const TIMER_MUTATING_REQUESTS: ReadonlySet<WorkRequestName> = new Set([
+  WorkRequestName.START_TIMER,
+  WorkRequestName.PAUSE_TIMER,
+  WorkRequestName.RESTART_FOCUS,
+  WorkRequestName.RESTART_SHORT_BREAK,
+  WorkRequestName.RESTART_LONG_BREAK,
+  WorkRequestName.RESET_TIMER_CONFIG
+])
+
+function summarize(state: TimerInternalState | null) {
+  if (!state) {
+    return null
+  }
+  return {
+    timerId: state.timerId,
+    stage: state.stage,
+    pausedAt: state.pausedAt?.toISOString() ?? null,
+    endAt: state.endAt.toISOString(),
+    sessionStartTime: state.sessionStartTime?.toISOString() ?? null,
+    focusSessionsCompleted: state.focusSessionsCompleted
+  }
+}
 export class BackgroundListener {
   static create() {
     return new BackgroundListener({
@@ -73,7 +99,8 @@ export class BackgroundListener {
       weeklySchedulesStorageService: newWeeklySchedulesStorageService(),
       timerBasedBlockingRulesStorageService: newTimerBasedBlockingRulesStorageService(),
       focusSessionRecordHouseKeepDays: config.getFocusSessionRecordHouseKeepDays(),
-      timer: FocusTimer.create()
+      timer: FocusTimer.create(),
+      debugLog: DebugLog.create()
     })
   }
 
@@ -90,6 +117,7 @@ export class BackgroundListener {
 
   private communicationManager: CommunicationManager
   private timer: FocusTimer
+  private debugLog: DebugLog
   private badgeDisplayService: BadgeDisplayService
   private timerStateStorageService: TimerStateStorageService
   private timerConfigStorageService: TimerConfigStorageService
@@ -137,6 +165,7 @@ export class BackgroundListener {
     this.soundService = params.soundService
     this.desktopNotificationService = params.desktopNotificationService
     this.desktopNotificationService.setOnClickStart(() => {
+      params.debugLog.log('request', { name: 'notificationStart' })
       params.timer.start()
     })
 
@@ -150,9 +179,11 @@ export class BackgroundListener {
     this.focusSessionRecordHouseKeepDays = params.focusSessionRecordHouseKeepDays
 
     this.timer = params.timer
+    this.debugLog = params.debugLog
   }
 
   async start() {
+    this.debugLog.log('listener.start')
     await Promise.all([
       this.setUpTimer(),
       this.setUpNotification(),
@@ -168,7 +199,8 @@ export class BackgroundListener {
     ])
   }
 
-  async reload() {
+  async reload(reason = 'unknown') {
+    this.debugLog.log('reload', { reason, timer: summarize(this.timer.getInternalState()) })
     this.timerStateStorageService.unsubscribeAll()
     this.timerConfigStorageService.unsubscribeAll()
     this.badgeDisplayService.clearBadge()
@@ -184,6 +216,10 @@ export class BackgroundListener {
       this.timerConfigStorageService.get(),
       this.timerStateStorageService.get()
     ])
+    this.debugLog.log('reload.restore', {
+      backup: summarize(backupInternalState),
+      timer: summarize(this.timer.getInternalState())
+    })
 
     if (backupInternalState) {
       this.timer.setConfig(timerConfig)
@@ -204,12 +240,20 @@ export class BackgroundListener {
       this.timerConfigStorageService.get(),
       this.timerStateStorageService.get()
     ])
+    this.debugLog.log('setup.restore', {
+      backup: summarize(backupInternalState),
+      timer: summarize(this.timer.getInternalState())
+    })
     this.timer.setConfigAndResetState(timerConfig)
     if (backupInternalState) {
       this.timer.setInternalState(backupInternalState)
     }
 
     this.timer.setOnStageCompleted(async ({ lastStage, lastSessionStartTime }) => {
+      this.debugLog.log('save', {
+        trigger: 'stageCompleted',
+        timer: summarize(this.timer.getInternalState())
+      })
       this.timerStateStorageService.save(this.timer.getInternalState())
 
       if (lastStage === TimerStage.FOCUS) {
@@ -227,6 +271,10 @@ export class BackgroundListener {
     // Use setOnTimerStart instead of putting these actions under START_TIMER to avoid duplication.
     // Restarting focus or break also need these actions.
     this.timer.setOnTimerStart(() => {
+      this.debugLog.log('save', {
+        trigger: 'timerStart',
+        timer: summarize(this.timer.getInternalState())
+      })
       this.timerStateStorageService.save(this.timer.getInternalState())
       this.closeTabsService.trigger()
       this.toggleBrowsingRules()
@@ -237,6 +285,10 @@ export class BackgroundListener {
     this.timer.setOnTimerPause(() => {
       this.badgeDisplayService.clearBadge()
       this.toggleBrowsingRules()
+      this.debugLog.log('save', {
+        trigger: 'timerPause',
+        timer: summarize(this.timer.getInternalState())
+      })
       this.timerStateStorageService.save(this.timer.getInternalState())
     })
 
@@ -262,10 +314,15 @@ export class BackgroundListener {
   private async setupTimerSubscriptions() {
     return Promise.all([
       this.timerStateStorageService.onChange((newInternalState) => {
-        if (
+        const shouldApply =
           newInternalState.timerId != this.timer.getId() &&
           !newInternalState.equalsIgnoringId(this.timer.getInternalState())
-        ) {
+        this.debugLog.log('storage.change', {
+          applied: shouldApply,
+          incoming: summarize(newInternalState),
+          timer: summarize(this.timer.getInternalState())
+        })
+        if (shouldApply) {
           this.timer.setInternalState(newInternalState)
         }
       }),
@@ -288,6 +345,11 @@ export class BackgroundListener {
     if (notificationSetting.sound) {
       services.push(this.soundService)
     }
+    this.debugLog.log('notification.setup', {
+      reminderTab: notificationSetting.reminderTab,
+      desktopNotification: notificationSetting.desktopNotification,
+      sound: notificationSetting.sound
+    })
 
     this.notificationServicesContainer = new MultipleActionService(services)
   }
@@ -297,7 +359,11 @@ export class BackgroundListener {
     const stageLabel = stageDisplayLabelHelper.getStageLabel(this.timer.getExternalState())
     this.desktopNotificationService.setNextButtonTitle(`Start ${stageLabel}`)
 
-    this.notificationServicesContainer.trigger()
+    this.debugLog.log('notification.trigger', { stageLabel })
+    this.notificationServicesContainer
+      .trigger()
+      .then(() => this.debugLog.log('notification.done'))
+      .catch((err) => this.debugLog.log('notification.failed', { error: String(err) }))
   }
 
   private async updateFocusSessionRecords(lastSessionStartTime: Date) {
@@ -306,19 +372,25 @@ export class BackgroundListener {
     })
     await retryUntilSuccess(
       async () => {
-        const oldRecords = await this.focusSessionRecordsStorageService.get()
+        try {
+          const oldRecords = await this.focusSessionRecordsStorageService.get()
 
-        await this.focusSessionRecordsStorageService.save([...oldRecords, newRecord])
-        await FocusSessionRecordHousekeeper.houseKeep({
-          focusSessionRecordsStorageService: this.focusSessionRecordsStorageService,
-          houseKeepDays: this.focusSessionRecordHouseKeepDays
-        })
+          await this.focusSessionRecordsStorageService.save([...oldRecords, newRecord])
+          await FocusSessionRecordHousekeeper.houseKeep({
+            focusSessionRecordsStorageService: this.focusSessionRecordsStorageService,
+            houseKeepDays: this.focusSessionRecordHouseKeepDays
+          })
+        } catch (err) {
+          this.debugLog.log('focusSessionRecords.saveFailed', { error: String(err) })
+          throw err
+        }
       },
       {
         retryIntervalMs: BackgroundListener.UPDATE_SESSION_RECORDS_RETRY_MS,
         functionName: 'BackgroundListener.updateFocusSessionRecords'
       }
     )
+    this.debugLog.log('focusSessionRecords.updated')
   }
 
   getTimerStateSubscriptionCount() {
@@ -355,6 +427,9 @@ export class BackgroundListener {
         this.setupTimerStateSubscription(backgroundPort)
 
         const listener = (message: WorkRequest) => {
+          if (TIMER_MUTATING_REQUESTS.has(message.name)) {
+            this.debugLog.log('request', { name: message.name })
+          }
           switch (message.name) {
             case WorkRequestName.TOGGLE_BROWSING_RULES: {
               this.toggleBrowsingRules()

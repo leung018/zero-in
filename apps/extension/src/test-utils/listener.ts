@@ -12,6 +12,7 @@ import { FakeActionService } from '../infra/action'
 import { FakeBadgeDisplayService } from '../infra/badge'
 import { FakeBrowsingControlService } from '../infra/browsing-control'
 import { FakeCommunicationManager } from '../infra/communication'
+import { DebugLog } from '../infra/debug-log'
 import { DesktopNotificationService } from '../infra/desktop-notification'
 import { BackgroundListener } from '../service-workers/listener'
 
@@ -39,7 +40,8 @@ export async function setUpListener({
     timerStateStorageService,
     timerConfigStorageService,
     closeTabsService: new FakeActionService(),
-    focusSessionRecordsStorageService: new FocusSessionRecordsStorageService(storage)
+    focusSessionRecordsStorageService: new FocusSessionRecordsStorageService(storage),
+    debugLog: DebugLog.createFake()
   }
 
   await params.timerConfigStorageService.save(timerConfig)

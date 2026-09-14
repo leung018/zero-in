@@ -44,7 +44,7 @@ export default function main() {
       }
       if (message.type == 'RELOAD') {
         listener
-          .reload()
+          .reload('reload-message')
           .then(() => {
             sendResponse({ type: 'RELOAD_SUCCESS' })
           })
@@ -66,7 +66,7 @@ export default function main() {
     FirebaseServices.onAuthStateChanged(() => {
       retryUntilSuccess(
         () => {
-          return listener.reload()
+          return listener.reload('auth-state-changed')
         },
         {
           functionName: 'BackgroundListener.reload'
