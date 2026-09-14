@@ -345,6 +345,11 @@ export class BackgroundListener {
     if (notificationSetting.sound) {
       services.push(this.soundService)
     }
+    this.debugLog.log('notification.setup', {
+      reminderTab: notificationSetting.reminderTab,
+      desktopNotification: notificationSetting.desktopNotification,
+      sound: notificationSetting.sound
+    })
 
     this.notificationServicesContainer = new MultipleActionService(services)
   }
@@ -354,7 +359,11 @@ export class BackgroundListener {
     const stageLabel = stageDisplayLabelHelper.getStageLabel(this.timer.getExternalState())
     this.desktopNotificationService.setNextButtonTitle(`Start ${stageLabel}`)
 
-    this.notificationServicesContainer.trigger()
+    this.debugLog.log('notification.trigger', { stageLabel })
+    this.notificationServicesContainer
+      .trigger()
+      .then(() => this.debugLog.log('notification.done'))
+      .catch((err) => this.debugLog.log('notification.failed', { error: String(err) }))
   }
 
   private async updateFocusSessionRecords(lastSessionStartTime: Date) {
@@ -363,19 +372,25 @@ export class BackgroundListener {
     })
     await retryUntilSuccess(
       async () => {
-        const oldRecords = await this.focusSessionRecordsStorageService.get()
+        try {
+          const oldRecords = await this.focusSessionRecordsStorageService.get()
 
-        await this.focusSessionRecordsStorageService.save([...oldRecords, newRecord])
-        await FocusSessionRecordHousekeeper.houseKeep({
-          focusSessionRecordsStorageService: this.focusSessionRecordsStorageService,
-          houseKeepDays: this.focusSessionRecordHouseKeepDays
-        })
+          await this.focusSessionRecordsStorageService.save([...oldRecords, newRecord])
+          await FocusSessionRecordHousekeeper.houseKeep({
+            focusSessionRecordsStorageService: this.focusSessionRecordsStorageService,
+            houseKeepDays: this.focusSessionRecordHouseKeepDays
+          })
+        } catch (err) {
+          this.debugLog.log('focusSessionRecords.saveFailed', { error: String(err) })
+          throw err
+        }
       },
       {
         retryIntervalMs: BackgroundListener.UPDATE_SESSION_RECORDS_RETRY_MS,
         functionName: 'BackgroundListener.updateFocusSessionRecords'
       }
     )
+    this.debugLog.log('focusSessionRecords.updated')
   }
 
   getTimerStateSubscriptionCount() {
