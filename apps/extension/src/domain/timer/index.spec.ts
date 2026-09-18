@@ -662,6 +662,12 @@ describe('FocusTimer', () => {
     expect(timer.getId()).not.toBe('other')
   })
 
+  it('should setInternalState keep the version of incoming state', () => {
+    const timer = newTimer()
+    timer.setInternalState(TimerInternalState.newTestInstance({ version: 5 }))
+    expect(timer.getInternalState().version).toBe(5)
+  })
+
   it('should start the timer if new state is running', async () => {
     const timer = newTimer()
 

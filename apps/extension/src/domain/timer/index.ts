@@ -275,8 +275,12 @@ export class FocusTimer {
     endAt: Date
     stage: TimerStage
     focusSessionsCompleted: number
+    version: number
   }) {
-    this.internalState = this.internalState.copyWith(update)
+    this.internalState = new TimerInternalState({
+      ...update,
+      timerId: this.internalState.timerId
+    })
 
     if (this.internalState.isRunning()) {
       this.start()
