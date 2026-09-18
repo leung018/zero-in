@@ -10,6 +10,7 @@ export class TimerInternalState {
   readonly endAt: Date
   readonly stage: TimerStage
   readonly focusSessionsCompleted: number
+  readonly version: number
 
   static newPausedState({
     timerId,
@@ -62,7 +63,8 @@ export class TimerInternalState {
     pausedAt = null,
     endAt = getDateAfter({ duration: new Duration({ minutes: 10 }) }),
     stage = TimerStage.FOCUS,
-    focusSessionsCompleted = 0
+    focusSessionsCompleted = 0,
+    version = 0
   }: Partial<TimerInternalState> = {}) {
     return new TimerInternalState({
       timerId,
@@ -70,7 +72,8 @@ export class TimerInternalState {
       pausedAt,
       endAt,
       stage,
-      focusSessionsCompleted
+      focusSessionsCompleted,
+      version
     })
   }
 
@@ -80,7 +83,8 @@ export class TimerInternalState {
     pausedAt,
     endAt,
     stage,
-    focusSessionsCompleted
+    focusSessionsCompleted,
+    version = 0
   }: {
     timerId: string
     sessionStartTime: Date | null
@@ -88,6 +92,7 @@ export class TimerInternalState {
     endAt: Date
     stage: TimerStage
     focusSessionsCompleted: number
+    version?: number
   }) {
     this.timerId = timerId
     this.sessionStartTime = sessionStartTime
@@ -95,6 +100,7 @@ export class TimerInternalState {
     this.endAt = endAt
     this.stage = stage
     this.focusSessionsCompleted = focusSessionsCompleted
+    this.version = version
   }
 
   toExternalState(now = new Date()): TimerExternalState {
@@ -145,7 +151,12 @@ export class TimerInternalState {
     stage?: TimerStage
     sessionStartTime?: Date | null
   }): TimerInternalState {
-    return new TimerInternalState({ ...this, ...update, timerId: this.timerId })
+    return new TimerInternalState({
+      ...this,
+      ...update,
+      timerId: this.timerId,
+      version: this.version + 1
+    })
   }
 
   equalsIgnoringId(other: TimerInternalState): boolean {

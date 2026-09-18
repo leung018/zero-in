@@ -89,3 +89,11 @@ describe('TimerInternalState.equalsIgnoringId', () => {
     expect(state1.equalsIgnoringId(state2)).toBe(false)
   })
 })
+
+describe('TimerInternalState.version', () => {
+  it('should copyWith return a state with version one higher than the source', () => {
+    const state = TimerInternalState.newTestInstance({ version: 3 })
+
+    expect(state.copyWith({ focusSessionsCompleted: 1 }).version).toBe(4)
+  })
+})
