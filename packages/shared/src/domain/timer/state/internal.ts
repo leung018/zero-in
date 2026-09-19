@@ -130,26 +130,22 @@ export class TimerInternalState {
   }
 
   copyAsPausedNow(): TimerInternalState {
-    return new TimerInternalState({
-      ...this,
-      pausedAt: new Date(),
-      version: this.version + 1
-    })
+    return this.copyWith({ pausedAt: new Date() })
   }
 
   copyAsResetWith(remaining: Duration): TimerInternalState {
-    return TimerInternalState.newPausedState({
-      ...this,
-      remaining,
-      version: this.version + 1
+    const now = new Date()
+    return this.copyWith({
+      sessionStartTime: null,
+      pausedAt: now,
+      endAt: getDateAfter({ from: now, duration: remaining })
     })
   }
 
   copyAsRunningWith(remaining: Duration): TimerInternalState {
-    return TimerInternalState.newRunningState({
-      ...this,
-      remaining,
-      version: this.version + 1
+    return this.copyWith({
+      pausedAt: null,
+      endAt: getDateAfter({ duration: remaining })
     })
   }
 
