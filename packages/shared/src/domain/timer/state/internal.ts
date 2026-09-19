@@ -16,12 +16,14 @@ export class TimerInternalState {
     timerId,
     remaining,
     stage,
-    focusSessionsCompleted
+    focusSessionsCompleted,
+    version = 0
   }: {
     timerId: string
     remaining: Duration
     stage: TimerStage
     focusSessionsCompleted: number
+    version?: number
   }) {
     const now = new Date()
     return new TimerInternalState({
@@ -30,7 +32,8 @@ export class TimerInternalState {
       pausedAt: now,
       endAt: getDateAfter({ from: now, duration: remaining }),
       stage,
-      focusSessionsCompleted
+      focusSessionsCompleted,
+      version
     })
   }
 
@@ -39,13 +42,15 @@ export class TimerInternalState {
     sessionStartTime = null,
     remaining,
     stage,
-    focusSessionsCompleted
+    focusSessionsCompleted,
+    version = 0
   }: {
     timerId: string
     sessionStartTime?: Date | null
     remaining: Duration
     stage: TimerStage
     focusSessionsCompleted: number
+    version?: number
   }) {
     return new TimerInternalState({
       timerId,
@@ -53,7 +58,8 @@ export class TimerInternalState {
       pausedAt: null,
       endAt: getDateAfter({ duration: remaining }),
       stage,
-      focusSessionsCompleted
+      focusSessionsCompleted,
+      version
     })
   }
 
@@ -126,21 +132,24 @@ export class TimerInternalState {
   copyAsPausedNow(): TimerInternalState {
     return new TimerInternalState({
       ...this,
-      pausedAt: new Date()
+      pausedAt: new Date(),
+      version: this.version + 1
     })
   }
 
   copyAsResetWith(remaining: Duration): TimerInternalState {
     return TimerInternalState.newPausedState({
       ...this,
-      remaining
+      remaining,
+      version: this.version + 1
     })
   }
 
   copyAsRunningWith(remaining: Duration): TimerInternalState {
     return TimerInternalState.newRunningState({
       ...this,
-      remaining
+      remaining,
+      version: this.version + 1
     })
   }
 

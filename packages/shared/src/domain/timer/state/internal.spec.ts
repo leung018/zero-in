@@ -1,3 +1,4 @@
+import { Duration } from '@zero-in/shared/domain/timer/duration'
 import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { describe, expect, it } from 'vitest'
 import { TimerInternalState } from './internal'
@@ -95,5 +96,17 @@ describe('TimerInternalState.version', () => {
     const state = TimerInternalState.newTestInstance({ version: 3 })
 
     expect(state.copyWith({ focusSessionsCompleted: 1 }).version).toBe(4)
+  })
+})
+
+describe('TimerInternalState.copyAs* version', () => {
+  it.each([
+    ['copyAsPausedNow', (state: TimerInternalState) => state.copyAsPausedNow()],
+    ['copyAsResetWith', (state: TimerInternalState) => state.copyAsResetWith(new Duration({}))],
+    ['copyAsRunningWith', (state: TimerInternalState) => state.copyAsRunningWith(new Duration({}))]
+  ])('%s should return a state with version one higher than the source', (_name, copy) => {
+    const state = TimerInternalState.newTestInstance({ version: 3 })
+
+    expect(copy(state).version).toBe(4)
   })
 })
