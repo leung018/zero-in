@@ -25,15 +25,12 @@ export class TimerInternalState {
     focusSessionsCompleted: number
     version?: number
   }) {
-    const now = new Date()
     return new TimerInternalState({
       timerId,
-      sessionStartTime: null,
-      pausedAt: now,
-      endAt: getDateAfter({ from: now, duration: remaining }),
       stage,
       focusSessionsCompleted,
-      version
+      version,
+      ...TimerInternalState.pausedFields(remaining)
     })
   }
 
@@ -55,11 +52,10 @@ export class TimerInternalState {
     return new TimerInternalState({
       timerId,
       sessionStartTime,
-      pausedAt: null,
-      endAt: getDateAfter({ duration: remaining }),
       stage,
       focusSessionsCompleted,
-      version
+      version,
+      ...TimerInternalState.runningFields(remaining)
     })
   }
 
@@ -81,6 +77,26 @@ export class TimerInternalState {
       focusSessionsCompleted,
       version
     })
+  }
+
+  private static pausedFields(remaining: Duration): {
+    sessionStartTime: null
+    pausedAt: Date
+    endAt: Date
+  } {
+    const now = new Date()
+    return {
+      sessionStartTime: null,
+      pausedAt: now,
+      endAt: getDateAfter({ from: now, duration: remaining })
+    }
+  }
+
+  private static runningFields(remaining: Duration): { pausedAt: null; endAt: Date } {
+    return {
+      pausedAt: null,
+      endAt: getDateAfter({ duration: remaining })
+    }
   }
 
   constructor({
@@ -134,19 +150,11 @@ export class TimerInternalState {
   }
 
   copyAsResetWith(remaining: Duration): TimerInternalState {
-    const now = new Date()
-    return this.copyWith({
-      sessionStartTime: null,
-      pausedAt: now,
-      endAt: getDateAfter({ from: now, duration: remaining })
-    })
+    return this.copyWith(TimerInternalState.pausedFields(remaining))
   }
 
   copyAsRunningWith(remaining: Duration): TimerInternalState {
-    return this.copyWith({
-      pausedAt: null,
-      endAt: getDateAfter({ duration: remaining })
-    })
+    return this.copyWith(TimerInternalState.runningFields(remaining))
   }
 
   copyWith(update: {
