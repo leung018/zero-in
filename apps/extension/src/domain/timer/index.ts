@@ -86,7 +86,8 @@ export class FocusTimer {
         timerId: this.internalState.timerId,
         remaining: this.config.focusDuration,
         stage: TimerStage.FOCUS,
-        focusSessionsCompleted: 0
+        focusSessionsCompleted: 0,
+        version: this.internalState.version + 1
       })
     )
   }

@@ -72,6 +72,16 @@ describe('FocusTimer', () => {
     expect(timer.getConfig()).toEqual(expected)
   })
 
+  it('should setConfigAndResetState bump version from the current state', () => {
+    const timer = newTimer()
+    timer.start()
+    const versionBeforeReset = timer.getInternalState().version
+
+    timer.setConfigAndResetState(newConfig())
+
+    expect(timer.getInternalState().version).toBe(versionBeforeReset + 1)
+  })
+
   it('should setConfigAndResetState reset the state too', () => {
     const timer = newTimer(
       newConfig({
