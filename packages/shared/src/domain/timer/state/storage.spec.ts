@@ -41,7 +41,8 @@ describe('TimerStateStorageService', () => {
         remaining: new Duration({ seconds: 100 }),
         stage: TimerStage.FOCUS,
         focusSessionsCompleted: 9,
-        timerId: ''
+        timerId: '',
+        version: 0
       })
     )
   })
@@ -62,7 +63,8 @@ describe('TimerStateStorageService', () => {
         remaining: new Duration({ seconds: 49 }),
         stage: TimerStage.SHORT_BREAK,
         focusSessionsCompleted: 0,
-        timerId: ''
+        timerId: '',
+        version: 0
       })
     )
   })

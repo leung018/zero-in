@@ -24,7 +24,7 @@ export class TimerStateStorageService implements StorageService<TimerInternalSta
     return new TimerStateStorageService(FakeRemoteStorage.create())
   }
 
-  private storageManager: StorageManager<TimerStateSchemas[5]>
+  private storageManager: StorageManager<TimerStateSchemas[6]>
 
   private unsubscribes: (() => void)[] = []
 
@@ -32,7 +32,7 @@ export class TimerStateStorageService implements StorageService<TimerInternalSta
     this.storageManager = StorageManager.create({
       storage,
       key: TimerStateStorageService.STORAGE_KEY,
-      currentDataVersion: 5,
+      currentDataVersion: 6,
       migrators: [
         {
           oldDataVersion: undefined,
@@ -89,6 +89,16 @@ export class TimerStateStorageService implements StorageService<TimerInternalSta
               ...oldData,
               dataVersion: 5,
               timerId: ''
+            }
+          }
+        },
+        {
+          oldDataVersion: 5,
+          migratorFunc: (oldData: TimerStateSchemas[5]): TimerStateSchemas[6] => {
+            return {
+              ...oldData,
+              dataVersion: 6,
+              version: 0
             }
           }
         }

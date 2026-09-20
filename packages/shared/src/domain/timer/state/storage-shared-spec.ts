@@ -18,7 +18,8 @@ export function runTimerStateStorageServiceTests(storage: RemoteStorage) {
       timerId: 'id01',
       remaining: new Duration({ seconds: 100 }),
       stage: TimerStage.FOCUS,
-      focusSessionsCompleted: 9
+      focusSessionsCompleted: 9,
+      version: 7
     })
     await service.save(state)
     expect(await service.get()).toStrictEqual(state)
@@ -28,7 +29,8 @@ export function runTimerStateStorageServiceTests(storage: RemoteStorage) {
       sessionStartTime: new Date(),
       remaining: new Duration({ seconds: 100 }),
       stage: TimerStage.SHORT_BREAK,
-      focusSessionsCompleted: 0
+      focusSessionsCompleted: 0,
+      version: 9
     })
     await service.save(state2)
     expect(await service.get()).toStrictEqual(state2)

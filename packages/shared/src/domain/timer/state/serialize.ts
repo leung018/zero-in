@@ -1,17 +1,18 @@
 import { TimerInternalState } from './internal'
 import { TimerStateSchemas } from './schema'
 
-type SerializedTimerState = TimerStateSchemas[5]
+type SerializedTimerState = TimerStateSchemas[6]
 
 export function serializeTimerState(timerState: TimerInternalState): SerializedTimerState {
   return {
-    dataVersion: 5,
+    dataVersion: 6,
     sessionStartTime: timerState.sessionStartTime?.getTime() ?? null,
     pausedAt: timerState.pausedAt?.getTime() ?? null,
     endAt: timerState.endAt.getTime(),
     stage: timerState.stage,
     focusSessionsCompleted: timerState.focusSessionsCompleted,
-    timerId: timerState.timerId
+    timerId: timerState.timerId,
+    version: timerState.version
   }
 }
 
@@ -22,6 +23,7 @@ export function deserializeTimerState(data: SerializedTimerState): TimerInternal
     pausedAt: data.pausedAt ? new Date(data.pausedAt) : null,
     endAt: new Date(data.endAt),
     stage: data.stage,
-    focusSessionsCompleted: data.focusSessionsCompleted
+    focusSessionsCompleted: data.focusSessionsCompleted,
+    version: data.version
   })
 }
