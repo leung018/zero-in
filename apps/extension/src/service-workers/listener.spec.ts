@@ -12,6 +12,7 @@ import type { FocusSessionRecord } from '@zero-in/shared/domain/timer/record/ind
 import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { TimerInternalState } from '@zero-in/shared/domain/timer/state/internal'
 import { TimerStateStorageService } from '@zero-in/shared/domain/timer/state/storage'
+import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { getDateAfter } from '@zero-in/shared/utils/date'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import config from '../config'
@@ -633,6 +634,24 @@ describe('BackgroundListener', () => {
     expect(listener2.getTimerExternalState()).toEqual(listener1.getTimerExternalState())
   })
 
+  it('should ignore timer state saved by an out of date listener', async () => {
+    const remoteStorage = FakeRemoteStorage.create()
+    const { clientPort, listener } = await startListenerWithTimerSync({
+      timerStateStorageService: new TimerStateStorageService(remoteStorage)
+    })
+    const outOfDateStorageService = new TimerStateStorageService(remoteStorage)
+    const { clientPort: outOfDateClientPort } = await startListenerWithTimerSync({
+      timerStateStorageService: outOfDateStorageService
+    })
+    outOfDateStorageService.unsubscribeAll()
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    await outOfDateClientPort.send({ name: WorkRequestName.PAUSE_TIMER })
+    await flushPromises()
+
+    expect(listener.getTimerExternalState().isRunning).toBe(true)
+  })
+
   it('should sync timer config to listener from timerConfigStorageService', async () => {
     const { listener, timerConfigStorageService, clientPort } = await startListenerWithTimerSync({
       timerConfig: TimerConfig.newTestInstance({
@@ -727,10 +746,9 @@ describe('BackgroundListener', () => {
   })
 
   it('should reload reset subscription in timerStateStorageService', async () => {
-    const { listener, timerStateStorageService } = await startListenerWithTimerSync({
-      timerConfig: TimerConfig.newTestInstance({
-        focusDuration: new Duration({ seconds: 3 })
-      })
+    const { listener, timerStateStorageService } = await startListenerWithTimerSync()
+    const { clientPort: otherClientPort } = await startListenerWithTimerSync({
+      timerStateStorageService
     })
 
     let changeCounter = 0
@@ -740,19 +758,14 @@ describe('BackgroundListener', () => {
 
     await listener.reload()
 
+    await otherClientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
     // Unsubscribed previous subscription in timerStateStorageService
-    await timerStateStorageService.save(
-      TimerInternalState.newTestInstance({
-        pausedAt: new Date(),
-        endAt: getDateAfter({
-          duration: new Duration({ seconds: 2 })
-        })
-      })
-    )
     expect(changeCounter).toBe(0)
 
     // Reload can reset subscription inside listener
-    expect(listener.getTimerExternalState().remaining).toEqual(new Duration({ seconds: 2 }))
+    expect(listener.getTimerExternalState().isRunning).toBe(true)
   })
 
   it('should reload reset subscription in timerConfigStorageService', async () => {

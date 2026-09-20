@@ -314,9 +314,7 @@ export class BackgroundListener {
   private async setupTimerSubscriptions() {
     return Promise.all([
       this.timerStateStorageService.onChange((newInternalState) => {
-        const shouldApply =
-          newInternalState.timerId != this.timer.getId() &&
-          !newInternalState.equalsIgnoringId(this.timer.getInternalState())
+        const shouldApply = newInternalState.version > this.timer.getInternalState().version
         this.debugLog.log('storage.change', {
           applied: shouldApply,
           incoming: summarize(newInternalState),
