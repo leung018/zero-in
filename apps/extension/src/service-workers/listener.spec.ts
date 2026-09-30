@@ -12,6 +12,7 @@ import type { FocusSessionRecord } from '@zero-in/shared/domain/timer/record/ind
 import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { TimerInternalState } from '@zero-in/shared/domain/timer/state/internal'
 import { TimerStateStorageService } from '@zero-in/shared/domain/timer/state/storage'
+import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { getDateAfter } from '@zero-in/shared/utils/date'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import config from '../config'
@@ -356,6 +357,7 @@ describe('BackgroundListener', () => {
 
     // Complete Focus Session
     vi.advanceTimersByTime(2000)
+    await flushPromises()
     await assertTimerStatesMatch()
 
     // Restart Focus
