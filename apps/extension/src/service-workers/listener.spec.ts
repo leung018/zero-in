@@ -633,6 +633,34 @@ describe('BackgroundListener', () => {
     expect(listener2.getTimerExternalState()).toEqual(listener1.getTimerExternalState())
   })
 
+  it('should ignore timer state saved by an out of date listener', async () => {
+    const remoteStorage = FakeRemoteStorage.create()
+    const { clientPort, listener } = await startListenerWithTimerSync({
+      timerStateStorageService: new TimerStateStorageService(remoteStorage),
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 1 })
+      })
+    })
+    const outOfDateStorageService = new TimerStateStorageService(remoteStorage)
+    await startListenerWithTimerSync({
+      timerStateStorageService: outOfDateStorageService,
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 1 })
+      })
+    })
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
+    outOfDateStorageService.unsubscribeAll()
+
+    await clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
+    vi.advanceTimersByTime(1000)
+    await flushPromises()
+
+    expect(listener.getTimerExternalState().focusSessionsCompleted).toBe(0)
+  })
+
   it('should sync timer config to listener from timerConfigStorageService', async () => {
     const { listener, timerConfigStorageService, clientPort } = await startListenerWithTimerSync({
       timerConfig: TimerConfig.newTestInstance({
