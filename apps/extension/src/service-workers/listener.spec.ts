@@ -12,6 +12,7 @@ import type { FocusSessionRecord } from '@zero-in/shared/domain/timer/record/ind
 import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { TimerInternalState } from '@zero-in/shared/domain/timer/state/internal'
 import { TimerStateStorageService } from '@zero-in/shared/domain/timer/state/storage'
+import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { getDateAfter } from '@zero-in/shared/utils/date'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import config from '../config'
@@ -356,6 +357,7 @@ describe('BackgroundListener', () => {
 
     // Complete Focus Session
     vi.advanceTimersByTime(2000)
+    await flushPromises()
     await assertTimerStatesMatch()
 
     // Restart Focus
@@ -631,6 +633,34 @@ describe('BackgroundListener', () => {
 
     expect(listener1.getTimerExternalState().isRunning).toBe(true)
     expect(listener2.getTimerExternalState()).toEqual(listener1.getTimerExternalState())
+  })
+
+  it('should ignore timer state saved by an out of date listener', async () => {
+    const remoteStorage = FakeRemoteStorage.create()
+    const { clientPort, listener } = await startListenerWithTimerSync({
+      timerStateStorageService: new TimerStateStorageService(remoteStorage),
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 1 })
+      })
+    })
+    const outOfDateStorageService = new TimerStateStorageService(remoteStorage)
+    await startListenerWithTimerSync({
+      timerStateStorageService: outOfDateStorageService,
+      timerConfig: TimerConfig.newTestInstance({
+        focusDuration: new Duration({ seconds: 1 })
+      })
+    })
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
+    outOfDateStorageService.unsubscribeAll()
+
+    await clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
+    vi.advanceTimersByTime(1000)
+    await flushPromises()
+
+    expect(listener.getTimerExternalState().focusSessionsCompleted).toBe(0)
   })
 
   it('should sync timer config to listener from timerConfigStorageService', async () => {
