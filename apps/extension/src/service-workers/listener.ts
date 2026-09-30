@@ -259,6 +259,12 @@ export class BackgroundListener {
           timer: summarize(this.timer.getInternalState())
         })
         this.timerStateStorageService.save(this.timer.getInternalState())
+      } else {
+        this.debugLog.log('save.skip', {
+          trigger: 'stageCompleted',
+          stored: summarize(stored),
+          timer: summarize(this.timer.getInternalState())
+        })
       }
 
       if (lastStage === TimerStage.FOCUS) {
