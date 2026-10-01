@@ -4463,9 +4463,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-firebase/app@npm:^26.3.2":
-  version: 26.3.2
-  resolution: "@react-native-firebase/app@npm:26.3.2"
+"@react-native-firebase/app@npm:^26.4.0":
+  version: 26.4.0
+  resolution: "@react-native-firebase/app@npm:26.4.0"
   dependencies:
     firebase: "npm:12.17.1"
   peerDependencies:
@@ -4475,33 +4475,33 @@ __metadata:
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10c0/ac5c5ee0bd5f211ccd31913d03d99b225406f346cf46a4e42369a8b732171b9a3745821bdcee46637ffc90faa0fb8c5dfc44b27c2e6feeac57372bb6d31c64d4
+  checksum: 10c0/da5efa6546ab953499c94ab263470a781f97351f23d361b6068a224f349f24a87d8e9c6fe88381ceffc293d75c35b79c065ddae3ceb00c92c52a825d441bdfe9
   languageName: node
   linkType: hard
 
-"@react-native-firebase/auth@npm:^26.3.2":
-  version: 26.3.2
-  resolution: "@react-native-firebase/auth@npm:26.3.2"
+"@react-native-firebase/auth@npm:^26.4.0":
+  version: 26.4.0
+  resolution: "@react-native-firebase/auth@npm:26.4.0"
   dependencies:
     "@expo/plist": "npm:^0.8.1"
   peerDependencies:
-    "@react-native-firebase/app": 26.3.2
+    "@react-native-firebase/app": 26.4.0
     expo: ">=47.0.0"
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10c0/44a7d047bd2ef94231f33d2652e6e906bd4c5468cc54638629de9503d9b0be3f312d955e6fe31f9cadc520ee178937456b35a516c4939eb5309ba9ef3e7ec674
+  checksum: 10c0/23f52c65f6578ba096e865fba479d132847f7845e29aa9ff4d10476e2ee9de273d56941af1d9de5efd5f896b0abb23847772acd203a8cd4accd7b711abc16300
   languageName: node
   linkType: hard
 
-"@react-native-firebase/firestore@npm:^26.3.2":
-  version: 26.3.2
-  resolution: "@react-native-firebase/firestore@npm:26.3.2"
+"@react-native-firebase/firestore@npm:^26.4.0":
+  version: 26.4.0
+  resolution: "@react-native-firebase/firestore@npm:26.4.0"
   dependencies:
     react-native-url-polyfill: "npm:4.0.0"
   peerDependencies:
-    "@react-native-firebase/app": 26.3.2
-  checksum: 10c0/241ae09ececb6d0ce6289a1a505c51b43b00b072a95a49fce9466664124fde1ce429d69edc9a326f605653eb6e7772f57d2f796dbd27ddbe6d5bc63dcb404b13
+    "@react-native-firebase/app": 26.4.0
+  checksum: 10c0/873ebb6201af3655820a9897cbe39904a8d76b942d8a4b02ececaab0e04cd967d7d010d55571bf3e06623ca3fd2f04246bbab3ffbb7e6a4a865d64a0ebba21f3
   languageName: node
   linkType: hard
 
@@ -6132,9 +6132,9 @@ __metadata:
     "@bacons/apple-targets": "npm:^4.0.7"
     "@expo/vector-icons": "npm:^15.0.3"
     "@react-native-community/datetimepicker": "npm:9.1.0"
-    "@react-native-firebase/app": "npm:^26.3.2"
-    "@react-native-firebase/auth": "npm:^26.3.2"
-    "@react-native-firebase/firestore": "npm:^26.3.2"
+    "@react-native-firebase/app": "npm:^26.4.0"
+    "@react-native-firebase/auth": "npm:^26.4.0"
+    "@react-native-firebase/firestore": "npm:^26.4.0"
     "@react-native/jest-preset": "npm:^0.85.3"
     "@react-navigation/bottom-tabs": "npm:^7.16.2"
     "@react-navigation/elements": "npm:^2.8.3"
