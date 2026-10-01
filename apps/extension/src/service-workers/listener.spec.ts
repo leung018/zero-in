@@ -635,7 +635,7 @@ describe('BackgroundListener', () => {
     expect(listener2.getTimerExternalState()).toEqual(listener1.getTimerExternalState())
   })
 
-  it('should not save back the timer state applied from storage', async () => {
+  it('should not save back the started timer state applied from storage', async () => {
     const remoteStorage = FakeRemoteStorage.create()
     const { clientPort, timer } = await startListenerWithTimerSync({
       timerStateStorageService: new TimerStateStorageService(remoteStorage)
@@ -645,6 +645,39 @@ describe('BackgroundListener', () => {
 
     await clientPort.send({ name: WorkRequestName.START_TIMER })
     await flushPromises()
+
+    expect((await mirrorStorageService.get())?.timerId).toBe(timer.getId())
+  })
+
+  it('should not save back the paused timer state applied from storage', async () => {
+    const remoteStorage = FakeRemoteStorage.create()
+    const { clientPort, timer } = await startListenerWithTimerSync({
+      timerStateStorageService: new TimerStateStorageService(remoteStorage)
+    })
+    const mirrorStorageService = new TimerStateStorageService(remoteStorage)
+    await startListenerWithTimerSync({ timerStateStorageService: mirrorStorageService })
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    await clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
+    await flushPromises()
+
+    expect((await mirrorStorageService.get())?.timerId).toBe(timer.getId())
+  })
+
+  it('should not save back the timer state restored on reload', async () => {
+    const remoteStorage = FakeRemoteStorage.create()
+    const { clientPort, timer } = await startListenerWithTimerSync({
+      timerStateStorageService: new TimerStateStorageService(remoteStorage)
+    })
+    const mirrorStorageService = new TimerStateStorageService(remoteStorage)
+    const { listener: mirrorListener } = await startListenerWithTimerSync({
+      timerStateStorageService: mirrorStorageService
+    })
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
+    await mirrorListener.reload()
 
     expect((await mirrorStorageService.get())?.timerId).toBe(timer.getId())
   })

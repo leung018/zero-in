@@ -229,7 +229,12 @@ export class BackgroundListener {
 
     if (backupInternalState) {
       this.timer.setConfig(timerConfig)
-      this.timer.setInternalState(backupInternalState)
+      this.isApplyingStoredState = true
+      try {
+        this.timer.setInternalState(backupInternalState)
+      } finally {
+        this.isApplyingStoredState = false
+      }
     } else {
       this.timer.setConfigAndResetState(timerConfig)
     }
@@ -304,11 +309,13 @@ export class BackgroundListener {
     this.timer.setOnTimerPause(() => {
       this.badgeDisplayService.clearBadge()
       this.toggleBrowsingRules()
-      this.debugLog.log('save', {
-        trigger: 'timerPause',
-        timer: summarize(this.timer.getInternalState())
-      })
-      this.timerStateStorageService.save(this.timer.getInternalState())
+      if (!this.isApplyingStoredState) {
+        this.debugLog.log('save', {
+          trigger: 'timerPause',
+          timer: summarize(this.timer.getInternalState())
+        })
+        this.timerStateStorageService.save(this.timer.getInternalState())
+      }
     })
 
     this.timer.setOnTimerUpdate((newExternalState) => {
