@@ -128,6 +128,10 @@ export class BackgroundListener {
   /**
    * True while applying a state received from storage. Such a state is already stored,
    * so saving it again would only replace its timerId with this instance's own.
+   * This prevents the bug where a remote machine's timer change gets saved back and
+   * affects the timer of the machine currently in use.
+   * e.g. the current machine gets no notification when its focus session completes,
+   * because the state is saved back before the notification is triggered.
    */
   private isApplyingStoredState = false
 
