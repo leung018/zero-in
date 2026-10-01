@@ -125,6 +125,16 @@ export class BackgroundListener {
 
   private timerStateSubscriptionManager = new SubscriptionManager<TimerExternalState>()
 
+  /**
+   * True while applying a state received from storage. Such a state is already stored,
+   * so saving it again would only replace its timerId with this instance's own.
+   * This prevents the bug where a remote machine's timer change gets saved back and
+   * affects the timer of the machine currently in use.
+   * e.g. the current machine gets no notification when its focus session completes,
+   * because the state is saved back before the notification is triggered.
+   */
+  private isApplyingStoredState = false
+
   private focusSessionRecordsStorageService: FocusSessionRecordsStorageService
   private focusSessionRecordHouseKeepDays: number
 
@@ -223,7 +233,12 @@ export class BackgroundListener {
 
     if (backupInternalState) {
       this.timer.setConfig(timerConfig)
-      this.timer.setInternalState(backupInternalState)
+      this.isApplyingStoredState = true
+      try {
+        this.timer.setInternalState(backupInternalState)
+      } finally {
+        this.isApplyingStoredState = false
+      }
     } else {
       this.timer.setConfigAndResetState(timerConfig)
     }
@@ -282,11 +297,13 @@ export class BackgroundListener {
     // Use setOnTimerStart instead of putting these actions under START_TIMER to avoid duplication.
     // Restarting focus or break also need these actions.
     this.timer.setOnTimerStart(() => {
-      this.debugLog.log('save', {
-        trigger: 'timerStart',
-        timer: summarize(this.timer.getInternalState())
-      })
-      this.timerStateStorageService.save(this.timer.getInternalState())
+      if (!this.isApplyingStoredState) {
+        this.debugLog.log('save', {
+          trigger: 'timerStart',
+          timer: summarize(this.timer.getInternalState())
+        })
+        this.timerStateStorageService.save(this.timer.getInternalState())
+      }
       this.closeTabsService.trigger()
       this.toggleBrowsingRules()
       this.desktopNotificationService.clear()
@@ -296,11 +313,13 @@ export class BackgroundListener {
     this.timer.setOnTimerPause(() => {
       this.badgeDisplayService.clearBadge()
       this.toggleBrowsingRules()
-      this.debugLog.log('save', {
-        trigger: 'timerPause',
-        timer: summarize(this.timer.getInternalState())
-      })
-      this.timerStateStorageService.save(this.timer.getInternalState())
+      if (!this.isApplyingStoredState) {
+        this.debugLog.log('save', {
+          trigger: 'timerPause',
+          timer: summarize(this.timer.getInternalState())
+        })
+        this.timerStateStorageService.save(this.timer.getInternalState())
+      }
     })
 
     this.timer.setOnTimerUpdate((newExternalState) => {
@@ -334,7 +353,12 @@ export class BackgroundListener {
           timer: summarize(this.timer.getInternalState())
         })
         if (shouldApply) {
-          this.timer.setInternalState(newInternalState)
+          this.isApplyingStoredState = true
+          try {
+            this.timer.setInternalState(newInternalState)
+          } finally {
+            this.isApplyingStoredState = false
+          }
         }
       }),
       this.timerConfigStorageService.onChange((newConfig) => {

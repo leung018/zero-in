@@ -635,6 +635,60 @@ describe('BackgroundListener', () => {
     expect(listener2.getTimerExternalState()).toEqual(listener1.getTimerExternalState())
   })
 
+  describe('Prevent saving back the timer state applied from storage', () => {
+    // These tests check the stored timerId, which may be an implementation detail of the fix.
+    // In future, can consider checking the behavior of the current active listener instead
+    // That may require each listener's timer to advance time separately, which may need a refactor.
+    // A similar setup existed in older code but was removed; refer to git history if needed.
+
+    it('should not save back the started timer state applied from storage', async () => {
+      const remoteStorage = FakeRemoteStorage.create()
+      const { clientPort, timer } = await startListenerWithTimerSync({
+        timerStateStorageService: new TimerStateStorageService(remoteStorage)
+      })
+      const mirrorStorageService = new TimerStateStorageService(remoteStorage)
+      await startListenerWithTimerSync({ timerStateStorageService: mirrorStorageService })
+
+      await clientPort.send({ name: WorkRequestName.START_TIMER })
+      await flushPromises()
+
+      expect((await mirrorStorageService.get())?.timerId).toBe(timer.getId())
+    })
+
+    it('should not save back the paused timer state applied from storage', async () => {
+      const remoteStorage = FakeRemoteStorage.create()
+      const { clientPort, timer } = await startListenerWithTimerSync({
+        timerStateStorageService: new TimerStateStorageService(remoteStorage)
+      })
+      const mirrorStorageService = new TimerStateStorageService(remoteStorage)
+      await startListenerWithTimerSync({ timerStateStorageService: mirrorStorageService })
+
+      await clientPort.send({ name: WorkRequestName.START_TIMER })
+      await clientPort.send({ name: WorkRequestName.PAUSE_TIMER })
+      await flushPromises()
+
+      expect((await mirrorStorageService.get())?.timerId).toBe(timer.getId())
+    })
+
+    it('should not save back the timer state restored on reload', async () => {
+      const remoteStorage = FakeRemoteStorage.create()
+      const { clientPort, timer } = await startListenerWithTimerSync({
+        timerStateStorageService: new TimerStateStorageService(remoteStorage)
+      })
+      const mirrorStorageService = new TimerStateStorageService(remoteStorage)
+      const { listener: mirrorListener } = await startListenerWithTimerSync({
+        timerStateStorageService: mirrorStorageService
+      })
+
+      await clientPort.send({ name: WorkRequestName.START_TIMER })
+      await flushPromises()
+
+      await mirrorListener.reload()
+
+      expect((await mirrorStorageService.get())?.timerId).toBe(timer.getId())
+    })
+  })
+
   it('should ignore timer state saved by an out of date listener', async () => {
     const remoteStorage = FakeRemoteStorage.create()
     const { clientPort, listener } = await startListenerWithTimerSync({
