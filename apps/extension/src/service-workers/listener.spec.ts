@@ -635,6 +635,20 @@ describe('BackgroundListener', () => {
     expect(listener2.getTimerExternalState()).toEqual(listener1.getTimerExternalState())
   })
 
+  it('should not save back the timer state applied from storage', async () => {
+    const remoteStorage = FakeRemoteStorage.create()
+    const { clientPort, timer } = await startListenerWithTimerSync({
+      timerStateStorageService: new TimerStateStorageService(remoteStorage)
+    })
+    const mirrorStorageService = new TimerStateStorageService(remoteStorage)
+    await startListenerWithTimerSync({ timerStateStorageService: mirrorStorageService })
+
+    await clientPort.send({ name: WorkRequestName.START_TIMER })
+    await flushPromises()
+
+    expect((await mirrorStorageService.get())?.timerId).toBe(timer.getId())
+  })
+
   it('should ignore timer state saved by an out of date listener', async () => {
     const remoteStorage = FakeRemoteStorage.create()
     const { clientPort, listener } = await startListenerWithTimerSync({

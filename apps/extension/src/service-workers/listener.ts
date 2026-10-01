@@ -125,6 +125,12 @@ export class BackgroundListener {
 
   private timerStateSubscriptionManager = new SubscriptionManager<TimerExternalState>()
 
+  /**
+   * True while applying a state received from storage. Such a state is already stored,
+   * so saving it again would only replace its timerId with this instance's own.
+   */
+  private isApplyingStoredState = false
+
   private focusSessionRecordsStorageService: FocusSessionRecordsStorageService
   private focusSessionRecordHouseKeepDays: number
 
@@ -282,11 +288,13 @@ export class BackgroundListener {
     // Use setOnTimerStart instead of putting these actions under START_TIMER to avoid duplication.
     // Restarting focus or break also need these actions.
     this.timer.setOnTimerStart(() => {
-      this.debugLog.log('save', {
-        trigger: 'timerStart',
-        timer: summarize(this.timer.getInternalState())
-      })
-      this.timerStateStorageService.save(this.timer.getInternalState())
+      if (!this.isApplyingStoredState) {
+        this.debugLog.log('save', {
+          trigger: 'timerStart',
+          timer: summarize(this.timer.getInternalState())
+        })
+        this.timerStateStorageService.save(this.timer.getInternalState())
+      }
       this.closeTabsService.trigger()
       this.toggleBrowsingRules()
       this.desktopNotificationService.clear()
@@ -334,7 +342,12 @@ export class BackgroundListener {
           timer: summarize(this.timer.getInternalState())
         })
         if (shouldApply) {
-          this.timer.setInternalState(newInternalState)
+          this.isApplyingStoredState = true
+          try {
+            this.timer.setInternalState(newInternalState)
+          } finally {
+            this.isApplyingStoredState = false
+          }
         }
       }),
       this.timerConfigStorageService.onChange((newConfig) => {
