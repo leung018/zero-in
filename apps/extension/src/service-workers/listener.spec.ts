@@ -636,6 +636,11 @@ describe('BackgroundListener', () => {
   })
 
   describe('Prevent saving back the timer state applied from storage', () => {
+    // These tests check the stored timerId, which may be an implementation detail of the fix.
+    // In future, can consider checking the behavior of the current active listener instead
+    // That may require each listener's timer to advance time separately, which may need a refactor.
+    // A similar setup existed in older code but was removed; refer to git history if needed.
+
     it('should not save back the started timer state applied from storage', async () => {
       const remoteStorage = FakeRemoteStorage.create()
       const { clientPort, timer } = await startListenerWithTimerSync({
