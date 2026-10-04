@@ -1,5 +1,6 @@
 import { ScheduleSpan } from '@zero-in/shared/domain/schedules'
 import { NativeModule, requireNativeModule } from 'expo'
+import { createLogger } from '../../../utils/logger'
 import { PermissionDetails, PermissionStatus, PermissionType } from './permission'
 
 declare class AppBlockerModule extends NativeModule {
@@ -13,6 +14,8 @@ declare class AppBlockerModule extends NativeModule {
 
 const nativeModule = requireNativeModule<AppBlockerModule>('AppBlocker')
 
+const log = createLogger('AppBlocker')
+
 export const appBlocker = {
   async getPermissionStatus(): Promise<PermissionStatus> {
     const response = await nativeModule.getPermissionDetails()
@@ -24,18 +27,25 @@ export const appBlocker = {
   },
 
   enableAlwaysBlock(): Promise<void> {
+    log.info('enableAlwaysBlock')
     return nativeModule.blockApps()
   },
 
   disableAlwaysBlock(): Promise<void> {
+    log.info('disableAlwaysBlock')
     return nativeModule.unblockApps()
   },
 
   setBlockingSchedule(scheduleSpan: ScheduleSpan): Promise<void> {
+    log.info('setBlockingSchedule', {
+      start: scheduleSpan.start.toISOString(),
+      end: scheduleSpan.end.toISOString()
+    })
     return nativeModule.setSchedule(scheduleSpan.start.getTime(), scheduleSpan.end.getTime())
   },
 
   clearBlockingSchedule(): Promise<void> {
+    log.info('clearBlockingSchedule')
     return nativeModule.clearSchedule()
   }
 }

@@ -14,6 +14,7 @@ export default function TabLayout() {
 
   useEffect(() => {
     const syncBlocking = (reason: string) => {
+      log.info(`${reason} sync triggered`)
       triggerAppBlockToggling().catch((err) => {
         log.error(`${reason} sync blocking failed:`, err)
       })
@@ -31,6 +32,7 @@ export default function TabLayout() {
     const timerStateStorageService = newTimerStateStorageService()
     timerStateStorageService
       .onChange(() => {
+        log.info('Timer state onChange sync triggered')
         return triggerAppBlockToggling()
       })
       .catch((err) => {
