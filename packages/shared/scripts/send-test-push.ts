@@ -9,7 +9,7 @@ async function main() {
   }
 
   const client = new ExpoPushClientImpl()
-  const result = await client.send([token])
+  const result = await client.send([{ token }])
 
   console.log('Send result:', result)
 }

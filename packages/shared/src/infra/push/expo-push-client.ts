@@ -4,13 +4,21 @@ export interface ExpoPushSendResult {
   deviceNotRegisteredTokens: string[]
 }
 
+export type PushPlatform = 'ios' | 'android'
+
+export interface PushTarget {
+  token: string
+  platform?: PushPlatform
+}
+
 export interface ExpoPushClient {
-  send(tokens: string[]): Promise<ExpoPushSendResult>
+  send(targets: PushTarget[]): Promise<ExpoPushSendResult>
 }
 
 export class ExpoPushClientImpl implements ExpoPushClient {
   // Require manual testing
-  async send(tokens: string[]): Promise<ExpoPushSendResult> {
+  async send(targets: PushTarget[]): Promise<ExpoPushSendResult> {
+    const tokens = targets.map((t) => t.token)
     const response = await fetch(EXPO_PUSH_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -46,11 +54,14 @@ export function parseExpoPushResponse(body: any, tokens: string[]): ExpoPushSend
 
 export class FakeExpoPushClient implements ExpoPushClient {
   sentTokensCalls: string[][] = []
+  sentTargetsCalls: PushTarget[][] = []
   deviceNotRegisteredTokens: string[] = []
   sendError: Error | null = null
 
-  async send(tokens: string[]): Promise<ExpoPushSendResult> {
+  async send(targets: PushTarget[]): Promise<ExpoPushSendResult> {
+    const tokens = targets.map((t) => t.token)
     this.sentTokensCalls.push(tokens)
+    this.sentTargetsCalls.push(targets)
     if (this.sendError) throw this.sendError
     return {
       deviceNotRegisteredTokens: tokens.filter((t) => this.deviceNotRegisteredTokens.includes(t))
