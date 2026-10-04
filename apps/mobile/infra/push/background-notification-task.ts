@@ -19,9 +19,28 @@ TaskManager.defineTask(
     if (payload?.kind === 'app-block-sync') {
       log.debug('Received app-block-sync push, triggering sync')
       await triggerAppBlockToggling()
+      await dismissAppBlockSyncNotifications()
     }
   }
 )
+
+/**
+ * On iOS the push also shows an alert in case the silent part is throttled. Once synced here, the
+ * alert is no longer needed.
+ */
+async function dismissAppBlockSyncNotifications(): Promise<void> {
+  try {
+    const presented = await Notifications.getPresentedNotificationsAsync()
+    for (const notification of presented) {
+      if (notification.request.content.data?.kind === 'app-block-sync') {
+        await Notifications.dismissNotificationAsync(notification.request.identifier)
+        log.debug('Dismissed app-block-sync notification:', notification.request.identifier)
+      }
+    }
+  } catch (error) {
+    log.error('Failed to dismiss app-block-sync notifications:', error)
+  }
+}
 
 export async function registerBackgroundNotificationTask(): Promise<void> {
   await Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK)
