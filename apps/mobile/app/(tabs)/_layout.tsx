@@ -32,6 +32,12 @@ export default function TabLayout() {
     const timerStateStorageService = newTimerStateStorageService()
     timerStateStorageService
       .onChange(() => {
+        // In background, the app-block-sync push handles the sync. Overlapping runs from here may get
+        // cut off when iOS suspends the app after the push task completes.
+        if (AppState.currentState !== 'active') {
+          log.info('Timer state onChange sync skipped in background')
+          return
+        }
         log.info('Timer state onChange sync triggered')
         return triggerAppBlockToggling()
       })
