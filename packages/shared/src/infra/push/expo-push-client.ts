@@ -22,14 +22,7 @@ export class ExpoPushClientImpl implements ExpoPushClient {
     const response = await fetch(EXPO_PUSH_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(
-        tokens.map((to) => ({
-          to,
-          _contentAvailable: true,
-          priority: 'high',
-          data: { kind: 'app-block-sync' }
-        }))
-      )
+      body: JSON.stringify(targets.map(toExpoPushMessage))
     })
 
     if (!response.ok) {
@@ -38,6 +31,27 @@ export class ExpoPushClientImpl implements ExpoPushClient {
     const body = await response.json()
     return parseExpoPushResponse(body, tokens)
   }
+}
+
+function toExpoPushMessage({ token, platform }: PushTarget) {
+  const message = {
+    to: token,
+    _contentAvailable: true,
+    priority: 'high',
+    data: { kind: 'app-block-sync' }
+  }
+  if (platform === 'ios') {
+    // iOS throttles silent pushes, so they may not wake the app. The alert makes sure the user can
+    // still tap to sync. If the app does wake, it dismisses the alert after syncing.
+    return {
+      ...message,
+      title: 'Blocking Updated',
+      body: 'Tap to apply your latest blocking settings.'
+    }
+  }
+  // Android stays data-only. A notification with a title would not run the background task while
+  // the app is in background.
+  return message
 }
 
 export function parseExpoPushResponse(body: any, tokens: string[]): ExpoPushSendResult {
