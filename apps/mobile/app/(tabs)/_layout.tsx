@@ -1,5 +1,9 @@
-import { triggerAppBlockToggling } from '@/infra/app-block/toggling-runner'
+import {
+  onScheduleEndNotificationTapped,
+  triggerAppBlockToggling
+} from '@/infra/app-block/toggling-runner'
 import { Ionicons } from '@expo/vector-icons'
+import * as Notifications from 'expo-notifications'
 import { Tabs } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { AppState, TouchableOpacity, View } from 'react-native'
@@ -11,6 +15,14 @@ const log = createLogger('TabLayout')
 
 export default function TabLayout() {
   const [menuVisible, setMenuVisible] = useState(false)
+  const lastNotificationResponse = Notifications.useLastNotificationResponse()
+
+  useEffect(() => {
+    if (lastNotificationResponse) {
+      onScheduleEndNotificationTapped(lastNotificationResponse)
+      Notifications.clearLastNotificationResponse()
+    }
+  }, [lastNotificationResponse])
 
   useEffect(() => {
     const syncBlocking = (reason: string) => {
@@ -21,6 +33,14 @@ export default function TabLayout() {
     }
 
     syncBlocking('Initial')
+
+    // Listen for notification taps that trigger app blocking service
+    const notificationResponseListener = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        log.debug('Notification response received:', response)
+        onScheduleEndNotificationTapped(response)
+      }
+    )
 
     const appStateSubscription = AppState.addEventListener('change', (nextState) => {
       if (nextState === 'active') {
@@ -47,6 +67,7 @@ export default function TabLayout() {
 
     return () => {
       appStateSubscription.remove()
+      notificationResponseListener.remove()
       timerStateStorageService.unsubscribeAll()
     }
   }, [])
