@@ -2,6 +2,7 @@ import {
   onScheduleEndNotificationTapped,
   triggerAppBlockToggling
 } from '@/infra/app-block/toggling-runner'
+import { onAppBlockSyncNotificationTapped } from '@/infra/push/background-notification-task'
 import { Ionicons } from '@expo/vector-icons'
 import * as Notifications from 'expo-notifications'
 import { Tabs } from 'expo-router'
@@ -20,6 +21,7 @@ export default function TabLayout() {
   useEffect(() => {
     if (lastNotificationResponse) {
       onScheduleEndNotificationTapped(lastNotificationResponse)
+      onAppBlockSyncNotificationTapped(lastNotificationResponse)
       Notifications.clearLastNotificationResponse()
     }
   }, [lastNotificationResponse])
@@ -39,6 +41,7 @@ export default function TabLayout() {
       (response) => {
         log.debug('Notification response received:', response)
         onScheduleEndNotificationTapped(response)
+        onAppBlockSyncNotificationTapped(response)
       }
     )
 

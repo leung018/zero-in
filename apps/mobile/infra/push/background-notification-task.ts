@@ -1,5 +1,6 @@
 import * as Notifications from 'expo-notifications'
 import * as TaskManager from 'expo-task-manager'
+import { Alert } from 'react-native'
 import { createLogger } from '../../utils/logger'
 import { triggerAppBlockToggling } from '../app-block/toggling-runner'
 import { extractNotificationTaskPayload } from './notification-task-payload'
@@ -40,6 +41,21 @@ async function dismissAppBlockSyncNotifications(): Promise<void> {
   } catch (error) {
     log.error('Failed to dismiss app-block-sync notifications:', error)
   }
+}
+
+// Only iOS shows app-block-sync notifications, so the alerts below are iOS-specific.
+export async function onAppBlockSyncNotificationTapped(
+  response: Notifications.NotificationResponse
+): Promise<void> {
+  if (response.notification.request.content.data?.kind !== 'app-block-sync') return
+
+  log.debug('App-block-sync notification tapped, triggering sync')
+  await triggerAppBlockToggling()
+  Alert.alert(
+    'Blocking Updated',
+    'Your latest blocking settings are now active. You can swipe up to return home.',
+    [{ text: 'OK' }]
+  )
 }
 
 export async function registerBackgroundNotificationTask(): Promise<void> {
