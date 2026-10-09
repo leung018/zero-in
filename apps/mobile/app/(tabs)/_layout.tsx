@@ -1,5 +1,10 @@
-import { triggerAppBlockToggling } from '@/infra/app-block/toggling-runner'
+import {
+  onScheduleEndNotificationTapped,
+  triggerAppBlockToggling
+} from '@/infra/app-block/toggling-runner'
+import { onAppBlockSyncNotificationTapped } from '@/infra/push/background-notification-task'
 import { Ionicons } from '@expo/vector-icons'
+import * as Notifications from 'expo-notifications'
 import { Tabs } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { AppState, TouchableOpacity, View } from 'react-native'
@@ -11,15 +16,34 @@ const log = createLogger('TabLayout')
 
 export default function TabLayout() {
   const [menuVisible, setMenuVisible] = useState(false)
+  const lastNotificationResponse = Notifications.useLastNotificationResponse()
+
+  useEffect(() => {
+    if (lastNotificationResponse) {
+      onScheduleEndNotificationTapped(lastNotificationResponse)
+      onAppBlockSyncNotificationTapped(lastNotificationResponse)
+      Notifications.clearLastNotificationResponse()
+    }
+  }, [lastNotificationResponse])
 
   useEffect(() => {
     const syncBlocking = (reason: string) => {
+      log.info(`${reason} sync triggered`)
       triggerAppBlockToggling().catch((err) => {
         log.error(`${reason} sync blocking failed:`, err)
       })
     }
 
     syncBlocking('Initial')
+
+    // Listen for notification taps that trigger app blocking service
+    const notificationResponseListener = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        log.debug('Notification response received:', response)
+        onScheduleEndNotificationTapped(response)
+        onAppBlockSyncNotificationTapped(response)
+      }
+    )
 
     const appStateSubscription = AppState.addEventListener('change', (nextState) => {
       if (nextState === 'active') {
@@ -31,6 +55,13 @@ export default function TabLayout() {
     const timerStateStorageService = newTimerStateStorageService()
     timerStateStorageService
       .onChange(() => {
+        // In background, the app-block-sync push handles the sync. Overlapping runs from here may get
+        // cut off when iOS suspends the app after the push task completes.
+        if (AppState.currentState !== 'active') {
+          log.info('Timer state onChange sync skipped in background')
+          return
+        }
+        log.info('Timer state onChange sync triggered')
         return triggerAppBlockToggling()
       })
       .catch((err) => {
@@ -39,6 +70,7 @@ export default function TabLayout() {
 
     return () => {
       appStateSubscription.remove()
+      notificationResponseListener.remove()
       timerStateStorageService.unsubscribeAll()
     }
   }, [])

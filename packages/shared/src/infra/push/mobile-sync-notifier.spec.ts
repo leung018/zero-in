@@ -47,6 +47,22 @@ describe('MobileSyncNotifier', () => {
     expect(pushClient.sentTokensCalls).toEqual([['t1', 't2'], ['t1']])
   })
 
+  it('notify sends the platform each token was registered with', async () => {
+    const pushClient = new FakeExpoPushClient()
+    const notifier = MobileSyncNotifier.createFake({ pushClient })
+
+    await notifier.register('t1', 'ios')
+    await notifier.register('t2', 'android')
+    await notifier.notify()
+
+    expect(pushClient.sentTargetsCalls).toEqual([
+      [
+        { token: 't1', platform: 'ios' },
+        { token: 't2', platform: 'android' }
+      ]
+    ])
+  })
+
   it('notify sends all registered tokens', async () => {
     const pushClient = new FakeExpoPushClient()
     const notifier = MobileSyncNotifier.createFake({ pushClient })

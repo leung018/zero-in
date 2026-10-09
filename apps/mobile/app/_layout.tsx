@@ -1,4 +1,3 @@
-import { onScheduleEndNotificationTapped } from '@/infra/app-block/toggling-runner'
 import { registerBackgroundNotificationTask } from '@/infra/push/background-notification-task'
 import { registerPushToken, unregisterPushToken } from '@/infra/push/expo-push-token'
 import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth'
@@ -17,15 +16,6 @@ const log = createLogger('RootLayout')
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const lastNotificationResponse = Notifications.useLastNotificationResponse()
-
-  useEffect(() => {
-    if (lastNotificationResponse) {
-      onScheduleEndNotificationTapped(lastNotificationResponse)
-      Notifications.clearLastNotificationResponse()
-    }
-  }, [lastNotificationResponse])
-
   const prevUidRef = useRef<string | null>(null)
 
   useEffect(() => {
@@ -34,14 +24,6 @@ export default function RootLayout() {
       .catch((err) => {
         log.error('Failed to set up notifications:', err)
       })
-
-    // Listen for notification taps that trigger app blocking service
-    const notificationResponseListener = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        log.debug('Notification response received:', response)
-        onScheduleEndNotificationTapped(response)
-      }
-    )
 
     const unsubscribeAuth = onAuthStateChanged(getAuth(), async (user) => {
       // TODO: Move below logic about pushToken into separate function/class, and add unit tests for them.
@@ -63,7 +45,6 @@ export default function RootLayout() {
 
     return () => {
       unsubscribeAuth()
-      notificationResponseListener.remove()
     }
   }, [])
 
