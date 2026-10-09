@@ -45,8 +45,8 @@ function toExpoPushMessage({ token, platform }: PushTarget) {
     // still tap to sync. If the app does wake, it dismisses the alert after syncing.
     return {
       ...message,
-      title: 'Blocking Updated',
-      body: 'Tap to apply your latest blocking settings.'
+      title: 'Blocking Update',
+      body: "Tap here if your blocking isn't updated automatically."
     }
   }
   // Android stays data-only. A notification with a title would not run the background task while
