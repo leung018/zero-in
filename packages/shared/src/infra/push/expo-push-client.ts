@@ -4,24 +4,25 @@ export interface ExpoPushSendResult {
   deviceNotRegisteredTokens: string[]
 }
 
+export type PushPlatform = 'ios' | 'android'
+
+export interface PushTarget {
+  token: string
+  platform?: PushPlatform
+}
+
 export interface ExpoPushClient {
-  send(tokens: string[]): Promise<ExpoPushSendResult>
+  send(targets: PushTarget[]): Promise<ExpoPushSendResult>
 }
 
 export class ExpoPushClientImpl implements ExpoPushClient {
   // Require manual testing
-  async send(tokens: string[]): Promise<ExpoPushSendResult> {
+  async send(targets: PushTarget[]): Promise<ExpoPushSendResult> {
+    const tokens = targets.map((t) => t.token)
     const response = await fetch(EXPO_PUSH_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(
-        tokens.map((to) => ({
-          to,
-          _contentAvailable: true,
-          priority: 'high',
-          data: { kind: 'app-block-sync' }
-        }))
-      )
+      body: JSON.stringify(targets.map(toExpoPushMessage))
     })
 
     if (!response.ok) {
@@ -30,6 +31,27 @@ export class ExpoPushClientImpl implements ExpoPushClient {
     const body = await response.json()
     return parseExpoPushResponse(body, tokens)
   }
+}
+
+function toExpoPushMessage({ token, platform }: PushTarget) {
+  const message = {
+    to: token,
+    _contentAvailable: true,
+    priority: 'high',
+    data: { kind: 'app-block-sync' }
+  }
+  if (platform === 'ios') {
+    // iOS throttles silent pushes, so they may not wake the app. The alert makes sure the user can
+    // still tap to sync. If the app does wake, it dismisses the alert after syncing.
+    return {
+      ...message,
+      title: 'Blocking Update',
+      body: "Tap here if your blocking isn't updated automatically."
+    }
+  }
+  // Android stays data-only. A notification with a title would not run the background task while
+  // the app is in background.
+  return message
 }
 
 export function parseExpoPushResponse(body: any, tokens: string[]): ExpoPushSendResult {
@@ -46,11 +68,14 @@ export function parseExpoPushResponse(body: any, tokens: string[]): ExpoPushSend
 
 export class FakeExpoPushClient implements ExpoPushClient {
   sentTokensCalls: string[][] = []
+  sentTargetsCalls: PushTarget[][] = []
   deviceNotRegisteredTokens: string[] = []
   sendError: Error | null = null
 
-  async send(tokens: string[]): Promise<ExpoPushSendResult> {
+  async send(targets: PushTarget[]): Promise<ExpoPushSendResult> {
+    const tokens = targets.map((t) => t.token)
     this.sentTokensCalls.push(tokens)
+    this.sentTargetsCalls.push(targets)
     if (this.sendError) throw this.sendError
     return {
       deviceNotRegisteredTokens: tokens.filter((t) => this.deviceNotRegisteredTokens.includes(t))

@@ -1,6 +1,12 @@
 import { FakeRemoteStorage } from '../storage/fake'
 import { RemoteStorage } from '../storage/interface'
-import { ExpoPushClient, ExpoPushClientImpl, FakeExpoPushClient } from './expo-push-client'
+import {
+  ExpoPushClient,
+  ExpoPushClientImpl,
+  FakeExpoPushClient,
+  PushPlatform,
+  PushTarget
+} from './expo-push-client'
 
 interface MobileSyncNotifierDeps {
   getTokenStorage: () => Promise<RemoteStorage>
@@ -24,10 +30,10 @@ export class MobileSyncNotifier {
   // TODO: Make below private; refactor unit tests so they don't need to subclass this for a testable fake.
   constructor(private readonly deps: MobileSyncNotifierDeps) {}
 
-  async register(token: string): Promise<void> {
+  async register(token: string, platform?: PushPlatform): Promise<void> {
     const storage = await this.deps.getTokenStorage()
     // Using the token as the key means registering the same token twice is a no-op (overwrites the same entry).
-    await storage.set(token, {})
+    await storage.set(token, platform ? { platform } : {})
   }
 
   async unregister(token: string): Promise<void> {
@@ -40,7 +46,13 @@ export class MobileSyncNotifier {
     const tokens = await storage.getKeys()
     if (!tokens.length) return
 
-    const { deviceNotRegisteredTokens } = await this.deps.pushClient.send(tokens)
+    const targets: PushTarget[] = await Promise.all(
+      tokens.map(async (token) => {
+        const { platform } = (await storage.get(token)) ?? {}
+        return platform ? { token, platform } : { token }
+      })
+    )
+    const { deviceNotRegisteredTokens } = await this.deps.pushClient.send(targets)
     await Promise.all(deviceNotRegisteredTokens.map((t) => storage.delete(t)))
   }
 }

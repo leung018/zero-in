@@ -63,10 +63,15 @@ async function registerAppBlockTogglingTask() {
 }
 
 async function triggerAppBlockTogglingImpl() {
+  log.info('Run started')
   await cancelNotification()
 
   const service = newAppBlockTogglingService()
   const scheduleSpan = await service.run()
+  log.info('Run finished. scheduleSpan:', {
+    start: scheduleSpan?.start.toISOString(),
+    end: scheduleSpan?.end.toISOString()
+  })
 
   if (scheduleSpan) {
     await scheduleNotificationAtScheduleEnd(scheduleSpan.end)

@@ -6,6 +6,9 @@ import { newTimerConfigStorageService } from './domain/timer/config/storage'
 import { newFocusSessionRecordsStorageService } from './domain/timer/record/storage'
 import { newTimerStateStorageService } from './domain/timer/state/storage'
 import { appBlocker } from './modules/app-blocker'
+import { createLogger } from './utils/logger'
+
+const log = createLogger('Factories')
 
 /**
  * This file contains factory methods for services that depend on real native modules.
@@ -28,6 +31,11 @@ export function newAppBlockTogglingService() {
       getTimerInfo: async () => {
         const timerState = await timerStateStorageService.get()
         const timerConfig = await timerConfigStorageService.get()
+        log.info('Read timer state:', {
+          stage: timerState?.stage,
+          isRunning: timerState?.isRunning(),
+          remainingMs: timerState?.remaining().totalMilliseconds
+        })
 
         return {
           timerStage: timerState?.stage || TimerStage.FOCUS,
