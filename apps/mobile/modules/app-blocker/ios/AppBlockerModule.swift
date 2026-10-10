@@ -64,6 +64,7 @@ public class AppBlockerModule: Module {
     }
 
     AsyncFunction("blockApps") { (promise: Promise) in
+      NSLog("[AppBlocker] blockApps called. hasSelection=\(SelectionStore.shared.selection != nil)")
       if let selection = SelectionStore.shared.selection {
         let store = ManagedSettingsStore()
         store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy
@@ -75,6 +76,7 @@ public class AppBlockerModule: Module {
     }
 
     AsyncFunction("unblockApps") { (promise: Promise) in
+      NSLog("[AppBlocker] unblockApps called")
       let store = ManagedSettingsStore()
       store.shield.applicationCategories = nil
       store.shield.applications = nil
@@ -85,6 +87,7 @@ public class AppBlockerModule: Module {
     AsyncFunction("setSchedule") { (startTime: Double, endTime: Double, promise: Promise) in
       let start = Date(timeIntervalSince1970: startTime / 1000.0)
       let end = Date(timeIntervalSince1970: endTime / 1000.0)
+      NSLog("[AppBlocker] setSchedule called. start=\(start) end=\(end) now=\(Date())")
 
       let center = DeviceActivityCenter()
 
@@ -137,6 +140,9 @@ public class AppBlockerModule: Module {
         // This handles cases where we set the schedule after 'start' has already passed.
         let now = Date()
         if start <= now, now < end {
+          NSLog(
+            "[AppBlocker] setSchedule applying shields immediately. hasSelection=\(SelectionStore.shared.selection != nil)"
+          )
           if let selection = SelectionStore.shared.selection {
             let store = ManagedSettingsStore()
             store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy
@@ -148,11 +154,13 @@ public class AppBlockerModule: Module {
 
         promise.resolve(nil)
       } catch {
+        NSLog("[AppBlocker] setSchedule failed: \(error)")
         promise.reject(error)
       }
     }
 
     AsyncFunction("clearSchedule") { (promise: Promise) in
+      NSLog("[AppBlocker] clearSchedule called")
       let center = DeviceActivityCenter()
 
       // Stop monitoring all potential schedules

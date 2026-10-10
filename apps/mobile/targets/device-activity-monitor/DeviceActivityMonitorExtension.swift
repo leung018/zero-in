@@ -1,10 +1,12 @@
 import DeviceActivity
 import FamilyControls
+import Foundation
 import ManagedSettings
 
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   override func intervalDidStart(for activity: DeviceActivityName) {
     super.intervalDidStart(for: activity)
+    NSLog("[AppBlockerMonitor] intervalDidStart activity=\(activity.rawValue) now=\(Date())")
 
     // "start" schedule triggers blocking
     if activity == .zeroInScheduleStart {
@@ -19,6 +21,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
   override func intervalDidEnd(for activity: DeviceActivityName) {
     super.intervalDidEnd(for: activity)
+    NSLog("[AppBlockerMonitor] intervalDidEnd activity=\(activity.rawValue) now=\(Date())")
     // Do nothing. Unblocking is handled by the start of the "end" schedule.
   }
 

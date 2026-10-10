@@ -9,7 +9,7 @@ export default function HomeScreen() {
         <View style={styles.hero}>
           <Text style={styles.heroIcon}>⏱</Text>
           <Text style={styles.heroTitle}>Zero In</Text>
-          <Text style={styles.heroSubtitle}>Focus, powered by your browser</Text>
+          <Text style={styles.heroSubtitle}>Limit distractions, browser to phone</Text>
         </View>
 
         <View style={commonStyles.card}>
