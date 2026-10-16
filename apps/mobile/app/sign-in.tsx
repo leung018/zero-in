@@ -1,6 +1,22 @@
-import { getAuth, GoogleAuthProvider, signInWithCredential } from '@react-native-firebase/auth'
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithCredential,
+  signInWithEmailAndPassword
+} from '@react-native-firebase/auth'
 import { Link } from 'expo-router'
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { useRef, useState } from 'react'
+import {
+  Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import GoogleSignInButton from '../components/google-sign-in-button'
 import GoogleSignInModule from '../modules/google-sign-in'
@@ -30,55 +46,134 @@ const handleGoogleSignIn = async () => {
   }
 }
 
+// Hidden email sign-in so Apple reviewers can use a demo account (Google sign-in isn't usable for them).
+// Reveal by tapping the title SECRET_TAP_COUNT times within SECRET_TAP_WINDOW_MS.
+const SECRET_TAP_COUNT = 5
+const SECRET_TAP_WINDOW_MS = 3000
+
+const handleEmailSignIn = async (email: string, password: string) => {
+  try {
+    await signInWithEmailAndPassword(getAuth(), email.trim(), password)
+  } catch (error) {
+    reportSignInError('signInWithEmailAndPassword', error)
+  }
+}
+
+const EmailSignInForm = () => {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const passwordRef = useRef<TextInput>(null)
+  const submit = () => handleEmailSignIn(email, password)
+
+  return (
+    <View style={styles.emailForm}>
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        autoCapitalize="none"
+        autoCorrect={false}
+        keyboardType="email-address"
+        returnKeyType="next"
+        submitBehavior="submit"
+        onSubmitEditing={() => passwordRef.current?.focus()}
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        ref={passwordRef}
+        style={styles.input}
+        placeholder="Password"
+        autoCapitalize="none"
+        secureTextEntry
+        returnKeyType="go"
+        onSubmitEditing={submit}
+        value={password}
+        onChangeText={setPassword}
+      />
+      <Pressable style={styles.emailButton} onPress={submit}>
+        <Text style={styles.emailButtonText}>Sign in with email</Text>
+      </Pressable>
+    </View>
+  )
+}
+
 const SignInScreen = () => {
+  const [showEmailForm, setShowEmailForm] = useState(false)
+  const tapTimes = useRef<number[]>([])
+  const scrollRef = useRef<ScrollView>(null)
+
+  const handleTitlePress = () => {
+    const now = Date.now()
+    tapTimes.current = [...tapTimes.current.filter((t) => now - t < SECRET_TAP_WINDOW_MS), now]
+    if (tapTimes.current.length >= SECRET_TAP_COUNT) {
+      tapTimes.current = []
+      setShowEmailForm(true)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title}>Welcome to Zero In</Text>
-            <Text style={styles.subtitle}>Sign in to unlock your full potential</Text>
-          </View>
-
-          {/* Info Card */}
-          <View style={styles.infoCard}>
-            <View style={styles.infoTitleRow}>
-              <View style={styles.iconContainer}>
-                <Text style={styles.icon}>⭐</Text>
-              </View>
-              <Text style={styles.infoTitle}>Limited Time Offer</Text>
+      <KeyboardAvoidingView style={styles.keyboardAvoider} behavior="padding">
+        <ScrollView
+          ref={scrollRef}
+          // Keyboard shrinks the ScrollView via KeyboardAvoidingView; keep the email sign-in button visible above it
+          onLayout={() => {
+            if (showEmailForm && Keyboard.isVisible()) scrollRef.current?.scrollToEnd()
+          }}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.content}>
+            {/* Header */}
+            <View style={styles.header}>
+              <Pressable onPress={handleTitlePress}>
+                <Text style={styles.title}>Welcome to Zero In</Text>
+              </Pressable>
+              <Text style={styles.subtitle}>Sign in to unlock your full potential</Text>
             </View>
-            <Text style={styles.infoText}>
-              Sign in to unlock{' '}
-              <Link href="https://zeroin.dev/premium" style={styles.link}>
-                premium features
-              </Link>
-              ! Enjoy a <Text style={styles.bold}>free trial</Text> during this promotion
-              <Text style={styles.muted}> (may end at any time)</Text>.
-            </Text>
-          </View>
 
-          {/* Google Sign-In Button */}
-          <View style={styles.buttonContainer}>
-            <GoogleSignInButton onPress={handleGoogleSignIn} />
-          </View>
+            {/* Info Card */}
+            <View style={styles.infoCard}>
+              <View style={styles.infoTitleRow}>
+                <View style={styles.iconContainer}>
+                  <Text style={styles.icon}>⭐</Text>
+                </View>
+                <Text style={styles.infoTitle}>Limited Time Offer</Text>
+              </View>
+              <Text style={styles.infoText}>
+                Sign in to unlock{' '}
+                <Link href="https://zeroin.dev/premium" style={styles.link}>
+                  premium features
+                </Link>
+                ! Enjoy a <Text style={styles.bold}>free trial</Text> during this promotion
+                <Text style={styles.muted}> (may end at any time)</Text>.
+              </Text>
+            </View>
 
-          {/* Terms and Privacy */}
-          <View style={styles.footer}>
-            <Text style={styles.termsText}>
-              By signing in, you agree to our{' '}
-              <Link href="https://zeroin.dev/tos" style={styles.footerLink}>
-                Terms of Service
-              </Link>{' '}
-              and{' '}
-              <Link href="https://zeroin.dev/privacy" style={styles.footerLink}>
-                Privacy Policy
-              </Link>
-            </Text>
+            {/* Google Sign-In Button */}
+            <View style={styles.buttonContainer}>
+              <GoogleSignInButton onPress={handleGoogleSignIn} />
+            </View>
+
+            {showEmailForm && <EmailSignInForm />}
+
+            {/* Terms and Privacy */}
+            <View style={styles.footer}>
+              <Text style={styles.termsText}>
+                By signing in, you agree to our{' '}
+                <Link href="https://zeroin.dev/tos" style={styles.footerLink}>
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link href="https://zeroin.dev/privacy" style={styles.footerLink}>
+                  Privacy Policy
+                </Link>
+              </Text>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }
@@ -87,6 +182,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f7fa'
+  },
+  keyboardAvoider: {
+    flex: 1
   },
   scrollContent: {
     flexGrow: 1,
@@ -177,6 +275,31 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginBottom: 24,
     alignItems: 'center'
+  },
+  emailForm: {
+    marginBottom: 24,
+    gap: 12
+  },
+  input: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 16,
+    color: '#1a1a1a'
+  },
+  emailButton: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center'
+  },
+  emailButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600'
   },
   footer: {
     paddingHorizontal: 8
