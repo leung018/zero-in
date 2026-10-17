@@ -6109,9 +6109,11 @@ __metadata:
     eslint: "npm:^9.39.1"
     eslint-config-expo: "npm:~56.0.4"
     expo: "npm:~56.0.23"
+    expo-apple-authentication: "npm:~56.0.4"
     expo-background-task: "npm:~56.0.27"
     expo-build-properties: "npm:~56.0.27"
     expo-constants: "npm:~56.0.27"
+    expo-crypto: "npm:~56.0.5"
     expo-doctor: "npm:^1.17.14"
     expo-font: "npm:~56.0.7"
     expo-haptics: "npm:~56.0.3"
@@ -9982,6 +9984,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-apple-authentication@npm:~56.0.4":
+  version: 56.0.4
+  resolution: "expo-apple-authentication@npm:56.0.4"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/aac654520e5f11c4dca795634f0dbf05dc093aab66ecdfcc0bd46b1edd1249a5f11d0806db1381178774ff0aebe94f24225553d22a2ca80f546afe1b1a9a6de9
+  languageName: node
+  linkType: hard
+
 "expo-application@npm:~56.0.3":
   version: 56.0.3
   resolution: "expo-application@npm:56.0.3"
@@ -10038,6 +10051,15 @@ __metadata:
     expo: "*"
     react-native: "*"
   checksum: 10c0/f20cebdda896ad49b7a64c78d4a0f7b38dfbd46bda03852615de15b09aef54246bc5582374c7caf3ec4adff9bb3d5d4c078b2c5169bae9392b43de7b01981ae1
+  languageName: node
+  linkType: hard
+
+"expo-crypto@npm:~56.0.5":
+  version: 56.0.5
+  resolution: "expo-crypto@npm:56.0.5"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/8d30889277cf308ac66bd9b14b9ffecb9ea73b44913848bfd776b6adf6bfca9b9cca86b79dd1ceb8dcf6c798dc0c56269cbeda528db00dfbd8eef2469bbf2bbc
   languageName: node
   linkType: hard
 
