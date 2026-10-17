@@ -37,6 +37,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       'com.apple.security.application-groups': ['group.dev.zeroin.mobile']
     },
     appleTeamId: 'YCDM23LPV6',
+    usesAppleSignIn: true,
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
       UIBackgroundModes: ['remote-notification']
@@ -59,6 +60,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // clashes (duplicate symbols) with useFrameworks: 'static' below.
     ['@react-native-firebase/app', { ios: { disableSPM: true } }],
     '@react-native-firebase/auth',
+    'expo-apple-authentication',
     [
       'expo-splash-screen',
       {
