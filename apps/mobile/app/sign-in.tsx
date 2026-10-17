@@ -1,15 +1,19 @@
 import {
   getAuth,
   GoogleAuthProvider,
+  OAuthProvider,
   signInWithCredential,
   signInWithEmailAndPassword
 } from '@react-native-firebase/auth'
+import * as AppleAuthentication from 'expo-apple-authentication'
+import * as Crypto from 'expo-crypto'
 import { Link } from 'expo-router'
 import { useRef, useState } from 'react'
 import {
   Alert,
   Keyboard,
   KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -43,6 +47,46 @@ const handleGoogleSignIn = async () => {
     await signInWithCredential(getAuth(), GoogleAuthProvider.credential(idToken))
   } catch (error) {
     reportSignInError(`signInWithCredential (idToken length ${idToken?.length ?? 'null'})`, error)
+  }
+}
+
+const handleAppleSignIn = async () => {
+  // Firebase verifies the token's nonce against the SHA-256 of this raw nonce
+  const rawNonce = Crypto.randomUUID()
+  const hashedNonce = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, rawNonce)
+
+  let appleCredential: AppleAuthentication.AppleAuthenticationCredential
+  try {
+    appleCredential = await AppleAuthentication.signInAsync({
+      requestedScopes: [
+        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+        AppleAuthentication.AppleAuthenticationScope.EMAIL
+      ],
+      nonce: hashedNonce
+    })
+  } catch (error: any) {
+    if (error?.code === 'ERR_REQUEST_CANCELED') return
+    reportSignInError('AppleAuthentication.signInAsync', error)
+    return
+  }
+
+  const { identityToken, fullName } = appleCredential
+  if (!identityToken) {
+    reportSignInError('AppleAuthentication.signInAsync', 'missing identityToken')
+    return
+  }
+
+  try {
+    await signInWithCredential(
+      getAuth(),
+      new OAuthProvider('apple.com').credential({
+        idToken: identityToken,
+        rawNonce,
+        fullName: fullName ?? undefined
+      })
+    )
+  } catch (error) {
+    reportSignInError('signInWithCredential (apple)', error)
   }
 }
 
@@ -151,8 +195,16 @@ const SignInScreen = () => {
               </Text>
             </View>
 
-            {/* Google Sign-In Button */}
             <View style={styles.buttonContainer}>
+              {Platform.OS === 'ios' && (
+                <AppleAuthentication.AppleAuthenticationButton
+                  buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+                  buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+                  cornerRadius={20}
+                  style={styles.appleButton}
+                  onPress={handleAppleSignIn}
+                />
+              )}
               <GoogleSignInButton onPress={handleGoogleSignIn} />
             </View>
 
@@ -274,7 +326,12 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginBottom: 24,
-    alignItems: 'center'
+    alignItems: 'center',
+    gap: 12
+  },
+  appleButton: {
+    width: 175,
+    height: 40
   },
   emailForm: {
     marginBottom: 24,
