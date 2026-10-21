@@ -9,7 +9,14 @@ public class AppBlockerModule: Module {
   /// re-reading it nor observing its publisher picks the change up. Asking DeviceActivity to
   /// schedule something is answered by the system daemon instead, so it reflects the current
   /// authorization. The probe activity is stopped right away and never fires.
+  ///
+  /// The probe alone is not enough: on a device that has never granted access it does not report
+  /// `.unauthorized`, so a non-approved cached status is trusted first.
   private static func isFamilyControlsAuthorized() -> Bool {
+    guard AuthorizationCenter.shared.authorizationStatus == .approved else {
+      return false
+    }
+
     let center = DeviceActivityCenter()
     let calendar = Calendar.current
     let dateComponents: Set<Calendar.Component> = [

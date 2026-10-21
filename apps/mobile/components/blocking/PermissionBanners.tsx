@@ -1,5 +1,9 @@
 import { AppBlockerPermissions } from '@/infra/app-block/permission'
-import { PermissionStatus, PermissionType } from '@/modules/app-blocker/src/permission'
+import {
+  isRecommendedPermission,
+  PermissionStatus,
+  PermissionType
+} from '@/modules/app-blocker/src/permission'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { ForegroundNotifier } from '../../infra/foreground-notifier'
@@ -31,17 +35,16 @@ const getPermissionDescription = (permissionType: PermissionType): string => {
   return descriptions[permissionType] || 'This permission is required for app blocking.'
 }
 
-const isRecommendedPermission = (permissionType: PermissionType): boolean =>
-  permissionType === PermissionType.IgnoreBatteryOptimizations
-
 export function PermissionBanners({
   appBlockerPermissions,
   foregroundNotifier,
-  triggerAppBlockToggling
+  triggerAppBlockToggling,
+  onRequiredPermissionsGrantedChange
 }: {
   appBlockerPermissions: AppBlockerPermissions
   foregroundNotifier: ForegroundNotifier
   triggerAppBlockToggling: () => Promise<void>
+  onRequiredPermissionsGrantedChange?: (granted: boolean) => void
 }) {
   const [permissionStatus, setPermissionStatus] = useState<PermissionStatus>(
     PermissionStatus.empty()
@@ -53,6 +56,7 @@ export function PermissionBanners({
       .getPermissionStatus()
       .then(async (status) => {
         setPermissionStatus(status)
+        onRequiredPermissionsGrantedChange?.(status.isRequiredPermissionsGranted)
 
         const newlyGranted = missingPermissionsRef.current.filter((permissionType) =>
           status.hasPermission(permissionType)
@@ -67,7 +71,7 @@ export function PermissionBanners({
       .catch((error) => {
         log.error('Failed to refresh permission status:', error)
       })
-  }, [appBlockerPermissions, triggerAppBlockToggling])
+  }, [appBlockerPermissions, triggerAppBlockToggling, onRequiredPermissionsGrantedChange])
 
   useEffect(() => {
     refreshPermissionStatus()

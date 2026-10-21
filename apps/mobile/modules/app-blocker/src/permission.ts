@@ -6,6 +6,10 @@ export enum PermissionType {
   IgnoreBatteryOptimizations = 'ignoreBatteryOptimizations'
 }
 
+export function isRecommendedPermission(type: PermissionType): boolean {
+  return type === PermissionType.IgnoreBatteryOptimizations
+}
+
 export interface PermissionDetails {
   [key: string]: boolean
 }
@@ -21,8 +25,8 @@ export class PermissionStatus {
 
   private constructor(public readonly details: PermissionDetails) {}
 
-  get isGranted(): boolean {
-    return Object.values(this.details).every((granted) => granted === true)
+  get isRequiredPermissionsGranted(): boolean {
+    return this.getMissingPermissions().every(isRecommendedPermission)
   }
 
   hasPermission(type: PermissionType): boolean {

@@ -14,7 +14,8 @@ export default function SelectAppsScreen() {
       <Stack.Screen
         options={{
           title: 'Select Blocked Apps',
-          headerShown: true
+          headerShown: true,
+          headerBackButtonDisplayMode: 'minimal'
         }}
       />
       <View style={styles.content}>
