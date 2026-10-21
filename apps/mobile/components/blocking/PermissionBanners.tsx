@@ -37,11 +37,13 @@ const isRecommendedPermission = (permissionType: PermissionType): boolean =>
 export function PermissionBanners({
   appBlockerPermissions,
   foregroundNotifier,
-  triggerAppBlockToggling
+  triggerAppBlockToggling,
+  onRequiredPermissionsGrantedChange
 }: {
   appBlockerPermissions: AppBlockerPermissions
   foregroundNotifier: ForegroundNotifier
   triggerAppBlockToggling: () => Promise<void>
+  onRequiredPermissionsGrantedChange?: (granted: boolean) => void
 }) {
   const [permissionStatus, setPermissionStatus] = useState<PermissionStatus>(
     PermissionStatus.empty()
@@ -53,6 +55,9 @@ export function PermissionBanners({
       .getPermissionStatus()
       .then(async (status) => {
         setPermissionStatus(status)
+        onRequiredPermissionsGrantedChange?.(
+          status.getMissingPermissions().every(isRecommendedPermission)
+        )
 
         const newlyGranted = missingPermissionsRef.current.filter((permissionType) =>
           status.hasPermission(permissionType)
@@ -67,7 +72,7 @@ export function PermissionBanners({
       .catch((error) => {
         log.error('Failed to refresh permission status:', error)
       })
-  }, [appBlockerPermissions, triggerAppBlockToggling])
+  }, [appBlockerPermissions, triggerAppBlockToggling, onRequiredPermissionsGrantedChange])
 
   useEffect(() => {
     refreshPermissionStatus()

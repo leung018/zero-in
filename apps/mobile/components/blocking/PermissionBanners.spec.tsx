@@ -61,6 +61,20 @@ describe('PermissionBanners', () => {
 
     expect(wrapper.queryByTestId(`permission-banner-${PermissionType.Overlay}`)).toBeNull()
   })
+
+  it('should report required permissions granted only after all of them are granted', async () => {
+    const { appBlockerPermissions, foregroundApp, onRequiredPermissionsGrantedChange } =
+      await renderPermissionBanners({
+        permissionDetails: { [PermissionType.FamilyControls]: false }
+      })
+
+    expect(onRequiredPermissionsGrantedChange).toHaveBeenLastCalledWith(false)
+
+    appBlockerPermissions.grant(PermissionType.FamilyControls)
+    await foregroundApp()
+
+    expect(onRequiredPermissionsGrantedChange).toHaveBeenLastCalledWith(true)
+  })
 })
 
 async function renderPermissionBanners({
@@ -76,12 +90,14 @@ async function renderPermissionBanners({
   })
   const foregroundNotifier = new FakeForegroundNotifier()
   const triggerAppBlockToggling = jest.fn(async () => {})
+  const onRequiredPermissionsGrantedChange = jest.fn()
 
   const wrapper: RenderAPI = render(
     <PermissionBanners
       appBlockerPermissions={appBlockerPermissions}
       foregroundNotifier={foregroundNotifier}
       triggerAppBlockToggling={triggerAppBlockToggling}
+      onRequiredPermissionsGrantedChange={onRequiredPermissionsGrantedChange}
     />
   )
 
@@ -95,5 +111,11 @@ async function renderPermissionBanners({
     })
   }
 
-  return { wrapper, appBlockerPermissions, foregroundApp, triggerAppBlockToggling }
+  return {
+    wrapper,
+    appBlockerPermissions,
+    foregroundApp,
+    triggerAppBlockToggling,
+    onRequiredPermissionsGrantedChange
+  }
 }
