@@ -65,12 +65,15 @@ describe('PermissionBanners', () => {
   it('should report required permissions granted only after all of them are granted', async () => {
     const { appBlockerPermissions, foregroundApp, onRequiredPermissionsGrantedChange } =
       await renderPermissionBanners({
-        permissionDetails: { [PermissionType.FamilyControls]: false }
+        permissionDetails: {
+          [PermissionType.Overlay]: false,
+          [PermissionType.IgnoreBatteryOptimizations]: false // This is a recommended permission, but not required.
+        }
       })
 
     expect(onRequiredPermissionsGrantedChange).toHaveBeenLastCalledWith(false)
 
-    appBlockerPermissions.grant(PermissionType.FamilyControls)
+    appBlockerPermissions.grant(PermissionType.Overlay)
     await foregroundApp()
 
     expect(onRequiredPermissionsGrantedChange).toHaveBeenLastCalledWith(true)
