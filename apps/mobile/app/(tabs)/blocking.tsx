@@ -5,6 +5,7 @@ import { WeeklySchedulesEditor } from '@/components/blocking/WeeklySchedulesEdit
 import { commonStyles } from '@/constants/styles'
 import { appBlocker } from '@/modules/app-blocker'
 import { useRouter } from 'expo-router'
+import { useState } from 'react'
 import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { newWeeklySchedulesStorageService } from '../../domain/schedules/storage'
@@ -14,6 +15,7 @@ import { appStateForegroundNotifier } from '../../infra/foreground-notifier'
 
 export default function BlockingScreen() {
   const router = useRouter()
+  const [requiredPermissionsGranted, setRequiredPermissionsGranted] = useState(true)
   // App Picker handled in separate screen
 
   return (
@@ -23,6 +25,7 @@ export default function BlockingScreen() {
           appBlockerPermissions={appBlocker}
           foregroundNotifier={appStateForegroundNotifier}
           triggerAppBlockToggling={triggerAppBlockToggling}
+          onRequiredPermissionsGrantedChange={setRequiredPermissionsGranted}
         />
 
         <View style={commonStyles.infoBox}>
@@ -46,9 +49,17 @@ export default function BlockingScreen() {
             </Text>
           </View>
 
+          {!requiredPermissionsGranted && (
+            <Text style={styles.permissionReminder}>Grant the required permissions first.</Text>
+          )}
+
           <TouchableOpacity
-            style={commonStyles.secondaryButton}
+            style={[
+              commonStyles.secondaryButton,
+              !requiredPermissionsGranted && styles.disabledButton
+            ]}
             onPress={() => router.push('/select-apps')}
+            disabled={!requiredPermissionsGranted}
             activeOpacity={0.8}
           >
             <Text style={commonStyles.secondaryButtonText}>Select Blocked Apps</Text>
@@ -79,5 +90,13 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 16,
     paddingBottom: 32
+  },
+  permissionReminder: {
+    fontSize: 13,
+    color: '#b91c1c',
+    marginBottom: 8
+  },
+  disabledButton: {
+    opacity: 0.5
   }
 })
