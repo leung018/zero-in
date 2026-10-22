@@ -1,7 +1,9 @@
 const OFFSCREEN_DOCUMENT_PATH = '/offscreen-sign-in.html'
 
+export type SignInProvider = 'google' | 'apple'
+
 // Require Manual testing
-export async function firebaseAuth(): Promise<any> {
+export async function firebaseAuth(provider: SignInProvider): Promise<any> {
   const offscreenContexts = await browser.runtime.getContexts({
     contextTypes: [browser.runtime.ContextType.OFFSCREEN_DOCUMENT]
   })
@@ -15,7 +17,7 @@ export async function firebaseAuth(): Promise<any> {
     await setupOffscreenDocument()
   }
 
-  return sendOffscreenAuthRequest().finally(browser.offscreen.closeDocument)
+  return sendOffscreenAuthRequest(provider).finally(browser.offscreen.closeDocument)
 }
 
 let creating: Promise<void> | null = null // A global promise to avoid concurrency issues
@@ -33,12 +35,13 @@ async function setupOffscreenDocument() {
   }
 }
 
-async function sendOffscreenAuthRequest() {
+async function sendOffscreenAuthRequest(provider: SignInProvider) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
     const auth = await browser.runtime.sendMessage({
       type: 'FIREBASE_AUTH',
-      target: 'offscreen'
+      target: 'offscreen',
+      provider
     })
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     auth?.name !== 'FirebaseError' ? resolve(auth) : reject(auth)

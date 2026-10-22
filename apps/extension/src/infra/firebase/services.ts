@@ -7,6 +7,7 @@ import {
   getAuth,
   GoogleAuthProvider,
   NextOrObserver,
+  OAuthProvider,
   onAuthStateChanged,
   setPersistence,
   signInWithCredential,
@@ -48,6 +49,14 @@ export class FirebaseServices {
 
   static async signInWithToken(token: string) {
     const credential = await signInWithCredential(auth, GoogleAuthProvider.credential(token))
+    await LocalStorageUserIdCache.setSignInUser(credential.user.uid)
+  }
+
+  static async signInWithAppleToken(idToken: string, rawNonce: string) {
+    const credential = await signInWithCredential(
+      auth,
+      new OAuthProvider('apple.com').credential({ idToken, rawNonce })
+    )
     await LocalStorageUserIdCache.setSignInUser(credential.user.uid)
   }
 

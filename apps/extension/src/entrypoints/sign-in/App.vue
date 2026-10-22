@@ -2,6 +2,7 @@
 import config from '@/config'
 import type { StorageInterface } from '@zero-in/shared/infra/storage/interface'
 import { ImportRecordStorageService } from '../../domain/import/record/storage'
+import type { SignInProvider } from '../../infra/browser/sign-in'
 import { FirebaseServices } from '../../infra/firebase/services'
 import { newLocalStorage } from '../../infra/storage/local-storage'
 import SignInProcessHelper from '../../pages/SignInProcessHelper.vue'
@@ -14,9 +15,14 @@ const signInProcessHelperRef = ref<InstanceType<typeof SignInProcessHelper> | nu
 const remoteStorage = shallowRef<StorageInterface | null>(null)
 const importRecordStorage = shallowRef<ImportRecordStorageService | null>(null)
 
-const pollAndFocusLoginPopup = () => {
+const LOGIN_POPUP_URL_PATTERNS: Record<SignInProvider, string> = {
+  google: '*://accounts.google.com/*',
+  apple: '*://appleid.apple.com/*'
+}
+
+const pollAndFocusLoginPopup = (provider: SignInProvider) => {
   const intervalId = setInterval(() => {
-    browser.tabs.query({ url: '*://accounts.google.com/*' }).then((tabs) => {
+    browser.tabs.query({ url: LOGIN_POPUP_URL_PATTERNS[provider] }).then((tabs) => {
       const targetTab = tabs.find(
         (tab) => tab.url && tab.url.includes(config.getFirebaseConfig().authDomain)
       )
@@ -29,11 +35,11 @@ const pollAndFocusLoginPopup = () => {
   }, 500)
 }
 
-const signIn = () => {
-  pollAndFocusLoginPopup() // In mac os, the popup might be behind other windows. So add this workaround to bring it to front.
+const signIn = (provider: SignInProvider) => {
+  pollAndFocusLoginPopup(provider) // In mac os, the popup might be behind other windows. So add this workaround to bring it to front.
   showProcessHelper.value = true
 
-  sendSignInWithRetry()
+  sendSignInWithRetry(provider)
 
   FirebaseServices.onAuthStateChanged(async (auth) => {
     if (auth) {
@@ -46,11 +52,12 @@ const signIn = () => {
   })
 }
 
-const sendSignInWithRetry = async () => {
+const sendSignInWithRetry = async (provider: SignInProvider) => {
   return retryUntilSuccess(
     async () => {
       await browser.runtime.sendMessage({
-        type: 'SIGN_IN'
+        type: 'SIGN_IN',
+        provider
       })
     },
     {
@@ -104,7 +111,7 @@ const onHelperProcessComplete = async () => {
       >.
     </p>
 
-    <button class="gsi-material-button" @click="signIn">
+    <button class="gsi-material-button" @click="signIn('google')">
       <div class="gsi-material-button-state"></div>
       <div class="gsi-material-button-content-wrapper">
         <div class="gsi-material-button-icon">
@@ -137,6 +144,16 @@ const onHelperProcessComplete = async () => {
         <span class="gsi-material-button-contents">Sign in with Google</span>
         <span style="display: none">Sign in with Google</span>
       </div>
+    </button>
+
+    <button class="apple-sign-in-button" @click="signIn('apple')">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="apple-sign-in-button-icon">
+        <path
+          fill="currentColor"
+          d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"
+        />
+      </svg>
+      <span>Sign in with Apple</span>
     </button>
   </div>
 
@@ -285,6 +302,33 @@ body {
 .gsi-material-button:not(:disabled):hover .gsi-material-button-state {
   background-color: #303030;
   opacity: 8%;
+}
+
+.apple-sign-in-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px auto 0;
+  height: 40px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 20px;
+  background-color: #000;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.apple-sign-in-button:hover {
+  background-color: #333;
+}
+
+.apple-sign-in-button-icon {
+  width: 16px;
+  height: 16px;
 }
 
 .message-box {
