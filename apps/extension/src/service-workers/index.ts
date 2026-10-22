@@ -1,6 +1,6 @@
 import { getStartOfNextMinute } from '@zero-in/shared/utils/date'
 import { BrowserNewTabService } from '../infra/browser/new-tab'
-import { firebaseAuth } from '../infra/browser/sign-in'
+import { firebaseAuth, SignInProvider } from '../infra/browser/sign-in'
 import { FirebaseServices } from '../infra/firebase/services'
 import { retryUntilSuccess } from '../utils/retry'
 import { BackgroundListener } from './listener'
@@ -26,9 +26,15 @@ export default function main() {
         sendResponse({ type: 'PONG' })
       }
       if (message.type === 'SIGN_IN') {
-        firebaseAuth()
+        const provider: SignInProvider = message.provider ?? 'google'
+        firebaseAuth(provider)
           .then((auth) => {
-            return FirebaseServices.signInWithToken(auth._tokenResponse.oauthIdToken).then(() => {
+            const { oauthIdToken, nonce } = auth._tokenResponse
+            const signIn =
+              provider === 'apple'
+                ? FirebaseServices.signInWithAppleToken(oauthIdToken, nonce)
+                : FirebaseServices.signInWithToken(oauthIdToken)
+            return signIn.then(() => {
               sendResponse({
                 type: 'SIGN_IN_SUCCESS',
                 payload: auth

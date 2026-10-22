@@ -41,7 +41,10 @@ const handleBrowserMessages: Parameters<typeof browser.runtime.onMessage.addList
   // Initialize the authentication flow in the iframed document. You must set the
   // second argument (targetOrigin) of the message in order for it to be successfully
   // delivered.
-  iframe.contentWindow?.postMessage({ initAuth: true }, new URL(config.getAuthUrl()).origin)
+  iframe.contentWindow?.postMessage(
+    { initAuth: true, provider: message.provider },
+    new URL(config.getAuthUrl()).origin
+  )
   return true
 }
 
