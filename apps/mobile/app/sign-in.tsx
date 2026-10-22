@@ -196,6 +196,7 @@ const SignInScreen = () => {
             </View>
 
             <View style={styles.buttonContainer}>
+              <GoogleSignInButton onPress={handleGoogleSignIn} />
               {Platform.OS === 'ios' && (
                 <AppleAuthentication.AppleAuthenticationButton
                   buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
@@ -205,7 +206,6 @@ const SignInScreen = () => {
                   onPress={handleAppleSignIn}
                 />
               )}
-              <GoogleSignInButton onPress={handleGoogleSignIn} />
             </View>
 
             {showEmailForm && <EmailSignInForm />}
