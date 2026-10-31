@@ -54,7 +54,7 @@ const getFirebaseConfig = () => ({
   // https://firebase.google.com/docs/projects/api-keys
   // Only key for firebase admin SDK should not be checked in but below is key for web app only
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyCKpyNci-eL6CgHmw0MUqjn8DtVJlaYqDI',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'zero-in-8211f.web.app',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'dev-auth.zeroin.dev',
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'zero-in-8211f',
   storageBucket:
     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'zero-in-8211f.firebasestorage.app',
