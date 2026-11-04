@@ -122,6 +122,7 @@ const onHelperProcessComplete = async () => {
               viewBox="0 0 48 48"
               xmlns:xlink="http://www.w3.org/1999/xlink"
               style="display: block"
+              aria-hidden="true"
             >
               <path
                 fill="#EA4335"
@@ -155,6 +156,7 @@ const onHelperProcessComplete = async () => {
           version="1.1"
           xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink"
+          aria-hidden="true"
         >
           <!-- Generator: Sketch 61 (89581) - https://sketch.com -->
           <title>Left White Logo Small</title>
