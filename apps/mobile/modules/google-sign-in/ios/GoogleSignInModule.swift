@@ -12,7 +12,7 @@ public class GoogleSignInModule: Module {
         let windowScene = UIApplication.shared.connectedScenes.first
         as? UIWindowScene,
         let rootViewController = windowScene.windows.first?
-        .rootViewController
+          .rootViewController
       else {
         promise.reject(
           Exception(

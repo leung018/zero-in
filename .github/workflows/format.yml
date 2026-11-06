@@ -21,4 +21,9 @@ jobs:
           brew install ktlint swiftformat
       - run: yarn install --immutable
       - name: Run Formatter Check
+        id: format-check
         run: yarn format-check
+      - name: Remind to upgrade local formatters
+        if: failure() && steps.format-check.outcome == 'failure'
+        run: |
+          echo "::warning title=Passes locally?::CI uses swiftformat $(swiftformat --version) and $(ktlint --version). Run: brew upgrade swiftformat ktlint, then yarn format, then commit."
