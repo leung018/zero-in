@@ -1,12 +1,10 @@
 import {
   getAuth,
-  GoogleAuthProvider,
-  OAuthProvider,
+  OAuthCredential,
   signInWithCredential,
   signInWithEmailAndPassword
 } from '@react-native-firebase/auth'
 import * as AppleAuthentication from 'expo-apple-authentication'
-import * as Crypto from 'expo-crypto'
 import { Link } from 'expo-router'
 import { useRef, useState } from 'react'
 import {
@@ -23,7 +21,11 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import GoogleSignInButton from '../components/google-sign-in-button'
-import GoogleSignInModule from '../modules/google-sign-in'
+import {
+  AppleCredentialResult,
+  getAppleCredential,
+  getGoogleCredential
+} from '../infra/firebase/auth-credentials'
 
 const reportSignInError = (step: string, error: unknown) => {
   console.error(`[sign-in] ${step} failed:`, error)
@@ -34,57 +36,37 @@ const reportSignInError = (step: string, error: unknown) => {
 }
 
 const handleGoogleSignIn = async () => {
-  let idToken: string
+  let credential: OAuthCredential | null
   try {
-    idToken = await GoogleSignInModule.signIn()
-  } catch (error: any) {
-    if (error?.code === 'USER_CANCELLED') return
+    credential = await getGoogleCredential()
+  } catch (error) {
     reportSignInError('GoogleSignInModule.signIn', error)
     return
   }
+  if (!credential) return
 
   try {
-    await signInWithCredential(getAuth(), GoogleAuthProvider.credential(idToken))
+    await signInWithCredential(getAuth(), credential)
   } catch (error) {
-    reportSignInError(`signInWithCredential (idToken length ${idToken?.length ?? 'null'})`, error)
+    reportSignInError(
+      `signInWithCredential (idToken length ${credential.idToken?.length ?? 'null'})`,
+      error
+    )
   }
 }
 
 const handleAppleSignIn = async () => {
-  // Firebase verifies the token's nonce against the SHA-256 of this raw nonce
-  const rawNonce = Crypto.randomUUID()
-  const hashedNonce = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, rawNonce)
-
-  let appleCredential: AppleAuthentication.AppleAuthenticationCredential
+  let result: AppleCredentialResult | null
   try {
-    appleCredential = await AppleAuthentication.signInAsync({
-      requestedScopes: [
-        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-        AppleAuthentication.AppleAuthenticationScope.EMAIL
-      ],
-      nonce: hashedNonce
-    })
-  } catch (error: any) {
-    if (error?.code === 'ERR_REQUEST_CANCELED') return
+    result = await getAppleCredential()
+  } catch (error) {
     reportSignInError('AppleAuthentication.signInAsync', error)
     return
   }
-
-  const { identityToken, fullName } = appleCredential
-  if (!identityToken) {
-    reportSignInError('AppleAuthentication.signInAsync', 'missing identityToken')
-    return
-  }
+  if (!result) return
 
   try {
-    await signInWithCredential(
-      getAuth(),
-      new OAuthProvider('apple.com').credential({
-        idToken: identityToken,
-        rawNonce,
-        fullName: fullName ?? undefined
-      })
-    )
+    await signInWithCredential(getAuth(), result.credential)
   } catch (error) {
     reportSignInError('signInWithCredential (apple)', error)
   }
