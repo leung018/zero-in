@@ -29,6 +29,14 @@ describe('Firestore security rules', () => {
     await assertFails(getDoc(ref))
   })
 
+  it('should denies write or delete if unauthenticated', async () => {
+    const unauthDb = testEnv.unauthenticatedContext().firestore()
+    const ref = doc(unauthDb, 'users/alice')
+
+    await assertFails(setDoc(ref, { name: 'Alice' }))
+    await assertFails(deleteDoc(ref))
+  })
+
   it('should allows a user to read their own document', async () => {
     const aliceDb = testEnv.authenticatedContext('alice').firestore()
 
