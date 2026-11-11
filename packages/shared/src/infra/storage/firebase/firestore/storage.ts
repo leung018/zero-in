@@ -22,6 +22,10 @@ export class FirestoreStorage implements RemoteStorage {
     return new FirestoreStorage(adapter, ['users', userId, 'pushTokens'])
   }
 
+  static createDeletionMarkerStorage({ adapter }: { adapter: FirestoreAdapter }): FirestoreStorage {
+    return new FirestoreStorage(adapter, ['deletedUsers'])
+  }
+
   constructor(
     private readonly adapter: FirestoreAdapter,
     private readonly pathPrefix: string[]
