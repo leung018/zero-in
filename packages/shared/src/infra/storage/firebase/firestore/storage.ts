@@ -55,7 +55,7 @@ export class FirestoreStorage implements RemoteStorage {
     return new FirestoreStorage(adapter, ['users', userId, collection])
   }
 
-  constructor(
+  private constructor(
     private readonly adapter: FirestoreAdapter,
     private readonly pathPrefix: string[]
   ) {}
