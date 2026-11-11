@@ -21,6 +21,19 @@ export class FirebaseServices {
     })
   }
 
+  static async getAllFirestoreUserStorages(): Promise<FirestoreStorage[]> {
+    return FirestoreStorage.createAllUserStorages({
+      userId: this.requireUserId(),
+      adapter: new ReactNativeFirestoreAdapter(firestore)
+    })
+  }
+
+  static async getFirestoreDeletionMarkerStorage(): Promise<FirestoreStorage> {
+    return FirestoreStorage.createDeletionMarkerStorage({
+      adapter: new ReactNativeFirestoreAdapter(firestore)
+    })
+  }
+
   private static requireUserId(): string {
     const userId = auth.currentUser?.uid
     if (!userId) {
