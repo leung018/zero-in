@@ -1,3 +1,4 @@
+import { FakeAccountAuth } from '@/infra/account/interface'
 import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { RemoteStorage } from '@zero-in/shared/infra/storage/interface'
 import { AccountDeletionService } from './account-deletion'
@@ -23,6 +24,14 @@ describe('AccountDeletionService', () => {
     })
   })
 
+  it('should delete the user', async () => {
+    const { service, accountAuth } = setup()
+
+    await service.deleteAccount()
+
+    expect(accountAuth.isUserDeleted()).toBe(true)
+  })
+
   it('should delete every key in every user storage', async () => {
     const appStorage = await createStorageWithKeys(['timerState', 'weeklySchedules'])
     const tokenStorage = await createStorageWithKeys(['device-1'])
@@ -44,12 +53,14 @@ function setup({
   userStorages?: RemoteStorage[]
   deletionMarkerStorage?: RemoteStorage
 } = {}) {
+  const accountAuth = new FakeAccountAuth()
   const service = AccountDeletionService.createFake({
     userId,
+    accountAuth,
     userStorages,
     deletionMarkerStorage
   })
-  return { service }
+  return { service, accountAuth }
 }
 
 async function createStorageWithKeys(keys: string[]): Promise<FakeRemoteStorage> {
