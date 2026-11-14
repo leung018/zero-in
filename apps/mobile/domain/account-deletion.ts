@@ -23,6 +23,8 @@ export class AccountDeletionService {
   constructor(private readonly deps: AccountDeletionDeps) {}
 
   async deleteAccount(): Promise<void> {
+    if ((await this.deps.accountAuth.reauthenticate()) === 'cancelled') return
+
     await this.deps.deletionMarkerStorage.set(this.deps.userId, { deletedAt: new Date().getTime() })
 
     for (const storage of this.deps.userStorages) {
