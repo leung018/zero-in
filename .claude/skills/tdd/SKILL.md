@@ -62,19 +62,30 @@ Ask: "What should the public interface look like? Which behaviors are most impor
 Write ONE test that confirms ONE thing about the system:
 
 ```
-RED:   Write test for first behavior → test fails
+RED:   Write test for first behavior → stub until it compiles → run → test fails on assertion
 GREEN: Write minimal code to pass → test passes
 STOP:  Ask the author to review this cycle, and wait.
 ```
 
 This is your tracer bullet - proves the path works end-to-end.
 
+#### What counts as RED
+
+Failures from a missing module, class or method are **NOT** RED. Don't start GREEN on them.
+
+1. Write the test.
+2. Run the test. If it fails on missing module/class/method, add the minimal stub: empty class, method returning a dummy value that can't be the right answer (test expects `false` → return `true`; expects `[]` → return a non-empty list). No real logic. Re-run.
+3. Test must fail on an **assertion** (expected vs. actual mismatch), not a thrown error or import failure.
+4. Show the failing output. Only then start GREEN.
+
+If the test still passes, the test is wrong or the behavior already exists - fix the test or pick another behavior.
+
 ### 3. Incremental Loop
 
 For each remaining behavior:
 
 ```
-RED:   Write next test → fails
+RED:   Write next test → stub until it compiles → run → fails on assertion
 GREEN: Minimal code to pass → passes
 STOP:  Ask the author to review this cycle, and wait.
 ```
@@ -82,6 +93,7 @@ STOP:  Ask the author to review this cycle, and wait.
 Rules:
 
 - One test at a time
+- RED = compiles + runs + fails on assertion. Never GREEN from a compile/module error
 - Only enough code to pass current test
 - Don't anticipate future tests
 - Keep tests focused on observable behavior
@@ -102,6 +114,7 @@ After all tests pass, look for [refactor candidates](refactoring.md):
 ## Checklist Per Cycle
 
 ```
+[ ] Saw test compile, run, and fail on assertion before GREEN
 [ ] Test describes behavior, not implementation
 [ ] Test uses public interface only
 [ ] Test would survive internal refactor
