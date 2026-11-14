@@ -1,4 +1,4 @@
-import { FakeAccountAuth } from '@/infra/account/interface'
+import { FakeAccountAuth, ReauthResult } from '@/infra/account/interface'
 import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { RemoteStorage } from '@zero-in/shared/infra/storage/interface'
 import { AccountDeletionService } from './account-deletion'
@@ -32,6 +32,22 @@ describe('AccountDeletionService', () => {
     expect(accountAuth.isUserDeleted()).toBe(true)
   })
 
+  it('should not change anything when reauthentication is cancelled', async () => {
+    const userStorage = await createStorageWithKeys(['timerState'])
+    const deletionMarkerStorage = FakeRemoteStorage.create()
+    const { service, accountAuth } = setup({
+      reauthResult: 'cancelled',
+      userStorages: [userStorage],
+      deletionMarkerStorage
+    })
+
+    await service.deleteAccount()
+
+    expect(accountAuth.isUserDeleted()).toBe(false)
+    expect(await userStorage.getKeys()).toEqual(['timerState'])
+    expect(await deletionMarkerStorage.getKeys()).toEqual([])
+  })
+
   it('should delete every key in every user storage', async () => {
     const appStorage = await createStorageWithKeys(['timerState', 'weeklySchedules'])
     const tokenStorage = await createStorageWithKeys(['device-1'])
@@ -46,14 +62,16 @@ describe('AccountDeletionService', () => {
 
 function setup({
   userId = 'user-1',
+  reauthResult = 'reauthenticated',
   userStorages = [FakeRemoteStorage.create()],
   deletionMarkerStorage = FakeRemoteStorage.create()
 }: {
   userId?: string
+  reauthResult?: ReauthResult
   userStorages?: RemoteStorage[]
   deletionMarkerStorage?: RemoteStorage
 } = {}) {
-  const accountAuth = new FakeAccountAuth()
+  const accountAuth = new FakeAccountAuth({ reauthResult })
   const service = AccountDeletionService.createFake({
     userId,
     accountAuth,
