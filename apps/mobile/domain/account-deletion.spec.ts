@@ -3,6 +3,26 @@ import { RemoteStorage } from '@zero-in/shared/infra/storage/interface'
 import { AccountDeletionService } from './account-deletion'
 
 describe('AccountDeletionService', () => {
+  beforeEach(() => {
+    jest.useFakeTimers()
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  it('should write a deletion marker with the deletion time under the user id', async () => {
+    jest.setSystemTime(new Date('2026-01-05T08:00:00'))
+    const deletionMarkerStorage = FakeRemoteStorage.create()
+    const { service } = setup({ userId: 'user-1', deletionMarkerStorage })
+
+    await service.deleteAccount()
+
+    expect(await deletionMarkerStorage.get('user-1')).toEqual({
+      deletedAt: new Date('2026-01-05T08:00:00').getTime()
+    })
+  })
+
   it('should delete every key in every user storage', async () => {
     const appStorage = await createStorageWithKeys(['timerState', 'weeklySchedules'])
     const tokenStorage = await createStorageWithKeys(['device-1'])
@@ -16,11 +36,19 @@ describe('AccountDeletionService', () => {
 })
 
 function setup({
-  userStorages = [FakeRemoteStorage.create()]
+  userId = 'user-1',
+  userStorages = [FakeRemoteStorage.create()],
+  deletionMarkerStorage = FakeRemoteStorage.create()
 }: {
+  userId?: string
   userStorages?: RemoteStorage[]
+  deletionMarkerStorage?: RemoteStorage
 } = {}) {
-  const service = AccountDeletionService.createFake({ userStorages })
+  const service = AccountDeletionService.createFake({
+    userId,
+    userStorages,
+    deletionMarkerStorage
+  })
   return { service }
 }
 
