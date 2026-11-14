@@ -32,6 +32,18 @@ describe('AccountDeletionService', () => {
     expect(accountAuth.isUserDeleted()).toBe(true)
   })
 
+  it('should return deleted when the account is deleted', async () => {
+    const { service } = setup()
+
+    expect(await service.deleteAccount()).toBe('deleted')
+  })
+
+  it('should return cancelled when reauthentication is cancelled', async () => {
+    const { service } = setup({ reauthResult: 'cancelled' })
+
+    expect(await service.deleteAccount()).toBe('cancelled')
+  })
+
   it('should not change anything when reauthentication is cancelled', async () => {
     const userStorage = await createStorageWithKeys(['timerState'])
     const deletionMarkerStorage = FakeRemoteStorage.create()

@@ -2,6 +2,8 @@ import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { RemoteStorage } from '@zero-in/shared/infra/storage/interface'
 import { AccountAuth, FakeAccountAuth } from '../infra/account/interface'
 
+export type AccountDeletionResult = 'deleted' | 'cancelled'
+
 type AccountDeletionDeps = {
   userId: string
   accountAuth: AccountAuth
@@ -22,8 +24,8 @@ export class AccountDeletionService {
 
   constructor(private readonly deps: AccountDeletionDeps) {}
 
-  async deleteAccount(): Promise<void> {
-    if ((await this.deps.accountAuth.reauthenticate()) === 'cancelled') return
+  async deleteAccount(): Promise<AccountDeletionResult> {
+    if ((await this.deps.accountAuth.reauthenticate()) === 'cancelled') return 'cancelled'
 
     await this.deps.deletionMarkerStorage.set(this.deps.userId, { deletedAt: new Date().getTime() })
 
@@ -34,5 +36,6 @@ export class AccountDeletionService {
     }
 
     await this.deps.accountAuth.deleteUser()
+    return 'deleted'
   }
 }
