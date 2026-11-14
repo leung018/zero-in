@@ -2,13 +2,17 @@ import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { RemoteStorage } from '@zero-in/shared/infra/storage/interface'
 
 type AccountDeletionDeps = {
+  userId: string
   userStorages: RemoteStorage[]
+  deletionMarkerStorage: RemoteStorage
 }
 
 export class AccountDeletionService {
   static createFake(overrides: Partial<AccountDeletionDeps> = {}): AccountDeletionService {
     return new AccountDeletionService({
+      userId: 'user-1',
       userStorages: [FakeRemoteStorage.create()],
+      deletionMarkerStorage: FakeRemoteStorage.create(),
       ...overrides
     })
   }
@@ -16,6 +20,8 @@ export class AccountDeletionService {
   constructor(private readonly deps: AccountDeletionDeps) {}
 
   async deleteAccount(): Promise<void> {
+    await this.deps.deletionMarkerStorage.set(this.deps.userId, { deletedAt: new Date().getTime() })
+
     for (const storage of this.deps.userStorages) {
       for (const key of await storage.getKeys()) {
         await storage.delete(key)
