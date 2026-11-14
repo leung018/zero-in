@@ -29,6 +29,14 @@ describe('Firestore security rules', () => {
     await assertFails(getDoc(ref))
   })
 
+  it('should denies write or delete if unauthenticated', async () => {
+    const unauthDb = testEnv.unauthenticatedContext().firestore()
+    const ref = doc(unauthDb, 'users/alice')
+
+    await assertFails(setDoc(ref, { name: 'Alice' }))
+    await assertFails(deleteDoc(ref))
+  })
+
   it('should allows a user to read their own document', async () => {
     const aliceDb = testEnv.authenticatedContext('alice').firestore()
 
@@ -77,5 +85,63 @@ describe('Firestore security rules', () => {
 
     ref = doc(bobDb, 'users/alice/profile/info')
     await assertFails(deleteDoc(ref))
+  })
+})
+
+describe('Deletion marker rules', () => {
+  async function createDeletionMarker(uid) {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), `deletedUsers/${uid}`), {})
+    })
+  }
+
+  it('should allow a user to create their own deletion marker', async () => {
+    const carolDb = testEnv.authenticatedContext('carol').firestore()
+
+    await assertSucceeds(setDoc(doc(carolDb, 'deletedUsers/carol'), {}))
+  })
+
+  it('should allow a user to overwrite their own deletion marker', async () => {
+    await createDeletionMarker('dave')
+    const daveDb = testEnv.authenticatedContext('dave').firestore()
+
+    await assertSucceeds(setDoc(doc(daveDb, 'deletedUsers/dave'), {}))
+  })
+
+  it('should deny a user from deleting their own deletion marker', async () => {
+    await createDeletionMarker('dave')
+    const daveDb = testEnv.authenticatedContext('dave').firestore()
+
+    await assertFails(deleteDoc(doc(daveDb, 'deletedUsers/dave')))
+  })
+
+  it("should deny a user from creating another user's deletion marker", async () => {
+    const bobDb = testEnv.authenticatedContext('bob').firestore()
+
+    await assertFails(setDoc(doc(bobDb, 'deletedUsers/alice'), {}))
+  })
+
+  it('should deny a user from writing their own data after their deletion marker exists', async () => {
+    await createDeletionMarker('erin')
+    const erinDb = testEnv.authenticatedContext('erin').firestore()
+
+    await assertFails(setDoc(doc(erinDb, 'users/erin'), { name: 'Erin' }))
+    await assertFails(setDoc(doc(erinDb, 'users/erin/application/timerState'), { remaining: 1 }))
+  })
+
+  it('should allow a user to delete their own data after their deletion marker exists', async () => {
+    await createDeletionMarker('frank')
+    const frankDb = testEnv.authenticatedContext('frank').firestore()
+
+    await assertSucceeds(deleteDoc(doc(frankDb, 'users/frank')))
+    await assertSucceeds(deleteDoc(doc(frankDb, 'users/frank/application/timerState')))
+  })
+
+  it('should allow a user to read their own data after their deletion marker exists', async () => {
+    await createDeletionMarker('grace')
+    const graceDb = testEnv.authenticatedContext('grace').firestore()
+
+    await assertSucceeds(getDoc(doc(graceDb, 'users/grace')))
+    await assertSucceeds(getDoc(doc(graceDb, 'users/grace/application/timerState')))
   })
 })

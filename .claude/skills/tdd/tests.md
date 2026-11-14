@@ -20,7 +20,8 @@ Characteristics:
 - Uses public API only
 - Survives internal refactors
 - Describes WHAT, not HOW
-- One logical assertion per test
+- One behavior per test (one when → one then). Multiple assertions OK if they verify that behavior's outcome. Need "and" in the test name → split into two tests
+- Complete and concise: body shows everything needed to understand it, nothing irrelevant. Prefer a bit of duplication (DAMP) over hiding key inputs in shared setup
 
 ## Object and Fake Helpers
 
