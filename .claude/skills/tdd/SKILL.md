@@ -84,7 +84,7 @@ If the test still passes, the test is wrong or the behavior already exists - fix
 
 At each STOP, judge if the cycle is worth committing:
 
-- Worth it: tests green, one coherent behavior added → suggest a one-line msg in repo style (short, imperative, e.g. `Add createAllUserStorages`)
+- Worth it: tests green, one coherent behavior added → suggest a one-line msg in repo style (imperative, ≤50 chars, e.g. `Add createAllUserStorages`)
 - Not worth it: too small or incomplete on its own → say so and suggest folding into next cycle
 - Refactor steps get their own commit, never mixed with new behavior
 - Only suggest. Don't commit unless the author asks
