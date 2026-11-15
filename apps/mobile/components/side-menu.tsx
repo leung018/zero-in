@@ -14,6 +14,7 @@ import {
   View
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { newAccountDeletionService } from '../factories'
 
 type SideMenuProps = {
   visible: boolean
@@ -62,6 +63,33 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
     }
   }
 
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      'Delete Account?',
+      "This permanently deletes your account and all its data, including data synced with the browser extension. This can't be undone.",
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: deleteAccount }
+      ]
+    )
+  }
+
+  const deleteAccount = async () => {
+    try {
+      const service = await newAccountDeletionService()
+      if ((await service.deleteAccount()) === 'deleted') {
+        onClose()
+        Alert.alert('Account Deleted', 'Your account and data have been deleted.')
+      }
+    } catch (error) {
+      console.error('Error deleting account:', error)
+      Alert.alert(
+        'Delete Account Error',
+        'An error occurred while deleting your account. Please try again.'
+      )
+    }
+  }
+
   return (
     <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
       <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]}>
@@ -96,6 +124,11 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
           <Pressable style={styles.item} onPress={handleSignOut}>
             <Ionicons name="log-out-outline" size={20} color="#dc3545" />
             <Text style={styles.itemDanger}>Sign Out</Text>
+          </Pressable>
+
+          <Pressable style={styles.item} onPress={handleDeleteAccount}>
+            <Ionicons name="trash-outline" size={20} color="#dc3545" />
+            <Text style={styles.itemDanger}>Delete Account</Text>
           </Pressable>
 
           {/* Future items can be added here and navigate with expo-router */}

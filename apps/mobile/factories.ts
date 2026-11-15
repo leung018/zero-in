@@ -1,10 +1,14 @@
+import { getAuth } from '@react-native-firebase/auth'
 import { TimerStage } from '../../packages/shared/src/domain/timer/stage'
+import { AccountDeletionService } from './domain/account-deletion'
 import { AppBlockTogglingService } from './domain/app-block-toggling'
 import { newWeeklySchedulesStorageService } from './domain/schedules/storage'
 import { newTimerBasedBlockingRulesStorageService } from './domain/timer-based-blocking/storage'
 import { newTimerConfigStorageService } from './domain/timer/config/storage'
 import { newFocusSessionRecordsStorageService } from './domain/timer/record/storage'
 import { newTimerStateStorageService } from './domain/timer/state/storage'
+import { FirebaseAccountAuth } from './infra/account/firebase-account-auth'
+import { FirebaseServices } from './infra/firebase/services'
 import { appBlocker } from './modules/app-blocker'
 import { createLogger } from './utils/logger'
 
@@ -47,5 +51,19 @@ export function newAppBlockTogglingService() {
       }
     },
     appBlocker
+  })
+}
+
+export async function newAccountDeletionService(): Promise<AccountDeletionService> {
+  const userId = getAuth().currentUser?.uid
+  if (!userId) {
+    throw new Error('User not authenticated')
+  }
+
+  return new AccountDeletionService({
+    userId,
+    accountAuth: new FirebaseAccountAuth(),
+    userStorages: await FirebaseServices.getAllFirestoreUserStorages(),
+    deletionMarkerStorage: await FirebaseServices.getFirestoreDeletionMarkerStorage()
   })
 }
