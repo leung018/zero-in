@@ -64,7 +64,7 @@ Write ONE test that confirms ONE thing about the system:
 ```
 RED:   Write test for first behavior → stub until it compiles → run → test fails on assertion
 GREEN: Write minimal code to pass → test passes
-STOP:  Ask the author to review this cycle, and wait.
+STOP:  Ask the author to review this cycle, suggest a commit msg if worth it, and wait.
 ```
 
 This is your tracer bullet - proves the path works end-to-end.
@@ -80,6 +80,15 @@ Failures from a missing module, class or method are **NOT** RED. Don't start GRE
 
 If the test still passes, the test is wrong or the behavior already exists - fix the test or pick another behavior.
 
+#### Commit suggestion
+
+At each STOP, judge if the cycle is worth committing:
+
+- Worth it: tests green, one coherent behavior added → suggest a one-line msg in repo style (short, imperative, e.g. `Add createAllUserStorages`)
+- Not worth it: too small or incomplete on its own → say so and suggest folding into next cycle
+- Refactor steps get their own commit, never mixed with new behavior
+- Only suggest. Don't commit unless the author asks
+
 ### 3. Incremental Loop
 
 For each remaining behavior:
@@ -87,7 +96,7 @@ For each remaining behavior:
 ```
 RED:   Write next test → stub until it compiles → run → fails on assertion
 GREEN: Minimal code to pass → passes
-STOP:  Ask the author to review this cycle, and wait.
+STOP:  Ask the author to review this cycle, suggest a commit msg if worth it, and wait.
 ```
 
 Rules:
@@ -107,7 +116,7 @@ After all tests pass, look for [refactor candidates](refactoring.md):
 - [ ] Deepen modules (move complexity behind simple interfaces)
 - [ ] Apply SOLID principles where natural
 - [ ] Consider what new code reveals about existing code
-- [ ] Run tests after each refactor step
+- [ ] Run tests after each refactor step, then suggest a separate commit msg
 
 **Never refactor while RED.** Get to GREEN first.
 
@@ -121,5 +130,5 @@ After all tests pass, look for [refactor candidates](refactoring.md):
 [ ] Code is minimal for this test
 [ ] No speculative features added
 [ ] Objects and fakes come from a helper that receives only the values the test cares about
-[ ] Stopped and asked the author to review this cycle
+[ ] Stopped, asked the author to review, and suggested a commit msg (or why not worth it)
 ```
