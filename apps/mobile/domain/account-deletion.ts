@@ -32,13 +32,17 @@ export class AccountDeletionService {
     // that would be left behind after the user is deleted.
     await this.deps.deletionMarkerStorage.set(this.deps.userId, { deletedAt: Date.now() })
 
+    await this.deleteAllUserData()
+
+    await this.deps.accountAuth.deleteUser()
+    return 'deleted'
+  }
+
+  private async deleteAllUserData(): Promise<void> {
     for (const storage of this.deps.userStorages) {
       for (const key of await storage.getKeys()) {
         await storage.delete(key)
       }
     }
-
-    await this.deps.accountAuth.deleteUser()
-    return 'deleted'
   }
 }
