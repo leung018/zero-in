@@ -29,7 +29,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // TODO: Create a separate bundle identifier for iOS development (like Android) in the future if needed.
     //       When doing so, note that only the bundle identifier with Family Controls capability
     //       was created on the Apple Developer Console — other configurations may also need to be set up.
-    supportsTablet: true,
+    supportsTablet: false,
     bundleIdentifier: 'dev.zeroin.mobile',
     googleServicesFile: process.env.GOOGLE_SERVICES_PLIST || 'GoogleService-Info.plist',
     entitlements: {
