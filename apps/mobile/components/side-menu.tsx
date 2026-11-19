@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { getAuth, signOut } from '@react-native-firebase/auth'
 import Constants from 'expo-constants'
 import { useRouter } from 'expo-router'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Alert,
   Animated,
@@ -15,6 +15,7 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { newAccountDeletionService } from '../factories'
+import { PasswordPromptModal } from './password-prompt-modal'
 
 type SideMenuProps = {
   visible: boolean
@@ -24,6 +25,9 @@ type SideMenuProps = {
 export function SideMenu({ visible, onClose }: SideMenuProps) {
   const router = useRouter()
   const slide = useMemo(() => new Animated.Value(0), [])
+  const [resolvePassword, setResolvePassword] = useState<
+    ((password: string | null) => void) | null
+  >(null)
 
   useEffect(() => {
     Animated.timing(slide, {
@@ -74,9 +78,17 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
     )
   }
 
+  const promptPassword = () =>
+    new Promise<string | null>((resolve) => setResolvePassword(() => resolve))
+
+  const answerPasswordPrompt = (password: string | null) => {
+    resolvePassword?.(password)
+    setResolvePassword(null)
+  }
+
   const deleteAccount = async () => {
     try {
-      const service = await newAccountDeletionService()
+      const service = await newAccountDeletionService({ promptPassword })
       if ((await service.deleteAccount()) === 'deleted') {
         onClose()
         Alert.alert('Account Deleted', 'Your account and data have been deleted.')
@@ -136,6 +148,13 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
           {buildInfo && <Text style={styles.buildInfo}>Build: {buildInfo}</Text>}
         </Animated.View>
       </SafeAreaView>
+
+      {resolvePassword && (
+        <PasswordPromptModal
+          onSubmit={answerPasswordPrompt}
+          onCancel={() => answerPasswordPrompt(null)}
+        />
+      )}
     </View>
   )
 }

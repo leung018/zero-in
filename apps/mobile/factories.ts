@@ -10,6 +10,7 @@ import { newTimerStateStorageService } from './domain/timer/state/storage'
 import { FirebaseAccountAuth } from './infra/account/firebase-account-auth'
 import {
   AppleSignInProvider,
+  EmailSignInProvider,
   GoogleSignInProvider,
   SignInProvider
 } from './infra/account/sign-in-provider'
@@ -59,7 +60,13 @@ export function newAppBlockTogglingService() {
   })
 }
 
-export async function newAccountDeletionService(): Promise<AccountDeletionService> {
+type PromptPassword = () => Promise<string | null>
+
+export async function newAccountDeletionService({
+  promptPassword
+}: {
+  promptPassword: PromptPassword
+}): Promise<AccountDeletionService> {
   const user = getAuth().currentUser
   if (!user) {
     throw new Error('User not authenticated')
@@ -67,13 +74,16 @@ export async function newAccountDeletionService(): Promise<AccountDeletionServic
 
   return new AccountDeletionService({
     userId: user.uid,
-    accountAuth: new FirebaseAccountAuth({ user, signInProvider: newSignInProvider(user) }),
+    accountAuth: new FirebaseAccountAuth({
+      user,
+      signInProvider: newSignInProvider(user, promptPassword)
+    }),
     userStorages: await FirebaseServices.getAllFirestoreUserStorages(),
     deletionMarkerStorage: await FirebaseServices.getFirestoreDeletionMarkerStorage()
   })
 }
 
-function newSignInProvider(user: User): SignInProvider {
+function newSignInProvider(user: User, promptPassword: PromptPassword): SignInProvider {
   const providerId = user.providerData[0]?.providerId
 
   switch (providerId) {
@@ -81,6 +91,9 @@ function newSignInProvider(user: User): SignInProvider {
       return new GoogleSignInProvider()
     case 'apple.com':
       return new AppleSignInProvider()
+    case 'password':
+      if (!user.email) throw new Error('Email sign-in user has no email')
+      return new EmailSignInProvider({ email: user.email, promptPassword })
     default:
       throw new Error(`Unsupported sign-in provider: ${providerId}`)
   }
