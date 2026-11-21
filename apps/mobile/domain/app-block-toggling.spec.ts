@@ -1,4 +1,4 @@
-import { BlockingState, FakeAppBlocker } from '@/infra/app-block/interface'
+import { BlockingState } from '@/infra/app-block/interface'
 import { ScheduleSpan, WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
@@ -14,6 +14,7 @@ import {
 import { FocusSessionRecordsStorageService } from '../../../packages/shared/src/domain/timer/record/storage'
 import { TimerStage } from '../../../packages/shared/src/domain/timer/stage'
 import { AppBlockTogglingService } from './app-block-toggling'
+import { AppBlockerWrapper } from './app-blocker-wrapper'
 
 describe('AppBlockTogglingService', () => {
   beforeEach(() => {
@@ -600,11 +601,11 @@ async function runAppBlockToggling({
   const weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake()
   const focusSessionRecordsStorageService = FocusSessionRecordsStorageService.createFake()
   const timerBasedBlockingRulesStorageService = TimerBasedBlockingRulesStorageService.createFake()
-  const appBlocker = new FakeAppBlocker()
+  const appBlocker = AppBlockerWrapper.createFake()
   const togglingService = new AppBlockTogglingService({
     weeklySchedulesStorageService,
     focusSessionRecordsStorageService,
-    appBlocker,
+    appBlockerWrapper: appBlocker,
     timerInfoGetter: {
       getTimerInfo: () => Promise.resolve(timerInfo)
     },
