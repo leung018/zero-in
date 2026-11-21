@@ -3,19 +3,8 @@
 ## Top Instructions
 
 - Be extremely concise and sacrifice grammar for the sake of concision
-- Following TDD when adding new features, ONE test → ONE implementation → repeat. Stop after each cycle for manual approval before starting the next
-- In tests, construct objects/services via helper methods that accept only the values the test cares about, with reasonable defaults for everything else. Apply this to both plain data objects and service instantiation (including `createFake()`). Example:
-  ```typescript
-  // helper
-  function createContact(overrides: Partial<Contact> = {}): Contact {
-    return new Contact({ firstName: 'Grace', lastName: 'Hopper', phoneNumber: '555-123-4567', ...overrides })
-  }
-  // test
-  it('combines first and last name', () => {
-    const contact = createContact({ firstName: 'Ada', lastName: 'Lovelace' })
-    expect(contact.fullName()).toBe('Ada Lovelace')
-  })
-  ```
+- For new features or bug fixes, follow TDD per `.claude/skills/tdd/SKILL.md` (use the `tdd` skill if available): ONE test → ONE implementation → repeat. Stop after each cycle for manual approval before starting the next
+- In tests, build objects and services (incl. `createFake()`) via helpers that take only the values the test cares about, defaulting the rest. See `.claude/skills/tdd/tests.md` for examples.
 - Avoid comments if code or function names are self-explanatory. Comment only for non-obvious logic.
 - Don't mix refactoring with new code in the same change. Do one, stop for review, then the other.
 

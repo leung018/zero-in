@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { getAuth, signOut } from '@react-native-firebase/auth'
 import Constants from 'expo-constants'
 import { useRouter } from 'expo-router'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Alert,
   Animated,
@@ -14,6 +14,8 @@ import {
   View
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { newAccountDeletionService } from '../factories'
+import { PasswordPromptModal } from './password-prompt-modal'
 
 type SideMenuProps = {
   visible: boolean
@@ -23,6 +25,9 @@ type SideMenuProps = {
 export function SideMenu({ visible, onClose }: SideMenuProps) {
   const router = useRouter()
   const slide = useMemo(() => new Animated.Value(0), [])
+  const [resolvePassword, setResolvePassword] = useState<
+    ((password: string | null) => void) | null
+  >(null)
 
   useEffect(() => {
     Animated.timing(slide, {
@@ -62,6 +67,41 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
     }
   }
 
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      'Delete Account?',
+      "This permanently deletes your account and all its data, including data synced with the browser extension. This can't be undone.",
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: deleteAccount }
+      ]
+    )
+  }
+
+  const promptPassword = () =>
+    new Promise<string | null>((resolve) => setResolvePassword(() => resolve))
+
+  const answerPasswordPrompt = (password: string | null) => {
+    resolvePassword?.(password)
+    setResolvePassword(null)
+  }
+
+  const deleteAccount = async () => {
+    try {
+      const service = await newAccountDeletionService({ promptPassword })
+      if ((await service.deleteAccount()) === 'deleted') {
+        onClose()
+        Alert.alert('Account Deleted', 'Your account and data have been deleted.')
+      }
+    } catch (error) {
+      console.error('Error deleting account:', error)
+      Alert.alert(
+        'Delete Account Error',
+        'An error occurred while deleting your account. Please try again.'
+      )
+    }
+  }
+
   return (
     <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
       <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]}>
@@ -98,11 +138,23 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
             <Text style={styles.itemDanger}>Sign Out</Text>
           </Pressable>
 
+          <Pressable style={styles.item} onPress={handleDeleteAccount}>
+            <Ionicons name="trash-outline" size={20} color="#dc3545" />
+            <Text style={styles.itemDanger}>Delete Account</Text>
+          </Pressable>
+
           {/* Future items can be added here and navigate with expo-router */}
 
           {buildInfo && <Text style={styles.buildInfo}>Build: {buildInfo}</Text>}
         </Animated.View>
       </SafeAreaView>
+
+      {resolvePassword && (
+        <PasswordPromptModal
+          onSubmit={answerPasswordPrompt}
+          onCancel={() => answerPasswordPrompt(null)}
+        />
+      )}
     </View>
   )
 }
