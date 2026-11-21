@@ -2,6 +2,7 @@ import { getAuth, User } from '@react-native-firebase/auth'
 import { TimerStage } from '../../packages/shared/src/domain/timer/stage'
 import { AccountDeletionService } from './domain/account-deletion'
 import { AppBlockTogglingService } from './domain/app-block-toggling'
+import { AppBlockerWrapper } from './domain/app-blocker-wrapper'
 import { newWeeklySchedulesStorageService } from './domain/schedules/storage'
 import { newTimerBasedBlockingRulesStorageService } from './domain/timer-based-blocking/storage'
 import { newTimerConfigStorageService } from './domain/timer/config/storage'
@@ -56,7 +57,7 @@ export function newAppBlockTogglingService() {
         }
       }
     },
-    appBlocker
+    appBlockerWrapper: new AppBlockerWrapper(appBlocker)
   })
 }
 
@@ -80,7 +81,7 @@ export async function newAccountDeletionService({
     }),
     userStorages: await FirebaseServices.getAllFirestoreUserStorages(),
     deletionMarkerStorage: await FirebaseServices.getFirestoreDeletionMarkerStorage(),
-    appBlocker
+    appBlockerWrapper: new AppBlockerWrapper(appBlocker)
   })
 }
 

@@ -1,7 +1,7 @@
 import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { RemoteStorage } from '@zero-in/shared/infra/storage/interface'
 import { AccountAuth, FakeAccountAuth } from '../infra/account/interface'
-import { AppBlocker, FakeAppBlocker } from '../infra/app-block/interface'
+import { AppBlockerWrapper } from './app-blocker-wrapper'
 
 export type AccountDeletionResult = 'deleted' | 'cancelled'
 
@@ -10,7 +10,7 @@ type AccountDeletionDeps = {
   accountAuth: AccountAuth
   userStorages: RemoteStorage[]
   deletionMarkerStorage: RemoteStorage
-  appBlocker: AppBlocker
+  appBlockerWrapper: AppBlockerWrapper
 }
 
 export class AccountDeletionService {
@@ -20,7 +20,7 @@ export class AccountDeletionService {
       accountAuth: new FakeAccountAuth(),
       userStorages: [FakeRemoteStorage.create()],
       deletionMarkerStorage: FakeRemoteStorage.create(),
-      appBlocker: new FakeAppBlocker(),
+      appBlockerWrapper: AppBlockerWrapper.createFake(),
       ...overrides
     })
   }
@@ -37,8 +37,7 @@ export class AccountDeletionService {
 
     await this.deleteAllUserData()
 
-    await this.deps.appBlocker.clearBlockingSchedule()
-    await this.deps.appBlocker.disableAlwaysBlock()
+    await this.deps.appBlockerWrapper.disableAllBlocking()
 
     await this.deps.accountAuth.deleteUser()
     return 'deleted'

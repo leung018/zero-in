@@ -1,9 +1,8 @@
 import { FakeAccountAuth, ReauthResult } from '@/infra/account/interface'
-import { FakeAppBlocker } from '@/infra/app-block/interface'
-import { ScheduleSpan } from '@zero-in/shared/domain/schedules'
 import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { RemoteStorage } from '@zero-in/shared/infra/storage/interface'
 import { AccountDeletionService } from './account-deletion'
+import { AppBlockerWrapper, FakeAppBlockerWrapper } from './app-blocker-wrapper'
 
 describe('AccountDeletionService', () => {
   beforeEach(() => {
@@ -88,13 +87,13 @@ function setup({
   reauthResult = 'reauthenticated',
   userStorages = [FakeRemoteStorage.create()],
   deletionMarkerStorage = FakeRemoteStorage.create(),
-  appBlocker = new FakeAppBlocker()
+  appBlocker = AppBlockerWrapper.createFake()
 }: {
   userId?: string
   reauthResult?: ReauthResult
   userStorages?: RemoteStorage[]
   deletionMarkerStorage?: RemoteStorage
-  appBlocker?: FakeAppBlocker
+  appBlocker?: FakeAppBlockerWrapper
 } = {}) {
   const accountAuth = new FakeAccountAuth({ reauthResult })
   const service = AccountDeletionService.createFake({
@@ -102,20 +101,14 @@ function setup({
     accountAuth,
     userStorages,
     deletionMarkerStorage,
-    appBlocker
+    appBlockerWrapper: appBlocker
   })
   return { service, accountAuth }
 }
 
-async function createBlockingAppBlocker(): Promise<FakeAppBlocker> {
-  const appBlocker = new FakeAppBlocker()
+async function createBlockingAppBlocker(): Promise<FakeAppBlockerWrapper> {
+  const appBlocker = AppBlockerWrapper.createFake()
   await appBlocker.enableAlwaysBlock()
-  await appBlocker.setBlockingSchedule(
-    new ScheduleSpan({
-      start: new Date('2026-01-05T08:00:00'),
-      end: new Date('2026-01-05T10:00:00')
-    })
-  )
   return appBlocker
 }
 
