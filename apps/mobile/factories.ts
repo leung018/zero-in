@@ -79,7 +79,8 @@ export async function newAccountDeletionService({
       signInProvider: newSignInProvider(user, promptPassword)
     }),
     userStorages: await FirebaseServices.getAllFirestoreUserStorages(),
-    deletionMarkerStorage: await FirebaseServices.getFirestoreDeletionMarkerStorage()
+    deletionMarkerStorage: await FirebaseServices.getFirestoreDeletionMarkerStorage(),
+    appBlocker
   })
 }
 

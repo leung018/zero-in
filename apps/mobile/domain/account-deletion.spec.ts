@@ -1,4 +1,6 @@
 import { FakeAccountAuth, ReauthResult } from '@/infra/account/interface'
+import { FakeAppBlocker } from '@/infra/app-block/interface'
+import { ScheduleSpan } from '@zero-in/shared/domain/schedules'
 import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { RemoteStorage } from '@zero-in/shared/infra/storage/interface'
 import { AccountDeletionService } from './account-deletion'
@@ -70,27 +72,51 @@ describe('AccountDeletionService', () => {
     expect(await appStorage.getKeys()).toEqual([])
     expect(await tokenStorage.getKeys()).toEqual([])
   })
+
+  it('should stop all blocking', async () => {
+    const appBlocker = await createBlockingAppBlocker()
+    const { service } = setup({ appBlocker })
+
+    await service.deleteAccount()
+
+    expect(appBlocker.getBlockingState()).toEqual({ kind: 'none' })
+  })
 })
 
 function setup({
   userId = 'user-1',
   reauthResult = 'reauthenticated',
   userStorages = [FakeRemoteStorage.create()],
-  deletionMarkerStorage = FakeRemoteStorage.create()
+  deletionMarkerStorage = FakeRemoteStorage.create(),
+  appBlocker = new FakeAppBlocker()
 }: {
   userId?: string
   reauthResult?: ReauthResult
   userStorages?: RemoteStorage[]
   deletionMarkerStorage?: RemoteStorage
+  appBlocker?: FakeAppBlocker
 } = {}) {
   const accountAuth = new FakeAccountAuth({ reauthResult })
   const service = AccountDeletionService.createFake({
     userId,
     accountAuth,
     userStorages,
-    deletionMarkerStorage
+    deletionMarkerStorage,
+    appBlocker
   })
   return { service, accountAuth }
+}
+
+async function createBlockingAppBlocker(): Promise<FakeAppBlocker> {
+  const appBlocker = new FakeAppBlocker()
+  await appBlocker.enableAlwaysBlock()
+  await appBlocker.setBlockingSchedule(
+    new ScheduleSpan({
+      start: new Date('2026-01-05T08:00:00'),
+      end: new Date('2026-01-05T10:00:00')
+    })
+  )
+  return appBlocker
 }
 
 async function createStorageWithKeys(keys: string[]): Promise<FakeRemoteStorage> {
