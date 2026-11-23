@@ -1,3 +1,4 @@
+import { AppBlocker } from '@/infra/app-block/app-blocker'
 import { ScheduleSpan } from '@zero-in/shared/domain/schedules'
 import { TimerStage } from '@zero-in/shared/domain/timer/stage'
 import { isInBreak, TimerInfoGetter } from '../../../packages/shared/src/domain/blocking-toggling'
@@ -6,7 +7,6 @@ import { TimerBasedBlockingRulesStorageService } from '../../../packages/shared/
 import { Duration } from '../../../packages/shared/src/domain/timer/duration'
 import { FocusSessionRecordsStorageService } from '../../../packages/shared/src/domain/timer/record/storage'
 import { getDateAfter, maxDate, minDate } from '../../../packages/shared/src/utils/date'
-import { AppBlockerWrapper } from './app-blocker-wrapper'
 import { findActiveOrNextScheduleSpan } from './schedules/schedule-span'
 
 interface AsyncTimerInfoGetter {
@@ -16,26 +16,26 @@ interface AsyncTimerInfoGetter {
 export class AppBlockTogglingService {
   private weeklySchedulesStorageService: WeeklySchedulesStorageService
   private focusSessionRecordsStorageService: FocusSessionRecordsStorageService
-  private appBlockerWrapper: AppBlockerWrapper
+  private appBlocker: AppBlocker
   private timerInfoGetter: AsyncTimerInfoGetter
   private timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
 
   constructor({
     weeklySchedulesStorageService,
     focusSessionRecordsStorageService,
-    appBlockerWrapper,
+    appBlocker,
     timerInfoGetter,
     timerBasedBlockingRulesStorageService
   }: {
     weeklySchedulesStorageService: WeeklySchedulesStorageService
     focusSessionRecordsStorageService: FocusSessionRecordsStorageService
-    appBlockerWrapper: AppBlockerWrapper
+    appBlocker: AppBlocker
     timerInfoGetter: AsyncTimerInfoGetter
     timerBasedBlockingRulesStorageService: TimerBasedBlockingRulesStorageService
   }) {
     this.weeklySchedulesStorageService = weeklySchedulesStorageService
     this.focusSessionRecordsStorageService = focusSessionRecordsStorageService
-    this.appBlockerWrapper = appBlockerWrapper
+    this.appBlocker = appBlocker
     this.timerInfoGetter = timerInfoGetter
     this.timerBasedBlockingRulesStorageService = timerBasedBlockingRulesStorageService
   }
@@ -61,15 +61,15 @@ export class AppBlockTogglingService {
       timerBasedBlockingRules.pauseBlockingWhenTimerNotRunning
     ) {
       if (!timerInfo.isRunning) {
-        return this.appBlockerWrapper.disableAllBlocking()
+        return this.appBlocker.disableAllBlocking()
       }
 
       if (!scheduleSpan || scheduleSpan.isContain(new Date())) {
-        return this.appBlockerWrapper.setBlockingSchedule(
+        return this.appBlocker.setBlockingSchedule(
           clampScheduleSpanToRemaining(timerInfo.remaining, scheduleSpan)
         )
       }
-      return this.appBlockerWrapper.disableAllBlocking()
+      return this.appBlocker.disableAllBlocking()
     }
 
     if (
@@ -78,14 +78,14 @@ export class AppBlockTogglingService {
     ) {
       if (isInBreak(timerInfo)) {
         if (scheduleSpan && timerInfo.isRunning) {
-          return this.appBlockerWrapper.setBlockingSchedule(
+          return this.appBlocker.setBlockingSchedule(
             new ScheduleSpan({
               start: maxDate(getDateAfter({ duration: timerInfo.remaining }), scheduleSpan.start),
               end: scheduleSpan.end
             })
           )
         }
-        return this.appBlockerWrapper.disableAllBlocking()
+        return this.appBlocker.disableAllBlocking()
       }
     }
 
@@ -95,19 +95,19 @@ export class AppBlockTogglingService {
     ) {
       if (timerInfo.isRunning && timerInfo.timerStage === TimerStage.FOCUS) {
         if (!scheduleSpan || scheduleSpan.isContain(new Date())) {
-          return this.appBlockerWrapper.setBlockingSchedule(
+          return this.appBlocker.setBlockingSchedule(
             clampScheduleSpanToRemaining(timerInfo.remaining, scheduleSpan)
           )
         }
       }
 
-      return this.appBlockerWrapper.disableAllBlocking()
+      return this.appBlocker.disableAllBlocking()
     }
 
     if (scheduleSpan) {
-      return this.appBlockerWrapper.setBlockingSchedule(scheduleSpan)
+      return this.appBlocker.setBlockingSchedule(scheduleSpan)
     }
-    return this.appBlockerWrapper.enableAlwaysBlock()
+    return this.appBlocker.enableAlwaysBlock()
   }
 }
 

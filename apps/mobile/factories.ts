@@ -14,9 +14,9 @@ import {
   GoogleSignInProvider,
   SignInProvider
 } from './infra/account/sign-in-provider'
-import { AppBlockerWrapper } from './infra/app-block/interface'
+import { AppBlocker } from './infra/app-block/app-blocker'
 import { FirebaseServices } from './infra/firebase/services'
-import { appBlocker } from './modules/app-blocker'
+import { appBlocker as nativeAppBlocker } from './modules/app-blocker'
 import { createLogger } from './utils/logger'
 
 const log = createLogger('Factories')
@@ -57,7 +57,7 @@ export function newAppBlockTogglingService() {
         }
       }
     },
-    appBlockerWrapper: new AppBlockerWrapper(appBlocker)
+    appBlocker: new AppBlocker(nativeAppBlocker)
   })
 }
 
@@ -81,7 +81,7 @@ export async function newAccountDeletionService({
     }),
     userStorages: await FirebaseServices.getAllFirestoreUserStorages(),
     deletionMarkerStorage: await FirebaseServices.getFirestoreDeletionMarkerStorage(),
-    appBlockerWrapper: new AppBlockerWrapper(appBlocker)
+    appBlocker: new AppBlocker(nativeAppBlocker)
   })
 }
 

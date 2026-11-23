@@ -5,49 +5,51 @@ export type BlockingState =
   | { kind: 'always' }
   | { kind: 'scheduled'; scheduleSpan: ScheduleSpan }
 
-export class AppBlockerWrapper {
-  // Be careful about sequences of calls to the app blocker in this class.
+export class AppBlocker {
+  // Be careful about sequences of calls to the native app blocker in this class.
   // Unit testing may not cover issues arising from improper sequences of calls.
-  static createFake(): FakeAppBlockerWrapper {
-    return new FakeAppBlockerWrapper(new FakeAppBlocker())
+
+  static createFake(): FakeAppBlocker {
+    return new FakeAppBlocker(new FakeNativeAppBlocker())
   }
 
-  constructor(private appBlocker: AppBlocker) {}
+  constructor(private nativeAppBlocker: NativeAppBlocker) {}
 
   async setBlockingSchedule(scheduleSpan: ScheduleSpan) {
-    await this.appBlocker.disableAlwaysBlock()
-    await this.appBlocker.setBlockingSchedule(scheduleSpan)
+    await this.nativeAppBlocker.disableAlwaysBlock()
+    await this.nativeAppBlocker.setBlockingSchedule(scheduleSpan)
     return scheduleSpan
   }
 
   async enableAlwaysBlock() {
-    await this.appBlocker.clearBlockingSchedule()
-    await this.appBlocker.enableAlwaysBlock()
+    await this.nativeAppBlocker.clearBlockingSchedule()
+    await this.nativeAppBlocker.enableAlwaysBlock()
   }
 
   async disableAllBlocking() {
-    await this.appBlocker.clearBlockingSchedule()
-    await this.appBlocker.disableAlwaysBlock()
+    await this.nativeAppBlocker.clearBlockingSchedule()
+    await this.nativeAppBlocker.disableAlwaysBlock()
   }
 }
-export class FakeAppBlockerWrapper extends AppBlockerWrapper {
-  constructor(private fakeAppBlocker: FakeAppBlocker) {
-    super(fakeAppBlocker)
+
+export class FakeAppBlocker extends AppBlocker {
+  constructor(private fakeNativeAppBlocker: FakeNativeAppBlocker) {
+    super(fakeNativeAppBlocker)
   }
 
   getBlockingState(): BlockingState {
-    return this.fakeAppBlocker.getBlockingState()
+    return this.fakeNativeAppBlocker.getBlockingState()
   }
 }
 
-interface AppBlocker {
+interface NativeAppBlocker {
   setBlockingSchedule(scheduleSpan: ScheduleSpan): Promise<void>
   clearBlockingSchedule(): Promise<void>
   enableAlwaysBlock(): Promise<void>
   disableAlwaysBlock(): Promise<void>
 }
 
-class FakeAppBlocker implements AppBlocker {
+class FakeNativeAppBlocker implements NativeAppBlocker {
   private activeScheduleSpan: ScheduleSpan | null = null
   private isAlwaysBlockActivated: boolean = false
 
