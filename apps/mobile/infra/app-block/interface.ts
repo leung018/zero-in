@@ -5,14 +5,49 @@ export type BlockingState =
   | { kind: 'always' }
   | { kind: 'scheduled'; scheduleSpan: ScheduleSpan }
 
-export interface AppBlocker {
+export class AppBlockerWrapper {
+  // Be careful about sequences of calls to the app blocker in this class.
+  // Unit testing may not cover issues arising from improper sequences of calls.
+  static createFake(): FakeAppBlockerWrapper {
+    return new FakeAppBlockerWrapper(new FakeAppBlocker())
+  }
+
+  constructor(private appBlocker: AppBlocker) {}
+
+  async setBlockingSchedule(scheduleSpan: ScheduleSpan) {
+    await this.appBlocker.disableAlwaysBlock()
+    await this.appBlocker.setBlockingSchedule(scheduleSpan)
+    return scheduleSpan
+  }
+
+  async enableAlwaysBlock() {
+    await this.appBlocker.clearBlockingSchedule()
+    await this.appBlocker.enableAlwaysBlock()
+  }
+
+  async disableAllBlocking() {
+    await this.appBlocker.clearBlockingSchedule()
+    await this.appBlocker.disableAlwaysBlock()
+  }
+}
+export class FakeAppBlockerWrapper extends AppBlockerWrapper {
+  constructor(private fakeAppBlocker: FakeAppBlocker) {
+    super(fakeAppBlocker)
+  }
+
+  getBlockingState(): BlockingState {
+    return this.fakeAppBlocker.getBlockingState()
+  }
+}
+
+interface AppBlocker {
   setBlockingSchedule(scheduleSpan: ScheduleSpan): Promise<void>
   clearBlockingSchedule(): Promise<void>
   enableAlwaysBlock(): Promise<void>
   disableAlwaysBlock(): Promise<void>
 }
 
-export class FakeAppBlocker implements AppBlocker {
+class FakeAppBlocker implements AppBlocker {
   private activeScheduleSpan: ScheduleSpan | null = null
   private isAlwaysBlockActivated: boolean = false
 

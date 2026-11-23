@@ -1,7 +1,7 @@
+import { AppBlockerWrapper } from '@/infra/app-block/interface'
 import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { RemoteStorage } from '@zero-in/shared/infra/storage/interface'
 import { AccountAuth, FakeAccountAuth } from '../infra/account/interface'
-import { AppBlockerWrapper } from './app-blocker-wrapper'
 
 export type AccountDeletionResult = 'deleted' | 'cancelled'
 

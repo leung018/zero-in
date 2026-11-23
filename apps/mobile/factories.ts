@@ -2,7 +2,6 @@ import { getAuth, User } from '@react-native-firebase/auth'
 import { TimerStage } from '../../packages/shared/src/domain/timer/stage'
 import { AccountDeletionService } from './domain/account-deletion'
 import { AppBlockTogglingService } from './domain/app-block-toggling'
-import { AppBlockerWrapper } from './domain/app-blocker-wrapper'
 import { newWeeklySchedulesStorageService } from './domain/schedules/storage'
 import { newTimerBasedBlockingRulesStorageService } from './domain/timer-based-blocking/storage'
 import { newTimerConfigStorageService } from './domain/timer/config/storage'
@@ -15,6 +14,7 @@ import {
   GoogleSignInProvider,
   SignInProvider
 } from './infra/account/sign-in-provider'
+import { AppBlockerWrapper } from './infra/app-block/interface'
 import { FirebaseServices } from './infra/firebase/services'
 import { appBlocker } from './modules/app-blocker'
 import { createLogger } from './utils/logger'

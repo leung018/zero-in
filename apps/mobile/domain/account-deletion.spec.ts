@@ -1,8 +1,8 @@
 import { FakeAccountAuth, ReauthResult } from '@/infra/account/interface'
+import { AppBlockerWrapper, FakeAppBlockerWrapper } from '@/infra/app-block/interface'
 import { FakeRemoteStorage } from '@zero-in/shared/infra/storage/fake'
 import { RemoteStorage } from '@zero-in/shared/infra/storage/interface'
 import { AccountDeletionService } from './account-deletion'
-import { AppBlockerWrapper, FakeAppBlockerWrapper } from './app-blocker-wrapper'
 
 describe('AccountDeletionService', () => {
   beforeEach(() => {

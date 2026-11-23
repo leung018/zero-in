@@ -1,4 +1,4 @@
-import { BlockingState } from '@/infra/app-block/interface'
+import { AppBlockerWrapper, BlockingState } from '@/infra/app-block/interface'
 import { ScheduleSpan, WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
@@ -14,7 +14,6 @@ import {
 import { FocusSessionRecordsStorageService } from '../../../packages/shared/src/domain/timer/record/storage'
 import { TimerStage } from '../../../packages/shared/src/domain/timer/stage'
 import { AppBlockTogglingService } from './app-block-toggling'
-import { AppBlockerWrapper } from './app-blocker-wrapper'
 
 describe('AppBlockTogglingService', () => {
   beforeEach(() => {
