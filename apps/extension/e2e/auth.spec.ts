@@ -11,10 +11,11 @@ test('should sign in and sign out buttons render according to state of authentic
   page,
   extensionId
 }) => {
-  await goToBlockingSettingPage(page, extensionId)
-
+  // Sign in on popup since options page reloads itself on auth change, racing with signInWithTestCredential
+  await goToFocusTimer(page, extensionId)
   await signIn(page)
-  await page.reload()
+
+  await goToBlockingSettingPage(page, extensionId)
 
   await expect(page.getByTestId('sign-out-button')).toBeVisible()
   await expect(page.getByTestId('sign-in-button')).toBeHidden()
