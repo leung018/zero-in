@@ -14,7 +14,9 @@ export function sleep(ms: number) {
 }
 
 /**
- * Sign in but expecting the target page attached signInWithTestCredential in window
+ * Sign in but expecting the target page attached signInWithTestCredential in window.
+ * Don't use on options page: it reloads itself on auth change, racing with signInWithTestCredential
+ * and causing flaky "Execution context was destroyed" error.
  */
 export async function signIn(page: Page) {
   await page.evaluate(async () => {
