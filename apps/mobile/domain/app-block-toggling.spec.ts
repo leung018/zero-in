@@ -1,4 +1,4 @@
-import { BlockingState, FakeAppBlocker } from '@/infra/app-block/interface'
+import { AppBlocker, BlockingState } from '@/infra/app-block/app-blocker'
 import { ScheduleSpan, WeeklySchedule } from '@zero-in/shared/domain/schedules/index'
 import { WeeklySchedulesStorageService } from '@zero-in/shared/domain/schedules/storage'
 import { Weekday } from '@zero-in/shared/domain/schedules/weekday'
@@ -600,7 +600,7 @@ async function runAppBlockToggling({
   const weeklySchedulesStorageService = WeeklySchedulesStorageService.createFake()
   const focusSessionRecordsStorageService = FocusSessionRecordsStorageService.createFake()
   const timerBasedBlockingRulesStorageService = TimerBasedBlockingRulesStorageService.createFake()
-  const appBlocker = new FakeAppBlocker()
+  const appBlocker = AppBlocker.createFake()
   const togglingService = new AppBlockTogglingService({
     weeklySchedulesStorageService,
     focusSessionRecordsStorageService,

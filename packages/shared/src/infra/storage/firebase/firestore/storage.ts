@@ -1,6 +1,11 @@
 import { RemoteStorage, Unsubscribe } from '../../interface'
 import { FirestoreAdapter, FirestoreDocumentReference } from './adapter'
 
+// Every collection listed here is deleted when the user deletes their account.
+const USER_COLLECTIONS = ['application', 'pushTokens'] as const
+
+type UserCollection = (typeof USER_COLLECTIONS)[number]
+
 export class FirestoreStorage implements RemoteStorage {
   static createAppStorage({
     userId,
@@ -9,7 +14,7 @@ export class FirestoreStorage implements RemoteStorage {
     userId: string
     adapter: FirestoreAdapter
   }): FirestoreStorage {
-    return new FirestoreStorage(adapter, ['users', userId, 'application'])
+    return FirestoreStorage.createUserStorage({ userId, adapter, collection: 'application' })
   }
 
   static createTokenStorage({
@@ -19,10 +24,38 @@ export class FirestoreStorage implements RemoteStorage {
     userId: string
     adapter: FirestoreAdapter
   }): FirestoreStorage {
-    return new FirestoreStorage(adapter, ['users', userId, 'pushTokens'])
+    return FirestoreStorage.createUserStorage({ userId, adapter, collection: 'pushTokens' })
   }
 
-  constructor(
+  static createAllUserStorages({
+    userId,
+    adapter
+  }: {
+    userId: string
+    adapter: FirestoreAdapter
+  }): FirestoreStorage[] {
+    return USER_COLLECTIONS.map((collection) =>
+      FirestoreStorage.createUserStorage({ userId, adapter, collection })
+    )
+  }
+
+  static createDeletionMarkerStorage({ adapter }: { adapter: FirestoreAdapter }): FirestoreStorage {
+    return new FirestoreStorage(adapter, ['deletedUsers'])
+  }
+
+  private static createUserStorage({
+    userId,
+    adapter,
+    collection
+  }: {
+    userId: string
+    adapter: FirestoreAdapter
+    collection: UserCollection
+  }): FirestoreStorage {
+    return new FirestoreStorage(adapter, ['users', userId, collection])
+  }
+
+  private constructor(
     private readonly adapter: FirestoreAdapter,
     private readonly pathPrefix: string[]
   ) {}
