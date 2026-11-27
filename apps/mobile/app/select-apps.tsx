@@ -19,7 +19,6 @@ export default function SelectAppsScreen() {
         }}
       />
       <View style={styles.content}>
-        {/* TODO: May need fix the UI about the view and loading screen being shown at the same time on android */}
         <View style={styles.appPickerContainer}>
           <AppPickerView
             style={styles.appPicker}
@@ -28,7 +27,6 @@ export default function SelectAppsScreen() {
             }}
           />
         </View>
-        {/* TODO: May make app blocking toggling is triggered whenever user change the selected apps */}
         <View style={styles.noticeBox}>
           <Text style={styles.noticeTitle}>Apply immediately</Text>
           <Text style={styles.noticeText}>
